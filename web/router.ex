@@ -5,7 +5,7 @@ defmodule Re.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", Re do
+  scope "/", Re do
     pipe_through :api
 
     resources "/listings", ListingController, except: [:new, :edit]
