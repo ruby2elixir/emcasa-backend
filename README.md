@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/gusaiani/re.svg?branch=master)](https://travis-ci.org/gusaiani/re)
 # Re
 
 To start your Phoenix app:
