@@ -7,5 +7,7 @@ defmodule Re.Router do
 
   scope "/api", Re do
     pipe_through :api
+
+    resources "/listings", ListingController, except: [:new, :edit]
   end
 end
