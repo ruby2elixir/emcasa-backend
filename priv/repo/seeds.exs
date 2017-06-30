@@ -15,11 +15,11 @@ alias Re.{Repo, Listing}
 Repo.delete_all(Listing)
 
 Repo.insert! %Listing{
-  name: "Primeiro Apartamento",
-  description: "Descrição maravilhosa do primeiro apartamento"
+  name: "First Apartament",
+  description: "Wonderful description for the first apartment"
 }
 
 Repo.insert! %Listing{
-  name: "Segundo Apartamento",
-  description: "Descrição maravilhosa do segundo apartamento"
+  name: "Second Apartament",
+  description: "Wonderful description for the second apartment"
 }
