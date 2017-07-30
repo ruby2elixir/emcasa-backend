@@ -36,5 +36,7 @@ defmodule Re.Endpoint do
     key: "_re_key",
     signing_salt: "BJUIPFWh"
 
+  plug CORSPlug
+
   plug Re.Router
 end
