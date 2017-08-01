@@ -1,7 +1,7 @@
-defmodule Re.ListingControllerTest do
-  use Re.ConnCase
+defmodule ReWeb.ListingControllerTest do
+  use ReWeb.ConnCase
 
-  alias Re.Listing
+  alias ReWeb.Listing
   @valid_attrs %{description: "some content", name: "some content"}
   @invalid_attrs %{}
 

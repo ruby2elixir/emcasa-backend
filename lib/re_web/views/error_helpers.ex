@@ -1,4 +1,4 @@
-defmodule Re.ErrorHelpers do
+defmodule ReWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -21,9 +21,9 @@ defmodule Re.ErrorHelpers do
     #     dgettext "errors", "is invalid"
     #
     if count = opts[:count] do
-      Gettext.dngettext(Re.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(ReWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(Re.Gettext, "errors", msg, opts)
+      Gettext.dgettext(ReWeb.Gettext, "errors", msg, opts)
     end
   end
 end

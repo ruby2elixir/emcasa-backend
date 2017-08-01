@@ -1,4 +1,4 @@
-defmodule Re.ConnCase do
+defmodule ReWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -25,10 +25,10 @@ defmodule Re.ConnCase do
       import Ecto.Changeset
       import Ecto.Query
 
-      import Re.Router.Helpers
+      import ReWeb.Router.Helpers
 
       # The default endpoint for testing
-      @endpoint Re.Endpoint
+      @endpoint ReWeb.Endpoint
     end
   end
 

@@ -1,4 +1,4 @@
-defmodule Re do
+defmodule Re.Application do
   @moduledoc """
   Main module for Re, starts supervision tree.
   """
@@ -17,7 +17,7 @@ defmodule Re do
       # Start the Ecto repository
       supervisor(Repo, []),
       # Start the endpoint when the application starts
-      supervisor(Endpoint, []),
+      supervisor(ReWeb.Endpoint, []),
       # Start your own worker by calling: Re.Worker.start_link(arg1, arg2, arg3)
       # worker(Re.Worker, [arg1, arg2, arg3]),
     ]
@@ -31,7 +31,7 @@ defmodule Re do
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
-    Endpoint.config_change(changed, removed)
+    ReWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end

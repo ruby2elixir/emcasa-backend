@@ -1,7 +1,7 @@
-defmodule Re.ListingController do
+defmodule ReWeb.ListingController do
   use Re.Web, :controller
 
-  alias Re.Listing
+  alias ReWeb.Listing
 
   def index(conn, _params) do
     listings = Repo.all(Listing)
@@ -20,7 +20,7 @@ defmodule Re.ListingController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(Re.ChangesetView, "error.json", changeset: changeset)
+        |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
@@ -39,7 +39,7 @@ defmodule Re.ListingController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(Re.ChangesetView, "error.json", changeset: changeset)
+        |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 

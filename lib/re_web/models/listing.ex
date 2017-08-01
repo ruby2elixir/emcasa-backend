@@ -1,4 +1,4 @@
-defmodule Re.Listing do
+defmodule ReWeb.Listing do
   @moduledoc """
   Model for listings, that is, each apartment or real estate piece on sale.
   """
