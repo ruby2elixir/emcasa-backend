@@ -1,4 +1,4 @@
-defmodule Re.ErrorHelpers do
+defmodule ReWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """

@@ -1,7 +1,7 @@
-defmodule Re.ListingController do
+defmodule ReWeb.ListingController do
   use Re.Web, :controller
 
-  alias Re.Listing
+  alias ReWeb.Listing
 
   def index(conn, _params) do
     listings = Repo.all(Listing)

@@ -1,4 +1,4 @@
-defmodule Re.ChannelCase do
+defmodule ReWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -27,7 +27,7 @@ defmodule Re.ChannelCase do
 
 
       # The default endpoint for testing
-      @endpoint Re.Endpoint
+      @endpoint ReWeb.Endpoint
     end
   end
 

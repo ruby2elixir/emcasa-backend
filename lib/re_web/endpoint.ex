@@ -1,7 +1,7 @@
-defmodule Re.Endpoint do
+defmodule ReWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :re
 
-  socket "/socket", Re.UserSocket
+  socket "/socket", ReWeb.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -38,5 +38,5 @@ defmodule Re.Endpoint do
 
   plug CORSPlug
 
-  plug Re.Router
+  plug ReWeb.Router
 end

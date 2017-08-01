@@ -1,4 +1,4 @@
-defmodule Re.Gettext do
+defmodule ReWeb.Gettext do
   @moduledoc """
   A module providing Internationalization with a gettext-based API.
 

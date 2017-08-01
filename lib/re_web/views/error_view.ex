@@ -1,4 +1,4 @@
-defmodule Re.ErrorView do
+defmodule ReWeb.ErrorView do
   use Re.Web, :view
 
   def render("404.json", _assigns) do

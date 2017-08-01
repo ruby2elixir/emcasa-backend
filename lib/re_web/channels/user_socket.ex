@@ -1,4 +1,4 @@
-defmodule Re.UserSocket do
+defmodule ReWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels

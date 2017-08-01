@@ -1,4 +1,4 @@
-defmodule Re.ChangesetView do
+defmodule ReWeb.ChangesetView do
   use Re.Web, :view
 
   alias Ecto.Changeset

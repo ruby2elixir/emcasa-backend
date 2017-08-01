@@ -1,5 +1,5 @@
 defmodule Re.ErrorViewTest do
-  use Re.ConnCase, async: true
+  use ReWeb.ConnCase, async: true
 
   # Bring render/3 and render_to_string/3 for testing custom views
   import Phoenix.View
