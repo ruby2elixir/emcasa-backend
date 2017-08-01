@@ -1,7 +1,7 @@
-defmodule Re.ListingTest do
+defmodule ReWeb.ListingTest do
   use Re.ModelCase
 
-  alias Re.Listing
+  alias ReWeb.Listing
 
   @valid_attrs %{description: "some content", name: "some content"}
   @invalid_attrs %{}

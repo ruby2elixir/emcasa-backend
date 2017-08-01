@@ -20,7 +20,7 @@ defmodule ReWeb.ListingController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(Re.ChangesetView, "error.json", changeset: changeset)
+        |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
@@ -39,7 +39,7 @@ defmodule ReWeb.ListingController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(Re.ChangesetView, "error.json", changeset: changeset)
+        |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
