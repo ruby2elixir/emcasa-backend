@@ -19,7 +19,8 @@ defmodule ReWeb.ListingControllerTest do
     conn = get conn, listing_path(conn, :show, listing)
     assert json_response(conn, 200)["data"] == %{"id" => listing.id,
       "description" => listing.description,
-      "name" => listing.name}
+      "name" => listing.name,
+      "rooms" => listing.rooms}
   end
 
   test "renders page not found when id is nonexistent", %{conn: conn} do
