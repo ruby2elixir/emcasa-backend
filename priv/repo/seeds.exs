@@ -20,7 +20,8 @@ Repo.insert! %Listing{
   description: "Wonderful description for the first apartment",
   price: 1000000,
   area: 90,
-  rooms: 2
+  rooms: 2,
+  garage_spots: 1
 }
 
 Repo.insert! %Listing{
@@ -28,5 +29,6 @@ Repo.insert! %Listing{
   description: "Wonderful description for the second apartment",
   price: 1845000,
   area: 136,
-  rooms: 4
+  rooms: 4,
+  garage_spots: 2
 }

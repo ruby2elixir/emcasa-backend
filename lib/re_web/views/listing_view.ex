@@ -15,6 +15,7 @@ defmodule ReWeb.ListingView do
       description: listing.description,
       price: listing.price,
       area: listing.area,
-      rooms: listing.rooms}
+      rooms: listing.rooms,
+      garage_spots: listing.garage_spots}
   end
 end
