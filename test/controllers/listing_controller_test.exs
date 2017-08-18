@@ -2,7 +2,7 @@ defmodule ReWeb.ListingControllerTest do
   use ReWeb.ConnCase
 
   alias ReWeb.Listing
-  @valid_attrs %{description: "some content", name: "some content"}
+  @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140}
   @invalid_attrs %{}
 
   setup %{conn: conn} do
@@ -17,10 +17,13 @@ defmodule ReWeb.ListingControllerTest do
   test "shows chosen resource", %{conn: conn} do
     listing = Repo.insert! %Listing{}
     conn = get conn, listing_path(conn, :show, listing)
-    assert json_response(conn, 200)["data"] == %{"id" => listing.id,
-      "description" => listing.description,
-      "name" => listing.name,
-      "rooms" => listing.rooms}
+    assert json_response(conn, 200)["data"] ==
+      %{"id" => listing.id,
+        "description" => listing.description,
+        "name" => listing.name,
+        "rooms" => listing.rooms,
+        "price" => listing.price,
+        "area" => listing.area}
   end
 
   test "renders page not found when id is nonexistent", %{conn: conn} do

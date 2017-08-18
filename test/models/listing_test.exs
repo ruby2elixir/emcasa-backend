@@ -3,7 +3,7 @@ defmodule ReWeb.ListingTest do
 
   alias ReWeb.Listing
 
-  @valid_attrs %{description: "some content", name: "some content"}
+  @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 150}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
