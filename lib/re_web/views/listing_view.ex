@@ -12,6 +12,7 @@ defmodule ReWeb.ListingView do
   def render("listing.json", %{listing: listing}) do
     %{id: listing.id,
       description: listing.description,
-      name: listing.name}
+      name: listing.name,
+      rooms: listing.rooms}
   end
 end

@@ -17,10 +17,12 @@ Repo.delete_all(Listing)
 
 Repo.insert! %Listing{
   name: "First Apartament",
-  description: "Wonderful description for the first apartment"
+  description: "Wonderful description for the first apartment",
+  rooms: 2
 }
 
 Repo.insert! %Listing{
   name: "Second Apartament",
-  description: "Wonderful description for the second apartment"
+  description: "Wonderful description for the second apartment",
+  rooms: 4
 }
