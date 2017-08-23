@@ -1,5 +1,5 @@
 defmodule ReWeb.ListingView do
-  use Re.Web, :view
+  use ReWeb, :view
 
   def render("index.json", %{listings: listings}) do
     %{data: render_many(listings, ReWeb.ListingView, "listing.json")}

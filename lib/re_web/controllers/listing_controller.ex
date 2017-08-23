@@ -1,5 +1,5 @@
 defmodule ReWeb.ListingController do
-  use Re.Web, :controller
+  use ReWeb, :controller
 
   alias ReWeb.Listing
 
