@@ -3,7 +3,7 @@ defmodule ReWeb.Listing do
   Model for listings, that is, each apartment or real estate piece on sale.
   """
 
-  use Re.Web, :model
+  use ReWeb, :model
 
   schema "listings" do
     field :name, :string

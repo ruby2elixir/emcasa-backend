@@ -1,5 +1,5 @@
 defmodule ReWeb.Router do
-  use Re.Web, :router
+  use ReWeb, :router
 
   pipeline :api do
     plug :accepts, ["json"]

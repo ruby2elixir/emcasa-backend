@@ -1,12 +1,12 @@
-defmodule Re.Web do
+defmodule ReWeb do
   @moduledoc """
   A module that keeps using definitions for controllers,
   views and so on.
 
   This can be used in your application as:
 
-      use Re.Web, :controller
-      use Re.Web, :view
+      use ReWeb, :controller
+      use ReWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
