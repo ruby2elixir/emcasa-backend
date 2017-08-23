@@ -4,7 +4,8 @@ defmodule ReWeb.ListingController do
   alias ReWeb.Listing
 
   def index(conn, _params) do
-    listings = Repo.all(Listing)
+    listings = Repo.all from l in Listing,
+                                  preload: [:address]
     render(conn, "index.json", listings: listings)
   end
 

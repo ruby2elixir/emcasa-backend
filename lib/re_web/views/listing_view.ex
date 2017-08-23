@@ -16,6 +16,14 @@ defmodule ReWeb.ListingView do
       price: listing.price,
       area: listing.area,
       rooms: listing.rooms,
-      garage_spots: listing.garage_spots}
+      garage_spots: listing.garage_spots,
+      address: %{
+        street: listing.address.street,
+        neighborhood: listing.address.neighborhood,
+        city: listing.address.city,
+        state: listing.address.state,
+        postal_code: listing.address.postal_code
+      }
+    }
   end
 end

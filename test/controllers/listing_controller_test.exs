@@ -2,7 +2,7 @@ defmodule ReWeb.ListingControllerTest do
   use ReWeb.ConnCase
 
   alias ReWeb.Listing
-  @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3}
+  @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3, address: %{city: "Rio de Janeiro", street: "Rua Garcia d'Ávila"}}
   @invalid_attrs %{}
 
   setup %{conn: conn} do
@@ -24,7 +24,12 @@ defmodule ReWeb.ListingControllerTest do
         "rooms" => listing.rooms,
         "price" => listing.price,
         "area" => listing.area,
-        "garage_spots" => listing.garage_spots}
+        "garage_spots" => listing.garage_spots,
+        "address" => %{
+          "city" => listing.address.city,
+          "street" => listing.address.street,
+        }
+      }
   end
 
   test "renders page not found when id is nonexistent", %{conn: conn} do
