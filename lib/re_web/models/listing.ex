@@ -12,6 +12,7 @@ defmodule ReWeb.Listing do
     field :rooms, :integer
     field :area, :integer
     field :garage_spots, :integer
+    belongs_to :address, ReWeb.Address
 
     timestamps()
   end

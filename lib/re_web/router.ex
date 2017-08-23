@@ -9,5 +9,6 @@ defmodule ReWeb.Router do
     pipe_through :api
 
     resources "/listings", ListingController, except: [:new, :edit]
+    resources "/addresses", AddressController, except: [:new, :edit]
   end
 end
