@@ -11,9 +11,18 @@
 # and so on) as they will fail if something goes wrong.
 
 alias Re.Repo
-alias ReWeb.Listing
+alias ReWeb.{Address, Listing}
 
+Repo.delete_all(Address)
 Repo.delete_all(Listing)
+
+Repo.insert! %Address{
+  street: "Delfim Moreira",
+  neighborhood: "Leblon",
+  city: "Rio de Janeiro",
+  state: "RJ",
+  postal_code: "22291-000"
+}
 
 Repo.insert! %Listing{
   name: "First Apartament",
