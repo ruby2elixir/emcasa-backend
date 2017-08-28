@@ -2,7 +2,7 @@ defmodule ReWeb.ListingControllerTest do
   use ReWeb.ConnCase
 
   alias ReWeb.Listing
-  @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3, address: %{city: "Rio de Janeiro", street: "Rua Garcia d'Ávila"}}
+  @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3,}
   @invalid_attrs %{}
 
   setup %{conn: conn} do
@@ -44,10 +44,10 @@ defmodule ReWeb.ListingControllerTest do
   #   assert Repo.get_by(Listing, @valid_attrs)
   # end
 
-  # test "does not create resource and renders errors when data is invalid", %{conn: conn} do
-  #   conn = post conn, listing_path(conn, :create), listing: @invalid_attrs
-  #   assert json_response(conn, 422)["errors"] != %{}
-  # end
+  test "does not create resource and renders errors when data is invalid", %{conn: conn} do
+    conn = post conn, listing_path(conn, :create), listing: @invalid_attrs
+    assert json_response(conn, 422)["errors"] != %{}
+  end
 
   # test "updates and renders chosen resource when data is valid", %{conn: conn} do
   #   listing = Repo.insert! %Listing{}
@@ -56,16 +56,16 @@ defmodule ReWeb.ListingControllerTest do
   #   assert Repo.get_by(Listing, @valid_attrs)
   # end
 
-  # test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-  #   listing = Repo.insert! %Listing{}
-  #   conn = put conn, listing_path(conn, :update, listing), listing: @invalid_attrs
-  #   assert json_response(conn, 422)["errors"] != %{}
-  # end
+  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
+    listing = Repo.insert! %Listing{}
+    conn = put conn, listing_path(conn, :update, listing), listing: @invalid_attrs
+    assert json_response(conn, 422)["errors"] != %{}
+  end
 
-  # test "deletes chosen resource", %{conn: conn} do
-  #   listing = Repo.insert! %Listing{}
-  #   conn = delete conn, listing_path(conn, :delete, listing)
-  #   assert response(conn, 204)
-  #   refute Repo.get(Listing, listing.id)
-  # end
+  test "deletes chosen resource", %{conn: conn} do
+    listing = Repo.insert! %Listing{}
+    conn = delete conn, listing_path(conn, :delete, listing)
+    assert response(conn, 204)
+    refute Repo.get(Listing, listing.id)
+  end
 end
