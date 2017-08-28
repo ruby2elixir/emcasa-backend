@@ -13,9 +13,11 @@ defmodule ReWeb.ListingView do
     %{id: listing.id,
       name: listing.name,
       description: listing.description,
+      floor: listing.floor,
       price: listing.price,
       area: listing.area,
       rooms: listing.rooms,
+      bathrooms: listing.bathrooms,
       garage_spots: listing.garage_spots,
       address: %{
         street: listing.address.street,

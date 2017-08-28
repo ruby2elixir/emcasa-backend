@@ -1,18 +1,18 @@
 defmodule ReWeb.ListingControllerTest do
-  # use ReWeb.ConnCase
+  use ReWeb.ConnCase
 
-  # alias ReWeb.Listing
-  # @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3, address: %{city: "Rio de Janeiro", street: "Rua Garcia d'Ávila"}}
-  # @invalid_attrs %{}
+  alias ReWeb.Listing
+  @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3, address: %{city: "Rio de Janeiro", street: "Rua Garcia d'Ávila"}}
+  @invalid_attrs %{}
 
-  # setup %{conn: conn} do
-  #   {:ok, conn: put_req_header(conn, "accept", "application/json")}
-  # end
+  setup %{conn: conn} do
+    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+  end
 
-  # test "lists all entries on index", %{conn: conn} do
-  #   conn = get conn, listing_path(conn, :index)
-  #   assert json_response(conn, 200)["data"] == []
-  # end
+  test "lists all entries on index", %{conn: conn} do
+    conn = get conn, listing_path(conn, :index)
+    assert json_response(conn, 200)["data"] == []
+  end
 
   # test "shows chosen resource", %{conn: conn} do
   #   listing = Repo.insert! %Listing{}
@@ -32,11 +32,11 @@ defmodule ReWeb.ListingControllerTest do
   #     }
   # end
 
-  # test "renders page not found when id is nonexistent", %{conn: conn} do
-  #   assert_error_sent 404, fn ->
-  #     get conn, listing_path(conn, :show, -1)
-  #   end
-  # end
+  test "renders page not found when id is nonexistent", %{conn: conn} do
+    assert_error_sent 404, fn ->
+      get conn, listing_path(conn, :show, -1)
+    end
+  end
 
   # test "creates and renders resource when data is valid", %{conn: conn} do
   #   conn = post conn, listing_path(conn, :create), listing: @valid_attrs
