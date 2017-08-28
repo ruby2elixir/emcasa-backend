@@ -13,8 +13,8 @@
 alias Re.Repo
 alias ReWeb.{Address, Listing}
 
-Repo.delete_all(Address)
 Repo.delete_all(Listing)
+Repo.delete_all(Address)
 
 Repo.insert! %Address{
   street: "Delfim Moreira",
