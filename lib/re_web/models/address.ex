@@ -7,6 +7,7 @@ defmodule ReWeb.Address do
 
   schema "addresses" do
     field :street, :string
+    field :street_number, :string
     field :neighborhood, :string
     field :city, :string
     field :state, :string
@@ -21,7 +22,7 @@ defmodule ReWeb.Address do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:street, :neighborhood, :city, :state, :postal_code])
+    |> cast(params, [:street, :neighborhood, :city, :state, :postal_code, :street_number])
     |> validate_required([:street, :neighborhood, :city, :state, :postal_code])
   end
 end

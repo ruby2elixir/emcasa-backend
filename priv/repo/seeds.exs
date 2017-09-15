@@ -18,6 +18,7 @@ Repo.delete_all(Address)
 
 Repo.insert! %Address{
   street: "Delfim Moreira",
+  street_number: "243",
   neighborhood: "Leblon",
   city: "Rio de Janeiro",
   state: "RJ",
@@ -48,6 +49,7 @@ Repo.insert! %Address{
 
 Repo.insert! %Address{
   street: "Bartolomeu Mitre",
+  street_number: "87",
   neighborhood: "Leblon",
   city: "Rio de Janeiro",
   state: "RJ",
