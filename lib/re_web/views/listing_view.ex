@@ -21,6 +21,7 @@ defmodule ReWeb.ListingView do
       garage_spots: listing.garage_spots,
       address: %{
         street: listing.address.street,
+        street_number: listing.address.street_number,
         neighborhood: listing.address.neighborhood,
         city: listing.address.city,
         state: listing.address.state,
