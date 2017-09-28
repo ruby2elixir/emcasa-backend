@@ -4,6 +4,13 @@ defmodule ReWeb.ListingController do
   alias ReWeb.Listing
 
   def index(conn, _params) do
+    SendGrid.Email.build()
+    |> SendGrid.Email.add_to("gustavo.saiani@emcasa.com")
+    |> SendGrid.Email.put_from("gustavo.saiani@emcasa.com")
+    |> SendGrid.Email.put_subject("Hello from Elixir")
+    |> SendGrid.Email.put_text("Sent with Elixir")
+    |> SendGrid.Mailer.send()
+
     listings = Repo.all from l in Listing,
                                   preload: [:address]
     render(conn, "index.json", listings: listings)
