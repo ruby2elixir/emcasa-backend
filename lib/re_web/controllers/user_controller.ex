@@ -4,8 +4,8 @@ defmodule ReWeb.UserController do
   alias ReWeb.User
 
   def index(conn, _params) do
-    user = Repo.all(User)
-    render(conn, "index.json", user: user)
+    users = Repo.all(User)
+    render(conn, "index.json", users: users)
   end
 
   def create(conn, %{"user" => user_params}) do

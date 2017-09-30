@@ -11,10 +11,29 @@
 # and so on) as they will fail if something goes wrong.
 
 alias Re.Repo
-alias ReWeb.{Address, Listing}
+alias ReWeb.{User, Address, Listing}
 
+Repo.delete_all(User)
 Repo.delete_all(Listing)
 Repo.delete_all(Address)
+
+Repo.insert! %User {
+  name: "Gustavo Rocha Saiani",
+  email: "gustavo.saiani@emcasa.com",
+  phone: "+55 21 9 9962 2634"
+}
+
+Repo.insert! %User {
+  name: "Gustavo Vaz",
+  email: "gustavo.vaz@emcasa.com",
+  phone: "+55 21 9 8123 2634"
+}
+
+Repo.insert! %User {
+  name: "Lucas Cardozo",
+  email: "lucas.cardozo@emcasa.com",
+  phone: "+55 21 9 9542 9672"
+}
 
 Repo.insert! %Address{
   street: "Delfim Moreira",
