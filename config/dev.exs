@@ -1,5 +1,7 @@
 use Mix.Config
 
+import_config "dev.secret.exs"
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
