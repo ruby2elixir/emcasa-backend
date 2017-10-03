@@ -1,4 +1,4 @@
-defmodule ReWeb.ListingModel do
+defmodule ReWeb.ListingUser do
   @moduledoc false
 
   use ReWeb, :model
