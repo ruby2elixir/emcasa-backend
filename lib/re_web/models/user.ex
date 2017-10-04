@@ -20,5 +20,6 @@ defmodule ReWeb.User do
     struct
     |> cast(params, [:name, :email, :phone])
     |> validate_required([])
+    |> unique_constraint(:email)
   end
 end
