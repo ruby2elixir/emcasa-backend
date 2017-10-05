@@ -51,17 +51,9 @@ Repo.insert! %Address{
       area: 90,
       rooms: 2,
       bathrooms: 1,
-      garage_spots: 1
-    },
-    %Listing{
-      name: "Second Apartament",
-      description: "Wonderful description for the second apartment",
-      floor: "8",
-      price: 1845000,
-      area: 136,
-      rooms: 4,
-      bathrooms: 2,
-      garage_spots: 2
+      garage_spots: 1,
+      photo: "listing_1.jpg",
+      gmaps: "gmaps_1.jpg"
     }
   ]
 }
@@ -75,35 +67,16 @@ Repo.insert! %Address{
   postal_code: "22291-000",
   listings: [
     %Listing{
-      name: "Third Apartament",
-      description: "Wonderful description for the third apartment",
+      name: "Second Apartament",
+      description: "Wonderful description for the second apartment",
       floor: "3",
       price: 1000000,
       area: 90,
       rooms: 2,
       bathrooms: 1,
-      garage_spots: 1
-    },
-    %Listing{
-      name: "Fourth Apartament",
-      description: "Wonderful description for the fourth apartment",
-      floor: "8",
-      price: 1845000,
-      area: 136,
-      rooms: 4,
-      bathrooms: 2,
-      garage_spots: 2
-    },
-    %Listing{
-      name: "Fifth Apartament",
-      description: "Wonderful description for the fifth apartment",
-      floor: "3",
-      price: 1000000,
-      area: 90,
-      rooms: 2,
-      bathrooms: 1,
-      garage_spots: 1
+      garage_spots: 1,
+      photo: "listing_2.jpg",
+      gmaps: "gmaps_2.jpg"
     }
   ]
 }
-
