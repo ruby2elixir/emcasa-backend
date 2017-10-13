@@ -36,47 +36,24 @@ Repo.insert! %User {
 }
 
 Repo.insert! %Address{
-  street: "Delfim Moreira",
-  street_number: "243",
-  neighborhood: "Leblon",
+  street: "Rua Jardim Botânico",
+  street_number: "171",
+  neighborhood: "Jardim Botânico",
   city: "Rio de Janeiro",
   state: "RJ",
-  postal_code: "22291-000",
+  postal_code: "22470-050",
   listings: [
     %Listing{
-      name: "First Apartament",
-      description: "Wonderful description for the first apartment",
-      floor: "3",
-      price: 1000000,
-      area: 90,
+      name: "Apartamento",
+      description: "2 Quartos no ponto mais nobre do Jardim Botânico",
+      floor: "1",
+      price: 1150000,
+      area: 75,
       rooms: 2,
-      bathrooms: 1,
-      garage_spots: 1,
+      bathrooms: 2,
+      garage_spots: 2,
       photo: "listing_1.jpg",
       gmaps: "gmaps_1.jpg"
-    }
-  ]
-}
-
-Repo.insert! %Address{
-  street: "Bartolomeu Mitre",
-  street_number: "87",
-  neighborhood: "Leblon",
-  city: "Rio de Janeiro",
-  state: "RJ",
-  postal_code: "22291-000",
-  listings: [
-    %Listing{
-      name: "Second Apartament",
-      description: "Wonderful description for the second apartment",
-      floor: "3",
-      price: 1000000,
-      area: 90,
-      rooms: 2,
-      bathrooms: 1,
-      garage_spots: 1,
-      photo: "listing_2.jpg",
-      gmaps: "gmaps_2.jpg"
     }
   ]
 }
