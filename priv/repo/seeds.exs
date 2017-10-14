@@ -42,6 +42,8 @@ Repo.insert! %Address{
   city: "Rio de Janeiro",
   state: "RJ",
   postal_code: "22470-050",
+  lat: "-22.9608099",
+  lng: "-43.2096142",
   listings: [
     %Listing{
       name: "Apartamento",

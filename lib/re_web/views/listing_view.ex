@@ -27,7 +27,9 @@ defmodule ReWeb.ListingView do
         neighborhood: listing.address.neighborhood,
         city: listing.address.city,
         state: listing.address.state,
-        postal_code: listing.address.postal_code
+        postal_code: listing.address.postal_code,
+        lat: listing.address.lat,
+        lng: listing.address.lng
       }
     }
   end

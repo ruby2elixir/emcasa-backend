@@ -12,6 +12,8 @@ defmodule ReWeb.Address do
     field :city, :string
     field :state, :string
     field :postal_code, :string
+    field :lat, :string
+    field :lng, :string
     has_many :listings, ReWeb.Listing
 
     timestamps()
@@ -22,7 +24,7 @@ defmodule ReWeb.Address do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:street, :neighborhood, :city, :state, :postal_code, :street_number])
-    |> validate_required([:street, :neighborhood, :city, :state, :postal_code])
+    |> cast(params, [:street, :neighborhood, :city, :state, :postal_code, :street_number, :lat, :lng])
+    |> validate_required([:street, :neighborhood, :city, :state, :postal_code, :lat, :lng])
   end
 end
