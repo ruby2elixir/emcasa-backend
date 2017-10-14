@@ -12,9 +12,11 @@ defmodule ReWeb.ListingUserController do
 
         SendGrid.Email.build()
         |> SendGrid.Email.add_to("gustavo.saiani@emcasa.com")
-        |> SendGrid.Email.add_to("gusaiani@gmail.com")
+        |> SendGrid.Email.add_to("gustavo.vaz@emcasa.com")
+        |> SendGrid.Email.add_to("lucas.cardozo@emcasa.com")
+        |> SendGrid.Email.add_to("camila.villanueva@emcasa.com")
         |> SendGrid.Email.put_from("gustavo.saiani@emcasa.com")
-        |> SendGrid.Email.put_subject("Novo interesse em listagem Em Casa")
+        |> SendGrid.Email.put_subject("Novo interesse em listagem EmCasa")
         |> SendGrid.Email.put_text("Nome: #{user.name}\n Email: #{user.email}\n Telefone: #{user.phone}\n Id da listagem: #{listing_id}")
         |> SendGrid.Mailer.send()
 
