@@ -2,6 +2,7 @@ defmodule ReWeb.ListingUserController do
   use ReWeb, :controller
 
   alias ReWeb.User
+  alias ReWeb.ListingUser
 
   def create(conn, %{"user" => user_params, "listing" => listing_params}) do
     changeset = User.changeset(%User{}, user_params)
@@ -9,6 +10,9 @@ defmodule ReWeb.ListingUserController do
     case Repo.insert(changeset, on_conflict: :replace_all, conflict_target: :email) do
       {:ok, user} ->
         %{"id" => listing_id} = listing_params
+
+        listing_user = %ReWeb.ListingUser{ user_id: user.id, listing_id: listing_id }
+        Re.Repo.insert(listing_user)
 
         SendGrid.Email.build()
         |> SendGrid.Email.add_to("gustavo.saiani@emcasa.com")
