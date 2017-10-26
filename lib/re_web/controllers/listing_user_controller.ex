@@ -11,7 +11,7 @@ defmodule ReWeb.ListingUserController do
       {:ok, user} ->
         %{"id" => listing_id} = listing_params
 
-        listing_user = %ReWeb.ListingUser{ user_id: user.id, listing_id: listing_id }
+        listing_user = %ReWeb.ListingUser{user_id: user.id, listing_id: listing_id}
         Re.Repo.insert(listing_user)
 
         SendGrid.Email.build()
