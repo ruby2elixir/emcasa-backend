@@ -54,8 +54,7 @@ Repo.insert! %Address{
       rooms: 2,
       bathrooms: 2,
       garage_spots: 2,
-      photo: "listing_1.jpg",
-      gmaps: "gmaps_1.jpg"
+      photo: "listing_1.jpg"
     }
   ]
 }
