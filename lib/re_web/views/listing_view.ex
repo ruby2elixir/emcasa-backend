@@ -20,7 +20,6 @@ defmodule ReWeb.ListingView do
       bathrooms: listing.bathrooms,
       garage_spots: listing.garage_spots,
       photo: listing.photo,
-      gmaps: listing.gmaps,
       address: %{
         street: listing.address.street,
         street_number: listing.address.street_number,

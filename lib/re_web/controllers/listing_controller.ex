@@ -4,9 +4,10 @@ defmodule ReWeb.ListingController do
   alias ReWeb.Listing
 
   def index(conn, _params) do
-
     listings = Repo.all from l in Listing,
-                                  preload: [:address]
+      where: l.is_active == true,
+      preload: [:address]
+
     render(conn, "index.json", listings: listings)
   end
 
@@ -27,7 +28,10 @@ defmodule ReWeb.ListingController do
   end
 
   def show(conn, %{"id" => id}) do
-    listing = Listing |> Repo.get!(id) |> Repo.preload(:address)
+    listing =
+      from(l in Listing, where: l.is_active == true)
+      |> Repo.get!(id) |> Repo.preload(:address)
+
     render(conn, "show.json", listing: listing)
   end
 

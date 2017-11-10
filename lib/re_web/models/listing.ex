@@ -15,7 +15,7 @@ defmodule ReWeb.Listing do
     field :area, :integer
     field :garage_spots, :integer
     field :photo, :string
-    field :gmaps, :string
+    field :is_active, :boolean
     belongs_to :address, ReWeb.Address
 
     timestamps()
@@ -26,7 +26,7 @@ defmodule ReWeb.Listing do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :description, :price, :floor, :rooms, :bathrooms, :area, :garage_spots, :photo, :gmaps])
+    |> cast(params, [:name, :description, :price, :floor, :rooms, :bathrooms, :area, :garage_spots, :photo, :is_active])
     |> validate_required([:description, :name, :price, :rooms, :area])
   end
 end
