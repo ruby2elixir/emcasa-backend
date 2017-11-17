@@ -58,3 +58,27 @@ Repo.insert! %Address{
     }
   ]
 }
+
+Repo.insert! %Address{
+  street: "Rua Barão da Torre",
+  street_number: "571",
+  neighborhood: "Ipanema",
+  city: "Rio de Janeiro",
+  state: "RJ",
+  postal_code: "22411-000",
+  lat: "-22.9773729",
+  lng: "-43.2309144",
+  listings: [
+    %Listing{
+      name: "Apartamento",
+      description: "Apartamento amplo em ótimo estado com 3 quartos (1 suíte) próximo dos melhores restaurantes do bairro. A 5 minutos da praia (posto 10) e a 8 minutos do metrô.",
+      floor: "2",
+      price: 2_400_000,
+      area: 144,
+      rooms: 3,
+      bathrooms: 3,
+      garage_spots: 1,
+      photo: "barao-da-torre.jpg"
+    }
+  ]
+}
