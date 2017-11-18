@@ -60,25 +60,26 @@ Repo.insert! %Address{
 }
 
 Repo.insert! %Address{
-  street: "Rua Barão da Torre",
-  street_number: "571",
-  neighborhood: "Ipanema",
+  street: "Rua Rainha Guilhermina",
+  street_number: "181",
+  neighborhood: "Leblon",
   city: "Rio de Janeiro",
   state: "RJ",
-  postal_code: "22411-000",
-  lat: "-22.9773729",
-  lng: "-43.2309144",
+  postal_code: "22441-120",
+  lat: "-22.983607",
+  lng: "-43.227337",
   listings: [
     %Listing{
       name: "Apartamento",
       description: "Apartamento amplo em ótimo estado com 3 quartos (1 suíte) próximo dos melhores restaurantes do bairro. A 5 minutos da praia (posto 10) e a 8 minutos do metrô.",
-      floor: "2",
-      price: 2_400_000,
-      area: 144,
+      floor: "3",
+      price: 2_250_000,
+      area: 83,
       rooms: 3,
       bathrooms: 3,
       garage_spots: 1,
-      photo: "barao-da-torre.jpg"
+      score: 3,
+      photo: "rainha-guilhermina.jpg"
     }
   ]
 }
