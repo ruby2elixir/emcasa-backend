@@ -70,6 +70,7 @@ Repo.insert! %Address{
   lng: "-43.227337",
   listings: [
     %Listing{
+      type: "Apartamento",
       name: "Apartamento",
       description: "Apartamento amplo em ótimo estado com 3 quartos (1 suíte) próximo dos melhores restaurantes do bairro. A 5 minutos da praia (posto 10) e a 8 minutos do metrô.",
       floor: "3",
