@@ -6,6 +6,7 @@ defmodule ReWeb.Listing do
   use ReWeb, :model
 
   schema "listings" do
+    field :type, :string
     field :name, :string
     field :description, :string
     field :price, :integer
@@ -28,7 +29,7 @@ defmodule ReWeb.Listing do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :description, :price, :floor, :rooms, :bathrooms, :area, :garage_spots, :score, :photo, :matterport_code, :is_active])
+    |> cast(params, [:type, :name, :description, :price, :floor, :rooms, :bathrooms, :area, :garage_spots, :score, :photo, :matterport_code, :is_active])
     |> validate_required([:description, :name, :price, :rooms, :area])
   end
 end
