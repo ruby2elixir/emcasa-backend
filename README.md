@@ -9,4 +9,4 @@ To start your Phoenix app:
 
 To see backend endpoint in staging:
 
-`https://quiet-plateau-93105.herokuapp.com/listings`
+`https://em-casa.herokuapp.com/listings`
