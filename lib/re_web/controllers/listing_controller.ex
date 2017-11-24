@@ -8,7 +8,7 @@ defmodule ReWeb.ListingController do
       where: l.is_active == true,
       order_by: [desc: l.score],
       order_by: [asc: l.matterport_code],
-      preload: [:address]
+      preload: [:address, :images]
 
     render(conn, "index.json", listings: listings)
   end
@@ -32,7 +32,9 @@ defmodule ReWeb.ListingController do
   def show(conn, %{"id" => id}) do
     listing =
       from(l in Listing, where: l.is_active == true)
-      |> Repo.get!(id) |> Repo.preload(:address)
+      |> Repo.get!(id)
+      |> Repo.preload(:address)
+      |> Repo.preload(:images)
 
     render(conn, "show.json", listing: listing)
   end

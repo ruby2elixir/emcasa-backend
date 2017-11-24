@@ -20,6 +20,7 @@ defmodule ReWeb.Listing do
     field :matterport_code, :string
     field :is_active, :boolean
     belongs_to :address, ReWeb.Address
+    has_many :images, ReWeb.Image
 
     timestamps()
   end

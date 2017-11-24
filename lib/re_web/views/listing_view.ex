@@ -32,7 +32,8 @@ defmodule ReWeb.ListingView do
         postal_code: listing.address.postal_code,
         lat: listing.address.lat,
         lng: listing.address.lng
-      }
+      },
+      images: render_many(listing.images, ReWeb.ImageView, "image.json")
     }
   end
 end
