@@ -32,7 +32,9 @@ defmodule ReWeb.ListingController do
   def show(conn, %{"id" => id}) do
     listing =
       from(l in Listing, where: l.is_active == true)
-      |> Repo.get!(id) |> Repo.preload(:address)
+      |> Repo.get!(id)
+      |> Repo.preload(:address)
+      |> Repo.preload(:images)
 
     render(conn, "show.json", listing: listing)
   end
