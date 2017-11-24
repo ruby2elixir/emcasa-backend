@@ -7,6 +7,7 @@ defmodule ReWeb.ListingController do
     listings = Repo.all from l in Listing,
       where: l.is_active == true,
       order_by: [desc: l.score],
+      order_by: [asc: l.matterport_code],
       preload: [:address]
 
     render(conn, "index.json", listings: listings)
