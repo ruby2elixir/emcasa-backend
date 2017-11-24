@@ -21,7 +21,6 @@ defmodule ReWeb.ListingView do
       bathrooms: listing.bathrooms,
       garage_spots: listing.garage_spots,
       score: listing.score,
-      photo: listing.photo,
       matterport_code: listing.matterport_code,
       address: %{
         street: listing.address.street,

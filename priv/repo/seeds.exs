@@ -11,10 +11,11 @@
 # and so on) as they will fail if something goes wrong.
 
 alias Re.Repo
-alias ReWeb.{User, Address, Listing}
+alias ReWeb.{User, Address, Listing, Image}
 
 Repo.delete_all(User)
 Repo.delete_all(Listing)
+Repo.delete_all(Image)
 Repo.delete_all(Address)
 
 Repo.insert! %User {
@@ -80,7 +81,10 @@ Repo.insert! %Address{
       bathrooms: 3,
       garage_spots: 1,
       score: 3,
-      photo: "rainha-guilhermina.jpg"
+      %Image{
+        filename: "rainha-guilhermina.jpg",
+        position: 1
+      }
     }
   ]
 }
