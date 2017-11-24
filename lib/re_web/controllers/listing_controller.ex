@@ -34,7 +34,7 @@ defmodule ReWeb.ListingController do
       from(l in Listing, where: l.is_active == true)
       |> Repo.get!(id)
       |> Repo.preload(:address)
-      |> Repo.preload(:images)
+      |> Repo.preload([images: (from i in ReWeb.Image, order_by: i.position)])
 
     render(conn, "show.json", listing: listing)
   end
