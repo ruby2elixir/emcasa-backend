@@ -1,14 +1,15 @@
 defmodule ReWeb.ListingController do
   use ReWeb, :controller
 
-  alias ReWeb.Listing
+  alias ReWeb.{Listing, Image}
 
   def index(conn, _params) do
-    listings = Repo.all from l in Listing,
+    listings = Repo.all(from l in Listing,
       where: l.is_active == true,
       order_by: [desc: l.score],
-      order_by: [asc: l.matterport_code],
-      preload: [:address, :images]
+      order_by: [asc: l.matterport_code])
+      |> Repo.preload(:address)
+      |> Repo.preload([images: (from i in Image, order_by: i.position)])
 
     render(conn, "index.json", listings: listings)
   end
@@ -34,7 +35,7 @@ defmodule ReWeb.ListingController do
       from(l in Listing, where: l.is_active == true)
       |> Repo.get!(id)
       |> Repo.preload(:address)
-      |> Repo.preload([images: (from i in ReWeb.Image, order_by: i.position)])
+      |> Repo.preload([images: (from i in Image, order_by: i.position)])
 
     render(conn, "show.json", listing: listing)
   end
