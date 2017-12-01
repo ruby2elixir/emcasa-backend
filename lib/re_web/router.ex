@@ -3,6 +3,9 @@ defmodule ReWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug ProperCase.Plug.SnakeCaseParams # TODO: maybe remove
+    plug Guardian.Plug.VerifyHeader, realm: "Token"
+    plug Guardian.Plug.LoadResource
   end
 
   scope "/", ReWeb do
