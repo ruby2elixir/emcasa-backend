@@ -19,7 +19,7 @@ defmodule Re.Mixfile do
   def application do
     [mod: {Re.Application, []},
      applications: [:phoenix, :phoenix_pubsub, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :sendgrid]]
+                    :phoenix_ecto, :postgrex, :sendgrid, :comeonin]]
   end
 
   # Specifies which paths to compile per environment.
