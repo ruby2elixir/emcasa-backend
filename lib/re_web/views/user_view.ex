@@ -15,4 +15,8 @@ defmodule ReWeb.UserView do
       email: user.email,
       phone: user.phone}
   end
+
+  def render("error.json", %{message: message}) do
+    %{message: message}
+  end
 end

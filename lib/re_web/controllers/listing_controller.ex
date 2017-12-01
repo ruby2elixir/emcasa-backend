@@ -1,7 +1,11 @@
 defmodule ReWeb.ListingController do
   use ReWeb, :controller
+  use Guardian.Phoenix.Controller
 
   alias ReWeb.{Listing, Image}
+
+  plug Guardian.Plug.EnsureAuthenticated,
+    %{handler: ReWeb.SessionController} when action in [:index]
 
   def index(conn, _params) do
     listings = Repo.all(from l in Listing,
