@@ -1,6 +1,7 @@
 defmodule ReWeb.UserController do
   use ReWeb, :controller
 
+  alias Re.Accounts.Auth
   alias ReWeb.User
 
   def index(conn, _params) do
@@ -25,14 +26,13 @@ defmodule ReWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
-    changeset = User.changeset(%User{}, user_params)
-
-    case Repo.insert(changeset) do
+    case Auth.register(user_params) do
       {:ok, user} ->
+        {:ok, jwt, _full_claims} = user |> Guardian.encode_and_sign(:token)
+
         conn
         |> put_status(:created)
-        |> put_resp_header("location", user_path(conn, :show, user))
-        |> render("show.json", user: user)
+        |> render("show.json", jwt: jwt, user: user)
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
