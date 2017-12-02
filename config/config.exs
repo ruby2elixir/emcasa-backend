@@ -29,7 +29,7 @@ config :guardian, Guardian,
   allowed_drift: 2000,
   verify_issuer: true, # optional
   secret_key: "MDLMflIpKod5YCnkdiY7C4E3ki2rgcAAMwfBl0+vyC5uqJNgoibfQmAh7J3uZWVK",
-  serializer: RealWorld.GuardianSerializer
+  serializer: Re.GuardianSerializer
 
 # Configure bcrypt for passwords
 config :comeonin, :bcrypt_log_rounds, 4
