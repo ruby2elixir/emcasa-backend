@@ -7,7 +7,7 @@ defmodule ReWeb.ListingController do
   plug Guardian.Plug.EnsureAuthenticated,
     %{handler: ReWeb.SessionController} when action in [:index]
 
-  def index(conn, _params) do
+  def index(conn, _params, user, _full_claims) do
     listings = Repo.all(from l in Listing,
       where: l.is_active == true,
       order_by: [desc: l.score],
