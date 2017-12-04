@@ -11,6 +11,7 @@ defmodule ReWeb.Router do
   scope "/", ReWeb do
     pipe_through :api
 
+    post "/users/login", SessionController, :create
     resources "/listings", ListingController, except: [:new, :edit]
     resources "/addresses", AddressController, except: [:new, :edit]
     resources "/users", UserController, except: [:new, :edit]

@@ -1,12 +1,17 @@
 defmodule ReWeb.UserView do
   use ReWeb, :view
+  alias ReWeb.UserView
 
   def render("index.json", %{users: users}) do
-    %{data: render_many(users, ReWeb.UserView, "user.json")}
+    %{data: render_many(users, UserView, "user.json")}
   end
 
   def render("show.json", %{user: user}) do
-    %{data: render_one(user, ReWeb.UserView, "user.json")}
+    %{data: render_one(user, UserView, "user.json")}
+  end
+
+  def render("login.json", %{jwt: jwt, user: user}) do
+    %{user: Map.merge(render_one(user, UserView, "user.json"), %{token: jwt})}
   end
 
   def render("user.json", %{user: user}) do

@@ -10,7 +10,7 @@ defmodule ReWeb.SessionController do
 
         conn
         |> put_status(:created)
-        |> render(Re.UserView, "login.json", jwt: jwt, user: user)
+        |> render(ReWeb.UserView, "login.json", jwt: jwt, user: user)
 
       {:error, message} ->
         conn
