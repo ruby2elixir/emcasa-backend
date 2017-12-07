@@ -9,6 +9,10 @@ defmodule ReWeb.ListingView do
     %{data: render_one(listing, ReWeb.ListingView, "listing.json")}
   end
 
+  def render("create.json", %{listing: listing}) do
+    %{data: render_one(listing, ReWeb.ListingView, "listing_id.json")}
+  end
+
   def render("listing.json", %{listing: listing}) do
     %{id: listing.id,
       type: listing.type,
@@ -34,4 +38,9 @@ defmodule ReWeb.ListingView do
       images: render_many(listing.images, ReWeb.ImageView, "image.json")
     }
   end
+
+  def render("listing_id.json", %{listing: listing}) do
+    %{id: listing.id}
+  end
+
 end

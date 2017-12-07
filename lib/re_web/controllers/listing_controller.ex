@@ -19,7 +19,6 @@ defmodule ReWeb.ListingController do
   end
 
   def create(conn, %{"listing" => listing_params, "address" => address_params}, _user, _full_claims) do
-
     address_changeset = Address.changeset(%Address{}, address_params)
 
     address_id =
@@ -38,8 +37,6 @@ defmodule ReWeb.ListingController do
         address -> address.id
       end
 
-    IO.inspect address_id
-
     listing_changeset =
       %Listing{}
       |> Listing.changeset(listing_params)
@@ -47,10 +44,11 @@ defmodule ReWeb.ListingController do
 
     case Repo.insert(listing_changeset) do
       {:ok, listing} ->
+        IO.inspect listing
+
         conn
         |> put_status(:created)
-        |> put_resp_header("location", listing_path(conn, :show, listing))
-        |> render("show.json", listing: listing)
+        |> render("create.json", listing: listing)
 
       {:error, changeset} ->
         conn
