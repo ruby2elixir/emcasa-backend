@@ -10,7 +10,7 @@ defmodule ReWeb.ListingView do
   end
 
   def render("create.json", %{listing: listing}) do
-    %{data: render_one(listing, ReWeb.ListingView, "listing_id.json")}
+    %{listing: render_one(listing, ReWeb.ListingView, "listing_id.json")}
   end
 
   def render("listing.json", %{listing: listing}) do

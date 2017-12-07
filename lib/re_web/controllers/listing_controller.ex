@@ -20,40 +20,48 @@ defmodule ReWeb.ListingController do
 
   def create(conn, %{"listing" => listing_params, "address" => address_params}, _user, _full_claims) do
     address_changeset = Address.changeset(%Address{}, address_params)
+    listing_changeset = %Listing{} |> Listing.changeset(listing_params)
 
     address_id =
       case Repo.get_by(Address,
-                  street: address_params["street"],
-                  postal_code: address_params["postal_code"],
-                  street_number: address_params["street_number"]) do
+                  street: address_params["street"] || "",
+                  postal_code: address_params["postal_code"] || "",
+                  street_number: address_params["street_number"] || "") do
 
         nil ->
           case Repo.insert(address_changeset) do
             {:ok, address} -> address.id
 
-            {:error, changeset} -> nil
+            {:error, _} -> nil
           end
 
         address -> address.id
       end
 
-    listing_changeset =
-      %Listing{}
-      |> Listing.changeset(listing_params)
-      |> Ecto.Changeset.change(address_id: address_id)
+    IO.inspect address_id
 
-    case Repo.insert(listing_changeset) do
-      {:ok, listing} ->
-        IO.inspect listing
-
-        conn
-        |> put_status(:created)
-        |> render("create.json", listing: listing)
-
-      {:error, changeset} ->
+    case address_id do
+      nil ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
+        |> render(ReWeb.ChangesetView, "error.json", changeset: address_changeset )
+
+      address_id ->
+        listing_changeset =
+          listing_changeset
+          |> Ecto.Changeset.change(address_id: address_id)
+
+        case Repo.insert(listing_changeset) do
+          {:ok, listing} ->
+            conn
+            |> put_status(:created)
+            |> render("create.json", listing: listing)
+
+          {:error, changeset} ->
+            conn
+            |> put_status(:unprocessable_entity)
+            |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
+        end
     end
   end
 

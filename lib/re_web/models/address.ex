@@ -25,6 +25,6 @@ defmodule ReWeb.Address do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:street, :neighborhood, :city, :state, :postal_code, :street_number, :lat, :lng])
-    |> validate_required([:street, :neighborhood, :city, :state, :postal_code, :lat, :lng])
+    |> validate_required([:street, :street_number, :neighborhood, :city, :state, :postal_code, :lat, :lng])
   end
 end
