@@ -2,12 +2,12 @@ defmodule ReWeb.ListingController do
   use ReWeb, :controller
   use Guardian.Phoenix.Controller
 
-  alias ReWeb.{Listing, Image}
+  alias ReWeb.{Listing, Image, Address}
 
   plug Guardian.Plug.EnsureAuthenticated,
-    %{handler: ReWeb.SessionController} when action in [:index]
+    %{handler: ReWeb.SessionController} when action in [:create, :update, :delete]
 
-  def index(conn, _params, user, _full_claims) do
+  def index(conn, _params, _user, _full_claims) do
     listings = Repo.all(from l in Listing,
       where: l.is_active == true,
       order_by: [desc: l.score],
@@ -18,15 +18,40 @@ defmodule ReWeb.ListingController do
     render(conn, "index.json", listings: listings)
   end
 
-  def create(conn, %{"listing" => listing_params}) do
-    changeset = Listing.changeset(%Listing{}, listing_params)
+  def create(conn, %{"listing" => listing_params, "address" => address_params}, _user, _full_claims) do
 
-    case Repo.insert(changeset) do
+    address_changeset = Address.changeset(%Address{}, address_params)
+
+    address_id =
+      case Repo.get_by(Address,
+                  street: address_params["street"],
+                  postal_code: address_params["postal_code"],
+                  street_number: address_params["street_number"]) do
+
+        nil ->
+          case Repo.insert(address_changeset) do
+            {:ok, address} -> address.id
+
+            {:error, changeset} -> nil
+          end
+
+        address -> address.id
+      end
+
+    IO.inspect address_id
+
+    listing_changeset =
+      %Listing{}
+      |> Listing.changeset(listing_params)
+      |> Ecto.Changeset.change(address_id: address_id)
+
+    case Repo.insert(listing_changeset) do
       {:ok, listing} ->
         conn
         |> put_status(:created)
         |> put_resp_header("location", listing_path(conn, :show, listing))
         |> render("show.json", listing: listing)
+
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
@@ -34,7 +59,7 @@ defmodule ReWeb.ListingController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
+  def show(conn, %{"id" => id}, _user, _full_claims) do
     listing =
       from(l in Listing, where: l.is_active == true)
       |> Repo.get!(id)
