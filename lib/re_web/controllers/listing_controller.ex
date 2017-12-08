@@ -39,8 +39,6 @@ defmodule ReWeb.ListingController do
         address -> address.id
       end
 
-    IO.inspect address_id
-
     case address_id do
       nil ->
         conn
@@ -87,22 +85,49 @@ defmodule ReWeb.ListingController do
   end
 
   def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, _user, _full_claims) do
-
     listing =
-      from(l in Listing, where: l.is_active == true)
+      Listing
       |> Repo.get!(id)
       |> Repo.preload(:address)
       |> Repo.preload([images: (from i in Image, order_by: i.position)])
 
-    changeset = Listing.changeset(listing, listing_params)
+    address = Repo.get(Address, listing.address_id) |> Repo.preload(:listings)
 
-    case Repo.update(changeset) do
-      {:ok, listing} ->
-        render(conn, "edit.json", listing: listing)
-      {:error, changeset} ->
+    address_changeset = Ecto.Changeset.change(address, address_params)
+
+    address_id =
+      case map_size(address_changeset.changes) do
+        0 ->
+          listing.address_id
+
+        _ ->
+          changeset = Address.changeset(%Address{}, address_params)
+          case Repo.insert(changeset) do
+            {:ok, address} -> address.id
+            {:error, _} -> nil
+          end
+      end
+
+    case address_id do
+      nil ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
+        |> render(ReWeb.ChangesetView, "error.json", changeset: address_changeset)
+
+      address_id ->
+        changeset =
+          listing
+          |> Listing.changeset(listing_params)
+          |> Ecto.Changeset.change(address_id: address_id)
+
+        case Repo.update(changeset) do
+          {:ok, listing} ->
+            render(conn, "edit.json", listing: listing)
+          {:error, changeset} ->
+            conn
+            |> put_status(:unprocessable_entity)
+            |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
+        end
     end
   end
 
