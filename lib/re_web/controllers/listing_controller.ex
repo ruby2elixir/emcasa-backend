@@ -5,7 +5,8 @@ defmodule ReWeb.ListingController do
   alias ReWeb.{Listing, Image, Address}
 
   plug Guardian.Plug.EnsureAuthenticated,
-    %{handler: ReWeb.SessionController} when action in [:create, :update, :delete]
+    %{handler: ReWeb.SessionController}
+    when action in [:create, :edit, :update, :delete]
 
   def index(conn, _params, _user, _full_claims) do
     listings = Repo.all(from l in Listing,
@@ -75,13 +76,29 @@ defmodule ReWeb.ListingController do
     render(conn, "show.json", listing: listing)
   end
 
-  def update(conn, %{"id" => id, "listing" => listing_params}) do
-    listing = Repo.get!(Listing, id)
+  def edit(conn, %{"id" => id}, _user, _full_claims) do
+    listing =
+      from(l in Listing, where: l.is_active == true)
+      |> Repo.get!(id)
+      |> Repo.preload(:address)
+      |> Repo.preload([images: (from i in Image, order_by: i.position)])
+
+    render(conn, "edit.json", listing: listing)
+  end
+
+  def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, _user, _full_claims) do
+
+    listing =
+      from(l in Listing, where: l.is_active == true)
+      |> Repo.get!(id)
+      |> Repo.preload(:address)
+      |> Repo.preload([images: (from i in Image, order_by: i.position)])
+
     changeset = Listing.changeset(listing, listing_params)
 
     case Repo.update(changeset) do
       {:ok, listing} ->
-        render(conn, "show.json", listing: listing)
+        render(conn, "edit.json", listing: listing)
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
