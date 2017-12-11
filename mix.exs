@@ -41,7 +41,8 @@ defmodule Re.Mixfile do
      {:sendgrid, "~> 1.7.0"},
      {:comeonin, "~> 3.2"},
      {:proper_case, "~> 1.0.0"}, # TODO: maybe unnecessary
-     {:guardian, "~> 0.14.5"}]
+     {:guardian, "~> 0.14.5"},
+     {:ex_machina, "~> 2.0", only: :test}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

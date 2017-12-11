@@ -2,11 +2,15 @@ defmodule ReWeb.ListingControllerTest do
   use ReWeb.ConnCase
 
   alias ReWeb.Listing
+  import Re.Factory
+
   @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3,}
   @invalid_attrs %{}
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    user = insert(:user)
+    {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
+    {:ok, conn: put_req_header(conn, "accept", "application/json"), jwt: jwt}
   end
 
   test "lists all entries on index", %{conn: conn} do
@@ -62,8 +66,9 @@ defmodule ReWeb.ListingControllerTest do
     assert json_response(conn, 422)["errors"] != %{}
   end
 
-  test "deletes chosen resource", %{conn: conn} do
+  test "deletes chosen resource", %{conn: conn, jwt: jwt} do
     listing = Repo.insert! %Listing{}
+    conn = conn |> put_req_header("authorization", "Token #{jwt}")
     conn = delete conn, listing_path(conn, :delete, listing)
     assert response(conn, 204)
     refute Repo.get(Listing, listing.id)
