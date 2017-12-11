@@ -161,7 +161,6 @@ Repo.insert! %Address{
   listings: [
     %Listing{
       type: "Apartamento",
-      name: "Apartamento",
       description: "Apartamento em prédio novo (7 anos) com piscina, spa, salão de festa e academia, dois quartos (1 suíte), sala em dois ambientes com varanda banheiro de empregada, 1 vaga na escritura.",
       floor: "3",
       price: 850_000,
@@ -192,7 +191,6 @@ Repo.insert! %Address{
   listings: [
     %Listing{
       type: "Apartamento",
-      name: "Apartamento",
       description: "Apartamento duplex todo reformado e com decoração impecável, vista livre para o Parque Guinle, próximo à estação do Metrô do Largo do Machado.",
       floor: "7",
       price: 4_750_000,
