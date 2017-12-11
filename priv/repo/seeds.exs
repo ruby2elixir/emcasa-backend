@@ -39,8 +39,7 @@ Repo.insert! %User {
 
 Repo.insert! %User {
   name: "Camila Villanueva",
-  email: "camila.villanueva@emcasa.com",
-  phone: "$2b$04$vdwcPd6eAdlMeoiqkFBMj.X8ZzDWBZcjFhIMWs92ZnlryXKbRL4pW"
+  email: "camila.villanueva@emcasa.com"
 }
 
 Repo.insert! %Address{
