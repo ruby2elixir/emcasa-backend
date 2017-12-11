@@ -30,6 +30,6 @@ defmodule ReWeb.Listing do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:type, :complement, :description, :price, :floor, :rooms, :bathrooms, :area, :garage_spots, :score, :matterport_code, :is_active])
-    |> validate_required([:type, :complement, :description, :price, :floor, :rooms, :bathrooms, :area, :garage_spots, :score, :matterport_code])
+    |> validate_required([:type, :complement, :description, :price, :floor, :rooms, :bathrooms, :area, :garage_spots, :score])
   end
 end
