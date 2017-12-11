@@ -131,7 +131,7 @@ defmodule ReWeb.ListingController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id}, _user, _full_claims) do
     listing = Repo.get!(Listing, id)
 
     # Here we use delete! (with a bang) because we expect
