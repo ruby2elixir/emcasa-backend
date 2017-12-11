@@ -67,9 +67,12 @@ defmodule ReWeb.ListingControllerTest do
   #   assert Repo.get_by(Listing, @valid_attrs)
   # end
 
-  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-    listing = Repo.insert! %Listing{}
-    conn = put conn, listing_path(conn, :update, listing), listing: @invalid_attrs
+  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn, jwt: jwt} do
+    address = Repo.insert! %ReWeb.Address{}
+    listing = Repo.insert! %Listing{address_id: address.id}
+
+    conn = conn |> put_req_header("authorization", "Token #{jwt}")
+    conn = put(conn, listing_path(conn, :update, listing), %{id: listing.id, listing: @invalid_attrs, address: @valid_address_attrs})
     assert json_response(conn, 422)["errors"] != %{}
   end
 
