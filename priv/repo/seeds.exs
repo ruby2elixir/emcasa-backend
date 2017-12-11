@@ -37,6 +37,12 @@ Repo.insert! %User {
   phone: "+55 21 9 9542 9672"
 }
 
+Repo.insert! %User {
+  name: "Camila Villanueva",
+  email: "camila.villanueva@emcasa.com",
+  phone: "$2b$04$vdwcPd6eAdlMeoiqkFBMj.X8ZzDWBZcjFhIMWs92ZnlryXKbRL4pW"
+}
+
 Repo.insert! %Address{
   street: "Rua Paula Freitas",
   street_number: "21",
@@ -49,7 +55,6 @@ Repo.insert! %Address{
   listings: [
     %Listing{
       type: "Apartamento",
-      name: "Apartamento",
       description: "Apartamento localizado na quadra da praia com vista incrível (8 minutos a pé até o metrô). Todos os ambientes estão reformados e com ar-condicionado split. Excelente para famílias grandes.",
       floor: "10",
       price: 3_200_000,
@@ -241,23 +246,3 @@ Repo.insert! %Address{
     }
   ]
 }
-
-Repo.insert!(%Image{listing_id: 8, position: 1, filename: "barao-da-torre/principal.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 2, filename: "barao-da-torre/32.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 3, filename: "barao-da-torre/33.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 4, filename: "barao-da-torre/34.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 5, filename: "barao-da-torre/35.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 6, filename: "barao-da-torre/36.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 7, filename: "barao-da-torre/37.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 8, filename: "barao-da-torre/40.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 9, filename: "barao-da-torre/41.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 10, filename: "barao-da-torre/42.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 11, filename: "barao-da-torre/44.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 12, filename: "barao-da-torre/45.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 13, filename: "barao-da-torre/46.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 14, filename: "barao-da-torre/47.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 15, filename: "barao-da-torre/50.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 16, filename: "barao-da-torre/52.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 17, filename: "barao-da-torre/54.jpg"})
-Repo.insert!(%Image{listing_id: 8, position: 18, filename: "barao-da-torre/56.jpg"})
-
