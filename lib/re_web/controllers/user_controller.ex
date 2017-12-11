@@ -1,8 +1,14 @@
 defmodule ReWeb.UserController do
   use ReWeb, :controller
 
+  use Guardian.Phoenix.Controller
+
   alias Re.Accounts.Auth
   alias ReWeb.User
+
+  plug Guardian.Plug.EnsureAuthenticated,
+    %{handler: ReWeb.SessionController}
+    when action in [:create, :edit, :update, :delete]
 
   def index(conn, _params) do
     users = Repo.all(User)
