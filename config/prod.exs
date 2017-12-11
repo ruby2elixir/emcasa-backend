@@ -23,6 +23,18 @@ config :logger, level: :info
 config :sendgrid,
   api_key: System.get_env("SEND_GRID_API_KEY")
 
+config :guardian, Guardian,
+  allowed_algos: ["ES512"],
+  secret_key: %{
+    "alg" => "ES512",
+    "crv" => "P-521",
+    "d" => System.get_env("GUARDIAN_D"),
+    "kty" => "EC",
+    "use" => "sig",
+    "x" => System.get_env("GUARDIAN_X"),
+    "y" => System.get_env("GUARDIAN_Y")
+  }
+
 config :re, Re.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),

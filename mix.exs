@@ -19,7 +19,7 @@ defmodule Re.Mixfile do
   def application do
     [mod: {Re.Application, []},
      applications: [:phoenix, :phoenix_pubsub, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :sendgrid]]
+                    :phoenix_ecto, :postgrex, :sendgrid, :comeonin]]
   end
 
   # Specifies which paths to compile per environment.
@@ -38,7 +38,11 @@ defmodule Re.Mixfile do
      {:cowboy, "~> 1.0"},
      {:cors_plug, "~> 1.2"},
      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
-     {:sendgrid, "~> 1.7.0"}]
+     {:sendgrid, "~> 1.7.0"},
+     {:comeonin, "~> 3.2"},
+     {:proper_case, "~> 1.0.0"}, # TODO: maybe unnecessary
+     {:guardian, "~> 0.14.5"},
+     {:ex_machina, "~> 2.0", only: :test}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

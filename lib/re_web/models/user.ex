@@ -9,6 +9,7 @@ defmodule ReWeb.User do
     field :name, :string
     field :email, :string
     field :phone, :string
+    field :password, :string
 
     timestamps()
   end
@@ -18,8 +19,8 @@ defmodule ReWeb.User do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :email, :phone])
-    |> validate_required([])
+    |> cast(params, [:name, :email, :phone, :password])
+    |> validate_required([:name, :email, :password])
     |> unique_constraint(:email)
   end
 end
