@@ -10,8 +10,8 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias Re.Repo
-alias ReWeb.{ListingUser, User, Address, Listing, Image}
+alias Re.{Listing, Repo}
+alias ReWeb.{ListingUser, User, Address, Image}
 
 Repo.delete_all(ListingUser)
 Repo.delete_all(User)

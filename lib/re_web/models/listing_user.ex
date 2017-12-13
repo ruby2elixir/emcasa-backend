@@ -4,7 +4,7 @@ defmodule ReWeb.ListingUser do
   use ReWeb, :model
 
   schema "listings_users" do
-    belongs_to :listing, ReWeb.Listing
+    belongs_to :listing, Re.Listing
     belongs_to :user, ReWeb.User
   end
 

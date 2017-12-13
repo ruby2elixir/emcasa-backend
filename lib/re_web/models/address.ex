@@ -14,7 +14,7 @@ defmodule ReWeb.Address do
     field :postal_code, :string
     field :lat, :string
     field :lng, :string
-    has_many :listings, ReWeb.Listing
+    has_many :listings, Re.Listing
 
     timestamps()
   end

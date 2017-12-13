@@ -1,9 +1,12 @@
-defmodule ReWeb.Listing do
+defmodule Re.Listing do
   @moduledoc """
   Model for listings, that is, each apartment or real estate piece on sale.
   """
+  use Ecto.Schema
 
-  use ReWeb, :model
+  import Ecto
+  import Ecto.Changeset
+  import Ecto.Query
 
   schema "listings" do
     field :type, :string

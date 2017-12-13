@@ -1,7 +1,7 @@
-defmodule ReWeb.ListingTest do
+defmodule Re.ListingTest do
   use Re.ModelCase
 
-  alias ReWeb.Listing
+  alias Re.Listing
 
   @valid_attrs %{type: "Apartamento", complement: "100", description: "some content",  price: 1_000_000, floor: "3", rooms: 4, bathrooms: 4, area: 150, garage_spots: 2, score: 4, matterport_code: ""}
   @invalid_attrs %{}
