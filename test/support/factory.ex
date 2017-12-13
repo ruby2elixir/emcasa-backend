@@ -25,7 +25,7 @@ defmodule Re.Factory do
       area: 100,
       score: 3,
       matterport_code: "",
-      is_active: true,
+      is_active: true
     }
   end
 
@@ -39,6 +39,13 @@ defmodule Re.Factory do
       postal_code: "12345-678",
       lat: "-25",
       lng: "35"
+    }
+  end
+
+  def image_factory do
+    %ReWeb.Image {
+      filename: "image.jpeg",
+      position: 5
     }
   end
 

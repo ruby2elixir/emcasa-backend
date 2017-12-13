@@ -4,7 +4,7 @@ defmodule ReWeb.ListingControllerTest do
   alias ReWeb.Listing
   import Re.Factory
 
-  @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3,}
+  # @valid_attrs %{description: "some content", name: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3,}
   @valid_address_attrs %{street: "A Street", street_number: "100", neighborhood: "A Neighborhood", city: "A City", state: "ST", postal_code: "12345-678", lat: "25", lng: "25"}
   @invalid_attrs %{}
 
@@ -24,23 +24,41 @@ defmodule ReWeb.ListingControllerTest do
     assert json_response(conn, 200)["data"] == []
   end
 
-  # test "shows chosen resource", %{conn: conn} do
-  #   listing = Repo.insert! %Listing{}
-  #   conn = get conn, listing_path(conn, :show, listing)
-  #   assert json_response(conn, 200)["data"] ==
-  #     %{"id" => listing.id,
-  #       "description" => listing.description,
-  #       "name" => listing.name,
-  #       "rooms" => listing.rooms,
-  #       "price" => listing.price,
-  #       "area" => listing.area,
-  #       "garage_spots" => listing.garage_spots,
-  #       "address" => %{
-  #         "city" => listing.address.city,
-  #         "street" => listing.address.street,
-  #       }
-  #     }
-  # end
+  test "shows chosen resource", %{conn: conn} do
+    address = insert(:address)
+    image = insert(:image)
+    listing = insert(:listing, images: [image], address: address)
+    conn = get conn, listing_path(conn, :show, listing)
+    assert json_response(conn, 200)["data"] ==
+      %{
+        "id" => listing.id,
+        "type" => listing.type,
+        "description" => listing.description,
+        "price" => listing.price,
+        "floor" => listing.floor,
+        "rooms" => listing.rooms,
+        "bathrooms" => listing.bathrooms,
+        "area" => listing.area,
+        "garage_spots" => listing.garage_spots,
+        "score" => listing.score,
+        "matterport_code" => listing.matterport_code,
+        "images" => [%{
+          "id" => image.id,
+          "filename" => image.filename,
+          "position" => image.position
+          }],
+        "address" => %{
+          "street" => listing.address.street,
+          "street_number" => listing.address.street_number,
+          "neighborhood" => listing.address.neighborhood,
+          "city" => listing.address.city,
+          "state" => listing.address.state,
+          "postal_code" => listing.address.postal_code,
+          "lat" => listing.address.lat,
+          "lng" => listing.address.lng
+        }
+      }
+  end
 
   test "renders page not found when id is nonexistent", %{conn: conn} do
     assert_error_sent 404, fn ->
@@ -84,8 +102,4 @@ defmodule ReWeb.ListingControllerTest do
     refute Repo.get(Listing, listing.id)
   end
 
-  defp create_listing(_) do
-    listing = fixture(:listing)
-    {:ok, listing: listing}
-  end
 end
