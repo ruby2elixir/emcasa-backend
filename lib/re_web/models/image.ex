@@ -8,7 +8,7 @@ defmodule ReWeb.Image do
   schema "images" do
     field :filename, :string
     field :position, :integer
-    belongs_to :listing, ReWeb.Listing
+    belongs_to :listing, Re.Listing
 
     timestamps()
   end

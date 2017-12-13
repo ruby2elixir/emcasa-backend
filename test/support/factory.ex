@@ -13,7 +13,7 @@ defmodule Re.Factory do
   end
 
   def listing_factory do
-    %ReWeb.Listing {
+    %Re.Listing {
       type: "Apartamento",
       complement: "100",
       description: "A description",

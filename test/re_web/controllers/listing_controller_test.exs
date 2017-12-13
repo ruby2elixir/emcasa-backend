@@ -1,7 +1,7 @@
 defmodule ReWeb.ListingControllerTest do
   use ReWeb.ConnCase
 
-  alias ReWeb.Listing
+  alias Re.Listing
   import Re.Factory
 
   @valid_attrs %{type: "apto", score: 3, floor: "H1", complement: "basement", bathrooms: 2, description: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3,}
