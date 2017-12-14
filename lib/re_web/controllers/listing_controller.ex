@@ -25,7 +25,6 @@ defmodule ReWeb.ListingController do
 
   def create(conn, %{"listing" => listing_params, "address" => address_params}, _user, _full_claims) do
     address_changeset = Address.changeset(%Address{}, address_params)
-    listing_changeset = %Listing{} |> Listing.changeset(listing_params)
 
     address_id =
       case Repo.get_by(Address,
@@ -50,11 +49,10 @@ defmodule ReWeb.ListingController do
         |> render(ReWeb.ChangesetView, "error.json", changeset: address_changeset )
 
       address_id ->
-        listing_changeset =
-          listing_changeset
-          |> Ecto.Changeset.change(address_id: address_id)
-
-        case Repo.insert(listing_changeset) do
+        %Listing{}
+        |> Listing.changeset(Map.put(listing_params, "address_id", address_id))
+        |> Repo.insert()
+        |> case do
           {:ok, listing} ->
             conn
             |> put_status(:created)
