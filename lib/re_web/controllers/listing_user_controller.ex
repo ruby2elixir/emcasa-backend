@@ -1,7 +1,7 @@
 defmodule ReWeb.ListingUserController do
   use ReWeb, :controller
 
-  alias ReWeb.{User, ListingUser}
+  alias Re.{User, ListingUser}
 
   def create(conn, %{"user" => user_params, "listing" => listing_params}) do
     changeset = User.changeset(%User{}, user_params)

@@ -6,7 +6,7 @@ defmodule Re.Factory do
   use ExMachina.Ecto, repo: Re.Repo
 
   def user_factory do
-    %ReWeb.User {
+    %Re.User {
       email: "user@example.com",
       password: "password"
     }
@@ -30,7 +30,7 @@ defmodule Re.Factory do
   end
 
   def address_factory do
-    %ReWeb.Address {
+    %Re.Address {
       street: "Street Name",
       street_number: "99",
       neighborhood: "A neighborhood",
@@ -43,7 +43,7 @@ defmodule Re.Factory do
   end
 
   def image_factory do
-    %ReWeb.Image {
+    %Re.Image {
       filename: "image.jpeg",
       position: 5
     }

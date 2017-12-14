@@ -1,7 +1,7 @@
 defmodule ReWeb.AddressController do
   use ReWeb, :controller
 
-  alias ReWeb.Address
+  alias Re.Address
 
   def index(conn, _params) do
     address = Repo.all(Address)

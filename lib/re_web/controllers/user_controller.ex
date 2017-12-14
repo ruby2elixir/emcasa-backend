@@ -4,7 +4,7 @@ defmodule ReWeb.UserController do
   use Guardian.Phoenix.Controller
 
   alias Re.Accounts.Auth
-  alias ReWeb.User
+  alias Re.User
 
   plug Guardian.Plug.EnsureAuthenticated,
     %{handler: ReWeb.SessionController}
@@ -15,7 +15,7 @@ defmodule ReWeb.UserController do
     render(conn, "index.json", users: users)
   end
 
-  def create(conn, %{"user" => user_params, "listing" => listing_params}) do
+  def create(conn, %{"user" => user_params, "listing" => _listing_params}) do
     changeset = User.changeset(%User{}, user_params)
 
     case Repo.insert(changeset) do
