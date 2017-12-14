@@ -2,7 +2,7 @@ defmodule ReWeb.ListingView do
   use ReWeb, :view
 
   def render("index.json", %{listings: listings}) do
-    %{data: render_many(listings, ReWeb.ListingView, "listing.json")}
+    %{listings: render_many(listings, ReWeb.ListingView, "listing.json")}
   end
 
   def render("edit.json", %{listing: listing}) do
@@ -10,7 +10,7 @@ defmodule ReWeb.ListingView do
   end
 
   def render("show.json", %{listing: listing}) do
-    %{data: render_one(listing, ReWeb.ListingView, "listing.json")}
+    %{listing: render_one(listing, ReWeb.ListingView, "listing.json")}
   end
 
   def render("create.json", %{listing: listing}) do
