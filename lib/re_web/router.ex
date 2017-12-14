@@ -12,7 +12,9 @@ defmodule ReWeb.Router do
     pipe_through :api
 
     post "/users/login", SessionController, :create
-    resources "/listings", ListingController, except: [:new]
+    resources "/listings", ListingController, except: [:new] do
+      resources "/images", ImageController, only: [:index]
+    end
     resources "/addresses", AddressController, except: [:new, :edit]
     resources "/users", UserController, except: [:new, :edit, :create]
     resources "/listings_users", ListingUserController, only: [:create]
