@@ -6,7 +6,7 @@ defmodule Re.Accounts.Auth do
   import Ecto.{Query, Changeset}, warn: false
 
   alias Re.Repo
-  alias ReWeb.User
+  alias Re.User
   alias Re.Accounts.Encryption
 
   def find_user_and_check_password(%{"user" => %{"email" => email, "password" => password}}) do

@@ -1,11 +1,14 @@
-defmodule ReWeb.ListingUser do
+defmodule Re.ListingUser do
   @moduledoc false
+  use Ecto.Schema
 
-  use ReWeb, :model
+  import Ecto
+  import Ecto.Changeset
+  import Ecto.Query
 
   schema "listings_users" do
     belongs_to :listing, Re.Listing
-    belongs_to :user, ReWeb.User
+    belongs_to :user, Re.User
   end
 
   @doc """

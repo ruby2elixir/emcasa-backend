@@ -1,9 +1,12 @@
-defmodule ReWeb.User do
+defmodule Re.User do
   @moduledoc """
   Model for users.
   """
+  use Ecto.Schema
 
-  use ReWeb, :model
+  import Ecto
+  import Ecto.Changeset
+  import Ecto.Query
 
   schema "users" do
     field :name, :string

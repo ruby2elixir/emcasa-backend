@@ -1,9 +1,12 @@
-defmodule ReWeb.Image do
+defmodule Re.Image do
   @moduledoc """
   Module for listing images.
   """
+  use Ecto.Schema
 
-  use ReWeb, :model
+  import Ecto
+  import Ecto.Changeset
+  import Ecto.Query
 
   schema "images" do
     field :filename, :string

@@ -2,8 +2,11 @@ defmodule ReWeb.ListingController do
   use ReWeb, :controller
   use Guardian.Phoenix.Controller
 
-  alias ReWeb.{Image, Address}
-  alias Re.Listing
+  alias Re.{
+    Address,
+    Image,
+    Listing
+  }
 
   plug Guardian.Plug.EnsureAuthenticated,
     %{handler: ReWeb.SessionController}

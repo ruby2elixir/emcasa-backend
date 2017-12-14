@@ -21,8 +21,8 @@ defmodule Re.Listing do
     field :score, :integer
     field :matterport_code, :string
     field :is_active, :boolean
-    belongs_to :address, ReWeb.Address
-    has_many :images, ReWeb.Image
+    belongs_to :address, Re.Address
+    has_many :images, Re.Image
 
     timestamps()
   end

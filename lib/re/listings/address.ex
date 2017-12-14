@@ -1,9 +1,12 @@
-defmodule ReWeb.Address do
+defmodule Re.Address do
   @moduledoc """
   Model for addresses.
   """
+  use Ecto.Schema
 
-  use ReWeb, :model
+  import Ecto
+  import Ecto.Changeset
+  import Ecto.Query
 
   schema "addresses" do
     field :street, :string

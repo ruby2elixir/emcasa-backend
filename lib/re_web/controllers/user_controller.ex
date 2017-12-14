@@ -4,7 +4,7 @@ defmodule ReWeb.UserController do
   use Guardian.Phoenix.Controller
 
   alias Re.Accounts.Auth
-  alias ReWeb.User
+  alias Re.User
 
   plug Guardian.Plug.EnsureAuthenticated,
     %{handler: ReWeb.SessionController}

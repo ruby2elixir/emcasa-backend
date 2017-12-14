@@ -90,7 +90,7 @@ defmodule ReWeb.ListingControllerTest do
   end
 
   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-    address = Repo.insert! %ReWeb.Address{}
+    address = Repo.insert! %Re.Address{}
     listing = Repo.insert! %Listing{address_id: address.id}
 
     conn = put(conn, listing_path(conn, :update, listing), %{id: listing.id, listing: @invalid_attrs, address: @valid_address_attrs})
