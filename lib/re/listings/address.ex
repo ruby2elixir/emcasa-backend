@@ -4,9 +4,7 @@ defmodule Re.Address do
   """
   use Ecto.Schema
 
-  import Ecto
   import Ecto.Changeset
-  import Ecto.Query
 
   schema "addresses" do
     field :street, :string

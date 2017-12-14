@@ -2,9 +2,7 @@ defmodule Re.ListingUser do
   @moduledoc false
   use Ecto.Schema
 
-  import Ecto
   import Ecto.Changeset
-  import Ecto.Query
 
   schema "listings_users" do
     belongs_to :listing, Re.Listing

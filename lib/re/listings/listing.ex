@@ -4,9 +4,7 @@ defmodule Re.Listing do
   """
   use Ecto.Schema
 
-  import Ecto
   import Ecto.Changeset
-  import Ecto.Query
 
   schema "listings" do
     field :type, :string

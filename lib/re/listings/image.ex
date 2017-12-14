@@ -4,9 +4,7 @@ defmodule Re.Image do
   """
   use Ecto.Schema
 
-  import Ecto
   import Ecto.Changeset
-  import Ecto.Query
 
   schema "images" do
     field :filename, :string
