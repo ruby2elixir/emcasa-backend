@@ -4,8 +4,10 @@ defmodule ReWeb.ListingController do
 
   alias Re.{
     Address,
+    Addresses,
     Image,
-    Listing
+    Listing,
+    Listings
   }
 
   plug Guardian.Plug.EnsureAuthenticated,
@@ -13,46 +15,18 @@ defmodule ReWeb.ListingController do
     when action in [:create, :edit, :update, :delete]
 
   def index(conn, _params, _user, _full_claims) do
-    listings = Repo.all(from l in Listing,
-      where: l.is_active == true,
-      order_by: [desc: l.score],
-      order_by: [asc: l.matterport_code])
-      |> Repo.preload(:address)
-      |> Repo.preload([images: (from i in Image, order_by: i.position)])
-
-    render(conn, "index.json", listings: listings)
+    render(conn, "index.json", listings: Listings.all())
   end
 
   def create(conn, %{"listing" => listing_params, "address" => address_params}, _user, _full_claims) do
-    address_changeset = Address.changeset(%Address{}, address_params)
-
-    address_id =
-      case Repo.get_by(Address,
-                  street: address_params["street"] || "",
-                  postal_code: address_params["postal_code"] || "",
-                  street_number: address_params["street_number"] || "") do
-
-        nil ->
-          case Repo.insert(address_changeset) do
-            {:ok, address} -> address.id
-
-            {:error, _} -> nil
-          end
-
-        address -> address.id
-      end
-
-    case address_id do
-      nil ->
+    case Addresses.find_or_create(address_params) do
+      {:error, address_changeset} ->
         conn
         |> put_status(:unprocessable_entity)
         |> render(ReWeb.ChangesetView, "error.json", changeset: address_changeset )
 
       address_id ->
-        %Listing{}
-        |> Listing.changeset(Map.put(listing_params, "address_id", address_id))
-        |> Repo.insert()
-        |> case do
+        case Listings.insert(listing_params, address_id) do
           {:ok, listing} ->
             conn
             |> put_status(:created)
@@ -67,23 +41,11 @@ defmodule ReWeb.ListingController do
   end
 
   def show(conn, %{"id" => id}, _user, _full_claims) do
-    listing =
-      from(l in Listing, where: l.is_active == true)
-      |> Repo.get!(id)
-      |> Repo.preload(:address)
-      |> Repo.preload([images: (from i in Image, order_by: i.position)])
-
-    render(conn, "show.json", listing: listing)
+    render(conn, "show.json", listing: Listings.get(id))
   end
 
   def edit(conn, %{"id" => id}, _user, _full_claims) do
-    listing =
-      from(l in Listing, where: l.is_active == true)
-      |> Repo.get!(id)
-      |> Repo.preload(:address)
-      |> Repo.preload([images: (from i in Image, order_by: i.position)])
-
-    render(conn, "edit.json", listing: listing)
+    render(conn, "edit.json", listing: Listings.get(id))
   end
 
   def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, _user, _full_claims) do
@@ -93,36 +55,14 @@ defmodule ReWeb.ListingController do
       |> Repo.preload(:address)
       |> Repo.preload([images: (from i in Image, order_by: i.position)])
 
-    address = Repo.get(Address, listing.address_id) |> Repo.preload(:listings)
-
-    address_changeset = Ecto.Changeset.change(address, address_params)
-
-    address_id =
-      case map_size(address_changeset.changes) do
-        0 ->
-          listing.address_id
-
-        _ ->
-          changeset = Address.changeset(%Address{}, address_params)
-          case Repo.insert(changeset) do
-            {:ok, address} -> address.id
-            {:error, _} -> nil
-          end
-      end
-
-    case address_id do
-      nil ->
+    case Addresses.update(listing, address_params) do
+      {:error, address_changeset} ->
         conn
         |> put_status(:unprocessable_entity)
         |> render(ReWeb.ChangesetView, "error.json", changeset: address_changeset)
 
       address_id ->
-        changeset =
-          listing
-          |> Listing.changeset(listing_params)
-          |> Ecto.Changeset.change(address_id: address_id)
-
-        case Repo.update(changeset) do
+        case Listings.update(listing, listing_params, address_id) do
           {:ok, listing} ->
             render(conn, "edit.json", listing: listing)
           {:error, changeset} ->
