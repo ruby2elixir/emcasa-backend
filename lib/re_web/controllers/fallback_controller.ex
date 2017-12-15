@@ -17,4 +17,10 @@ defmodule ReWeb.FallbackController do
     |> put_status(:not_found)
     |> render(ReWeb.ErrorView, :"404")
   end
+
+  def call(conn, {:error, :bad_request}) do
+    conn
+    |> put_status(:bad_request)
+    |> render(ReWeb.ErrorView, :"400")
+  end
 end

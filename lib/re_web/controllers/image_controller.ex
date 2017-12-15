@@ -4,10 +4,13 @@ defmodule ReWeb.ImageController do
 
   alias Re.Images
 
-  # plug Guardian.Plug.EnsureAuthenticated,
-  #   %{handler: ReWeb.SessionController}
+  plug Guardian.Plug.EnsureAuthenticated,
+    %{handler: ReWeb.SessionController}
 
-  def index(conn, %{"listing_id" => listing_id}, _user, _full_claims) do
-    render(conn, "index.json", images: Images.all(listing_id))
+  action_fallback ReWeb.FallbackController
+
+  def index(conn, params, _user, _full_claims) do
+    with {:ok, images} <- Images.all(params),
+      do: render(conn, "index.json", images: images)
   end
 end
