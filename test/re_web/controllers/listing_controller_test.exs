@@ -24,7 +24,7 @@ defmodule ReWeb.ListingControllerTest do
 
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, listing_path(conn, :index)
-    assert json_response(conn, 200)["data"] == []
+    assert json_response(conn, 200)["listings"] == []
   end
 
   test "shows chosen resource", %{conn: conn} do
@@ -32,7 +32,7 @@ defmodule ReWeb.ListingControllerTest do
     image = insert(:image)
     listing = insert(:listing, images: [image], address: address)
     conn = get conn, listing_path(conn, :show, listing)
-    assert json_response(conn, 200)["data"] ==
+    assert json_response(conn, 200)["listing"] ==
       %{
         "id" => listing.id,
         "type" => listing.type,
