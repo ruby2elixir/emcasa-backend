@@ -5,11 +5,22 @@ defmodule Re.Images do
 
   import Ecto.Query
 
-  alias Re.{Repo, Image}
+  alias Re.{
+    Image,
+    Listing,
+    Repo
+  }
 
-  def all(listing_id) do
-    Repo.all(from i in Image,
-      where: i.listing_id == ^listing_id,
-      preload: :listing)
+  @query from l in Listing, preload: :images
+
+  def all(%{"listing_id" => listing_id}) do
+    @query
+    |> Repo.get(listing_id)
+    |> Map.get(:images)
+    |> format_output()
   end
+  def all(_), do: {:error, :bad_request}
+
+  defp format_output(images), do: {:ok, images}
+
 end
