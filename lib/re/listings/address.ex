@@ -5,6 +5,7 @@ defmodule Re.Address do
   use Ecto.Schema
 
   import Ecto.Changeset
+  alias Ecto.Changeset
 
   schema "addresses" do
     field :street, :string
@@ -20,12 +21,61 @@ defmodule Re.Address do
     timestamps()
   end
 
+  @attr ~w(street street_number neighborhood city state postal_code lat lng)a
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:street, :neighborhood, :city, :state, :postal_code, :street_number, :lat, :lng])
-    |> validate_required([:street, :street_number, :neighborhood, :city, :state, :postal_code, :lat, :lng])
+    |> cast(params, @attr)
+    |> validate_required(@attr)
+    |> validate_length(:street, max: 128)
+    |> validate_length(:street_number, max: 128)
+    |> validate_length(:neighborhood, max: 128)
+    |> validate_length(:city, max: 128)
+    |> validate_length(:state, is: 2)
+    |> validate_postal_code()
+    |> validate_lat()
+    |> validate_lng()
+  end
+
+  @postal_code_regex ~r/^[0-9]{5}[-][0-9]{3}$/
+
+  defp validate_postal_code(changeset) do
+    postal_code = Changeset.get_field(changeset, :postal_code, "")
+    if Regex.match?(@postal_code_regex, postal_code) do
+      changeset
+    else
+      Changeset.add_error(changeset, :postal_code, "postal code didn't match")
+    end
+  end
+
+  defp validate_lat(changeset) do
+    changeset
+    |> Changeset.get_field(:lat, "")
+    |> Float.parse
+    |> case do
+      {latitude, ""} -> if latitude > -90 and latitude < 90 do
+        changeset
+      else
+        Changeset.add_error(changeset, :lat, "invalid latitude")
+      end
+      _ -> Changeset.add_error(changeset, :lat, "parsing error")
+    end
+  end
+
+  defp validate_lng(changeset) do
+    changeset
+    |> Changeset.get_field(:lng, "")
+    |> Float.parse
+    |> case do
+      {longitude, ""} -> if longitude > -180 and longitude < 180 do
+        changeset
+      else
+        Changeset.add_error(changeset, :lng, "invalid longitude")
+      end
+      _ -> Changeset.add_error(changeset, :lng, "parsing error")
+    end
   end
 end
