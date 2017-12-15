@@ -16,92 +16,130 @@ defmodule ReWeb.ListingControllerTest do
   setup %{conn: conn} do
     user = insert(:user)
     {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
-    conn = conn
+    conn =
+      conn
       |> put_req_header("accept", "application/json")
-      |> put_req_header("authorization", "Token #{jwt}")
-    {:ok, conn: conn}
+
+    authenticated_conn = put_req_header(conn, "authorization", "Token #{jwt}")
+    {:ok, authenticated_conn: authenticated_conn, unauthenticated_conn: conn}
   end
 
-  test "lists all entries on index", %{conn: conn} do
+  test "lists all entries on index", %{authenticated_conn: conn} do
     conn = get conn, listing_path(conn, :index)
     assert json_response(conn, 200)["listings"] == []
   end
 
-  test "shows chosen resource", %{conn: conn} do
-    address = insert(:address)
-    image = insert(:image)
-    listing = insert(:listing, images: [image], address: address)
-    conn = get conn, listing_path(conn, :show, listing)
-    assert json_response(conn, 200)["listing"] ==
-      %{
-        "id" => listing.id,
-        "type" => listing.type,
-        "description" => listing.description,
-        "price" => listing.price,
-        "floor" => listing.floor,
-        "rooms" => listing.rooms,
-        "bathrooms" => listing.bathrooms,
-        "area" => listing.area,
-        "garage_spots" => listing.garage_spots,
-        "score" => listing.score,
-        "matterport_code" => listing.matterport_code,
-        "images" => [%{
-          "id" => image.id,
-          "filename" => image.filename,
-          "position" => image.position
+  describe "show" do
+    test "shows chosen resource", %{authenticated_conn: conn} do
+      address = insert(:address)
+      image = insert(:image)
+      listing = insert(:listing, images: [image], address: address)
+      conn = get conn, listing_path(conn, :show, listing)
+      assert json_response(conn, 200)["listing"] ==
+        %{
+          "id" => listing.id,
+          "type" => listing.type,
+          "description" => listing.description,
+          "price" => listing.price,
+          "floor" => listing.floor,
+          "rooms" => listing.rooms,
+          "bathrooms" => listing.bathrooms,
+          "area" => listing.area,
+          "garage_spots" => listing.garage_spots,
+          "matterport_code" => listing.matterport_code,
+          "images" => [%{
+            "id" => image.id,
+            "filename" => image.filename,
+            "position" => image.position
           }],
-        "address" => %{
-          "street" => listing.address.street,
-          "street_number" => listing.address.street_number,
-          "neighborhood" => listing.address.neighborhood,
-          "city" => listing.address.city,
-          "state" => listing.address.state,
-          "postal_code" => listing.address.postal_code,
-          "lat" => listing.address.lat,
-          "lng" => listing.address.lng
+          "address" => %{
+            "street" => listing.address.street,
+            "street_number" => listing.address.street_number,
+            "neighborhood" => listing.address.neighborhood,
+            "city" => listing.address.city,
+            "state" => listing.address.state,
+            "postal_code" => listing.address.postal_code,
+            "lat" => listing.address.lat,
+            "lng" => listing.address.lng
+          }
         }
-      }
-  end
+    end
 
-  test "renders page not found when id is nonexistent", %{conn: conn} do
-    assert_error_sent 404, fn ->
-      get conn, listing_path(conn, :show, -1)
+    test "renders page not found when id is nonexistent", %{authenticated_conn: conn} do
+      assert_error_sent 404, fn ->
+        get conn, listing_path(conn, :show, -1)
+      end
+    end
+
+    test "list listing for unauthenticated requests even if not authenticated", %{unauthenticated_conn: conn} do
+      address = insert(:address)
+      image = insert(:image)
+      listing = insert(:listing, images: [image], address: address)
+
+      conn = get conn, listing_path(conn, :show, listing)
+      json_response(conn, 200)
     end
   end
 
-  test "creates and renders resource when data is valid", %{conn: conn} do
-    conn = post conn, listing_path(conn, :create), listing: @valid_attrs, address: @valid_address_attrs
-    response = json_response(conn, 201)
-    assert response["listing"]["id"]
-    assert Repo.get_by(Listing, @valid_attrs)
+  describe "create" do
+    test "creates and renders resource when data is valid", %{authenticated_conn: conn} do
+      conn = post conn, listing_path(conn, :create), listing: @valid_attrs, address: @valid_address_attrs
+      response = json_response(conn, 201)
+      assert response["listing"]["id"]
+      assert Repo.get_by(Listing, @valid_attrs)
+    end
+
+    test "does not create resource and renders errors when data is invalid", %{authenticated_conn: conn} do
+      conn = post(conn, listing_path(conn, :create), %{listing: @invalid_attrs, address: @valid_address_attrs})
+      assert json_response(conn, 422)["errors"] != %{}
+    end
+
+    test "does not create resource when user is not authenticated", %{unauthenticated_conn: conn} do
+      conn = post(conn, listing_path(conn, :create), %{listing: @valid_attrs, address: @valid_address_attrs})
+      json_response(conn, 403)
+      refute Repo.get_by(Listing, @valid_attrs)
+    end
   end
 
-  test "does not create resource and renders errors when data is invalid", %{conn: conn} do
-    conn = post(conn, listing_path(conn, :create), %{listing: @invalid_attrs, address: @valid_address_attrs})
-    assert json_response(conn, 422)["errors"] != %{}
+  describe "update" do
+    test "updates and renders chosen resource when data is valid", %{authenticated_conn: conn} do
+      listing = insert(:listing, address: build(:address))
+      conn = put conn, listing_path(conn, :update, listing),
+        id: listing.id, listing: @valid_attrs, address: @valid_address_attrs
+      assert json_response(conn, 200)["listing"]["id"]
+      assert Repo.get_by(Listing, @valid_attrs)
+    end
+
+    test "does not update chosen resource and renders errors when data is invalid", %{authenticated_conn: conn} do
+      address = Repo.insert! %Re.Address{}
+      listing = Repo.insert! %Listing{address_id: address.id}
+
+      conn = put(conn, listing_path(conn, :update, listing), %{id: listing.id, listing: @invalid_attrs, address: @valid_address_attrs})
+      assert json_response(conn, 422)["errors"] != %{}
+    end
+
+    test "does not update resource when user is not authenticated", %{unauthenticated_conn: conn} do
+      listing = insert(:listing, address: build(:address))
+      conn = put conn, listing_path(conn, :update, listing),
+        id: listing.id, listing: @valid_attrs, address: @valid_address_attrs
+      assert json_response(conn, 403)
+      refute Repo.get_by(Listing, @valid_attrs)
+    end
   end
 
-  test "updates and renders chosen resource when data is valid", %{conn: conn} do
-    listing = insert(:listing, address: build(:address))
-    conn = put conn, listing_path(conn, :update, listing),
-      id: listing.id, listing: @valid_attrs, address: @valid_address_attrs
-    assert json_response(conn, 200)["listing"]["id"]
-    assert Repo.get_by(Listing, @valid_attrs)
+  describe "delete" do
+    test "deletes chosen resource", %{authenticated_conn: conn} do
+      listing = insert(:listing)
+      conn = delete conn, listing_path(conn, :delete, listing)
+      assert response(conn, 204)
+      refute Repo.get(Listing, listing.id)
+    end
+
+    test "does not delete resource when user is not authenticated", %{unauthenticated_conn: conn} do
+      listing = insert(:listing)
+      conn = delete conn, listing_path(conn, :delete, listing)
+      assert response(conn, 403)
+      assert Repo.get(Listing, listing.id)
+    end
   end
-
-  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-    address = Repo.insert! %Re.Address{}
-    listing = Repo.insert! %Listing{address_id: address.id}
-
-    conn = put(conn, listing_path(conn, :update, listing), %{id: listing.id, listing: @invalid_attrs, address: @valid_address_attrs})
-    assert json_response(conn, 422)["errors"] != %{}
-  end
-
-  test "deletes chosen resource", %{conn: conn} do
-    listing = insert(:listing)
-    conn = delete conn, listing_path(conn, :delete, listing)
-    assert response(conn, 204)
-    refute Repo.get(Listing, listing.id)
-  end
-
 end
