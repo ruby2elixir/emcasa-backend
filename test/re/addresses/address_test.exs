@@ -1,7 +1,12 @@
 defmodule Re.AddressTest do
   use Re.ModelCase
 
-  alias Re.Address
+  alias Re.{
+    Address,
+    Repo
+  }
+
+  import Re.Factory
 
   @valid_attrs %{
     street: "some street",
@@ -40,5 +45,14 @@ defmodule Re.AddressTest do
     assert Keyword.get(changeset.errors, :postal_code) == {"postal code didn't match", []}
     assert Keyword.get(changeset.errors, :lat) == {"invalid latitude", []}
     assert Keyword.get(changeset.errors, :lng) == {"invalid longitude", []}
+  end
+
+  test "duplicated address should be invalid" do
+    insert(:address, @valid_attrs)
+    {:error, changeset} =
+      %Address{}
+      |> Address.changeset(@valid_attrs)
+      |> Repo.insert()
+    assert changeset.errors == [postal_code: {"has already been taken", []}]
   end
 end

@@ -36,6 +36,7 @@ defmodule Re.Address do
     |> validate_length(:city, max: 128)
     |> validate_length(:state, is: 2)
     |> validate_postal_code()
+    |> unique_constraint(:postal_code, name: :unique_address)
     |> validate_lat()
     |> validate_lng()
   end
