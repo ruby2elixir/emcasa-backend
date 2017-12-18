@@ -65,10 +65,17 @@ defmodule ReWeb.ListingControllerTest do
         }
     end
 
+    test "do not show inactive listing", %{authenticated_conn: conn} do
+      address = insert(:address)
+      image = insert(:image)
+      listing = insert(:listing, images: [image], address: address, is_active: false)
+      conn = get conn, listing_path(conn, :show, listing)
+      json_response(conn, 404)
+    end
+
     test "renders page not found when id is nonexistent", %{authenticated_conn: conn} do
-      assert_error_sent 404, fn ->
-        get conn, listing_path(conn, :show, -1)
-      end
+      conn = get conn, listing_path(conn, :show, -1)
+      json_response(conn, 404)
     end
 
     test "list listing for unauthenticated requests even if not authenticated", %{unauthenticated_conn: conn} do
@@ -78,6 +85,59 @@ defmodule ReWeb.ListingControllerTest do
 
       conn = get conn, listing_path(conn, :show, listing)
       json_response(conn, 200)
+    end
+  end
+
+  describe "edit" do
+    test "edits chosen resource", %{authenticated_conn: conn} do
+      address = insert(:address)
+      image = insert(:image)
+      listing = insert(:listing, images: [image], address: address)
+      conn = get conn, listing_path(conn, :edit, listing)
+      assert json_response(conn, 200)["listing"] ==
+        %{
+          "id" => listing.id,
+          "type" => listing.type,
+          "complement" => listing.complement,
+          "description" => listing.description,
+          "price" => listing.price,
+          "floor" => listing.floor,
+          "rooms" => listing.rooms,
+          "bathrooms" => listing.bathrooms,
+          "area" => listing.area,
+          "garage_spots" => listing.garage_spots,
+          "score" => listing.score,
+          "matterport_code" => listing.matterport_code,
+          "images" => [%{
+            "id" => image.id,
+            "filename" => image.filename,
+            "position" => image.position
+          }],
+          "address" => %{
+            "street" => listing.address.street,
+            "street_number" => listing.address.street_number,
+            "neighborhood" => listing.address.neighborhood,
+            "city" => listing.address.city,
+            "state" => listing.address.state,
+            "postal_code" => listing.address.postal_code,
+            "lat" => listing.address.lat,
+            "lng" => listing.address.lng
+          }
+        }
+    end
+
+    test "renders page not found when id is nonexistent", %{authenticated_conn: conn} do
+      conn = get conn, listing_path(conn, :edit, -1)
+      json_response(conn, 404)
+    end
+
+    test "does not list listing for unauthenticated requests even if not authenticated", %{unauthenticated_conn: conn} do
+      address = insert(:address)
+      image = insert(:image)
+      listing = insert(:listing, images: [image], address: address)
+
+      conn = get conn, listing_path(conn, :edit, listing)
+      json_response(conn, 403)
     end
   end
 

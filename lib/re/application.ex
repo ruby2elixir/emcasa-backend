@@ -5,8 +5,6 @@ defmodule Re.Application do
 
   use Application
 
-  alias Re.{Repo, Endpoint}
-
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
@@ -15,7 +13,7 @@ defmodule Re.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the Ecto repository
-      supervisor(Repo, []),
+      supervisor(Re.Repo, []),
       # Start the endpoint when the application starts
       supervisor(ReWeb.Endpoint, []),
       # Start your own worker by calling: Re.Worker.start_link(arg1, arg2, arg3)
