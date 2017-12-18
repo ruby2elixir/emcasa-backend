@@ -3,7 +3,6 @@ defmodule ReWeb.ListingController do
   use Guardian.Phoenix.Controller
 
   alias Re.{
-    Address,
     Addresses,
     Image,
     Listing,

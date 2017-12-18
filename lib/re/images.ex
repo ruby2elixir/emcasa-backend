@@ -6,7 +6,6 @@ defmodule Re.Images do
   import Ecto.Query
 
   alias Re.{
-    Image,
     Listing,
     Repo
   }
