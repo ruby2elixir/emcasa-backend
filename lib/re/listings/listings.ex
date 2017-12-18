@@ -42,4 +42,6 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
+  def delete(listing), do: Repo.delete(listing)
+
 end

@@ -79,12 +79,8 @@ defmodule ReWeb.ListingController do
   end
 
   def delete(conn, %{"id" => id}, _user, _full_claims) do
-    listing = Repo.get!(Listing, id)
-
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
-    Repo.delete!(listing)
-
-    send_resp(conn, :no_content, "")
+    with {:ok, listing} <- Listings.get(id),
+         {:ok, _listing} <- Listings.delete(listing),
+      do: send_resp(conn, :no_content, "")
   end
 end
