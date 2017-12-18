@@ -14,6 +14,8 @@ defmodule ReWeb.ListingController do
     %{handler: ReWeb.SessionController}
     when action in [:create, :edit, :update, :delete]
 
+  action_fallback ReWeb.FallbackController
+
   def index(conn, _params, _user, _full_claims) do
     render(conn, "index.json", listings: Listings.all())
   end
@@ -41,11 +43,15 @@ defmodule ReWeb.ListingController do
   end
 
   def show(conn, %{"id" => id}, _user, _full_claims) do
-    render(conn, "show.json", listing: Listings.get(id))
+    with {:ok, listing} <- Listings.get(id),
+         {:ok, listing} <- Listings.preload(listing),
+      do: render(conn, "show.json", listing: listing)
   end
 
   def edit(conn, %{"id" => id}, _user, _full_claims) do
-    render(conn, "edit.json", listing: Listings.get(id))
+    with {:ok, listing} <- Listings.get(id),
+         {:ok, listing} <- Listings.preload(listing),
+      do: render(conn, "edit.json", listing: listing)
   end
 
   def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, _user, _full_claims) do

@@ -1,6 +1,5 @@
 defmodule Re.Listings do
 
-  import Ecto
   import Ecto.Query
 
   alias Re.{
@@ -9,22 +8,26 @@ defmodule Re.Listings do
     Repo
   }
 
+  @active_listings_query from l in Listing, where: l.is_active == true
+  @order_by_position from i in Image, order_by: i.position
+
   def all do
     Repo.all(from l in Listing,
       where: l.is_active == true,
       order_by: [desc: l.score],
       order_by: [asc: l.matterport_code])
       |> Repo.preload(:address)
-      |> Repo.preload([images: (from i in Image, order_by: i.position)])
+      |> Repo.preload([images: @order_by_position])
   end
 
   def get(id) do
-    listing =
-      from(l in Listing, where: l.is_active == true)
-      |> Repo.get!(id)
-      |> Repo.preload(:address)
-      |> Repo.preload([images: (from i in Image, order_by: i.position)])
+    case Repo.get(@active_listings_query, id) do
+      nil -> {:error, :not_found}
+      listing -> {:ok, listing}
+    end
   end
+
+  def preload(listing), do: {:ok, Repo.preload(listing, [:address, images: @order_by_position])}
 
   def insert(listing_params, address_id) do
     %Listing{}
