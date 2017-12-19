@@ -15,7 +15,7 @@ defmodule ReWeb.Router do
     resources "/listings", ListingController, except: [:new] do
       resources "/images", ImageController, only: [:index]
     end
-    patch "/listings/:listing_id/image_order", ListingController, :order
+    put "/listings/:listing_id/image_order", ListingController, :order
     resources "/addresses", AddressController, except: [:new, :edit]
     resources "/users", UserController, except: [:new, :edit, :create]
     resources "/listings_users", ListingUserController, only: [:create]

@@ -217,7 +217,7 @@ defmodule ReWeb.ListingControllerTest do
         %{id: id3, position: 1}
       ]
       # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
-      conn = dispatch(conn, @endpoint, "patch", "/listings/#{listing.id}/image_order", images: image_params)
+      conn = dispatch(conn, @endpoint, "put", "/listings/#{listing.id}/image_order", images: image_params)
       assert response(conn, 204)
       im1 = Repo.get(Image, id1)
       im2 = Repo.get(Image, id2)
