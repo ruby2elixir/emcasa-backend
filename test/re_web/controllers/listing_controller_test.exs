@@ -1,6 +1,11 @@
 defmodule ReWeb.ListingControllerTest do
   use ReWeb.ConnCase
 
+  alias Re.{
+    Address,
+    Listing
+  }
+
   import Re.Factory
 
   alias Re.{
@@ -151,6 +156,15 @@ defmodule ReWeb.ListingControllerTest do
       response = json_response(conn, 201)
       assert response["listing"]["id"]
       assert Repo.get_by(Listing, @valid_attrs)
+    end
+
+    test "creates and renders resource with existing address", %{authenticated_conn: conn} do
+      insert(:address, @valid_address_attrs)
+      conn = post conn, listing_path(conn, :create), listing: @valid_attrs, address: @valid_address_attrs
+      response = json_response(conn, 201)
+      assert response["listing"]["id"]
+      assert Repo.get_by(Listing, @valid_attrs)
+      assert length(Repo.all(Address)) == 1
     end
 
     test "does not create resource and renders errors when data is invalid", %{authenticated_conn: conn} do
