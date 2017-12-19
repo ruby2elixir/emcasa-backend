@@ -16,16 +16,22 @@ defmodule ReWeb.ListingImageControllerTest do
 
   test "lists all images for a listing", %{authenticated_conn: conn} do
     address = insert(:address)
-    image = insert(:image)
-    listing = insert(:listing, images: [image], address: address)
+    image1 = insert(:image, position: 2)
+    image2 = insert(:image, position: 1)
+    listing = insert(:listing, images: [image1, image2], address: address)
 
     conn = get conn, listing_image_path(conn, :index, listing)
     assert json_response(conn, 200)["images"] == [
       %{
-        "filename" => image.filename,
-        "id" => image.id,
-        "position" => image.position
-      }
+        "filename" => image2.filename,
+        "id" => image2.id,
+        "position" => image2.position
+      },
+      %{
+        "filename" => image1.filename,
+        "id" => image1.id,
+        "position" => image1.position
+      },
     ]
   end
 
@@ -37,4 +43,5 @@ defmodule ReWeb.ListingImageControllerTest do
     conn = get conn, listing_image_path(conn, :index, listing)
     json_response(conn, 403)
   end
+
 end

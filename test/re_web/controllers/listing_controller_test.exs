@@ -5,7 +5,13 @@ defmodule ReWeb.ListingControllerTest do
     Address,
     Listing
   }
+
   import Re.Factory
+
+  alias Re.{
+    Image,
+    Listing
+  }
 
   @valid_attrs %{type: "apto", score: 3, floor: "H1", complement: "basement", bathrooms: 2, description: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3,}
   @valid_address_attrs %{street: "A Street", street_number: "100", neighborhood: "A Neighborhood", city: "A City", state: "ST", postal_code: "12345-678", lat: "25", lng: "25"}
@@ -212,6 +218,27 @@ defmodule ReWeb.ListingControllerTest do
       conn = delete conn, listing_path(conn, :delete, listing)
       assert response(conn, 403)
       assert Repo.get(Listing, listing.id)
+    end
+  end
+
+  describe "order" do
+    test "update images order on listing by position", %{authenticated_conn: conn} do
+      listing = insert(:listing)
+      [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
+      image_params = [
+        %{id: id1, position: 2},
+        %{id: id2, position: 3},
+        %{id: id3, position: 1}
+      ]
+      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
+      conn = dispatch(conn, @endpoint, "put", "/listings/#{listing.id}/image_order", images: image_params)
+      assert response(conn, 204)
+      im1 = Repo.get(Image, id1)
+      im2 = Repo.get(Image, id2)
+      im3 = Repo.get(Image, id3)
+      assert im1.position == 2
+      assert im2.position == 3
+      assert im3.position == 1
     end
   end
 end
