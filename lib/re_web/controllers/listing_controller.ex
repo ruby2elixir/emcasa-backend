@@ -5,13 +5,14 @@ defmodule ReWeb.ListingController do
   alias Re.{
     Addresses,
     Image,
+    Images,
     Listing,
     Listings
   }
 
   plug Guardian.Plug.EnsureAuthenticated,
     %{handler: ReWeb.SessionController}
-    when action in [:create, :edit, :update, :delete]
+    when action in [:create, :edit, :update, :delete, :order]
 
   action_fallback ReWeb.FallbackController
 
@@ -81,6 +82,12 @@ defmodule ReWeb.ListingController do
   def delete(conn, %{"id" => id}, _user, _full_claims) do
     with {:ok, listing} <- Listings.get(id),
          {:ok, _listing} <- Listings.delete(listing),
+      do: send_resp(conn, :no_content, "")
+  end
+
+  def order(conn, %{"listing_id" => id, "images" => images_params}, _user, _full_claims) do
+    with {:ok, listing} <- Listings.get(id),
+         :ok <- Images.update_per_listing(listing, images_params),
       do: send_resp(conn, :no_content, "")
   end
 end
