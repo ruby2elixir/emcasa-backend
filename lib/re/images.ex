@@ -31,4 +31,10 @@ defmodule Re.Images do
     |> Repo.update()
   end
 
+  def insert(image_params, listing_id) do
+    %Image{}
+    |> Image.changeset(Map.put(image_params, "listing_id", listing_id))
+    |> Repo.insert()
+  end
+
 end

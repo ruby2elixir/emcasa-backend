@@ -5,6 +5,9 @@ defmodule ReWeb.ImageView do
     %{images: render_many(images, ReWeb.ImageView, "image.json")}
   end
 
+  def render("create.json", %{image: image}) do
+    %{image: render_one(image, ReWeb.ImageView, "image.json")}
+  end
 
   def render("image.json", %{image: image}) do
     %{id: image.id,

@@ -5,7 +5,7 @@ defmodule ReWeb.ListingImageControllerTest do
 
   alias Re.{Image}
 
-  @valid_attrs %{filename: "filename", position: 1, listing_id: 1}
+  @valid_attrs %{filename: "filename.jpg", position: 1}
 
   setup %{conn: conn} do
     user = insert(:user)
@@ -50,7 +50,8 @@ defmodule ReWeb.ListingImageControllerTest do
 
   describe "create" do
     test "successfully", %{authenticated_conn: conn} do
-      conn = post conn, listing_image_path(conn, :create, 1), image: @valid_attrs
+      listing = insert(:listing)
+      conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
       response = json_response(conn, 201)
       assert response["image"]["id"]
       assert Repo.get_by(Image, @valid_attrs)
