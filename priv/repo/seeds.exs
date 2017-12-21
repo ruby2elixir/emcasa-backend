@@ -73,179 +73,179 @@ Repo.insert! %Address{
           filename: "paula-freitas/paula-freitas-0.jpg",
           position: 1
         },
-        %Image{
-          filename: "paula-freitas/paula-freitas-42.jpg",
-          position: 2
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-50.jpg",
-          position: 3
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-53.jpg",
-          position: 4
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-54.jpg",
-          position: 5
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-59.jpg",
-          position: 6
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-60.jpg",
-          position: 7
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-66.jpg",
-          position: 8
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-69.jpg",
-          position: 9
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-72.jpg",
-          position: 10
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-73.jpg",
-          position: 11
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-77.jpg",
-          position: 12
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-81.jpg",
-          position: 13
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-82.jpg",
-          position: 14
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-86.jpg",
-          position: 15
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-90.jpg",
-          position: 16
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-92.jpg",
-          position: 17
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-95.jpg",
-          position: 18
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-96.jpg",
-          position: 19
-        },
-        %Image{
-          filename: "paula-freitas/paula-freitas-97.jpg",
-          position: 20
-        }
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-42.jpg",
+        #   position: 2
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-50.jpg",
+        #   position: 3
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-53.jpg",
+        #   position: 4
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-54.jpg",
+        #   position: 5
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-59.jpg",
+        #   position: 6
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-60.jpg",
+        #   position: 7
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-66.jpg",
+        #   position: 8
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-69.jpg",
+        #   position: 9
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-72.jpg",
+        #   position: 10
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-73.jpg",
+        #   position: 11
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-77.jpg",
+        #   position: 12
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-81.jpg",
+        #   position: 13
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-82.jpg",
+        #   position: 14
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-86.jpg",
+        #   position: 15
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-90.jpg",
+        #   position: 16
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-92.jpg",
+        #   position: 17
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-95.jpg",
+        #   position: 18
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-96.jpg",
+        #   position: 19
+        # },
+        # %Image{
+        #   filename: "paula-freitas/paula-freitas-97.jpg",
+        #   position: 20
+        # }
       ]
     }
   ]
 }
 
-Repo.insert! %Address{
-  street: "Rua General Cristóvão Barcelos",
-  street_number: "25",
-  neighborhood: "Laranjeiras",
-  city: "Rio de Janeiro",
-  state: "RJ",
-  postal_code: "22245-110",
-  lat: "-22.940907",
-  lng: "-43.19132289999999",
-  listings: [
-    %Listing{
-      type: "Apartamento",
-      description: "Apartamento em prédio novo (7 anos) com piscina, spa, salão de festa e academia, dois quartos (1 suíte), sala em dois ambientes com varanda banheiro de empregada, 1 vaga na escritura.",
-      floor: "3",
-      price: 850_000,
-      area: 75,
-      rooms: 2,
-      bathrooms: 2,
-      garage_spots: 1,
-      score: 4,
-      images: [
-        %Image{
-          filename: "cristovao-barcelos/principal.jpg",
-          position: 1
-        }
-      ]
-    }
-  ]
-}
+# Repo.insert! %Address{
+#   street: "Rua General Cristóvão Barcelos",
+#   street_number: "25",
+#   neighborhood: "Laranjeiras",
+#   city: "Rio de Janeiro",
+#   state: "RJ",
+#   postal_code: "22245-110",
+#   lat: "-22.940907",
+#   lng: "-43.19132289999999",
+#   listings: [
+#     %Listing{
+#       type: "Apartamento",
+#       description: "Apartamento em prédio novo (7 anos) com piscina, spa, salão de festa e academia, dois quartos (1 suíte), sala em dois ambientes com varanda banheiro de empregada, 1 vaga na escritura.",
+#       floor: "3",
+#       price: 850_000,
+#       area: 75,
+#       rooms: 2,
+#       bathrooms: 2,
+#       garage_spots: 1,
+#       score: 4,
+#       images: [
+#         %Image{
+#           filename: "cristovao-barcelos/principal.jpg",
+#           position: 1
+#         }
+#       ]
+#     }
+#   ]
+# }
 
-Repo.insert! %Address{
-  street: "Rua Gago Coutinho",
-  street_number: "66",
-  neighborhood: "Laranjeiras",
-  city: "Rio de Janeiro",
-  state: "RJ",
-  postal_code: "22221-070",
-  lat: "-22.9315194",
-  lng: "-43.1819802",
-  listings: [
-    %Listing{
-      type: "Apartamento",
-      description: "Apartamento duplex todo reformado e com decoração impecável, vista livre para o Parque Guinle, próximo à estação do Metrô do Largo do Machado.",
-      floor: "7",
-      price: 4_750_000,
-      area: 280,
-      rooms: 4,
-      bathrooms: 2,
-      garage_spots: 1,
-      score: 2,
-      images: [
-        %Image{
-          filename: "gago-coutinho/principal.jpg",
-          position: 1
-        },
-        %Image{
-          filename: "gago-coutinho/61.jpg",
-          position: 2
-        },
-        %Image{
-          filename: "gago-coutinho/59.jpg",
-          position: 3
-        },
-        %Image{
-          filename: "gago-coutinho/56.jpg",
-          position: 4
-        },
-        %Image{
-          filename: "gago-coutinho/54.jpg",
-          position: 5
-        },
-        %Image{
-          filename: "gago-coutinho/53.jpg",
-          position: 6
-        },
-        %Image{
-          filename: "gago-coutinho/48.jpg",
-          position: 7
-        },
-        %Image{
-          filename: "gago-coutinho/42.jpg",
-          position: 8
-        },
-        %Image{
-          filename: "gago-coutinho/40.jpg",
-          position: 9
-        },
-        %Image{
-          filename: "gago-coutinho/36.jpg",
-          position: 10
-        }
-      ]
-    }
-  ]
-}
+# Repo.insert! %Address{
+#   street: "Rua Gago Coutinho",
+#   street_number: "66",
+#   neighborhood: "Laranjeiras",
+#   city: "Rio de Janeiro",
+#   state: "RJ",
+#   postal_code: "22221-070",
+#   lat: "-22.9315194",
+#   lng: "-43.1819802",
+#   listings: [
+#     %Listing{
+#       type: "Apartamento",
+#       description: "Apartamento duplex todo reformado e com decoração impecável, vista livre para o Parque Guinle, próximo à estação do Metrô do Largo do Machado.",
+#       floor: "7",
+#       price: 4_750_000,
+#       area: 280,
+#       rooms: 4,
+#       bathrooms: 2,
+#       garage_spots: 1,
+#       score: 2,
+#       images: [
+#         %Image{
+#           filename: "gago-coutinho/principal.jpg",
+#           position: 1
+#         },
+#         %Image{
+#           filename: "gago-coutinho/61.jpg",
+#           position: 2
+#         },
+#         %Image{
+#           filename: "gago-coutinho/59.jpg",
+#           position: 3
+#         },
+#         %Image{
+#           filename: "gago-coutinho/56.jpg",
+#           position: 4
+#         },
+#         %Image{
+#           filename: "gago-coutinho/54.jpg",
+#           position: 5
+#         },
+#         %Image{
+#           filename: "gago-coutinho/53.jpg",
+#           position: 6
+#         },
+#         %Image{
+#           filename: "gago-coutinho/48.jpg",
+#           position: 7
+#         },
+#         %Image{
+#           filename: "gago-coutinho/42.jpg",
+#           position: 8
+#         },
+#         %Image{
+#           filename: "gago-coutinho/40.jpg",
+#           position: 9
+#         },
+#         %Image{
+#           filename: "gago-coutinho/36.jpg",
+#           position: 10
+#         }
+#       ]
+#     }
+#   ]
+# }

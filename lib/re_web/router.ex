@@ -13,7 +13,7 @@ defmodule ReWeb.Router do
 
     post "/users/login", SessionController, :create
     resources "/listings", ListingController, except: [:new] do
-      resources "/images", ImageController, only: [:index]
+      resources "/images", ImageController, only: [:index, :create]
     end
     put "/listings/:listing_id/image_order", ListingController, :order
     resources "/addresses", AddressController, except: [:new, :edit]

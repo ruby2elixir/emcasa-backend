@@ -3,6 +3,10 @@ defmodule ReWeb.ListingImageControllerTest do
 
   import Re.Factory
 
+  alias Re.{Image}
+
+  @valid_attrs %{filename: "filename.jpg", position: 1}
+
   setup %{conn: conn} do
     user = insert(:user)
     {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
@@ -25,12 +29,14 @@ defmodule ReWeb.ListingImageControllerTest do
       %{
         "filename" => image2.filename,
         "id" => image2.id,
-        "position" => image2.position
+        "position" => image2.position,
+        "is_cloudinary" => image2.is_cloudinary
       },
       %{
         "filename" => image1.filename,
         "id" => image1.id,
-        "position" => image1.position
+        "position" => image1.position,
+        "is_cloudinary" => image1.is_cloudinary
       },
     ]
   end
@@ -44,4 +50,13 @@ defmodule ReWeb.ListingImageControllerTest do
     json_response(conn, 403)
   end
 
+  describe "create" do
+    test "successfully", %{authenticated_conn: conn} do
+      listing = insert(:listing)
+      conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
+      response = json_response(conn, 201)
+      assert response["image"]["id"]
+      assert Repo.get_by(Image, @valid_attrs)
+    end
+  end
 end

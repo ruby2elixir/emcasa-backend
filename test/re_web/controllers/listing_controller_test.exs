@@ -59,7 +59,8 @@ defmodule ReWeb.ListingControllerTest do
           "images" => [%{
             "id" => image.id,
             "filename" => image.filename,
-            "position" => image.position
+            "position" => image.position,
+            "is_cloudinary" => image.is_cloudinary
           }],
           "address" => %{
             "street" => listing.address.street,
@@ -120,7 +121,8 @@ defmodule ReWeb.ListingControllerTest do
           "images" => [%{
             "id" => image.id,
             "filename" => image.filename,
-            "position" => image.position
+            "position" => image.position,
+            "is_cloudinary" => image.is_cloudinary
           }],
           "address" => %{
             "street" => listing.address.street,
