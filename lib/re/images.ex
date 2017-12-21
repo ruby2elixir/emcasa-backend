@@ -7,7 +7,8 @@ defmodule Re.Images do
 
   alias Re.{
     Image,
-    Repo
+    Repo,
+    Listing
   }
 
   def all(%{"listing_id" => listing_id}) do
@@ -36,5 +37,4 @@ defmodule Re.Images do
     |> Image.changeset(Map.put(image_params, "listing_id", listing_id))
     |> Repo.insert()
   end
-
 end
