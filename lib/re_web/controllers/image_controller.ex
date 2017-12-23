@@ -27,4 +27,10 @@ defmodule ReWeb.ImageController do
         |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
+
+  def delete(conn, %{"listing_id" => listing_id, "id" => image_id}, _user, _full_claims) do
+    with {:ok, image} <- Images.get_per_listing(listing_id, image_id),
+         {:ok, _image} <- Images.delete(image),
+      do: send_resp(conn, :no_content, "")
+  end
 end

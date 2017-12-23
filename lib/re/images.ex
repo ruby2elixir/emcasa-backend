@@ -20,6 +20,19 @@ defmodule Re.Images do
   end
   def all(_), do: {:error, :bad_request}
 
+  def get_per_listing(listing_id, image_id) do
+    case Repo.get_by(Image, id: image_id, listing_id: listing_id) do
+      nil -> {:error, :not_found}
+      image -> {:ok, image}
+    end
+  end
+
+  def insert(image_params, listing_id) do
+    %Image{}
+    |> Image.changeset(Map.put(image_params, "listing_id", listing_id))
+    |> Repo.insert()
+  end
+
   def update_per_listing(_listing, images_param) do
     Enum.each(images_param, &update_image/1)
   end
@@ -32,9 +45,6 @@ defmodule Re.Images do
     |> Repo.update()
   end
 
-  def insert(image_params, listing_id) do
-    %Image{}
-    |> Image.changeset(Map.put(image_params, "listing_id", listing_id))
-    |> Repo.insert()
-  end
+  def delete(image), do: Repo.delete(image)
+
 end

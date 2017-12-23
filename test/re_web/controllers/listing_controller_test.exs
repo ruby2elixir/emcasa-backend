@@ -17,11 +17,6 @@ defmodule ReWeb.ListingControllerTest do
   @valid_address_attrs %{street: "A Street", street_number: "100", neighborhood: "A Neighborhood", city: "A City", state: "ST", postal_code: "12345-678", lat: "25", lng: "25"}
   @invalid_attrs %{}
 
-  def fixture(:listing) do
-    {:ok, listing} = insert(:listing)
-    listing
-  end
-
   setup %{conn: conn} do
     user = insert(:user)
     {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
