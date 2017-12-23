@@ -77,10 +77,11 @@ defmodule ReWeb.ListingImageControllerTest do
       refute Repo.get(Image, image.id)
     end
 
-    # test "fails if not authenticated", %{unauthenticated_conn: conn} do
-    #   listing = insert(:listing)
-    #   conn = delete conn, listing_image_path(conn, :delete, listing)
-    #   response = json_response(conn, 403)
-    # end
+    test "fails if not authenticated", %{unauthenticated_conn: conn} do
+      image = insert(:image)
+      listing = insert(:listing, images: [image])
+      conn = delete conn, listing_image_path(conn, :delete, listing, image)
+      assert json_response(conn, 403)
+    end
   end
 end
