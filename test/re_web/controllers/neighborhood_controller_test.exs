@@ -23,6 +23,7 @@ defmodule ReWeb.NeighborhoodControllerTest do
 
     test "succeeds if unauthenticated", %{unauthenticated_conn: conn} do
       address = insert(:address)
+      insert(:address, postal_code: "12345-678", street: "Another street")
       conn = get conn, neighborhood_path(conn, :index)
       assert json_response(conn, 200)["neighborhoods"] == [address.neighborhood]
     end

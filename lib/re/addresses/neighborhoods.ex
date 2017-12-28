@@ -8,6 +8,6 @@ defmodule Re.Neighborhoods do
   alias Re.{Repo, Address}
 
   def all do
-    Re.Repo.all(from a in Address, select: a.neighborhood)
+    Repo.all(from a in Address, select: a.neighborhood, distinct: a.neighborhood)
   end
 end
