@@ -12,7 +12,6 @@ defmodule ReWeb.ImageView do
   def render("image.json", %{image: image}) do
     %{id: image.id,
       filename: image.filename,
-      is_cloudinary: image.is_cloudinary,
       position: image.position}
   end
 end

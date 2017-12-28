@@ -45,8 +45,7 @@ defmodule Re.Factory do
   def image_factory do
     %Re.Image {
       filename: "image.jpeg",
-      position: 5,
-      is_cloudinary: true
+      position: 5
     }
   end
 

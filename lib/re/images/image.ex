@@ -9,7 +9,6 @@ defmodule Re.Image do
   schema "images" do
     field :filename, :string
     field :position, :integer
-    field :is_cloudinary, :boolean
     belongs_to :listing, Re.Listing
 
     timestamps()
@@ -20,7 +19,7 @@ defmodule Re.Image do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:filename, :position, :is_cloudinary, :listing_id])
+    |> cast(params, [:filename, :position, :listing_id])
     |> validate_required([:filename, :position])
   end
 end
