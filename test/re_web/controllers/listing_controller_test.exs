@@ -3,15 +3,11 @@ defmodule ReWeb.ListingControllerTest do
 
   alias Re.{
     Address,
-    Listing
+    Listing,
+    Image
   }
 
   import Re.Factory
-
-  alias Re.{
-    Image,
-    Listing
-  }
 
   @valid_attrs %{type: "apto", score: 3, floor: "H1", complement: "basement", bathrooms: 2, description: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3,}
   @valid_address_attrs %{street: "A Street", street_number: "100", neighborhood: "A Neighborhood", city: "A City", state: "ST", postal_code: "12345-678", lat: "25", lng: "25"}
