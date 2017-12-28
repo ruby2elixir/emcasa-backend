@@ -30,14 +30,12 @@ defmodule ReWeb.ListingImageControllerTest do
         %{
           "filename" => image2.filename,
           "id" => image2.id,
-          "position" => image2.position,
-          "is_cloudinary" => image2.is_cloudinary
+          "position" => image2.position
         },
         %{
           "filename" => image1.filename,
           "id" => image1.id,
-          "position" => image1.position,
-          "is_cloudinary" => image1.is_cloudinary
+          "position" => image1.position
         },
       ]
     end
