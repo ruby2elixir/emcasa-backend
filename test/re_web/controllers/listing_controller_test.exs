@@ -24,9 +24,32 @@ defmodule ReWeb.ListingControllerTest do
     {:ok, authenticated_conn: authenticated_conn, unauthenticated_conn: conn}
   end
 
-  test "lists all entries on index", %{authenticated_conn: conn} do
-    conn = get conn, listing_path(conn, :index)
-    assert json_response(conn, 200)["listings"] == []
+  describe "index" do
+    test "suceeds", %{authenticated_conn: conn} do
+      address = insert(:address)
+      listing = insert(:listing, address: address)
+
+      conn = get conn, listing_path(conn, :index)
+
+      listings = json_response(conn, 200)["listings"]
+      retrieved_listing = List.first(listings)
+      assert retrieved_listing["description"] == listing.description
+    end
+
+    test "filters by neighborhood", %{authenticated_conn: conn} do
+      address = insert(:address)
+      insert(:listing, address: address)
+
+      address2 = insert(:address, postal_code: "12345", neighborhood: "Another neighborhood")
+      listing2 = insert(:listing, address: address2, description: "Another description")
+      conn = get conn, listing_path(conn, :index, neighborhood: address2.neighborhood)
+
+      listings = json_response(conn, 200)["listings"]
+      assert length(listings) == 1
+
+      retrieved_listing = List.first(listings)
+      assert retrieved_listing["description"] == listing2.description
+    end
   end
 
   describe "show" do
