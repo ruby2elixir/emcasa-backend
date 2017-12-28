@@ -1,10 +1,5 @@
-defmodule ReWeb.NeighborhoodControllertest do
+defmodule ReWeb.NeighborhoodControllerTest do
   use ReWeb.ConnCase
-
-  alias Re.{
-    Address,
-    Listing
-  }
 
   import Re.Factory
 
@@ -19,8 +14,17 @@ defmodule ReWeb.NeighborhoodControllertest do
     {:ok, authenticated_conn: authenticated_conn, unauthenticated_conn: conn}
   end
 
-  test "lists all entries on index", %{authenticated_conn: conn} do
-    conn = get conn, neighborhood_path(conn, :index)
-    assert json_response(conn, 200)["neighborhoods"] == []
+  describe "index" do
+    test "succeeds if authenticated", %{authenticated_conn: conn} do
+      address = insert(:address)
+      conn = get conn, neighborhood_path(conn, :index)
+      assert json_response(conn, 200)["neighborhoods"] == [address.neighborhood]
+    end
+
+    test "succeeds if unauthenticated", %{unauthenticated_conn: conn} do
+      address = insert(:address)
+      conn = get conn, neighborhood_path(conn, :index)
+      assert json_response(conn, 200)["neighborhoods"] == [address.neighborhood]
+    end
   end
 end

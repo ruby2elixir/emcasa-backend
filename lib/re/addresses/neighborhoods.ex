@@ -5,9 +5,9 @@ defmodule Re.Neighborhoods do
 
   import Ecto.Query
 
-  alias Re.Address
+  alias Re.{Repo, Address}
 
   def all do
-    Repo.all(from a in Address, select: a.neighborhood)
+    Re.Repo.all(from a in Address, select: a.neighborhood)
   end
 end
