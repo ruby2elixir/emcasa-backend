@@ -1,4 +1,7 @@
 defmodule Re.Listings do
+  @moduledoc """
+  Context for listings.
+  """
 
   import Ecto.Query
 
