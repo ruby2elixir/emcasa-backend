@@ -5,6 +5,14 @@ defmodule Re.Addresses do
     Repo
   }
 
+  import Ecto.Query
+
+  def get_ids_with_neighborhood(neighborhood) do
+    Repo.all(from a in Address,
+             select: a.id,
+             where: a.neighborhood == ^neighborhood)
+  end
+
   def find_or_create(address_params) do
     address_changeset = Address.changeset(%Address{}, address_params)
     case Repo.get_by(Address,

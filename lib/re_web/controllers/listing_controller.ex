@@ -16,8 +16,8 @@ defmodule ReWeb.ListingController do
 
   action_fallback ReWeb.FallbackController
 
-  def index(conn, _params, _user, _full_claims) do
-    render(conn, "index.json", listings: Listings.all())
+  def index(conn, params, _user, _full_claims) do
+    render(conn, "index.json", listings: Listings.all(params))
   end
 
   def create(conn, %{"listing" => listing_params, "address" => address_params}, _user, _full_claims) do

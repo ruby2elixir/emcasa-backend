@@ -6,6 +6,7 @@ defmodule Re.Listings do
   import Ecto.Query
 
   alias Re.{
+    Addresses,
     Listing,
     Image,
     Repo
@@ -14,13 +15,20 @@ defmodule Re.Listings do
   @active_listings_query from l in Listing, where: l.is_active == true
   @order_by_position from i in Image, order_by: i.position
 
-  def all do
-    Repo.all(from l in Listing,
-      where: l.is_active == true,
-      order_by: [desc: l.score],
-      order_by: [asc: l.matterport_code])
-      |> Repo.preload(:address)
-      |> Repo.preload([images: @order_by_position])
+  def all(params) do
+    @active_listings_query
+    |> order_by([l], desc: l.score, asc: l.matterport_code)
+    |> maybe_get_address_ids_with_neighborhood(params["neighborhood"])
+    |> Repo.all()
+    |> Repo.preload(:address)
+    |> Repo.preload([images: @order_by_position])
+  end
+
+  def maybe_get_address_ids_with_neighborhood(query, nil), do: query
+  def maybe_get_address_ids_with_neighborhood(query, neighborhood) do
+    ids = Addresses.get_ids_with_neighborhood(neighborhood)
+    query
+    |> where([l], l.address_id in ^ids)
   end
 
   def get(id) do
