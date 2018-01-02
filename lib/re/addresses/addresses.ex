@@ -32,19 +32,14 @@ defmodule Re.Addresses do
   end
 
   def update(listing, address_params) do
-    address = Repo.get(Address, listing.address_id) |> Repo.preload(:listings)
-    address_changeset = Ecto.Changeset.change(address, address_params)
-      case map_size(address_changeset.changes) do
-        0 ->
-          listing.address_id
-
-        _ ->
-          changeset = Address.changeset(%Address{}, address_params)
-          case Repo.insert(changeset) do
-            {:ok, address} -> address.id
-            {:error, changeset} -> {:error, changeset}
-          end
-      end
+    Address
+    |> Repo.get(listing.address_id)
+    |> Repo.preload(:listings)
+    |> Address.changeset(address_params)
+    |> case do
+      %{changes: %{}} -> listing.address_id
+      changeset -> Repo.insert(changeset, on_conflict: :nothing)
+    end
   end
 
 end
