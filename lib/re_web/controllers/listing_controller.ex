@@ -21,24 +21,12 @@ defmodule ReWeb.ListingController do
   end
 
   def create(conn, %{"listing" => listing_params, "address" => address_params}, _user, _full_claims) do
-    case Addresses.find_or_create(address_params) do
-      {:error, address_changeset} ->
+    with {:ok, address} <- Addresses.find_or_create(address_params),
+         {:ok, listing} <- Listings.insert(listing_params, address.id)
+      do
         conn
-        |> put_status(:unprocessable_entity)
-        |> render(ReWeb.ChangesetView, "error.json", changeset: address_changeset )
-
-      {:ok, address} ->
-        case Listings.insert(listing_params, address.id) do
-          {:ok, listing} ->
-            conn
-            |> put_status(:created)
-            |> render("create.json", listing: listing)
-
-          {:error, changeset} ->
-            conn
-            |> put_status(:unprocessable_entity)
-            |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
-        end
+        |> put_status(:created)
+        |> render("create.json", listing: listing)
     end
   end
 
@@ -55,28 +43,11 @@ defmodule ReWeb.ListingController do
   end
 
   def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, _user, _full_claims) do
-    listing =
-      Listing
-      |> Repo.get!(id)
-      |> Repo.preload(:address)
-      |> Repo.preload([images: (from i in Image, order_by: i.position)])
-
-    case Addresses.update(listing, address_params) do
-      {:error, address_changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(ReWeb.ChangesetView, "error.json", changeset: address_changeset)
-
-      {:ok, address} ->
-        case Listings.update(listing, listing_params, address.id) do
-          {:ok, listing} ->
-            render(conn, "edit.json", listing: listing)
-          {:error, changeset} ->
-            conn
-            |> put_status(:unprocessable_entity)
-            |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
-        end
-    end
+    with {:ok, listing} <- Listings.get(id),
+         {:ok, listing} <- Listings.preload(listing),
+         {:ok, address} <- Addresses.update(listing, address_params),
+         {:ok, listing} <- Listings.update(listing, listing_params, address.id),
+      do: render(conn, "edit.json", listing: listing)
   end
 
   def delete(conn, %{"id" => id}, _user, _full_claims) do
