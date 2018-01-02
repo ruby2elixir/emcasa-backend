@@ -10,6 +10,7 @@ defmodule Re.Images do
     Repo,
     Listing
   }
+  alias Ecto.Changeset
 
   def all(%{"listing_id" => listing_id}) do
     q = from i in Image,
@@ -28,10 +29,15 @@ defmodule Re.Images do
   end
 
   def insert(image_params, listing_id) do
+    {:ok, images} = all(%{"listing_id" => listing_id})
     %Image{}
     |> Image.changeset(Map.put(image_params, "listing_id", listing_id))
+    |> Changeset.change(position: calculate_position(images))
     |> Repo.insert()
   end
+
+  defp calculate_position([]), do: 1
+  defp calculate_position([top_image | _]), do: top_image.position - 1
 
   def update_per_listing(_listing, images_param) do
     Enum.each(images_param, &update_image/1)
