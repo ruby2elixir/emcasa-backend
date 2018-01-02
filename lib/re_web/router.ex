@@ -17,7 +17,6 @@ defmodule ReWeb.Router do
     end
     put "/listings/:listing_id/image_order", ListingController, :order
     resources "/neighborhoods", NeighborhoodController, only: [:index]
-    resources "/addresses", AddressController, except: [:new, :edit]
     resources "/users", UserController, except: [:new, :edit, :create]
     resources "/listings_users", ListingUserController, only: [:create]
   end
