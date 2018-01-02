@@ -16,7 +16,7 @@ defmodule Re.Addresses do
   def find_or_create(address_params) do
     case find_unique(address_params) do
       nil -> insert(address_params)
-      address -> address
+      address -> {:ok, address}
     end
   end
 

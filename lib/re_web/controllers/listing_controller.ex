@@ -27,8 +27,8 @@ defmodule ReWeb.ListingController do
         |> put_status(:unprocessable_entity)
         |> render(ReWeb.ChangesetView, "error.json", changeset: address_changeset )
 
-      address_id ->
-        case Listings.insert(listing_params, address_id) do
+      {:ok, address} ->
+        case Listings.insert(listing_params, address.id) do
           {:ok, listing} ->
             conn
             |> put_status(:created)
@@ -67,8 +67,8 @@ defmodule ReWeb.ListingController do
         |> put_status(:unprocessable_entity)
         |> render(ReWeb.ChangesetView, "error.json", changeset: address_changeset)
 
-      address_id ->
-        case Listings.update(listing, listing_params, address_id) do
+      {:ok, address} ->
+        case Listings.update(listing, listing_params, address.id) do
           {:ok, listing} ->
             render(conn, "edit.json", listing: listing)
           {:error, changeset} ->
