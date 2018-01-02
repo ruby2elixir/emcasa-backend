@@ -7,8 +7,7 @@ defmodule Re.Images do
 
   alias Re.{
     Image,
-    Repo,
-    Listing
+    Repo
   }
 
   def all(%{"listing_id" => listing_id}) do
