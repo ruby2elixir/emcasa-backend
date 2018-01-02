@@ -4,9 +4,7 @@ defmodule ReWeb.ListingController do
 
   alias Re.{
     Addresses,
-    Image,
     Images,
-    Listing,
     Listings
   }
 
