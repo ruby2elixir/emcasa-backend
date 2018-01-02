@@ -2,29 +2,28 @@ defmodule ReWeb.ImageController do
   use ReWeb, :controller
   use Guardian.Phoenix.Controller
 
-  alias Re.Images
+  alias Re.{
+    Images,
+    Listings
+  }
 
   plug Guardian.Plug.EnsureAuthenticated,
     %{handler: ReWeb.SessionController}
 
   action_fallback ReWeb.FallbackController
 
-  def index(conn, params, _user, _full_claims) do
-    with {:ok, images} <- Images.all(params),
+  def index(conn, %{"listing_id" => listing_id}, _user, _full_claims) do
+    with {:ok, images} <- Images.all(listing_id),
       do: render(conn, "index.json", images: images)
   end
 
   def create(conn, %{"listing_id" => listing_id, "image" => image_params}, _user, _full_claims) do
-    case Images.insert(image_params, listing_id) do
-      {:ok, image} ->
+    with {:ok, listing} <- Listings.get(listing_id),
+         {:ok, image} <- Images.insert(image_params, listing.id)
+      do
         conn
         |> put_status(:created)
         |> render("create.json", image: image)
-
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 

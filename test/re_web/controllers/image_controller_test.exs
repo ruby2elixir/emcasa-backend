@@ -62,7 +62,17 @@ defmodule ReWeb.ListingImageControllerTest do
     test "fails if not authenticated", %{unauthenticated_conn: conn} do
       listing = insert(:listing)
       conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
-      assert json_response(conn, 403)
+      json_response(conn, 403)
+    end
+
+    test "insert with lowest position", %{authenticated_conn: conn} do
+      image1 = insert(:image, %{position: 1})
+      image2 = insert(:image, %{position: 2})
+      listing = insert(:listing, images: [image1, image2])
+      conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
+      response = json_response(conn, 201)
+      assert inserted_image = Repo.get(Image, response["image"]["id"])
+      assert inserted_image.position == 0
     end
   end
 
@@ -71,7 +81,7 @@ defmodule ReWeb.ListingImageControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image])
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
-      assert response(conn, 204)
+      response(conn, 204)
       refute Repo.get(Image, image.id)
     end
 
@@ -79,7 +89,7 @@ defmodule ReWeb.ListingImageControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image])
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
-      assert json_response(conn, 403)
+      json_response(conn, 403)
     end
   end
 end
