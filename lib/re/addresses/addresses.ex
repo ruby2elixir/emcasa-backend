@@ -31,7 +31,7 @@ defmodule Re.Addresses do
     if changed?(listing, address_params) do
       find_or_create(address_params)
     else
-      listing.address
+      {:ok, listing.address}
     end
   end
 

@@ -18,7 +18,7 @@ defmodule Re.AddressesTest do
         |> Map.delete(:__meta__)
         |> stringify_keys()
 
-      assert address == Addresses.update(listing, address_params)
+      assert {:ok, address} == Addresses.update(listing, address_params)
     end
 
     test "should update address attributes" do
