@@ -14,37 +14,40 @@ defmodule Re.Addresses do
   end
 
   def find_or_create(address_params) do
-    address_changeset = Address.changeset(%Address{}, address_params)
-    case Repo.get_by(Address,
-                  street: address_params["street"] || "",
-                  postal_code: address_params["postal_code"] || "",
-                  street_number: address_params["street_number"] || "") do
+    case find_unique(address_params) do
+      nil -> insert(address_params)
+      address -> {:ok, address}
+    end
+  end
 
-        nil ->
-          case Repo.insert(address_changeset) do
-            {:ok, address} -> address.id
-
-            {:error, changeset} -> {:error, changeset}
-          end
-
-        address -> address.id
-      end
+  defp find_unique(address_params) do
+    Repo.get_by(Address,
+      street: address_params["street"] || "",
+      postal_code: address_params["postal_code"] || "",
+      street_number: address_params["street_number"] || "")
   end
 
   def update(listing, address_params) do
-    address = Repo.get(Address, listing.address_id) |> Repo.preload(:listings)
-    address_changeset = Ecto.Changeset.change(address, address_params)
-      case map_size(address_changeset.changes) do
-        0 ->
-          listing.address_id
+    if changed?(listing, address_params) do
+      find_or_create(address_params)
+    else
+      {:ok, listing.address}
+    end
+  end
 
-        _ ->
-          changeset = Address.changeset(%Address{}, address_params)
-          case Repo.insert(changeset) do
-            {:ok, address} -> address.id
-            {:error, changeset} -> {:error, changeset}
-          end
-      end
+  defp changed?(listing, address_params) do
+    %{changes: changes} = Address
+    |> Repo.get(listing.address_id)
+    |> Repo.preload(:listings)
+    |> Address.changeset(address_params)
+
+    changes != %{}
+  end
+
+  defp insert(address_params) do
+    %Address{}
+    |> Address.changeset(address_params)
+    |> Repo.insert()
   end
 
 end
