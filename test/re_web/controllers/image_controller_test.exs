@@ -81,7 +81,7 @@ defmodule ReWeb.ListingImageControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image])
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
-      assert response(conn, 204)
+      response(conn, 204)
       refute Repo.get(Image, image.id)
     end
 
@@ -89,7 +89,7 @@ defmodule ReWeb.ListingImageControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image])
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
-      assert json_response(conn, 403)
+      json_response(conn, 403)
     end
   end
 end

@@ -15,16 +15,11 @@ defmodule ReWeb.ImageController do
   end
 
   def create(conn, %{"listing_id" => listing_id, "image" => image_params}, _user, _full_claims) do
-    case Images.insert(image_params, listing_id) do
-      {:ok, image} ->
+    with {:ok, image} <- Images.insert(image_params, listing_id)
+      do
         conn
         |> put_status(:created)
         |> render("create.json", image: image)
-
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
