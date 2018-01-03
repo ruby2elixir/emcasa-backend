@@ -7,6 +7,7 @@ defmodule ReWeb.ListingUserControllerTest do
   alias Re.User
 
   @user_params %{name: "Test Name", email: "test@email.com", password: "somepass"}
+  @invalid_user_params %{name: "Test Name", email: "test@email.com"}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -21,6 +22,12 @@ defmodule ReWeb.ListingUserControllerTest do
       user_id = response["data"]["id"]
       user = Repo.get(User, user_id)
       assert_email_sent Re.UserEmail.notify_interest(user, listing.id)
+    end
+
+    test "invalid user params", %{conn: conn} do
+      listing = insert(:listing)
+      conn = dispatch(conn, @endpoint, "post", "/listings_users", %{user: @invalid_user_params, listing: %{id: listing.id}})
+      json_response(conn, 422)
     end
   end
 end

@@ -7,6 +7,8 @@ defmodule ReWeb.ListingUserController do
     Mailer
   }
 
+  action_fallback ReWeb.FallbackController
+
   def create(conn, %{"user" => user_params, "listing" => %{"id" => listing_id}}) do
     with {:ok, user} <- ListingsUsers.insert_user(user_params),
          {:ok, _} <- ListingsUsers.insert_listing_user(user.id, listing_id)
