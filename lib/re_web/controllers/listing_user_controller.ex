@@ -2,33 +2,23 @@ defmodule ReWeb.ListingUserController do
   use ReWeb, :controller
 
   alias Re.{
-    User,
     UserEmail,
-    ListingUser,
+    ListingsUsers,
     Mailer
   }
 
   def create(conn, %{"user" => user_params, "listing" => %{"id" => listing_id}}) do
-    changeset = User.changeset(%User{}, user_params)
-
-    case Repo.insert(changeset, on_conflict: :replace_all, conflict_target: :email) do
-      {:ok, user} ->
-        listing_user = %ListingUser{user_id: user.id, listing_id: listing_id}
-        Repo.insert(listing_user)
-
+    with {:ok, user} <- ListingsUsers.insert_user(user_params),
+         {:ok, _} <- ListingsUsers.insert_listing_user(user.id, listing_id)
+      do
         user
         |> UserEmail.notify_interest(listing_id)
-        |> Mailer.deliver()
+        |> Mailer.deliver() #TODO send e-mail asynchronously
 
         conn
         |> put_status(:created)
         |> put_resp_header("location", user_path(conn, :show, user))
         |> render("show.json", user: user)
-
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 end
