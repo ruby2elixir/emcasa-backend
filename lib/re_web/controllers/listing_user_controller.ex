@@ -1,6 +1,5 @@
 defmodule ReWeb.ListingUserController do
   use ReWeb, :controller
-  use Guardian.Phoenix.Controller
 
   alias Re.{
     User,
@@ -9,11 +8,7 @@ defmodule ReWeb.ListingUserController do
     Mailer
   }
 
-  plug Guardian.Plug.EnsureAuthenticated,
-    %{handler: ReWeb.SessionController}
-    when action in [:create]
-
-  def create(conn, %{"user" => user_params, "listing" => %{"id" => listing_id}}, _user, _full_claims) do
+  def create(conn, %{"user" => user_params, "listing" => %{"id" => listing_id}}) do
     changeset = User.changeset(%User{}, user_params)
 
     case Repo.insert(changeset, on_conflict: :replace_all, conflict_target: :email) do
