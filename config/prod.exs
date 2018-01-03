@@ -20,9 +20,6 @@ config :re, ReWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :sendgrid,
-  api_key: System.get_env("SEND_GRID_API_KEY")
-
 config :guardian, Guardian,
   allowed_algos: ["ES512"],
   secret_key: %{
@@ -40,6 +37,14 @@ config :re, Re.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
+
+config :re, Re.Mailer,
+  adapter: Swoosh.Adapters.Sendgrid,
+  api_key: System.get_env("SEND_GRID_API_KEY")
+
+config :re,
+  to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),
+  from: System.get_env("ADMIN_EMAIL")
 
 # ## SSL Support
 #

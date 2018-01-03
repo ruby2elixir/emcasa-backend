@@ -1,27 +1,29 @@
 defmodule ReWeb.ListingUserController do
   use ReWeb, :controller
+  use Guardian.Phoenix.Controller
 
-  alias Re.{User, ListingUser}
+  alias Re.{
+    User,
+    UserEmail,
+    ListingUser,
+    Mailer
+  }
 
-  def create(conn, %{"user" => user_params, "listing" => listing_params}) do
+  plug Guardian.Plug.EnsureAuthenticated,
+    %{handler: ReWeb.SessionController}
+    when action in [:create]
+
+  def create(conn, %{"user" => user_params, "listing" => %{"id" => listing_id}}, _user, _full_claims) do
     changeset = User.changeset(%User{}, user_params)
 
     case Repo.insert(changeset, on_conflict: :replace_all, conflict_target: :email) do
       {:ok, user} ->
-        %{"id" => listing_id} = listing_params
-
         listing_user = %ListingUser{user_id: user.id, listing_id: listing_id}
-        Re.Repo.insert(listing_user)
+        Repo.insert(listing_user)
 
-        SendGrid.Email.build()
-        |> SendGrid.Email.add_to("gustavo.saiani@emcasa.com")
-        |> SendGrid.Email.add_to("gustavo.vaz@emcasa.com")
-        |> SendGrid.Email.add_to("lucas.cardozo@emcasa.com")
-        |> SendGrid.Email.add_to("camila.villanueva@emcasa.com")
-        |> SendGrid.Email.put_from("gustavo.saiani@emcasa.com")
-        |> SendGrid.Email.put_subject("Novo interesse em listagem EmCasa")
-        |> SendGrid.Email.put_text("Nome: #{user.name}\n Email: #{user.email}\n Telefone: #{user.phone}\n Id da listagem: #{listing_id}")
-        |> SendGrid.Mailer.send()
+        user
+        |> UserEmail.notify_interest(listing_id)
+        |> Mailer.deliver()
 
         conn
         |> put_status(:created)
