@@ -11,7 +11,7 @@ defmodule Re.ListingsUsers do
 
   def insert_user(params) do
     %User{}
-    |> User.changeset(params)
+    |> User.passwordless_changeset(params)
     |> Repo.insert(on_conflict: :replace_all, conflict_target: :email)
   end
 
