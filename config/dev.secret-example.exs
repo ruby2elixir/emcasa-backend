@@ -22,6 +22,10 @@ config :guardian, Guardian,
     "y" => "xxxxxx"
   }
 
+# The emails below are used when a visitor
+# fills out a form expressing interest in a listing.
+# Both `to:` and `from:` can be individual emails
+# or multiple emails, in which case use `|` as separator.
 config :re,
   to: "dev1@email.com|dev2@email.com",
   from: "admin@email.com"
