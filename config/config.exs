@@ -7,7 +7,9 @@ use Mix.Config
 
 # General application configuration
 config :re,
-  ecto_repos: [Re.Repo]
+  ecto_repos: [Re.Repo],
+  to: "dev1@email.com|dev2@email.com",
+  from: "admin@email.com"
 
 # Configures the endpoint
 config :re, ReWeb.Endpoint,
@@ -35,4 +37,9 @@ config :guardian, Guardian,
 config :comeonin, :bcrypt_log_rounds, 4
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
+
+config :re, Re.Mailer,
+  adapter: Swoosh.Adapters.Sendgrid,
+  api_key: "SG.x.x"
+
 import_config "#{Mix.env}.exs"
