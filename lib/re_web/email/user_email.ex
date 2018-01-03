@@ -1,8 +1,6 @@
 defmodule Re.UserEmail do
   import Swoosh.Email
 
-  alias Re.Mailer
-
   @to Application.get_env(:re, :to) |> String.split("|")
   @from Application.get_env(:re, :from)
 
