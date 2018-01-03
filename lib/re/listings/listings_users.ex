@@ -1,4 +1,7 @@
 defmodule Re.ListingsUsers do
+  @moduledoc """
+  Context to manage operation between users and listings
+  """
 
   alias Re.{
     User,

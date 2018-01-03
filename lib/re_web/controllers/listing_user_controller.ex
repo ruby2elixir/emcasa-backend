@@ -13,7 +13,7 @@ defmodule ReWeb.ListingUserController do
       do
         user
         |> UserEmail.notify_interest(listing_id)
-        |> Mailer.deliver() #TODO send e-mail asynchronously
+        |> Mailer.deliver()
 
         conn
         |> put_status(:created)

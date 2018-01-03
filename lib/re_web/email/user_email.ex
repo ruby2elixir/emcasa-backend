@@ -1,7 +1,10 @@
 defmodule Re.UserEmail do
+  @moduledoc """
+  Module for building e-mails to send to users
+  """
   import Swoosh.Email
 
-  @to Application.get_env(:re, :to) |> String.split("|")
+  @to String.split(Application.get_env(:re, :to), "|")
   @from Application.get_env(:re, :from)
 
   def notify_interest(user, listing_id) do
