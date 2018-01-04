@@ -61,7 +61,6 @@ defmodule Re.Listings.Filter do
   end
   defp max_area_filter(query, _), do: query
 
-
   defp neighborhoods_filter(query, %{neighborhoods: neighborhoods}) do
     from l in query,
       join: ad in assoc(l, :address),

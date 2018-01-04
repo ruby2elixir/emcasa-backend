@@ -20,7 +20,7 @@ defmodule Re.ListingsTest do
       assert [%{id: ^id1}, %{id: ^id2}] = Listings.all(%{"min_price" => 95})
       assert [%{id: ^id2}, %{id: ^id3}] = Listings.all(%{"rooms" => 3})
       assert [%{id: ^id1}, %{id: ^id3}] = Listings.all(%{"max_area" => 55})
-      assert [%{id: ^id1}, %{id: ^id2}] = Listings.all(%{"neighborhoods" => ["Laranjeiras","Leblon"]})
+      assert [%{id: ^id1}, %{id: ^id2}] = Listings.all(%{"neighborhoods" => ["Laranjeiras", "Leblon"]})
     end
   end
 
