@@ -8,6 +8,7 @@ defmodule Re.Listings do
   alias Re.{
     Addresses,
     Listing,
+    Listings.Filter,
     Image,
     Repo
   }
@@ -20,6 +21,7 @@ defmodule Re.Listings do
     @active_listings_query
     |> order_by([l], desc: l.score, asc: l.matterport_code)
     |> maybe_get_address_ids_with_neighborhood(params["neighborhood"])
+    |> Filter.apply(params)
     |> Repo.all()
     |> Repo.preload(:address)
     |> Repo.preload([images: @order_by_position])
