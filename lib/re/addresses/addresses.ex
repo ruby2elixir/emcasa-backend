@@ -1,4 +1,7 @@
 defmodule Re.Addresses do
+  @moduledoc """
+  Context ƒor handling addresses
+  """
 
   alias Re.{
     Address,

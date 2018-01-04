@@ -11,6 +11,7 @@ defmodule Re.Listings do
     Image,
     Repo
   }
+  alias Ecto.Changeset
 
   @active_listings_query from l in Listing, where: l.is_active == true
   @order_by_position from i in Image, order_by: i.position
@@ -49,7 +50,7 @@ defmodule Re.Listings do
   def update(listing, listing_params, address_id) do
     listing
     |> Listing.changeset(listing_params)
-    |> Ecto.Changeset.change(address_id: address_id)
+    |> Changeset.change(address_id: address_id)
     |> Repo.update()
   end
 

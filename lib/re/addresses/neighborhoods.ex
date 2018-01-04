@@ -7,7 +7,11 @@ defmodule Re.Neighborhoods do
 
   alias Re.{Repo, Address}
 
+  @all_query from a in Address,
+    select: a.neighborhood,
+    distinct: a.neighborhood
+
   def all do
-    Repo.all(from a in Address, select: a.neighborhood, distinct: a.neighborhood)
+    Repo.all(@all_query)
   end
 end
