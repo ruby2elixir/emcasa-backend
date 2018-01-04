@@ -240,9 +240,9 @@ defmodule ReWeb.ListingControllerTest do
       listing = insert(:listing)
       [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
       image_params = [
-        %{id: id1, position: 2, listing_id: listing.id},
-        %{id: id2, position: 3, listing_id: listing.id},
-        %{id: id3, position: 1, listing_id: listing.id}
+        %{id: id1, position: 2},
+        %{id: id2, position: 3},
+        %{id: id3, position: 1}
       ]
       # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
       conn = dispatch(conn, @endpoint, "put", "/listings/#{listing.id}/image_order", images: image_params)
