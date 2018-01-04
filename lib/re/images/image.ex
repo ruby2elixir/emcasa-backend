@@ -22,4 +22,10 @@ defmodule Re.Image do
     |> cast(params, [:filename, :position, :listing_id])
     |> validate_required([:filename, :position])
   end
+
+  def position_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:position])
+    |> validate_required([:position])
+  end
 end

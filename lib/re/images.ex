@@ -41,16 +41,18 @@ defmodule Re.Images do
     end
   end
 
-  def update_per_listing(_listing, images_param) do
-    Enum.each(images_param, &update_image/1)
+  def update_per_listing(listing, images_params) do
+    Enum.each(images_params, &(update_image(listing, &1)))
   end
 
-  defp update_image(%{"id" => id} = params) do
+  defp update_image(listing, %{"id" => id} = params) do
     image = Repo.get(Image, id)
 
-    image
-    |> Image.changeset(params)
-    |> Repo.update()
+    if image.listing_id == listing.id do
+      image
+      |> Image.position_changeset(params)
+      |> Repo.update()
+    end
   end
 
   def delete(image), do: Repo.delete(image)
