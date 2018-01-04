@@ -30,8 +30,10 @@ defmodule Re.Listing do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, ~w(type complement description price floor rooms bathrooms area garage_spots score matterport_code is_active address_id)a)
-    |> validate_required(~w(type complement description price floor rooms bathrooms area garage_spots score address_id)a)
+    |> cast(params, ~w(type complement description price floor rooms bathrooms
+      area garage_spots score matterport_code is_active address_id)a)
+    |> validate_required(~w(type complement description price floor rooms
+      bathrooms area garage_spots score address_id)a)
     |> validate_number(:price, greater_than_or_equal_to: 0)
     |> validate_number(:bathrooms, greater_than_or_equal_to: 0)
     |> validate_number(:garage_spots, greater_than_or_equal_to: 0)
