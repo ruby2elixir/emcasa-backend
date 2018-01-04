@@ -41,8 +41,17 @@ defmodule Re.Images do
     end
   end
 
-  def update_per_listing(_listing, images_param) do
-    Enum.each(images_param, &update_image/1)
+  def update_per_listing(listing, images_params) do
+    if all_belongs_to_listing(listing.id, images_params) do
+      Enum.each(images_params, &update_image/1)
+    else
+      {:error, :bad_request}
+    end
+  end
+
+  defp all_belongs_to_listing(listing_id, image_params) do
+    Enum.all?(image_params,
+      fn %{"listing_id" => listing_id_image} -> listing_id_image == listing_id end)
   end
 
   defp update_image(%{"id" => id} = params) do
