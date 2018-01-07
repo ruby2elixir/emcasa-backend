@@ -24,4 +24,22 @@ defmodule Re.ListingsTest do
     end
   end
 
+  describe "paginated/1" do
+    test "should return paginated result" do
+      insert_list(3, :listing)
+
+      page = Listings.paginated(%{page_size: 2, page: 1})
+      assert [_, _] = page.entries
+      assert 2 == page.page_size
+      assert 2 == page.total_pages
+      assert 3 == page.total_entries
+
+      page = Listings.paginated(%{page_size: 2, page: 2})
+      assert [_] = page.entries
+      assert 2 == page.page_size
+      assert 2 == page.total_pages
+      assert 3 == page.total_entries
+    end
+  end
+
 end

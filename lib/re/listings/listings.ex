@@ -17,14 +17,24 @@ defmodule Re.Listings do
   @active_listings_query from l in Listing, where: l.is_active == true
   @order_by_position from i in Image, order_by: i.position
 
-  def all(params) do
+  defp old_all(params) do
     @active_listings_query
     |> order_by([l], desc: l.score, asc: l.matterport_code)
     |> maybe_get_address_ids_with_neighborhood(params["neighborhood"])
     |> Filter.apply(params)
+    |> Ecto.Query.preload([:address, images: ^@order_by_position])
+  end
+
+  def all(params) do
+    params
+    |> old_all()
     |> Repo.all()
-    |> Repo.preload(:address)
-    |> Repo.preload([images: @order_by_position])
+  end
+
+  def paginated(params) do
+    params
+    |> old_all()
+    |> Repo.paginate(params)
   end
 
   def maybe_get_address_ids_with_neighborhood(query, nil), do: query
