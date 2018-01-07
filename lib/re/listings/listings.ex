@@ -56,6 +56,10 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
-  def delete(listing), do: Repo.delete(listing)
+  def delete(listing) do
+    listing
+    |> Changeset.change(is_active: false)
+    |> Repo.update()
+  end
 
 end

@@ -224,14 +224,16 @@ defmodule ReWeb.ListingControllerTest do
       listing = insert(:listing)
       conn = delete conn, listing_path(conn, :delete, listing)
       assert response(conn, 204)
-      refute Repo.get(Listing, listing.id)
+      assert listing = Repo.get(Listing, listing.id)
+      refute listing.is_active
     end
 
     test "does not delete resource when user is not authenticated", %{unauthenticated_conn: conn} do
       listing = insert(:listing)
       conn = delete conn, listing_path(conn, :delete, listing)
       assert response(conn, 403)
-      assert Repo.get(Listing, listing.id)
+      assert listing = Repo.get(Listing, listing.id)
+      assert listing.is_active
     end
   end
 
