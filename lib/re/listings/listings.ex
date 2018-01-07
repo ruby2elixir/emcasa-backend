@@ -22,7 +22,7 @@ defmodule Re.Listings do
     |> order_by([l], desc: l.score, asc: l.matterport_code)
     |> maybe_get_address_ids_with_neighborhood(params["neighborhood"])
     |> Filter.apply(params)
-    |> Ecto.Query.preload([:address, images: ^@order_by_position])
+    |> preload([:address, images: ^@order_by_position])
     |> Repo.paginate(params)
   end
 
