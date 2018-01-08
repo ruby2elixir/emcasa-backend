@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/gusaiani/re.svg?branch=master)](https://travis-ci.org/gusaiani/re)
+[![Ebert](https://ebertapp.io/github/gusaiani/re.svg)](https://ebertapp.io/github/gusaiani/re)
 # Re WebService
 
 ## Install
