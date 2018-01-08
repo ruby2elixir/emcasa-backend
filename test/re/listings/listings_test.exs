@@ -16,11 +16,29 @@ defmodule Re.ListingsTest do
       %{id: id2} = insert(:listing, price: 110, area: 60, rooms: 3, score: 3, address_id: leblon.id)
       %{id: id3} = insert(:listing, price: 90, area: 50, rooms: 3, score: 2, address_id: botafogo.id)
 
-      assert [%{id: ^id1}, %{id: ^id3}] = Listings.all(%{"max_price" => 105})
-      assert [%{id: ^id1}, %{id: ^id2}] = Listings.all(%{"min_price" => 95})
-      assert [%{id: ^id2}, %{id: ^id3}] = Listings.all(%{"rooms" => 3})
-      assert [%{id: ^id1}, %{id: ^id3}] = Listings.all(%{"max_area" => 55})
-      assert [%{id: ^id1}, %{id: ^id2}] = Listings.all(%{"neighborhoods" => ["Laranjeiras", "Leblon"]})
+      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"max_price" => 105})
+      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"min_price" => 95})
+      assert %{entries: [%{id: ^id2}, %{id: ^id3}]} = Listings.paginated(%{"rooms" => 3})
+      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"max_area" => 55})
+      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"neighborhoods" => ["Laranjeiras", "Leblon"]})
+    end
+  end
+
+  describe "paginated/1" do
+    test "should return paginated result" do
+      insert_list(3, :listing)
+
+      page = Listings.paginated(%{page_size: 2, page: 1})
+      assert [_, _] = page.entries
+      assert 2 == page.page_size
+      assert 2 == page.total_pages
+      assert 3 == page.total_entries
+
+      page = Listings.paginated(%{page_size: 2, page: 2})
+      assert [_] = page.entries
+      assert 2 == page.page_size
+      assert 2 == page.total_pages
+      assert 3 == page.total_entries
     end
   end
 

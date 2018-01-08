@@ -15,7 +15,14 @@ defmodule ReWeb.ListingController do
   action_fallback ReWeb.FallbackController
 
   def index(conn, params, _user, _full_claims) do
-    render(conn, "index.json", listings: Listings.all(params))
+    page = Listings.paginated(params)
+    render(conn, "index.json",
+      listings: page.entries,
+      page_number: page.page_number,
+      page_size: page.page_size,
+      total_pages: page.total_pages,
+      total_entries: page.total_entries
+    )
   end
 
   def create(conn, %{"listing" => listing_params, "address" => address_params}, _user, _full_claims) do
