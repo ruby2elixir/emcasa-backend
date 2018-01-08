@@ -11,18 +11,24 @@ defmodule Re.User do
     field :email, :string
     field :phone, :string
     field :password, :string
+    field :role, :string
 
     timestamps()
   end
+
+  @required ~w(name email password role)
+  @optional ~w(phone)a
+  @roles ~w(admin)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :email, :phone, :password])
-    |> validate_required([:name, :email, :password])
+    |> cast(params, @required ++ @optional)
+    |> validate_required(@required)
     |> unique_constraint(:email)
+    |> validate_inclusion(:role, @roles)
   end
 
   @doc """
