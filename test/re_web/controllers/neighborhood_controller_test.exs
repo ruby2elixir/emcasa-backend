@@ -3,6 +3,8 @@ defmodule ReWeb.NeighborhoodControllerTest do
 
   import Re.Factory
 
+  alias ReWeb.Guardian
+
   setup %{conn: conn} do
     user = insert(:user)
     {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)

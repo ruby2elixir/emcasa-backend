@@ -39,7 +39,7 @@ defmodule Re.Mixfile do
      {:cors_plug, "~> 1.2"},
      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
      {:comeonin, "~> 3.2"},
-     {:guardian, "~> 0.14.5"},
+     {:guardian, "~> 1.0"},
      {:ex_machina, "~> 2.0", only: :test},
      {:swoosh, "~> 0.12.0"},
      {:scrivener_ecto, "~> 1.0"},

@@ -1,14 +1,11 @@
 defmodule ReWeb.UserController do
   use ReWeb, :controller
 
-  use Guardian.Phoenix.Controller
-
-  alias Re.Accounts.Auth
-  alias Re.User
-
-  plug Guardian.Plug.EnsureAuthenticated,
-    %{handler: ReWeb.SessionController}
-    when action in [:create, :edit, :update, :delete]
+  alias Re.{
+    Accounts.Auth,
+    User
+  }
+  alias ReWeb.Guardian
 
   def index(conn, _params) do
     users = Repo.all(User)
@@ -34,7 +31,7 @@ defmodule ReWeb.UserController do
   def create(conn, %{"user" => user_params}) do
     case Auth.register(user_params) do
       {:ok, user} ->
-        {:ok, jwt, _full_claims} = user |> Guardian.encode_and_sign(:token)
+        {:ok, jwt, _full_claims} = user |> Guardian.encode_and_sign()
 
         conn
         |> put_status(:created)

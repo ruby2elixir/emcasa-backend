@@ -6,6 +6,7 @@ defmodule ReWeb.ListingControllerTest do
     Listing,
     Image
   }
+  alias ReWeb.Guardian
 
   import Re.Factory
 
@@ -181,7 +182,7 @@ defmodule ReWeb.ListingControllerTest do
       listing = insert(:listing, images: [image], address: address)
 
       conn = get conn, listing_path(conn, :edit, listing)
-      json_response(conn, 403)
+      json_response(conn, 401)
     end
   end
 
@@ -209,7 +210,7 @@ defmodule ReWeb.ListingControllerTest do
 
     test "does not create resource when user is not authenticated", %{unauthenticated_conn: conn} do
       conn = post(conn, listing_path(conn, :create), %{listing: @valid_attrs, address: @valid_address_attrs})
-      json_response(conn, 403)
+      json_response(conn, 401)
       refute Repo.get_by(Listing, @valid_attrs)
     end
   end
@@ -235,7 +236,7 @@ defmodule ReWeb.ListingControllerTest do
       listing = insert(:listing, address: build(:address))
       conn = put conn, listing_path(conn, :update, listing),
         id: listing.id, listing: @valid_attrs, address: @valid_address_attrs
-      assert json_response(conn, 403)
+      assert json_response(conn, 401)
       refute Repo.get_by(Listing, @valid_attrs)
     end
   end
@@ -252,7 +253,7 @@ defmodule ReWeb.ListingControllerTest do
     test "does not delete resource when user is not authenticated", %{unauthenticated_conn: conn} do
       listing = insert(:listing)
       conn = delete conn, listing_path(conn, :delete, listing)
-      assert response(conn, 403)
+      assert response(conn, 401)
       assert listing = Repo.get(Listing, listing.id)
       assert listing.is_active
     end

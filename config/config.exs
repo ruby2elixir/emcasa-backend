@@ -24,7 +24,7 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-config :guardian, Guardian,
+config :re, ReWeb.Guardian,
   allowed_algos: ["HS256"],
   issuer: "Re",
   ttl: { 30, :days },

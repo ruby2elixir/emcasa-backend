@@ -1,6 +1,10 @@
 defmodule ReWeb.ErrorView do
   use ReWeb, :view
 
+  def render("401.json", error) do
+    %{errors: %{detail: "Unauthenticated"}}
+  end
+
   def render("404.json", _assigns) do
     %{errors: %{detail: "Page not found"}}
   end
