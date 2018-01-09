@@ -1,4 +1,7 @@
 defmodule ReWeb.GuardianPipeline do
+  @moduledoc """
+  Module to define guardian related plugs into a pipeline
+  """
   @claims %{typ: "access"}
 
   use Guardian.Plug.Pipeline, otp_app: :re,

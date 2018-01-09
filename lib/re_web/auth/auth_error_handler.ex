@@ -1,4 +1,7 @@
 defmodule ReWeb.Guardian.AuthErrorHandler do
+  @moduledoc """
+  Module to handle authentication error
+  """
   use ReWeb, :controller
 
   def auth_error(conn, {:unauthenticated, _reason}, _opts) do

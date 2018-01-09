@@ -31,7 +31,7 @@ defmodule ReWeb.UserController do
   def create(conn, %{"user" => user_params}) do
     case Auth.register(user_params) do
       {:ok, user} ->
-        {:ok, jwt, _full_claims} = user |> Guardian.encode_and_sign()
+        {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
 
         conn
         |> put_status(:created)
