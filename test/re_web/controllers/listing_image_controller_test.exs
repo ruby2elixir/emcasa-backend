@@ -3,16 +3,15 @@ defmodule ReWeb.ListingImageControllerTest do
 
   import Re.Factory
 
-  alias Re.{Image}
+  alias Re.Image
+  alias ReWeb.Guardian
 
   @valid_attrs %{filename: "filename.jpg", position: 1}
 
   setup %{conn: conn} do
     user = insert(:user)
     {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
-    conn =
-      conn
-      |> put_req_header("accept", "application/json")
+    conn = put_req_header(conn, "accept", "application/json")
 
     authenticated_conn = put_req_header(conn, "authorization", "Token #{jwt}")
     {:ok, authenticated_conn: authenticated_conn, unauthenticated_conn: conn}
@@ -46,7 +45,7 @@ defmodule ReWeb.ListingImageControllerTest do
       listing = insert(:listing, images: [image], address: address)
 
       conn = get conn, listing_image_path(conn, :index, listing)
-      json_response(conn, 403)
+      json_response(conn, 401)
     end
   end
 
@@ -62,7 +61,7 @@ defmodule ReWeb.ListingImageControllerTest do
     test "fails if not authenticated", %{unauthenticated_conn: conn} do
       listing = insert(:listing)
       conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
-      json_response(conn, 403)
+      json_response(conn, 401)
     end
 
     test "insert with lowest position", %{authenticated_conn: conn} do
@@ -89,7 +88,7 @@ defmodule ReWeb.ListingImageControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image])
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
-      json_response(conn, 403)
+      json_response(conn, 401)
     end
   end
 end

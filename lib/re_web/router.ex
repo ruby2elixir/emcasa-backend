@@ -9,23 +9,32 @@ defmodule ReWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
+  pipeline :public_api do
     plug :accepts, ["json"]
-    plug Guardian.Plug.VerifyHeader, realm: "Token"
-    plug Guardian.Plug.LoadResource
+  end
+
+  pipeline :private_api do
+    plug :accepts, ["json"]
+    plug ReWeb.GuardianPipeline
   end
 
   scope "/", ReWeb do
-    pipe_through :api
+    pipe_through :public_api
 
+    resources "/neighborhoods", NeighborhoodController, only: [:index]
+    resources "/listings", ListingController, only: [:index, :show]
+    resources "/listings_users", ListingUserController, only: [:create]
     post "/users/login", SessionController, :create
+  end
+
+  scope "/", ReWeb do
+    pipe_through :private_api
+
     resources "/listings", ListingController, except: [:new] do
       resources "/images", ImageController, only: [:index, :create, :delete]
     end
     put "/listings/:listing_id/image_order", ListingController, :order
-    resources "/neighborhoods", NeighborhoodController, only: [:index]
     resources "/users", UserController, except: [:new, :edit, :create]
-    resources "/listings_users", ListingUserController, only: [:create]
   end
 
   if Mix.env == :dev do

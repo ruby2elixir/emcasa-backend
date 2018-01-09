@@ -2,11 +2,12 @@ defmodule ReWeb.SessionController do
   use ReWeb, :controller
 
   alias Re.Accounts.Auth
+  alias ReWeb.Guardian
 
   def create(conn, params) do
     case Auth.find_user_and_check_password(params) do
       {:ok, user} ->
-        {:ok, jwt, _full_claims} = user |> Guardian.encode_and_sign(:token)
+        {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
 
         conn
         |> put_status(:created)

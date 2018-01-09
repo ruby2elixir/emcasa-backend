@@ -9,7 +9,7 @@ config :re, ReWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-config :guardian, Guardian,
+config :re, ReWeb.Guardian,
   allowed_algos: ["ES512"],
   secret_key: %{
     "alg" => "ES512",

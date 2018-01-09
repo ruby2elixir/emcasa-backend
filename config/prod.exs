@@ -20,7 +20,7 @@ config :re, ReWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :guardian, Guardian,
+config :re, ReWeb.Guardian,
   allowed_algos: ["ES512"],
   secret_key: %{
     "alg" => "ES512",

@@ -10,7 +10,7 @@ use Mix.Config
 # JOSE.JWS.generate_key(%{"alg" => "ES512"}) |> JOSE.JWK.to_map |> elem(1)
 #  and copy the hashes for "d", "x", and "y".
 
-config :guardian, Guardian,
+config :re, ReWeb.Guardian,
   allowed_algos: ["ES512"],
   secret_key: %{
     "alg" => "ES512",
