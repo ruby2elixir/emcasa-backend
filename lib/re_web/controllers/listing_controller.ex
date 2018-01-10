@@ -1,5 +1,6 @@
 defmodule ReWeb.ListingController do
   use ReWeb, :controller
+  use ReWeb.GuardedController
 
   alias Re.{
     Addresses,
@@ -9,7 +10,7 @@ defmodule ReWeb.ListingController do
 
   action_fallback ReWeb.FallbackController
 
-  def index(conn, params) do
+  def index(conn, params, _user) do
     page = Listings.paginated(params)
     render(conn, "index.json",
       listings: page.entries,
@@ -20,7 +21,7 @@ defmodule ReWeb.ListingController do
     )
   end
 
-  def create(conn, %{"listing" => listing_params, "address" => address_params}) do
+  def create(conn, %{"listing" => listing_params, "address" => address_params}, _user) do
     with {:ok, address} <- Addresses.find_or_create(address_params),
          {:ok, listing} <- Listings.insert(listing_params, address.id)
       do
@@ -30,19 +31,19 @@ defmodule ReWeb.ListingController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
+  def show(conn, %{"id" => id}, _user) do
     with {:ok, listing} <- Listings.get(id),
          {:ok, listing} <- Listings.preload(listing),
       do: render(conn, "show.json", listing: listing)
   end
 
-  def edit(conn, %{"id" => id}) do
+  def edit(conn, %{"id" => id}, _user) do
     with {:ok, listing} <- Listings.get(id),
          {:ok, listing} <- Listings.preload(listing),
       do: render(conn, "edit.json", listing: listing)
   end
 
-  def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}) do
+  def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, _user) do
     with {:ok, listing} <- Listings.get(id),
          {:ok, listing} <- Listings.preload(listing),
          {:ok, address} <- Addresses.update(listing, address_params),
@@ -50,13 +51,13 @@ defmodule ReWeb.ListingController do
       do: render(conn, "edit.json", listing: listing)
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id}, _user) do
     with {:ok, listing} <- Listings.get(id),
          {:ok, _listing} <- Listings.delete(listing),
       do: send_resp(conn, :no_content, "")
   end
 
-  def order(conn, %{"listing_id" => id, "images" => images_params}) do
+  def order(conn, %{"listing_id" => id, "images" => images_params}, _user) do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Images.update_per_listing(listing, images_params),
       do: send_resp(conn, :no_content, "")
