@@ -8,7 +8,8 @@ defmodule Re.Factory do
   def user_factory do
     %Re.User {
       email: "user@example.com",
-      password: "password"
+      password: "password",
+      role: "admin"
     }
   end
 

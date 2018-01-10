@@ -18,7 +18,7 @@ defmodule Re.User do
 
   @required ~w(name email password role)
   @optional ~w(phone)a
-  @roles ~w(admin)
+  @roles ~w(admin user)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.

@@ -43,6 +43,7 @@ defmodule Re.Mixfile do
      {:ex_machina, "~> 2.0", only: :test},
      {:swoosh, "~> 0.12.0"},
      {:scrivener_ecto, "~> 1.0"},
+     {:bodyguard, "~> 2.1"},
    ]
   end
 
