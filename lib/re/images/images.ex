@@ -11,6 +11,8 @@ defmodule Re.Images do
   }
   alias Ecto.Changeset
 
+  defdelegate authorize(action, user, params), to: Re.Images.Policy
+
   def all(listing_id) do
     q = from i in Image,
       where: i.listing_id == ^listing_id,

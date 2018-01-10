@@ -9,16 +9,16 @@ defmodule ReWeb.ListingImageControllerTest do
   @valid_attrs %{filename: "filename.jpg", position: 1}
 
   setup %{conn: conn} do
-    user = insert(:user)
-    {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
     conn = put_req_header(conn, "accept", "application/json")
-
-    authenticated_conn = put_req_header(conn, "authorization", "Token #{jwt}")
-    {:ok, authenticated_conn: authenticated_conn, unauthenticated_conn: conn}
+    {:ok,
+      unauthenticated_conn: conn,
+      admin_conn: login_as(conn, insert(:user, email: "admin@email.com", role: "admin")),
+      user_conn: login_as(conn, insert(:user, email: "user@email.com", role: "user"))
+    }
   end
 
   describe "index" do
-    test "lists all images for a listing", %{authenticated_conn: conn} do
+    test "lists all images for a listing", %{admin_conn: conn} do
       address = insert(:address)
       image1 = insert(:image, position: 2)
       image2 = insert(:image, position: 1)
@@ -47,10 +47,19 @@ defmodule ReWeb.ListingImageControllerTest do
       conn = get conn, listing_image_path(conn, :index, listing)
       json_response(conn, 401)
     end
+
+    test "don't list images for not admin", %{user_conn: conn} do
+      address = insert(:address)
+      image = insert(:image)
+      listing = insert(:listing, images: [image], address: address)
+
+      conn = get conn, listing_image_path(conn, :index, listing)
+      json_response(conn, 403)
+    end
   end
 
   describe "create" do
-    test "successfully if authenticated", %{authenticated_conn: conn} do
+    test "successfully if authenticated", %{admin_conn: conn} do
       listing = insert(:listing)
       conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
       response = json_response(conn, 201)
@@ -64,7 +73,13 @@ defmodule ReWeb.ListingImageControllerTest do
       json_response(conn, 401)
     end
 
-    test "insert with lowest position", %{authenticated_conn: conn} do
+    test "fails if not admin", %{user_conn: conn} do
+      listing = insert(:listing)
+      conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
+      json_response(conn, 403)
+    end
+
+    test "insert with lowest position", %{admin_conn: conn} do
       image1 = insert(:image, %{position: 1})
       image2 = insert(:image, %{position: 2})
       listing = insert(:listing, images: [image1, image2])
@@ -76,7 +91,7 @@ defmodule ReWeb.ListingImageControllerTest do
   end
 
   describe "delete" do
-    test "successfully if authenticated", %{authenticated_conn: conn} do
+    test "successfully if authenticated", %{admin_conn: conn} do
       image = insert(:image)
       listing = insert(:listing, images: [image])
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
@@ -89,6 +104,13 @@ defmodule ReWeb.ListingImageControllerTest do
       listing = insert(:listing, images: [image])
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
       json_response(conn, 401)
+    end
+
+    test "fails if not admin", %{user_conn: conn} do
+      image = insert(:image)
+      listing = insert(:listing, images: [image])
+      conn = delete conn, listing_image_path(conn, :delete, listing, image)
+      json_response(conn, 403)
     end
   end
 end
