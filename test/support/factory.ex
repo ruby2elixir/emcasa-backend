@@ -9,7 +9,7 @@ defmodule Re.Factory do
     %Re.User {
       email: "user@example.com",
       password: "password",
-      role: "admin"
+      role: "user"
     }
   end
 
