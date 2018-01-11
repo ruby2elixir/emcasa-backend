@@ -2,6 +2,7 @@ defmodule Re.Listings do
   @moduledoc """
   Context for listings.
   """
+  @behaviour Bodyguard.Policy
 
   import Ecto.Query
 
@@ -13,6 +14,8 @@ defmodule Re.Listings do
     Repo
   }
   alias Ecto.Changeset
+
+  defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
   @active_listings_query from l in Listing, where: l.is_active == true
   @order_by_position from i in Image, order_by: i.position

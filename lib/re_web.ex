@@ -26,6 +26,7 @@ defmodule ReWeb do
 
       import ReWeb.Router.Helpers
       import ReWeb.Gettext
+      import Bodyguard
     end
   end
 

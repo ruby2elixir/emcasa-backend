@@ -29,6 +29,14 @@ defmodule ReWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint ReWeb.Endpoint
+
+      alias ReWeb.Guardian
+
+      def login_as(conn, user) do
+        {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
+
+        put_req_header(conn, "authorization", "Token #{jwt}")
+      end
     end
   end
 
@@ -41,4 +49,5 @@ defmodule ReWeb.ConnCase do
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
 end
