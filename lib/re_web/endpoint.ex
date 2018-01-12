@@ -10,7 +10,6 @@ defmodule ReWeb.Endpoint do
   end
 
   plug Plug.RequestId
-  plug Plug.Logger
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
@@ -29,6 +28,11 @@ defmodule ReWeb.Endpoint do
     signing_salt: "BJUIPFWh"
 
   plug CORSPlug
+
+  # Add Timber plugs for capturing HTTP context and events
+  plug Timber.Integrations.SessionContextPlug
+  plug Timber.Integrations.HTTPContextPlug
+  plug Timber.Integrations.EventPlug
 
   plug ReWeb.Router
 end

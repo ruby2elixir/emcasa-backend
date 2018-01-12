@@ -18,7 +18,7 @@ defmodule ReWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: ReWeb
+      use Phoenix.Controller, log: false, namespace: ReWeb
 
       alias Re.Repo
       import Ecto
@@ -53,7 +53,7 @@ defmodule ReWeb do
 
   def channel do
     quote do
-      use Phoenix.Channel
+      use Phoenix.Channel, log_join: false, log_handle_in: false
 
       alias Re.Repo
       import Ecto
