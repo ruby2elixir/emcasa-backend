@@ -45,9 +45,14 @@ defmodule Re.Listings do
 
   def preload(listing), do: {:ok, Repo.preload(listing, [:address, images: @order_by_position])}
 
-  def insert(listing_params, address_id) do
+  def insert(listing_params, address_id, user_id) do
+    listing_params =
+      listing_params
+      |> Map.put("address_id", address_id)
+      |> Map.put("user_id", user_id)
+
     %Listing{}
-    |> Listing.changeset(Map.put(listing_params, "address_id", address_id))
+    |> Listing.changeset(listing_params)
     |> Repo.insert()
   end
 
