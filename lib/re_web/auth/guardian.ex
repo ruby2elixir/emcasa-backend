@@ -16,8 +16,7 @@ defmodule ReWeb.Guardian do
   def resource_from_claims(claims) do
     user = Repo.get(User, claims["sub"])
     if user do
-      %Timber.Contexts.UserContext{id: user.id, email: user.email, name: user.name}
-      |> Timber.add_context()
+      Timber.add_context(%Timber.Contexts.UserContext{id: user.id, email: user.email, name: user.name})
     end
 
     {:ok, user}
