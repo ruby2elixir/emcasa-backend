@@ -2,6 +2,7 @@ defmodule Re.ListingsTest do
   use Re.ModelCase
 
   alias Re.{
+    Listing,
     Listings
   }
 
@@ -48,6 +49,28 @@ defmodule Re.ListingsTest do
 
       {:ok, listing} = Listings.delete(listing)
       refute listing.is_active
+    end
+  end
+
+  describe "insert/2" do
+    test "should insert with description size bigger than 255" do
+      address = insert(:address)
+      listing_params = %{
+        "type" => "Apartamento",
+        "complement" => "100",
+        "description" => String.duplicate("a", 256),
+        "price" => 1_000_000,
+        "floor" => "3",
+        "rooms" => 3,
+        "bathrooms" => 2,
+        "garage_spots" => 1,
+        "area" => 100,
+        "score" => 3,
+        "is_active" => true
+      }
+
+      assert {:ok, listing} = Listings.insert(listing_params, address.id)
+      assert Repo.get(Listing, listing.id)
     end
   end
 
