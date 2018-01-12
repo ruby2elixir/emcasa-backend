@@ -4,7 +4,8 @@ defmodule ReWeb.ListingControllerTest do
   alias Re.{
     Address,
     Listing,
-    Image
+    Image,
+    User
   }
   alias ReWeb.Guardian
 
@@ -268,8 +269,10 @@ defmodule ReWeb.ListingControllerTest do
 
     test "does not create resource when user is not admin", %{user_conn: conn} do
       conn = post(conn, listing_path(conn, :create), %{listing: @valid_attrs, address: @valid_address_attrs})
-      json_response(conn, 403)
-      refute Repo.get_by(Listing, @valid_attrs)
+      json_response(conn, 201)
+      user = Repo.get_by(User, email: "user@email.com")
+      assert listing = Repo.get_by(Listing, @valid_attrs)
+      assert listing.user_id == user.id
     end
   end
 

@@ -55,7 +55,7 @@ defmodule Re.ListingsTest do
   describe "insert/2" do
     test "should insert with description size bigger than 255" do
       address = insert(:address)
-      user = insert(:user)
+      user = insert(:user, role: "user")
       listing_params = %{
         "type" => "Apartamento",
         "complement" => "100",
