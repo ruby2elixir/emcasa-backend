@@ -43,3 +43,6 @@ config :re, Re.Mailer,
   api_key: "SG.x.x"
 
 import_config "#{Mix.env}.exs"
+
+# Import Timber, structured logging
+import_config "timber.exs"
