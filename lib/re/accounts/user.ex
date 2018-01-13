@@ -13,6 +13,8 @@ defmodule Re.User do
     field :password, :string
     field :role, :string
 
+    has_many :listings, Re.Listing
+
     timestamps()
   end
 

@@ -29,7 +29,13 @@ defmodule Re.ListingTest do
 
   test "changeset with valid attributes" do
     address = insert(:address)
-    changeset = Listing.changeset(%Listing{}, @valid_attrs |> Map.put(:address_id, address.id))
+    user = insert(:user)
+    attrs =
+      @valid_attrs
+      |> Map.put(:address_id, address.id)
+      |> Map.put(:user_id, user.id)
+
+    changeset = Listing.changeset(%Listing{}, attrs)
     assert changeset.valid?
   end
 

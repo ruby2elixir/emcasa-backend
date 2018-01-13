@@ -19,7 +19,9 @@ defmodule Re.Listing do
     field :score, :integer
     field :matterport_code, :string
     field :is_active, :boolean
+
     belongs_to :address, Re.Address
+    belongs_to :user, Re.User
     has_many :images, Re.Image
 
     timestamps()
@@ -31,7 +33,7 @@ defmodule Re.Listing do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, ~w(type complement description price floor rooms bathrooms
-      area garage_spots score matterport_code is_active address_id)a)
+      area garage_spots score matterport_code is_active address_id user_id)a)
     |> validate_required(~w(type complement description price floor rooms
       bathrooms area garage_spots score address_id)a)
     |> validate_number(:price, greater_than_or_equal_to: 0)

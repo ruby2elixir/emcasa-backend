@@ -55,6 +55,7 @@ defmodule Re.ListingsTest do
   describe "insert/2" do
     test "should insert with description size bigger than 255" do
       address = insert(:address)
+      user = insert(:user, role: "user")
       listing_params = %{
         "type" => "Apartamento",
         "complement" => "100",
@@ -69,8 +70,10 @@ defmodule Re.ListingsTest do
         "is_active" => true
       }
 
-      assert {:ok, listing} = Listings.insert(listing_params, address.id)
-      assert Repo.get(Listing, listing.id)
+      assert {:ok, listing} = Listings.insert(listing_params, address.id, user.id)
+      assert listing = Repo.get(Listing, listing.id)
+      assert listing.address_id == address.id
+      assert listing.user_id == user.id
     end
   end
 
