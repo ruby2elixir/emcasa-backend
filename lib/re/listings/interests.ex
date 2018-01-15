@@ -9,7 +9,6 @@ defmodule Re.Listings.Interests do
   }
 
   def show_interest(params) do
-    IO.inspect params
     %Interest{}
     |> Interest.changeset(params)
     |> Repo.insert()
