@@ -15,7 +15,8 @@ defmodule ReWeb.InterestControllerTest do
   describe "create" do
     test "show interest in listing", %{conn: conn} do
       listing = insert(:listing)
-      conn = dispatch(conn, @endpoint, "post", "/listings_users", %{user: @params, listing: %{id: listing.id}})
+      params = Map.put(@params, :listing_id, listing.id)
+      conn = dispatch(conn, @endpoint, "post", "/interests", %{interest: params})
       response = json_response(conn, 201)
 
       interest_id = response["data"]["id"]
