@@ -23,7 +23,7 @@ defmodule ReWeb.Router do
 
     resources "/neighborhoods", NeighborhoodController, only: [:index]
     resources "/listings", ListingController, only: [:index, :show]
-    resources "/listings_users", ListingUserController, only: [:create]
+    resources "/interests", InterestController, only: [:create]
     post "/users/login", SessionController, :create
   end
 
