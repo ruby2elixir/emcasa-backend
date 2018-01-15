@@ -102,6 +102,7 @@ defmodule ReWeb.ListingControllerTest do
           "area" => listing.area,
           "garage_spots" => listing.garage_spots,
           "matterport_code" => listing.matterport_code,
+          "user_id" => listing.user_id,
           "images" => [%{
             "id" => image.id,
             "filename" => image.filename,
@@ -137,6 +138,7 @@ defmodule ReWeb.ListingControllerTest do
           "area" => listing.area,
           "garage_spots" => listing.garage_spots,
           "matterport_code" => listing.matterport_code,
+          "user_id" => listing.user_id,
           "images" => [%{
             "id" => image.id,
             "filename" => image.filename,
