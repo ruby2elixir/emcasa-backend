@@ -46,6 +46,7 @@ defmodule ReWeb.ListingView do
         lat: listing.address.lat,
         lng: listing.address.lng
       },
+      user_id: listing.user_id,
       images: render_many(listing.images, ReWeb.ImageView, "image.json")
     }
   end

@@ -17,10 +17,14 @@ defmodule ReWeb.ListingControllerTest do
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
+    admin_user = insert(:user, email: "admin@email.com", role: "admin")
+    user_user = insert(:user, email: "user@email.com", role: "user")
     {:ok,
       unauthenticated_conn: conn,
-      admin_conn: login_as(conn, insert(:user, email: "admin@email.com", role: "admin")),
-      user_conn: login_as(conn, insert(:user, email: "user@email.com", role: "user"))
+      admin_user: admin_user,
+      user_user: user_user,
+      admin_conn: login_as(conn, admin_user),
+      user_conn: login_as(conn, user_user)
     }
   end
 
@@ -85,10 +89,10 @@ defmodule ReWeb.ListingControllerTest do
   end
 
   describe "show" do
-    test "resource for admin user", %{admin_conn: conn} do
+    test "resource for admin user", %{admin_conn: conn, admin_user: admin_user} do
       address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address)
+      listing = insert(:listing, images: [image], address: address, user: admin_user)
       conn = get conn, listing_path(conn, :show, listing)
       assert json_response(conn, 200)["listing"] ==
         %{
@@ -102,6 +106,7 @@ defmodule ReWeb.ListingControllerTest do
           "area" => listing.area,
           "garage_spots" => listing.garage_spots,
           "matterport_code" => listing.matterport_code,
+          "user_id" => listing.user_id,
           "images" => [%{
             "id" => image.id,
             "filename" => image.filename,
@@ -120,10 +125,10 @@ defmodule ReWeb.ListingControllerTest do
         }
     end
 
-    test "resource for non user", %{user_conn: conn} do
+    test "resource for non user", %{user_conn: conn, admin_user: admin_user} do
       address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address)
+      listing = insert(:listing, images: [image], address: address, user: admin_user)
       conn = get conn, listing_path(conn, :show, listing)
       assert json_response(conn, 200)["listing"] ==
         %{
@@ -137,6 +142,7 @@ defmodule ReWeb.ListingControllerTest do
           "area" => listing.area,
           "garage_spots" => listing.garage_spots,
           "matterport_code" => listing.matterport_code,
+          "user_id" => listing.user_id,
           "images" => [%{
             "id" => image.id,
             "filename" => image.filename,
