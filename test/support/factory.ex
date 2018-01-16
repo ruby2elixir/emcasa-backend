@@ -5,13 +5,14 @@ defmodule Re.Factory do
 
   use ExMachina.Ecto, repo: Re.Repo
 
-  alias Faker.{Name, Address, Internet, Pokemon, Lorem.Shakespeare}
+  alias Faker.{Name, Address, Internet, Pokemon, Lorem.Shakespeare, Phone}
   alias Comeonin.Bcrypt
 
   def user_factory do
     %Re.User {
       name: Name.name(),
       email: Internet.email(),
+      phone: Phone.EnUs.phone(),
       password: Bcrypt.hashpwsalt("password"),
       role: "user"
     }
