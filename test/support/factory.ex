@@ -43,8 +43,8 @@ defmodule Re.Factory do
       city: Address.city(),
       state: Address.state_abbr(),
       postal_code: random_postcode(),
-      lat: Address.latitude() |> Float.to_string(),
-      lng: Address.longitude() |> Float.to_string()
+      lat: Float.to_string(Address.latitude()),
+      lng: Float.to_string(Address.longitude())
     }
   end
 
