@@ -13,239 +13,194 @@
 alias Re.{
   Address,
   Image,
+  Listings.Interest,
   Listing,
-  ListingUser,
   Repo,
   User
 }
+alias Comeonin.Bcrypt
 
-Repo.delete_all(ListingUser)
 Repo.delete_all(User)
 Repo.delete_all(Image)
 Repo.delete_all(Listing)
 Repo.delete_all(Address)
+Repo.delete_all(Interest)
 
-Repo.insert! %User {
-  name: "Gustavo Rocha Saiani",
-  email: "gustavo.saiani@emcasa.com",
-  phone: "+55 21 9 9962 2634"
-}
+{:ok, admin1} = Repo.insert(%User{
+  name: "Admin 1",
+  email: "admin1@emcasa.com",
+  phone: "11111111111",
+  password: Bcrypt.hashpwsalt("password"),
+  role: "admin"
+})
 
-Repo.insert! %User {
-  name: "Gustavo Vaz",
-  email: "gustavo.vaz@emcasa.com",
-  phone: "+55 21 9 8123 2634"
-}
+{:ok, admin2} = Repo.insert(%User{
+  name: "Admin 2",
+  email: "admin2@emcasa.com",
+  phone: "22222222222",
+  password: Bcrypt.hashpwsalt("password"),
+  role: "admin"
+})
 
-Repo.insert! %User {
-  name: "Lucas Cardozo",
-  email: "lucas.cardozo@emcasa.com",
-  phone: "+55 21 9 9542 9672"
-}
+{:ok, user1} = Repo.insert(%User{
+  name: "User 1",
+  email: "user1@emcasa.com",
+  phone: "33333333333",
+  password: Bcrypt.hashpwsalt("password"),
+  role: "user"
+})
 
-Repo.insert! %User {
-  name: "Camila Villanueva",
-  email: "camila.villanueva@emcasa.com"
-}
+{:ok, user2} = Repo.insert(%User{
+  name: "User 2",
+  email: "user2@emcasa.com",
+  phone: "4444444444",
+  password: Bcrypt.hashpwsalt("password"),
+  role: "user"
+})
 
-Repo.insert! %Address{
-  street: "Rua Paula Freitas",
-  street_number: "21",
-  neighborhood: "Copacabana",
-  city: "Rio de Janeiro",
-  state: "RJ",
-  postal_code: "22040-010",
-  lat: "-22.9682784",
-  lng: "-43.18275790000001",
-  listings: [
-    %Listing{
-      type: "Apartamento",
-      description: "Apartamento localizado na quadra da praia com vista incrível (8 minutos a pé até o metrô). Todos os ambientes estão reformados e com ar-condicionado split. Excelente para famílias grandes.",
-      floor: "10",
-      price: 3_200_000,
-      area: 303,
-      rooms: 4,
-      bathrooms: 5,
-      garage_spots: 1,
-      score: 3,
-      images: [
-        %Image{
-          filename: "paula-freitas/paula-freitas-0.jpg",
-          position: 1
-        },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-42.jpg",
-        #   position: 2
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-50.jpg",
-        #   position: 3
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-53.jpg",
-        #   position: 4
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-54.jpg",
-        #   position: 5
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-59.jpg",
-        #   position: 6
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-60.jpg",
-        #   position: 7
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-66.jpg",
-        #   position: 8
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-69.jpg",
-        #   position: 9
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-72.jpg",
-        #   position: 10
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-73.jpg",
-        #   position: 11
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-77.jpg",
-        #   position: 12
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-81.jpg",
-        #   position: 13
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-82.jpg",
-        #   position: 14
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-86.jpg",
-        #   position: 15
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-90.jpg",
-        #   position: 16
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-92.jpg",
-        #   position: 17
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-95.jpg",
-        #   position: 18
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-96.jpg",
-        #   position: 19
-        # },
-        # %Image{
-        #   filename: "paula-freitas/paula-freitas-97.jpg",
-        #   position: 20
-        # }
-      ]
-    }
-  ]
-}
+{:ok, address1} = Repo.insert(%Address{
+  street: "Test Street 1",
+  street_number: "1",
+  neighborhood: "Downtown",
+  city: "Test City 1",
+  state: "ST",
+  postal_code: "11111-111",
+  lat: "-10",
+  lng: "-10"
+})
 
-# Repo.insert! %Address{
-#   street: "Rua General Cristóvão Barcelos",
-#   street_number: "25",
-#   neighborhood: "Laranjeiras",
-#   city: "Rio de Janeiro",
-#   state: "RJ",
-#   postal_code: "22245-110",
-#   lat: "-22.940907",
-#   lng: "-43.19132289999999",
-#   listings: [
-#     %Listing{
-#       type: "Apartamento",
-#       description: "Apartamento em prédio novo (7 anos) com piscina, spa, salão de festa e academia, dois quartos (1 suíte), sala em dois ambientes com varanda banheiro de empregada, 1 vaga na escritura.",
-#       floor: "3",
-#       price: 850_000,
-#       area: 75,
-#       rooms: 2,
-#       bathrooms: 2,
-#       garage_spots: 1,
-#       score: 4,
-#       images: [
-#         %Image{
-#           filename: "cristovao-barcelos/principal.jpg",
-#           position: 1
-#         }
-#       ]
-#     }
-#   ]
-# }
 
-# Repo.insert! %Address{
-#   street: "Rua Gago Coutinho",
-#   street_number: "66",
-#   neighborhood: "Laranjeiras",
-#   city: "Rio de Janeiro",
-#   state: "RJ",
-#   postal_code: "22221-070",
-#   lat: "-22.9315194",
-#   lng: "-43.1819802",
-#   listings: [
-#     %Listing{
-#       type: "Apartamento",
-#       description: "Apartamento duplex todo reformado e com decoração impecável, vista livre para o Parque Guinle, próximo à estação do Metrô do Largo do Machado.",
-#       floor: "7",
-#       price: 4_750_000,
-#       area: 280,
-#       rooms: 4,
-#       bathrooms: 2,
-#       garage_spots: 1,
-#       score: 2,
-#       images: [
-#         %Image{
-#           filename: "gago-coutinho/principal.jpg",
-#           position: 1
-#         },
-#         %Image{
-#           filename: "gago-coutinho/61.jpg",
-#           position: 2
-#         },
-#         %Image{
-#           filename: "gago-coutinho/59.jpg",
-#           position: 3
-#         },
-#         %Image{
-#           filename: "gago-coutinho/56.jpg",
-#           position: 4
-#         },
-#         %Image{
-#           filename: "gago-coutinho/54.jpg",
-#           position: 5
-#         },
-#         %Image{
-#           filename: "gago-coutinho/53.jpg",
-#           position: 6
-#         },
-#         %Image{
-#           filename: "gago-coutinho/48.jpg",
-#           position: 7
-#         },
-#         %Image{
-#           filename: "gago-coutinho/42.jpg",
-#           position: 8
-#         },
-#         %Image{
-#           filename: "gago-coutinho/40.jpg",
-#           position: 9
-#         },
-#         %Image{
-#           filename: "gago-coutinho/36.jpg",
-#           position: 10
-#         }
-#       ]
-#     }
-#   ]
-# }
+{:ok, address2} = Repo.insert(%Address{
+  street: "Test Street 2",
+  street_number: "2",
+  neighborhood: "Downtown",
+  city: "Test City 2",
+  state: "ST",
+  postal_code: "22222-222",
+  lat: "-20",
+  lng: "-20"
+})
+
+{:ok, image1} = Repo.insert(%Image{
+  filename: "image1.jpg",
+  position: 1
+})
+
+{:ok, image2} = Repo.insert(%Image{
+  filename: "image2.jpg",
+  position: 2
+})
+
+{:ok, image3} = Repo.insert(%Image{
+  filename: "image3.jpg",
+  position: 3
+})
+
+{:ok, listing1} = Repo.insert(%Listing{
+  type: "Apartment",
+  description: "A description about the listing.",
+  floor: "1",
+  price: 1_000_000,
+  area: 100,
+  rooms: 2,
+  bathrooms: 2,
+  garage_spots: 1,
+  score: 3,
+  images: [image1, image2],
+  user: admin1,
+  address: address1
+})
+
+{:ok, listing2} = Repo.insert(%Listing{
+  type: "House",
+  description: "A description about the listing.",
+  floor: "2",
+  price: 2_000_000,
+  area: 200,
+  rooms: 3,
+  bathrooms: 3,
+  garage_spots: 2,
+  score: 4,
+  images: [image2, image3],
+  user: admin2,
+  address: address2
+})
+
+
+{:ok, listing3} = Repo.insert(%Listing{
+  type: "House",
+  description: "A description about the listing.",
+  floor: "3",
+  price: 3_000_000,
+  area: 300,
+  rooms: 5,
+  bathrooms: 2,
+  garage_spots: 1,
+  score: 4,
+  images: [image1, image3],
+  user: user1,
+  address: address1
+})
+
+
+{:ok, listing4} = Repo.insert(%Listing{
+  type: "House",
+  description: "A description about the listing.",
+  floor: "4",
+  price: 4_000_000,
+  area: 400,
+  rooms: 3,
+  bathrooms: 3,
+  garage_spots: 2,
+  score: 4,
+  images: [image2],
+  user: user1,
+  address: address2
+})
+
+
+{:ok, listing5} = Repo.insert(%Listing{
+  type: "House",
+  description: "A description about the listing.",
+  floor: "2",
+  price: 2_000_000,
+  area: 200,
+  rooms: 3,
+  bathrooms: 3,
+  garage_spots: 2,
+  score: 4,
+  user: user2,
+  address: address2
+})
+
+{:ok, interest1} = Repo.insert(%Interest{
+  name: "Interested Person 1",
+  email: "interested1@email.com",
+  phone: "123212321",
+  message: "Looks like an awesome listing",
+  listing: listing2
+})
+
+{:ok, interest2} = Repo.insert(%Interest{
+  name: "Interested Person 2",
+  email: "interested2@email.com",
+  phone: "321232123",
+  message: "Looks like an awesome listing",
+  listing: listing2
+})
+
+{:ok, interest3} = Repo.insert(%Interest{
+  name: "Interested Person 2",
+  email: "interested2@email.com",
+  phone: "321232123",
+  message: "Looks like an awesome listing",
+  listing: listing3
+})
+
+{:ok, interest4} = Repo.insert(%Interest{
+  name: "Interested Person 3",
+  email: "interested3@email.com",
+  phone: "432112344321",
+  message: "Looks like an awesome listing",
+  listing: listing4
+})
