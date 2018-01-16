@@ -20,6 +20,7 @@ defmodule Re.User do
 
   @required ~w(name email password role)a
   @optional ~w(phone)a
+
   @roles ~w(admin user)
 
   @doc """
