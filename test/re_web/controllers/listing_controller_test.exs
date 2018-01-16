@@ -222,10 +222,18 @@ defmodule ReWeb.ListingControllerTest do
         }
     end
 
-    test "fails for non admin user", %{user_conn: conn} do
+    test "edit if listing belongs to user", %{user_conn: conn, user_user: user} do
       address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address)
+      listing = insert(:listing, images: [image], address: address, user_id: user.id)
+      conn = get conn, listing_path(conn, :edit, listing)
+      assert json_response(conn, 200)
+    end
+
+    test "fails if listing does not belong to user", %{user_conn: conn, admin_user: user} do
+      address = insert(:address)
+      image = insert(:image)
+      listing = insert(:listing, images: [image], address: address, user_id: user.id)
       conn = get conn, listing_path(conn, :edit, listing)
       assert json_response(conn, 403)
     end
@@ -246,11 +254,19 @@ defmodule ReWeb.ListingControllerTest do
   end
 
   describe "create" do
-    test "creates and renders resource when data is valid", %{admin_conn: conn} do
+    test "creates and renders resource as admin", %{admin_conn: conn} do
       conn = post conn, listing_path(conn, :create), listing: @valid_attrs, address: @valid_address_attrs
       response = json_response(conn, 201)
       assert response["listing"]["id"]
       assert Repo.get_by(Listing, @valid_attrs)
+    end
+
+    test "creates and renders resource as user", %{user_conn: conn} do
+      conn = post(conn, listing_path(conn, :create), %{listing: @valid_attrs, address: @valid_address_attrs})
+      json_response(conn, 201)
+      user = Repo.get_by(User, email: "user@email.com")
+      assert listing = Repo.get_by(Listing, @valid_attrs)
+      assert listing.user_id == user.id
     end
 
     test "creates and renders resource with existing address", %{admin_conn: conn} do
@@ -271,14 +287,6 @@ defmodule ReWeb.ListingControllerTest do
       conn = post(conn, listing_path(conn, :create), %{listing: @valid_attrs, address: @valid_address_attrs})
       json_response(conn, 401)
       refute Repo.get_by(Listing, @valid_attrs)
-    end
-
-    test "does not create resource when user is not admin", %{user_conn: conn} do
-      conn = post(conn, listing_path(conn, :create), %{listing: @valid_attrs, address: @valid_address_attrs})
-      json_response(conn, 201)
-      user = Repo.get_by(User, email: "user@email.com")
-      assert listing = Repo.get_by(Listing, @valid_attrs)
-      assert listing.user_id == user.id
     end
   end
 
@@ -307,8 +315,16 @@ defmodule ReWeb.ListingControllerTest do
       refute Repo.get_by(Listing, @valid_attrs)
     end
 
-    test "does not update resource when user is not admin", %{user_conn: conn} do
-      listing = insert(:listing, address: build(:address))
+    test "update resource when listing belongs to user", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing, address: build(:address), user_id: user.id)
+      conn = put conn, listing_path(conn, :update, listing),
+        id: listing.id, listing: @valid_attrs, address: @valid_address_attrs
+      assert json_response(conn, 200)
+      assert Repo.get_by(Listing, @valid_attrs)
+    end
+
+    test "does not update resource when listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
+      listing = insert(:listing, address: build(:address), user_id: user.id)
       conn = put conn, listing_path(conn, :update, listing),
         id: listing.id, listing: @valid_attrs, address: @valid_address_attrs
       assert json_response(conn, 403)
@@ -333,8 +349,16 @@ defmodule ReWeb.ListingControllerTest do
       assert listing.is_active
     end
 
-    test "does not delete resource when user is not admin", %{user_conn: conn} do
-      listing = insert(:listing)
+    test "delete resource when listing belongs to user", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing, user_id: user.id)
+      conn = delete conn, listing_path(conn, :delete, listing)
+      assert response(conn, 204)
+      assert listing = Repo.get(Listing, listing.id)
+      refute listing.is_active
+    end
+
+    test "doest not delete resource when listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
+      listing = insert(:listing, user_id: user.id)
       conn = delete conn, listing_path(conn, :delete, listing)
       assert response(conn, 403)
       assert listing = Repo.get(Listing, listing.id)
@@ -375,8 +399,21 @@ defmodule ReWeb.ListingControllerTest do
       assert json_response(conn, 401)
     end
 
-    test "does not update images order when not admin", %{user_conn: conn} do
-      listing = insert(:listing)
+    test "update images order when listing belongs to user", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing, user_id: user.id)
+      [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
+      image_params = [
+        %{id: id1, position: 2},
+        %{id: id2, position: 3},
+        %{id: id3, position: 1}
+      ]
+      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
+      conn = dispatch(conn, @endpoint, "put", "/listings/#{listing.id}/image_order", images: image_params)
+      assert response(conn, 204)
+    end
+
+    test "does not update images order when listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
+      listing = insert(:listing, user_id: user.id)
       [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
       image_params = [
         %{id: id1, position: 2},

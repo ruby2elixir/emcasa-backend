@@ -10,10 +10,14 @@ defmodule ReWeb.ListingImageControllerTest do
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
+    admin_user = insert(:user, email: "admin@email.com", role: "admin")
+    user_user = insert(:user, email: "user@email.com", role: "user")
     {:ok,
       unauthenticated_conn: conn,
-      admin_conn: login_as(conn, insert(:user, email: "admin@email.com", role: "admin")),
-      user_conn: login_as(conn, insert(:user, email: "user@email.com", role: "user"))
+      admin_user: admin_user,
+      user_user: user_user,
+      admin_conn: login_as(conn, admin_user),
+      user_conn: login_as(conn, user_user)
     }
   end
 
@@ -48,10 +52,19 @@ defmodule ReWeb.ListingImageControllerTest do
       json_response(conn, 401)
     end
 
-    test "don't list images for not admin", %{user_conn: conn} do
+    test "list images if listing belongs to user", %{user_conn: conn, user_user: user} do
       address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address)
+      listing = insert(:listing, images: [image], address: address, user_id: user.id)
+
+      conn = get conn, listing_image_path(conn, :index, listing)
+      json_response(conn, 200)
+    end
+
+    test "does not list images if listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
+      address = insert(:address)
+      image = insert(:image)
+      listing = insert(:listing, images: [image], address: address, user_id: user.id)
 
       conn = get conn, listing_image_path(conn, :index, listing)
       json_response(conn, 403)
@@ -73,8 +86,16 @@ defmodule ReWeb.ListingImageControllerTest do
       json_response(conn, 401)
     end
 
-    test "fails if not admin", %{user_conn: conn} do
-      listing = insert(:listing)
+    test "create image if listing belongs to user", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing, user_id: user.id)
+      conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
+      response = json_response(conn, 201)
+      assert response["image"]["id"]
+      assert Repo.get_by(Image, @valid_attrs)
+    end
+
+    test "does not create image if listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
+      listing = insert(:listing, user_id: user.id)
       conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
       json_response(conn, 403)
     end
@@ -106,9 +127,17 @@ defmodule ReWeb.ListingImageControllerTest do
       json_response(conn, 401)
     end
 
-    test "fails if not admin", %{user_conn: conn} do
+    test "delete image if listing belongs to user", %{user_conn: conn, user_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image])
+      listing = insert(:listing, images: [image], user_id: user.id)
+      conn = delete conn, listing_image_path(conn, :delete, listing, image)
+      response(conn, 204)
+      refute Repo.get(Image, image.id)
+    end
+
+    test "does not delete image if listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
+      image = insert(:image)
+      listing = insert(:listing, images: [image], user_id: user.id)
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
       json_response(conn, 403)
     end
