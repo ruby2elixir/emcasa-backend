@@ -22,11 +22,11 @@ defmodule ReWeb.ListingImageControllerTest do
   end
 
   describe "index" do
-    test "lists all images for a listing", %{admin_conn: conn} do
+    test "lists all images for a listing", %{admin_conn: conn, admin_user: user} do
       address = insert(:address)
       image1 = insert(:image, position: 2)
       image2 = insert(:image, position: 1)
-      listing = insert(:listing, images: [image1, image2], address: address)
+      listing = insert(:listing, images: [image1, image2], address: address, user: user)
 
       conn = get conn, listing_image_path(conn, :index, listing)
       assert json_response(conn, 200)["images"] == [
@@ -43,10 +43,10 @@ defmodule ReWeb.ListingImageControllerTest do
       ]
     end
 
-    test "don't list images for unauthenticated requests", %{unauthenticated_conn: conn} do
+    test "don't list images for unauthenticated requests", %{unauthenticated_conn: conn, admin_user: user} do
       address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address)
+      listing = insert(:listing, images: [image], address: address, user: user)
 
       conn = get conn, listing_image_path(conn, :index, listing)
       json_response(conn, 401)
@@ -55,7 +55,7 @@ defmodule ReWeb.ListingImageControllerTest do
     test "list images if listing belongs to user", %{user_conn: conn, user_user: user} do
       address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address, user_id: user.id)
+      listing = insert(:listing, images: [image], address: address, user: user)
 
       conn = get conn, listing_image_path(conn, :index, listing)
       json_response(conn, 200)
@@ -64,7 +64,7 @@ defmodule ReWeb.ListingImageControllerTest do
     test "does not list images if listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
       address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address, user_id: user.id)
+      listing = insert(:listing, images: [image], address: address, user: user)
 
       conn = get conn, listing_image_path(conn, :index, listing)
       json_response(conn, 403)
@@ -72,22 +72,22 @@ defmodule ReWeb.ListingImageControllerTest do
   end
 
   describe "create" do
-    test "successfully if authenticated", %{admin_conn: conn} do
-      listing = insert(:listing)
+    test "successfully if authenticated", %{admin_conn: conn, admin_user: user} do
+      listing = insert(:listing, user: user)
       conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
       response = json_response(conn, 201)
       assert response["image"]["id"]
       assert Repo.get_by(Image, @valid_attrs)
     end
 
-    test "fails if not authenticated", %{unauthenticated_conn: conn} do
-      listing = insert(:listing)
+    test "fails if not authenticated", %{unauthenticated_conn: conn, admin_user: user} do
+      listing = insert(:listing, user: user)
       conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
       json_response(conn, 401)
     end
 
     test "create image if listing belongs to user", %{user_conn: conn, user_user: user} do
-      listing = insert(:listing, user_id: user.id)
+      listing = insert(:listing, user: user)
       conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
       response = json_response(conn, 201)
       assert response["image"]["id"]
@@ -95,15 +95,15 @@ defmodule ReWeb.ListingImageControllerTest do
     end
 
     test "does not create image if listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
-      listing = insert(:listing, user_id: user.id)
+      listing = insert(:listing, user: user)
       conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
       json_response(conn, 403)
     end
 
-    test "insert with lowest position", %{admin_conn: conn} do
+    test "insert with lowest position", %{admin_conn: conn, admin_user: user} do
       image1 = insert(:image, %{position: 1})
       image2 = insert(:image, %{position: 2})
-      listing = insert(:listing, images: [image1, image2])
+      listing = insert(:listing, images: [image1, image2], user: user)
       conn = post conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs
       response = json_response(conn, 201)
       assert inserted_image = Repo.get(Image, response["image"]["id"])
@@ -112,24 +112,24 @@ defmodule ReWeb.ListingImageControllerTest do
   end
 
   describe "delete" do
-    test "successfully if authenticated", %{admin_conn: conn} do
+    test "successfully if authenticated", %{admin_conn: conn, admin_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image])
+      listing = insert(:listing, images: [image], user: user)
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
       response(conn, 204)
       refute Repo.get(Image, image.id)
     end
 
-    test "fails if not authenticated", %{unauthenticated_conn: conn} do
+    test "fails if not authenticated", %{unauthenticated_conn: conn, admin_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image])
+      listing = insert(:listing, images: [image], user: user)
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
       json_response(conn, 401)
     end
 
     test "delete image if listing belongs to user", %{user_conn: conn, user_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image], user_id: user.id)
+      listing = insert(:listing, images: [image], user: user)
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
       response(conn, 204)
       refute Repo.get(Image, image.id)
@@ -137,7 +137,7 @@ defmodule ReWeb.ListingImageControllerTest do
 
     test "does not delete image if listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image], user_id: user.id)
+      listing = insert(:listing, images: [image], user: user)
       conn = delete conn, listing_image_path(conn, :delete, listing, image)
       json_response(conn, 403)
     end
