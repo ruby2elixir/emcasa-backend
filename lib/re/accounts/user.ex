@@ -18,7 +18,7 @@ defmodule Re.User do
     timestamps()
   end
 
-  @required ~w(name email password role)
+  @required ~w(name email password role)a
   @optional ~w(phone)a
   @roles ~w(admin user)
 
