@@ -46,6 +46,7 @@ defmodule Re.Mixfile do
      {:scrivener_ecto, "~> 1.0"},
      {:bodyguard, "~> 2.1"},
      {:timber, "~> 2.5"},
+     {:faker, "~> 0.9.0", only: :test},
    ]
   end
 
