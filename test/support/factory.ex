@@ -5,49 +5,78 @@ defmodule Re.Factory do
 
   use ExMachina.Ecto, repo: Re.Repo
 
+  alias Faker.{Name, Address, Internet, Pokemon, Lorem.Shakespeare, Phone}
+  alias Comeonin.Bcrypt
+
   def user_factory do
     %Re.User {
-      email: "user@example.com",
-      password: "password",
+      name: Name.name(),
+      email: Internet.email(),
+      phone: Phone.EnUs.phone(),
+      password: Bcrypt.hashpwsalt("password"),
       role: "user"
     }
   end
 
   def listing_factory do
     %Re.Listing {
-      type: "Apartamento",
-      complement: "100",
-      description: "A description",
-      price: 1_000_000,
-      floor: "3",
-      rooms: 3,
-      bathrooms: 2,
-      garage_spots: 1,
-      area: 100,
-      score: 3,
-      matterport_code: "",
+      type: random(:listing_type),
+      complement: Address.secondary_address(),
+      description: Shakespeare.hamlet(),
+      price: random(:price),
+      floor: random(:floor),
+      rooms: Enum.random(1..10),
+      bathrooms: Enum.random(1..10),
+      garage_spots: Enum.random(0..10),
+      area: Enum.random(1..500),
+      score: Enum.random(1..4),
+      matterport_code: Faker.String.base64(),
       is_active: true
     }
   end
 
   def address_factory do
     %Re.Address {
-      street: "Street Name",
-      street_number: "99",
-      neighborhood: "A neighborhood",
-      city: "A City",
-      state: "ST",
-      postal_code: "12345-678",
-      lat: "-25",
-      lng: "35"
+      street: Address.street_name(),
+      street_number: Address.building_number(),
+      neighborhood: Pokemon.location(),
+      city: Address.city(),
+      state: Address.state_abbr(),
+      postal_code: random_postcode(),
+      lat: Float.to_string(Address.latitude()),
+      lng: Float.to_string(Address.longitude())
     }
   end
 
   def image_factory do
     %Re.Image {
-      filename: "image.jpeg",
-      position: 5
+      filename: Internet.image_url(),
+      position: Enum.random(-50..50)
     }
+  end
+
+  defp random_postcode do
+    first =
+      10_000..99_999
+      |> Enum.random()
+      |> Integer.to_string()
+      |> String.pad_leading(5, "0")
+
+    last =
+      100..999
+      |> Enum.random()
+      |> Integer.to_string()
+      |> String.pad_leading(3, "0")
+
+    "#{first}-#{last}"
+  end
+
+  defp random(:listing_type), do: Enum.random ~w(Casa Apartamento Cobertura Porão)
+  defp random(:price), do: Enum.random 1..999_999_999
+  defp random(:floor) do
+    1..50
+    |> Enum.random()
+    |> Integer.to_string()
   end
 
 end

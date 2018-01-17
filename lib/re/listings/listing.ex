@@ -27,15 +27,17 @@ defmodule Re.Listing do
     timestamps()
   end
 
+  @required ~w(type complement description price floor rooms bathrooms
+               area garage_spots score address_id user_id)a
+  @optional ~w(matterport_code is_active)a
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, ~w(type complement description price floor rooms bathrooms
-      area garage_spots score matterport_code is_active address_id user_id)a)
-    |> validate_required(~w(type complement description price floor rooms
-      bathrooms area garage_spots score address_id)a)
+    |> cast(params, @required ++ @optional)
+    |> validate_required(@required)
     |> validate_number(:price, greater_than_or_equal_to: 0)
     |> validate_number(:bathrooms, greater_than_or_equal_to: 0)
     |> validate_number(:garage_spots, greater_than_or_equal_to: 0)

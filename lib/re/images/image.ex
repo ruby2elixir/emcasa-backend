@@ -14,13 +14,16 @@ defmodule Re.Image do
     timestamps()
   end
 
+  @required ~w(filename position)a
+  @optional ~w(listing_id)a
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:filename, :position, :listing_id])
-    |> validate_required([:filename, :position])
+    |> cast(params, @required ++ @optional)
+    |> validate_required(@required)
   end
 
   def position_changeset(struct, params \\ %{}) do

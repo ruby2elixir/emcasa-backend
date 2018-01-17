@@ -21,15 +21,15 @@ defmodule Re.Address do
     timestamps()
   end
 
-  @attr ~w(street street_number neighborhood city state postal_code lat lng)a
+  @required ~w(street street_number neighborhood city state postal_code lat lng)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @attr)
-    |> validate_required(@attr)
+    |> cast(params, @required)
+    |> validate_required(@required)
     |> validate_length(:street, max: 128)
     |> validate_length(:street_number, max: 128)
     |> validate_length(:neighborhood, max: 128)

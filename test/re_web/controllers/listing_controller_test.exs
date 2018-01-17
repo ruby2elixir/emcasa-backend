@@ -4,16 +4,15 @@ defmodule ReWeb.ListingControllerTest do
   alias Re.{
     Address,
     Listing,
-    Image,
-    User
+    Image
   }
   alias ReWeb.Guardian
 
   import Re.Factory
 
-  @valid_attrs %{type: "apto", score: 3, floor: "H1", complement: "basement", bathrooms: 2, description: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3,}
+  @valid_attrs %{type: "apto", score: 3, floor: "H1", complement: "basement", bathrooms: 2, description: "some content", price: 1_000_000, rooms: 4, area: 140, garage_spots: 3}
   @valid_address_attrs %{street: "A Street", street_number: "100", neighborhood: "A Neighborhood", city: "A City", state: "ST", postal_code: "12345-678", lat: "25", lng: "25"}
-  @invalid_attrs %{}
+  @invalid_attrs %{score: 7, bathrooms: -1, price: -1, rooms: -1, area: -1, garage_spots: -1}
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
@@ -29,9 +28,8 @@ defmodule ReWeb.ListingControllerTest do
   end
 
   describe "index" do
-    test "admin user", %{admin_conn: conn} do
-      address = insert(:address)
-      listing = insert(:listing, address: address)
+    test "admin user", %{admin_conn: conn, admin_user: user} do
+      listing = insert(:listing, address: build(:address), user: user)
 
       conn = get conn, listing_path(conn, :index)
 
@@ -40,9 +38,8 @@ defmodule ReWeb.ListingControllerTest do
       assert retrieved_listing["description"] == listing.description
     end
 
-    test "not admin user", %{user_conn: conn} do
-      address = insert(:address)
-      listing = insert(:listing, address: address)
+    test "not admin user", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing, address: build(:address), user: user)
 
       conn = get conn, listing_path(conn, :index)
 
@@ -51,12 +48,11 @@ defmodule ReWeb.ListingControllerTest do
       assert retrieved_listing["description"] == listing.description
     end
 
-    test "filters by neighborhood", %{admin_conn: conn} do
-      address = insert(:address)
-      insert(:listing, address: address)
+    test "filters by neighborhood", %{admin_conn: conn, admin_user: user} do
+      insert(:listing, address: build(:address), user: user)
 
       address2 = insert(:address, postal_code: "12345", neighborhood: "Another neighborhood")
-      listing2 = insert(:listing, address: address2, description: "Another description")
+      listing2 = insert(:listing, address: address2, description: "Another description", user: user)
       conn = get conn, listing_path(conn, :index, neighborhood: address2.neighborhood)
 
       listings = json_response(conn, 200)["listings"]
@@ -66,9 +62,8 @@ defmodule ReWeb.ListingControllerTest do
       assert retrieved_listing["description"] == listing2.description
     end
 
-    test "paginated query", %{admin_conn: conn} do
-      address = insert(:address)
-      insert_list(5, :listing, address: address)
+    test "paginated query", %{admin_conn: conn, admin_user: user} do
+      insert_list(5, :listing, address: insert(:address), user: user)
 
       conn = get conn, listing_path(conn, :index, %{page_size: 2, page: 1})
 
@@ -89,10 +84,9 @@ defmodule ReWeb.ListingControllerTest do
   end
 
   describe "show" do
-    test "resource for admin user", %{admin_conn: conn, admin_user: admin_user} do
-      address = insert(:address)
+    test "resource for admin user", %{admin_conn: conn, admin_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address, user: admin_user)
+      listing = insert(:listing, images: [image], address: build(:address), user: user)
       conn = get conn, listing_path(conn, :show, listing)
       assert json_response(conn, 200)["listing"] ==
         %{
@@ -125,10 +119,10 @@ defmodule ReWeb.ListingControllerTest do
         }
     end
 
-    test "resource for non user", %{user_conn: conn, admin_user: admin_user} do
+    test "resource for non user", %{user_conn: conn, admin_user: user} do
       address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address, user: admin_user)
+      listing = insert(:listing, images: [image], address: address, user: user)
       conn = get conn, listing_path(conn, :show, listing)
       assert json_response(conn, 200)["listing"] ==
         %{
@@ -161,10 +155,9 @@ defmodule ReWeb.ListingControllerTest do
         }
     end
 
-    test "do not show inactive listing", %{admin_conn: conn} do
-      address = insert(:address)
+    test "do not show inactive listing", %{admin_conn: conn, admin_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address, is_active: false)
+      listing = insert(:listing, images: [image], address: build(:address), is_active: false, user: user)
       conn = get conn, listing_path(conn, :show, listing)
       json_response(conn, 404)
     end
@@ -174,10 +167,9 @@ defmodule ReWeb.ListingControllerTest do
       json_response(conn, 404)
     end
 
-    test "list listing for unauthenticated requests even if not authenticated", %{unauthenticated_conn: conn} do
-      address = insert(:address)
+    test "list listing for unauthenticated requests even if not authenticated", %{unauthenticated_conn: conn, admin_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address)
+      listing = insert(:listing, images: [image], address: build(:address), user: user)
 
       conn = get conn, listing_path(conn, :show, listing)
       json_response(conn, 200)
@@ -185,10 +177,9 @@ defmodule ReWeb.ListingControllerTest do
   end
 
   describe "edit" do
-    test "edits chosen resource", %{admin_conn: conn} do
-      address = insert(:address)
+    test "edits chosen resource", %{admin_conn: conn, admin_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address)
+      listing = insert(:listing, images: [image], address: build(:address), user: user)
       conn = get conn, listing_path(conn, :edit, listing)
       assert json_response(conn, 200)["listing"] ==
         %{
@@ -223,17 +214,15 @@ defmodule ReWeb.ListingControllerTest do
     end
 
     test "edit if listing belongs to user", %{user_conn: conn, user_user: user} do
-      address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address, user_id: user.id)
+      listing = insert(:listing, images: [image], address: build(:address), user: user)
       conn = get conn, listing_path(conn, :edit, listing)
       assert json_response(conn, 200)
     end
 
     test "fails if listing does not belong to user", %{user_conn: conn, admin_user: user} do
-      address = insert(:address)
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address, user_id: user.id)
+      listing = insert(:listing, images: [image], address: build(:address), user: user)
       conn = get conn, listing_path(conn, :edit, listing)
       assert json_response(conn, 403)
     end
@@ -243,10 +232,9 @@ defmodule ReWeb.ListingControllerTest do
       json_response(conn, 404)
     end
 
-    test "does not list listing for unauthenticated requests even if not authenticated", %{unauthenticated_conn: conn} do
-      address = insert(:address)
+    test "does not list listing for unauthenticated requests even if not authenticated", %{unauthenticated_conn: conn, admin_user: user} do
       image = insert(:image)
-      listing = insert(:listing, images: [image], address: address)
+      listing = insert(:listing, images: [image], address: build(:address), user: user)
 
       conn = get conn, listing_path(conn, :edit, listing)
       json_response(conn, 401)
@@ -254,17 +242,17 @@ defmodule ReWeb.ListingControllerTest do
   end
 
   describe "create" do
-    test "creates and renders resource as admin", %{admin_conn: conn} do
+    test "creates and renders resource as admin", %{admin_conn: conn, admin_user: user} do
       conn = post conn, listing_path(conn, :create), listing: @valid_attrs, address: @valid_address_attrs
       response = json_response(conn, 201)
       assert response["listing"]["id"]
-      assert Repo.get_by(Listing, @valid_attrs)
+      assert listing = Repo.get_by(Listing, @valid_attrs)
+      assert listing.user_id == user.id
     end
 
-    test "creates and renders resource as user", %{user_conn: conn} do
+    test "creates and renders resource as user", %{user_conn: conn, user_user: user} do
       conn = post(conn, listing_path(conn, :create), %{listing: @valid_attrs, address: @valid_address_attrs})
       json_response(conn, 201)
-      user = Repo.get_by(User, email: "user@email.com")
       assert listing = Repo.get_by(Listing, @valid_attrs)
       assert listing.user_id == user.id
     end
@@ -281,6 +269,7 @@ defmodule ReWeb.ListingControllerTest do
     test "does not create resource and renders errors when data is invalid", %{admin_conn: conn} do
       conn = post(conn, listing_path(conn, :create), %{listing: @invalid_attrs, address: @valid_address_attrs})
       assert json_response(conn, 422)["errors"] != %{}
+      assert Repo.all(Listing) == []
     end
 
     test "does not create resource when user is not authenticated", %{unauthenticated_conn: conn} do
@@ -291,17 +280,16 @@ defmodule ReWeb.ListingControllerTest do
   end
 
   describe "update" do
-    test "updates and renders chosen resource when data is valid", %{admin_conn: conn} do
-      listing = insert(:listing, address: build(:address))
+    test "updates and renders chosen resource when data is valid", %{admin_conn: conn, admin_user: user} do
+      listing = insert(:listing, address: build(:address), user: user)
       conn = put conn, listing_path(conn, :update, listing),
         id: listing.id, listing: @valid_attrs, address: @valid_address_attrs
       assert json_response(conn, 200)["listing"]["id"]
       assert Repo.get_by(Listing, @valid_attrs)
     end
 
-    test "does not update chosen resource and renders errors when data is invalid", %{admin_conn: conn} do
-      address = Repo.insert! %Re.Address{}
-      listing = Repo.insert! %Listing{address_id: address.id}
+    test "does not update chosen resource and renders errors when data is invalid", %{admin_conn: conn, admin_user: user} do
+      listing = insert(:listing, address: build(:address), user: user)
 
       conn = put(conn, listing_path(conn, :update, listing), %{id: listing.id, listing: @invalid_attrs, address: @valid_address_attrs})
       assert json_response(conn, 422)["errors"] != %{}
@@ -316,7 +304,7 @@ defmodule ReWeb.ListingControllerTest do
     end
 
     test "update resource when listing belongs to user", %{user_conn: conn, user_user: user} do
-      listing = insert(:listing, address: build(:address), user_id: user.id)
+      listing = insert(:listing, address: build(:address), user: user)
       conn = put conn, listing_path(conn, :update, listing),
         id: listing.id, listing: @valid_attrs, address: @valid_address_attrs
       assert json_response(conn, 200)
@@ -324,7 +312,7 @@ defmodule ReWeb.ListingControllerTest do
     end
 
     test "does not update resource when listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
-      listing = insert(:listing, address: build(:address), user_id: user.id)
+      listing = insert(:listing, address: build(:address), user: user)
       conn = put conn, listing_path(conn, :update, listing),
         id: listing.id, listing: @valid_attrs, address: @valid_address_attrs
       assert json_response(conn, 403)
@@ -350,7 +338,7 @@ defmodule ReWeb.ListingControllerTest do
     end
 
     test "delete resource when listing belongs to user", %{user_conn: conn, user_user: user} do
-      listing = insert(:listing, user_id: user.id)
+      listing = insert(:listing, user: user)
       conn = delete conn, listing_path(conn, :delete, listing)
       assert response(conn, 204)
       assert listing = Repo.get(Listing, listing.id)
@@ -358,7 +346,7 @@ defmodule ReWeb.ListingControllerTest do
     end
 
     test "doest not delete resource when listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
-      listing = insert(:listing, user_id: user.id)
+      listing = insert(:listing, user: user)
       conn = delete conn, listing_path(conn, :delete, listing)
       assert response(conn, 403)
       assert listing = Repo.get(Listing, listing.id)
@@ -400,7 +388,7 @@ defmodule ReWeb.ListingControllerTest do
     end
 
     test "update images order when listing belongs to user", %{user_conn: conn, user_user: user} do
-      listing = insert(:listing, user_id: user.id)
+      listing = insert(:listing, user: user)
       [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
       image_params = [
         %{id: id1, position: 2},
@@ -413,7 +401,7 @@ defmodule ReWeb.ListingControllerTest do
     end
 
     test "does not update images order when listing doesn't belong to user", %{user_conn: conn, admin_user: user} do
-      listing = insert(:listing, user_id: user.id)
+      listing = insert(:listing, user: user)
       [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
       image_params = [
         %{id: id1, position: 2},
