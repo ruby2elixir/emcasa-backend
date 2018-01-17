@@ -4,7 +4,7 @@ defmodule Re.Listings.Policy do
   """
 
   alias Re.{
-    Listing,
+    # Listing,
     User
   }
 
