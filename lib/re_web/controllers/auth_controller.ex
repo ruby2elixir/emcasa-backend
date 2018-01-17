@@ -1,4 +1,4 @@
-defmodule ReWeb.SessionController do
+defmodule ReWeb.AuthController do
   use ReWeb, :controller
 
   alias Re.Accounts.Auth
@@ -6,7 +6,7 @@ defmodule ReWeb.SessionController do
 
   action_fallback ReWeb.FallbackController
 
-  def create(conn, %{"user" => %{"email" => email, "password" => password}}) do
+  def login(conn, %{"user" => %{"email" => email, "password" => password}}) do
     with {:ok, user} <- Auth.find_user(email),
          :ok <- Auth.check_password(password, user),
          {:ok, jwt, _full_claims} <- Guardian.encode_and_sign(user)
