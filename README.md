@@ -17,4 +17,4 @@
 
 To see backend endpoint in production:
 
-`https://em-casa.herokuapp.com/listings`
+`https://em-casa-backend.herokuapp.com/listings`
