@@ -47,6 +47,7 @@ defmodule Re.Mixfile do
      {:bodyguard, "~> 2.1"},
      {:timber, "~> 2.5"},
      {:faker, "~> 0.9.0", only: :test},
+     {:email_checker, "~> 0.1.1"},
    ]
   end
 

@@ -6,11 +6,14 @@ defmodule Re.User do
 
   import Ecto.Changeset
 
+  alias Comeonin.Bcrypt
+
   schema "users" do
     field :name, :string
     field :email, :string
     field :phone, :string
-    field :password, :string
+    field :password, :string, virtual: true
+    field :password_hash, :string
     field :role, :string
 
     has_many :listings, Re.Listing
@@ -30,7 +33,29 @@ defmodule Re.User do
     struct
     |> cast(params, @required ++ @optional)
     |> validate_required(@required)
+    |> validate_email()
     |> unique_constraint(:email)
-    |> validate_inclusion(:role, @roles)
+    |> validate_inclusion(:role, @roles, message: "should be one of: [#{Enum.join(@roles, " ")}]")
+    |> hash_password()
+  end
+
+  defp validate_email(changeset) do
+    changeset
+    |> get_field(:email)
+    |> EmailChecker.valid?()
+    |> case do
+      true -> changeset
+      false -> add_error(changeset, :email, "has invalid format", [validation: :format])
+    end
+  end
+
+  defp hash_password(%{valid?: false} = changeset), do: changeset
+  defp hash_password(changeset) do
+    password_hash =
+      changeset
+      |> get_change(:password)
+      |> Bcrypt.hashpwsalt()
+
+    put_change(changeset, :password_hash, password_hash)
   end
 end

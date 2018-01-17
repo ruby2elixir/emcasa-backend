@@ -1,10 +1,10 @@
 defmodule ReWeb.InterestController do
   use ReWeb, :controller
 
-  alias Re.{
-    UserEmail,
-    Listings.Interests,
-    Mailer
+  alias Re.Listings.Interests
+  alias ReWeb.{
+    Mailer,
+    UserEmail
   }
 
   action_fallback ReWeb.FallbackController

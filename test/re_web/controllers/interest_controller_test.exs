@@ -21,7 +21,7 @@ defmodule ReWeb.InterestControllerTest do
 
       interest_id = response["data"]["id"]
       interest = Repo.get(Interest, interest_id)
-      assert_email_sent Re.UserEmail.notify_interest(interest)
+      assert_email_sent ReWeb.UserEmail.notify_interest(interest)
     end
   end
 end

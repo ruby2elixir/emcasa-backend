@@ -31,5 +31,5 @@ config :re, Re.Repo,
   hostname: "localhost",
   pool_size: 10
 
-config :re, Re.Mailer,
+config :re, ReWeb.Mailer,
   adapter: Swoosh.Adapters.Local

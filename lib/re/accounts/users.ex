@@ -15,4 +15,12 @@ defmodule Re.Accounts.Users do
     end
   end
 
+  def create(params) do
+    params = Map.put(params, "role", "user")
+
+    %User{}
+    |> User.changeset(params)
+    |> Repo.insert()
+  end
+
 end
