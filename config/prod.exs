@@ -38,7 +38,7 @@ config :re, Re.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
-config :re, Re.Mailer,
+config :re, ReWeb.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: System.get_env("SEND_GRID_API_KEY")
 

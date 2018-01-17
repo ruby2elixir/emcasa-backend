@@ -25,6 +25,7 @@ defmodule ReWeb.Router do
     resources "/listings", ListingController, only: [:index, :show]
     resources "/interests", InterestController, only: [:create]
     post "/users/login", AuthController, :login
+    post "/users/register", AuthController, :register
   end
 
   scope "/", ReWeb do

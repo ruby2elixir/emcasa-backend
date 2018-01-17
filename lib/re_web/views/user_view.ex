@@ -14,6 +14,10 @@ defmodule ReWeb.UserView do
     %{user: Map.merge(render_one(user, UserView, "user.json"), %{token: jwt})}
   end
 
+  def render("register.json", %{user: user}) do
+    %{user: render_one(user, UserView, "user.json")}
+  end
+
   def render("user.json", %{user: user}) do
     %{id: user.id,
       name: user.name,

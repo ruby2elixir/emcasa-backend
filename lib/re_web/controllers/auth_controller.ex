@@ -1,8 +1,15 @@
 defmodule ReWeb.AuthController do
   use ReWeb, :controller
 
-  alias Re.Accounts.Auth
-  alias ReWeb.Guardian
+  alias Re.Accounts.{
+    Auth,
+    Users
+  }
+  alias ReWeb.{
+    Guardian,
+    Mailer,
+    UserEmail
+  }
 
   action_fallback ReWeb.FallbackController
 
@@ -15,5 +22,18 @@ defmodule ReWeb.AuthController do
         |> put_status(:created)
         |> render(ReWeb.UserView, "login.json", jwt: jwt, user: user)
     end
+  end
+
+  def register(conn, %{"user" => %{"email" => email, "password" => password} = params}) do
+    with {:ok, user} <- Users.create(params)
+      do
+        user
+        |> UserEmail.welcome()
+        |> Mailer.deliver()
+
+        conn
+        |> put_status(:created)
+        |> render(ReWeb.UserView, "register.json", user: user)
+      end
   end
 end
