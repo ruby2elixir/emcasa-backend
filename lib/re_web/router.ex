@@ -34,7 +34,6 @@ defmodule ReWeb.Router do
       resources "/images", ImageController, only: [:index, :create, :delete]
     end
     put "/listings/:listing_id/image_order", ListingController, :order
-    # resources "/users", UserController, except: [:new, :edit, :create]
   end
 
   if Mix.env == :dev do
