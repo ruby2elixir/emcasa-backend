@@ -18,14 +18,12 @@ defmodule ReWeb.SessionControllerTest do
     test "fails when password is incorrect", %{conn: conn} do
       user = insert(:user)
       conn = post conn, session_path(conn, :create, %{"user" => %{"email" => user.email, "password" => "wrongpass"}})
-      assert response = json_response(conn, 401)
-      assert response["message"] == "Could not login"
+      assert json_response(conn, 401)
     end
 
     test "fails when user doesn't exist", %{conn: conn} do
       conn = post conn, session_path(conn, :create, %{"user" => %{"email" => "wrong@email.com", "password" => "password"}})
-      assert response = json_response(conn, 401)
-      assert response["message"] == "Could not login"
+      assert json_response(conn, 401)
     end
   end
 end
