@@ -23,7 +23,7 @@ defmodule ReWeb.UserEmail do
   end
 
   def welcome(%User{name: name, email: email}) do
-    new
+    new()
     |> to(email)
     |> from(@admin_email)
     |> subject("Bem-vindo à EmCasa, #{name}")

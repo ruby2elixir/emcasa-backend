@@ -24,7 +24,7 @@ defmodule ReWeb.AuthController do
     end
   end
 
-  def register(conn, %{"user" => %{"email" => email, "password" => password} = params}) do
+  def register(conn, %{"user" => params}) do
     with {:ok, user} <- Users.create(params)
       do
         user
