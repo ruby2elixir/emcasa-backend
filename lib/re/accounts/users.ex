@@ -1,4 +1,7 @@
 defmodule Re.Accounts.Users do
+  @moduledoc """
+  Context boundary to User management
+  """
 
   alias Re.{
     Repo,
