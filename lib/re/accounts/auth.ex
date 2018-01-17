@@ -3,41 +3,22 @@ defmodule Re.Accounts.Auth do
   The boundary for the Auth system
   """
 
-  import Ecto.{Query, Changeset}, warn: false
+  alias Re.Accounts.Users
+  alias Comeonin.Bcrypt
 
-  alias Re.Repo
-  alias Re.User
-  alias Re.Accounts.Encryption
-
-  def find_user_and_check_password(%{"user" => %{"email" => email, "password" => password}}) do
-    user = Repo.get_by(User, email: String.downcase(email))
-
-    case check_password(user, password) do
-      true -> {:ok, user}
-      _ -> {:error, "Could not login"}
+  def find_user(email) do
+    case Users.get_by_email(email) do
+      {:ok, user} -> {:ok, user}
+      {:error, :not_found} -> {:error, :unauthorized}
     end
   end
 
-  def register(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> hash_password
-    |> Repo.insert
-  end
-
-  defp check_password(user, password) do
-    case user do
-      nil -> false
-      _ -> Encryption.validate_password(password, user.password)
+  def check_password(password, %{password: password_hash}) do
+    if Bcrypt.checkpw(password, password_hash) do
+      :ok
+    else
+      {:error, :unauthorized}
     end
   end
 
-  defp hash_password(changeset) do
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
-        put_change(changeset, :password, Encryption.password_hashing(pass))
-      _ ->
-        changeset
-    end
-  end
 end
