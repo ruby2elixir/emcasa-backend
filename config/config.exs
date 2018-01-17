@@ -42,6 +42,9 @@ config :re, Re.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: "SG.x.x"
 
+config :email_checker,
+  validations: [EmailChecker.Check.Format]
+
 import_config "#{Mix.env}.exs"
 
 # Import Timber, structured logging
