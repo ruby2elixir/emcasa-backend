@@ -3,7 +3,6 @@ defmodule Re.Accounts.Auth do
   The boundary for the Auth system
   """
 
-
   alias Re.Accounts.Users
   alias Comeonin.Bcrypt
 
