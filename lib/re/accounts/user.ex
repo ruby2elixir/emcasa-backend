@@ -10,7 +10,7 @@ defmodule Re.User do
     field :name, :string
     field :email, :string
     field :phone, :string
-    field :password, :string
+    field :password_hash, :string
     field :role, :string
 
     has_many :listings, Re.Listing
@@ -18,7 +18,7 @@ defmodule Re.User do
     timestamps()
   end
 
-  @required ~w(name email password role)a
+  @required ~w(name email password_hash role)a
   @optional ~w(phone)a
 
   @roles ~w(admin user)

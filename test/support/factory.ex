@@ -13,7 +13,7 @@ defmodule Re.Factory do
       name: Name.name(),
       email: Internet.email(),
       phone: Phone.EnUs.phone(),
-      password: Bcrypt.hashpwsalt("password"),
+      password_hash: Bcrypt.hashpwsalt("password"),
       role: "user"
     }
   end

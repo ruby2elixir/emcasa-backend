@@ -13,7 +13,7 @@ defmodule Re.Accounts.Auth do
     end
   end
 
-  def check_password(password, %{password: password_hash}) do
+  def check_password(password, %{password_hash: password_hash}) do
     if Bcrypt.checkpw(password, password_hash) do
       :ok
     else
