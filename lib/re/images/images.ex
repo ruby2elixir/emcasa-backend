@@ -2,6 +2,7 @@ defmodule Re.Images do
   @moduledoc """
   This module interfaces calls to Image data.
   """
+  @behaviour Bodyguard.Policy
 
   import Ecto.Query
 
