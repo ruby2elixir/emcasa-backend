@@ -42,8 +42,16 @@ defmodule ReWeb.UserEmail do
     |> to(email)
     |> from(@admin_email)
     |> subject("Confirmação de cadastro na EmCasa")
-    |> html_body("#{name}, confirme seu cadastro pelo link #{@frontend_url <> token}")
-    |> text_body("#{name}, confirme seu cadastro pelo link #{@frontend_url <> token}")
+    |> html_body(
+      "#{name}, confirme seu cadastro pelo link #{
+        @frontend_url <> "/confirmar_cadastro/" <> token
+      }"
+    )
+    |> text_body(
+      "#{name}, confirme seu cadastro pelo link #{
+        @frontend_url <> "/confirmar_cadastro/" <> token
+      }"
+    )
   end
 
   def welcome(%User{name: name, email: email}) do
