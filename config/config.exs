@@ -16,8 +16,7 @@ config :re, ReWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "AFa6xCBxoVrAjCy3YRiSjY9e1TfUn75VT2QhSALdwJ+q/oA693/5mJ0OKptYSIID",
   render_errors: [view: ReWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Re.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: Re.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -27,9 +26,10 @@ config :logger, :console,
 config :re, ReWeb.Guardian,
   allowed_algos: ["HS256"],
   issuer: "Re",
-  ttl: { 30, :days },
+  ttl: {30, :days},
   allowed_drift: 2000,
-  verify_issuer: true, # optional
+  # optional
+  verify_issuer: true,
   secret_key: "MDLMflIpKod5YCnkdiY7C4E3ki2rgcAAMwfBl0+vyC5uqJNgoibfQmAh7J3uZWVK",
   serializer: Re.GuardianSerializer
 
@@ -42,10 +42,9 @@ config :re, ReWeb.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: "SG.x.x"
 
-config :email_checker,
-  validations: [EmailChecker.Check.Format]
+config :email_checker, validations: [EmailChecker.Check.Format]
 
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"
 
 # Import Timber, structured logging
 import_config "timber.exs"
