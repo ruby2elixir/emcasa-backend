@@ -16,7 +16,11 @@ defmodule Re.Accounts.Users do
   end
 
   def create(params) do
-    params = Map.put(params, "role", "user")
+    params =
+      params
+      |> Map.put("role", "user")
+      |> Map.put("confirmation_token", UUID.uuid4())
+      |> Map.put("confirmed", false)
 
     %User{}
     |> User.changeset(params)

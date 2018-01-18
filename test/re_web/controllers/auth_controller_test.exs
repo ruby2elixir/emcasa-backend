@@ -45,6 +45,8 @@ defmodule ReWeb.AuthControllerTest do
       conn = post conn, auth_path(conn, :register, %{"user" => user_params})
       assert json_response(conn, 201)
       assert user = Repo.get_by(User, email: "validemail@emcasa.com")
+      assert user.confirmation_token
+      refute user.confirmed
       assert_email_sent UserEmail.welcome(user)
     end
 

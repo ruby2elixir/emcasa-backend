@@ -13,7 +13,9 @@ defmodule Re.UserTest do
     email: "validemail@emcasa.com",
     phone: "317894719384",
     password: "validpassword",
-    role: "user"
+    role: "user",
+    confirmation_token: "97971cce-eb6e-418a-8529-e717ca1dcf62",
+    confirmed: true
   }
   @invalid_attrs %{
     name: nil,

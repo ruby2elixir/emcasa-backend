@@ -11,6 +11,7 @@ defmodule ReWeb.UserEmail do
 
   @to String.split(Application.get_env(:re, :to), "|")
   @from Application.get_env(:re, :from)
+  @frontend_url Application.get_env(:re, :frontend_url)
   @admin_email "admin@emcasa.com"
 
   def notify_interest(%Interest{
@@ -36,12 +37,12 @@ defmodule ReWeb.UserEmail do
     )
   end
 
-  def welcome(%User{name: name, email: email}) do
+  def welcome(%User{name: name, email: email, confirmation_token: token}) do
     new()
     |> to(email)
     |> from(@admin_email)
     |> subject("Bem-vindo à EmCasa, #{name}")
-    |> html_body("something something confirmation link")
-    |> text_body("something something confirmation link")
+    |> html_body("Confirme seu cadastro pelo link #{@frontend_url <> token}")
+    |> text_body("Confirme seu cadastro pelo link #{@frontend_url <> token}")
   end
 end

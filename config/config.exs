@@ -9,7 +9,8 @@ use Mix.Config
 config :re,
   ecto_repos: [Re.Repo],
   to: "dev1@email.com|dev2@email.com",
-  from: "admin@email.com"
+  from: "admin@email.com",
+  frontend_url: "http://localhost:3000"
 
 # Configures the endpoint
 config :re, ReWeb.Endpoint,

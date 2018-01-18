@@ -16,12 +16,15 @@ defmodule Re.User do
     field(:password_hash, :string)
     field(:role, :string)
 
+    field(:confirmation_token, :string)
+    field(:confirmed, :boolean)
+
     has_many(:listings, Re.Listing)
 
     timestamps()
   end
 
-  @required ~w(name email password role)a
+  @required ~w(name email password role confirmation_token confirmed)a
   @optional ~w(phone)a
 
   @roles ~w(admin user)
