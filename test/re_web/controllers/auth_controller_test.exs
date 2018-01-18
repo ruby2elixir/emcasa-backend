@@ -116,6 +116,29 @@ defmodule ReWeb.AuthControllerTest do
       assert user.confirmed
       assert_email_sent(UserEmail.welcome(user))
     end
+
+    test "does not confirm registration with wrong token", %{conn: conn} do
+      user =
+        insert(
+          :user,
+          confirmation_token: "97971cce-eb6e-418a-8529-e717ca1dcf62",
+          confirmed: false
+        )
+
+      conn =
+        put(
+          conn,
+          auth_path(conn, :confirm, %{
+            "id" => user.id,
+            "user" => %{"token" => "wrontoken"}
+          })
+        )
+
+      assert json_response(conn, 400)
+      assert user = Repo.get(User, user.id)
+      refute user.confirmed
+      assert_email_not_sent(UserEmail.welcome(user))
+    end
   end
 
   describe "reset_password" do
@@ -133,6 +156,22 @@ defmodule ReWeb.AuthControllerTest do
       assert json_response(conn, 200)
       assert user = Repo.get(User, user.id)
       assert_email_sent(UserEmail.reset_password(user))
+    end
+
+    test "does not confirm registration with wrong email", %{conn: conn} do
+      user = insert(:user)
+
+      conn =
+        post(
+          conn,
+          auth_path(conn, :reset_password, %{
+            "user" => %{"email" => "wrongemail@emcasa.com"}
+          })
+        )
+
+      assert json_response(conn, 404)
+      assert user = Repo.get(User, user.id)
+      refute user.reset_token
     end
   end
 end
