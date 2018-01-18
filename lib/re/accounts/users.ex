@@ -14,5 +14,4 @@ defmodule Re.Accounts.Users do
       user -> {:ok, user}
     end
   end
-
 end

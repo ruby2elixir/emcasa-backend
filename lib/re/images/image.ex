@@ -7,9 +7,9 @@ defmodule Re.Image do
   import Ecto.Changeset
 
   schema "images" do
-    field :filename, :string
-    field :position, :integer
-    belongs_to :listing, Re.Listing
+    field(:filename, :string)
+    field(:position, :integer)
+    belongs_to(:listing, Re.Listing)
 
     timestamps()
   end

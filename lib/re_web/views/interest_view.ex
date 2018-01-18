@@ -10,7 +10,8 @@ defmodule ReWeb.InterestView do
   end
 
   def render("interest.json", %{interest: interest}) do
-    %{id: interest.id,
+    %{
+      id: interest.id,
       name: interest.name,
       email: interest.email,
       phone: interest.phone,

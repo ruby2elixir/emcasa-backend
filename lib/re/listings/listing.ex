@@ -7,22 +7,22 @@ defmodule Re.Listing do
   import Ecto.Changeset
 
   schema "listings" do
-    field :type, :string
-    field :complement, :string
-    field :description, :string
-    field :price, :integer
-    field :floor, :string
-    field :rooms, :integer
-    field :bathrooms, :integer
-    field :area, :integer
-    field :garage_spots, :integer
-    field :score, :integer
-    field :matterport_code, :string
-    field :is_active, :boolean
+    field(:type, :string)
+    field(:complement, :string)
+    field(:description, :string)
+    field(:price, :integer)
+    field(:floor, :string)
+    field(:rooms, :integer)
+    field(:bathrooms, :integer)
+    field(:area, :integer)
+    field(:garage_spots, :integer)
+    field(:score, :integer)
+    field(:matterport_code, :string)
+    field(:is_active, :boolean)
 
-    belongs_to :address, Re.Address
-    belongs_to :user, Re.User
-    has_many :images, Re.Image
+    belongs_to(:address, Re.Address)
+    belongs_to(:user, Re.User)
+    has_many(:images, Re.Image)
 
     timestamps()
   end
@@ -45,5 +45,4 @@ defmodule Re.Listing do
     |> validate_length(:type, max: 32)
     |> validate_length(:complement, max: 32)
   end
-
 end

@@ -20,5 +20,4 @@ defmodule Re.Accounts.Auth do
       {:error, :unauthorized}
     end
   end
-
 end

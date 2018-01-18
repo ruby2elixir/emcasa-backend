@@ -7,13 +7,13 @@ defmodule Re.User do
   import Ecto.Changeset
 
   schema "users" do
-    field :name, :string
-    field :email, :string
-    field :phone, :string
-    field :password, :string
-    field :role, :string
+    field(:name, :string)
+    field(:email, :string)
+    field(:phone, :string)
+    field(:password, :string)
+    field(:role, :string)
 
-    has_many :listings, Re.Listing
+    has_many(:listings, Re.Listing)
 
     timestamps()
   end

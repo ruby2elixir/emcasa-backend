@@ -32,12 +32,12 @@ defmodule ReWeb do
 
   def view do
     quote do
-      use Phoenix.View, root: "lib/re_web/templates",
-                        namespace: ReWeb
+      use Phoenix.View,
+        root: "lib/re_web/templates",
+        namespace: ReWeb
 
       # Import convenience functions from controllers
-      import Phoenix.Controller,
-        only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
+      import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
 
       import ReWeb.Router.Helpers
       import ReWeb.ErrorHelpers

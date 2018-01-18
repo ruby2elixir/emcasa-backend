@@ -1,11 +1,15 @@
 defmodule ReWeb.ListingView do
   use ReWeb, :view
 
-  def render("index.json", %{listings: listings, page_number: page_number,
-    page_size: page_size, total_pages: total_pages,
-    total_entries: total_entries}) do
-
-    %{listings: render_many(listings, ReWeb.ListingView, "listing.json"),
+  def render("index.json", %{
+        listings: listings,
+        page_number: page_number,
+        page_size: page_size,
+        total_pages: total_pages,
+        total_entries: total_entries
+      }) do
+    %{
+      listings: render_many(listings, ReWeb.ListingView, "listing.json"),
       page_number: page_number,
       page_size: page_size,
       total_pages: total_pages,
@@ -26,7 +30,8 @@ defmodule ReWeb.ListingView do
   end
 
   def render("listing.json", %{listing: listing}) do
-    %{id: listing.id,
+    %{
+      id: listing.id,
       type: listing.type,
       description: listing.description,
       floor: listing.floor,
@@ -52,7 +57,8 @@ defmodule ReWeb.ListingView do
   end
 
   def render("listing_edit.json", %{listing: listing}) do
-    %{id: listing.id,
+    %{
+      id: listing.id,
       type: listing.type,
       complement: listing.complement,
       description: listing.description,
@@ -81,5 +87,4 @@ defmodule ReWeb.ListingView do
   def render("listing_id.json", %{listing: listing}) do
     %{id: listing.id}
   end
-
 end
