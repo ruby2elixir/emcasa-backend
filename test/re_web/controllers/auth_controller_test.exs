@@ -117,4 +117,22 @@ defmodule ReWeb.AuthControllerTest do
       assert_email_sent(UserEmail.welcome(user))
     end
   end
+
+  describe "reset_password" do
+    test "successfully request password reset", %{conn: conn} do
+      user = insert(:user)
+
+      conn =
+        post(
+          conn,
+          auth_path(conn, :reset_password, %{
+            "user" => %{"email" => user.email}
+          })
+        )
+
+      assert json_response(conn, 200)
+      assert user = Repo.get(User, user.id)
+      assert_email_sent(UserEmail.reset_password(user))
+    end
+  end
 end

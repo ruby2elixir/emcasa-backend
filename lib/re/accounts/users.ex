@@ -39,4 +39,10 @@ defmodule Re.Accounts.Users do
     |> User.update_changeset(params)
     |> Repo.update()
   end
+
+  def reset_password(user) do
+    user
+    |> User.reset_changeset(%{reset_token: UUID.uuid4()})
+    |> Repo.update()
+  end
 end

@@ -18,6 +18,7 @@ defmodule Re.User do
 
     field(:confirmation_token, :string)
     field(:confirmed, :boolean)
+    field(:reset_token, :string)
 
     has_many(:listings, Re.Listing)
 
@@ -40,16 +41,23 @@ defmodule Re.User do
     |> hash_password()
   end
 
-  @update_required ~w()
-  @update_optional ~w(name email password role confirmation_token confirmed phone)
+  @update_required ~w()a
+  @update_optional ~w(name email password role confirmation_token confirmed phone)a
 
-  @doc """
-  Builds a changeset based on the `struct` and `params`.
-  """
   def update_changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @update_required ++ @update_optional)
     |> validate_required(@update_required)
+    |> base_changeset()
+  end
+
+  @reset_required ~w(reset_token)a
+  @reset_optional ~w()a
+
+  def reset_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, @reset_required ++ @reset_optional)
+    |> validate_required(@reset_required)
     |> base_changeset()
   end
 

@@ -27,6 +27,7 @@ defmodule ReWeb.Router do
     post("/users/login", AuthController, :login)
     post("/users/register", AuthController, :register)
     put("/users/confirm", AuthController, :confirm)
+    post("/users/reset_password", AuthController, :reset_password)
   end
 
   scope "/", ReWeb do
