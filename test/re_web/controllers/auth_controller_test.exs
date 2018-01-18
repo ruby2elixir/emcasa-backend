@@ -8,6 +8,7 @@ defmodule ReWeb.AuthControllerTest do
     Repo,
     User
   }
+
   alias ReWeb.UserEmail
 
   setup %{conn: conn} do
@@ -17,19 +18,38 @@ defmodule ReWeb.AuthControllerTest do
   describe "login" do
     test "successful login", %{conn: conn} do
       user = insert(:user)
-      conn = post conn, auth_path(conn, :login, %{"user" => %{"email" => user.email, "password" => "password"}})
+
+      conn =
+        post(
+          conn,
+          auth_path(conn, :login, %{"user" => %{"email" => user.email, "password" => "password"}})
+        )
+
       assert response = json_response(conn, 201)
       assert response["user"]["token"]
     end
 
     test "fails when password is incorrect", %{conn: conn} do
       user = insert(:user)
-      conn = post conn, auth_path(conn, :login, %{"user" => %{"email" => user.email, "password" => "wrongpass"}})
+
+      conn =
+        post(
+          conn,
+          auth_path(conn, :login, %{"user" => %{"email" => user.email, "password" => "wrongpass"}})
+        )
+
       assert json_response(conn, 401)
     end
 
     test "fails when user doesn't exist", %{conn: conn} do
-      conn = post conn, auth_path(conn, :login, %{"user" => %{"email" => "wrong@email.com", "password" => "password"}})
+      conn =
+        post(
+          conn,
+          auth_path(conn, :login, %{
+            "user" => %{"email" => "wrong@email.com", "password" => "password"}
+          })
+        )
+
       assert json_response(conn, 401)
     end
   end
@@ -42,12 +62,12 @@ defmodule ReWeb.AuthControllerTest do
         "password" => "validpassword"
       }
 
-      conn = post conn, auth_path(conn, :register, %{"user" => user_params})
+      conn = post(conn, auth_path(conn, :register, %{"user" => user_params}))
       assert json_response(conn, 201)
       assert user = Repo.get_by(User, email: "validemail@emcasa.com")
       assert user.confirmation_token
       refute user.confirmed
-      assert_email_sent UserEmail.welcome(user)
+      assert_email_sent(UserEmail.confirm(user))
     end
 
     test "fails when password is invalid", %{conn: conn} do
@@ -57,7 +77,7 @@ defmodule ReWeb.AuthControllerTest do
         "password" => ""
       }
 
-      conn = post conn, auth_path(conn, :register, %{"user" => user_params})
+      conn = post(conn, auth_path(conn, :register, %{"user" => user_params}))
       assert json_response(conn, 422)
     end
 
@@ -68,8 +88,33 @@ defmodule ReWeb.AuthControllerTest do
         "password" => "password"
       }
 
-      conn = post conn, auth_path(conn, :register, %{"user" => user_params})
+      conn = post(conn, auth_path(conn, :register, %{"user" => user_params}))
       assert json_response(conn, 422)
+    end
+  end
+
+  describe "confirm" do
+    test "successfully confirm registration", %{conn: conn} do
+      user =
+        insert(
+          :user,
+          confirmation_token: "97971cce-eb6e-418a-8529-e717ca1dcf62",
+          confirmed: false
+        )
+
+      conn =
+        put(
+          conn,
+          auth_path(conn, :confirm, %{
+            "id" => user.id,
+            "user" => %{"token" => "97971cce-eb6e-418a-8529-e717ca1dcf62"}
+          })
+        )
+
+      assert json_response(conn, 200)
+      assert user = Repo.get(User, user.id)
+      assert user.confirmed
+      assert_email_sent(UserEmail.welcome(user))
     end
   end
 end

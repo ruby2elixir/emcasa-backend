@@ -26,6 +26,7 @@ defmodule ReWeb.Router do
     resources("/interests", InterestController, only: [:create])
     post("/users/login", AuthController, :login)
     post("/users/register", AuthController, :register)
+    put("/users/confirm", AuthController, :confirm)
   end
 
   scope "/", ReWeb do

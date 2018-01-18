@@ -6,7 +6,7 @@ defmodule ReWeb.UserEmail do
 
   alias Re.{
     Listings.Interest,
-    User,
+    User
   }
 
   @to String.split(Application.get_env(:re, :to), "|")
@@ -37,12 +37,21 @@ defmodule ReWeb.UserEmail do
     )
   end
 
-  def welcome(%User{name: name, email: email, confirmation_token: token}) do
+  def confirm(%User{name: name, email: email, confirmation_token: token}) do
+    new()
+    |> to(email)
+    |> from(@admin_email)
+    |> subject("Confirmação de cadastro na EmCasa")
+    |> html_body("#{name}, confirme seu cadastro pelo link #{@frontend_url <> token}")
+    |> text_body("#{name}, confirme seu cadastro pelo link #{@frontend_url <> token}")
+  end
+
+  def welcome(%User{name: name, email: email}) do
     new()
     |> to(email)
     |> from(@admin_email)
     |> subject("Bem-vindo à EmCasa, #{name}")
-    |> html_body("Confirme seu cadastro pelo link #{@frontend_url <> token}")
-    |> text_body("Confirme seu cadastro pelo link #{@frontend_url <> token}")
+    |> html_body("Você se cadastrou no EmCasa.")
+    |> text_body("Você se cadastrou no EmCasa.")
   end
 end
