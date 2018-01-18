@@ -16,27 +16,48 @@ defmodule Re.User do
     field(:password_hash, :string)
     field(:role, :string)
 
+    field(:confirmation_token, :string)
+    field(:confirmed, :boolean)
+
     has_many(:listings, Re.Listing)
 
     timestamps()
   end
 
-  @required ~w(name email password role)a
-  @optional ~w(phone)a
-
   @roles ~w(admin user)
+
+  @create_required ~w(name email password role confirmation_token confirmed)a
+  @optional ~w(phone)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
-  def changeset(struct, params \\ %{}) do
+  def create_changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @required ++ @optional)
-    |> validate_required(@required)
+    |> cast(params, @create_required ++ @optional)
+    |> validate_required(@create_required)
+    |> base_changeset()
+    |> hash_password()
+  end
+
+  @update_required ~w()
+  @update_optional ~w(name email password role confirmation_token confirmed phone)
+
+  @doc """
+  Builds a changeset based on the `struct` and `params`.
+  """
+  def update_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, @update_required ++ @update_optional)
+    |> validate_required(@update_required)
+    |> base_changeset()
+  end
+
+  defp base_changeset(changeset) do
+    changeset
     |> validate_email()
     |> unique_constraint(:email)
     |> validate_inclusion(:role, @roles, message: "should be one of: [#{Enum.join(@roles, " ")}]")
-    |> hash_password()
   end
 
   defp validate_email(changeset) do

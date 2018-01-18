@@ -44,7 +44,8 @@ config :re, ReWeb.Mailer,
 
 config :re,
   to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),
-  from: System.get_env("ADMIN_EMAIL")
+  from: System.get_env("ADMIN_EMAIL"),
+  frontend_url: System.get_env("FRONTEND_URL")
 
 # ## SSL Support
 #

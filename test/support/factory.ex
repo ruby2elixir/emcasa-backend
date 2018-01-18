@@ -14,7 +14,9 @@ defmodule Re.Factory do
       email: Internet.email(),
       phone: Phone.EnUs.phone(),
       password_hash: Bcrypt.hashpwsalt("password"),
-      role: "user"
+      role: "user",
+      confirmation_token: "97971cce-eb6e-418a-8529-e717ca1dcf62",
+      confirmed: true
     }
   end
 
