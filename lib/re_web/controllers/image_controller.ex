@@ -7,23 +7,22 @@ defmodule ReWeb.ImageController do
     Listings
   }
 
-  action_fallback ReWeb.FallbackController
+  action_fallback(ReWeb.FallbackController)
 
   def index(conn, %{"listing_id" => listing_id}, user) do
     with {:ok, listing} <- Listings.get(listing_id),
          :ok <- Bodyguard.permit(Images, :index_images, user, listing),
          {:ok, images} <- Images.all(listing_id),
-      do: render(conn, "index.json", images: images)
+         do: render(conn, "index.json", images: images)
   end
 
   def create(conn, %{"listing_id" => listing_id, "image" => image_params}, user) do
     with {:ok, listing} <- Listings.get(listing_id),
          :ok <- Bodyguard.permit(Images, :create_images, user, listing),
-         {:ok, image} <- Images.insert(image_params, listing.id)
-      do
-        conn
-        |> put_status(:created)
-        |> render("create.json", image: image)
+         {:ok, image} <- Images.insert(image_params, listing.id) do
+      conn
+      |> put_status(:created)
+      |> render("create.json", image: image)
     end
   end
 
@@ -32,6 +31,6 @@ defmodule ReWeb.ImageController do
          :ok <- Bodyguard.permit(Images, :delete_images, user, listing),
          {:ok, image} <- Images.get_per_listing(listing.id, image_id),
          {:ok, _image} <- Images.delete(image),
-      do: send_resp(conn, :no_content, "")
+         do: send_resp(conn, :no_content, "")
   end
 end

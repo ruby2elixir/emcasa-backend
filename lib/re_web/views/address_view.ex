@@ -10,12 +10,14 @@ defmodule ReWeb.AddressView do
   end
 
   def render("address.json", %{address: address}) do
-    %{id: address.id,
+    %{
+      id: address.id,
       street: address.street,
       street_number: address.street_number,
       neighborhood: address.neighborhood,
       city: address.city,
       state: address.state,
-      postal_code: address.postal_code}
+      postal_code: address.postal_code
+    }
   end
 end

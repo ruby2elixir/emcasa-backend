@@ -17,5 +17,4 @@ defmodule Re.Listings.Policy do
   # def authorize(:order_listing_images, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
 
   def authorize(_, _, _), do: {:error, :forbidden}
-
 end

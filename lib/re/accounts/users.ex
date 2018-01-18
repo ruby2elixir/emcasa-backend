@@ -22,5 +22,4 @@ defmodule Re.Accounts.Users do
     |> User.changeset(params)
     |> Repo.insert()
   end
-
 end

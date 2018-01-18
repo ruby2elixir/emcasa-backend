@@ -10,14 +10,18 @@ defmodule Re.Images do
     Image,
     Repo
   }
+
   alias Ecto.Changeset
 
   defdelegate authorize(action, user, params), to: Re.Images.Policy
 
   def all(listing_id) do
-    q = from i in Image,
-      where: i.listing_id == ^listing_id,
-      order_by: [asc: i.position]
+    q =
+      from(
+        i in Image,
+        where: i.listing_id == ^listing_id,
+        order_by: [asc: i.position]
+      )
 
     {:ok, Repo.all(q)}
   end
@@ -45,7 +49,7 @@ defmodule Re.Images do
   end
 
   def update_per_listing(listing, images_params) do
-    Enum.each(images_params, &(update_image(listing, &1)))
+    Enum.each(images_params, &update_image(listing, &1))
   end
 
   defp update_image(listing, %{"id" => id} = params) do
@@ -59,5 +63,4 @@ defmodule Re.Images do
   end
 
   def delete(image), do: Repo.delete(image)
-
 end

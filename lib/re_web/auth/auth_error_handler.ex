@@ -21,5 +21,4 @@ defmodule ReWeb.Guardian.AuthErrorHandler do
     |> put_status(500)
     |> render(ReWeb.ErrorView, "500.json")
   end
-
 end

@@ -13,12 +13,13 @@ defmodule Re.Listings do
     Image,
     Repo
   }
+
   alias Ecto.Changeset
 
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
-  @active_listings_query from l in Listing, where: l.is_active == true
-  @order_by_position from i in Image, order_by: i.position
+  @active_listings_query from(l in Listing, where: l.is_active == true)
+  @order_by_position from(i in Image, order_by: i.position)
 
   def paginated(params) do
     @active_listings_query
@@ -30,8 +31,10 @@ defmodule Re.Listings do
   end
 
   def maybe_get_address_ids_with_neighborhood(query, nil), do: query
+
   def maybe_get_address_ids_with_neighborhood(query, neighborhood) do
     ids = Addresses.get_ids_with_neighborhood(neighborhood)
+
     query
     |> where([l], l.address_id in ^ids)
   end
@@ -68,5 +71,4 @@ defmodule Re.Listings do
     |> Changeset.change(is_active: false)
     |> Repo.update()
   end
-
 end

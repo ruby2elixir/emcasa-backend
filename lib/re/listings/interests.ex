@@ -13,5 +13,4 @@ defmodule Re.Listings.Interests do
     |> Interest.changeset(params)
     |> Repo.insert()
   end
-
 end

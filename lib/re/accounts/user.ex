@@ -9,14 +9,14 @@ defmodule Re.User do
   alias Comeonin.Bcrypt
 
   schema "users" do
-    field :name, :string
-    field :email, :string
-    field :phone, :string
-    field :password, :string, virtual: true
-    field :password_hash, :string
-    field :role, :string
+    field(:name, :string)
+    field(:email, :string)
+    field(:phone, :string)
+    field(:password, :string, virtual: true)
+    field(:password_hash, :string)
+    field(:role, :string)
 
-    has_many :listings, Re.Listing
+    has_many(:listings, Re.Listing)
 
     timestamps()
   end
@@ -45,11 +45,12 @@ defmodule Re.User do
     |> EmailChecker.valid?()
     |> case do
       true -> changeset
-      false -> add_error(changeset, :email, "has invalid format", [validation: :format])
+      false -> add_error(changeset, :email, "has invalid format", validation: :format)
     end
   end
 
   defp hash_password(%{valid?: false} = changeset), do: changeset
+
   defp hash_password(changeset) do
     password_hash =
       changeset

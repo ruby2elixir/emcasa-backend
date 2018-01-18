@@ -15,5 +15,4 @@ defmodule Re.Images.Policy do
   def authorize(:delete_images, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
 
   def authorize(_, _, _), do: {:error, :forbidden}
-
 end
