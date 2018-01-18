@@ -22,6 +22,14 @@ defmodule ReWeb.UserView do
     %{user: render_one(user, UserView, "user.json")}
   end
 
+  def render("reset_password.json", %{user: user}) do
+    %{user: render_one(user, UserView, "user.json")}
+  end
+
+  def render("redefine_password.json", %{user: user}) do
+    %{user: render_one(user, UserView, "user.json")}
+  end
+
   def render("user.json", %{user: user}) do
     %{id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role}
   end

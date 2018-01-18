@@ -45,4 +45,22 @@ defmodule ReWeb.AuthController do
       render(conn, ReWeb.UserView, "confirm.json", user: user)
     end
   end
+
+  def reset_password(conn, %{"user" => %{"email" => email}}) do
+    with {:ok, user} <- Users.get_by_email(email),
+         {:ok, user} <- Users.reset_password(user) do
+      user
+      |> UserEmail.reset_password()
+      |> Mailer.deliver()
+
+      render(conn, ReWeb.UserView, "reset_password.json", user: user)
+    end
+  end
+
+  def redefine_password(conn, %{"user" => %{"reset_token" => token, "password" => password}}) do
+    with {:ok, user} <- Users.get_by_reset_token(token),
+         {:ok, user} <- Users.redefine_password(user, password) do
+      render(conn, ReWeb.UserView, "redefine_password.json", user: user)
+    end
+  end
 end

@@ -15,6 +15,13 @@ defmodule Re.Accounts.Users do
     end
   end
 
+  def get_by_reset_token(token) do
+    case Repo.get_by(User, reset_token: token) do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
+  end
+
   def create(params) do
     params =
       params
@@ -37,6 +44,18 @@ defmodule Re.Accounts.Users do
   def update(user, params) do
     user
     |> User.update_changeset(params)
+    |> Repo.update()
+  end
+
+  def reset_password(user) do
+    user
+    |> User.reset_changeset(%{reset_token: UUID.uuid4()})
+    |> Repo.update()
+  end
+
+  def redefine_password(user, password) do
+    user
+    |> User.redefine_changeset(%{password: password})
     |> Repo.update()
   end
 end

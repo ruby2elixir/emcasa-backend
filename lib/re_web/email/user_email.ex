@@ -62,4 +62,21 @@ defmodule ReWeb.UserEmail do
     |> html_body("Você se cadastrou no EmCasa.")
     |> text_body("Você se cadastrou no EmCasa.")
   end
+
+  def reset_password(%User{name: name, email: email, reset_token: token}) do
+    new()
+    |> to(email)
+    |> from(@admin_email)
+    |> subject("Redefinição de senha")
+    |> html_body(
+      "#{name}, você requisitou mudança de senha. Acesse: #{
+        @frontend_url <> "/resetar_senha/" <> token
+      } para definir uma nova senha."
+    )
+    |> text_body(
+      "#{name}, você requisitou mudança de senha. Acesse: #{
+        @frontend_url <> "/resetar_senha/" <> token
+      } para definir uma nova senha."
+    )
+  end
 end
