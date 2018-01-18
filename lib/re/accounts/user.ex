@@ -61,6 +61,17 @@ defmodule Re.User do
     |> base_changeset()
   end
 
+  @redefine_required ~w(password)a
+  @redefine_optional ~w()a
+
+  def redefine_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, @redefine_required ++ @redefine_optional)
+    |> validate_required(@redefine_required)
+    |> base_changeset()
+    |> hash_password()
+  end
+
   defp base_changeset(changeset) do
     changeset
     |> validate_email()

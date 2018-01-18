@@ -9,6 +9,7 @@ defmodule ReWeb.AuthControllerTest do
     User
   }
 
+  alias Comeonin.Bcrypt
   alias ReWeb.UserEmail
 
   setup %{conn: conn} do
@@ -172,6 +173,44 @@ defmodule ReWeb.AuthControllerTest do
       assert json_response(conn, 404)
       assert user = Repo.get(User, user.id)
       refute user.reset_token
+    end
+  end
+
+  describe "redefine_password" do
+    test "successfully redefine password", %{conn: conn} do
+      user = insert(:user, reset_token: "97971cce-eb6e-418a-8529-e717ca1dcf62")
+
+      conn =
+        post(
+          conn,
+          auth_path(conn, :redefine_password, %{
+            "user" => %{
+              "reset_token" => "97971cce-eb6e-418a-8529-e717ca1dcf62",
+              "password" => "newpassword"
+            }
+          })
+        )
+
+      assert json_response(conn, 200)
+      assert user = Repo.get(User, user.id)
+      assert Bcrypt.checkpw("newpassword", user.password_hash)
+    end
+
+    test "does not redefine password with wrong token", %{conn: conn} do
+      user = insert(:user)
+
+      conn =
+        post(
+          conn,
+          auth_path(conn, :reset_password, %{
+            "user" => %{"email" => "wrongtoken", "password" => "newpassword"}
+          })
+        )
+
+      assert json_response(conn, 404)
+      assert user = Repo.get(User, user.id)
+      assert Bcrypt.checkpw("password", user.password_hash)
+      refute Bcrypt.checkpw("newpassword", user.password_hash)
     end
   end
 end

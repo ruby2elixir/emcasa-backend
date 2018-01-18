@@ -56,4 +56,11 @@ defmodule ReWeb.AuthController do
       render(conn, ReWeb.UserView, "reset_password.json", user: user)
     end
   end
+
+  def redefine_password(conn, %{"user" => %{"reset_token" => token, "password" => password}}) do
+    with {:ok, user} <- Users.get_by_reset_token(token),
+         {:ok, user} <- Users.redefine_password(user, password) do
+      render(conn, ReWeb.UserView, "redefine_password.json", user: user)
+    end
+  end
 end
