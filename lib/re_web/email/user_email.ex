@@ -13,6 +13,8 @@ defmodule ReWeb.UserEmail do
   @from Application.get_env(:re, :from)
   @frontend_url Application.get_env(:re, :frontend_url)
   @admin_email "admin@emcasa.com"
+  @confirm_path "/confirmar_cadastro/"
+  @reset_path "/resetar_senha/"
 
   def notify_interest(%Interest{
         name: name,
@@ -38,20 +40,14 @@ defmodule ReWeb.UserEmail do
   end
 
   def confirm(%User{name: name, email: email, confirmation_token: token}) do
+    confirm_url = build_url(@confirm_path, token)
+
     new()
     |> to(email)
     |> from(@admin_email)
     |> subject("Confirmação de cadastro na EmCasa")
-    |> html_body(
-      "#{name}, confirme seu cadastro pelo link #{
-        @frontend_url <> "/confirmar_cadastro/" <> token
-      }"
-    )
-    |> text_body(
-      "#{name}, confirme seu cadastro pelo link #{
-        @frontend_url <> "/confirmar_cadastro/" <> token
-      }"
-    )
+    |> html_body("#{name}, confirme seu cadastro pelo link #{confirm_url}")
+    |> text_body("#{name}, confirme seu cadastro pelo link #{confirm_url}")
   end
 
   def welcome(%User{name: name, email: email}) do
@@ -64,19 +60,24 @@ defmodule ReWeb.UserEmail do
   end
 
   def reset_password(%User{name: name, email: email, reset_token: token}) do
+    reset_url = build_url(@reset_path, token)
+
     new()
     |> to(email)
     |> from(@admin_email)
     |> subject("Redefinição de senha")
     |> html_body(
-      "#{name}, você requisitou mudança de senha. Acesse: #{
-        @frontend_url <> "/resetar_senha/" <> token
-      } para definir uma nova senha."
+      "#{name}, você requisitou mudança de senha. Acesse: #{reset_url} para definir uma nova senha."
     )
     |> text_body(
-      "#{name}, você requisitou mudança de senha. Acesse: #{
-        @frontend_url <> "/resetar_senha/" <> token
-      } para definir uma nova senha."
+      "#{name}, você requisitou mudança de senha. Acesse: #{reset_url} para definir uma nova senha."
     )
+  end
+
+  def build_url(path, param) do
+    @frontend_url
+    |> URI.merge(path)
+    |> URI.merge(param)
+    |> URI.to_string()
   end
 end
