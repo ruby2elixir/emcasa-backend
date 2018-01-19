@@ -8,6 +8,13 @@ defmodule Re.Accounts.Users do
     User
   }
 
+  def get(id) do
+    case Repo.get(User, id) do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
+  end
+
   def get_by_email(email) do
     case Repo.get_by(User, email: String.downcase(email)) do
       nil -> {:error, :not_found}
@@ -56,6 +63,12 @@ defmodule Re.Accounts.Users do
   def redefine_password(user, password) do
     user
     |> User.redefine_changeset(%{password: password})
+    |> Repo.update()
+  end
+
+  def edit_password(user, new_password) do
+    user
+    |> User.redefine_changeset(%{password: new_password})
     |> Repo.update()
   end
 end

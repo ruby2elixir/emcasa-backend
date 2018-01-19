@@ -34,6 +34,8 @@ defmodule ReWeb.Router do
   scope "/", ReWeb do
     pipe_through(:private_api)
 
+    post("/users/edit_password", AuthController, :edit_password)
+
     resources "/listings", ListingController, except: [:new] do
       resources("/images", ImageController, only: [:index, :create, :delete])
     end
