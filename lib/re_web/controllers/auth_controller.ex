@@ -1,5 +1,6 @@
 defmodule ReWeb.AuthController do
   use ReWeb, :controller
+  use ReWeb.GuardedController
 
   alias Re.Accounts.{
     Auth,
@@ -14,7 +15,7 @@ defmodule ReWeb.AuthController do
 
   action_fallback(ReWeb.FallbackController)
 
-  def login(conn, %{"user" => %{"email" => email, "password" => password}}) do
+  def login(conn, %{"user" => %{"email" => email, "password" => password}}, _user) do
     with {:ok, user} <- Auth.find_user(email),
          :ok <- Auth.check_password(password, user),
          {:ok, jwt, _full_claims} <- Guardian.encode_and_sign(user) do
@@ -24,7 +25,7 @@ defmodule ReWeb.AuthController do
     end
   end
 
-  def register(conn, %{"user" => params}) do
+  def register(conn, %{"user" => params}, _user) do
     with {:ok, user} <- Users.create(params) do
       user
       |> UserEmail.confirm()
@@ -36,7 +37,7 @@ defmodule ReWeb.AuthController do
     end
   end
 
-  def confirm(conn, %{"user" => %{"token" => token}}) do
+  def confirm(conn, %{"user" => %{"token" => token}}, _user) do
     with {:ok, user} <- Users.confirm(token) do
       user
       |> UserEmail.welcome()
@@ -46,7 +47,7 @@ defmodule ReWeb.AuthController do
     end
   end
 
-  def reset_password(conn, %{"user" => %{"email" => email}}) do
+  def reset_password(conn, %{"user" => %{"email" => email}}, _user) do
     with {:ok, user} <- Users.get_by_email(email),
          {:ok, user} <- Users.reset_password(user) do
       user
@@ -57,10 +58,28 @@ defmodule ReWeb.AuthController do
     end
   end
 
-  def redefine_password(conn, %{"user" => %{"reset_token" => token, "password" => password}}) do
+  def redefine_password(
+        conn,
+        %{"user" => %{"reset_token" => token, "password" => password}},
+        _user
+      ) do
     with {:ok, user} <- Users.get_by_reset_token(token),
          {:ok, user} <- Users.redefine_password(user, password) do
       render(conn, ReWeb.UserView, "redefine_password.json", user: user)
+    end
+  end
+
+  def edit_password(
+        conn,
+        %{
+          "user" => %{"current_password" => current_password, "new_password" => new_password}
+        },
+        %{id: id}
+      ) do
+    with {:ok, user} <- Users.get(id),
+         :ok <- Auth.check_password(current_password, user),
+         {:ok, user} <- Users.edit_password(user, new_password) do
+      render(conn, ReWeb.UserView, "edit_password.json", user: user)
     end
   end
 end

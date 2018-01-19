@@ -213,4 +213,46 @@ defmodule ReWeb.AuthControllerTest do
       refute Bcrypt.checkpw("newpassword", user.password_hash)
     end
   end
+
+  describe "edit_password" do
+    test "successfully edit password", %{conn: conn} do
+      user = insert(:user, password_hash: Bcrypt.hashpwsalt("oldpassword"))
+      conn = login_as(conn, user)
+
+      conn =
+        post(
+          conn,
+          auth_path(conn, :edit_password, %{
+            "user" => %{
+              "current_password" => "oldpassword",
+              "new_password" => "newpassword"
+            }
+          })
+        )
+
+      assert json_response(conn, 200)
+      assert user = Repo.get(User, user.id)
+      assert Bcrypt.checkpw("newpassword", user.password_hash)
+    end
+
+    test "does not edit password with wrong current password", %{conn: conn} do
+      user = insert(:user, password_hash: Bcrypt.hashpwsalt("oldpassword"))
+      conn = login_as(conn, user)
+
+      conn =
+        post(
+          conn,
+          auth_path(conn, :edit_password, %{
+            "user" => %{
+              "current_password" => "wrongpassword",
+              "new_password" => "newpassword"
+            }
+          })
+        )
+
+      assert json_response(conn, 401)
+      assert user = Repo.get(User, user.id)
+      assert Bcrypt.checkpw("oldpassword", user.password_hash)
+    end
+  end
 end
