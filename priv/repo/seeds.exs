@@ -10,11 +10,11 @@ if Mix.env() == :dev do
 
   alias Comeonin.Bcrypt
 
-  Repo.delete_all(User)
   Repo.delete_all(Image)
+  Repo.delete_all(Interest)
   Repo.delete_all(Listing)
   Repo.delete_all(Address)
-  Repo.delete_all(Interest)
+  Repo.delete_all(User)
 
   {:ok, admin1} =
     Repo.insert(%User{
