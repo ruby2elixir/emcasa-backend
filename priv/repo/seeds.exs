@@ -21,7 +21,7 @@ if Mix.env() == :dev do
       name: "Admin 1",
       email: "admin1@emcasa.com",
       phone: "11111111111",
-      password: Bcrypt.hashpwsalt("password"),
+      password_hash: Bcrypt.hashpwsalt("password"),
       role: "admin",
       confirmed: true
     })
@@ -31,7 +31,7 @@ if Mix.env() == :dev do
       name: "Admin 2",
       email: "admin2@emcasa.com",
       phone: "22222222222",
-      password: Bcrypt.hashpwsalt("password"),
+      password_hash: Bcrypt.hashpwsalt("password"),
       role: "admin",
       confirmed: true
     })
@@ -41,7 +41,7 @@ if Mix.env() == :dev do
       name: "User 1",
       email: "user1@emcasa.com",
       phone: "33333333333",
-      password: Bcrypt.hashpwsalt("password"),
+      password_hash: Bcrypt.hashpwsalt("password"),
       role: "user",
       confirmed: true
     })
@@ -51,7 +51,7 @@ if Mix.env() == :dev do
       name: "User 2",
       email: "user2@emcasa.com",
       phone: "4444444444",
-      password: Bcrypt.hashpwsalt("password"),
+      password_hash: Bcrypt.hashpwsalt("password"),
       role: "user",
       confirmed: true
     })
