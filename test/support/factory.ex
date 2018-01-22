@@ -9,7 +9,7 @@ defmodule Re.Factory do
   alias Comeonin.Bcrypt
 
   def user_factory do
-    %Re.User {
+    %Re.User{
       name: Name.name(),
       email: Internet.email(),
       phone: Phone.EnUs.phone(),
@@ -21,7 +21,7 @@ defmodule Re.Factory do
   end
 
   def listing_factory do
-    %Re.Listing {
+    %Re.Listing{
       type: random(:listing_type),
       complement: Address.secondary_address(),
       description: Shakespeare.hamlet(),
@@ -38,7 +38,7 @@ defmodule Re.Factory do
   end
 
   def address_factory do
-    %Re.Address {
+    %Re.Address{
       street: Address.street_name(),
       street_number: Address.building_number(),
       neighborhood: Pokemon.location(),
@@ -51,7 +51,7 @@ defmodule Re.Factory do
   end
 
   def image_factory do
-    %Re.Image {
+    %Re.Image{
       filename: Internet.image_url(),
       position: Enum.random(-50..50)
     }
@@ -73,12 +73,12 @@ defmodule Re.Factory do
     "#{first}-#{last}"
   end
 
-  defp random(:listing_type), do: Enum.random ~w(Casa Apartamento Cobertura Porão)
-  defp random(:price), do: Enum.random 1..999_999_999
+  defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura))
+  defp random(:price), do: Enum.random(1..999_999_999)
+
   defp random(:floor) do
     1..50
     |> Enum.random()
     |> Integer.to_string()
   end
-
 end
