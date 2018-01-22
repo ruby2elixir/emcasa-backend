@@ -17,6 +17,10 @@ defmodule ReWeb.ListingView do
     }
   end
 
+  def render("featured.json", %{listings: listings}) do
+    %{listings: render_many(listings, ReWeb.ListingView, "listing.json")}
+  end
+
   def render("edit.json", %{listing: listing}) do
     %{listing: render_one(listing, ReWeb.ListingView, "listing_edit.json")}
   end

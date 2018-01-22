@@ -15,6 +15,7 @@ defmodule ReWeb.Router do
 
     resources("/neighborhoods", NeighborhoodController, only: [:index])
     resources("/listings", ListingController, only: [:index, :show])
+    get("/featured_listings", ListingController, :featured)
     resources("/interests", InterestController, only: [:create])
   end
 

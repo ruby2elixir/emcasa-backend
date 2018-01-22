@@ -9,6 +9,7 @@ defmodule Re.Listings do
   alias Re.{
     Addresses,
     Listing,
+    Listings.FeaturedListing,
     Listings.Filter,
     Image,
     Repo
@@ -71,4 +72,17 @@ defmodule Re.Listings do
     |> Changeset.change(is_active: false)
     |> Repo.update()
   end
+
+  def featured do
+    FeaturedListing
+    |> preload([:listing, listing: [:address, images: ^@order_by_position]])
+    |> Repo.all()
+    |> Enum.map(&Map.get(&1, :listing))
+    |> check_if_exists()
+  end
+
+  @top_4_listings_query from(l in Listing, where: l.is_active == true, order_by: [desc: l.score])
+
+  defp check_if_exists([_, _, _, _] = featured), do: featured
+  defp check_if_exists(_), do: Repo.all(@top_4_listings_query)
 end
