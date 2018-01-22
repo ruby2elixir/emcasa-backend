@@ -20,6 +20,7 @@ defmodule Re.Images do
       from(
         i in Image,
         where: i.listing_id == ^listing_id,
+        where: i.is_active == true,
         order_by: [asc: i.position]
       )
 
@@ -27,7 +28,7 @@ defmodule Re.Images do
   end
 
   def get_per_listing(listing_id, image_id) do
-    case Repo.get_by(Image, id: image_id, listing_id: listing_id) do
+    case Repo.get_by(Image, id: image_id, listing_id: listing_id, is_active: true) do
       nil -> {:error, :not_found}
       image -> {:ok, image}
     end
@@ -35,7 +36,8 @@ defmodule Re.Images do
 
   def insert(image_params, listing_id) do
     %Image{}
-    |> Image.changeset(image_params)
+    |> Image.create_changeset(image_params)
+    |> Changeset.change(is_active: true)
     |> Changeset.change(listing_id: listing_id)
     |> Changeset.change(position: calculate_position(listing_id))
     |> Repo.insert()
@@ -62,5 +64,10 @@ defmodule Re.Images do
     end
   end
 
-  def delete(image), do: Repo.delete(image)
+  def delete(image) do
+    image
+    |> Image.delete_changeset()
+    |> Changeset.change(is_active: false)
+    |> Repo.update()
+  end
 end

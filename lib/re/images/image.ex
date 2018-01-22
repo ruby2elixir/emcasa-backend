@@ -9,26 +9,40 @@ defmodule Re.Image do
   schema "images" do
     field(:filename, :string)
     field(:position, :integer)
+    field(:is_active, :boolean, default: true)
+
     belongs_to(:listing, Re.Listing)
 
     timestamps()
   end
 
-  @required ~w(filename position)a
-  @optional ~w(listing_id)a
+  @create_required ~w(filename position)a
+  @create_optional ~w(listing_id)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
-  def changeset(struct, params \\ %{}) do
+  def create_changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @required ++ @optional)
-    |> validate_required(@required)
+    |> cast(params, @create_required ++ @create_optional)
+    |> validate_required(@create_required)
   end
+
+  @position_required ~w(position)a
+  @position_optional ~w()a
 
   def position_changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:position])
-    |> validate_required([:position])
+    |> cast(params, @position_required ++ @position_optional)
+    |> validate_required(@position_required)
+  end
+
+  @delete_required ~w(is_active)a
+  @delete_optional ~w()a
+
+  def delete_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, @delete_required ++ @delete_optional)
+    |> validate_required(@delete_required)
   end
 end
