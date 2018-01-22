@@ -5,10 +5,16 @@ defmodule Re.Neighborhoods do
 
   import Ecto.Query
 
-  alias Re.{Repo, Address}
+  alias Re.{
+    Address,
+    Listing,
+    Repo
+  }
 
   @all_query from(
                a in Address,
+               join: l in Listing,
+               where: l.address_id == a.id and l.is_active,
                select: a.neighborhood,
                distinct: a.neighborhood
              )
