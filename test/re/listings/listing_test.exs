@@ -6,7 +6,7 @@ defmodule Re.ListingTest do
   import Re.Factory
 
   @valid_attrs %{
-    type: "Apartment",
+    type: "Apartamento",
     complement: "100",
     description: "some content",
     price: 1_000_000,
@@ -30,6 +30,7 @@ defmodule Re.ListingTest do
   test "changeset with valid attributes" do
     address = insert(:address)
     user = insert(:user)
+
     attrs =
       @valid_attrs
       |> Map.put(:address_id, address.id)
@@ -42,16 +43,33 @@ defmodule Re.ListingTest do
   test "changeset with invalid attributes" do
     changeset = Listing.changeset(%Listing{}, @invalid_attrs)
     refute changeset.valid?
-    assert Keyword.get(changeset.errors, :complement) == {"should be at most %{count} character(s)", [count: 32, validation: :length, max: 32]}
-    assert Keyword.get(changeset.errors, :type) == {"should be at most %{count} character(s)", [count: 32, validation: :length, max: 32]}
-    assert Keyword.get(changeset.errors, :score) == {"must be less than %{number}", [validation: :number, number: 5]}
-    assert Keyword.get(changeset.errors, :price) == {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
-    assert Keyword.get(changeset.errors, :bathrooms) == {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
-    assert Keyword.get(changeset.errors, :garage_spots) == {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
-    assert Keyword.get(changeset.errors, :address_id) == {"can't be blank", [validation: :required]}
+
+    assert Keyword.get(changeset.errors, :complement) ==
+             {"should be at most %{count} character(s)",
+              [count: 32, validation: :length, max: 32]}
+
+    assert Keyword.get(changeset.errors, :type) ==
+             {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
+
+    assert Keyword.get(changeset.errors, :score) ==
+             {"must be less than %{number}", [validation: :number, number: 5]}
+
+    assert Keyword.get(changeset.errors, :price) ==
+             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+    assert Keyword.get(changeset.errors, :bathrooms) ==
+             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+    assert Keyword.get(changeset.errors, :garage_spots) ==
+             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+    assert Keyword.get(changeset.errors, :address_id) ==
+             {"can't be blank", [validation: :required]}
 
     changeset = Listing.changeset(%Listing{}, %{score: 0})
     refute changeset.valid?
-    assert Keyword.get(changeset.errors, :score) == {"must be greater than %{number}", [validation: :number, number: 0]}
+
+    assert Keyword.get(changeset.errors, :score) ==
+             {"must be greater than %{number}", [validation: :number, number: 0]}
   end
 end

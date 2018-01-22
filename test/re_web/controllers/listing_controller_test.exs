@@ -12,7 +12,7 @@ defmodule ReWeb.ListingControllerTest do
   import Re.Factory
 
   @valid_attrs %{
-    type: "apto",
+    type: "Casa",
     score: 3,
     floor: "H1",
     complement: "basement",

@@ -79,7 +79,7 @@ defmodule Re.Factory do
     "#{first}-#{last}"
   end
 
-  defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura Porão))
+  defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura))
   defp random(:price), do: Enum.random(1..999_999_999)
 
   defp random(:floor) do
