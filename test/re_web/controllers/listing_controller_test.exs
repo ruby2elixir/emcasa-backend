@@ -583,4 +583,69 @@ defmodule ReWeb.ListingControllerTest do
       assert json_response(conn, 403)
     end
   end
+
+  describe "featured" do
+    test "show featured listings for admin user", %{admin_conn: conn} do
+      address = insert(:address)
+      %{id: id1} = insert(:listing, address: address)
+      %{id: id2} = insert(:listing, address: address)
+      %{id: id3} = insert(:listing, address: address)
+      %{id: id4} = insert(:listing, address: address)
+      insert(:featured_listing, listing_id: id1)
+      insert(:featured_listing, listing_id: id2)
+      insert(:featured_listing, listing_id: id3)
+      insert(:featured_listing, listing_id: id4)
+
+      conn =
+        dispatch(
+          conn,
+          @endpoint,
+          "get",
+          "/featured_listings"
+        )
+
+      response = json_response(conn, 200)
+
+      assert [%{"id" => ^id1}, %{"id" => ^id2}, %{"id" => ^id3}, %{"id" => ^id4}] =
+               response["listings"]
+    end
+
+    test "show featured listings for non admin user", %{user_conn: conn} do
+      address = insert(:address)
+      %{id: id1} = insert(:listing, address: address)
+      %{id: id2} = insert(:listing, address: address)
+      %{id: id3} = insert(:listing, address: address)
+      %{id: id4} = insert(:listing, address: address)
+      insert(:featured_listing, listing_id: id1)
+      insert(:featured_listing, listing_id: id2)
+      insert(:featured_listing, listing_id: id3)
+      insert(:featured_listing, listing_id: id4)
+
+      conn = dispatch(conn, @endpoint, "get", "/featured_listings")
+
+      response = json_response(conn, 200)
+
+      assert [%{"id" => ^id1}, %{"id" => ^id2}, %{"id" => ^id3}, %{"id" => ^id4}] =
+               response["listings"]
+    end
+
+    test "show featured listings for non authenticated user", %{unauthenticated_conn: conn} do
+      address = insert(:address)
+      %{id: id1} = insert(:listing, address: address)
+      %{id: id2} = insert(:listing, address: address)
+      %{id: id3} = insert(:listing, address: address)
+      %{id: id4} = insert(:listing, address: address)
+      insert(:featured_listing, listing_id: id1)
+      insert(:featured_listing, listing_id: id2)
+      insert(:featured_listing, listing_id: id3)
+      insert(:featured_listing, listing_id: id4)
+
+      conn = dispatch(conn, @endpoint, "get", "/featured_listings")
+
+      response = json_response(conn, 200)
+
+      assert [%{"id" => ^id1}, %{"id" => ^id2}, %{"id" => ^id3}, %{"id" => ^id4}] =
+               response["listings"]
+    end
+  end
 end

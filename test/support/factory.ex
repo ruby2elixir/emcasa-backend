@@ -57,6 +57,12 @@ defmodule Re.Factory do
     }
   end
 
+  def featured_listing_factory do
+    %Re.Listings.FeaturedListing{
+      position: 0
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
