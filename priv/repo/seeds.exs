@@ -83,19 +83,22 @@ if Mix.env() == :dev do
   {:ok, image1} =
     Repo.insert(%Image{
       filename: "image1.jpg",
-      position: 1
+      position: 1,
+      is_active: true
     })
 
   {:ok, image2} =
     Repo.insert(%Image{
       filename: "image2.jpg",
-      position: 2
+      position: 2,
+      is_active: true
     })
 
   {:ok, image3} =
     Repo.insert(%Image{
       filename: "image3.jpg",
-      position: 3
+      position: 3,
+      is_active: true
     })
 
   {:ok, listing1} =
