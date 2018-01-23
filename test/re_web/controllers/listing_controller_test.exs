@@ -591,10 +591,10 @@ defmodule ReWeb.ListingControllerTest do
       %{id: id2} = insert(:listing, address: address)
       %{id: id3} = insert(:listing, address: address)
       %{id: id4} = insert(:listing, address: address)
-      insert(:featured_listing, listing_id: id1)
-      insert(:featured_listing, listing_id: id2)
-      insert(:featured_listing, listing_id: id3)
-      insert(:featured_listing, listing_id: id4)
+      insert(:featured_listing, listing_id: id1, position: 4)
+      insert(:featured_listing, listing_id: id2, position: 3)
+      insert(:featured_listing, listing_id: id3, position: 2)
+      insert(:featured_listing, listing_id: id4, position: 1)
 
       conn =
         dispatch(
@@ -606,7 +606,7 @@ defmodule ReWeb.ListingControllerTest do
 
       response = json_response(conn, 200)
 
-      assert [%{"id" => ^id1}, %{"id" => ^id2}, %{"id" => ^id3}, %{"id" => ^id4}] =
+      assert [%{"id" => ^id4}, %{"id" => ^id3}, %{"id" => ^id2}, %{"id" => ^id1}] =
                response["listings"]
     end
 
@@ -639,6 +639,23 @@ defmodule ReWeb.ListingControllerTest do
       insert(:featured_listing, listing_id: id2)
       insert(:featured_listing, listing_id: id3)
       insert(:featured_listing, listing_id: id4)
+
+      conn = dispatch(conn, @endpoint, "get", "/featured_listings")
+
+      response = json_response(conn, 200)
+
+      assert [%{"id" => ^id1}, %{"id" => ^id2}, %{"id" => ^id3}, %{"id" => ^id4}] =
+               response["listings"]
+    end
+
+    test "fallback to default index call if there's no featured listings entries", %{
+      unauthenticated_conn: conn
+    } do
+      address = insert(:address)
+      %{id: id1} = insert(:listing, address: address, score: 4)
+      %{id: id2} = insert(:listing, address: address, score: 3)
+      %{id: id3} = insert(:listing, address: address, score: 2)
+      %{id: id4} = insert(:listing, address: address, score: 1)
 
       conn = dispatch(conn, @endpoint, "get", "/featured_listings")
 
