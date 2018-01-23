@@ -44,10 +44,6 @@ defmodule Re.ListingTest do
     changeset = Listing.changeset(%Listing{}, @invalid_attrs)
     refute changeset.valid?
 
-    assert Keyword.get(changeset.errors, :complement) ==
-             {"should be at most %{count} character(s)",
-              [count: 32, validation: :length, max: 32]}
-
     assert Keyword.get(changeset.errors, :type) ==
              {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
 
