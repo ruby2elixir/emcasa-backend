@@ -75,6 +75,7 @@ defmodule Re.Listings do
 
   def featured do
     FeaturedListing
+    |> order_by([fl], asc: fl.position)
     |> preload([:listing, listing: [:address, images: ^@order_by_position]])
     |> Repo.all()
     |> Enum.map(&Map.get(&1, :listing))
