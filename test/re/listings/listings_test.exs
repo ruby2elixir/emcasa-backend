@@ -58,6 +58,22 @@ defmodule Re.ListingsTest do
       assert %{entries: [%{id: ^id1}, %{id: ^id2}]} =
                Listings.paginated(%{"types" => ["Apartamento"]})
     end
+
+    test "should not filter for empty array" do
+      laranjeiras = insert(:address, street: "astreet", neighborhood: "Laranjeiras")
+      leblon = insert(:address, street: "anotherstreet", neighborhood: "Leblon")
+      botafogo = insert(:address, street: "onemorestreet", neighborhood: "Botafogo")
+
+      %{id: id1} = insert(:listing, score: 4, address_id: laranjeiras.id, type: "Apartamento")
+      %{id: id2} = insert(:listing, score: 3, address_id: leblon.id, type: "Casa")
+      %{id: id3} = insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento")
+
+      assert %{entries: [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}]} =
+               Listings.paginated(%{"neighborhoods" => []})
+
+      assert %{entries: [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}]} =
+               Listings.paginated(%{"types" => []})
+    end
   end
 
   describe "paginated/1" do

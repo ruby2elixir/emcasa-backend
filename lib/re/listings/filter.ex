@@ -69,6 +69,8 @@ defmodule Re.Listings.Filter do
 
   defp max_area_filter(query, _), do: query
 
+  defp neighborhoods_filter(query, %{neighborhoods: []}), do: query
+
   defp neighborhoods_filter(query, %{neighborhoods: neighborhoods}) do
     from(
       l in query,
@@ -78,6 +80,8 @@ defmodule Re.Listings.Filter do
   end
 
   defp neighborhoods_filter(query, _), do: query
+
+  defp types_filter(query, %{types: []}), do: query
 
   defp types_filter(query, %{types: types}) do
     from(l in query, where: l.type in ^types)
