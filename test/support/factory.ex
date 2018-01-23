@@ -53,7 +53,8 @@ defmodule Re.Factory do
   def image_factory do
     %Re.Image{
       filename: Internet.image_url(),
-      position: Enum.random(-50..50)
+      position: Enum.random(-50..50),
+      is_active: true
     }
   end
 
