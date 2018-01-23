@@ -29,9 +29,9 @@ defmodule Re.Listing do
 
   @types ~w(Apartamento Casa Cobertura)
 
-  @required ~w(type complement description price floor rooms bathrooms
+  @required ~w(type description price floor rooms bathrooms
                area garage_spots score address_id user_id)a
-  @optional ~w(matterport_code is_active)a
+  @optional ~w(complement matterport_code is_active)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -45,6 +45,5 @@ defmodule Re.Listing do
     |> validate_number(:garage_spots, greater_than_or_equal_to: 0)
     |> validate_number(:score, greater_than: 0, less_than: 5)
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
-    |> validate_length(:complement, max: 32)
   end
 end
