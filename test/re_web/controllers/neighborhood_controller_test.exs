@@ -17,14 +17,17 @@ defmodule ReWeb.NeighborhoodControllerTest do
   describe "index" do
     test "succeeds if authenticated", %{authenticated_conn: conn} do
       address = insert(:address)
-      conn = get conn, neighborhood_path(conn, :index)
+      insert(:listing, address: address)
+      conn = get(conn, neighborhood_path(conn, :index))
       assert json_response(conn, 200)["neighborhoods"] == [address.neighborhood]
     end
 
     test "succeeds if unauthenticated", %{unauthenticated_conn: conn} do
-      insert(:address, neighborhood: "Copacabana")
-      insert(:address, neighborhood: "Copacabana")
-      conn = get conn, neighborhood_path(conn, :index)
+      address1 = insert(:address, neighborhood: "Copacabana")
+      address2 = insert(:address, neighborhood: "Copacabana")
+      insert(:listing, address: address1)
+      insert(:listing, address: address2)
+      conn = get(conn, neighborhood_path(conn, :index))
       assert json_response(conn, 200)["neighborhoods"] == ["Copacabana"]
     end
   end

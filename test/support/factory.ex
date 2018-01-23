@@ -58,6 +58,12 @@ defmodule Re.Factory do
     }
   end
 
+  def featured_listing_factory do
+    %Re.Listings.FeaturedListing{
+      position: 0
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
@@ -74,7 +80,7 @@ defmodule Re.Factory do
     "#{first}-#{last}"
   end
 
-  defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura Porão))
+  defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura))
   defp random(:price), do: Enum.random(1..999_999_999)
 
   defp random(:floor) do

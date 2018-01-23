@@ -24,6 +24,10 @@ defmodule ReWeb.ListingController do
     )
   end
 
+  def featured(conn, _params, _user) do
+    render(conn, "featured.json", listings: Listings.featured())
+  end
+
   def create(conn, %{"listing" => listing_params, "address" => address_params} = params, user) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
          {:ok, address} <- Addresses.find_or_create(address_params),
