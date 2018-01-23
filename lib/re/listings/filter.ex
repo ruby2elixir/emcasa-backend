@@ -16,9 +16,10 @@ defmodule Re.Listings.Filter do
     field(:min_area, :integer)
     field(:max_area, :integer)
     field(:neighborhoods, {:array, :string})
+    field(:types, {:array, :string})
   end
 
-  @filters ~w(max_price min_price rooms min_area max_area neighborhoods)a
+  @filters ~w(max_price min_price rooms min_area max_area neighborhoods types)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -35,6 +36,7 @@ defmodule Re.Listings.Filter do
     |> min_area_filter(filters)
     |> max_area_filter(filters)
     |> neighborhoods_filter(filters)
+    |> types_filter(filters)
   end
 
   defp max_price_filter(query, %{max_price: max_price}) do
@@ -76,4 +78,10 @@ defmodule Re.Listings.Filter do
   end
 
   defp neighborhoods_filter(query, _), do: query
+
+  defp types_filter(query, %{types: types}) do
+    from(l in query, where: l.type in ^types)
+  end
+
+  defp types_filter(query, _), do: query
 end
