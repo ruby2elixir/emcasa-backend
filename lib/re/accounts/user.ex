@@ -72,6 +72,16 @@ defmodule Re.User do
     |> hash_password()
   end
 
+  @email_required ~w(email confirmed confirmation_token)a
+  @email_optional ~w()a
+
+  def email_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, @email_required ++ @email_optional)
+    |> validate_required(@email_required)
+    |> base_changeset()
+  end
+
   defp base_changeset(changeset) do
     changeset
     |> validate_email()

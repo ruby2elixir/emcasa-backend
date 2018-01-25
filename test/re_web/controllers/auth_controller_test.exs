@@ -255,4 +255,58 @@ defmodule ReWeb.AuthControllerTest do
       assert Bcrypt.checkpw("oldpassword", user.password_hash)
     end
   end
+
+  describe "change_email" do
+    test "successfully for admin", %{conn: conn} do
+      user = insert(:user, role: "admin")
+      conn = login_as(conn, user)
+
+      conn =
+        put(
+          conn,
+          auth_path(conn, :change_email, %{"user" => %{"email" => "newemail@emcasa.com"}})
+        )
+
+      assert json_response(conn, 200)
+      assert user = Repo.get(User, user.id)
+      assert user.email == "newemail@emcasa.com"
+      refute user.confirmed
+      assert_email_sent(UserEmail.change_email(user))
+    end
+
+    test "successfully for user", %{conn: conn} do
+      user = insert(:user)
+      conn = login_as(conn, user)
+
+      conn =
+        put(
+          conn,
+          auth_path(conn, :change_email, %{"user" => %{"email" => "newemail@emcasa.com"}})
+        )
+
+      assert json_response(conn, 200)
+      assert user = Repo.get(User, user.id)
+      assert user.email == "newemail@emcasa.com"
+      refute user.confirmed
+      assert_email_sent(UserEmail.change_email(user))
+    end
+
+    test "gives error when e-mail already exists", %{conn: conn} do
+      insert(:user, email: "existingemail@emcasa.com")
+      %{email: old_email} = user = insert(:user)
+      conn = login_as(conn, user)
+
+      conn =
+        put(
+          conn,
+          auth_path(conn, :change_email, %{"user" => %{"email" => "existingemail@emcasa.com"}})
+        )
+
+      assert json_response(conn, 422)
+      assert user = Repo.get(User, user.id)
+      assert user.email == old_email
+      assert user.confirmed
+      assert_email_not_sent(UserEmail.change_email(user))
+    end
+  end
 end

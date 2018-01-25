@@ -50,6 +50,17 @@ defmodule ReWeb.UserEmail do
     |> text_body("#{name}, confirme seu cadastro pelo link #{confirm_url}")
   end
 
+  def change_email(%User{name: name, email: email, confirmation_token: token}) do
+    confirm_url = build_url(@confirm_path, token)
+
+    new()
+    |> to(email)
+    |> from(@admin_email)
+    |> subject("Mudança de e-mail na EmCasa")
+    |> html_body("#{name}, confirme sua mudança de e-mail pelo link #{confirm_url}")
+    |> text_body("#{name}, confirme sua mudança de e-mail pelo link #{confirm_url}")
+  end
+
   def welcome(%User{name: name, email: email}) do
     new()
     |> to(email)

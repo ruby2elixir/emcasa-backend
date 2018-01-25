@@ -33,13 +33,18 @@ defmodule ReWeb.Router do
   scope "/", ReWeb do
     pipe_through(:private_api)
 
-    post("/users/edit_password", AuthController, :edit_password)
-
     resources "/listings", ListingController, except: [:new] do
       resources("/images", ImageController, only: [:index, :create, :delete])
     end
 
     put("/listings/:listing_id/image_order", ListingController, :order)
+  end
+
+  scope "/users", ReWeb do
+    pipe_through(:private_api)
+
+    post("/edit_password", AuthController, :edit_password)
+    put("/change_email", AuthController, :change_email)
   end
 
   if Mix.env() == :dev do

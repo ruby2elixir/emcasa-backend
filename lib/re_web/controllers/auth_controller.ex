@@ -82,4 +82,15 @@ defmodule ReWeb.AuthController do
       render(conn, ReWeb.UserView, "edit_password.json", user: user)
     end
   end
+
+  def change_email(conn, %{"user" => %{"email" => new_email}}, %{id: id}) do
+    with {:ok, user} <- Users.get(id),
+         {:ok, user} <- Users.change_email(user, new_email) do
+      user
+      |> UserEmail.change_email()
+      |> Mailer.deliver()
+
+      render(conn, ReWeb.UserView, "change_email.json", user: user)
+    end
+  end
 end
