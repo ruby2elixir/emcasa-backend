@@ -33,7 +33,7 @@ defmodule ReWeb.AuthController do
 
       conn
       |> put_status(:created)
-      |> render(ReWeb.UserView, "register.json", user: user)
+      |> render(ReWeb.UserView, "show.json", user: user)
     end
   end
 
@@ -43,7 +43,7 @@ defmodule ReWeb.AuthController do
       |> UserEmail.welcome()
       |> Mailer.deliver()
 
-      render(conn, ReWeb.UserView, "confirm.json", user: user)
+      render(conn, ReWeb.UserView, "show.json", user: user)
     end
   end
 
@@ -54,7 +54,7 @@ defmodule ReWeb.AuthController do
       |> UserEmail.reset_password()
       |> Mailer.deliver()
 
-      render(conn, ReWeb.UserView, "reset_password.json", user: user)
+      render(conn, ReWeb.UserView, "show.json", user: user)
     end
   end
 
@@ -65,7 +65,7 @@ defmodule ReWeb.AuthController do
       ) do
     with {:ok, user} <- Users.get_by_reset_token(token),
          {:ok, user} <- Users.redefine_password(user, password) do
-      render(conn, ReWeb.UserView, "redefine_password.json", user: user)
+      render(conn, ReWeb.UserView, "show.json", user: user)
     end
   end
 
@@ -79,7 +79,18 @@ defmodule ReWeb.AuthController do
     with {:ok, user} <- Users.get(id),
          :ok <- Auth.check_password(current_password, user),
          {:ok, user} <- Users.edit_password(user, new_password) do
-      render(conn, ReWeb.UserView, "edit_password.json", user: user)
+      render(conn, ReWeb.UserView, "show.json", user: user)
+    end
+  end
+
+  def change_email(conn, %{"user" => %{"email" => new_email}}, %{id: id}) do
+    with {:ok, user} <- Users.get(id),
+         {:ok, user} <- Users.change_email(user, new_email) do
+      user
+      |> UserEmail.change_email()
+      |> Mailer.deliver()
+
+      render(conn, ReWeb.UserView, "show.json", user: user)
     end
   end
 end

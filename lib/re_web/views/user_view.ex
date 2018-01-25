@@ -14,26 +14,6 @@ defmodule ReWeb.UserView do
     %{user: Map.merge(render_one(user, UserView, "user.json"), %{token: jwt})}
   end
 
-  def render("register.json", %{user: user}) do
-    %{user: render_one(user, UserView, "user.json")}
-  end
-
-  def render("confirm.json", %{user: user}) do
-    %{user: render_one(user, UserView, "user.json")}
-  end
-
-  def render("reset_password.json", %{user: user}) do
-    %{user: render_one(user, UserView, "user.json")}
-  end
-
-  def render("redefine_password.json", %{user: user}) do
-    %{user: render_one(user, UserView, "user.json")}
-  end
-
-  def render("edit_password.json", %{user: user}) do
-    %{user: render_one(user, UserView, "user.json")}
-  end
-
   def render("user.json", %{user: user}) do
     %{id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role}
   end

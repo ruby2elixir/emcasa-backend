@@ -71,4 +71,14 @@ defmodule Re.Accounts.Users do
     |> User.redefine_changeset(%{password: new_password})
     |> Repo.update()
   end
+
+  def change_email(user, new_email) do
+    user
+    |> User.email_changeset(%{
+      email: new_email,
+      confirmed: false,
+      confirmation_token: UUID.uuid4()
+    })
+    |> Repo.update()
+  end
 end
