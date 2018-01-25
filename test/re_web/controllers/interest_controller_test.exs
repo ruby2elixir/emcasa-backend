@@ -14,14 +14,15 @@ defmodule ReWeb.InterestControllerTest do
 
   describe "create" do
     test "show interest in listing", %{conn: conn} do
-      listing = insert(:listing)
-      params = Map.put(@params, :listing_id, listing.id)
-      conn = dispatch(conn, @endpoint, "post", "/interests", %{interest: params})
+      listing = insert(:listing, address: build(:address))
+
+      conn = post(conn, listing_interest_path(conn, :create, listing.id), interest: @params)
+
       response = json_response(conn, 201)
 
       interest_id = response["data"]["id"]
       interest = Repo.get(Interest, interest_id)
-      assert_email_sent ReWeb.UserEmail.notify_interest(interest)
+      assert_email_sent(ReWeb.UserEmail.notify_interest(interest))
     end
   end
 end

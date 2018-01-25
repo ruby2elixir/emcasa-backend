@@ -14,9 +14,12 @@ defmodule ReWeb.Router do
     pipe_through(:public_api)
 
     resources("/neighborhoods", NeighborhoodController, only: [:index])
-    resources("/listings", ListingController, only: [:index, :show])
+
+    resources "/listings", ListingController, only: [:index, :show] do
+      resources("/interests", InterestController, only: [:create])
+    end
+
     get("/featured_listings", FeaturedController, :index)
-    resources("/interests", InterestController, only: [:create])
   end
 
   scope "/users", ReWeb do

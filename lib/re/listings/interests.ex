@@ -8,7 +8,9 @@ defmodule Re.Listings.Interests do
     Repo
   }
 
-  def show_interest(params) do
+  def show_interest(listing_id, params) do
+    params = Map.put(params, "listing_id", listing_id)
+
     %Interest{}
     |> Interest.changeset(params)
     |> Repo.insert()
