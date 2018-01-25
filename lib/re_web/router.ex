@@ -19,7 +19,7 @@ defmodule ReWeb.Router do
       resources("/interests", InterestController, only: [:create])
     end
 
-    get("/featured_listings", FeaturedController, :index)
+    resources("/featured_listings", FeaturedController, only: [:index])
   end
 
   scope "/users", ReWeb do
