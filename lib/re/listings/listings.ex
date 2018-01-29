@@ -106,8 +106,11 @@ defmodule Re.Listings do
     |> Enum.reduce(query, &build_query(&1, &2))
     |> Repo.all()
     |> case do
-      [] -> do_related(rest, listing, query)
-      [listing | _] -> {:ok, listing}
+      [] ->
+        do_related(rest, listing, query)
+
+      [listing | _] ->
+        {:ok, Repo.preload(listing, [:address, images: @order_by_position])}
     end
   end
 
