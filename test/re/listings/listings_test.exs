@@ -128,4 +128,90 @@ defmodule Re.ListingsTest do
       assert listing.user_id == user.id
     end
   end
+
+  describe "related/1" do
+    test "should return a comeplete match listing" do
+      listing =
+        insert(
+          :listing,
+          address: build(:address),
+          type: "Apartamento",
+          rooms: 3,
+          bathrooms: 3,
+          garage_spots: 3
+        )
+
+      %{id: id2} =
+        insert(
+          :listing,
+          address: build(:address),
+          type: "Apartamento",
+          rooms: 3,
+          bathrooms: 3,
+          garage_spots: 3
+        )
+
+      assert {:ok, %{id: ^id2}} = Listings.related(listing)
+    end
+
+    test "should return a partial match listing" do
+      listing =
+        insert(
+          :listing,
+          address: build(:address),
+          type: "Apartamento",
+          rooms: 3,
+          bathrooms: 2,
+          garage_spots: 2
+        )
+
+      %{id: id2} =
+        insert(
+          :listing,
+          address: build(:address),
+          type: "Apartamento",
+          rooms: 3,
+          bathrooms: 3,
+          garage_spots: 3
+        )
+
+      assert {:ok, %{id: ^id2}} = Listings.related(listing)
+    end
+
+    test "should return a featured listing when there's no related one" do
+      %{id: id1} = insert(:listing, unrelated_attrs(build(:address)))
+      %{id: id2} = insert(:listing, unrelated_attrs(build(:address)))
+      %{id: id3} = insert(:listing, unrelated_attrs(build(:address)))
+      %{id: id4} = insert(:listing, unrelated_attrs(build(:address)))
+      insert(:featured_listing, listing_id: id1, position: 4)
+      insert(:featured_listing, listing_id: id2, position: 3)
+      insert(:featured_listing, listing_id: id3, position: 2)
+      insert(:featured_listing, listing_id: id4, position: 1)
+
+      listing =
+        insert(
+          :listing,
+          address: build(:address),
+          type: "Casa",
+          rooms: 2,
+          bathrooms: 2,
+          garage_spots: 2
+        )
+
+      insert(
+        :listing,
+        address: build(:address),
+        type: "Apartamento",
+        rooms: 3,
+        bathrooms: 3,
+        garage_spots: 3
+      )
+
+      assert {:ok, %{id: ^id4}} = Listings.related(listing)
+    end
+
+    defp unrelated_attrs(address) do
+      %{address: address, type: "Apartamento", rooms: 3, bathrooms: 3, garage_spots: 3}
+    end
+  end
 end
