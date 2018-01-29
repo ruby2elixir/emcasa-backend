@@ -1,4 +1,4 @@
-defmodule ReWeb.AuthControllerTest do
+defmodule ReWeb.UserControllerTest do
   use ReWeb.ConnCase
 
   import Re.Factory
@@ -23,7 +23,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         post(
           conn,
-          auth_path(conn, :login, %{"user" => %{"email" => user.email, "password" => "password"}})
+          user_path(conn, :login, %{"user" => %{"email" => user.email, "password" => "password"}})
         )
 
       assert response = json_response(conn, 201)
@@ -36,7 +36,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         post(
           conn,
-          auth_path(conn, :login, %{"user" => %{"email" => user.email, "password" => "wrongpass"}})
+          user_path(conn, :login, %{"user" => %{"email" => user.email, "password" => "wrongpass"}})
         )
 
       assert json_response(conn, 401)
@@ -46,7 +46,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         post(
           conn,
-          auth_path(conn, :login, %{
+          user_path(conn, :login, %{
             "user" => %{"email" => "wrong@email.com", "password" => "password"}
           })
         )
@@ -63,7 +63,7 @@ defmodule ReWeb.AuthControllerTest do
         "password" => "validpassword"
       }
 
-      conn = post(conn, auth_path(conn, :register, %{"user" => user_params}))
+      conn = post(conn, user_path(conn, :register, %{"user" => user_params}))
       assert json_response(conn, 201)
       assert user = Repo.get_by(User, email: "validemail@emcasa.com")
       assert user.confirmation_token
@@ -78,7 +78,7 @@ defmodule ReWeb.AuthControllerTest do
         "password" => ""
       }
 
-      conn = post(conn, auth_path(conn, :register, %{"user" => user_params}))
+      conn = post(conn, user_path(conn, :register, %{"user" => user_params}))
       assert json_response(conn, 422)
     end
 
@@ -89,7 +89,7 @@ defmodule ReWeb.AuthControllerTest do
         "password" => "password"
       }
 
-      conn = post(conn, auth_path(conn, :register, %{"user" => user_params}))
+      conn = post(conn, user_path(conn, :register, %{"user" => user_params}))
       assert json_response(conn, 422)
     end
   end
@@ -106,7 +106,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         put(
           conn,
-          auth_path(conn, :confirm, %{
+          user_path(conn, :confirm, %{
             "id" => user.id,
             "user" => %{"token" => "97971cce-eb6e-418a-8529-e717ca1dcf62"}
           })
@@ -129,7 +129,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         put(
           conn,
-          auth_path(conn, :confirm, %{
+          user_path(conn, :confirm, %{
             "id" => user.id,
             "user" => %{"token" => "wrontoken"}
           })
@@ -149,7 +149,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         post(
           conn,
-          auth_path(conn, :reset_password, %{
+          user_path(conn, :reset_password, %{
             "user" => %{"email" => user.email}
           })
         )
@@ -165,7 +165,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         post(
           conn,
-          auth_path(conn, :reset_password, %{
+          user_path(conn, :reset_password, %{
             "user" => %{"email" => "wrongemail@emcasa.com"}
           })
         )
@@ -183,7 +183,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         post(
           conn,
-          auth_path(conn, :redefine_password, %{
+          user_path(conn, :redefine_password, %{
             "user" => %{
               "reset_token" => "97971cce-eb6e-418a-8529-e717ca1dcf62",
               "password" => "newpassword"
@@ -202,7 +202,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         post(
           conn,
-          auth_path(conn, :reset_password, %{
+          user_path(conn, :reset_password, %{
             "user" => %{"email" => "wrongtoken", "password" => "newpassword"}
           })
         )
@@ -222,7 +222,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         post(
           conn,
-          auth_path(conn, :edit_password, %{
+          user_path(conn, :edit_password, %{
             "user" => %{
               "current_password" => "oldpassword",
               "new_password" => "newpassword"
@@ -242,7 +242,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         post(
           conn,
-          auth_path(conn, :edit_password, %{
+          user_path(conn, :edit_password, %{
             "user" => %{
               "current_password" => "wrongpassword",
               "new_password" => "newpassword"
@@ -264,7 +264,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         put(
           conn,
-          auth_path(conn, :change_email, %{"user" => %{"email" => "newemail@emcasa.com"}})
+          user_path(conn, :change_email, %{"user" => %{"email" => "newemail@emcasa.com"}})
         )
 
       assert json_response(conn, 200)
@@ -281,7 +281,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         put(
           conn,
-          auth_path(conn, :change_email, %{"user" => %{"email" => "newemail@emcasa.com"}})
+          user_path(conn, :change_email, %{"user" => %{"email" => "newemail@emcasa.com"}})
         )
 
       assert json_response(conn, 200)
@@ -299,7 +299,7 @@ defmodule ReWeb.AuthControllerTest do
       conn =
         put(
           conn,
-          auth_path(conn, :change_email, %{"user" => %{"email" => "existingemail@emcasa.com"}})
+          user_path(conn, :change_email, %{"user" => %{"email" => "existingemail@emcasa.com"}})
         )
 
       assert json_response(conn, 422)

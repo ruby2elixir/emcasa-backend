@@ -1,4 +1,4 @@
-defmodule ReWeb.ListingImageControllerTest do
+defmodule ReWeb.ImageControllerTest do
   use ReWeb.ConnCase
 
   import Re.Factory
@@ -156,6 +156,110 @@ defmodule ReWeb.ListingImageControllerTest do
       listing = insert(:listing, images: [image], user: user)
       conn = delete(conn, listing_image_path(conn, :delete, listing, image))
       json_response(conn, 403)
+    end
+  end
+
+  describe "order" do
+    test "update images order on listing by position", %{admin_conn: conn} do
+      listing = insert(:listing)
+      [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
+
+      image_params = [
+        %{id: id1, position: 2},
+        %{id: id2, position: 3},
+        %{id: id3, position: 1}
+      ]
+
+      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
+      conn =
+        dispatch(
+          conn,
+          @endpoint,
+          "put",
+          "/listings/#{listing.id}/images_orders",
+          images: image_params
+        )
+
+      assert response(conn, 204)
+      im1 = Repo.get(Image, id1)
+      im2 = Repo.get(Image, id2)
+      im3 = Repo.get(Image, id3)
+      assert im1.position == 2
+      assert im2.position == 3
+      assert im3.position == 1
+    end
+
+    test "does not update images order when unauthenticated", %{unauthenticated_conn: conn} do
+      listing = insert(:listing)
+      [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
+
+      image_params = [
+        %{id: id1, position: 2},
+        %{id: id2, position: 3},
+        %{id: id3, position: 1}
+      ]
+
+      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
+      conn =
+        dispatch(
+          conn,
+          @endpoint,
+          "put",
+          "/listings/#{listing.id}/images_orders",
+          images: image_params
+        )
+
+      assert json_response(conn, 401)
+    end
+
+    test "update images order when listing belongs to user", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing, user: user)
+      [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
+
+      image_params = [
+        %{id: id1, position: 2},
+        %{id: id2, position: 3},
+        %{id: id3, position: 1}
+      ]
+
+      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
+      conn =
+        dispatch(
+          conn,
+          @endpoint,
+          "put",
+          "/listings/#{listing.id}/images_orders",
+          images: image_params
+        )
+
+      assert response(conn, 403)
+      # assert response(conn, 204)
+    end
+
+    test "does not update images order when listing doesn't belong to user", %{
+      user_conn: conn,
+      admin_user: user
+    } do
+      listing = insert(:listing, user: user)
+      [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
+
+      image_params = [
+        %{id: id1, position: 2},
+        %{id: id2, position: 3},
+        %{id: id3, position: 1}
+      ]
+
+      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
+      conn =
+        dispatch(
+          conn,
+          @endpoint,
+          "put",
+          "/listings/#{listing.id}/images_orders",
+          images: image_params
+        )
+
+      assert json_response(conn, 403)
     end
   end
 end

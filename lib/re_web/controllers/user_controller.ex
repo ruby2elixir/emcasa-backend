@@ -1,4 +1,4 @@
-defmodule ReWeb.AuthController do
+defmodule ReWeb.UserController do
   use ReWeb, :controller
   use ReWeb.GuardedController
 

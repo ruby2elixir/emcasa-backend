@@ -14,20 +14,23 @@ defmodule ReWeb.Router do
     pipe_through(:public_api)
 
     resources("/neighborhoods", NeighborhoodController, only: [:index])
-    resources("/listings", ListingController, only: [:index, :show])
-    get("/featured_listings", ListingController, :featured)
-    resources("/interests", InterestController, only: [:create])
+
+    resources "/listings", ListingController, only: [:index, :show] do
+      resources("/interests", InterestController, only: [:create])
+    end
+
+    resources("/featured_listings", FeaturedController, only: [:index])
   end
 
   scope "/users", ReWeb do
     pipe_through(:public_api)
 
-    put("/confirm", AuthController, :confirm)
+    put("/confirm", UserController, :confirm)
 
-    post("/login", AuthController, :login)
-    post("/register", AuthController, :register)
-    post("/reset_password", AuthController, :reset_password)
-    post("/redefine_password", AuthController, :redefine_password)
+    post("/login", UserController, :login)
+    post("/register", UserController, :register)
+    post("/reset_password", UserController, :reset_password)
+    post("/redefine_password", UserController, :redefine_password)
   end
 
   scope "/", ReWeb do
@@ -35,16 +38,15 @@ defmodule ReWeb.Router do
 
     resources "/listings", ListingController, except: [:new] do
       resources("/images", ImageController, only: [:index, :create, :delete])
+      put("/images_orders", ImageController, :order)
     end
-
-    put("/listings/:listing_id/image_order", ListingController, :order)
   end
 
   scope "/users", ReWeb do
     pipe_through(:private_api)
 
-    post("/edit_password", AuthController, :edit_password)
-    put("/change_email", AuthController, :change_email)
+    post("/edit_password", UserController, :edit_password)
+    put("/change_email", UserController, :change_email)
   end
 
   if Mix.env() == :dev do
