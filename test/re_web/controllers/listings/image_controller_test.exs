@@ -175,8 +175,8 @@ defmodule ReWeb.ImageControllerTest do
         dispatch(
           conn,
           @endpoint,
-          "post",
-          "/listings/#{listing.id}/images/order",
+          "put",
+          "/listings/#{listing.id}/images_orders",
           images: image_params
         )
 
@@ -204,8 +204,8 @@ defmodule ReWeb.ImageControllerTest do
         dispatch(
           conn,
           @endpoint,
-          "post",
-          "/listings/#{listing.id}/images/order",
+          "put",
+          "/listings/#{listing.id}/images_orders",
           images: image_params
         )
 
@@ -227,8 +227,8 @@ defmodule ReWeb.ImageControllerTest do
         dispatch(
           conn,
           @endpoint,
-          "post",
-          "/listings/#{listing.id}/images/order",
+          "put",
+          "/listings/#{listing.id}/images_orders",
           images: image_params
         )
 
@@ -254,8 +254,8 @@ defmodule ReWeb.ImageControllerTest do
         dispatch(
           conn,
           @endpoint,
-          "post",
-          "/listings/#{listing.id}/images/order",
+          "put",
+          "/listings/#{listing.id}/images_orders",
           images: image_params
         )
 

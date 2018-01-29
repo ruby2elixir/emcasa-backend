@@ -38,7 +38,7 @@ defmodule ReWeb.Router do
 
     resources "/listings", ListingController, except: [:new] do
       resources("/images", ImageController, only: [:index, :create, :delete])
-      post("/images/order", ImageController, :order)
+      put("/images_orders", ImageController, :order)
     end
   end
 
