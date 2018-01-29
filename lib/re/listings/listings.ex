@@ -20,7 +20,7 @@ defmodule Re.Listings do
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
   @active_listings_query from(l in Listing, where: l.is_active == true)
-  @order_by_position from(i in Image, order_by: i.position)
+  @order_by_position from(i in Image, where: i.is_active == true, order_by: i.position)
 
   def paginated(params) do
     @active_listings_query
