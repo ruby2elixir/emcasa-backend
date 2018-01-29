@@ -209,6 +209,20 @@ defmodule ReWeb.ListingControllerTest do
       conn = get(conn, listing_path(conn, :show, listing))
       json_response(conn, 200)
     end
+
+    test "do not show inactive image", %{
+      unauthenticated_conn: conn,
+      admin_user: user
+    } do
+      %{id: id1} = image1 = insert(:image, position: 1)
+      %{id: id2} = image2 = insert(:image, position: 2)
+      image3 = insert(:image, is_active: false)
+      listing = insert(:listing, images: [image1, image2, image3], address: build(:address), user: user)
+
+      conn = get(conn, listing_path(conn, :show, listing))
+      response = json_response(conn, 200)
+      assert [%{"id" => ^id1}, %{"id" => ^id2}] = response["listing"]["images"]
+    end
   end
 
   describe "edit" do

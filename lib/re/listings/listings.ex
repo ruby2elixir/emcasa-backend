@@ -20,7 +20,7 @@ defmodule Re.Listings do
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
   @active_listings_query from(l in Listing, where: l.is_active == true)
-  @order_by_position from(i in Image, order_by: i.position)
+  @order_by_position from(i in Image, where: i.is_active == true, order_by: i.position)
 
   def paginated(params) do
     @active_listings_query
@@ -41,13 +41,21 @@ defmodule Re.Listings do
   end
 
   def get(id) do
-    case Repo.get(@active_listings_query, id) do
+    get(Listing, id)
+  end
+
+  def get_preloaded(id) do
+    @active_listings_query
+    |> preload([:address, images: ^@order_by_position])
+    |> get(id)
+  end
+
+  defp get(query, id) do
+    case Repo.get(query, id) do
       nil -> {:error, :not_found}
       listing -> {:ok, listing}
     end
   end
-
-  def preload(listing), do: {:ok, Repo.preload(listing, [:address, images: @order_by_position])}
 
   def insert(listing_params, address_id, user_id) do
     listing_params =
