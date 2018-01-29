@@ -39,21 +39,18 @@ defmodule ReWeb.ListingController do
   end
 
   def show(conn, %{"id" => id}, _user) do
-    with {:ok, listing} <- Listings.get(id),
-         {:ok, listing} <- Listings.preload(listing),
+    with {:ok, listing} <- Listings.get_preloaded(id),
          do: render(conn, "show.json", listing: listing)
   end
 
   def edit(conn, %{"id" => id}, user) do
-    with {:ok, listing} <- Listings.get(id),
-         {:ok, listing} <- Listings.preload(listing),
+    with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :edit_listing, user, listing),
          do: render(conn, "edit.json", listing: listing)
   end
 
   def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, user) do
-    with {:ok, listing} <- Listings.get(id),
-         {:ok, listing} <- Listings.preload(listing),
+    with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, user, listing),
          {:ok, address} <- Addresses.update(listing, address_params),
          {:ok, listing} <- Listings.update(listing, listing_params, address.id),
