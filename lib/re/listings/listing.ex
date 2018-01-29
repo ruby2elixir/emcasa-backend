@@ -29,9 +29,9 @@ defmodule Re.Listing do
 
   @types ~w(Apartamento Casa Cobertura)
 
-  @required ~w(type description price floor rooms bathrooms
+  @required ~w(type description price rooms bathrooms
                area garage_spots score address_id user_id)a
-  @optional ~w(complement matterport_code is_active)a
+  @optional ~w(complement floor matterport_code is_active)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
