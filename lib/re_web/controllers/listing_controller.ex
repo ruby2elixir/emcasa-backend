@@ -15,7 +15,7 @@ defmodule ReWeb.ListingController do
 
     render(
       conn,
-      "index.json",
+      "paginated_index.json",
       listings: page.entries,
       page_number: page.page_number,
       page_size: page.page_size,
