@@ -103,7 +103,7 @@ if Mix.env() == :dev do
 
   {:ok, listing1} =
     Repo.insert(%Listing{
-      type: "Apartment",
+      type: "Apartamento",
       description: "A description about the listing.",
       floor: "1",
       price: 1_000_000,
@@ -119,7 +119,7 @@ if Mix.env() == :dev do
 
   {:ok, listing2} =
     Repo.insert(%Listing{
-      type: "House",
+      type: "Casa",
       description: "A description about the listing.",
       floor: "2",
       price: 2_000_000,
@@ -135,7 +135,7 @@ if Mix.env() == :dev do
 
   {:ok, listing3} =
     Repo.insert(%Listing{
-      type: "House",
+      type: "Casa",
       description: "A description about the listing.",
       floor: "3",
       price: 3_000_000,
@@ -151,7 +151,7 @@ if Mix.env() == :dev do
 
   {:ok, listing4} =
     Repo.insert(%Listing{
-      type: "House",
+      type: "Casa",
       description: "A description about the listing.",
       floor: "4",
       price: 4_000_000,
@@ -167,7 +167,7 @@ if Mix.env() == :dev do
 
   {:ok, listing5} =
     Repo.insert(%Listing{
-      type: "House",
+      type: "Cobertura",
       description: "A description about the listing.",
       floor: "2",
       price: 2_000_000,
