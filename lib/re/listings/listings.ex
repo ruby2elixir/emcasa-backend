@@ -90,6 +90,39 @@ defmodule Re.Listings do
     |> check_if_exists()
   end
 
+  def related(listing) do
+    query = from(l in @active_listings_query, where: l.id != ^listing.id)
+    do_related(~w(address)a, listing, query)
+  end
+
+  defp do_related([], _, _) do
+    [listing | _] = featured()
+    {:ok, listing}
+  end
+
+  defp do_related([_attr | rest] = attrs, listing, query) do
+    listing
+    |> Repo.preload(:address)
+    |> Map.take(attrs)
+    |> Enum.reduce(query, &build_query(&1, &2))
+    |> Repo.all()
+    |> case do
+      [] ->
+        do_related(rest, listing, query)
+
+      [listing | _] ->
+        {:ok, Repo.preload(listing, [:address, images: @order_by_position])}
+    end
+  end
+
+  defp build_query({:address, address}, query) do
+    from(
+      l in query,
+      join: a in assoc(l, :address),
+      where: ^address.neighborhood == a.neighborhood
+    )
+  end
+
   @top_4_listings_query from(l in Listing, where: l.is_active == true, order_by: [desc: l.score])
 
   defp check_if_exists([_, _, _, _] = featured), do: featured
