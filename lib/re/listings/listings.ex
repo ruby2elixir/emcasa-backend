@@ -92,7 +92,7 @@ defmodule Re.Listings do
 
   def related(listing) do
     query = from(l in @active_listings_query, where: l.id != ^listing.id)
-    do_related(~w(garage_spots batahrooms rooms type)a, listing, query)
+    do_related(~w(address)a, listing, query)
   end
 
   defp do_related([], _, _) do
@@ -102,6 +102,7 @@ defmodule Re.Listings do
 
   defp do_related([_attr | rest] = attrs, listing, query) do
     listing
+    |> Repo.preload(:address)
     |> Map.take(attrs)
     |> Enum.reduce(query, &build_query(&1, &2))
     |> Repo.all()
@@ -114,8 +115,12 @@ defmodule Re.Listings do
     end
   end
 
-  defp build_query({key, value}, query) do
-    from(l in query, where: field(l, ^key) == ^value)
+  defp build_query({:address, address}, query) do
+    from(
+      l in query,
+      join: a in assoc(l, :address),
+      where: ^address.neighborhood == a.neighborhood
+    )
   end
 
   @top_4_listings_query from(l in Listing, where: l.is_active == true, order_by: [desc: l.score])

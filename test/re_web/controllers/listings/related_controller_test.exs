@@ -18,25 +18,28 @@ defmodule ReWeb.RelatedControllerTest do
 
   describe "show" do
     test "related listings for admin user", %{admin_conn: conn} do
-      listing =
-        insert(
-          :listing,
-          address: build(:address),
-          type: "Apartamento",
-          rooms: 3,
-          bathrooms: 3,
-          garage_spots: 3
-        )
+      listing = insert(:listing, address: build(:address, neighborhood: "Ipanema"))
+      %{id: id2} = insert(:listing, address: build(:address, neighborhood: "Ipanema"))
 
-      %{id: id2} =
-        insert(
-          :listing,
-          address: build(:address),
-          type: "Apartamento",
-          rooms: 3,
-          bathrooms: 3,
-          garage_spots: 3
-        )
+      conn = get(conn, listing_related_path(conn, :index, listing))
+
+      response = json_response(conn, 200)
+      assert [%{"id" => ^id2}] = response["listings"]
+    end
+
+    test "related listings for non user", %{admin_conn: conn} do
+      listing = insert(:listing, address: build(:address, neighborhood: "Ipanema"))
+      %{id: id2} = insert(:listing, address: build(:address, neighborhood: "Ipanema"))
+
+      conn = get(conn, listing_related_path(conn, :index, listing))
+
+      response = json_response(conn, 200)
+      assert [%{"id" => ^id2}] = response["listings"]
+    end
+
+    test "related listings for unauthenticated request", %{conn: conn} do
+      listing = insert(:listing, address: build(:address, neighborhood: "Ipanema"))
+      %{id: id2} = insert(:listing, address: build(:address, neighborhood: "Ipanema"))
 
       conn = get(conn, listing_related_path(conn, :index, listing))
 
