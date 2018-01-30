@@ -131,9 +131,21 @@ defmodule Re.ListingsTest do
 
   describe "related/1" do
     test "should return a neighborhood match listing" do
-      listing = insert(:listing, address: build(:address, neighborhood: "Copacabana"))
+      listing =
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
 
-      %{id: id2} = insert(:listing, address: build(:address, neighborhood: "Copacabana"))
+      %{id: id2} =
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_999)
+
+      assert {:ok, %{id: ^id2}} = Listings.related(listing)
+    end
+
+    test "should return a neighborhood and price match listing" do
+      listing =
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
+
+      %{id: id2} =
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 75_001)
 
       assert {:ok, %{id: ^id2}} = Listings.related(listing)
     end
@@ -148,9 +160,10 @@ defmodule Re.ListingsTest do
       insert(:featured_listing, listing_id: id3, position: 2)
       insert(:featured_listing, listing_id: id4, position: 1)
 
-      listing = insert(:listing, address: build(:address, neighborhood: "Copacabana"))
+      listing =
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
 
-      insert(:listing, address: build(:address, neighborhood: "Botafogo"))
+      insert(:listing, address: build(:address, neighborhood: "Botafogo"), price: 130_000)
 
       assert {:ok, %{id: ^id4}} = Listings.related(listing)
     end

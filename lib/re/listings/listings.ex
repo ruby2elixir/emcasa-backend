@@ -92,7 +92,7 @@ defmodule Re.Listings do
 
   def related(listing) do
     query = from(l in @active_listings_query, where: l.id != ^listing.id)
-    do_related(~w(address)a, listing, query)
+    do_related(~w(price address)a, listing, query)
   end
 
   defp do_related([], _, _) do
@@ -121,6 +121,14 @@ defmodule Re.Listings do
       join: a in assoc(l, :address),
       where: ^address.neighborhood == a.neighborhood
     )
+  end
+
+  defp build_query({:price, price}, query) do
+    price_diff = price * 0.25
+    floor = trunc(price - price_diff)
+    ceiling = trunc(price + price_diff)
+
+    from(l in query, where: l.price >= ^floor and l.price <= ^ceiling)
   end
 
   @top_4_listings_query from(l in Listing, where: l.is_active == true, order_by: [desc: l.score])
