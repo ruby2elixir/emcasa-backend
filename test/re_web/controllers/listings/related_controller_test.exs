@@ -16,7 +16,7 @@ defmodule ReWeb.RelatedControllerTest do
      user_conn: login_as(conn, user_user)}
   end
 
-  describe "show" do
+  describe "index" do
     test "related listings for admin user", %{admin_conn: conn} do
       listing =
         insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 100_000)
