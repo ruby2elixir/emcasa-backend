@@ -90,15 +90,18 @@ defmodule Re.Listings do
     |> check_if_exists()
   end
 
-  def related(listing) do
-    query = from(l in @active_listings_query, where: l.id != ^listing.id)
-    do_related(~w(price address)a, listing, query)
+  def related(%{id: listing_id} = listing) do
+    ~w(price address)a
+    |> do_related(listing, @active_listings_query)
+    |> Enum.reject(fn %{id: id} -> id == listing_id end)
+    |> Enum.uniq_by(fn %{id: id} -> id end)
+    |> Repo.preload([:address, images: @order_by_position])
+    |> okd()
   end
 
-  defp do_related([], _, _) do
-    [listing | _] = featured()
-    {:ok, listing}
-  end
+  defp okd(arg), do: {:ok, arg}
+
+  defp do_related([], _, _), do: featured()
 
   defp do_related([_attr | rest] = attrs, listing, query) do
     listing
@@ -106,13 +109,7 @@ defmodule Re.Listings do
     |> Map.take(attrs)
     |> Enum.reduce(query, &build_query(&1, &2))
     |> Repo.all()
-    |> case do
-      [] ->
-        do_related(rest, listing, query)
-
-      [listing | _] ->
-        {:ok, Repo.preload(listing, [:address, images: @order_by_position])}
-    end
+    |> Enum.concat(do_related(rest, listing, query))
   end
 
   defp build_query({:address, address}, query) do
