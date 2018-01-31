@@ -82,21 +82,28 @@ if Mix.env() == :dev do
 
   {:ok, image1} =
     Repo.insert(%Image{
-      filename: "image1.jpg",
+      filename: "axetblju0i3keovz87ab.jpg",
       position: 1,
       is_active: true
     })
 
   {:ok, image2} =
     Repo.insert(%Image{
-      filename: "image2.jpg",
+      filename: "cz9ytkthhdmd0f9mt2wy.jpg",
       position: 2,
       is_active: true
     })
 
   {:ok, image3} =
     Repo.insert(%Image{
-      filename: "image3.jpg",
+      filename: "u6fy4vpnjqff7jjxcg27.jp",
+      position: 3,
+      is_active: true
+    })
+
+  {:ok, image4} =
+    Repo.insert(%Image{
+      filename: "u6fy4vpnjqff7jjxcg27.jp",
       position: 3,
       is_active: true
     })
@@ -112,7 +119,7 @@ if Mix.env() == :dev do
       bathrooms: 2,
       garage_spots: 1,
       score: 3,
-      images: [image1, image2],
+      images: [image1],
       user: admin1,
       address: address1
     })
@@ -128,7 +135,7 @@ if Mix.env() == :dev do
       bathrooms: 3,
       garage_spots: 2,
       score: 4,
-      images: [image2, image3],
+      images: [image2],
       user: admin2,
       address: address2
     })
@@ -144,7 +151,7 @@ if Mix.env() == :dev do
       bathrooms: 2,
       garage_spots: 1,
       score: 4,
-      images: [image1, image3],
+      images: [image3],
       user: user1,
       address: address1
     })
@@ -160,7 +167,7 @@ if Mix.env() == :dev do
       bathrooms: 3,
       garage_spots: 2,
       score: 4,
-      images: [image2],
+      images: [image4],
       user: user1,
       address: address2
     })
