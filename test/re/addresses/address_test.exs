@@ -15,8 +15,8 @@ defmodule Re.AddressTest do
     city: "Rio de Janeiro",
     state: "RJ",
     postal_code: "22020-001",
-    lat: "55.3213",
-    lng: "110.01"
+    lat: 55.3213,
+    lng: 110.01
   }
   @invalid_attrs %{
     street: String.duplicate("some street", 15),
@@ -25,8 +25,8 @@ defmodule Re.AddressTest do
     city: String.duplicate("Rio de Janeiro", 20),
     state: "RJJ",
     postal_code: "2202-001",
-    lat: "-95",
-    lng: "-200"
+    lat: -95,
+    lng: -200
   }
 
   test "changeset with valid attributes" do
@@ -37,11 +37,26 @@ defmodule Re.AddressTest do
   test "changeset with invalid attributes" do
     changeset = Address.changeset(%Address{}, @invalid_attrs)
     refute changeset.valid?
-    assert Keyword.get(changeset.errors, :street) == {"should be at most %{count} character(s)", [count: 128, validation: :length, max: 128]}
-    assert Keyword.get(changeset.errors, :street_number) == {"should be at most %{count} character(s)", [count: 128, validation: :length, max: 128]}
-    assert Keyword.get(changeset.errors, :neighborhood) == {"should be at most %{count} character(s)", [count: 128, validation: :length, max: 128]}
-    assert Keyword.get(changeset.errors, :city) == {"should be at most %{count} character(s)", [count: 128, validation: :length, max: 128]}
-    assert Keyword.get(changeset.errors, :state) == {"should be %{count} character(s)", [count: 2, validation: :length, is: 2]}
+
+    assert Keyword.get(changeset.errors, :street) ==
+             {"should be at most %{count} character(s)",
+              [count: 128, validation: :length, max: 128]}
+
+    assert Keyword.get(changeset.errors, :street_number) ==
+             {"should be at most %{count} character(s)",
+              [count: 128, validation: :length, max: 128]}
+
+    assert Keyword.get(changeset.errors, :neighborhood) ==
+             {"should be at most %{count} character(s)",
+              [count: 128, validation: :length, max: 128]}
+
+    assert Keyword.get(changeset.errors, :city) ==
+             {"should be at most %{count} character(s)",
+              [count: 128, validation: :length, max: 128]}
+
+    assert Keyword.get(changeset.errors, :state) ==
+             {"should be %{count} character(s)", [count: 2, validation: :length, is: 2]}
+
     assert Keyword.get(changeset.errors, :postal_code) == {"postal code didn't match", []}
     assert Keyword.get(changeset.errors, :lat) == {"invalid latitude", []}
     assert Keyword.get(changeset.errors, :lng) == {"invalid longitude", []}
@@ -49,10 +64,12 @@ defmodule Re.AddressTest do
 
   test "duplicated address should be invalid" do
     insert(:address, @valid_attrs)
+
     {:error, changeset} =
       %Address{}
       |> Address.changeset(@valid_attrs)
       |> Repo.insert()
+
     assert changeset.errors == [postal_code: {"has already been taken", []}]
   end
 end

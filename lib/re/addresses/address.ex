@@ -14,8 +14,8 @@ defmodule Re.Address do
     field(:city, :string)
     field(:state, :string)
     field(:postal_code, :string)
-    field(:lat, :string)
-    field(:lng, :string)
+    field(:lat, :float)
+    field(:lng, :float)
     has_many(:listings, Re.Listing)
 
     timestamps()
@@ -55,35 +55,19 @@ defmodule Re.Address do
 
   defp validate_lat(changeset) do
     changeset
-    |> Changeset.get_field(:lat, "")
-    |> Float.parse()
+    |> Changeset.get_field(:lat, nil)
     |> case do
-      {latitude, ""} ->
-        if latitude > -90 and latitude < 90 do
-          changeset
-        else
-          Changeset.add_error(changeset, :lat, "invalid latitude")
-        end
-
-      _ ->
-        Changeset.add_error(changeset, :lat, "parsing error")
+      lat when lat > -90 and lat < 90 -> changeset
+      _ -> Changeset.add_error(changeset, :lat, "invalid latitude")
     end
   end
 
   defp validate_lng(changeset) do
     changeset
-    |> Changeset.get_field(:lng, "")
-    |> Float.parse()
+    |> Changeset.get_field(:lng, nil)
     |> case do
-      {longitude, ""} ->
-        if longitude > -180 and longitude < 180 do
-          changeset
-        else
-          Changeset.add_error(changeset, :lng, "invalid longitude")
-        end
-
-      _ ->
-        Changeset.add_error(changeset, :lng, "parsing error")
+      lng when lng > -180 and lng < 180 -> changeset
+      _ -> Changeset.add_error(changeset, :lng, "invalid longitude")
     end
   end
 end
