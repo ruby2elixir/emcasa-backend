@@ -10,9 +10,32 @@ defmodule Re.ListingsTest do
 
   describe "all/1" do
     test "should filter by attributes" do
-      laranjeiras = insert(:address, street: "astreet", neighborhood: "Laranjeiras")
-      leblon = insert(:address, street: "anotherstreet", neighborhood: "Leblon")
-      botafogo = insert(:address, street: "onemorestreet", neighborhood: "Botafogo")
+      laranjeiras =
+        insert(
+          :address,
+          street: "astreet",
+          neighborhood: "Laranjeiras",
+          lat: -22.9675614,
+          lng: -43.20261119999998
+        )
+
+      leblon =
+        insert(
+          :address,
+          street: "anotherstreet",
+          neighborhood: "Leblon",
+          lat: -22.9461014,
+          lng: -43.21675540000001
+        )
+
+      botafogo =
+        insert(
+          :address,
+          street: "onemorestreet",
+          neighborhood: "Botafogo",
+          lat: -22.9961014,
+          lng: -43.19675540000001
+        )
 
       %{id: id1} =
         insert(
@@ -57,6 +80,11 @@ defmodule Re.ListingsTest do
 
       assert %{entries: [%{id: ^id1}, %{id: ^id2}]} =
                Listings.paginated(%{"types" => ["Apartamento"]})
+
+      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"max_lat" => -22.95})
+      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"min_lat" => -22.98})
+      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"max_lng" => -43.199})
+      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"min_lng" => -43.203})
     end
 
     test "should not filter for empty array" do
