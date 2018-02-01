@@ -2,7 +2,6 @@ defmodule Re.AddressesTest do
   use Re.ModelCase
 
   alias Re.{
-    Address,
     Addresses
   }
 
