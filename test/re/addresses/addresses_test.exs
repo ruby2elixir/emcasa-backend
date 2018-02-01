@@ -115,8 +115,8 @@ defmodule Re.AddressesTest do
       assert updated_address.city == address.city
       assert updated_address.state == address.state
       assert updated_address.postal_code == address.postal_code
-      assert updated_address.lat == "-20.123"
-      assert updated_address.lng == "-40.123"
+      assert updated_address.lat == -20.123
+      assert updated_address.lng == -40.123
     end
 
     test "should maintain original address when passing unique parameter changes" do
