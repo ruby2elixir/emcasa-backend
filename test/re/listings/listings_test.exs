@@ -10,9 +10,13 @@ defmodule Re.ListingsTest do
 
   describe "all/1" do
     test "should filter by attributes" do
-      laranjeiras = insert(:address, street: "astreet", neighborhood: "Laranjeiras")
-      leblon = insert(:address, street: "anotherstreet", neighborhood: "Leblon")
-      botafogo = insert(:address, street: "onemorestreet", neighborhood: "Botafogo")
+      laranjeiras =
+        insert(:address, street: "astreet", neighborhood: "Laranjeiras", lat: -1, lng: -1)
+
+      leblon = insert(:address, street: "anotherstreet", neighborhood: "Leblon", lat: -5, lng: -5)
+
+      botafogo =
+        insert(:address, street: "onemorestreet", neighborhood: "Botafogo", lat: 10, lng: 10)
 
       %{id: id1} =
         insert(
@@ -57,6 +61,11 @@ defmodule Re.ListingsTest do
 
       assert %{entries: [%{id: ^id1}, %{id: ^id2}]} =
                Listings.paginated(%{"types" => ["Apartamento"]})
+
+      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"max_lat" => 5})
+      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"min_lat" => -2})
+      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"max_lng" => 5})
+      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"min_lng" => -2})
     end
 
     test "should not filter for empty array" do
