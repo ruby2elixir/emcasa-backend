@@ -2,6 +2,7 @@ defmodule Re.AddressesTest do
   use Re.ModelCase
 
   alias Re.{
+    Address,
     Addresses
   }
 
@@ -96,7 +97,7 @@ defmodule Re.AddressesTest do
     test "update address when exists but the not-unique parameters are different" do
       address = insert(:address)
 
-      {:ok, created_address} =
+      {:ok, updated_address} =
         Addresses.find_or_create(%{
           "street" => address.street,
           "street_number" => address.street_number,
@@ -108,15 +109,41 @@ defmodule Re.AddressesTest do
           "lng" => "-40.123"
         })
 
-      assert created_address.id == address.id
-      assert created_address.street == address.street
+      assert updated_address.id == address.id
+      assert updated_address.street == address.street
+      assert updated_address.street_number == address.street_number
+      assert updated_address.neighborhood == address.neighborhood
+      assert updated_address.city == address.city
+      assert updated_address.state == address.state
+      assert updated_address.postal_code == address.postal_code
+      assert updated_address.lat == "-20.123"
+      assert updated_address.lng == "-40.123"
+    end
+
+    test "update address when exists but unique parameters are different" do
+      address = insert(:address)
+
+      {:ok, created_address} =
+        Addresses.find_or_create(%{
+          "street" => "new street",
+          "street_number" => address.street_number,
+          "neighborhood" => address.neighborhood,
+          "city" => address.city,
+          "state" => address.state,
+          "postal_code" => address.postal_code,
+          "lat" => address.lat,
+          "lng" => address.lng
+        })
+
+      assert created_address.id != address.id
+      assert created_address.street == "new street"
       assert created_address.street_number == address.street_number
       assert created_address.neighborhood == address.neighborhood
       assert created_address.city == address.city
       assert created_address.state == address.state
       assert created_address.postal_code == address.postal_code
-      assert created_address.lat == "-20.123"
-      assert created_address.lng == "-40.123"
+      assert created_address.lat == address.lat
+      assert created_address.lng == address.lng
     end
   end
 
