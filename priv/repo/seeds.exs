@@ -64,8 +64,8 @@ if Mix.env() == :dev do
       city: "Test City 1",
       state: "ST",
       postal_code: "11111-111",
-      lat: "-10",
-      lng: "-10"
+      lat: "-10.101",
+      lng: "-10.101"
     })
 
   {:ok, address2} =
@@ -76,8 +76,8 @@ if Mix.env() == :dev do
       city: "Test City 2",
       state: "ST",
       postal_code: "22222-222",
-      lat: "-20",
-      lng: "-20"
+      lat: "-20.20202020202",
+      lng: "-20.20202020202"
     })
 
   {:ok, image1} =
