@@ -119,7 +119,7 @@ defmodule Re.AddressesTest do
       assert updated_address.lng == "-40.123"
     end
 
-    test "update address when exists but unique parameters are different" do
+    test "should maintain original address when passing unique parameter changes" do
       address = insert(:address)
 
       {:ok, created_address} =
