@@ -22,8 +22,13 @@ defmodule Re.Addresses do
 
   def find_or_create(address_params) do
     case find_unique(address_params) do
-      nil -> insert(address_params)
-      address -> {:ok, address}
+      nil ->
+        insert(address_params)
+
+      address ->
+        address
+        |> Address.changeset(address_params)
+        |> Repo.update()
     end
   end
 
