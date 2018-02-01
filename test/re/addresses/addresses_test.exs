@@ -44,15 +44,16 @@ defmodule Re.AddressesTest do
 
   describe "find_or_create" do
     test "create new address" do
-      {:ok, created_address} = Addresses.find_or_create(%{
-        "street" => "test st",
-        "street_number" => "101",
-        "neighborhood" => "downtown",
-        "city" => "neverland",
-        "state" => "ST",
-        "postal_code" => "11111-111",
-        "lat" => "-1",
-        "lng" => "1"
+      {:ok, created_address} =
+        Addresses.find_or_create(%{
+          "street" => "test st",
+          "street_number" => "101",
+          "neighborhood" => "downtown",
+          "city" => "neverland",
+          "state" => "ST",
+          "postal_code" => "11111-111",
+          "lat" => "-1",
+          "lng" => "1"
         })
 
       assert created_address.id
@@ -68,15 +69,17 @@ defmodule Re.AddressesTest do
 
     test "find address" do
       address = insert(:address)
-      {:ok, created_address} = Addresses.find_or_create(%{
-        "street" => address.street,
-        "street_number" => address.street_number,
-        "neighborhood" => address.neighborhood,
-        "city" => address.city,
-        "state" => address.state,
-        "postal_code" => address.postal_code,
-        "lat" => address.lat,
-        "lng" => address.lng
+
+      {:ok, created_address} =
+        Addresses.find_or_create(%{
+          "street" => address.street,
+          "street_number" => address.street_number,
+          "neighborhood" => address.neighborhood,
+          "city" => address.city,
+          "state" => address.state,
+          "postal_code" => address.postal_code,
+          "lat" => address.lat,
+          "lng" => address.lng
         })
 
       assert created_address.id == address.id
@@ -88,6 +91,32 @@ defmodule Re.AddressesTest do
       assert created_address.postal_code == address.postal_code
       assert created_address.lat == address.lat
       assert created_address.lng == address.lng
+    end
+
+    test "update address when exists but the not-unique parameters are different" do
+      address = insert(:address)
+
+      {:ok, created_address} =
+        Addresses.find_or_create(%{
+          "street" => address.street,
+          "street_number" => address.street_number,
+          "neighborhood" => address.neighborhood,
+          "city" => address.city,
+          "state" => address.state,
+          "postal_code" => address.postal_code,
+          "lat" => "-20.123",
+          "lng" => "-40.123"
+        })
+
+      assert created_address.id == address.id
+      assert created_address.street == address.street
+      assert created_address.street_number == address.street_number
+      assert created_address.neighborhood == address.neighborhood
+      assert created_address.city == address.city
+      assert created_address.state == address.state
+      assert created_address.postal_code == address.postal_code
+      assert created_address.lat == "-20.123"
+      assert created_address.lng == "-40.123"
     end
   end
 
