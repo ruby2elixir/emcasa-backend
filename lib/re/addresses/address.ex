@@ -14,8 +14,8 @@ defmodule Re.Address do
     field(:city, :string)
     field(:state, :string)
     field(:postal_code, :string)
-    field(:lat, :string)
-    field(:lng, :string)
+    field(:lat, :float)
+    field(:lng, :float)
     has_many(:listings, Re.Listing)
 
     timestamps()
@@ -67,7 +67,7 @@ defmodule Re.Address do
     |> Changeset.get_field(:lng, nil)
     |> case do
       lng when lng > -180 and lng < 180 -> changeset
-      _ -> Changeset.add_error(changeset, :lng, "invalid latitude")
+      _ -> Changeset.add_error(changeset, :lng, "invalid longitude")
     end
   end
 end

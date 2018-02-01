@@ -44,15 +44,16 @@ defmodule Re.AddressesTest do
 
   describe "find_or_create" do
     test "create new address" do
-      {:ok, created_address} = Addresses.find_or_create(%{
-        "street" => "test st",
-        "street_number" => "101",
-        "neighborhood" => "downtown",
-        "city" => "neverland",
-        "state" => "ST",
-        "postal_code" => "11111-111",
-        "lat" => "-1",
-        "lng" => "1"
+      {:ok, created_address} =
+        Addresses.find_or_create(%{
+          "street" => "test st",
+          "street_number" => "101",
+          "neighborhood" => "downtown",
+          "city" => "neverland",
+          "state" => "ST",
+          "postal_code" => "11111-111",
+          "lat" => "-1",
+          "lng" => "1"
         })
 
       assert created_address.id
@@ -62,21 +63,23 @@ defmodule Re.AddressesTest do
       assert created_address.city == "neverland"
       assert created_address.state == "ST"
       assert created_address.postal_code == "11111-111"
-      assert created_address.lat == "-1"
-      assert created_address.lng == "1"
+      assert created_address.lat == -1.0
+      assert created_address.lng == 1.0
     end
 
     test "find address" do
       address = insert(:address)
-      {:ok, created_address} = Addresses.find_or_create(%{
-        "street" => address.street,
-        "street_number" => address.street_number,
-        "neighborhood" => address.neighborhood,
-        "city" => address.city,
-        "state" => address.state,
-        "postal_code" => address.postal_code,
-        "lat" => address.lat,
-        "lng" => address.lng
+
+      {:ok, created_address} =
+        Addresses.find_or_create(%{
+          "street" => address.street,
+          "street_number" => address.street_number,
+          "neighborhood" => address.neighborhood,
+          "city" => address.city,
+          "state" => address.state,
+          "postal_code" => address.postal_code,
+          "lat" => address.lat,
+          "lng" => address.lng
         })
 
       assert created_address.id == address.id
