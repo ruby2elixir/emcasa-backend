@@ -2,6 +2,7 @@ defmodule Re.Listings.Related do
   import Ecto.Query
 
   alias Re.{
+    Listings.Featured,
     Listings,
     Repo
   }
@@ -21,7 +22,7 @@ defmodule Re.Listings.Related do
 
   defp okd(arg), do: {:ok, arg}
 
-  defp do_get([], _, _), do: Listings.featured()
+  defp do_get([], _, _), do: Featured.get()
 
   defp do_get([_attr | rest] = attrs, listing, query) do
     listing

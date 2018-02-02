@@ -8,7 +8,7 @@ defmodule Re.Listings.Featured do
     Repo
   }
 
-  def featured do
+  def get do
     FeaturedListing
     |> order_by([fl], asc: fl.position)
     |> preload([:listing, listing: [:address, images: ^Listings.order_by_position()]])
