@@ -9,7 +9,6 @@ defmodule Re.Listings do
   alias Re.{
     Addresses,
     Listing,
-    Listings.FeaturedListing,
     Listings.Filter,
     Image,
     Repo
@@ -21,6 +20,8 @@ defmodule Re.Listings do
 
   @active_listings_query from(l in Listing, where: l.is_active == true)
   @order_by_position from(i in Image, where: i.is_active == true, order_by: i.position)
+  def active_listings_query, do: @active_listings_query
+  def order_by_position, do: @order_by_position
 
   def paginated(params) do
     @active_listings_query
@@ -79,62 +80,5 @@ defmodule Re.Listings do
     listing
     |> Changeset.change(is_active: false)
     |> Repo.update()
-  end
-
-  def featured do
-    FeaturedListing
-    |> order_by([fl], asc: fl.position)
-    |> preload([:listing, listing: [:address, images: ^@order_by_position]])
-    |> Repo.all()
-    |> Enum.map(&Map.get(&1, :listing))
-    |> check_if_exists()
-  end
-
-  def related(%{id: listing_id} = listing) do
-    ~w(price address)a
-    |> do_related(listing, @active_listings_query)
-    |> Enum.reject(fn %{id: id} -> id == listing_id end)
-    |> Enum.uniq_by(fn %{id: id} -> id end)
-    |> Repo.preload([:address, images: @order_by_position])
-    |> okd()
-  end
-
-  defp okd(arg), do: {:ok, arg}
-
-  defp do_related([], _, _), do: featured()
-
-  defp do_related([_attr | rest] = attrs, listing, query) do
-    listing
-    |> Repo.preload(:address)
-    |> Map.take(attrs)
-    |> Enum.reduce(query, &build_query(&1, &2))
-    |> Repo.all()
-    |> Enum.concat(do_related(rest, listing, query))
-  end
-
-  defp build_query({:address, address}, query) do
-    from(
-      l in query,
-      join: a in assoc(l, :address),
-      where: ^address.neighborhood == a.neighborhood
-    )
-  end
-
-  defp build_query({:price, price}, query) do
-    price_diff = price * 0.25
-    floor = trunc(price - price_diff)
-    ceiling = trunc(price + price_diff)
-
-    from(l in query, where: l.price >= ^floor and l.price <= ^ceiling)
-  end
-
-  @top_4_listings_query from(l in Listing, where: l.is_active == true, order_by: [desc: l.score])
-
-  defp check_if_exists([_, _, _, _] = featured), do: featured
-
-  defp check_if_exists(_) do
-    @top_4_listings_query
-    |> preload([:address, images: ^@order_by_position])
-    |> Repo.all()
   end
 end
