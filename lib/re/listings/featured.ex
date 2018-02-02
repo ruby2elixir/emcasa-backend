@@ -1,4 +1,8 @@
 defmodule Re.Listings.Featured do
+  @moduledoc """
+  Module that contains featured listings queries
+  It tries to get from a table of featured listings and falls back to top score listings
+  """
   import Ecto.Query
 
   alias Re.{

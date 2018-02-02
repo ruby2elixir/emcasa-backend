@@ -1,4 +1,8 @@
 defmodule Re.Listings.Related do
+  @moduledoc """
+  Module that contains related listings queries based on a listing
+  It takes apart a few common attributes and attempts queries
+  """
   import Ecto.Query
 
   alias Re.{
