@@ -90,14 +90,18 @@ defmodule Re.Listings do
     |> check_if_exists()
   end
 
-  def related(%{id: listing_id} = listing) do
+  def related(listing, limit \\ :no_limit) do
     ~w(price address)a
     |> do_related(listing, @active_listings_query)
-    |> Enum.reject(fn %{id: id} -> id == listing_id end)
+    |> Enum.reject(fn %{id: id} -> id == listing.id end)
     |> Enum.uniq_by(fn %{id: id} -> id end)
+    |> limit_results(limit)
     |> Repo.preload([:address, images: @order_by_position])
     |> okd()
   end
+
+  defp limit_results(result, :no_limit), do: result
+  defp limit_results(result, limit), do: Enum.take(result, limit)
 
   defp okd(arg), do: {:ok, arg}
 
