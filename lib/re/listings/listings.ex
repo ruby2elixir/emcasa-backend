@@ -18,8 +18,6 @@ defmodule Re.Listings do
   alias Ecto.Changeset
 
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
-  defdelegate related(listing, limit), to: Re.Listings.Related
-  defdelegate related(listing), to: Re.Listings.Related
 
   @active_listings_query from(l in Listing, where: l.is_active == true)
   @order_by_position from(i in Image, where: i.is_active == true, order_by: i.position)

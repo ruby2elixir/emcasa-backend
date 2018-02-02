@@ -6,9 +6,9 @@ defmodule Re.Listings.Related do
     Repo
   }
 
-  def related(listing, limit \\ :no_limit) do
+  def get(listing, limit \\ :no_limit) do
     ~w(price address)a
-    |> do_related(listing, Listings.active_listings_query())
+    |> do_get(listing, Listings.active_listings_query())
     |> Enum.reject(fn %{id: id} -> id == listing.id end)
     |> Enum.uniq_by(fn %{id: id} -> id end)
     |> limit_results(limit)
@@ -21,15 +21,15 @@ defmodule Re.Listings.Related do
 
   defp okd(arg), do: {:ok, arg}
 
-  defp do_related([], _, _), do: Listings.featured()
+  defp do_get([], _, _), do: Listings.featured()
 
-  defp do_related([_attr | rest] = attrs, listing, query) do
+  defp do_get([_attr | rest] = attrs, listing, query) do
     listing
     |> Repo.preload(:address)
     |> Map.take(attrs)
     |> Enum.reduce(query, &build_query(&1, &2))
     |> Repo.all()
-    |> Enum.concat(do_related(rest, listing, query))
+    |> Enum.concat(do_get(rest, listing, query))
   end
 
   defp build_query({:address, address}, query) do

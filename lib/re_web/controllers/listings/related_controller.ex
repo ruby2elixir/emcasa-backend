@@ -1,14 +1,17 @@
 defmodule ReWeb.RelatedController do
   use ReWeb, :controller
 
-  alias Re.Listings
+  alias Re.{
+    Listings,
+    Listings.Related
+  }
 
   action_fallback(ReWeb.FallbackController)
 
   def index(conn, %{"listing_id" => id} = params) do
     with {:ok, listing} <- Listings.get(id),
          {:ok, limit} <- get_limit(params),
-         {:ok, listings} <- Listings.related(listing, limit) do
+         {:ok, listings} <- Related.get(listing, limit) do
       render(conn, ReWeb.ListingView, "index.json", listings: listings)
     end
   end
