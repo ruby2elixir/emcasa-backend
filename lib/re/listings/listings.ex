@@ -9,7 +9,6 @@ defmodule Re.Listings do
   alias Re.{
     Addresses,
     Listing,
-    Listings.FeaturedListing,
     Listings.Filter,
     Image,
     Repo
@@ -18,6 +17,7 @@ defmodule Re.Listings do
   alias Ecto.Changeset
 
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
+  defdelegate featured(), to: Re.Listings.Featured
 
   @active_listings_query from(l in Listing, where: l.is_active == true)
   @order_by_position from(i in Image, where: i.is_active == true, order_by: i.position)
@@ -81,24 +81,5 @@ defmodule Re.Listings do
     listing
     |> Changeset.change(is_active: false)
     |> Repo.update()
-  end
-
-  def featured do
-    FeaturedListing
-    |> order_by([fl], asc: fl.position)
-    |> preload([:listing, listing: [:address, images: ^@order_by_position]])
-    |> Repo.all()
-    |> Enum.map(&Map.get(&1, :listing))
-    |> check_if_exists()
-  end
-
-  @top_4_listings_query from(l in Listing, where: l.is_active == true, order_by: [desc: l.score])
-
-  defp check_if_exists([_, _, _, _] = featured), do: featured
-
-  defp check_if_exists(_) do
-    @top_4_listings_query
-    |> preload([:address, images: ^@order_by_position])
-    |> Repo.all()
   end
 end
