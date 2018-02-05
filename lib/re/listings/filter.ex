@@ -25,62 +25,40 @@ defmodule Re.Listings.Filter do
 
   @filters ~w(max_price min_price rooms min_area max_area neighborhoods types
               max_lat min_lat max_lng min_lng)a
+  def filters, do: @filters
 
-  def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
+  def changeset(struct, params \\ %{}), do: cast(struct, params, filters())
 
   def apply(query, params) do
-    filters =
-      %__MODULE__{}
-      |> changeset(params)
-      |> Map.get(:changes)
-
-    query
-    |> max_price_filter(filters)
-    |> min_price_filter(filters)
-    |> rooms_filter(filters)
-    |> min_area_filter(filters)
-    |> max_area_filter(filters)
-    |> neighborhoods_filter(filters)
-    |> types_filter(filters)
-    |> max_lat_filter(filters)
-    |> min_lat_filter(filters)
-    |> max_lng_filter(filters)
-    |> min_lng_filter(filters)
+    %__MODULE__{}
+    |> changeset(params)
+    |> Map.get(:changes)
+    |> Enum.reduce(query, &attr_filter/2)
   end
 
-  defp max_price_filter(query, %{max_price: max_price}) do
+  defp attr_filter({:max_price, max_price}, query) do
     from(l in query, where: l.price <= ^max_price)
   end
 
-  defp max_price_filter(query, _), do: query
-
-  defp min_price_filter(query, %{min_price: min_price}) do
+  defp attr_filter({:min_price, min_price}, query) do
     from(l in query, where: l.price >= ^min_price)
   end
 
-  defp min_price_filter(query, _), do: query
-
-  defp rooms_filter(query, %{rooms: rooms}) do
+  defp attr_filter({:rooms, rooms}, query) do
     from(l in query, where: l.rooms == ^rooms)
   end
 
-  defp rooms_filter(query, _), do: query
-
-  defp min_area_filter(query, %{min_area: min_area}) do
+  defp attr_filter({:min_area, min_area}, query) do
     from(l in query, where: l.area >= ^min_area)
   end
 
-  defp min_area_filter(query, _), do: query
-
-  defp max_area_filter(query, %{max_area: max_area}) do
+  defp attr_filter({:max_area, max_area}, query) do
     from(l in query, where: l.area <= ^max_area)
   end
 
-  defp max_area_filter(query, _), do: query
+  defp attr_filter({:neighborhoods, []}, query), do: query
 
-  defp neighborhoods_filter(query, %{neighborhoods: []}), do: query
-
-  defp neighborhoods_filter(query, %{neighborhoods: neighborhoods}) do
+  defp attr_filter({:neighborhoods, neighborhoods}, query) do
     from(
       l in query,
       join: ad in assoc(l, :address),
@@ -88,17 +66,13 @@ defmodule Re.Listings.Filter do
     )
   end
 
-  defp neighborhoods_filter(query, _), do: query
+  defp attr_filter({:types, []}, query), do: query
 
-  defp types_filter(query, %{types: []}), do: query
-
-  defp types_filter(query, %{types: types}) do
+  defp attr_filter({:types, types}, query) do
     from(l in query, where: l.type in ^types)
   end
 
-  defp types_filter(query, _), do: query
-
-  defp max_lat_filter(query, %{max_lat: max_lat}) do
+  defp attr_filter({:max_lat, max_lat}, query) do
     from(
       l in query,
       join: ad in assoc(l, :address),
@@ -106,9 +80,7 @@ defmodule Re.Listings.Filter do
     )
   end
 
-  defp max_lat_filter(query, _), do: query
-
-  defp min_lat_filter(query, %{min_lat: min_lat}) do
+  defp attr_filter({:min_lat, min_lat}, query) do
     from(
       l in query,
       join: ad in assoc(l, :address),
@@ -116,9 +88,7 @@ defmodule Re.Listings.Filter do
     )
   end
 
-  defp min_lat_filter(query, _), do: query
-
-  defp max_lng_filter(query, %{max_lng: max_lng}) do
+  defp attr_filter({:max_lng, max_lng}, query) do
     from(
       l in query,
       join: ad in assoc(l, :address),
@@ -126,9 +96,7 @@ defmodule Re.Listings.Filter do
     )
   end
 
-  defp max_lng_filter(query, _), do: query
-
-  defp min_lng_filter(query, %{min_lng: min_lng}) do
+  defp attr_filter({:min_lng, min_lng}, query) do
     from(
       l in query,
       join: ad in assoc(l, :address),
@@ -136,5 +104,5 @@ defmodule Re.Listings.Filter do
     )
   end
 
-  defp min_lng_filter(query, _), do: query
+  defp attr_filter(_, query), do: query
 end
