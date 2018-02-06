@@ -1,0 +1,26 @@
+defmodule Re.Stats.ListingVisualization do
+  @moduledoc """
+  Model to record listing visualizations
+  """
+  use Ecto.Schema
+
+  import Ecto.Changeset
+
+  schema "listing_visualizations" do
+    field(:details, :map)
+
+    belongs_to(:listing, Re.Listing)
+    belongs_to(:user, Re.User)
+
+    timestamps()
+  end
+
+  @required ~w(listing_id)a
+  @optional ~w(user_id details)a
+
+  def changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, @required ++ @optional)
+    |> validate_required(@required)
+  end
+end
