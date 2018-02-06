@@ -5,7 +5,7 @@ defmodule Re.RelatedTest do
 
   import Re.Factory
 
-  describe "related/1" do
+  describe "get/1" do
     test "should return a neighborhood match listing" do
       listing =
         insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
