@@ -5,8 +5,11 @@ defmodule ReWeb.ListingController do
   alias Re.{
     Addresses,
     Images,
-    Listings
+    Listings,
+    Stats.Visualizations
   }
+
+  @visualizations Application.get_env(:re, :visualizations, Visualizations)
 
   action_fallback(ReWeb.FallbackController)
 
@@ -34,9 +37,12 @@ defmodule ReWeb.ListingController do
     end
   end
 
-  def show(conn, %{"id" => id}, _user) do
-    with {:ok, listing} <- Listings.get_preloaded(id),
-         do: render(conn, "show.json", listing: listing)
+  def show(conn, %{"id" => id}, user) do
+    with {:ok, listing} <- Listings.get_preloaded(id) do
+      @visualizations.listing(listing, user, extract_details(conn))
+
+      render(conn, "show.json", listing: listing)
+    end
   end
 
   def edit(conn, %{"id" => id}, user) do
@@ -65,5 +71,13 @@ defmodule ReWeb.ListingController do
          :ok <- Bodyguard.permit(Listings, :order_listing_images, user, listing),
          :ok <- Images.update_per_listing(listing, images_params),
          do: send_resp(conn, :no_content, "")
+  end
+
+  @visualization_params ~w(remote_ip req_headers)a
+
+  defp extract_details(conn) do
+    conn
+    |> Map.take(@visualization_params)
+    |> Kernel.inspect()
   end
 end
