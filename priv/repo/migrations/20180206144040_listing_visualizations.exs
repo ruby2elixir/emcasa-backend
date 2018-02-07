@@ -5,7 +5,7 @@ defmodule Re.Repo.Migrations.ListingVisualizations do
     create table(:listing_visualizations) do
       add(:listing_id, references(:listings))
       add(:user_id, references(:users))
-      add(:details, :map)
+      add(:details, :text)
 
       timestamps()
     end

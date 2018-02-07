@@ -7,7 +7,7 @@ defmodule Re.Stats.ListingVisualization do
   import Ecto.Changeset
 
   schema "listing_visualizations" do
-    field(:details, :map)
+    field(:details, :string)
 
     belongs_to(:listing, Re.Listing)
     belongs_to(:user, Re.User)

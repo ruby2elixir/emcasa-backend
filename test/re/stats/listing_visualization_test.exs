@@ -24,7 +24,7 @@ defmodule Re.ListingVisualizationTest do
     changeset =
       ListingVisualization.changeset(%ListingVisualization{}, %{
         listing_id: listing.id,
-        details: %{something: "something"}
+        details: "some details"
       })
 
     assert changeset.valid?
