@@ -49,13 +49,13 @@ defmodule Re.Mixfile do
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:comeonin, "~> 3.2"},
       {:guardian, "~> 1.0"},
-      {:ex_machina, "~> 2.0", only: :test},
-      {:swoosh, "~> 0.12.0"},
-      {:scrivener_ecto, "~> 1.0"},
+      {:ex_machina, "~> 2.1", only: :test},
+      {:swoosh, "~> 0.13"},
+      {:scrivener_ecto, "~> 1.3"},
       {:bodyguard, "~> 2.1"},
-      {:timber, "~> 2.5"},
+      {:timber, "~> 2.6"},
       {:faker, "~> 0.9.0", only: :test},
-      {:email_checker, "~> 0.1.1"}
+      {:email_checker, "~> 0.1"}
     ]
   end
 
