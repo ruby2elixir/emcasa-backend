@@ -34,3 +34,5 @@ config :re, Re.Repo,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :re, ReWeb.Mailer, adapter: Swoosh.Adapters.Test
+
+config :re, :visualizations, Re.TestVisualizations
