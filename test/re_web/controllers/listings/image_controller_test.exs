@@ -170,15 +170,8 @@ defmodule ReWeb.ImageControllerTest do
         %{id: id3, position: 1}
       ]
 
-      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
       conn =
-        dispatch(
-          conn,
-          @endpoint,
-          "put",
-          "/listings/#{listing.id}/images_orders",
-          images: image_params
-        )
+        put(conn, listing_image_path(conn, :order, listing), id: listing.id, images: image_params)
 
       assert response(conn, 204)
       im1 = Repo.get(Image, id1)
@@ -199,15 +192,8 @@ defmodule ReWeb.ImageControllerTest do
         %{id: id3, position: 1}
       ]
 
-      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
       conn =
-        dispatch(
-          conn,
-          @endpoint,
-          "put",
-          "/listings/#{listing.id}/images_orders",
-          images: image_params
-        )
+        put(conn, listing_image_path(conn, :order, listing), id: listing.id, images: image_params)
 
       assert json_response(conn, 401)
     end
@@ -222,18 +208,15 @@ defmodule ReWeb.ImageControllerTest do
         %{id: id3, position: 1}
       ]
 
-      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
       conn =
-        dispatch(
+        put(
           conn,
-          @endpoint,
-          "put",
-          "/listings/#{listing.id}/images_orders",
+          listing_image_path(conn, :order, listing),
+          id: listing.id,
           images: image_params
         )
 
       assert response(conn, 403)
-      # assert response(conn, 204)
     end
 
     test "does not update images order when listing doesn't belong to user", %{
@@ -249,13 +232,11 @@ defmodule ReWeb.ImageControllerTest do
         %{id: id3, position: 1}
       ]
 
-      # conn = patch conn, listing_listing_path(conn, :order, images: image_params)
       conn =
-        dispatch(
+        put(
           conn,
-          @endpoint,
-          "put",
-          "/listings/#{listing.id}/images_orders",
+          listing_image_path(conn, :order, listing),
+          id: listing.id,
           images: image_params
         )
 
