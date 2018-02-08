@@ -11,6 +11,5 @@ defmodule ReWeb.GuardianPipeline do
 
   plug(Guardian.Plug.VerifySession, claims: @claims)
   plug(Guardian.Plug.VerifyHeader, claims: @claims, realm: "Token")
-  plug(Guardian.Plug.EnsureAuthenticated)
-  plug(Guardian.Plug.LoadResource, ensure: true)
+  plug(Guardian.Plug.LoadResource, allow_blank: true)
 end

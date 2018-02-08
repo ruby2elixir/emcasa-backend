@@ -8,17 +8,21 @@ defmodule ReWeb.UserController do
   }
 
   alias ReWeb.{
-    Guardian,
     Mailer,
     UserEmail
   }
 
   action_fallback(ReWeb.FallbackController)
 
+  plug(
+    Guardian.Plug.EnsureAuthenticated
+    when action in [:change_email, :edit_password]
+  )
+
   def login(conn, %{"user" => %{"email" => email, "password" => password}}, _user) do
     with {:ok, user} <- Auth.find_user(email),
          :ok <- Auth.check_password(password, user),
-         {:ok, jwt, _full_claims} <- Guardian.encode_and_sign(user) do
+         {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
       conn
       |> put_status(:created)
       |> render(ReWeb.UserView, "login.json", jwt: jwt, user: user)

@@ -1,53 +1,38 @@
 defmodule ReWeb.Router do
   use ReWeb, :router
 
-  pipeline :public_api do
-    plug(:accepts, ["json"])
-  end
-
-  pipeline :private_api do
+  pipeline :api do
     plug(:accepts, ["json"])
     plug(ReWeb.GuardianPipeline)
   end
 
   scope "/", ReWeb do
-    pipe_through(:public_api)
+    pipe_through(:api)
 
     resources("/neighborhoods", NeighborhoodController, only: [:index])
 
-    resources "/listings", ListingController, only: [:index, :show] do
+    resources "/listings", ListingController, except: [:new] do
+      resources("/images", ImageController, only: [:index, :create, :delete])
       resources("/interests", InterestController, only: [:create])
       resources("/related", RelatedController, only: [:index])
+
+      put("/images_orders", ImageController, :order)
     end
 
     resources("/featured_listings", FeaturedController, only: [:index])
   end
 
   scope "/users", ReWeb do
-    pipe_through(:public_api)
-
-    put("/confirm", UserController, :confirm)
+    pipe_through(:api)
 
     post("/login", UserController, :login)
     post("/register", UserController, :register)
     post("/reset_password", UserController, :reset_password)
     post("/redefine_password", UserController, :redefine_password)
-  end
-
-  scope "/", ReWeb do
-    pipe_through(:private_api)
-
-    resources "/listings", ListingController, except: [:new] do
-      resources("/images", ImageController, only: [:index, :create, :delete])
-      put("/images_orders", ImageController, :order)
-    end
-  end
-
-  scope "/users", ReWeb do
-    pipe_through(:private_api)
-
     post("/edit_password", UserController, :edit_password)
+
     put("/change_email", UserController, :change_email)
+    put("/confirm", UserController, :confirm)
   end
 
   if Mix.env() == :dev do

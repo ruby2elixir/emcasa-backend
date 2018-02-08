@@ -9,6 +9,11 @@ defmodule ReWeb.ImageController do
 
   action_fallback(ReWeb.FallbackController)
 
+  plug(
+    Guardian.Plug.EnsureAuthenticated
+    when action in [:create, :delete, :order]
+  )
+
   def index(conn, %{"listing_id" => listing_id}, user) do
     with {:ok, listing} <- Listings.get(listing_id),
          :ok <- Bodyguard.permit(Images, :index_images, user, listing),

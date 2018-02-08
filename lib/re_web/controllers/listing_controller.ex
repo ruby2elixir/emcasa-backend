@@ -4,7 +4,6 @@ defmodule ReWeb.ListingController do
 
   alias Re.{
     Addresses,
-    Images,
     Listings,
     Stats.Visualizations
   }
@@ -12,6 +11,17 @@ defmodule ReWeb.ListingController do
   @visualizations Application.get_env(:re, :visualizations, Visualizations)
 
   action_fallback(ReWeb.FallbackController)
+
+  plug(
+    Guardian.Plug.EnsureAuthenticated
+    when action in [
+           :create,
+           :edit,
+           :update,
+           :delete,
+           :order
+         ]
+  )
 
   def index(conn, params, _user) do
     page = Listings.paginated(params)
@@ -63,13 +73,6 @@ defmodule ReWeb.ListingController do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :delete_listing, user, listing),
          {:ok, _listing} <- Listings.delete(listing),
-         do: send_resp(conn, :no_content, "")
-  end
-
-  def order(conn, %{"listing_id" => id, "images" => images_params}, user) do
-    with {:ok, listing} <- Listings.get(id),
-         :ok <- Bodyguard.permit(Listings, :order_listing_images, user, listing),
-         :ok <- Images.update_per_listing(listing, images_params),
          do: send_resp(conn, :no_content, "")
   end
 
