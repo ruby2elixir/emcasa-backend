@@ -20,7 +20,8 @@ defmodule ReWeb.ListingControllerTest do
     price: 1_000_000,
     rooms: 4,
     area: 140,
-    garage_spots: 3
+    garage_spots: 3,
+    is_exclusive: true
   }
   @valid_address_attrs %{
     street: "A Street",
@@ -124,6 +125,7 @@ defmodule ReWeb.ListingControllerTest do
                  "area" => listing.area,
                  "garage_spots" => listing.garage_spots,
                  "matterport_code" => listing.matterport_code,
+                 "is_exclusive" => listing.is_exclusive,
                  "user_id" => listing.user_id,
                  "images" => [
                    %{
@@ -163,6 +165,7 @@ defmodule ReWeb.ListingControllerTest do
                  "area" => listing.area,
                  "garage_spots" => listing.garage_spots,
                  "matterport_code" => listing.matterport_code,
+                 "is_exclusive" => listing.is_exclusive,
                  "user_id" => listing.user_id,
                  "images" => [
                    %{
@@ -245,6 +248,7 @@ defmodule ReWeb.ListingControllerTest do
                  "garage_spots" => listing.garage_spots,
                  "score" => listing.score,
                  "matterport_code" => listing.matterport_code,
+                 "is_exclusive" => listing.is_exclusive,
                  "images" => [
                    %{
                      "id" => image.id,

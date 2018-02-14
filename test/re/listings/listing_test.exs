@@ -16,7 +16,8 @@ defmodule Re.ListingTest do
     area: 150,
     garage_spots: 2,
     score: 4,
-    matterport_code: ""
+    matterport_code: "",
+    is_exclusive: false
   }
   @invalid_attrs %{
     type: "ApartmentApartmentApartmentApartmentApartment",
@@ -24,7 +25,8 @@ defmodule Re.ListingTest do
     price: -1,
     bathrooms: -1,
     garage_spots: -1,
-    score: 5
+    score: 5,
+    is_exclusive: "banana"
   }
 
   test "changeset with valid attributes" do
@@ -61,6 +63,9 @@ defmodule Re.ListingTest do
 
     assert Keyword.get(changeset.errors, :address_id) ==
              {"can't be blank", [validation: :required]}
+
+    assert Keyword.get(changeset.errors, :is_exclusive) ==
+             {"is invalid", [type: :boolean, validation: :cast]}
 
     changeset = Listing.changeset(%Listing{}, %{score: 0})
     refute changeset.valid?
