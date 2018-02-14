@@ -19,6 +19,7 @@ defmodule Re.Listing do
     field(:score, :integer)
     field(:matterport_code, :string)
     field(:is_active, :boolean)
+    field(:is_exclusive, :boolean, default: false)
 
     belongs_to(:address, Re.Address)
     belongs_to(:user, Re.User)
@@ -31,7 +32,7 @@ defmodule Re.Listing do
 
   @required ~w(type description price rooms bathrooms
                area garage_spots score address_id user_id)a
-  @optional ~w(complement floor matterport_code is_active)a
+  @optional ~w(complement floor matterport_code is_active is_exclusive)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
