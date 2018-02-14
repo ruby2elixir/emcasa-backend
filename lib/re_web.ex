@@ -24,8 +24,10 @@ defmodule ReWeb do
       import Ecto
       import Ecto.Query
 
-      import ReWeb.Router.Helpers
-      import ReWeb.Gettext
+      import ReWeb.{
+        Gettext,
+        Router.Helpers
+      }
       import Bodyguard
     end
   end
@@ -39,9 +41,11 @@ defmodule ReWeb do
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
 
-      import ReWeb.Router.Helpers
-      import ReWeb.ErrorHelpers
-      import ReWeb.Gettext
+      import ReWeb.{
+        ErrorHelpers,
+        Gettext,
+        Router.Helpers
+      }
     end
   end
 

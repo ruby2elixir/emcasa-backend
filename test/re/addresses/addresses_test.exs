@@ -146,7 +146,7 @@ defmodule Re.AddressesTest do
     end
   end
 
-  defp stringify_keys(map = %{}) do
+  defp stringify_keys(%{} = map) do
     map
     |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
     |> Enum.into(%{})

@@ -22,8 +22,10 @@ defmodule ReWeb.ConnCase do
 
       alias Re.Repo
       import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
+      import Ecto.{
+        Changeset,
+        Query
+      }
 
       import ReWeb.Router.Helpers
 
