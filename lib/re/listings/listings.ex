@@ -37,8 +37,7 @@ defmodule Re.Listings do
   def maybe_get_address_ids_with_neighborhood(query, neighborhood) do
     ids = Addresses.get_ids_with_neighborhood(neighborhood)
 
-    query
-    |> where([l], l.address_id in ^ids)
+    from l in query, where: l.address_id in ^ids
   end
 
   def get(id) do
