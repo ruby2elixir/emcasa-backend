@@ -9,6 +9,8 @@ defmodule Re.Listings.Filter do
     Changeset
   }
 
+  alias Re.Listings.Filters.Relax
+
   schema "listings_filter" do
     field(:max_price, :integer)
     field(:min_price, :integer)
@@ -38,6 +40,13 @@ defmodule Re.Listings.Filter do
     %__MODULE__{}
     |> changeset(params)
     |> Map.get(:changes)
+  end
+
+  def relax(query, params, types) do
+    params
+    |> cast()
+    |> Relax.apply(types)
+    |> build_query(query)
   end
 
   defp build_query(params, query), do: Enum.reduce(params, query, &attr_filter/2)

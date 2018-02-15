@@ -31,6 +31,15 @@ defmodule Re.Listings do
     |> Repo.paginate(params)
   end
 
+  def relaxed(params, types) do
+    @active_listings_query
+    |> order_by([l], desc: l.score, asc: l.matterport_code)
+    |> exclude_listings(params)
+    |> Filter.relax(params, types)
+    |> preload([:address, images: ^@order_by_position])
+    |> Repo.all()
+  end
+
   def get(id), do: do_get(Listing, id)
 
   def get_preloaded(id) do
@@ -68,6 +77,10 @@ defmodule Re.Listings do
       nil -> {:error, :not_found}
       listing -> {:ok, listing}
     end
+  end
+
+  defp exclude_listings(query, %{"exclude_listings" => ids}) do
+    from l in query, where: l.id not in ^ids
   end
 
 end

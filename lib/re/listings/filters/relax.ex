@@ -4,19 +4,26 @@ defmodule Re.Listings.Filters.Relax do
 
   defguardp is_not_nil(value) when not is_nil(value)
 
-  def price(params) do
+  def apply(params, types) when is_list(types) do
+    Enum.reduce(types, params, &do_apply/2)
+  end
+  def apply(params, _), do: params
+
+  def do_apply(:price, params) do
     params
     |> Filter.cast()
     |> max_price()
     |> min_price()
   end
 
-  def area(params) do
+  def do_apply(:area, params) do
     params
     |> Filter.cast()
     |> max_area()
     |> min_area()
   end
+
+  def do_apply(_, params), do: params
 
   defp max_price(%{max_price: max_price} = params) when is_not_nil(max_price) do
     Map.update(params, :max_price, 0, &(trunc(&1 * 1.1)))
