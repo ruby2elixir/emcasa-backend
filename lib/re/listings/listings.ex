@@ -26,35 +26,26 @@ defmodule Re.Listings do
   def paginated(params) do
     @active_listings_query
     |> order_by([l], desc: l.score, asc: l.matterport_code)
-    |> maybe_get_address_ids_with_neighborhood(params["neighborhood"])
     |> Filter.apply(params)
     |> preload([:address, images: ^@order_by_position])
     |> Repo.paginate(params)
   end
 
-  def maybe_get_address_ids_with_neighborhood(query, nil), do: query
-
-  def maybe_get_address_ids_with_neighborhood(query, neighborhood) do
-    ids = Addresses.get_ids_with_neighborhood(neighborhood)
-
-    from l in query, where: l.address_id in ^ids
+  def relaxed(params, types) do
+    @active_listings_query
+    |> order_by([l], desc: l.score, asc: l.matterport_code)
+    |> exclude_listings(params)
+    |> Filter.relax(params, types)
+    |> preload([:address, images: ^@order_by_position])
+    |> Repo.all()
   end
 
-  def get(id) do
-    get(Listing, id)
-  end
+  def get(id), do: do_get(Listing, id)
 
   def get_preloaded(id) do
     @active_listings_query
     |> preload([:address, images: ^@order_by_position])
-    |> get(id)
-  end
-
-  defp get(query, id) do
-    case Repo.get(query, id) do
-      nil -> {:error, :not_found}
-      listing -> {:ok, listing}
-    end
+    |> do_get(id)
   end
 
   def insert(listing_params, address_id, user_id) do
@@ -80,4 +71,16 @@ defmodule Re.Listings do
     |> Changeset.change(is_active: false)
     |> Repo.update()
   end
+
+  defp do_get(query, id) do
+    case Repo.get(query, id) do
+      nil -> {:error, :not_found}
+      listing -> {:ok, listing}
+    end
+  end
+
+  defp exclude_listings(query, %{"exclude_listings" => ids}) do
+    from l in query, where: l.id not in ^ids
+  end
+
 end

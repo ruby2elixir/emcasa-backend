@@ -9,6 +9,8 @@ defmodule Re.Listings.Filter do
     Changeset
   }
 
+  alias Re.Listings.Filters.Relax
+
   schema "listings_filter" do
     field(:max_price, :integer)
     field(:min_price, :integer)
@@ -25,16 +27,29 @@ defmodule Re.Listings.Filter do
 
   @filters ~w(max_price min_price rooms min_area max_area neighborhoods types
               max_lat min_lat max_lng min_lng)a
-  def filters, do: @filters
 
-  def changeset(struct, params \\ %{}), do: cast(struct, params, filters())
+  def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
   def apply(query, params) do
+    params
+    |> cast()
+    |> build_query(query)
+  end
+
+  def cast(params) do
     %__MODULE__{}
     |> changeset(params)
     |> Map.get(:changes)
-    |> Enum.reduce(query, &attr_filter/2)
   end
+
+  def relax(query, params, types) do
+    params
+    |> cast()
+    |> Relax.apply(types)
+    |> build_query(query)
+  end
+
+  defp build_query(params, query), do: Enum.reduce(params, query, &attr_filter/2)
 
   defp attr_filter({:max_price, max_price}, query) do
     from(l in query, where: l.price <= ^max_price)
