@@ -30,10 +30,15 @@ defmodule Re.Listings.Filter do
   def changeset(struct, params \\ %{}), do: cast(struct, params, filters())
 
   def apply(query, params) do
+    params
+    |> cast()
+    |> Enum.reduce(query, &attr_filter/2)
+  end
+
+  def cast(params) do
     %__MODULE__{}
     |> changeset(params)
     |> Map.get(:changes)
-    |> Enum.reduce(query, &attr_filter/2)
   end
 
   defp attr_filter({:max_price, max_price}, query) do
