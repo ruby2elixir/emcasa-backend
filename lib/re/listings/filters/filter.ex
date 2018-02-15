@@ -25,14 +25,13 @@ defmodule Re.Listings.Filter do
 
   @filters ~w(max_price min_price rooms min_area max_area neighborhoods types
               max_lat min_lat max_lng min_lng)a
-  def filters, do: @filters
 
-  def changeset(struct, params \\ %{}), do: cast(struct, params, filters())
+  def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
   def apply(query, params) do
     params
     |> cast()
-    |> Enum.reduce(query, &attr_filter/2)
+    |> build_query(query)
   end
 
   def cast(params) do
@@ -40,6 +39,8 @@ defmodule Re.Listings.Filter do
     |> changeset(params)
     |> Map.get(:changes)
   end
+
+  defp build_query(params, query), do: Enum.reduce(params, query, &attr_filter/2)
 
   defp attr_filter({:max_price, max_price}, query) do
     from(l in query, where: l.price <= ^max_price)
