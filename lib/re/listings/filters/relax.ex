@@ -1,4 +1,7 @@
 defmodule Re.Listings.Filters.Relax do
+  @moduledoc """
+  Module to group logic to relax filter parameters
+  """
 
   alias Re.Listings.Filter
 

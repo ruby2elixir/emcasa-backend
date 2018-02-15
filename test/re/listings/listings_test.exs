@@ -122,7 +122,6 @@ defmodule Re.ListingsTest do
     end
   end
 
-
   describe "relaxed/1" do
     test "should return query with relaxed filters" do
       %{id: id1} = insert(:listing, price: 1_000_000, area: 100, score: 4, address: build(:address))
