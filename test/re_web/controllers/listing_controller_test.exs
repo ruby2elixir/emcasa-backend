@@ -69,23 +69,6 @@ defmodule ReWeb.ListingControllerTest do
       assert retrieved_listing["description"] == listing.description
     end
 
-    test "filters by neighborhood", %{admin_conn: conn, admin_user: user} do
-      insert(:listing, address: build(:address), user: user)
-
-      address2 = insert(:address, postal_code: "12345", neighborhood: "Another neighborhood")
-
-      listing2 =
-        insert(:listing, address: address2, description: "Another description", user: user)
-
-      conn = get(conn, listing_path(conn, :index, neighborhood: address2.neighborhood))
-
-      listings = json_response(conn, 200)["listings"]
-      assert length(listings) == 1
-
-      retrieved_listing = List.first(listings)
-      assert retrieved_listing["description"] == listing2.description
-    end
-
     test "paginated query", %{admin_conn: conn, admin_user: user} do
       insert_list(5, :listing, address: insert(:address), user: user)
 

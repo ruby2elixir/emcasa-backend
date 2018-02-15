@@ -26,7 +26,6 @@ defmodule Re.Listings do
   def paginated(params) do
     @active_listings_query
     |> order_by([l], desc: l.score, asc: l.matterport_code)
-    |> maybe_get_address_ids_with_neighborhood(params["neighborhood"])
     |> Filter.apply(params)
     |> preload([:address, images: ^@order_by_position])
     |> Repo.paginate(params)
@@ -71,11 +70,4 @@ defmodule Re.Listings do
     end
   end
 
-  defp maybe_get_address_ids_with_neighborhood(query, nil), do: query
-
-  defp maybe_get_address_ids_with_neighborhood(query, neighborhood) do
-    ids = Addresses.get_ids_with_neighborhood(neighborhood)
-
-    from l in query, where: l.address_id in ^ids
-  end
 end
