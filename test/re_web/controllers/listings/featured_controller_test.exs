@@ -85,9 +85,10 @@ defmodule ReWeb.FeaturedControllerTest do
     } do
       address = insert(:address)
       %{id: id1} = insert(:listing, address: address, score: 4)
-      %{id: id2} = insert(:listing, address: address, score: 3)
-      %{id: id3} = insert(:listing, address: address, score: 2)
-      %{id: id4} = insert(:listing, address: address, score: 1)
+      %{id: id2} = insert(:listing, address: address, score: 4)
+      %{id: id3} = insert(:listing, address: address, score: 3)
+      %{id: id4} = insert(:listing, address: address, score: 2)
+      insert(:listing, address: address, score: 1)
 
       conn = dispatch(conn, @endpoint, "get", "/featured_listings")
 

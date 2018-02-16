@@ -19,6 +19,7 @@ defmodule Re.Listings.Featured do
     |> Repo.all()
     |> Enum.map(&Map.get(&1, :listing))
     |> check_if_exists()
+    |> Enum.take(4)
   end
 
   @top_4_listings_query from(l in Listing, where: l.is_active == true, order_by: [desc: l.score])
