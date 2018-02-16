@@ -7,7 +7,6 @@ defmodule Re.Listings do
   import Ecto.Query
 
   alias Re.{
-    Addresses,
     Listing,
     Listings.Filter,
     Image,
