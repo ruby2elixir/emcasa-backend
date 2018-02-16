@@ -20,10 +20,6 @@ defmodule ReWeb do
     quote do
       use Phoenix.Controller, log: false, namespace: ReWeb
 
-      alias Re.Repo
-      import Ecto
-      import Ecto.Query
-
       import ReWeb.{
         Gettext,
         Router.Helpers
@@ -60,9 +56,6 @@ defmodule ReWeb do
     quote do
       use Phoenix.Channel, log_join: false, log_handle_in: false
 
-      alias Re.Repo
-      import Ecto
-      import Ecto.Query
       import ReWeb.Gettext
     end
   end
