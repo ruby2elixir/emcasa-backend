@@ -28,6 +28,7 @@ defmodule ReWeb do
         Gettext,
         Router.Helpers
       }
+
       import Bodyguard
     end
   end
