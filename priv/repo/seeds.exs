@@ -187,6 +187,22 @@ if Mix.env() == :dev do
       address: address2
     })
 
+  {:ok, listing6} =
+    Repo.insert(%Listing{
+      type: "Cobertura",
+      description: "A description about the listing.",
+      floor: "2",
+      price: 2_000_000,
+      area: 200,
+      rooms: 3,
+      bathrooms: 3,
+      garage_spots: 2,
+      score: 4,
+      user: user2,
+      address: address2,
+      is_active: false
+    })
+
   {:ok, interest1} =
     Repo.insert(%Interest{
       name: "Interested Person 1",
