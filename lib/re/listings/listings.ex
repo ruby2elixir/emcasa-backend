@@ -18,13 +18,13 @@ defmodule Re.Listings do
 
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
-  @active_listings_query from(l in Listing, where: l.is_active == true)
+  def active_listings_query(query \\ Listing), do: from(l in query, where: l.is_active == true)
+
   @order_by_position from(i in Image, where: i.is_active == true, order_by: i.position)
-  def active_listings_query, do: @active_listings_query
   def order_by_position, do: @order_by_position
 
   def paginated(params) do
-    @active_listings_query
+    active_listings_query()
     |> order_by([l], desc: l.score, asc: l.matterport_code)
     |> Filter.apply(params)
     |> preload([:address, images: ^@order_by_position])
@@ -32,7 +32,7 @@ defmodule Re.Listings do
   end
 
   def relaxed(params, types) do
-    @active_listings_query
+    active_listings_query()
     |> order_by([l], desc: l.score, asc: l.matterport_code)
     |> exclude_listings(params)
     |> Filter.relax(params, types)
@@ -43,7 +43,7 @@ defmodule Re.Listings do
   def get(id), do: do_get(Listing, id)
 
   def get_preloaded(id) do
-    @active_listings_query
+    active_listings_query()
     |> preload([:address, images: ^@order_by_position])
     |> do_get(id)
   end
@@ -80,7 +80,6 @@ defmodule Re.Listings do
   end
 
   defp exclude_listings(query, %{"exclude_listings" => ids}) do
-    from l in query, where: l.id not in ^ids
+    from(l in query, where: l.id not in ^ids)
   end
-
 end

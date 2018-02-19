@@ -13,7 +13,7 @@ defmodule Re.RelatedTest do
       %{id: id2} =
         insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_999)
 
-      assert {:ok, [%{id: ^id2}]} = Related.get(listing)
+      assert %{entries: [%{id: ^id2}]} = Related.get(listing)
     end
 
     test "should return a neighborhood and price match listing" do
@@ -21,12 +21,12 @@ defmodule Re.RelatedTest do
         insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
 
       %{id: id2} =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_999)
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_000)
 
       %{id: id3} =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 75_001)
+        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000)
 
-      assert {:ok, [%{id: ^id2}, %{id: ^id3}]} = Related.get(listing)
+      assert %{entries: [%{id: ^id2}, %{id: ^id3}]} = Related.get(listing)
     end
 
     test "should return a featured listing when there's no related one" do
@@ -44,7 +44,7 @@ defmodule Re.RelatedTest do
 
       insert(:listing, address: build(:address, neighborhood: "Botafogo"), price: 130_000)
 
-      assert {:ok, [%{id: ^id4}, %{id: ^id3}, %{id: ^id2}, %{id: ^id1}]} = Related.get(listing)
+      assert %{entries: []} = Related.get(listing)
     end
   end
 end

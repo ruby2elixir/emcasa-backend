@@ -61,10 +61,17 @@ defmodule ReWeb.RelatedControllerTest do
       listing = insert(:listing, address: address)
       insert_list(10, :listing, address: address)
 
-      conn = get(conn, listing_related_path(conn, :index, listing, limit: 4))
+      conn = get(conn, listing_related_path(conn, :index, listing, page_size: 4))
 
       response = json_response(conn, 200)
       assert length(response["listings"]) == 4
+      assert response["total_entries"] == 10
+
+      conn = get(conn, listing_related_path(conn, :index, listing), page_size: 4, page: 3)
+
+      response = json_response(conn, 200)
+      assert length(response["listings"]) == 2
+      assert response["total_entries"] == 10
     end
   end
 end
