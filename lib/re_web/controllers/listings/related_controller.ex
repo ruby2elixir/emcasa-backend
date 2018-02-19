@@ -9,19 +9,18 @@ defmodule ReWeb.RelatedController do
   action_fallback(ReWeb.FallbackController)
 
   def index(conn, %{"listing_id" => id} = params) do
-    with {:ok, listing} <- Listings.get(id),
-         {:ok, limit} <- get_limit(params),
-         {:ok, listings} <- Related.get(listing, limit) do
-      render(conn, ReWeb.ListingView, "index.json", listings: listings)
+    with {:ok, listing} <- Listings.get_preloaded(id),
+         page <- Related.get(listing, params) do
+      render(
+        conn,
+        ReWeb.ListingView,
+        "paginated_index.json",
+        listings: page.entries,
+        page_number: page.page_number,
+        page_size: page.page_size,
+        total_pages: page.total_pages,
+        total_entries: page.total_entries
+      )
     end
   end
-
-  defp get_limit(%{"limit" => limit}) do
-    case Integer.parse(limit) do
-      {limit, ""} -> {:ok, limit}
-      _ -> {:error, :bad_request}
-    end
-  end
-
-  defp get_limit(_), do: {:ok, :no_limit}
 end

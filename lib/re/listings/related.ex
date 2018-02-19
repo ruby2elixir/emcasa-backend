@@ -6,50 +6,36 @@ defmodule Re.Listings.Related do
   import Ecto.Query
 
   alias Re.{
-    Listings.Featured,
+    Listing,
     Listings,
     Repo
   }
 
-  def get(listing, limit \\ :no_limit) do
+  def get(listing, params \\ %{}) do
     ~w(price address)a
-    |> do_get(listing, Listings.active_listings_query())
-    |> Enum.reject(fn %{id: id} -> id == listing.id end)
-    |> Enum.uniq_by(fn %{id: id} -> id end)
-    |> limit_results(limit)
-    |> Repo.preload([:address, images: Listings.order_by_position()])
-    |> okd()
+    |> Enum.reduce(Listing, &build_query(&1, listing, &2))
+    |> exclude_current(listing)
+    |> active_listings_query()
+    |> preload([:address, images: ^Listings.order_by_position()])
+    |> Repo.paginate(params)
   end
 
-  defp limit_results(result, :no_limit), do: result
-  defp limit_results(result, limit), do: Enum.take(result, limit)
+  defp exclude_current(query, listing), do: from(l in subquery(query), where: ^listing.id != l.id)
+  defp active_listings_query(query), do: from(l in subquery(query), where: l.is_active == true)
 
-  defp okd(arg), do: {:ok, arg}
-
-  defp do_get([], _, _), do: Featured.get()
-
-  defp do_get([_attr | rest] = attrs, listing, query) do
-    listing
-    |> Repo.preload(:address)
-    |> Map.take(attrs)
-    |> Enum.reduce(query, &build_query(&1, &2))
-    |> Repo.all()
-    |> Enum.concat(do_get(rest, listing, query))
-  end
-
-  defp build_query({:address, address}, query) do
+  defp build_query(:address, listing, query) do
     from(
       l in query,
       join: a in assoc(l, :address),
-      where: ^address.neighborhood == a.neighborhood
+      or_where: ^listing.address.neighborhood == a.neighborhood
     )
   end
 
-  defp build_query({:price, price}, query) do
-    price_diff = price * 0.25
-    floor = trunc(price - price_diff)
-    ceiling = trunc(price + price_diff)
+  defp build_query(:price, listing, query) do
+    price_diff = listing.price * 0.25
+    floor = trunc(listing.price - price_diff)
+    ceiling = trunc(listing.price + price_diff)
 
-    from(l in query, where: l.price >= ^floor and l.price <= ^ceiling)
+    from(l in query, or_where: l.price >= ^floor and l.price <= ^ceiling)
   end
 end
