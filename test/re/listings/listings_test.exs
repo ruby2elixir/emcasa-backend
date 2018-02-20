@@ -73,6 +73,8 @@ defmodule Re.ListingsTest do
       assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"max_price" => 105})
       assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"min_price" => 95})
       assert %{entries: [%{id: ^id2}, %{id: ^id3}]} = Listings.paginated(%{"rooms" => 3})
+      assert %{entries: [%{id: ^id2}, %{id: ^id3}]} = Listings.paginated(%{"max_rooms" => 3})
+      assert %{entries: [%{id: ^id1}]} = Listings.paginated(%{"min_rooms" => 4})
       assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"max_area" => 55})
 
       assert %{entries: [%{id: ^id1}, %{id: ^id2}]} =
@@ -124,18 +126,37 @@ defmodule Re.ListingsTest do
 
   describe "relaxed/1" do
     test "should return query with relaxed filters" do
-      %{id: id1} = insert(:listing, price: 1_000_000, area: 100, score: 4, address: build(:address))
+      %{id: id1} =
+        insert(:listing, price: 1_000_000, area: 100, score: 4, address: build(:address))
 
       %{id: id2} = insert(:listing, price: 950_000, area: 95, score: 3, address: build(:address))
 
-      %{id: id3} = insert(:listing, price: 1_050_000, area: 80, score: 2, address: build(:address))
+      %{id: id3} =
+        insert(:listing, price: 1_050_000, area: 80, score: 2, address: build(:address))
 
-      assert [%{id: ^id2}, %{id: ^id3}] = Listings.relaxed(%{"max_price" => 1_000_000, "exclude_listings" => [id1]}, [:price])
-      assert [%{id: ^id2}, %{id: ^id3}] = Listings.relaxed(%{"min_price" => 1_000_000, "exclude_listings" => [id1]}, [:price])
-      assert [%{id: ^id3}] = Listings.relaxed(%{"max_area" => 90, "exclude_listings" => [id2]}, [:area])
-      assert [%{id: ^id2}] = Listings.relaxed(%{"min_area" => 100, "exclude_listings" => [id1]}, [:area])
-      assert [%{id: ^id3}] = Listings.relaxed(%{"max_area" => 90, "max_price" => 1_000_000, "exclude_listings" => [id1, id2]}, [:area, :price])
-      assert [%{id: ^id1}] = Listings.relaxed(%{"min_area" => 95, "min_price" => 900_000, "exclude_listings" => [id2, id3]}, [:area, :price])
+      assert [%{id: ^id2}, %{id: ^id3}] =
+               Listings.relaxed(%{"max_price" => 1_000_000, "exclude_listings" => [id1]}, [:price])
+
+      assert [%{id: ^id2}, %{id: ^id3}] =
+               Listings.relaxed(%{"min_price" => 1_000_000, "exclude_listings" => [id1]}, [:price])
+
+      assert [%{id: ^id3}] =
+               Listings.relaxed(%{"max_area" => 90, "exclude_listings" => [id2]}, [:area])
+
+      assert [%{id: ^id2}] =
+               Listings.relaxed(%{"min_area" => 100, "exclude_listings" => [id1]}, [:area])
+
+      assert [%{id: ^id3}] =
+               Listings.relaxed(
+                 %{"max_area" => 90, "max_price" => 1_000_000, "exclude_listings" => [id1, id2]},
+                 [:area, :price]
+               )
+
+      assert [%{id: ^id1}] =
+               Listings.relaxed(
+                 %{"min_area" => 95, "min_price" => 900_000, "exclude_listings" => [id2, id3]},
+                 [:area, :price]
+               )
     end
   end
 
