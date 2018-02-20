@@ -10,8 +10,10 @@ defmodule Re.Listings.Filters.Relax do
 
   defguardp is_not_nil(value) when not is_nil(value)
 
-  def apply(params, types) when is_list(types) do
-    Enum.reduce(types, params, &do_apply/2)
+  @types ~w(price area room neighborhoods)a
+
+  def apply(params) do
+    Enum.reduce(@types, params, &do_apply/2)
   end
 
   def apply(params, _), do: params
