@@ -27,6 +27,13 @@ defmodule Re.Listings.Filters.Relax do
     |> min_area()
   end
 
+  def do_apply(:room, params) do
+    params
+    |> Filter.cast()
+    |> max_rooms()
+    |> min_rooms()
+  end
+
   def do_apply(_, params), do: params
 
   defp max_price(%{max_price: max_price} = params) when is_not_nil(max_price) do
@@ -52,4 +59,16 @@ defmodule Re.Listings.Filters.Relax do
   end
 
   defp min_area(params), do: params
+
+  defp max_rooms(%{max_rooms: max_rooms} = params) when is_not_nil(max_rooms) do
+    Map.update(params, :max_rooms, 0, &trunc(&1 + 1))
+  end
+
+  defp max_rooms(params), do: params
+
+  defp min_rooms(%{min_rooms: min_rooms} = params) when is_not_nil(min_rooms) do
+    Map.update(params, :min_rooms, 0, &trunc(&1 - 1))
+  end
+
+  defp min_rooms(params), do: params
 end
