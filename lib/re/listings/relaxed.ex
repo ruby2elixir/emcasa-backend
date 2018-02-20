@@ -30,5 +30,7 @@ defmodule Re.Listings.Relaxed do
   defp excluding(query, %{"excluded_listing_ids" => excluded_listing_ids}),
     do: from(l in subquery(query), where: l.id not in ^excluded_listing_ids)
 
+  defp excluding(query, _), do: query
+
   defp active_listings_query(query), do: from(l in subquery(query), where: l.is_active == true)
 end
