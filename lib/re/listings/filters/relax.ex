@@ -3,7 +3,10 @@ defmodule Re.Listings.Filters.Relax do
   Module to group logic to relax filter parameters
   """
 
-  alias Re.Listings.Filter
+  alias Re.{
+    Listings.Filter,
+    Neighborhoods
+  }
 
   defguardp is_not_nil(value) when not is_nil(value)
 
@@ -32,6 +35,12 @@ defmodule Re.Listings.Filters.Relax do
     |> Filter.cast()
     |> max_rooms()
     |> min_rooms()
+  end
+
+  defp do_apply(:neighborhoods, params) do
+    params
+    |> Filter.cast()
+    |> neighborhoods()
   end
 
   defp do_apply(_, params), do: params
@@ -71,4 +80,16 @@ defmodule Re.Listings.Filters.Relax do
   end
 
   defp min_rooms(params), do: params
+
+  defp neighborhoods(%{neighborhoods: neighborhoods} = params) when is_not_nil(neighborhoods) do
+    relaxed_neighborhoods =
+      neighborhoods
+      |> Enum.map(&Neighborhoods.nearby/1)
+      |> Enum.concat(neighborhoods)
+      |> Enum.uniq()
+
+    %{params | neighborhoods: relaxed_neighborhoods}
+  end
+
+  defp neighborhoods(params), do: params
 end
