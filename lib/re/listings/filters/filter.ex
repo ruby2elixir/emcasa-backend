@@ -44,11 +44,10 @@ defmodule Re.Listings.Filter do
     |> Map.get(:changes)
   end
 
-  def relax(query, params, types) do
+  def relax(params) do
     params
     |> cast()
-    |> Relax.apply(types)
-    |> build_query(query)
+    |> Relax.apply()
   end
 
   defp build_query(params, query), do: Enum.reduce(params, query, &attr_filter/2)

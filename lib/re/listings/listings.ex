@@ -24,26 +24,17 @@ defmodule Re.Listings do
 
   def paginated(params) do
     active_listings_query()
-    |> order_by([l], desc: l.score, asc: l.matterport_code)
+    |> order_by_listing()
     |> Filter.apply(params)
-    |> preload([:address, images: ^@order_by_position])
+    |> preload_listing()
     |> Repo.paginate(params)
-  end
-
-  def relaxed(params, types) do
-    active_listings_query()
-    |> order_by([l], desc: l.score, asc: l.matterport_code)
-    |> exclude_listings(params)
-    |> Filter.relax(params, types)
-    |> preload([:address, images: ^@order_by_position])
-    |> Repo.all()
   end
 
   def get(id), do: do_get(Listing, id)
 
   def get_preloaded(id) do
     active_listings_query()
-    |> preload([:address, images: ^@order_by_position])
+    |> preload_listing()
     |> do_get(id)
   end
 
@@ -70,6 +61,10 @@ defmodule Re.Listings do
     |> Changeset.change(is_active: false)
     |> Repo.update()
   end
+
+  def order_by_listing(query), do: order_by(query, [l], desc: l.score, asc: l.matterport_code)
+
+  def preload_listing(query), do: preload(query, [:address, images: ^@order_by_position])
 
   defp do_get(query, id) do
     case Repo.get(query, id) do
