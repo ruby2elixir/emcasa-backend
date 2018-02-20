@@ -15,6 +15,8 @@ defmodule Re.Listings.Filter do
     field(:max_price, :integer)
     field(:min_price, :integer)
     field(:rooms, :integer)
+    field(:max_rooms, :integer)
+    field(:min_rooms, :integer)
     field(:min_area, :integer)
     field(:max_area, :integer)
     field(:neighborhoods, {:array, :string})
@@ -25,7 +27,7 @@ defmodule Re.Listings.Filter do
     field(:min_lng, :float)
   end
 
-  @filters ~w(max_price min_price rooms min_area max_area neighborhoods types
+  @filters ~w(max_price min_price rooms max_rooms min_rooms min_area max_area neighborhoods types
               max_lat min_lat max_lng min_lng)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
@@ -61,6 +63,14 @@ defmodule Re.Listings.Filter do
 
   defp attr_filter({:rooms, rooms}, query) do
     from(l in query, where: l.rooms == ^rooms)
+  end
+
+  defp attr_filter({:max_rooms, max_rooms}, query) do
+    from(l in query, where: l.rooms <= ^max_rooms)
+  end
+
+  defp attr_filter({:min_rooms, min_rooms}, query) do
+    from(l in query, where: l.rooms >= ^min_rooms)
   end
 
   defp attr_filter({:min_area, min_area}, query) do
