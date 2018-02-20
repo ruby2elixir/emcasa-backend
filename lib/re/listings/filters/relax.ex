@@ -13,28 +13,28 @@ defmodule Re.Listings.Filters.Relax do
 
   def apply(params, _), do: params
 
-  def do_apply(:price, params) do
+  defp do_apply(:price, params) do
     params
     |> Filter.cast()
     |> max_price()
     |> min_price()
   end
 
-  def do_apply(:area, params) do
+  defp do_apply(:area, params) do
     params
     |> Filter.cast()
     |> max_area()
     |> min_area()
   end
 
-  def do_apply(:room, params) do
+  defp do_apply(:room, params) do
     params
     |> Filter.cast()
     |> max_rooms()
     |> min_rooms()
   end
 
-  def do_apply(_, params), do: params
+  defp do_apply(_, params), do: params
 
   defp max_price(%{max_price: max_price} = params) when is_not_nil(max_price) do
     %{params | max_price: trunc(max_price * 1.1)}
