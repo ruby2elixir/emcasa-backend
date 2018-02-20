@@ -16,7 +16,7 @@ defmodule Re.Listings.Related do
     |> Enum.reduce(Listing, &build_query(&1, listing, &2))
     |> exclude_current(listing)
     |> active_listings_query()
-    |> preload([:address, images: ^Listings.order_by_position()])
+    |> Listings.preload_listing()
     |> Repo.paginate(params)
   end
 
