@@ -71,4 +71,24 @@ defmodule Re.Listings.Filters.RelaxTest do
       assert %{min_rooms: 2} = Relax.apply(%{min_rooms: 3, max_rooms: nil}, [:room])
     end
   end
+
+  describe "neighborhoods/1" do
+    test "one neighborhood" do
+      assert %{neighborhoods: ["Humaitá", "Botafogo"]} =
+               Relax.apply(%{neighborhoods: ["Botafogo"]}, [:neighborhoods])
+    end
+
+    test "multiple neighborhoods" do
+      assert %{neighborhoods: ["Leblon", "Gávea", "Copacabana", "Ipanema"]} =
+               Relax.apply(%{neighborhoods: ["Gávea", "Leblon", "Ipanema"]}, [:neighborhoods])
+    end
+
+    test "empty neighborhoods" do
+      assert %{neighborhoods: []} = Relax.apply(%{neighborhoods: []}, [:neighborhoods])
+    end
+
+    test "nil neighborhoods" do
+      assert %{} = Relax.apply(%{neighborhoods: nil}, [:neighborhoods])
+    end
+  end
 end
