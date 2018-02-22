@@ -6,12 +6,7 @@ defmodule Re.Listings do
 
   import Ecto.Query
 
-  alias Re.{
-    Listing,
-    Listings.Filter,
-    Image,
-    Repo
-  }
+  alias Re.{Listing, Listings.Filter, Image, Repo}
 
   alias Ecto.Changeset
 
@@ -22,7 +17,7 @@ defmodule Re.Listings do
   @order_by_position from(i in Image, where: i.is_active == true, order_by: i.position)
   def order_by_position, do: @order_by_position
 
-  def paginated(params) do
+  def paginated(params \\ %{}) do
     active_listings_query()
     |> order_by_listing()
     |> Filter.apply(params)
