@@ -18,3 +18,5 @@
 To see backend endpoint in production:
 
 `https://em-casa-backend.herokuapp.com/listings`
+
+At the moment, we're tracking tasks at https://www.pivotaltracker.com/n/projects/2125081
