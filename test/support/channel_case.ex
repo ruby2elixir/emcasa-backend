@@ -22,6 +22,7 @@ defmodule ReWeb.ChannelCase do
 
       alias Re.Repo
       import Ecto
+
       import Ecto.{
         Changeset,
         Query

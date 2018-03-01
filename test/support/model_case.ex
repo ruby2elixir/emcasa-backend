@@ -19,10 +19,12 @@ defmodule Re.ModelCase do
       alias Re.Repo
 
       import Ecto
+
       import Ecto.{
         Changeset,
         Query
       }
+
       import Re.ModelCase
     end
   end

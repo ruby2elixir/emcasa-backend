@@ -22,6 +22,7 @@ defmodule ReWeb.ConnCase do
 
       alias Re.Repo
       import Ecto
+
       import Ecto.{
         Changeset,
         Query
@@ -51,5 +52,4 @@ defmodule ReWeb.ConnCase do
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
-
 end

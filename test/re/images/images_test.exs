@@ -14,6 +14,7 @@ defmodule Re.ImagesTest do
       listing2 = insert(:listing)
       [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing1.id)
       %{id: id4} = insert(:image, listing_id: listing2.id, position: 0)
+
       images_params = [
         %{"id" => id1, "position" => 6},
         %{"id" => id2, "position" => 7},
@@ -28,5 +29,4 @@ defmodule Re.ImagesTest do
       assert Repo.get(Image, id4).position == 0
     end
   end
-
 end

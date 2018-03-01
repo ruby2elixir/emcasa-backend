@@ -35,7 +35,16 @@ defmodule ReWeb.ListingControllerTest do
     lat: "25",
     lng: "25"
   }
-  @invalid_attrs %{score: 7, bathrooms: -1, price: -1, property_tax: -500.00, maintenance_fee: -300.00, rooms: -1, area: -1, garage_spots: -1}
+  @invalid_attrs %{
+    score: 7,
+    bathrooms: -1,
+    price: -1,
+    property_tax: -500.00,
+    maintenance_fee: -300.00,
+    rooms: -1,
+    area: -1,
+    garage_spots: -1
+  }
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
@@ -209,7 +218,9 @@ defmodule ReWeb.ListingControllerTest do
       %{id: id1} = image1 = insert(:image, position: 1)
       %{id: id2} = image2 = insert(:image, position: 2)
       image3 = insert(:image, is_active: false)
-      listing = insert(:listing, images: [image1, image2, image3], address: build(:address), user: user)
+
+      listing =
+        insert(:listing, images: [image1, image2, image3], address: build(:address), user: user)
 
       conn = get(conn, listing_path(conn, :show, listing))
       response = json_response(conn, 200)
