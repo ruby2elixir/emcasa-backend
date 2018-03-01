@@ -8,15 +8,15 @@ defmodule Re.Address do
   alias Ecto.Changeset
 
   schema "addresses" do
-    field(:street, :string)
-    field(:street_number, :string)
-    field(:neighborhood, :string)
-    field(:city, :string)
-    field(:state, :string)
-    field(:postal_code, :string)
-    field(:lat, :float)
-    field(:lng, :float)
-    has_many(:listings, Re.Listing)
+    field :street, :string
+    field :street_number, :string
+    field :neighborhood, :string
+    field :city, :string
+    field :state, :string
+    field :postal_code, :string
+    field :lat, :float
+    field :lng, :float
+    has_many :listings, Re.Listing
 
     timestamps()
   end

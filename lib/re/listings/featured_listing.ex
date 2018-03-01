@@ -7,9 +7,9 @@ defmodule Re.Listings.FeaturedListing do
   import Ecto.Changeset
 
   schema "featured_listings" do
-    field(:position, :integer)
+    field :position, :integer
 
-    belongs_to(:listing, Re.Listing)
+    belongs_to :listing, Re.Listing
 
     timestamps()
   end
