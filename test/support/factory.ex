@@ -26,6 +26,8 @@ defmodule Re.Factory do
       complement: Address.secondary_address(),
       description: Shakespeare.hamlet(),
       price: random(:price),
+      property_tax: random(:price_float),
+      maintenance_fee: random(:price_float),
       floor: random(:floor),
       rooms: Enum.random(1..10),
       bathrooms: Enum.random(1..10),
@@ -82,6 +84,7 @@ defmodule Re.Factory do
 
   defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura))
   defp random(:price), do: Enum.random(1..999_999_999)
+  defp random(:price_float), do: Enum.random(1..999_999_999) / 100
 
   defp random(:floor) do
     1..50
