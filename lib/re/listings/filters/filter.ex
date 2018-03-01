@@ -12,19 +12,19 @@ defmodule Re.Listings.Filter do
   alias Re.Listings.Filters.Relax
 
   schema "listings_filter" do
-    field(:max_price, :integer)
-    field(:min_price, :integer)
-    field(:rooms, :integer)
-    field(:max_rooms, :integer)
-    field(:min_rooms, :integer)
-    field(:min_area, :integer)
-    field(:max_area, :integer)
-    field(:neighborhoods, {:array, :string})
-    field(:types, {:array, :string})
-    field(:max_lat, :float)
-    field(:min_lat, :float)
-    field(:max_lng, :float)
-    field(:min_lng, :float)
+    field :max_price, :integer
+    field :min_price, :integer
+    field :rooms, :integer
+    field :max_rooms, :integer
+    field :min_rooms, :integer
+    field :min_area, :integer
+    field :max_area, :integer
+    field :neighborhoods, {:array, :string}
+    field :types, {:array, :string}
+    field :max_lat, :float
+    field :min_lat, :float
+    field :max_lng, :float
+    field :min_lng, :float
   end
 
   @filters ~w(max_price min_price rooms max_rooms min_rooms min_area max_area neighborhoods types

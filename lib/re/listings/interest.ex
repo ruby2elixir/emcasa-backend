@@ -7,12 +7,12 @@ defmodule Re.Listings.Interest do
   import Ecto.Changeset
 
   schema "interests" do
-    field(:name, :string)
-    field(:email, :string)
-    field(:phone, :string)
-    field(:message, :string)
+    field :name, :string
+    field :email, :string
+    field :phone, :string
+    field :message, :string
 
-    belongs_to(:listing, Re.Listing)
+    belongs_to :listing, Re.Listing
 
     timestamps()
   end

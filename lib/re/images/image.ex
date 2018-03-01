@@ -7,11 +7,11 @@ defmodule Re.Image do
   import Ecto.Changeset
 
   schema "images" do
-    field(:filename, :string)
-    field(:position, :integer)
-    field(:is_active, :boolean, default: true)
+    field :filename, :string
+    field :position, :integer
+    field :is_active, :boolean, default: true
 
-    belongs_to(:listing, Re.Listing)
+    belongs_to :listing, Re.Listing
 
     timestamps()
   end

@@ -9,18 +9,18 @@ defmodule Re.User do
   alias Comeonin.Bcrypt
 
   schema "users" do
-    field(:name, :string)
-    field(:email, :string)
-    field(:phone, :string)
-    field(:password, :string, virtual: true)
-    field(:password_hash, :string)
-    field(:role, :string)
+    field :name, :string
+    field :email, :string
+    field :phone, :string
+    field :password, :string, virtual: true
+    field :password_hash, :string
+    field :role, :string
 
-    field(:confirmation_token, :string)
-    field(:confirmed, :boolean)
-    field(:reset_token, :string)
+    field :confirmation_token, :string
+    field :confirmed, :boolean
+    field :reset_token, :string
 
-    has_many(:listings, Re.Listing)
+    has_many :listings, Re.Listing
 
     timestamps()
   end
