@@ -18,6 +18,8 @@ defmodule ReWeb.ListingControllerTest do
     bathrooms: 2,
     description: "some content",
     price: 1_000_000,
+    property_tax: 500.00,
+    maintenance_fee: 300.00,
     rooms: 4,
     area: 140,
     garage_spots: 3,
@@ -33,7 +35,7 @@ defmodule ReWeb.ListingControllerTest do
     lat: "25",
     lng: "25"
   }
-  @invalid_attrs %{score: 7, bathrooms: -1, price: -1, rooms: -1, area: -1, garage_spots: -1}
+  @invalid_attrs %{score: 7, bathrooms: -1, price: -1, property_tax: -500.00, maintenance_fee: -300.00, rooms: -1, area: -1, garage_spots: -1}
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
@@ -102,6 +104,8 @@ defmodule ReWeb.ListingControllerTest do
                  "type" => listing.type,
                  "description" => listing.description,
                  "price" => listing.price,
+                 "property_tax" => listing.property_tax,
+                 "maintenance_fee" => listing.maintenance_fee,
                  "floor" => listing.floor,
                  "rooms" => listing.rooms,
                  "bathrooms" => listing.bathrooms,
@@ -142,6 +146,8 @@ defmodule ReWeb.ListingControllerTest do
                  "type" => listing.type,
                  "description" => listing.description,
                  "price" => listing.price,
+                 "property_tax" => listing.property_tax,
+                 "maintenance_fee" => listing.maintenance_fee,
                  "floor" => listing.floor,
                  "rooms" => listing.rooms,
                  "bathrooms" => listing.bathrooms,
@@ -224,6 +230,8 @@ defmodule ReWeb.ListingControllerTest do
                  "complement" => listing.complement,
                  "description" => listing.description,
                  "price" => listing.price,
+                 "property_tax" => listing.property_tax,
+                 "maintenance_fee" => listing.maintenance_fee,
                  "floor" => listing.floor,
                  "rooms" => listing.rooms,
                  "bathrooms" => listing.bathrooms,

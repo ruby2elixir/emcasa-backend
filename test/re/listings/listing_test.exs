@@ -10,6 +10,8 @@ defmodule Re.ListingTest do
     complement: "100",
     description: "some content",
     price: 1_000_000,
+    property_tax: 500.00,
+    maintenance_fee: 300.00,
     floor: "3",
     rooms: 4,
     bathrooms: 4,
@@ -23,6 +25,8 @@ defmodule Re.ListingTest do
     type: "ApartmentApartmentApartmentApartmentApartment",
     complement: "complementcomplementcomplementcomplement",
     price: -1,
+    property_tax: -500.00,
+    maintenance_fee: -300.00,
     bathrooms: -1,
     garage_spots: -1,
     score: 5,
@@ -53,6 +57,12 @@ defmodule Re.ListingTest do
              {"must be less than %{number}", [validation: :number, number: 5]}
 
     assert Keyword.get(changeset.errors, :price) ==
+             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+    assert Keyword.get(changeset.errors, :property_tax) ==
+             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+    assert Keyword.get(changeset.errors, :maintenance_fee) ==
              {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
     assert Keyword.get(changeset.errors, :bathrooms) ==
