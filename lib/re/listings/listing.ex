@@ -55,6 +55,7 @@ defmodule Re.Listing do
 
   @attributes_v2 ~w(type complement description price property_tax maintenance_fee floor
                     rooms bathrooms area garage_spots score matterport_code is_exclusive
+                    address_id user_id
                  )a
 
   def insert_changeset(struct, params \\ %{}) do
