@@ -1,4 +1,5 @@
 defmodule ReWeb.ListingControllerV2 do
+  @moduledoc false
   use ReWeb, :controller
   use ReWeb.GuardedController
 
@@ -10,7 +11,7 @@ defmodule ReWeb.ListingControllerV2 do
 
   action_fallback(ReWeb.FallbackController)
 
-  plug(Guardian.Plug.EnsureAuthenticated when action in [:create])
+  plug(Guardian.Plug.EnsureAuthenticated when action in [:create, :update])
 
   def create(conn, %{"listing" => listing_params, "address" => address_params} = params, user) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
