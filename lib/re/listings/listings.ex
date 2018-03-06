@@ -27,10 +27,7 @@ defmodule Re.Listings do
 
   def get(id), do: do_get(Listing, id)
 
-  def get_preloaded(id) do
-    preload_listing()
-    |> do_get(id)
-  end
+  def get_preloaded(id), do: do_get(preload_listing(), id)
 
   def insert(listing_params, address_id, user_id) do
     listing_params =
