@@ -185,14 +185,31 @@ defmodule ReWeb.ListingControllerTest do
                }
     end
 
-    test "do not show inactive listing", %{admin_conn: conn, admin_user: user} do
+    test "do not show inactive listing for non admin user", %{user_conn: conn} do
       image = insert(:image)
 
-      listing =
-        insert(:listing, images: [image], address: build(:address), is_active: false, user: user)
+      listing = insert(:listing, images: [image], address: build(:address), is_active: false)
 
       conn = get(conn, listing_path(conn, :show, listing))
       json_response(conn, 404)
+    end
+
+    test "do not show inactive listing for unauthenticated user", %{unauthenticated_conn: conn} do
+      image = insert(:image)
+
+      listing = insert(:listing, images: [image], address: build(:address), is_active: false)
+
+      conn = get(conn, listing_path(conn, :show, listing))
+      json_response(conn, 404)
+    end
+
+    test "show inactive listing for admin user", %{admin_conn: conn} do
+      image = insert(:image)
+
+      listing = insert(:listing, images: [image], address: build(:address), is_active: false)
+
+      conn = get(conn, listing_path(conn, :show, listing))
+      json_response(conn, 200)
     end
 
     test "renders page not found when id is nonexistent", %{admin_conn: conn} do
