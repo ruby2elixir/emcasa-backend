@@ -71,8 +71,4 @@ defmodule Re.Listings do
       listing -> {:ok, listing}
     end
   end
-
-  defp exclude_listings(query, %{"exclude_listings" => ids}) do
-    from(l in query, where: l.id not in ^ids)
-  end
 end
