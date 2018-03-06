@@ -27,11 +27,7 @@ defmodule Re.Listings do
 
   def get(id), do: do_get(Listing, id)
 
-  def get_preloaded(id) do
-    active_listings_query()
-    |> preload_listing()
-    |> do_get(id)
-  end
+  def get_preloaded(id), do: do_get(preload_listing(), id)
 
   def insert(listing_params, address_id, user_id) do
     listing_params =
@@ -57,18 +53,19 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
+  def should_show(listing, %{role: "admin"}), do: {:ok, listing}
+  def should_show(%{is_active: true} = listing, _), do: {:ok, listing}
+  def should_show(_, _), do: {:error, :not_found}
+
   def order_by_listing(query), do: order_by(query, [l], desc: l.score, asc: l.matterport_code)
 
-  def preload_listing(query), do: preload(query, [:address, images: ^@order_by_position])
+  def preload_listing(query \\ Listing),
+    do: preload(query, [:address, images: ^@order_by_position])
 
   defp do_get(query, id) do
     case Repo.get(query, id) do
       nil -> {:error, :not_found}
       listing -> {:ok, listing}
     end
-  end
-
-  defp exclude_listings(query, %{"exclude_listings" => ids}) do
-    from(l in query, where: l.id not in ^ids)
   end
 end
