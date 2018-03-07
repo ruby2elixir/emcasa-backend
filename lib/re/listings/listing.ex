@@ -56,6 +56,4 @@ defmodule Re.Listing do
     |> validate_number(:score, greater_than: 0, less_than: 5)
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
   end
-
-
 end
