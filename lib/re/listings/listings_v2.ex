@@ -13,6 +13,7 @@ defmodule Re.ListingsV2 do
 
     %Listing{}
     |> Listing.insert_changeset(listing_params)
+    |> Changeset.change(is_active: true)
     |> Repo.insert()
   end
 
@@ -20,6 +21,7 @@ defmodule Re.ListingsV2 do
     listing
     |> Listing.update_changeset(listing_params)
     |> Changeset.change(address_id: address_id)
+    |> Changeset.change(is_active: true)
     |> Repo.update()
   end
 end
