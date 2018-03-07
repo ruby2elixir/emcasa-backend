@@ -66,6 +66,12 @@ defmodule Re.Factory do
     }
   end
 
+  def interest_type_factory do
+    %Re.Listings.InterestType{
+      name: "Just looking"
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999

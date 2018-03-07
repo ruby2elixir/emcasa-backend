@@ -13,7 +13,7 @@ defmodule Re.Listings.Interest do
     field :message, :string
 
     belongs_to :listing, Re.Listing
-    belongs_to :interest_type, Re.InterestType
+    belongs_to :interest_type, Re.Listings.InterestType
 
     timestamps()
   end

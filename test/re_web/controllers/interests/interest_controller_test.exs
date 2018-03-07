@@ -6,7 +6,7 @@ defmodule ReWeb.InterestControllerTest do
 
   alias Re.Listings.Interest
 
-  @params %{name: "Test Name", email: "test@email.com"}
+  @params %{name: "Test Name", email: "test@email.com", interest_type_id: 1}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -21,7 +21,7 @@ defmodule ReWeb.InterestControllerTest do
       response = json_response(conn, 201)
 
       interest_id = response["data"]["id"]
-      interest = Repo.get(Interest, interest_id)
+      interest = Repo.get(Interest, interest_id) |> Repo.preload(:interest_type)
       assert_email_sent(ReWeb.UserEmail.notify_interest(interest))
     end
   end
