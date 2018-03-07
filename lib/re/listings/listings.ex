@@ -37,12 +37,14 @@ defmodule Re.Listings do
 
     %Listing{}
     |> Listing.changeset(listing_params)
+    |> Changeset.change(is_active: true)
     |> Repo.insert()
   end
 
   def update(listing, listing_params, address_id) do
     listing
     |> Listing.changeset(listing_params)
+    |> Changeset.change(is_active: true)
     |> Changeset.change(address_id: address_id)
     |> Repo.update()
   end
