@@ -5,6 +5,7 @@ defmodule Re.Listings.Interests do
 
   alias Re.{
     Listings.Interest,
+    Listings.InterestType,
     Repo
   }
 
@@ -14,5 +15,11 @@ defmodule Re.Listings.Interests do
     %Interest{}
     |> Interest.changeset(params)
     |> Repo.insert()
+  end
+
+  def preload(interest), do: Repo.preload(interest, :interest_type)
+
+  def get_types do
+    Repo.all(InterestType)
   end
 end
