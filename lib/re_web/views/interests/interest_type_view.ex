@@ -12,7 +12,7 @@ defmodule ReWeb.InterestTypeView do
   def render("interest_type.json", %{interest_type: interest_type}) do
     %{
       id: interest_type.id,
-      name: interest_type.name,
+      name: interest_type.name
     }
   end
 end

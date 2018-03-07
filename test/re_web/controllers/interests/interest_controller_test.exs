@@ -21,7 +21,7 @@ defmodule ReWeb.InterestControllerTest do
       response = json_response(conn, 201)
 
       interest_id = response["data"]["id"]
-      interest = Repo.get(Interest, interest_id) |> Repo.preload(:interest_type)
+      interest = Interest |> Repo.get(interest_id) |> Repo.preload(:interest_type)
       assert_email_sent(ReWeb.UserEmail.notify_interest(interest))
     end
   end

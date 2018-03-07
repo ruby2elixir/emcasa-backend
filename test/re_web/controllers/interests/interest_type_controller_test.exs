@@ -12,11 +12,11 @@ defmodule ReWeb.InterestTypeControllerTest do
       response = json_response(conn, 200)
 
       assert [
-        %{"id" => _, "name" => "Me ligue dentro de 5 minutos"},
-        %{"id" => _, "name" => "Me ligue em um horário específico"},
-        %{"id" => _, "name" => "Agendamento por e-mail"},
-        %{"id" => _, "name" => "Agendamento por Whatsapp"}
-      ] = response["data"]
+               %{"id" => _, "name" => "Me ligue dentro de 5 minutos"},
+               %{"id" => _, "name" => "Me ligue em um horário específico"},
+               %{"id" => _, "name" => "Agendamento por e-mail"},
+               %{"id" => _, "name" => "Agendamento por Whatsapp"}
+             ] = response["data"]
     end
   end
 end
