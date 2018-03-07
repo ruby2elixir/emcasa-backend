@@ -13,12 +13,13 @@ defmodule Re.Listings.Interest do
     field :message, :string
 
     belongs_to :listing, Re.Listing
+    belongs_to :interest_type, Re.InterestType
 
     timestamps()
   end
 
   @required ~w(name email listing_id)a
-  @optional ~w(phone message)a
+  @optional ~w(phone message interest_type_id)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
