@@ -37,13 +37,17 @@ defmodule Re.Listing do
   @optional ~w(complement floor matterport_code is_active is_exclusive
                property_tax maintenance_fee)a
 
+  @attributes ~w(type complement description price property_tax maintenance_fee floor
+                    rooms bathrooms area garage_spots score matterport_code is_exclusive
+                    address_id user_id is_active
+                 )a
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @required ++ @optional)
-    |> validate_required(@required)
+    |> cast(params, @attributes)
     |> validate_number(:price, greater_than_or_equal_to: 0)
     |> validate_number(:property_tax, greater_than_or_equal_to: 0)
     |> validate_number(:maintenance_fee, greater_than_or_equal_to: 0)
@@ -53,32 +57,5 @@ defmodule Re.Listing do
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
   end
 
-  @attributes_v2 ~w(type complement description price property_tax maintenance_fee floor
-                    rooms bathrooms area garage_spots score matterport_code is_exclusive
-                    address_id user_id is_active
-                 )a
 
-  def insert_changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, @attributes_v2)
-    |> validate_number(:price, greater_than_or_equal_to: 0)
-    |> validate_number(:property_tax, greater_than_or_equal_to: 0)
-    |> validate_number(:maintenance_fee, greater_than_or_equal_to: 0)
-    |> validate_number(:bathrooms, greater_than_or_equal_to: 0)
-    |> validate_number(:garage_spots, greater_than_or_equal_to: 0)
-    |> validate_number(:score, greater_than: 0, less_than: 5)
-    |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
-  end
-
-  def update_changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, @attributes_v2)
-    |> validate_number(:price, greater_than_or_equal_to: 0)
-    |> validate_number(:property_tax, greater_than_or_equal_to: 0)
-    |> validate_number(:maintenance_fee, greater_than_or_equal_to: 0)
-    |> validate_number(:bathrooms, greater_than_or_equal_to: 0)
-    |> validate_number(:garage_spots, greater_than_or_equal_to: 0)
-    |> validate_number(:score, greater_than: 0, less_than: 5)
-    |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
-  end
 end

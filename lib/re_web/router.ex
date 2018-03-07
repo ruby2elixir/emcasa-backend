@@ -24,12 +24,6 @@ defmodule ReWeb.Router do
     resources("/search", SearchController, only: [:index])
   end
 
-  scope "/v2", ReWeb do
-    pipe_through(:api)
-
-    resources("/listings", ListingControllerV2, only: [:create, :update])
-  end
-
   scope "/users", ReWeb do
     pipe_through(:api)
 
