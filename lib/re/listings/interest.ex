@@ -18,8 +18,8 @@ defmodule Re.Listings.Interest do
     timestamps()
   end
 
-  @required ~w(name email listing_id)a
-  @optional ~w(phone message interest_type_id)a
+  @required ~w(name listing_id)a
+  @optional ~w(email phone message interest_type_id)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
