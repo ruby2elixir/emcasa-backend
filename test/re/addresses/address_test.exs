@@ -24,7 +24,6 @@ defmodule Re.AddressTest do
     neighborhood: String.duplicate("downtown", 30),
     city: String.duplicate("Rio de Janeiro", 20),
     state: "RJJ",
-    postal_code: "2202-001",
     lat: -95,
     lng: -200
   }
@@ -57,7 +56,6 @@ defmodule Re.AddressTest do
     assert Keyword.get(changeset.errors, :state) ==
              {"should be %{count} character(s)", [count: 2, validation: :length, is: 2]}
 
-    assert Keyword.get(changeset.errors, :postal_code) == {"postal code didn't match", []}
     assert Keyword.get(changeset.errors, :lat) == {"invalid latitude", []}
     assert Keyword.get(changeset.errors, :lng) == {"invalid longitude", []}
   end
@@ -71,5 +69,11 @@ defmodule Re.AddressTest do
       |> Repo.insert()
 
     assert changeset.errors == [postal_code: {"has already been taken", []}]
+  end
+
+  test "five digits posta code should be valid" do
+    attr = Map.put(@valid_attrs, :postal_code, "22041")
+    changeset = Address.changeset(%Address{}, attr)
+    assert changeset.valid?
   end
 end
