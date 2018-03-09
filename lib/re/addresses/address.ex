@@ -35,22 +35,9 @@ defmodule Re.Address do
     |> validate_length(:neighborhood, max: 128)
     |> validate_length(:city, max: 128)
     |> validate_length(:state, is: 2)
-    |> validate_postal_code()
     |> unique_constraint(:postal_code, name: :unique_address)
     |> validate_lat()
     |> validate_lng()
-  end
-
-  @postal_code_regex ~r/^[0-9]{5}[-][0-9]{3}$/
-
-  defp validate_postal_code(changeset) do
-    postal_code = Changeset.get_field(changeset, :postal_code, "")
-
-    if Regex.match?(@postal_code_regex, postal_code) do
-      changeset
-    else
-      Changeset.add_error(changeset, :postal_code, "postal code didn't match")
-    end
   end
 
   defp validate_lat(changeset) do
