@@ -23,6 +23,9 @@ defmodule ReWeb.ListingControllerTest do
     rooms: 4,
     area: 140,
     garage_spots: 3,
+    suites: 1,
+    dependencies: 1,
+    has_elevator: true,
     is_exclusive: true
   }
   @valid_address_attrs %{
@@ -43,7 +46,9 @@ defmodule ReWeb.ListingControllerTest do
     maintenance_fee: -300.00,
     rooms: -1,
     area: -1,
-    garage_spots: -1
+    garage_spots: -1,
+    suites: -1,
+    dependencies: -1
   }
 
   setup %{conn: conn} do
@@ -121,6 +126,9 @@ defmodule ReWeb.ListingControllerTest do
                  "area" => listing.area,
                  "garage_spots" => listing.garage_spots,
                  "matterport_code" => listing.matterport_code,
+                 "suites" => listing.suites,
+                 "dependencies" => listing.dependencies,
+                 "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "user_id" => listing.user_id,
                  "images" => [
@@ -163,6 +171,9 @@ defmodule ReWeb.ListingControllerTest do
                  "area" => listing.area,
                  "garage_spots" => listing.garage_spots,
                  "matterport_code" => listing.matterport_code,
+                 "suites" => listing.suites,
+                 "dependencies" => listing.dependencies,
+                 "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "user_id" => listing.user_id,
                  "images" => [
@@ -267,6 +278,9 @@ defmodule ReWeb.ListingControllerTest do
                  "garage_spots" => listing.garage_spots,
                  "score" => listing.score,
                  "matterport_code" => listing.matterport_code,
+                 "suites" => listing.suites,
+                 "dependencies" => listing.dependencies,
+                 "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "images" => [
                    %{

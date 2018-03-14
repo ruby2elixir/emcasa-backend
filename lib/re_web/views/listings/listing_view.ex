@@ -51,6 +51,9 @@ defmodule ReWeb.ListingView do
       bathrooms: listing.bathrooms,
       garage_spots: listing.garage_spots,
       matterport_code: listing.matterport_code,
+      suites: listing.suites,
+      dependencies: listing.dependencies,
+      has_elevator: listing.has_elevator,
       is_exclusive: listing.is_exclusive,
       address: %{
         street: listing.address.street,
@@ -83,6 +86,9 @@ defmodule ReWeb.ListingView do
       garage_spots: listing.garage_spots,
       score: listing.score,
       matterport_code: listing.matterport_code,
+      suites: listing.suites,
+      dependencies: listing.dependencies,
+      has_elevator: listing.has_elevator,
       is_exclusive: listing.is_exclusive,
       address: %{
         street: listing.address.street,
