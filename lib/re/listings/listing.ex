@@ -19,6 +19,9 @@ defmodule Re.Listing do
     field :area, :integer
     field :garage_spots, :integer
     field :score, :integer
+    field :suites, :integer
+    field :dependencies, :integer
+    field :has_elevator, :boolean
     field :matterport_code, :string
     field :is_active, :boolean, default: false
     field :is_exclusive, :boolean, default: false
@@ -33,14 +36,12 @@ defmodule Re.Listing do
   @types ~w(Apartamento Casa Cobertura)
 
   @required ~w(type description price rooms bathrooms
-               area garage_spots score address_id user_id)a
+               area garage_spots score address_id user_id
+               suites dependencies has_elevator)a
   @optional ~w(complement floor matterport_code is_active is_exclusive
                property_tax maintenance_fee)a
 
-  @attributes ~w(type complement description price property_tax maintenance_fee floor
-                    rooms bathrooms area garage_spots score matterport_code is_exclusive
-                    address_id user_id is_active
-                 )a
+  @attributes (@required ++ @optional)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -53,6 +54,8 @@ defmodule Re.Listing do
     |> validate_number(:maintenance_fee, greater_than_or_equal_to: 0)
     |> validate_number(:bathrooms, greater_than_or_equal_to: 0)
     |> validate_number(:garage_spots, greater_than_or_equal_to: 0)
+    |> validate_number(:suites, greater_than_or_equal_to: 0)
+    |> validate_number(:dependencies, greater_than_or_equal_to: 0)
     |> validate_number(:score, greater_than: 0, less_than: 5)
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
   end
