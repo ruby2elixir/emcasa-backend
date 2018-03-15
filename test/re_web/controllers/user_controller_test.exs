@@ -194,6 +194,7 @@ defmodule ReWeb.UserControllerTest do
       assert json_response(conn, 200)
       assert user = Repo.get(User, user.id)
       assert Bcrypt.checkpw("newpassword", user.password_hash)
+      refute user.reset_token
     end
 
     test "does not redefine password with wrong token", %{conn: conn} do

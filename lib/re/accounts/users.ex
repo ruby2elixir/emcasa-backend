@@ -62,7 +62,7 @@ defmodule Re.Accounts.Users do
 
   def redefine_password(user, password) do
     user
-    |> User.redefine_changeset(%{password: password})
+    |> User.redefine_changeset(%{password: password, reset_token: nil})
     |> Repo.update()
   end
 
