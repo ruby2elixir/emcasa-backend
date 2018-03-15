@@ -62,7 +62,7 @@ defmodule Re.User do
   end
 
   @redefine_required ~w(password)a
-  @redefine_optional ~w()a
+  @redefine_optional ~w(reset_token)a
 
   def redefine_changeset(struct, params \\ %{}) do
     struct
