@@ -228,7 +228,14 @@ defmodule ReWeb.ListingControllerTest do
     test "show inactive listing for owner user", %{user_conn: conn, user_user: user} do
       image = insert(:image)
 
-      listing = insert(:listing, images: [image], address: build(:address), is_active: false, user_id: user.id)
+      listing =
+        insert(
+          :listing,
+          images: [image],
+          address: build(:address),
+          is_active: false,
+          user_id: user.id
+        )
 
       conn = get(conn, listing_path(conn, :show, listing))
       json_response(conn, 200)

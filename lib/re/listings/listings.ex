@@ -81,6 +81,7 @@ defmodule Re.Listings do
   defp activate_if_admin(changeset, %{role: "admin"}) do
     Changeset.change(changeset, is_active: true)
   end
+
   defp activate_if_admin(changeset, %{role: "user"}) do
     Changeset.change(changeset, is_active: false)
   end
