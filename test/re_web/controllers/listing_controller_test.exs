@@ -130,6 +130,7 @@ defmodule ReWeb.ListingControllerTest do
                  "dependencies" => listing.dependencies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_active" => listing.is_active,
                  "user_id" => listing.user_id,
                  "images" => [
                    %{
@@ -175,6 +176,7 @@ defmodule ReWeb.ListingControllerTest do
                  "dependencies" => listing.dependencies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_active" => listing.is_active,
                  "user_id" => listing.user_id,
                  "images" => [
                    %{
@@ -291,6 +293,7 @@ defmodule ReWeb.ListingControllerTest do
                  "dependencies" => listing.dependencies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_active" => listing.is_active,
                  "images" => [
                    %{
                      "id" => image.id,

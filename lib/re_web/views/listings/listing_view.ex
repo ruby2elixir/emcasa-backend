@@ -55,6 +55,7 @@ defmodule ReWeb.ListingView do
       dependencies: listing.dependencies,
       has_elevator: listing.has_elevator,
       is_exclusive: listing.is_exclusive,
+      is_active: listing.is_active,
       address: %{
         street: listing.address.street,
         street_number: listing.address.street_number,
@@ -90,6 +91,7 @@ defmodule ReWeb.ListingView do
       dependencies: listing.dependencies,
       has_elevator: listing.has_elevator,
       is_exclusive: listing.is_exclusive,
+      is_active: listing.is_active,
       address: %{
         street: listing.address.street,
         street_number: listing.address.street_number,
