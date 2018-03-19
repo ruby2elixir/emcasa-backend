@@ -64,7 +64,8 @@ defmodule ReWeb.UserControllerTest do
       }
 
       conn = post(conn, user_path(conn, :register, %{"user" => user_params}))
-      assert json_response(conn, 201)
+      assert response = json_response(conn, 201)
+      assert response["user"]["token"]
       assert user = Repo.get_by(User, email: "validemail@emcasa.com")
       assert user.confirmation_token
       refute user.confirmed
@@ -79,7 +80,8 @@ defmodule ReWeb.UserControllerTest do
       }
 
       conn = post(conn, user_path(conn, :register, %{"user" => user_params}))
-      assert json_response(conn, 422)
+      assert response = json_response(conn, 422)
+      refute response["user"]["token"]
     end
 
     test "fails when email is invalid", %{conn: conn} do
@@ -90,7 +92,8 @@ defmodule ReWeb.UserControllerTest do
       }
 
       conn = post(conn, user_path(conn, :register, %{"user" => user_params}))
-      assert json_response(conn, 422)
+      assert response = json_response(conn, 422)
+      refute response["user"]["token"]
     end
   end
 

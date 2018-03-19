@@ -30,14 +30,15 @@ defmodule ReWeb.UserController do
   end
 
   def register(conn, %{"user" => params}, _user) do
-    with {:ok, user} <- Users.create(params) do
+    with {:ok, user} <- Users.create(params),
+         {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
       user
       |> UserEmail.confirm()
       |> Mailer.deliver()
 
       conn
       |> put_status(:created)
-      |> render(ReWeb.UserView, "show.json", user: user)
+      |> render(ReWeb.UserView, "login.json", jwt: jwt, user: user)
     end
   end
 
