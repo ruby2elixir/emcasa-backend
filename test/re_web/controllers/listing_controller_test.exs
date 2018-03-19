@@ -350,17 +350,16 @@ defmodule ReWeb.ListingControllerTest do
       assert listing.user_id == user.id
     end
 
-    test "creates and renders resource as user", %{user_conn: conn, user_user: _user} do
+    test "creates and renders resource as user", %{user_conn: conn, user_user: user} do
       conn =
         post(conn, listing_path(conn, :create), %{
           listing: @valid_attrs,
           address: @valid_address_attrs
         })
 
-      json_response(conn, 403)
-      # json_response(conn, 201)
-      # assert listing = Repo.get_by(Listing, @valid_attrs)
-      # assert listing.user_id == user.id
+      json_response(conn, 201)
+      assert listing = Repo.get_by(Listing, @valid_attrs)
+      assert listing.user_id == user.id
     end
 
     test "creates and renders resource with existing address", %{admin_conn: conn} do
