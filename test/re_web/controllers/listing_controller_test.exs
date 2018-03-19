@@ -130,6 +130,7 @@ defmodule ReWeb.ListingControllerTest do
                  "dependencies" => listing.dependencies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_active" => listing.is_active,
                  "user_id" => listing.user_id,
                  "images" => [
                    %{
@@ -175,6 +176,7 @@ defmodule ReWeb.ListingControllerTest do
                  "dependencies" => listing.dependencies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_active" => listing.is_active,
                  "user_id" => listing.user_id,
                  "images" => [
                    %{
@@ -218,6 +220,15 @@ defmodule ReWeb.ListingControllerTest do
       image = insert(:image)
 
       listing = insert(:listing, images: [image], address: build(:address), is_active: false)
+
+      conn = get(conn, listing_path(conn, :show, listing))
+      json_response(conn, 200)
+    end
+
+    test "show inactive listing for owner user", %{user_conn: conn, user_user: user} do
+      image = insert(:image)
+
+      listing = insert(:listing, images: [image], address: build(:address), is_active: false, user_id: user.id)
 
       conn = get(conn, listing_path(conn, :show, listing))
       json_response(conn, 200)
@@ -282,6 +293,7 @@ defmodule ReWeb.ListingControllerTest do
                  "dependencies" => listing.dependencies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_active" => listing.is_active,
                  "images" => [
                    %{
                      "id" => image.id,

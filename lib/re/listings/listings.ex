@@ -57,6 +57,7 @@ defmodule Re.Listings do
 
   def should_show(listing, %{role: "admin"}), do: {:ok, listing}
   def should_show(%{is_active: true} = listing, _), do: {:ok, listing}
+  def should_show(%{user_id: id} = listing, %{id: id}), do: {:ok, listing}
   def should_show(_, _), do: {:error, :not_found}
 
   def order_by_listing(query), do: order_by(query, [l], desc: l.score, asc: l.matterport_code)
