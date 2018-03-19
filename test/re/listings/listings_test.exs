@@ -134,28 +134,46 @@ defmodule Re.ListingsTest do
   end
 
   describe "insert/2" do
+
+    @insert_listing_params %{
+      "type" => "Apartamento",
+      "complement" => "100",
+      "description" => String.duplicate("a", 256),
+      "price" => 1_000_000,
+      "floor" => "3",
+      "rooms" => 3,
+      "bathrooms" => 2,
+      "garage_spots" => 1,
+      "area" => 100,
+      "score" => 3
+    }
+
     test "should insert with description size bigger than 255" do
       address = insert(:address)
       user = insert(:user, role: "user")
 
-      listing_params = %{
-        "type" => "Apartamento",
-        "complement" => "100",
-        "description" => String.duplicate("a", 256),
-        "price" => 1_000_000,
-        "floor" => "3",
-        "rooms" => 3,
-        "bathrooms" => 2,
-        "garage_spots" => 1,
-        "area" => 100,
-        "score" => 3,
-        "is_active" => true
-      }
+      assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address.id, user)
+      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
+      assert retrieved_listing.address_id == address.id
+      assert retrieved_listing.user_id == user.id
+    end
 
-      assert {:ok, listing} = Listings.insert(listing_params, address.id, user.id)
-      assert listing = Repo.get(Listing, listing.id)
-      assert listing.address_id == address.id
-      assert listing.user_id == user.id
+    test "should activate for admin user" do
+      address = insert(:address)
+      user = insert(:user, role: "admin")
+
+      assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address.id, user)
+      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
+      assert retrieved_listing.is_active
+    end
+
+    test "should not activate for normal user" do
+      address = insert(:address)
+      user = insert(:user, role: "user")
+
+      assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address.id, user)
+      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
+      refute retrieved_listing.is_active
     end
   end
 end
