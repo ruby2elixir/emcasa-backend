@@ -77,6 +77,14 @@ defmodule ReWeb.ListingController do
          do: send_resp(conn, :no_content, "")
   end
 
+  def toggle(conn, %{"id" => id}, user) do
+    with {:ok, listing} <- Listings.get_preloaded(id),
+         :ok <- Bodyguard.permit(Listings, :toggle_listing, user, listing),
+         {:ok, listing} <- Listings.toggle_is_active(listing) do
+      render(conn, "show.json", listing: listing)
+    end
+  end
+
   @visualization_params ~w(remote_ip req_headers)a
 
   defp extract_details(conn) do

@@ -540,4 +540,54 @@ defmodule ReWeb.ListingControllerTest do
       assert listing.is_active
     end
   end
+
+  describe "toggle" do
+    test "deactivate listing for admin user", %{admin_conn: conn} do
+      listing = insert(:listing, address: build(:address), is_active: true)
+      conn = put(conn, listing_listing_path(conn, :toggle, listing), id: listing.id)
+      assert response(conn, 200)
+      assert listing = Repo.get(Listing, listing.id)
+      refute listing.is_active
+    end
+
+    test "activate listing for admin user", %{admin_conn: conn} do
+      listing = insert(:listing, address: build(:address), is_active: false)
+      conn = put(conn, listing_listing_path(conn, :toggle, listing), id: listing.id)
+      assert response(conn, 200)
+      assert listing = Repo.get(Listing, listing.id)
+      assert listing.is_active
+    end
+
+    test "does not deactivate listing for non admin user", %{user_conn: conn} do
+      listing = insert(:listing, address: build(:address), is_active: true)
+      conn = put(conn, listing_listing_path(conn, :toggle, listing), id: listing.id)
+      assert response(conn, 403)
+      assert listing = Repo.get(Listing, listing.id)
+      assert listing.is_active
+    end
+
+    test "does not activate listing for non admin user", %{user_conn: conn} do
+      listing = insert(:listing, address: build(:address), is_active: false)
+      conn = put(conn, listing_listing_path(conn, :toggle, listing), id: listing.id)
+      assert response(conn, 403)
+      assert listing = Repo.get(Listing, listing.id)
+      refute listing.is_active
+    end
+
+    test "does not deactivate listing for unauthenticated user", %{unauthenticated_conn: conn} do
+      listing = insert(:listing, address: build(:address), is_active: true)
+      conn = put(conn, listing_listing_path(conn, :toggle, listing), id: listing.id)
+      assert response(conn, 401)
+      assert listing = Repo.get(Listing, listing.id)
+      assert listing.is_active
+    end
+
+    test "does not activate listing for unauthenticated user", %{unauthenticated_conn: conn} do
+      listing = insert(:listing, address: build(:address), is_active: false)
+      conn = put(conn, listing_listing_path(conn, :toggle, listing), id: listing.id)
+      assert response(conn, 401)
+      assert listing = Repo.get(Listing, listing.id)
+      refute listing.is_active
+    end
+  end
 end

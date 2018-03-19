@@ -55,6 +55,12 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
+  def toggle_is_active(%{is_active: is_active} = listing) do
+    listing
+    |> Listing.changeset(%{is_active: !is_active})
+    |> Repo.update()
+  end
+
   def should_show(listing, %{role: "admin"}), do: {:ok, listing}
   def should_show(%{is_active: true} = listing, _), do: {:ok, listing}
   def should_show(%{user_id: id} = listing, %{id: id}), do: {:ok, listing}
