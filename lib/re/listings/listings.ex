@@ -55,9 +55,9 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
-  def toggle_is_active(%{is_active: is_active} = listing) do
+  def activate(listing) do
     listing
-    |> Listing.changeset(%{is_active: !is_active})
+    |> Listing.changeset(%{is_active: true})
     |> Repo.update()
   end
 
