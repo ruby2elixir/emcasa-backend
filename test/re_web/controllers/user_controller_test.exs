@@ -115,7 +115,8 @@ defmodule ReWeb.UserControllerTest do
           })
         )
 
-      assert json_response(conn, 200)
+      assert response = json_response(conn, 200)
+      assert response["user"]["token"]
       assert user = Repo.get(User, user.id)
       assert user.confirmed
       assert_email_sent(UserEmail.welcome(user))
@@ -138,7 +139,8 @@ defmodule ReWeb.UserControllerTest do
           })
         )
 
-      assert json_response(conn, 400)
+      assert response = json_response(conn, 400)
+      refute response["user"]["token"]
       assert user = Repo.get(User, user.id)
       refute user.confirmed
       assert_email_not_sent(UserEmail.welcome(user))

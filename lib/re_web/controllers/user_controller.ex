@@ -43,12 +43,13 @@ defmodule ReWeb.UserController do
   end
 
   def confirm(conn, %{"user" => %{"token" => token}}, _user) do
-    with {:ok, user} <- Users.confirm(token) do
+    with {:ok, user} <- Users.confirm(token),
+         {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
       user
       |> UserEmail.welcome()
       |> Mailer.deliver()
 
-      render(conn, ReWeb.UserView, "show.json", user: user)
+      render(conn, ReWeb.UserView, "login.json", jwt: jwt, user: user)
     end
   end
 
