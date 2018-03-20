@@ -29,23 +29,20 @@ defmodule Re.Listings do
 
   def get_preloaded(id), do: do_get(preload_listing(), id)
 
-  def insert(listing_params, address_id, user) do
-    listing_params =
-      listing_params
-      |> Map.put("address_id", address_id)
-      |> Map.put("user_id", user.id)
-
+  def insert(listing_params, address, user) do
     %Listing{}
+    |> Changeset.change(address_id: address.id)
+    |> Changeset.change(user_id: user.id)
     |> Listing.changeset(listing_params)
     |> activate_if_admin(user)
     |> Repo.insert()
   end
 
-  def update(listing, listing_params, address_id) do
+  def update(listing, listing_params, address, user) do
     listing
     |> Listing.changeset(listing_params)
-    |> Changeset.change(is_active: true)
-    |> Changeset.change(address_id: address_id)
+    |> Changeset.change(address_id: address.id)
+    |> activate_if_admin(user)
     |> Repo.update()
   end
 
