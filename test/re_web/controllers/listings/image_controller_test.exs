@@ -216,7 +216,7 @@ defmodule ReWeb.ImageControllerTest do
           images: image_params
         )
 
-      assert response(conn, 403)
+      assert response(conn, 204)
     end
 
     test "does not update images order when listing doesn't belong to user", %{
