@@ -66,7 +66,7 @@ defmodule ReWeb.ListingController do
     with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, user, listing),
          {:ok, address} <- Addresses.update(listing, address_params),
-         {:ok, listing} <- Listings.update(listing, listing_params, address, user),
+         {:ok, listing} <- Listings.update(listing, listing_params, address),
          do: render(conn, "edit.json", listing: listing)
   end
 

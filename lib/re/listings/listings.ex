@@ -38,11 +38,10 @@ defmodule Re.Listings do
     |> Repo.insert()
   end
 
-  def update(listing, listing_params, address, user) do
+  def update(listing, listing_params, address) do
     listing
     |> Listing.changeset(listing_params)
     |> Changeset.change(address_id: address.id)
-    |> activate_if_admin(user)
     |> Repo.update()
   end
 
