@@ -17,7 +17,6 @@ defmodule ReWeb.Router do
       resources("/related", RelatedController, only: [:index])
 
       put("/images_orders", ImageController, :order)
-      put("/activate", ListingController, :activate)
     end
 
     resources("/featured_listings", FeaturedController, only: [:index])
