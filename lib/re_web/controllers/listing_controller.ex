@@ -19,7 +19,7 @@ defmodule ReWeb.ListingController do
            :edit,
            :update,
            :delete,
-           :order
+           :activate
          ]
   )
 
@@ -40,7 +40,7 @@ defmodule ReWeb.ListingController do
   def create(conn, %{"listing" => listing_params, "address" => address_params} = params, user) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
          {:ok, address} <- Addresses.find_or_create(address_params),
-         {:ok, listing} <- Listings.insert(listing_params, address.id, user) do
+         {:ok, listing} <- Listings.insert(listing_params, address, user) do
       conn
       |> put_status(:created)
       |> render("create.json", listing: listing)
@@ -75,6 +75,14 @@ defmodule ReWeb.ListingController do
          :ok <- Bodyguard.permit(Listings, :delete_listing, user, listing),
          {:ok, _listing} <- Listings.delete(listing),
          do: send_resp(conn, :no_content, "")
+  end
+
+  def activate(conn, %{"id" => id}, user) do
+    with {:ok, listing} <- Listings.get_preloaded(id),
+         :ok <- Bodyguard.permit(Listings, :toggle_listing, user, listing),
+         {:ok, listing} <- Listings.activate(listing) do
+      render(conn, "show.json", listing: listing)
+    end
   end
 
   @visualization_params ~w(remote_ip req_headers)a
