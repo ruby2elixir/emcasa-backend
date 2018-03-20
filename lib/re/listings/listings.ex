@@ -29,14 +29,11 @@ defmodule Re.Listings do
 
   def get_preloaded(id), do: do_get(preload_listing(), id)
 
-  def insert(listing_params, address_id, user) do
-    listing_params =
-      listing_params
-      |> Map.put("address_id", address_id)
-      |> Map.put("user_id", user.id)
-
+  def insert(listing_params, address, user) do
     %Listing{}
     |> Listing.changeset(listing_params)
+    |> Changeset.change(address_id: address.id)
+    |> Changeset.change(user_id: user.id)
     |> Repo.insert()
   end
 

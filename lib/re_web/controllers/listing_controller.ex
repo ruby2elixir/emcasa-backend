@@ -19,7 +19,6 @@ defmodule ReWeb.ListingController do
            :edit,
            :update,
            :delete,
-           :order,
            :activate
          ]
   )
@@ -41,7 +40,7 @@ defmodule ReWeb.ListingController do
   def create(conn, %{"listing" => listing_params, "address" => address_params} = params, user) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
          {:ok, address} <- Addresses.find_or_create(address_params),
-         {:ok, listing} <- Listings.insert(listing_params, address.id, user) do
+         {:ok, listing} <- Listings.insert(listing_params, address, user) do
       conn
       |> put_status(:created)
       |> render("create.json", listing: listing)
