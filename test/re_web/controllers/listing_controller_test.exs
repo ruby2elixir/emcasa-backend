@@ -228,14 +228,7 @@ defmodule ReWeb.ListingControllerTest do
     test "show inactive listing for owner user", %{user_conn: conn, user_user: user} do
       image = insert(:image)
 
-      listing =
-        insert(
-          :listing,
-          images: [image],
-          address: build(:address),
-          is_active: false,
-          user_id: user.id
-        )
+      listing = insert(:listing, images: [image], address: build(:address), is_active: false, user_id: user.id)
 
       conn = get(conn, listing_path(conn, :show, listing))
       json_response(conn, 200)
@@ -542,32 +535,6 @@ defmodule ReWeb.ListingControllerTest do
       assert response(conn, 403)
       assert listing = Repo.get(Listing, listing.id)
       assert listing.is_active
-    end
-  end
-
-  describe "activate" do
-    test "activate listing for admin user", %{admin_conn: conn} do
-      listing = insert(:listing, address: build(:address), is_active: false)
-      conn = put(conn, listing_listing_path(conn, :activate, listing), id: listing.id)
-      assert response(conn, 200)
-      assert listing = Repo.get(Listing, listing.id)
-      assert listing.is_active
-    end
-
-    test "does not activate listing for non admin user", %{user_conn: conn} do
-      listing = insert(:listing, address: build(:address), is_active: false)
-      conn = put(conn, listing_listing_path(conn, :activate, listing), id: listing.id)
-      assert response(conn, 403)
-      assert listing = Repo.get(Listing, listing.id)
-      refute listing.is_active
-    end
-
-    test "does not activate listing for unauthenticated user", %{unauthenticated_conn: conn} do
-      listing = insert(:listing, address: build(:address), is_active: false)
-      conn = put(conn, listing_listing_path(conn, :activate, listing), id: listing.id)
-      assert response(conn, 401)
-      assert listing = Repo.get(Listing, listing.id)
-      refute listing.is_active
     end
   end
 end

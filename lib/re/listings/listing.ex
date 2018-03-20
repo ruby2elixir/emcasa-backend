@@ -41,7 +41,7 @@ defmodule Re.Listing do
   @optional ~w(complement floor matterport_code is_active is_exclusive
                property_tax maintenance_fee)a
 
-  @attributes @required ++ @optional
+  @attributes (@required ++ @optional)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.

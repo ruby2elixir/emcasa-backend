@@ -29,17 +29,22 @@ defmodule Re.Listings do
 
   def get_preloaded(id), do: do_get(preload_listing(), id)
 
-  def insert(listing_params, address, user) do
+  def insert(listing_params, address_id, user) do
+    listing_params =
+      listing_params
+      |> Map.put("address_id", address_id)
+      |> Map.put("user_id", user.id)
+
     %Listing{}
     |> Listing.changeset(listing_params)
-    |> Changeset.change(address_id: address.id)
-    |> Changeset.change(user_id: user.id)
+    |> activate_if_admin(user)
     |> Repo.insert()
   end
 
   def update(listing, listing_params, address_id) do
     listing
     |> Listing.changeset(listing_params)
+    |> Changeset.change(is_active: true)
     |> Changeset.change(address_id: address_id)
     |> Repo.update()
   end
@@ -47,12 +52,6 @@ defmodule Re.Listings do
   def delete(listing) do
     listing
     |> Changeset.change(is_active: false)
-    |> Repo.update()
-  end
-
-  def activate(listing) do
-    listing
-    |> Changeset.change(is_active: true)
     |> Repo.update()
   end
 
@@ -76,7 +75,6 @@ defmodule Re.Listings do
   defp activate_if_admin(changeset, %{role: "admin"}) do
     Changeset.change(changeset, is_active: true)
   end
-
   defp activate_if_admin(changeset, %{role: "user"}) do
     Changeset.change(changeset, is_active: false)
   end
