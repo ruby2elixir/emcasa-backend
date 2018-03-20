@@ -8,6 +8,11 @@ defmodule ReWeb.ListingController do
     Stats.Visualizations
   }
 
+  alias ReWeb.{
+    Mailer,
+    UserEmail
+  }
+
   @visualizations Application.get_env(:re, :visualizations, Visualizations)
 
   action_fallback(ReWeb.FallbackController)
@@ -41,6 +46,9 @@ defmodule ReWeb.ListingController do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
          {:ok, address} <- Addresses.find_or_create(address_params),
          {:ok, listing} <- Listings.insert(listing_params, address.id, user) do
+
+      send_email_if_not_admin(listing, user)
+
       conn
       |> put_status(:created)
       |> render("create.json", listing: listing)
@@ -84,4 +92,15 @@ defmodule ReWeb.ListingController do
     |> Map.take(@visualization_params)
     |> Kernel.inspect()
   end
+
+  defp send_email_if_not_admin(listing, %{role: "user"} = user) do
+    user
+    |> UserEmail.listing_added(listing)
+    |> Mailer.deliver()
+
+    user
+    |> UserEmail.listing_added_admin(listing)
+    |> Mailer.deliver()
+  end
+  defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing
 end

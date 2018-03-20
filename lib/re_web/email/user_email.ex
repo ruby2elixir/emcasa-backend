@@ -15,6 +15,7 @@ defmodule ReWeb.UserEmail do
   @admin_email "admin@emcasa.com"
   @confirm_path "/confirmar_cadastro/"
   @reset_path "/resetar_senha/"
+  @listing_path "/imoveis/"
 
   def notify_interest(%Interest{
         name: name,
@@ -94,5 +95,40 @@ defmodule ReWeb.UserEmail do
     |> URI.merge(path)
     |> URI.merge(param)
     |> URI.to_string()
+  end
+
+  def listing_added(%User{name: name, email: email}, listing) do
+    listing_url = build_url(@listing_path, to_string(listing.id))
+
+    new()
+    |> to(email)
+    |> from(@admin_email)
+    |> subject("Seu imóvel foi pré-cadastrado")
+    |> html_body("Olá, #{name}.<br>
+                  Já fomos notificados sobre seu pré-cadastro de imóvel.<br>
+                  Ele não está visível publicamente, <a href=\"#{listing_url}\">clique aqui</a> para ver uma prévia.<br>
+                  Em breve entraremos em contato.<br>
+                  Equipe EmCasa")
+    |> text_body("Olá, #{name}.
+                  Já fomos notificados sobre seu pré-cadastro de imóvel.
+                  Ele não está visível publicamente, clique no link a seguir para ver uma prévia:
+                  #{listing_url}
+                  Em breve entraremos em contato.
+                  Equipe EmCasa")
+  end
+
+  def listing_added_admin(%User{name: name, email: email}, listing) do
+    listing_url = build_url(@listing_path, to_string(listing.id))
+
+    new()
+    |> to(@to)
+    |> from(@admin_email)
+    |> subject("Um usuário cadastrou um imóvel")
+    |> html_body("Nome: #{name}<br>
+                  Email: #{email}<br>
+                  <a href=\"#{listing_url}\">Imóvel</a><br>")
+    |> text_body("Nome: #{name}
+                  Email: #{email}
+                  <a href=\"#{listing_url}\">Imóvel</a>")
   end
 end
