@@ -77,10 +77,13 @@ defmodule Re.ListingTest do
     assert Keyword.get(changeset.errors, :is_exclusive) ==
              {"is invalid", [type: :boolean, validation: :cast]}
 
-    changeset = Listing.changeset(%Listing{}, %{score: 0})
+    changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000})
     refute changeset.valid?
 
     assert Keyword.get(changeset.errors, :score) ==
              {"must be greater than %{number}", [validation: :number, number: 0]}
+
+    assert Keyword.get(changeset.errors, :price) ==
+             {"must be less than or equal to %{number}", [validation: :number, number: 100_000_000]}
   end
 end
