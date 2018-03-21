@@ -57,7 +57,7 @@ defmodule ReWeb.ListingController do
 
   def show(conn, %{"id" => id}, user) do
     with {:ok, listing} <- Listings.get_preloaded(id),
-         {:ok, listing} <- Listings.should_show(listing, user) do
+         :ok <- Bodyguard.permit(Listings, :show_listing, user, listing) do
       @visualizations.listing(listing, user, extract_details(conn))
 
       render(conn, "show.json", listing: listing)
