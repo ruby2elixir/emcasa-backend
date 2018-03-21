@@ -57,7 +57,7 @@ defmodule Re.ListingTest do
              {"must be less than %{number}", [validation: :number, number: 5]}
 
     assert Keyword.get(changeset.errors, :price) ==
-             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+             {"must be greater than or equal to %{number}", [validation: :number, number: 750_000]}
 
     assert Keyword.get(changeset.errors, :property_tax) ==
              {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
