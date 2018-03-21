@@ -1,4 +1,8 @@
 defmodule Re.Images.Queries do
+  @moduledoc """
+  Module for grouping images queries
+  """
+
   alias Re.Image
 
   import Ecto.Query

@@ -1,4 +1,8 @@
 defmodule Re.Listings.Queries do
+  @moduledoc """
+  Module for grouping listing queries
+  """
+
   alias Re.Listing
   alias Re.Images.Queries, as: IQ
 
