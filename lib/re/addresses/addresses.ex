@@ -30,19 +30,20 @@ defmodule Re.Addresses do
   end
 
   def update(listing, address_params) do
-    if changed?(listing, address_params) do
+    address =
+      listing
+      |> Repo.preload(:address)
+      |> Map.get(:address)
+
+    if changed?(address, address_params) do
       find_or_create(address_params)
     else
-      {:ok, listing.address}
+      {:ok, address}
     end
   end
 
-  defp changed?(listing, address_params) do
-    %{changes: changes} =
-      Address
-      |> Repo.get(listing.address_id)
-      |> Repo.preload(:listings)
-      |> Address.changeset(address_params)
+  defp changed?(address, address_params) do
+    %{changes: changes} = Address.changeset(address, address_params)
 
     changes != %{}
   end
