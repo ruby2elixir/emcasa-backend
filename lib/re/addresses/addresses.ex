@@ -8,18 +8,6 @@ defmodule Re.Addresses do
     Repo
   }
 
-  import Ecto.Query
-
-  def get_ids_with_neighborhood(neighborhood) do
-    Repo.all(
-      from(
-        a in Address,
-        select: a.id,
-        where: a.neighborhood == ^neighborhood
-      )
-    )
-  end
-
   def find_or_create(address_params) do
     case find_unique(address_params) do
       nil ->
