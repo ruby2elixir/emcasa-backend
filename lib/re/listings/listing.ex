@@ -35,29 +35,50 @@ defmodule Re.Listing do
 
   @types ~w(Apartamento Casa Cobertura)
 
-  @required ~w(type description price rooms bathrooms
-               area garage_spots score address_id user_id
-               suites dependencies has_elevator)a
-  @optional ~w(complement floor matterport_code is_active is_exclusive
-               property_tax maintenance_fee)a
-
-  @attributes (@required ++ @optional)
-
+  @user_required ~w(type)a
+  @user_optional ~w(description price rooms bathrooms area garage_spots
+                    address_id user_id suites dependencies has_elevator
+                    complement floor is_exclusive property_tax maintenance_fee)a
+  @user_attributes @user_required ++ @user_optional
   @doc """
-  Builds a changeset based on the `struct` and `params`.
+  Builds a changeset based on the `struct` and `params` and user role.
   """
-  def changeset(struct, params \\ %{}) do
+  def changeset(struct, params \\ %{}, role \\ "user")
+
+  def changeset(struct, params, "user") do
     struct
-    |> cast(params, @attributes)
-    |> validate_number(:price, greater_than_or_equal_to: 750_000)
-    |> validate_number(:price, less_than_or_equal_to: 100_000_000)
-    |> validate_number(:property_tax, greater_than_or_equal_to: 0)
-    |> validate_number(:maintenance_fee, greater_than_or_equal_to: 0)
-    |> validate_number(:bathrooms, greater_than_or_equal_to: 0)
-    |> validate_number(:garage_spots, greater_than_or_equal_to: 0)
-    |> validate_number(:suites, greater_than_or_equal_to: 0)
-    |> validate_number(:dependencies, greater_than_or_equal_to: 0)
+    |> cast(params, @user_attributes)
+    |> validate_required(@user_required)
+    |> validate_attributes()
+    |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
+  end
+
+  @admin_required ~w(type description price rooms bathrooms
+                     area garage_spots score address_id user_id
+                     suites dependencies has_elevator)a
+  @admin_optional ~w(complement floor matterport_code is_active is_exclusive
+                     property_tax maintenance_fee)a
+  @admin_attributes @admin_required ++ @admin_optional
+  def changeset(struct, params, "admin") do
+    struct
+    |> cast(params, @admin_attributes)
+    |> validate_attributes()
+    |> validate_number(
+      :price,
+      greater_than_or_equal_to: 750_000,
+      less_than_or_equal_to: 100_000_000
+    )
     |> validate_number(:score, greater_than: 0, less_than: 5)
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
+    |> change(is_active: true)
+  end
+
+  defp validate_attributes(changeset) do
+    ~w(property_tax maintenance_fee bathrooms garage_spots suites dependencies)a
+    |> Enum.reduce(changeset, &greater_than/2)
+  end
+
+  defp greater_than(attr, changeset) do
+    validate_number(changeset, attr, greater_than_or_equal_to: 0)
   end
 end

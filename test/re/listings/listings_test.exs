@@ -134,7 +134,6 @@ defmodule Re.ListingsTest do
   end
 
   describe "insert/2" do
-
     @insert_listing_params %{
       "type" => "Apartamento",
       "complement" => "100",

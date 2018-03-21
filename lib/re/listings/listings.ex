@@ -33,15 +33,14 @@ defmodule Re.Listings do
     %Listing{}
     |> Changeset.change(address_id: address.id)
     |> Changeset.change(user_id: user.id)
-    |> Listing.changeset(listing_params)
-    |> activate_if_admin(user)
+    |> Listing.changeset(listing_params, user.role)
     |> Repo.insert()
   end
 
-  def update(listing, listing_params, address) do
+  def update(listing, listing_params, address, user) do
     listing
-    |> Listing.changeset(listing_params)
     |> Changeset.change(address_id: address.id)
+    |> Listing.changeset(listing_params, user.role)
     |> Repo.update()
   end
 
@@ -50,11 +49,6 @@ defmodule Re.Listings do
     |> Changeset.change(is_active: false)
     |> Repo.update()
   end
-
-  def should_show(listing, %{role: "admin"}), do: {:ok, listing}
-  def should_show(%{is_active: true} = listing, _), do: {:ok, listing}
-  def should_show(%{user_id: id} = listing, %{id: id}), do: {:ok, listing}
-  def should_show(_, _), do: {:error, :not_found}
 
   def order_by_listing(query), do: order_by(query, [l], desc: l.score, asc: l.matterport_code)
 
@@ -66,12 +60,5 @@ defmodule Re.Listings do
       nil -> {:error, :not_found}
       listing -> {:ok, listing}
     end
-  end
-
-  defp activate_if_admin(changeset, %{role: "admin"}) do
-    Changeset.change(changeset, is_active: true)
-  end
-  defp activate_if_admin(changeset, %{role: "user"}) do
-    Changeset.change(changeset, is_active: false)
   end
 end

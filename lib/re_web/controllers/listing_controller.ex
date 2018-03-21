@@ -46,9 +46,8 @@ defmodule ReWeb.ListingController do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
          {:ok, address} <- Addresses.find_or_create(address_params),
          {:ok, listing} <- Listings.insert(listing_params, address, user) do
-
       send_email_if_not_admin(listing, user)
-      
+
       conn
       |> put_status(:created)
       |> render("create.json", listing: listing)
@@ -57,7 +56,7 @@ defmodule ReWeb.ListingController do
 
   def show(conn, %{"id" => id}, user) do
     with {:ok, listing} <- Listings.get_preloaded(id),
-         {:ok, listing} <- Listings.should_show(listing, user) do
+         :ok <- Bodyguard.permit(Listings, :show_listing, user, listing) do
       @visualizations.listing(listing, user, extract_details(conn))
 
       render(conn, "show.json", listing: listing)
@@ -74,7 +73,7 @@ defmodule ReWeb.ListingController do
     with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, user, listing),
          {:ok, address} <- Addresses.update(listing, address_params),
-         {:ok, listing} <- Listings.update(listing, listing_params, address),
+         {:ok, listing} <- Listings.update(listing, listing_params, address, user),
          do: render(conn, "edit.json", listing: listing)
   end
 
@@ -102,5 +101,6 @@ defmodule ReWeb.ListingController do
     |> UserEmail.listing_added_admin(listing)
     |> Mailer.deliver()
   end
+
   defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing
 end

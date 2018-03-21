@@ -15,6 +15,9 @@ defmodule Re.ListingTest do
     floor: "3",
     rooms: 4,
     bathrooms: 4,
+    suites: 1,
+    dependencies: 1,
+    has_elevator: true,
     area: 150,
     garage_spots: 2,
     score: 4,
@@ -28,62 +31,115 @@ defmodule Re.ListingTest do
     property_tax: -500.00,
     maintenance_fee: -300.00,
     bathrooms: -1,
+    suites: -1,
+    dependencies: -1,
     garage_spots: -1,
     score: 5,
     is_exclusive: "banana"
   }
 
-  test "changeset with valid attributes" do
-    address = insert(:address)
-    user = insert(:user)
+  describe "user" do
+    test "changeset with valid attributes" do
+      address = insert(:address)
+      user = insert(:user)
 
-    attrs =
-      @valid_attrs
-      |> Map.put(:address_id, address.id)
-      |> Map.put(:user_id, user.id)
+      attrs =
+        @valid_attrs
+        |> Map.put(:address_id, address.id)
+        |> Map.put(:user_id, user.id)
 
-    changeset = Listing.changeset(%Listing{}, attrs)
-    assert changeset.valid?
+      changeset = Listing.changeset(%Listing{}, attrs, "user")
+      assert changeset.valid?
+    end
+
+    test "changeset with invalid attributes" do
+      changeset = Listing.changeset(%Listing{}, @invalid_attrs, "user")
+      refute changeset.valid?
+
+      assert Keyword.get(changeset.errors, :type) ==
+               {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
+
+      assert Keyword.get(changeset.errors, :property_tax) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :maintenance_fee) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :bathrooms) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :suites) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :dependencies) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :garage_spots) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :is_exclusive) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+    end
   end
 
-  test "changeset with invalid attributes" do
-    changeset = Listing.changeset(%Listing{}, @invalid_attrs)
-    refute changeset.valid?
+  describe "admin" do
+    test "changeset with valid attributes" do
+      address = insert(:address)
+      user = insert(:user)
 
-    assert Keyword.get(changeset.errors, :type) ==
-             {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
+      attrs =
+        @valid_attrs
+        |> Map.put(:address_id, address.id)
+        |> Map.put(:user_id, user.id)
 
-    assert Keyword.get(changeset.errors, :score) ==
-             {"must be less than %{number}", [validation: :number, number: 5]}
+      changeset = Listing.changeset(%Listing{}, attrs, "admin")
+      assert changeset.valid?
+    end
 
-    assert Keyword.get(changeset.errors, :price) ==
-             {"must be greater than or equal to %{number}", [validation: :number, number: 750_000]}
+    test "changeset with invalid attributes" do
+      changeset = Listing.changeset(%Listing{}, @invalid_attrs, "admin")
+      refute changeset.valid?
 
-    assert Keyword.get(changeset.errors, :property_tax) ==
-             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+      assert Keyword.get(changeset.errors, :type) ==
+               {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
 
-    assert Keyword.get(changeset.errors, :maintenance_fee) ==
-             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+      assert Keyword.get(changeset.errors, :score) ==
+               {"must be less than %{number}", [validation: :number, number: 5]}
 
-    assert Keyword.get(changeset.errors, :bathrooms) ==
-             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+      assert Keyword.get(changeset.errors, :price) ==
+               {"must be greater than or equal to %{number}",
+                [validation: :number, number: 750_000]}
 
-    assert Keyword.get(changeset.errors, :garage_spots) ==
-             {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+      assert Keyword.get(changeset.errors, :property_tax) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
-    # assert Keyword.get(changeset.errors, :address_id) ==
-    #          {"can't be blank", [validation: :required]}
+      assert Keyword.get(changeset.errors, :maintenance_fee) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
-    assert Keyword.get(changeset.errors, :is_exclusive) ==
-             {"is invalid", [type: :boolean, validation: :cast]}
+      assert Keyword.get(changeset.errors, :bathrooms) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
-    changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000})
-    refute changeset.valid?
+      assert Keyword.get(changeset.errors, :suites) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
-    assert Keyword.get(changeset.errors, :score) ==
-             {"must be greater than %{number}", [validation: :number, number: 0]}
+      assert Keyword.get(changeset.errors, :dependencies) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
-    assert Keyword.get(changeset.errors, :price) ==
-             {"must be less than or equal to %{number}", [validation: :number, number: 100_000_000]}
+      assert Keyword.get(changeset.errors, :garage_spots) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :is_exclusive) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+
+      changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000}, "admin")
+      refute changeset.valid?
+
+      assert Keyword.get(changeset.errors, :score) ==
+               {"must be greater than %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :price) ==
+               {"must be less than or equal to %{number}",
+                [validation: :number, number: 100_000_000]}
+    end
   end
 end
