@@ -49,7 +49,7 @@ defmodule Re.Listing do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @attributes)
-    |> validate_number(:price, greater_than_or_equal_to: 0)
+    |> validate_number(:price, greater_than_or_equal_to: 750_000)
     |> validate_number(:property_tax, greater_than_or_equal_to: 0)
     |> validate_number(:maintenance_fee, greater_than_or_equal_to: 0)
     |> validate_number(:bathrooms, greater_than_or_equal_to: 0)
