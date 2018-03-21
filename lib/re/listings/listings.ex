@@ -33,15 +33,14 @@ defmodule Re.Listings do
     %Listing{}
     |> Changeset.change(address_id: address.id)
     |> Changeset.change(user_id: user.id)
-    |> Listing.changeset(listing_params)
-    |> activate_if_admin(user)
+    |> Listing.changeset(listing_params, user.role)
     |> Repo.insert()
   end
 
-  def update(listing, listing_params, address) do
+  def update(listing, listing_params, address, user) do
     listing
-    |> Listing.changeset(listing_params)
     |> Changeset.change(address_id: address.id)
+    |> Listing.changeset(listing_params, user.role)
     |> Repo.update()
   end
 
@@ -68,10 +67,4 @@ defmodule Re.Listings do
     end
   end
 
-  defp activate_if_admin(changeset, %{role: "admin"}) do
-    Changeset.change(changeset, is_active: true)
-  end
-  defp activate_if_admin(changeset, %{role: "user"}) do
-    Changeset.change(changeset, is_active: false)
-  end
 end

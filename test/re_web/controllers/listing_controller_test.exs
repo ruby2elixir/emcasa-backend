@@ -14,7 +14,24 @@ defmodule ReWeb.ListingControllerTest do
   import Re.Factory
   import Swoosh.TestAssertions
 
-  @valid_attrs %{
+  @valid_attrs_user %{
+    type: "Casa",
+    floor: "H1",
+    complement: "basement",
+    bathrooms: 2,
+    description: "some content",
+    price: 1_000_000,
+    property_tax: 500.00,
+    maintenance_fee: 300.00,
+    rooms: 4,
+    area: 140,
+    garage_spots: 3,
+    suites: 1,
+    dependencies: 1,
+    has_elevator: true,
+    is_exclusive: true
+  }
+  @valid_attrs_admin %{
     type: "Casa",
     score: 3,
     floor: "H1",
@@ -355,25 +372,25 @@ defmodule ReWeb.ListingControllerTest do
         post(
           conn,
           listing_path(conn, :create),
-          listing: @valid_attrs,
+          listing: @valid_attrs_admin,
           address: @valid_address_attrs
         )
 
       response = json_response(conn, 201)
       assert response["listing"]["id"]
-      assert listing = Repo.get_by(Listing, @valid_attrs)
+      assert listing = Repo.get_by(Listing, @valid_attrs_admin)
       assert listing.user_id == user.id
     end
 
     test "creates and renders resource as user", %{user_conn: conn, user_user: user} do
       conn =
         post(conn, listing_path(conn, :create), %{
-          listing: @valid_attrs,
+          listing: @valid_attrs_user,
           address: @valid_address_attrs
         })
 
       json_response(conn, 201)
-      assert listing = Repo.get_by(Listing, @valid_attrs)
+      assert listing = Repo.get_by(Listing, @valid_attrs_user)
       assert listing.user_id == user.id
       assert_email_sent(UserEmail.listing_added(user, listing))
       assert_email_sent(UserEmail.listing_added_admin(user, listing))
@@ -386,13 +403,13 @@ defmodule ReWeb.ListingControllerTest do
         post(
           conn,
           listing_path(conn, :create),
-          listing: @valid_attrs,
+          listing: @valid_attrs_admin,
           address: @valid_address_attrs
         )
 
       response = json_response(conn, 201)
       assert response["listing"]["id"]
-      assert listing = Repo.get_by(Listing, @valid_attrs)
+      assert listing = Repo.get_by(Listing, @valid_attrs_admin)
       assert length(Repo.all(Address)) == 1
       assert_email_not_sent(UserEmail.listing_added(user, listing))
       assert_email_not_sent(UserEmail.listing_added_admin(user, listing))
@@ -412,12 +429,12 @@ defmodule ReWeb.ListingControllerTest do
     test "does not create resource when user is not authenticated", %{unauthenticated_conn: conn} do
       conn =
         post(conn, listing_path(conn, :create), %{
-          listing: @valid_attrs,
+          listing: @valid_attrs_user,
           address: @valid_address_attrs
         })
 
       json_response(conn, 401)
-      refute Repo.get_by(Listing, @valid_attrs)
+      refute Repo.get_by(Listing, @valid_attrs_user)
     end
   end
 
@@ -433,12 +450,12 @@ defmodule ReWeb.ListingControllerTest do
           conn,
           listing_path(conn, :update, listing),
           id: listing.id,
-          listing: @valid_attrs,
+          listing: @valid_attrs_admin,
           address: @valid_address_attrs
         )
 
       assert json_response(conn, 200)["listing"]["id"]
-      assert Repo.get_by(Listing, @valid_attrs)
+      assert Repo.get_by(Listing, @valid_attrs_admin)
     end
 
     test "does not update chosen resource and renders errors when data is invalid", %{
@@ -465,12 +482,12 @@ defmodule ReWeb.ListingControllerTest do
           conn,
           listing_path(conn, :update, listing),
           id: listing.id,
-          listing: @valid_attrs,
+          listing: @valid_attrs_user,
           address: @valid_address_attrs
         )
 
       assert json_response(conn, 401)
-      refute Repo.get_by(Listing, @valid_attrs)
+      refute Repo.get_by(Listing, @valid_attrs_user)
     end
 
     test "update resource when listing belongs to user", %{user_conn: conn, user_user: user} do
@@ -481,12 +498,12 @@ defmodule ReWeb.ListingControllerTest do
           conn,
           listing_path(conn, :update, listing),
           id: listing.id,
-          listing: @valid_attrs,
+          listing: @valid_attrs_user,
           address: @valid_address_attrs
         )
 
       assert json_response(conn, 200)
-      assert Repo.get_by(Listing, @valid_attrs)
+      assert Repo.get_by(Listing, @valid_attrs_user)
     end
 
     test "does not update resource when listing doesn't belong to user", %{
@@ -500,12 +517,12 @@ defmodule ReWeb.ListingControllerTest do
           conn,
           listing_path(conn, :update, listing),
           id: listing.id,
-          listing: @valid_attrs,
+          listing: @valid_attrs_admin,
           address: @valid_address_attrs
         )
 
       assert json_response(conn, 403)
-      refute Repo.get_by(Listing, @valid_attrs)
+      refute Repo.get_by(Listing, @valid_attrs_admin)
     end
   end
 
