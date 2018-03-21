@@ -12,15 +12,17 @@ defmodule Re.Listings.Relaxed do
     Repo
   }
 
+  alias Re.Listings.Queries, as: LQ
+
   def get(params) do
     relaxed_filters = Filter.relax(params)
 
     Listing
     |> Filter.apply(relaxed_filters)
-    |> active_listings_query()
+    |> LQ.active()
     |> excluding(params)
-    |> Listings.order_by_listing()
-    |> Listings.preload_listing()
+    |> LQ.order_by()
+    |> LQ.preload()
     |> Repo.paginate(params)
     |> include_filters(relaxed_filters)
   end
@@ -31,6 +33,4 @@ defmodule Re.Listings.Relaxed do
     do: from(l in subquery(query), where: l.id not in ^excluded_listing_ids)
 
   defp excluding(query, _), do: query
-
-  defp active_listings_query(query), do: from(l in subquery(query), where: l.is_active == true)
 end

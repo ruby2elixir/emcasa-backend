@@ -11,17 +11,18 @@ defmodule Re.Listings.Related do
     Repo
   }
 
+  alias Re.Listings.Queries, as: LQ
+
   def get(listing, params \\ %{}) do
     ~w(price address)a
     |> Enum.reduce(Listing, &build_query(&1, listing, &2))
     |> exclude_current(listing)
-    |> active_listings_query()
-    |> Listings.preload_listing()
+    |> LQ.active()
+    |> LQ.preload()
     |> Repo.paginate(params)
   end
 
   defp exclude_current(query, listing), do: from(l in subquery(query), where: ^listing.id != l.id)
-  defp active_listings_query(query), do: from(l in subquery(query), where: l.is_active == true)
 
   defp build_query(:address, listing, query) do
     from(

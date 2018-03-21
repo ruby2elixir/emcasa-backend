@@ -4,31 +4,27 @@ defmodule Re.Images do
   """
   @behaviour Bodyguard.Policy
 
-  import Ecto.Query
-
   alias Re.{
     Image,
     Repo
   }
 
+  alias Re.Images.Queries, as: IQ
   alias Ecto.Changeset
 
   defdelegate authorize(action, user, params), to: Re.Images.Policy
 
   def all(listing_id) do
-    q =
-      from(
-        i in Image,
-        where: i.listing_id == ^listing_id,
-        where: i.is_active == true,
-        order_by: [asc: i.position]
-      )
-
-    {:ok, Repo.all(q)}
+    IQ.by_listing(listing_id)
+    |> IQ.active()
+    |> IQ.order_by_position()
+    |> Repo.all()
   end
 
-  def get_per_listing(listing_id, image_id) do
-    case Repo.get_by(Image, id: image_id, listing_id: listing_id, is_active: true) do
+  def get(id) do
+    IQ.active()
+    |> Repo.get(id)
+    |> case do
       nil -> {:error, :not_found}
       image -> {:ok, image}
     end
@@ -45,8 +41,8 @@ defmodule Re.Images do
 
   defp calculate_position(listing_id) do
     case all(listing_id) do
-      {:ok, []} -> 1
-      {:ok, [top_image | _]} -> top_image.position - 1
+      [] -> 1
+      [top_image | _] -> top_image.position - 1
     end
   end
 
@@ -70,7 +66,4 @@ defmodule Re.Images do
     |> Changeset.change(is_active: false)
     |> Repo.update()
   end
-
-  def order_by_position(query \\ Image),
-    do: from(i in subquery(query), where: i.is_active == true, order_by: i.position)
 end
