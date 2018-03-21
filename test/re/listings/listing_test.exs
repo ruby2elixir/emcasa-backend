@@ -38,8 +38,6 @@ defmodule Re.ListingTest do
     is_exclusive: "banana"
   }
 
-
-
   describe "user" do
     test "changeset with valid attributes" do
       address = insert(:address)
@@ -109,7 +107,8 @@ defmodule Re.ListingTest do
                {"must be less than %{number}", [validation: :number, number: 5]}
 
       assert Keyword.get(changeset.errors, :price) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 750_000]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, number: 750_000]}
 
       assert Keyword.get(changeset.errors, :property_tax) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
@@ -139,7 +138,8 @@ defmodule Re.ListingTest do
                {"must be greater than %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :price) ==
-               {"must be less than or equal to %{number}", [validation: :number, number: 100_000_000]}
+               {"must be less than or equal to %{number}",
+                [validation: :number, number: 100_000_000]}
     end
   end
 end

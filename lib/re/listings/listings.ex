@@ -61,5 +61,4 @@ defmodule Re.Listings do
       listing -> {:ok, listing}
     end
   end
-
 end

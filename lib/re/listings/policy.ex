@@ -16,7 +16,10 @@ defmodule Re.Listings.Policy do
   def authorize(:edit_listing, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
   def authorize(:update_listing, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
   def authorize(:delete_listing, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
-  def authorize(:order_listing_images, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
+
+  def authorize(:order_listing_images, %User{id: id, role: "user"}, %Listing{user_id: id}),
+    do: :ok
+
   def authorize(_, nil, _), do: {:error, :unauthorized}
 
   def authorize(_, _, _), do: {:error, :forbidden}

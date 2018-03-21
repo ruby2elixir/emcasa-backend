@@ -46,7 +46,6 @@ defmodule ReWeb.ListingController do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
          {:ok, address} <- Addresses.find_or_create(address_params),
          {:ok, listing} <- Listings.insert(listing_params, address, user) do
-
       send_email_if_not_admin(listing, user)
 
       conn
@@ -102,5 +101,6 @@ defmodule ReWeb.ListingController do
     |> UserEmail.listing_added_admin(listing)
     |> Mailer.deliver()
   end
+
   defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing
 end

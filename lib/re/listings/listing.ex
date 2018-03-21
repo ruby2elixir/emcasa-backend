@@ -44,6 +44,7 @@ defmodule Re.Listing do
   Builds a changeset based on the `struct` and `params` and user role.
   """
   def changeset(struct, params \\ %{}, role \\ "user")
+
   def changeset(struct, params, "user") do
     struct
     |> cast(params, @user_attributes)
@@ -62,7 +63,11 @@ defmodule Re.Listing do
     struct
     |> cast(params, @admin_attributes)
     |> validate_attributes()
-    |> validate_number(:price, greater_than_or_equal_to: 750_000, less_than_or_equal_to: 100_000_000)
+    |> validate_number(
+      :price,
+      greater_than_or_equal_to: 750_000,
+      less_than_or_equal_to: 100_000_000
+    )
     |> validate_number(:score, greater_than: 0, less_than: 5)
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
     |> change(is_active: true)
