@@ -5,7 +5,6 @@ defmodule Re.Address do
   use Ecto.Schema
 
   import Ecto.Changeset
-  alias Ecto.Changeset
 
   schema "addresses" do
     field :street, :string
@@ -36,25 +35,7 @@ defmodule Re.Address do
     |> validate_length(:city, max: 128)
     |> validate_length(:state, is: 2)
     |> unique_constraint(:postal_code, name: :unique_address)
-    |> validate_lat()
-    |> validate_lng()
-  end
-
-  defp validate_lat(changeset) do
-    changeset
-    |> Changeset.get_field(:lat, nil)
-    |> case do
-      lat when lat > -90 and lat < 90 -> changeset
-      _ -> Changeset.add_error(changeset, :lat, "invalid latitude")
-    end
-  end
-
-  defp validate_lng(changeset) do
-    changeset
-    |> Changeset.get_field(:lng, nil)
-    |> case do
-      lng when lng > -180 and lng < 180 -> changeset
-      _ -> Changeset.add_error(changeset, :lng, "invalid longitude")
-    end
+    |> validate_number(:lat, greater_than: -90, less_than: 90)
+    |> validate_number(:lng, greater_than: -180, less_than: 180)
   end
 end
