@@ -70,4 +70,7 @@ defmodule Re.Images do
     |> Changeset.change(is_active: false)
     |> Repo.update()
   end
+
+  def order_by_position(query \\ Image),
+    do: from(i in subquery(query), where: i.is_active == true, order_by: i.position)
 end
