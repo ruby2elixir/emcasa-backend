@@ -23,16 +23,30 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
-  def do_activate(id) do
+  def favorite(%{id: id}, %{context: %{current_user: current_user}}) do
+    case Bodyguard.permit(Listings, :favorite_listing, current_user, %{}) do
+      :ok -> do_favorite(id, current_user)
+      _error -> {:error, :unauthorized}
+    end
+  end
+
+  defp do_activate(id) do
     case Listings.get(id) do
       {:ok, listing} -> Listings.activate(listing)
       {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
     end
   end
 
-  def do_deactivate(id) do
+  defp do_deactivate(id) do
     case Listings.get(id) do
       {:ok, listing} -> Listings.delete(listing)
+      {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
+    end
+  end
+
+  defp do_favorite(id, user) do
+    case Listings.get(id) do
+      {:ok, listing} -> Listings.favorite(listing, user)
       {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
     end
   end
