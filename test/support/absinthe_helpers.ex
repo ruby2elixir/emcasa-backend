@@ -8,10 +8,10 @@ defmodule ReWeb.AbsintheHelpers do
   end
 
   def mutation_skeleton(query) do
-  %{
-    "operationName" => "",
-    "query" => "#{query}",
-    "variables" => ""
-  }
-end
+    %{
+      "operationName" => "",
+      "query" => "#{query}",
+      "variables" => ""
+    }
+  end
 end

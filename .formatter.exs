@@ -7,7 +7,10 @@
     has_many: 2,
     belongs_to: 2,
     embeds_one: 2,
-    plug: 1,
-    plug: 2
+    pipe_through: 1,
+    forward: 3,
+    import_types: 1,
+    resolve: 1,
+    arg: 2
   ]
 ]

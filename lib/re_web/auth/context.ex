@@ -29,5 +29,4 @@ defmodule ReWeb.Auth.Context do
       _error -> {:error, "invalid authorization token"}
     end
   end
-
 end

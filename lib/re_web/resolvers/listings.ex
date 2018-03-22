@@ -1,5 +1,4 @@
 defmodule ReWeb.Resolvers.Listings do
-
   alias Re.Listings
 
   def all(_args, _resolution) do
