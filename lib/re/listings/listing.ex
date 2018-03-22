@@ -65,7 +65,7 @@ defmodule Re.Listing do
     |> validate_attributes()
     |> validate_number(
       :price,
-      greater_than_or_equal_to: 750_000,
+      greater_than_or_equal_to: 650_000,
       less_than_or_equal_to: 100_000_000
     )
     |> validate_number(:score, greater_than: 0, less_than: 5)
