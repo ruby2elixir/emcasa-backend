@@ -21,5 +21,11 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Listings.activate/2
     end
+    @desc "Deactivate listing"
+    field :deactivate_listing, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.deactivate/2
+    end
   end
 end
