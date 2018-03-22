@@ -5,6 +5,7 @@ defmodule Re.Listings do
   @behaviour Bodyguard.Policy
 
   alias Re.{
+    Listings.Favorite,
     Listing,
     Listings.Filter,
     Listings.Queries,
@@ -52,6 +53,13 @@ defmodule Re.Listings do
     listing
     |> Changeset.change(is_active: true)
     |> Repo.update()
+  end
+
+  def favorite(listing, user) do
+    %Favorite{}
+    |> Changeset.change(listing_id: listing.id)
+    |> Changeset.change(user_id: user.id)
+    |> Repo.insert()
   end
 
   defp do_get(query, id) do
