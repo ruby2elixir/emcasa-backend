@@ -6,23 +6,23 @@ defmodule Re.Images do
 
   alias Re.{
     Image,
+    Images.Queries,
     Repo
   }
 
-  alias Re.Images.Queries, as: IQ
   alias Ecto.Changeset
 
   defdelegate authorize(action, user, params), to: Re.Images.Policy
 
   def all(listing_id) do
-    IQ.by_listing(listing_id)
-    |> IQ.active()
-    |> IQ.order_by_position()
+    Queries.by_listing(listing_id)
+    |> Queries.active()
+    |> Queries.order_by_position()
     |> Repo.all()
   end
 
   def get(id) do
-    IQ.active()
+    Queries.active()
     |> Repo.get(id)
     |> case do
       nil -> {:error, :not_found}

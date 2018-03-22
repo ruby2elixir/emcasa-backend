@@ -7,22 +7,20 @@ defmodule Re.Listings.Relaxed do
 
   alias Re.{
     Listing,
-    Listings,
     Listings.Filter,
+    Listings.Queries,
     Repo
   }
-
-  alias Re.Listings.Queries, as: LQ
 
   def get(params) do
     relaxed_filters = Filter.relax(params)
 
     Listing
     |> Filter.apply(relaxed_filters)
-    |> LQ.active()
+    |> Queries.active()
     |> excluding(params)
-    |> LQ.order_by()
-    |> LQ.preload()
+    |> Queries.order_by()
+    |> Queries.preload()
     |> Repo.paginate(params)
     |> include_filters(relaxed_filters)
   end

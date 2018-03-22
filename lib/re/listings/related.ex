@@ -8,17 +8,16 @@ defmodule Re.Listings.Related do
   alias Re.{
     Listing,
     Listings,
+    Listings.Queries,
     Repo
   }
-
-  alias Re.Listings.Queries, as: LQ
 
   def get(listing, params \\ %{}) do
     ~w(price address)a
     |> Enum.reduce(Listing, &build_query(&1, listing, &2))
     |> exclude_current(listing)
-    |> LQ.active()
-    |> LQ.preload()
+    |> Queries.active()
+    |> Queries.preload()
     |> Repo.paginate(params)
   end
 

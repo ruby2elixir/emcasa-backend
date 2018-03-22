@@ -4,31 +4,28 @@ defmodule Re.Listings do
   """
   @behaviour Bodyguard.Policy
 
-  import Ecto.Query
-
   alias Re.{
     Listing,
     Listings.Filter,
-    Images,
+    Listings.Queries,
     Repo
   }
 
-  alias Re.Listings.Queries, as: LQ
   alias Ecto.Changeset
 
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
   def paginated(params \\ %{}) do
-    LQ.active()
-    |> LQ.order_by()
-    |> LQ.preload()
+    Queries.active()
+    |> Queries.order_by()
+    |> Queries.preload()
     |> Filter.apply(params)
     |> Repo.paginate(params)
   end
 
   def get(id), do: do_get(Listing, id)
 
-  def get_preloaded(id), do: do_get(LQ.preload(), id)
+  def get_preloaded(id), do: do_get(Queries.preload(), id)
 
   def insert(params, address, user) do
     %Listing{}
