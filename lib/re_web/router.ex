@@ -6,6 +6,10 @@ defmodule ReWeb.Router do
     plug(ReWeb.GuardianPipeline)
   end
 
+  pipeline :graphql do
+    plug(ReWeb.Auth.Context)
+  end
+
   scope "/", ReWeb do
     pipe_through(:api)
 
@@ -36,6 +40,16 @@ defmodule ReWeb.Router do
 
     put("/change_email", UserController, :change_email)
     put("/confirm", UserController, :confirm)
+  end
+
+  scope "/graphql_api" do
+    pipe_through :graphql
+
+    if Mix.env() == :dev do
+      forward "/graphiql", Absinthe.Plug.GraphiQL, schema: ReWeb.Schema
+    end
+
+    forward "/", Absinthe.Plug, schema: ReWeb.Schema
   end
 
   if Mix.env() == :dev do

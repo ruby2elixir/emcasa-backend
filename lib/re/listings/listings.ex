@@ -48,6 +48,12 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
+  def activate(listing) do
+    listing
+    |> Changeset.change(is_active: true)
+    |> Repo.update()
+  end
+
   defp do_get(query, id) do
     case Repo.get(query, id) do
       nil -> {:error, :not_found}

@@ -7,7 +7,6 @@ defmodule Re.Listings.Related do
 
   alias Re.{
     Listing,
-    Listings,
     Listings.Queries,
     Repo
   }
