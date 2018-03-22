@@ -1,4 +1,7 @@
 defmodule ReWeb.AbsintheHelpers do
+  @moduledoc """
+  Helpers for absinthe endpoint testing
+  """
   def query_skeleton(query, query_name) do
     %{
       "operationName" => "#{query_name}",

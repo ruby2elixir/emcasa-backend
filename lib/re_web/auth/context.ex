@@ -1,9 +1,10 @@
 defmodule ReWeb.Auth.Context do
+  @moduledoc """
+  Plug to insert current user to Plug.Conn struct for graphql endpoint
+  """
   @behaviour Plug
 
   import Plug.Conn
-
-  alias Re.{Repo, User}
 
   def init(opts), do: opts
 
@@ -22,9 +23,7 @@ defmodule ReWeb.Auth.Context do
   end
 
   defp authorize(token) do
-    token
-    |> ReWeb.Guardian.resource_from_token()
-    |> case do
+    case ReWeb.Guardian.resource_from_token(token) do
       {:ok, user, _claims} -> {:ok, user}
       _error -> {:error, "invalid authorization token"}
     end

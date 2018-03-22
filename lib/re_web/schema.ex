@@ -1,4 +1,7 @@
 defmodule ReWeb.Schema do
+  @moduledoc """
+  Module for defining graphQL schemas
+  """
   use Absinthe.Schema
   import_types ReWeb.Schema.ListingTypes
 

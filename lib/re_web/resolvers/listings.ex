@@ -1,4 +1,7 @@
 defmodule ReWeb.Resolvers.Listings do
+  @moduledoc """
+  Resolver module for listing queries and mutations
+  """
   alias Re.Listings
 
   def all(_args, _resolution) do

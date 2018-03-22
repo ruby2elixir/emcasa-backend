@@ -8,7 +8,6 @@ defmodule Re.Listings.Featured do
   alias Re.{
     Listing,
     Listings.FeaturedListing,
-    Images,
     Repo
   }
 
