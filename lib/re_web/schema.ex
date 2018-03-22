@@ -1,16 +1,22 @@
 defmodule ReWeb.Schema do
   use Absinthe.Schema
-  import_types ReWeb.Schema.ContentTypes
+  import_types ReWeb.Schema.ListingTypes
 
   alias ReWeb.Resolvers
 
   query do
-
-    @desc "Get paginated listings"
-    field :paginated_listing, :paginated_listing do
-      resolve &Resolvers.Content.paginated_listing/2
+    @desc "Get all listings"
+    field :listings, list_of(:listing) do
+      resolve &Resolvers.Listings.all/2
     end
-
   end
 
+  mutation do
+    @desc "Activate listing"
+    field :activate_listing, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.activate/2
+    end
+  end
 end
