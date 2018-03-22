@@ -7,8 +7,8 @@ defmodule Re.Listings.Relaxed do
 
   alias Re.{
     Listing,
-    Listings,
     Listings.Filter,
+    Listings.Queries,
     Repo
   }
 
@@ -17,10 +17,10 @@ defmodule Re.Listings.Relaxed do
 
     Listing
     |> Filter.apply(relaxed_filters)
-    |> active_listings_query()
+    |> Queries.active()
     |> excluding(params)
-    |> Listings.order_by_listing()
-    |> Listings.preload_listing()
+    |> Queries.order_by()
+    |> Queries.preload()
     |> Repo.paginate(params)
     |> include_filters(relaxed_filters)
   end
@@ -31,6 +31,4 @@ defmodule Re.Listings.Relaxed do
     do: from(l in subquery(query), where: l.id not in ^excluded_listing_ids)
 
   defp excluding(query, _), do: query
-
-  defp active_listings_query(query), do: from(l in subquery(query), where: l.is_active == true)
 end

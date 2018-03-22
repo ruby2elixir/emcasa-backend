@@ -56,8 +56,11 @@ defmodule Re.AddressTest do
     assert Keyword.get(changeset.errors, :state) ==
              {"should be %{count} character(s)", [count: 2, validation: :length, is: 2]}
 
-    assert Keyword.get(changeset.errors, :lat) == {"invalid latitude", []}
-    assert Keyword.get(changeset.errors, :lng) == {"invalid longitude", []}
+    assert Keyword.get(changeset.errors, :lat) ==
+             {"must be greater than %{number}", [validation: :number, number: -90]}
+
+    assert Keyword.get(changeset.errors, :lng) ==
+             {"must be greater than %{number}", [validation: :number, number: -180]}
   end
 
   test "duplicated address should be invalid" do

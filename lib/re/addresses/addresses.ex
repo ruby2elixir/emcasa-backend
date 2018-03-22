@@ -8,18 +8,6 @@ defmodule Re.Addresses do
     Repo
   }
 
-  import Ecto.Query
-
-  def get_ids_with_neighborhood(neighborhood) do
-    Repo.all(
-      from(
-        a in Address,
-        select: a.id,
-        where: a.neighborhood == ^neighborhood
-      )
-    )
-  end
-
   def find_or_create(address_params) do
     case find_unique(address_params) do
       nil ->
@@ -42,19 +30,20 @@ defmodule Re.Addresses do
   end
 
   def update(listing, address_params) do
-    if changed?(listing, address_params) do
+    address =
+      listing
+      |> Repo.preload(:address)
+      |> Map.get(:address)
+
+    if changed?(address, address_params) do
       find_or_create(address_params)
     else
-      {:ok, listing.address}
+      {:ok, address}
     end
   end
 
-  defp changed?(listing, address_params) do
-    %{changes: changes} =
-      Address
-      |> Repo.get(listing.address_id)
-      |> Repo.preload(:listings)
-      |> Address.changeset(address_params)
+  defp changed?(address, address_params) do
+    %{changes: changes} = Address.changeset(address, address_params)
 
     changes != %{}
   end

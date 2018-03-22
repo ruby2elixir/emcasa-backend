@@ -73,9 +73,12 @@ defmodule Re.Listing do
     |> change(is_active: true)
   end
 
+  @more_than_zero_attributes ~w(property_tax maintenance_fee
+                                bathrooms garage_spots suites
+                                dependencies)a
+
   defp validate_attributes(changeset) do
-    ~w(property_tax maintenance_fee bathrooms garage_spots suites dependencies)a
-    |> Enum.reduce(changeset, &greater_than/2)
+    Enum.reduce(@more_than_zero_attributes, changeset, &greater_than/2)
   end
 
   defp greater_than(attr, changeset) do
