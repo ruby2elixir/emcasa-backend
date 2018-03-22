@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQLTest do
+defmodule ReWeb.GraphQL.ListingsTest do
   use ReWeb.ConnCase
 
   import Re.Factory
