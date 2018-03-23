@@ -62,6 +62,13 @@ defmodule Re.Listings do
     |> Repo.insert()
   end
 
+  def unfavorite(listing, user) do
+    case Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id) do
+      nil -> {:error, :not_found}
+      favorite -> Repo.delete(favorite)
+    end
+  end
+
   defp do_get(query, id) do
     case Repo.get(query, id) do
       nil -> {:error, :not_found}

@@ -173,9 +173,61 @@ defmodule ReWeb.GraphQL.ListingsTest do
         }
       """
 
-      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert [] == Repo.all(Favorite)
+      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "unfavoriteListing" do
+    test "admin should unfavorite listing", %{admin_conn: conn, admin_user: user} do
+      listing = insert(:listing)
+      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+
+      mutation = """
+        mutation {
+          unfavoriteListing(id: #{listing.id}) {
+            id
+          }
+        }
+      """
+
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      refute Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
+    end
+
+    test "user should unfavorite listing", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing)
+      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+
+      mutation = """
+        mutation {
+          unfavoriteListing(id: #{listing.id}) {
+            id
+          }
+        }
+      """
+
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      refute Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
+    end
+
+    test "anonymous should not unfavorite listing", %{unauthenticated_conn: conn} do
+      listing = insert(:listing)
+
+      mutation = """
+        mutation {
+          unfavoriteListing(id: #{listing.id}) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
     end
   end
 end

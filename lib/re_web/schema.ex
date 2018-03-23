@@ -35,5 +35,12 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Listings.favorite/2
     end
+
+    @desc "Unfavorite listing"
+    field :unfavorite_listing, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.unfavorite/2
+    end
   end
 end

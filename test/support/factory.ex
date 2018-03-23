@@ -75,6 +75,10 @@ defmodule Re.Factory do
     }
   end
 
+  def listing_favorite_factory do
+    %Re.Listings.Favorite{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
