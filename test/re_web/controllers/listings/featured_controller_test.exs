@@ -84,10 +84,10 @@ defmodule ReWeb.FeaturedControllerTest do
       unauthenticated_conn: conn
     } do
       address = insert(:address)
-      %{id: id1} = insert(:listing, address: address, score: 4)
-      %{id: id2} = insert(:listing, address: address, score: 4)
-      %{id: id3} = insert(:listing, address: address, score: 3)
-      %{id: id4} = insert(:listing, address: address, score: 2)
+      %{id: id1} = insert(:listing, address: address, score: 4, images: [build(:image)])
+      %{id: id2} = insert(:listing, address: address, score: 4, images: [build(:image)])
+      %{id: id3} = insert(:listing, address: address, score: 3, images: [build(:image)])
+      %{id: id4} = insert(:listing, address: address, score: 2, images: [build(:image)])
       insert(:listing, address: address, score: 1)
 
       conn = dispatch(conn, @endpoint, "get", "/featured_listings")
@@ -95,6 +95,25 @@ defmodule ReWeb.FeaturedControllerTest do
       response = json_response(conn, 200)
 
       assert [%{"id" => ^id1}, %{"id" => ^id2}, %{"id" => ^id3}, %{"id" => ^id4}] =
+               response["listings"]
+    end
+
+    test "do not show listing without images", %{
+      unauthenticated_conn: conn
+    } do
+      address = insert(:address)
+      %{id: id1} = insert(:listing, address: address, score: 4, images: [build(:image)])
+      %{id: id2} = insert(:listing, address: address, score: 4, images: [build(:image)])
+      %{id: id3} = insert(:listing, address: address, score: 3, images: [build(:image)])
+      %{id: id4} = insert(:listing, address: address, score: 4)
+      %{id: id5} = insert(:listing, address: address, score: 2, images: [build(:image)])
+      insert(:listing, address: address, score: 1)
+
+      conn = dispatch(conn, @endpoint, "get", "/featured_listings")
+
+      response = json_response(conn, 200)
+
+      assert [%{"id" => ^id1}, %{"id" => ^id2}, %{"id" => ^id3}, %{"id" => ^id5}] =
                response["listings"]
     end
   end
