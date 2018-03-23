@@ -1,4 +1,7 @@
 defmodule ReWeb.Schema.Helpers do
+  @moduledoc """
+  Module for absinthe helper functions
+  """
   import Ecto.Query
 
   alias Re.Repo
