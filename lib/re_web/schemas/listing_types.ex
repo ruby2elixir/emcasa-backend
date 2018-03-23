@@ -33,7 +33,7 @@ defmodule ReWeb.Schema.ListingTypes do
         batch(
           {ReWeb.Schema.Helpers, :by_id, Address},
           listing.address_id,
-          &({:ok, Map.get(&1, listing.address_id)})
+          &{:ok, Map.get(&1, listing.address_id)}
         )
       end
     end

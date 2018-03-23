@@ -1,11 +1,9 @@
 defmodule ReWeb.Schema.Helpers do
-
   import Ecto.Query
 
   alias Re.Repo
 
   def by_id(model, ids) do
-
     ids = Enum.uniq(ids)
 
     model

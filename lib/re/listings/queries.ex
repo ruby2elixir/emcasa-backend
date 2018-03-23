@@ -14,6 +14,6 @@ defmodule Re.Listings.Queries do
 
   def order_by(query \\ Listing), do: order_by(query, [l], desc: l.score, asc: l.matterport_code)
 
-  def preload(query \\ Listing), do: preload(query, [:address, images: ^Images.Queries.listing_preload()])
-
+  def preload(query \\ Listing),
+    do: preload(query, [:address, images: ^Images.Queries.listing_preload()])
 end
