@@ -8,9 +8,9 @@ defmodule ReWeb.Schema do
   alias ReWeb.Resolvers
 
   query do
-    @desc "Get all listings"
-    field :listings, list_of(:listing) do
-      resolve &Resolvers.Listings.all/2
+    @desc "Get favorited listings"
+    field :favorited_listings, list_of(:listing) do
+      resolve &Resolvers.Users.favorited/2
     end
   end
 

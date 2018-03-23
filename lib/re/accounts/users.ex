@@ -8,6 +8,8 @@ defmodule Re.Accounts.Users do
     User
   }
 
+  defdelegate authorize(action, user, params), to: Re.Users.Policy
+
   def get(id) do
     case Repo.get(User, id) do
       nil -> {:error, :not_found}
@@ -80,5 +82,11 @@ defmodule Re.Accounts.Users do
       confirmation_token: UUID.uuid4()
     })
     |> Repo.update()
+  end
+
+  def favorited(user) do
+    user
+    |> Repo.preload(:favorited)
+    |> Map.get(:favorited)
   end
 end
