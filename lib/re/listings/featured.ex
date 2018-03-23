@@ -30,5 +30,9 @@ defmodule Re.Listings.Featured do
     @top_4_listings_query
     |> preload([:address, images: ^Queries.order_by_position()])
     |> Repo.all()
+    |> Enum.filter(&filter_no_images/1)
   end
+
+  defp filter_no_images(%{images: []}), do: false
+  defp filter_no_images(_), do: true
 end
