@@ -21,11 +21,26 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Listings.activate/2
     end
+
     @desc "Deactivate listing"
     field :deactivate_listing, type: :listing do
       arg :id, non_null(:id)
 
       resolve &Resolvers.Listings.deactivate/2
+    end
+
+    @desc "Favorite listing"
+    field :favorite_listing, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.favorite/2
+    end
+
+    @desc "Unfavorite listing"
+    field :unfavorite_listing, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.unfavorite/2
     end
   end
 end

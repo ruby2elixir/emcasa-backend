@@ -20,6 +20,9 @@ defmodule Re.Listings.Policy do
   def authorize(:order_listing_images, %User{id: id, role: "user"}, %Listing{user_id: id}),
     do: :ok
 
+  def authorize(:favorite_listing, %User{}, _), do: :ok
+  def authorize(:unfavorite_listing, %User{}, _), do: :ok
+
   def authorize(_, nil, _), do: {:error, :unauthorized}
 
   def authorize(_, _, _), do: {:error, :forbidden}

@@ -105,7 +105,7 @@ defmodule ReWeb.FeaturedControllerTest do
       %{id: id1} = insert(:listing, address: address, score: 4, images: [build(:image)])
       %{id: id2} = insert(:listing, address: address, score: 4, images: [build(:image)])
       %{id: id3} = insert(:listing, address: address, score: 3, images: [build(:image)])
-      %{id: id4} = insert(:listing, address: address, score: 4)
+      insert(:listing, address: address, score: 4)
       %{id: id5} = insert(:listing, address: address, score: 2, images: [build(:image)])
       insert(:listing, address: address, score: 1)
 
