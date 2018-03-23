@@ -31,7 +31,8 @@ defmodule ReWeb.GraphQL.UsersTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
 
       listing_id = to_string(listing.id)
       assert %{"favoritedListings" => [%{"id" => ^listing_id}]} = json_response(conn, 200)["data"]
@@ -49,7 +50,8 @@ defmodule ReWeb.GraphQL.UsersTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
 
       listing_id = to_string(listing.id)
       assert %{"favoritedListings" => [%{"id" => ^listing_id}]} = json_response(conn, 200)["data"]
@@ -64,7 +66,8 @@ defmodule ReWeb.GraphQL.UsersTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
 
       assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
     end
