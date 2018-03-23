@@ -8,6 +8,8 @@ defmodule Re.Accounts.Users do
     User
   }
 
+  defdelegate authorize(action, user, params), to: Re.Users.Policy
+
   def get(id) do
     case Repo.get(User, id) do
       nil -> {:error, :not_found}
