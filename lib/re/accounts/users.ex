@@ -81,4 +81,10 @@ defmodule Re.Accounts.Users do
     })
     |> Repo.update()
   end
+
+  def favorited(user) do
+    user
+    |> Repo.preload(:favorited)
+    |> Map.get(:favorited)
+  end
 end
