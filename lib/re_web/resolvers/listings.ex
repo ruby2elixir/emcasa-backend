@@ -5,72 +5,37 @@ defmodule ReWeb.Resolvers.Listings do
   alias Re.Listings
 
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :activate_listing, current_user, %{}) do
-      :ok -> do_activate(id)
-      _error -> {:error, :unauthorized}
+    with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
+         {:ok, listing} <- Listings.get(id) do
+      Listings.activate(listing)
     end
   end
 
   def deactivate(%{id: id}, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :deactivate_listing, current_user, %{}) do
-      :ok -> do_deactivate(id)
-      _error -> {:error, :unauthorized}
+    with :ok <- Bodyguard.permit(Listings, :deactivate_listing, current_user, %{}),
+         {:ok, listing} <- Listings.get(id) do
+      Listings.delete(listing)
     end
   end
 
   def favorite(%{id: id}, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :favorite_listing, current_user, %{}) do
-      :ok -> do_favorite(id, current_user)
-      _error -> {:error, :unauthorized}
+    with :ok <- Bodyguard.permit(Listings, :favorite_listing, current_user, %{}),
+         {:ok, listing} <- Listings.get(id) do
+      Listings.favorite(listing, current_user)
     end
   end
 
   def unfavorite(%{id: id}, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :unfavorite_listing, current_user, %{}) do
-      :ok -> do_unfavorite(id, current_user)
-      _error -> {:error, :unauthorized}
+    with :ok <- Bodyguard.permit(Listings, :unfavorite_listing, current_user, %{}),
+         {:ok, listing} <- Listings.get(id) do
+      Listings.unfavorite(listing, current_user)
     end
   end
 
   def favorited_users(%{id: id}, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :show_favorited_users, current_user, %{}) do
-      :ok -> do_favorited_users(id)
-      error -> error
-    end
-  end
-
-  defp do_activate(id) do
-    case Listings.get(id) do
-      {:ok, listing} -> Listings.activate(listing)
-      {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
-    end
-  end
-
-  defp do_deactivate(id) do
-    case Listings.get(id) do
-      {:ok, listing} -> Listings.delete(listing)
-      {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
-    end
-  end
-
-  defp do_favorite(id, user) do
-    case Listings.get(id) do
-      {:ok, listing} -> Listings.favorite(listing, user)
-      {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
-    end
-  end
-
-  defp do_unfavorite(id, user) do
-    case Listings.get(id) do
-      {:ok, listing} -> Listings.unfavorite(listing, user)
-      {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
-    end
-  end
-
-  defp do_favorited_users(id) do
-    case Listings.get(id) do
-      {:ok, listing} -> {:ok, Listings.favorited_users(listing)}
-      {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
+    with :ok <- Bodyguard.permit(Listings, :show_favorited_users, current_user, %{}),
+         {:ok, listing} <- Listings.get(id) do
+      {:ok, Listings.favorited_users(listing)}
     end
   end
 end
