@@ -4,6 +4,7 @@ defmodule ReWeb.Schema do
   """
   use Absinthe.Schema
   import_types ReWeb.Schema.ListingTypes
+  import_types ReWeb.Schema.UserTypes
 
   alias ReWeb.Resolvers
 
@@ -11,6 +12,12 @@ defmodule ReWeb.Schema do
     @desc "Get favorited listings"
     field :favorited_listings, list_of(:listing) do
       resolve &Resolvers.Users.favorited/2
+    end
+
+    @desc "Get favorited users"
+    field :show_favorited_users, list_of(:user) do
+      arg :id, non_null(:id)
+      resolve &Resolvers.Listings.favorited_users/2
     end
   end
 

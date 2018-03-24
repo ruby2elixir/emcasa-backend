@@ -32,6 +32,13 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
+  def favorited_users(%{id: id}, %{context: %{current_user: current_user}}) do
+    case Bodyguard.permit(Listings, :show_favorited_users, current_user, %{}) do
+      :ok -> do_favorited_users(id)
+      error -> error
+    end
+  end
+
   defp do_activate(id) do
     case Listings.get(id) do
       {:ok, listing} -> Listings.activate(listing)
@@ -56,6 +63,13 @@ defmodule ReWeb.Resolvers.Listings do
   defp do_unfavorite(id, user) do
     case Listings.get(id) do
       {:ok, listing} -> Listings.unfavorite(listing, user)
+      {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
+    end
+  end
+
+  defp do_favorited_users(id) do
+    case Listings.get(id) do
+      {:ok, listing} -> {:ok, Listings.favorited_users(listing)}
       {:error, :not_found} -> {:error, "Listing ID #{id} not found"}
     end
   end

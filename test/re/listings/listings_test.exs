@@ -177,7 +177,6 @@ defmodule Re.ListingsTest do
   end
 
   describe "favorited_users/1" do
-
     test "should return favorited users" do
       [user1, user2, user3] = insert_list(3, :user)
       listing = insert(:listing)
