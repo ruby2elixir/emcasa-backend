@@ -69,6 +69,12 @@ defmodule Re.Listings do
     end
   end
 
+  def favorited_users(listing) do
+    listing
+    |> Repo.preload(:favorited)
+    |> Map.get(:favorited)
+  end
+
   defp do_get(query, id) do
     case Repo.get(query, id) do
       nil -> {:error, :not_found}
