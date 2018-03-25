@@ -175,4 +175,16 @@ defmodule Re.ListingsTest do
       refute retrieved_listing.is_active
     end
   end
+
+  describe "favorited_users/1" do
+    test "should return favorited users" do
+      [user1, user2, user3] = insert_list(3, :user)
+      listing = insert(:listing)
+      insert(:listing_favorite, listing_id: listing.id, user_id: user1.id)
+      insert(:listing_favorite, listing_id: listing.id, user_id: user2.id)
+      insert(:listing_favorite, listing_id: listing.id, user_id: user3.id)
+
+      assert [^user1, ^user2, ^user3] = Listings.favorited_users(listing)
+    end
+  end
 end

@@ -30,6 +30,9 @@ defmodule Re.Listing do
     belongs_to :user, Re.User
     has_many :images, Re.Image
 
+    has_many :listings_favorites, Re.Listings.Favorite
+    has_many :favorited, through: [:listings_favorites, :user]
+
     timestamps()
   end
 

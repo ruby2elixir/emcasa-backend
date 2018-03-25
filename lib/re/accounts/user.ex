@@ -22,7 +22,8 @@ defmodule Re.User do
 
     has_many :listings, Re.Listing
 
-    many_to_many :favorited, Re.Listing, join_through: Re.Listings.Favorite
+    has_many :listings_favorites, Re.Listings.Favorite
+    has_many :favorited, through: [:listings_favorites, :listing]
 
     timestamps()
   end

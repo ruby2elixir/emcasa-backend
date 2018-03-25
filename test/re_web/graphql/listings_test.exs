@@ -230,4 +230,63 @@ defmodule ReWeb.GraphQL.ListingsTest do
       assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "showFavoritedUsers" do
+    test "admin should see favorited users", %{admin_conn: conn, admin_user: user} do
+      listing = insert(:listing)
+      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+
+      query = """
+        {
+          showFavoritedUsers(id: #{listing.id}) {
+            id
+          }
+        }
+      """
+
+      user_id = to_string(user.id)
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "showFavoritedUsers"))
+
+      assert %{"showFavoritedUsers" => [%{"id" => ^user_id}]} = json_response(conn, 200)["data"]
+    end
+
+    test "admin should not see favorited users", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing)
+      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+
+      query = """
+        {
+          showFavoritedUsers(id: #{listing.id}) {
+            id
+          }
+        }
+      """
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "showFavoritedUsers"))
+
+      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+    end
+
+    test "anonymous should not see favorited users", %{unauthenticated_conn: conn} do
+      listing = insert(:listing)
+      user = insert(:user)
+      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+
+      query = """
+        {
+          showFavoritedUsers(id: #{listing.id}) {
+            id
+          }
+        }
+      """
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "showFavoritedUsers"))
+
+      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+    end
+  end
 end
