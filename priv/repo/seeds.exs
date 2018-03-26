@@ -3,6 +3,7 @@ if Mix.env() == :dev do
     Address,
     Image,
     Listings.Interest,
+    Listings.InterestType,
     Listing,
     Repo,
     User
@@ -238,4 +239,9 @@ if Mix.env() == :dev do
       message: "Looks like an awesome listing",
       listing: listing4
     })
+
+  Re.Repo.insert!(%InterestType{name: "Me ligue dentro de 5 minutos"})
+  Re.Repo.insert!(%InterestType{name: "Me ligue em um horário específico"})
+  Re.Repo.insert!(%InterestType{name: "Agendamento por e-mail"})
+  Re.Repo.insert!(%InterestType{name: "Agendamento por Whatsapp"})
 end
