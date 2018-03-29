@@ -27,6 +27,7 @@ defmodule ReWeb.Router do
     resources("/relaxed_listings", RelaxedController, only: [:index])
     resources("/search", SearchController, only: [:index])
     resources("/interest_types", InterestTypeController, only: [:index])
+    resources("/sitemap_listings", SitemapController, only: [:index])
   end
 
   scope "/users", ReWeb do

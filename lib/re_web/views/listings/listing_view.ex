@@ -109,4 +109,8 @@ defmodule ReWeb.ListingView do
   def render("listing_id.json", %{listing: listing}) do
     %{id: listing.id}
   end
+
+  def render("sitemap_listing.json", %{listing: listing}) do
+    %{id: listing.id, updated_at: listing.updated_at}
+  end
 end
