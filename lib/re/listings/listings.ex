@@ -16,12 +16,23 @@ defmodule Re.Listings do
 
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
+  def all(params \\ %{}) do
+    params
+    |> build_query()
+    |> Repo.all()
+  end
+
   def paginated(params \\ %{}) do
+    params
+    |> build_query()
+    |> Repo.paginate(params)
+  end
+
+  defp build_query(params) do
     Queries.active()
     |> Queries.order_by()
     |> Queries.preload()
     |> Filter.apply(params)
-    |> Repo.paginate(params)
   end
 
   def get(id), do: do_get(Listing, id)
