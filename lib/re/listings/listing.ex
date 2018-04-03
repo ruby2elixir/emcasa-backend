@@ -76,6 +76,8 @@ defmodule Re.Listing do
     |> change(is_active: true)
   end
 
+  def deactivate_changeset(struct, _params, "admin"), do: change(struct, is_active: false)
+
   @more_than_zero_attributes ~w(property_tax maintenance_fee
                                 bathrooms garage_spots suites
                                 dependencies)a
