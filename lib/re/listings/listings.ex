@@ -30,7 +30,9 @@ defmodule Re.Listings do
 
   defp build_query(params) do
     Queries.active()
-    |> Queries.order_by()
+    |> Queries.order_by_score()
+    |> Queries.randomize()
+    |> Queries.order_by_matterport_code()
     |> Queries.preload()
     |> Filter.apply(params)
   end
