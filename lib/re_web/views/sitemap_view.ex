@@ -4,5 +4,4 @@ defmodule ReWeb.SitemapView do
   def render("index.json", %{listings: listings}) do
     %{listings: render_many(listings, ReWeb.ListingView, "sitemap_listing.json")}
   end
-
 end
