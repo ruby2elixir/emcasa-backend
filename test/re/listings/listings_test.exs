@@ -9,6 +9,17 @@ defmodule Re.ListingsTest do
   import Re.Factory
 
   describe "all/1" do
+    test "should return all listings sorted by id" do
+      %{id: id1} = insert(:listing, score: 4)
+      %{id: id2} = insert(:listing, score: 3)
+      %{id: id3} = insert(:listing, score: 4)
+      %{id: id4} = insert(:listing, score: 3)
+
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}, %{id: ^id4}] = Listings.all()
+    end
+  end
+
+  describe "paginated/1" do
     test "should filter by attributes" do
       laranjeiras =
         insert(
@@ -104,9 +115,7 @@ defmodule Re.ListingsTest do
       assert %{entries: [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}]} =
                Listings.paginated(%{"types" => []})
     end
-  end
 
-  describe "paginated/1" do
     test "should return paginated result" do
       insert_list(3, :listing)
 

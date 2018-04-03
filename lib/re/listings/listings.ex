@@ -16,9 +16,9 @@ defmodule Re.Listings do
 
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
-  def all(params \\ %{}) do
-    params
-    |> build_query()
+  def all do
+    Queries.active()
+    |> Queries.order_by_id()
     |> Repo.all()
   end
 
