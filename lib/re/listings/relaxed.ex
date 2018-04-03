@@ -19,11 +19,10 @@ defmodule Re.Listings.Relaxed do
     |> Filter.apply(relaxed_filters)
     |> Queries.active()
     |> excluding(params)
-    |> Queries.order_by_score()
-    |> Queries.order_by_matterport_code()
-    |> Queries.randomize()
+    |> Queries.order_by()
     |> Queries.preload()
     |> Repo.paginate(params)
+    |> Queries.randomize_within_score()
     |> include_filters(relaxed_filters)
   end
 

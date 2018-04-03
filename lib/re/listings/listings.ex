@@ -26,13 +26,12 @@ defmodule Re.Listings do
     params
     |> build_query()
     |> Repo.paginate(params)
+    |> Queries.randomize_within_score()
   end
 
   defp build_query(params) do
     Queries.active()
-    |> Queries.order_by_score()
-    |> Queries.randomize()
-    |> Queries.order_by_matterport_code()
+    |> Queries.order_by()
     |> Queries.preload()
     |> Filter.apply(params)
   end
