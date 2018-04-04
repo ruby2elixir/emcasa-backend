@@ -23,5 +23,6 @@ defmodule Re.Listings.Favorite do
     struct
     |> cast(params, @required ++ @optional)
     |> validate_required(@required)
+    |> unique_constraint(:listing_id, name: :unique_favorite)
   end
 end
