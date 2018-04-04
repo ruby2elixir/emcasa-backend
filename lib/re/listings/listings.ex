@@ -68,8 +68,7 @@ defmodule Re.Listings do
 
   def favorite(listing, user) do
     %Favorite{}
-    |> Changeset.change(listing_id: listing.id)
-    |> Changeset.change(user_id: user.id)
+    |> Favorite.changeset(%{listing_id: listing.id, user_id: user.id})
     |> Repo.insert()
   end
 
