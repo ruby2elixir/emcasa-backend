@@ -26,7 +26,7 @@ defmodule ReWeb.Schema.ListingTypes do
     field :is_active, :boolean
     field :is_exclusive, :boolean
 
-    # field :images, list_of(:image)
+    field :images, list_of(:image)
 
     field :address, :address do
       resolve fn listing, _, _ ->
@@ -48,5 +48,11 @@ defmodule ReWeb.Schema.ListingTypes do
     field :postal_code, :string
     field :lat, :float
     field :lng, :float
+  end
+
+  object :image do
+    field :filename, :string
+    field :position, :integer
+    field :is_active, :boolean
   end
 end
