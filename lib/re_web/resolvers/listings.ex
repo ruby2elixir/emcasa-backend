@@ -20,8 +20,9 @@ defmodule ReWeb.Resolvers.Listings do
 
   def favorite(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :favorite_listing, current_user, %{}),
-         {:ok, listing} <- Listings.get(id) do
-      Listings.favorite(listing, current_user)
+         {:ok, listing} <- Listings.get(id),
+         {:ok, _} <- Listings.favorite(listing, current_user) do
+      {:ok, %{listing: listing, user: current_user}}
     end
   end
 

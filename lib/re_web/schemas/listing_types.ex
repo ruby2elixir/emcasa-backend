@@ -55,4 +55,9 @@ defmodule ReWeb.Schema.ListingTypes do
     field :position, :integer
     field :is_active, :boolean
   end
+
+  object :listing_user do
+    field :listing, :listing
+    field :user, :user
+  end
 end

@@ -136,14 +136,22 @@ defmodule ReWeb.GraphQL.ListingsTest do
       mutation = """
         mutation {
           favoriteListing(id: #{listing.id}) {
-            id
+            listing {
+              id
+            }
+            user {
+              id
+            }
           }
         }
       """
 
-      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
+      listing_id = to_string(listing.id)
+      user_id = to_string(user.id)
       assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
+      assert %{"favoriteListing" => %{"listing" => %{"id" => ^listing_id}, "user" => %{"id" => ^user_id}}} = json_response(conn, 200)["data"]
     end
 
     test "user should favorite listing", %{user_conn: conn, user_user: user} do
@@ -152,14 +160,22 @@ defmodule ReWeb.GraphQL.ListingsTest do
       mutation = """
         mutation {
           favoriteListing(id: #{listing.id}) {
-            id
+            listing {
+              id
+            }
+            user {
+              id
+            }
           }
         }
       """
 
-      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
+      listing_id = to_string(listing.id)
+      user_id = to_string(user.id)
       assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
+      assert %{"favoriteListing" => %{"listing" => %{"id" => ^listing_id}, "user" => %{"id" => ^user_id}}} = json_response(conn, 200)["data"]
     end
 
     test "anonymous should not favorite listing", %{unauthenticated_conn: conn} do
@@ -168,7 +184,12 @@ defmodule ReWeb.GraphQL.ListingsTest do
       mutation = """
         mutation {
           favoriteListing(id: #{listing.id}) {
-            id
+            listing {
+              id
+            }
+            user {
+              id
+            }
           }
         }
       """
