@@ -12,7 +12,12 @@ defmodule Re.Listings.Queries do
 
   def active(query \\ Listing), do: where(query, [l], l.is_active == true)
 
-  def order_by(query \\ Listing), do: order_by(query, [l], desc: l.score, asc: l.matterport_code)
+  def order_by(query \\ Listing) do
+    query
+    |> order_by([l], desc: l.score)
+    |> order_by([l], fragment("RANDOM()"))
+    |> order_by([l], asc: l.matterport_code)
+  end
 
   def order_by_id(query \\ Listing), do: order_by(query, [l], asc: l.id)
 
@@ -28,4 +33,9 @@ defmodule Re.Listings.Queries do
 
     %{result | entries: randomized_entries}
   end
+
+  def excluding(query, %{"excluded_listing_ids" => excluded_listing_ids}),
+    do: from(l in query, where: l.id not in ^excluded_listing_ids)
+
+  def excluding(query, _), do: query
 end
