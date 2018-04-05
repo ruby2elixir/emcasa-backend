@@ -10,6 +10,8 @@ defmodule Re.Listings.Queries do
 
   import Ecto.Query
 
+  @page_size 100
+
   def active(query \\ Listing), do: where(query, [l], l.is_active == true)
 
   def order_by(query \\ Listing) do
@@ -37,5 +39,14 @@ defmodule Re.Listings.Queries do
   def excluding(query, %{"excluded_listing_ids" => excluded_listing_ids}),
     do: from(l in query, where: l.id not in ^excluded_listing_ids)
 
+  def excluding(query, %{excluded_listing_ids: excluded_listing_ids}),
+    do: from(l in query, where: l.id not in ^excluded_listing_ids)
+
   def excluding(query, _), do: query
+
+  def limit(query, %{"page_size" => page_size}), do: from(l in query, limit: ^page_size)
+
+  def limit(query, %{page_size: page_size}), do: from(l in query, limit: ^page_size)
+
+  def limit(query, _), do: from(l in query, limit: @page_size)
 end

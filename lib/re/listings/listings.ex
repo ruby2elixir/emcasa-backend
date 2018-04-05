@@ -25,13 +25,14 @@ defmodule Re.Listings do
   def paginated(params \\ %{}) do
     params
     |> build_query()
-    |> Repo.paginate(params)
+    |> Repo.all()
   end
 
   defp build_query(params) do
     Queries.active()
     |> Queries.excluding(params)
     |> Queries.order_by()
+    |> Queries.limit(params)
     |> Queries.preload()
     |> Filter.apply(params)
   end

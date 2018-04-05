@@ -1,22 +1,6 @@
 defmodule ReWeb.ListingView do
   use ReWeb, :view
 
-  def render("paginated_index.json", %{
-        listings: listings,
-        page_number: page_number,
-        page_size: page_size,
-        total_pages: total_pages,
-        total_entries: total_entries
-      }) do
-    %{
-      listings: render_many(listings, ReWeb.ListingView, "listing.json"),
-      page_number: page_number,
-      page_size: page_size,
-      total_pages: total_pages,
-      total_entries: total_entries
-    }
-  end
-
   def render("index.json", %{listings: listings}) do
     %{listings: render_many(listings, ReWeb.ListingView, "listing.json")}
   end

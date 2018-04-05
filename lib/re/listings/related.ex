@@ -15,12 +15,14 @@ defmodule Re.Listings.Related do
     ~w(price address)a
     |> Enum.reduce(Listing, &build_query(&1, listing, &2))
     |> exclude_current(listing)
+    |> Queries.excluding(params)
     |> Queries.active()
+    |> Queries.limit(params)
     |> Queries.preload()
-    |> Repo.paginate(params)
+    |> Repo.all()
   end
 
-  defp exclude_current(query, listing), do: from(l in subquery(query), where: ^listing.id != l.id)
+  defp exclude_current(query, listing), do: from(l in query, where: ^listing.id != l.id)
 
   defp build_query(:address, listing, query) do
     from(

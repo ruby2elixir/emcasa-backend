@@ -18,10 +18,11 @@ defmodule Re.Listings.Relaxed do
     |> Queries.active()
     |> Queries.excluding(params)
     |> Queries.order_by()
+    |> Queries.limit(params)
     |> Queries.preload()
-    |> Repo.paginate(params)
+    |> Repo.all()
     |> include_filters(relaxed_filters)
   end
 
-  defp include_filters(result, filters), do: Map.put(result, :filters, filters)
+  defp include_filters(listings, filters), do: %{listings: listings, filters: filters}
 end
