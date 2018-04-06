@@ -10,16 +10,13 @@ defmodule ReWeb.RelatedController do
 
   def index(conn, %{"listing_id" => id} = params) do
     with {:ok, listing} <- Listings.get_preloaded(id),
-         page <- Related.get(listing, params) do
+         results <- Related.get(listing, params) do
       render(
         conn,
         ReWeb.ListingView,
-        "paginated_index.json",
-        listings: page.entries,
-        page_number: page.page_number,
-        page_size: page.page_size,
-        total_pages: page.total_pages,
-        total_entries: page.total_entries
+        "index.json",
+        listings: results.listings,
+        remaining_count: results.remaining_count
       )
     end
   end

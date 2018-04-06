@@ -109,21 +109,14 @@ defmodule ReWeb.ListingControllerTest do
     test "paginated query", %{admin_conn: conn, admin_user: user} do
       insert_list(5, :listing, address: insert(:address), user: user)
 
-      conn = get(conn, listing_path(conn, :index, %{page_size: 2, page: 1}))
+      conn = get(conn, listing_path(conn, :index, %{page_size: 2}))
 
       assert [_, _] = json_response(conn, 200)["listings"]
-      assert 1 == json_response(conn, 200)["page_number"]
-      assert 2 == json_response(conn, 200)["page_size"]
-      assert 3 == json_response(conn, 200)["total_pages"]
-      assert 5 == json_response(conn, 200)["total_entries"]
+      assert 3 = json_response(conn, 200)["remaining_count"]
 
-      conn = get(conn, listing_path(conn, :index, %{page_size: 2, page: 2}))
+      conn = get(conn, listing_path(conn, :index, %{page_size: 2}))
 
       assert [_, _] = json_response(conn, 200)["listings"]
-      assert 2 == json_response(conn, 200)["page_number"]
-      assert 2 == json_response(conn, 200)["page_size"]
-      assert 3 == json_response(conn, 200)["total_pages"]
-      assert 5 == json_response(conn, 200)["total_entries"]
     end
   end
 
