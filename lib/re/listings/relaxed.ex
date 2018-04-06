@@ -5,6 +5,7 @@ defmodule Re.Listings.Relaxed do
   """
   alias Re.{
     Listing,
+    Listings,
     Listings.Filter,
     Listings.Queries,
     Repo
@@ -13,16 +14,21 @@ defmodule Re.Listings.Relaxed do
   def get(params) do
     relaxed_filters = Filter.relax(params)
 
-    Listing
-    |> Filter.apply(relaxed_filters)
-    |> Queries.active()
-    |> Queries.excluding(params)
-    |> Queries.order_by()
-    |> Queries.limit(params)
-    |> Queries.preload()
-    |> Repo.all()
-    |> include_filters(relaxed_filters)
-  end
+    query =
+      Listing
+      |> Filter.apply(relaxed_filters)
+      |> Queries.active()
+      |> Queries.excluding(params)
+      |> Queries.order_by()
+      |> Queries.limit(params)
+      |> Queries.preload()
 
-  defp include_filters(listings, filters), do: %{listings: listings, filters: filters}
+    listings = Repo.all(query)
+
+    %{
+      listings: listings,
+      filters: relaxed_filters,
+      remaining_count: Listings.remaining_count(query, params)
+    }
+  end
 end

@@ -9,6 +9,7 @@ defmodule Re.Listings do
     Listing,
     Listings.Filter,
     Listings.Queries,
+    Listings.Opts,
     Repo
   }
 
@@ -23,9 +24,28 @@ defmodule Re.Listings do
   end
 
   def paginated(params \\ %{}) do
-    params
-    |> build_query()
-    |> Repo.all()
+    query = build_query(params)
+
+    %{
+      remaining_count: remaining_count(query, params),
+      listings: Repo.all(query)
+    }
+  end
+
+  def remaining_count(query, params) do
+    query
+    |> Queries.remaining_count()
+    |> Repo.one()
+    |> calculate_remaining(params)
+  end
+
+  defp calculate_remaining(count, params) do
+    opts = Opts.build(params)
+
+    case (count || 0) - (opts.page_size + length(opts.excluded_listings_ids)) do
+      num when num > 0 -> num
+      _ -> 0
+    end
   end
 
   defp build_query(params) do

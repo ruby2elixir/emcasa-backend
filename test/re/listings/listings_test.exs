@@ -82,40 +82,40 @@ defmodule Re.ListingsTest do
         )
 
       result = Listings.paginated(%{"max_price" => 105})
-      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"min_price" => 95})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"rooms" => 3})
-      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result)
+      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"max_rooms" => 3})
-      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result)
+      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"min_rooms" => 4})
-      assert [%{id: ^id1}] = chunk_and_short(result)
+      assert [%{id: ^id1}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"max_area" => 55})
-      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"neighborhoods" => ["Laranjeiras", "Leblon"]})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"types" => ["Apartamento"]})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"max_lat" => -22.95})
-      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"min_lat" => -22.98})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"max_lng" => -43.199})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"min_lng" => -43.203})
-      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
     end
 
     test "should not filter for empty array" do
@@ -128,10 +128,10 @@ defmodule Re.ListingsTest do
       %{id: id3} = insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento")
 
       result = Listings.paginated(%{"neighborhoods" => []})
-      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"types" => []})
-      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result)
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
     end
 
     test "should return paginated result" do
@@ -139,9 +139,11 @@ defmodule Re.ListingsTest do
       insert(:listing, score: 4)
       %{id: id3} = insert(:listing, score: 3)
 
-      assert [%{id: id1}, %{id: id2}] = Listings.paginated(%{page_size: 2})
+      assert %{remaining_count: 1, listings: [%{id: id1}, %{id: id2}]} =
+               Listings.paginated(%{page_size: 2})
 
-      assert [%{id: ^id3}] = Listings.paginated(%{page_size: 2, excluded_listing_ids: [id1, id2]})
+      assert %{remaining_count: 0, listings: [%{id: ^id3}]} =
+               Listings.paginated(%{page_size: 2, excluded_listing_ids: [id1, id2]})
     end
   end
 

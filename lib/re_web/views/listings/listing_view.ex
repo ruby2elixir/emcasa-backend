@@ -1,8 +1,11 @@
 defmodule ReWeb.ListingView do
   use ReWeb, :view
 
-  def render("index.json", %{listings: listings}) do
-    %{listings: render_many(listings, ReWeb.ListingView, "listing.json")}
+  def render("index.json", %{listings: listings, remaining_count: remaining_count}) do
+    %{
+      listings: render_many(listings, ReWeb.ListingView, "listing.json"),
+      remaining_count: remaining_count
+    }
   end
 
   def render("featured.json", %{listings: listings}) do

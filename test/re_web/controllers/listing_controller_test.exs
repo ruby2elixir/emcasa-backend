@@ -112,6 +112,7 @@ defmodule ReWeb.ListingControllerTest do
       conn = get(conn, listing_path(conn, :index, %{page_size: 2}))
 
       assert [_, _] = json_response(conn, 200)["listings"]
+      assert 3 = json_response(conn, 200)["remaining_count"]
 
       conn = get(conn, listing_path(conn, :index, %{page_size: 2}))
 

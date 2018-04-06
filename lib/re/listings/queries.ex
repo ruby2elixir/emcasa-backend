@@ -49,4 +49,14 @@ defmodule Re.Listings.Queries do
   def limit(query, %{page_size: page_size}), do: from(l in query, limit: ^page_size)
 
   def limit(query, _), do: from(l in query, limit: @page_size)
+
+  def remaining_count(query) do
+    query
+    |> exclude(:preload)
+    |> exclude(:order_by)
+    |> exclude(:limit)
+    |> count()
+  end
+
+  def count(query \\ Listing), do: from(l in query, select: count(l.id))
 end

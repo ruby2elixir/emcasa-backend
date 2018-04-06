@@ -29,7 +29,14 @@ defmodule ReWeb.ListingController do
   )
 
   def index(conn, params, _user) do
-    render(conn, "index.json", listings: Listings.paginated(params))
+    result = Listings.paginated(params)
+
+    render(
+      conn,
+      "index.json",
+      listings: result.listings,
+      remaining_count: result.remaining_count
+    )
   end
 
   def create(conn, %{"listing" => listing_params, "address" => address_params} = params, user) do

@@ -6,8 +6,14 @@ defmodule ReWeb.RelaxedController do
   action_fallback(ReWeb.FallbackController)
 
   def index(conn, params) do
-    result = Relaxed.get(params)
+    results = Relaxed.get(params)
 
-    render(conn, "index.json", listings: result.listings, filters: result.filters)
+    render(
+      conn,
+      "index.json",
+      listings: results.listings,
+      filters: results.filters,
+      remaining_count: results.remaining_count
+    )
   end
 end
