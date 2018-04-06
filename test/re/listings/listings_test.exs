@@ -2,6 +2,7 @@ defmodule Re.ListingsTest do
   use Re.ModelCase
 
   alias Re.{
+    Listings.Favorite,
     Listing,
     Listings
   }
@@ -208,6 +209,20 @@ defmodule Re.ListingsTest do
       insert(:listing_favorite, listing_id: listing.id, user_id: user3.id)
 
       assert [^user1, ^user2, ^user3] = Listings.favorited_users(listing)
+    end
+  end
+
+  describe "favorite/2" do
+    test "should favorite only once" do
+      user = insert(:user)
+      listing = insert(:listing)
+
+      assert {:ok, _} = Listings.favorite(listing, user)
+
+      assert {:error, %{errors: [listing_id: {"has already been taken", []}]}} =
+               Listings.favorite(listing, user)
+
+      assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
     end
   end
 

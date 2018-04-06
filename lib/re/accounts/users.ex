@@ -86,7 +86,7 @@ defmodule Re.Accounts.Users do
 
   def favorited(user) do
     user
-    |> Repo.preload(:favorited)
+    |> Repo.preload(favorited: [:images])
     |> Map.get(:favorited)
   end
 end
