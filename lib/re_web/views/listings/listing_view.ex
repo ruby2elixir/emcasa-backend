@@ -54,7 +54,10 @@ defmodule ReWeb.ListingView do
         lng: listing.address.lng
       },
       user_id: listing.user_id,
-      images: render_many(listing.images, ReWeb.ImageView, "image.json")
+      images: render_many(listing.images, ReWeb.ImageView, "image.json"),
+      visualisations: Enum.count(listing.listings_visualisations),
+      favorite_count: Enum.count(listing.listings_favorites),
+      interest_count: Enum.count(listing.interests)
     }
   end
 

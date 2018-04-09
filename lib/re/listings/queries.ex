@@ -5,7 +5,8 @@ defmodule Re.Listings.Queries do
 
   alias Re.{
     Images,
-    Listing
+    Listing,
+    Listings.Interests
   }
 
   import Ecto.Query
@@ -23,8 +24,15 @@ defmodule Re.Listings.Queries do
 
   def order_by_id(query \\ Listing), do: order_by(query, [l], asc: l.id)
 
-  def preload(query \\ Listing),
-    do: preload(query, [:address, images: ^Images.Queries.listing_preload()])
+  def preload(query \\ Listing) do
+    preload(query, [
+      :address,
+      :listings_visualisations,
+      :listings_favorites,
+      interests: ^Interests.Queries.with_type(),
+      images: ^Images.Queries.listing_preload()
+    ])
+  end
 
   def randomize_within_score(%{entries: entries} = result) do
     randomized_entries =
