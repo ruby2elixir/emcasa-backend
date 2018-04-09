@@ -6,45 +6,26 @@ defmodule Re.Listings.Featured do
   import Ecto.Query
 
   alias Re.{
-    Images.Queries,
-    Listing,
+    Listings,
     Listings.FeaturedListing,
-    Listings.Interests,
     Repo
   }
 
   def get do
     FeaturedListing
     |> order_by([fl], asc: fl.position)
-    |> preload([
-      :listing,
-      listing: [
-        :address,
-        :listings_visualisations,
-        :listings_favorites,
-        interests: ^Interests.Queries.with_type(),
-        images: ^Queries.order_by_position()
-      ]
-    ])
+    |> preload([listing: ^Listings.Queries.preload()])
     |> Repo.all()
     |> Enum.map(&Map.get(&1, :listing))
     |> check_if_exists()
     |> Enum.take(4)
   end
 
-  @top_4_listings_query from(l in Listing, where: l.is_active == true, order_by: [desc: l.score])
-
   defp check_if_exists([_, _, _, _] = featured), do: featured
 
   defp check_if_exists(_) do
-    @top_4_listings_query
-    |> preload([
-      :address,
-      :listings_visualisations,
-      :listings_favorites,
-      interests: ^Interests.Queries.with_type(),
-      images: ^Queries.order_by_position()
-    ])
+    Listings.Queries.order_by()
+    |> Listings.Queries.preload()
     |> Repo.all()
     |> Enum.filter(&filter_no_images/1)
   end
