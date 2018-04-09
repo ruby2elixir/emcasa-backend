@@ -36,6 +36,10 @@ defmodule ReWeb.UserController do
       |> UserEmail.confirm()
       |> Mailer.deliver()
 
+      user
+      |> UserEmail.user_registered()
+      |> Mailer.deliver()
+
       conn
       |> put_status(:created)
       |> render(ReWeb.UserView, "login.json", jwt: jwt, user: user)
