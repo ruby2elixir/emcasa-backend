@@ -15,7 +15,10 @@ defmodule Re.Listings.Featured do
   def get do
     FeaturedListing
     |> order_by([fl], asc: fl.position)
-    |> preload([:listing, listing: [:address, images: ^Queries.order_by_position()]])
+    |> preload([
+      :listing,
+      listing: [:address, :listings_visualisations, images: ^Queries.order_by_position()]
+    ])
     |> Repo.all()
     |> Enum.map(&Map.get(&1, :listing))
     |> check_if_exists()
@@ -28,7 +31,7 @@ defmodule Re.Listings.Featured do
 
   defp check_if_exists(_) do
     @top_4_listings_query
-    |> preload([:address, images: ^Queries.order_by_position()])
+    |> preload([:address, :listings_visualisations, images: ^Queries.order_by_position()])
     |> Repo.all()
     |> Enum.filter(&filter_no_images/1)
   end

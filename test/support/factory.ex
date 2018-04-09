@@ -79,6 +79,10 @@ defmodule Re.Factory do
     %Re.Listings.Favorite{}
   end
 
+  def listing_visualisation_factory do
+    %Re.Stats.ListingVisualization{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999

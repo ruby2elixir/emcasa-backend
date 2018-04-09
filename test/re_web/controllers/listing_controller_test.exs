@@ -124,6 +124,7 @@ defmodule ReWeb.ListingControllerTest do
     test "resource for admin user", %{admin_conn: conn, admin_user: user} do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
+      insert_list(3, :listing_visualisation, listing_id: listing.id)
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -162,7 +163,8 @@ defmodule ReWeb.ListingControllerTest do
                    "postal_code" => listing.address.postal_code,
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
-                 }
+                 },
+                 "visualisations" => 3
                }
     end
 
@@ -170,6 +172,7 @@ defmodule ReWeb.ListingControllerTest do
       address = insert(:address)
       image = insert(:image)
       listing = insert(:listing, images: [image], address: address, user: user)
+      insert_list(3, :listing_visualisation, listing_id: listing.id)
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -208,7 +211,8 @@ defmodule ReWeb.ListingControllerTest do
                    "postal_code" => listing.address.postal_code,
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
-                 }
+                 },
+                 "visualisations" => 3
                }
     end
 

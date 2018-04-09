@@ -24,7 +24,12 @@ defmodule Re.Listings.Queries do
   def order_by_id(query \\ Listing), do: order_by(query, [l], asc: l.id)
 
   def preload(query \\ Listing),
-    do: preload(query, [:address, images: ^Images.Queries.listing_preload()])
+    do:
+      preload(query, [
+        :address,
+        :listings_visualisations,
+        images: ^Images.Queries.listing_preload()
+      ])
 
   def randomize_within_score(%{entries: entries} = result) do
     randomized_entries =
