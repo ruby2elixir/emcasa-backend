@@ -9,6 +9,7 @@ defmodule Re.Listings.Featured do
     Images.Queries,
     Listing,
     Listings.FeaturedListing,
+    Listings.Interests,
     Repo
   }
 
@@ -21,6 +22,7 @@ defmodule Re.Listings.Featured do
         :address,
         :listings_visualisations,
         :listings_favorites,
+        interests: ^Interests.Queries.with_type(),
         images: ^Queries.order_by_position()
       ]
     ])
@@ -40,6 +42,7 @@ defmodule Re.Listings.Featured do
       :address,
       :listings_visualisations,
       :listings_favorites,
+      interests: ^Interests.Queries.with_type(),
       images: ^Queries.order_by_position()
     ])
     |> Repo.all()

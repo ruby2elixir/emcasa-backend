@@ -27,6 +27,7 @@ defmodule Re.Listing do
     field :is_exclusive, :boolean, default: false
     field :visualisations, :integer, virtual: true
     field :favorite_count, :integer, virtual: true
+    field :interest_count, :integer, virtual: true
 
     belongs_to :address, Re.Address
     belongs_to :user, Re.User
@@ -35,6 +36,7 @@ defmodule Re.Listing do
 
     has_many :listings_favorites, Re.Listings.Favorite
     has_many :favorited, through: [:listings_favorites, :user]
+    has_many :interests, Re.Listings.Interest
 
     timestamps()
   end

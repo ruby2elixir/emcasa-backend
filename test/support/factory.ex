@@ -69,6 +69,12 @@ defmodule Re.Factory do
     }
   end
 
+  def interest_factory do
+    %Re.Listings.Interest{
+      name: "John Doe"
+    }
+  end
+
   def interest_type_factory do
     %Re.Listings.InterestType{
       name: "Just looking"
