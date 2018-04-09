@@ -26,6 +26,7 @@ defmodule Re.Listing do
     field :is_active, :boolean, default: false
     field :is_exclusive, :boolean, default: false
     field :visualisations, :integer, virtual: true
+    field :favorite_count, :integer, virtual: true
 
     belongs_to :address, Re.Address
     belongs_to :user, Re.User

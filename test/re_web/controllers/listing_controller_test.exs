@@ -125,6 +125,7 @@ defmodule ReWeb.ListingControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
       insert_list(3, :listing_visualisation, listing_id: listing.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -164,7 +165,8 @@ defmodule ReWeb.ListingControllerTest do
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
                  },
-                 "visualisations" => 3
+                 "visualisations" => 3,
+                 "favorite_count" => 1
                }
     end
 
@@ -173,6 +175,7 @@ defmodule ReWeb.ListingControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: address, user: user)
       insert_list(3, :listing_visualisation, listing_id: listing.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -212,7 +215,8 @@ defmodule ReWeb.ListingControllerTest do
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
                  },
-                 "visualisations" => 3
+                 "visualisations" => 3,
+                 "favorite_count" => 1
                }
     end
 
