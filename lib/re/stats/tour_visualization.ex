@@ -8,7 +8,6 @@ defmodule Re.Stats.TourVisualization do
 
   schema "tour_visualizations" do
     field :details, :string
-    field :matterport_code, :string
 
     belongs_to :listing, Re.Listing
     belongs_to :user, Re.User
@@ -16,12 +15,13 @@ defmodule Re.Stats.TourVisualization do
     timestamps()
   end
 
-  @required ~w(listing_id matterport_code)a
+  @required ~w(listing_id)a
   @optional ~w(user_id details)a
 
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @required ++ @optional)
     |> validate_required(@required)
+    |> foreign_key_constraint(:listing_id)
   end
 end

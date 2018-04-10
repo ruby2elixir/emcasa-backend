@@ -9,11 +9,12 @@ defmodule Re.Stats.Visualizations do
   alias Re.{
     Listing,
     Stats.ListingVisualization,
+    Stats.TourVisualization,
     Repo,
     User
   }
 
-  @type action :: :listing_visualization
+  @type action :: :listing_visualization | :tour_visualization
 
   @spec listing(Listing.t(), User.t() | nil, map()) :: GenServer.cast()
   def listing(listing, user, details \\ %{})
@@ -38,7 +39,7 @@ defmodule Re.Stats.Visualizations do
 
   @spec handle_cast({action, integer(), integer() | nil, map()}, any) :: {:noreply, any}
   def handle_cast({:listing_visualization, listing_id, user_id, details}, state) do
-    case insert(%{listing_id: listing_id, user_id: user_id, details: details}) do
+    case insert_listing(%{listing_id: listing_id, user_id: user_id, details: details}) do
       {:ok, _} ->
         {:noreply, state}
 
@@ -48,9 +49,26 @@ defmodule Re.Stats.Visualizations do
     end
   end
 
-  defp insert(params) do
+  def handle_cast({:tour_visualization, listing_id, user_id, details}, state) do
+    case insert_tour(%{listing_id: listing_id, user_id: user_id, details: details}) do
+      {:ok, _} ->
+        {:noreply, state}
+
+      {:error, reason} ->
+        Logger.warn("Tour visualization was not inserted: #{inspect(reason)}")
+        {:noreply, state}
+    end
+  end
+
+  defp insert_listing(params) do
     %ListingVisualization{}
     |> ListingVisualization.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp insert_tour(params) do
+    %TourVisualization{}
+    |> TourVisualization.changeset(params)
     |> Repo.insert()
   end
 end
