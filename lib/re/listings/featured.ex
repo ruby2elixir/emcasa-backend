@@ -14,7 +14,7 @@ defmodule Re.Listings.Featured do
   def get do
     FeaturedListing
     |> order_by([fl], asc: fl.position)
-    |> preload([listing: ^Listings.Queries.preload()])
+    |> preload(listing: ^Listings.Queries.preload())
     |> Repo.all()
     |> Enum.map(&Map.get(&1, :listing))
     |> check_if_exists()
