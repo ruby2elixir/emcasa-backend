@@ -13,37 +13,32 @@ defmodule Re.Stats.Visualizations do
     User
   }
 
-  def listing(listing, user, conn \\ %{})
+  @type action :: :listing_visualization
 
-  def listing(%Listing{} = listing, %User{} = user, _conn) do
-    GenServer.cast(__MODULE__, {:listing_user, listing.id, user.id})
+  @spec listing(Listing.t(), User.t() | nil, map()) :: GenServer.cast()
+  def listing(listing, user, details \\ %{})
+
+  def listing(%Listing{} = listing, %User{} = user, details) do
+    GenServer.cast(__MODULE__, {:listing_visualization, listing.id, user.id, details})
   end
 
   def listing(%Listing{} = listing, nil, details) do
-    GenServer.cast(__MODULE__, {:listing_anon, listing.id, details})
+    GenServer.cast(__MODULE__, {:listing_visualization, listing.id, nil, details})
   end
 
   def listing(_, _, _), do: Logger.warn("Listing visualization did not match.")
 
+  @spec start_link :: GenServer.start_link()
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
+  @spec init(term) :: {:ok, term}
   def init(args), do: {:ok, args}
 
-  def handle_cast({:listing_user, listing_id, user_id}, state) do
-    case insert(%{listing_id: listing_id, user_id: user_id}) do
-      {:ok, _} ->
-        {:noreply, state}
-
-      {:error, reason} ->
-        Logger.warn("Listing visualization was not inserted: #{inspect(reason)}")
-        {:noreply, state}
-    end
-  end
-
-  def handle_cast({:listing_anon, listing_id, details}, state) do
-    case insert(%{listing_id: listing_id, details: details}) do
+  @spec handle_cast({action, integer(), integer() | nil, map()}, any) :: {:noreply, any}
+  def handle_cast({:listing_visualization, listing_id, user_id, details}, state) do
+    case insert(%{listing_id: listing_id, user_id: user_id, details: details}) do
       {:ok, _} ->
         {:noreply, state}
 

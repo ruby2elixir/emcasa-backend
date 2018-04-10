@@ -22,5 +22,6 @@ defmodule Re.Stats.ListingVisualization do
     struct
     |> cast(params, @required ++ @optional)
     |> validate_required(@required)
+    |> foreign_key_constraint(:listing_id)
   end
 end
