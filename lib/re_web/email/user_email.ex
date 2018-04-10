@@ -77,7 +77,7 @@ defmodule ReWeb.UserEmail do
 
   def user_registered(%User{name: name, email: email}) do
     new()
-    |> to(@admin_email)
+    |> to(@to)
     |> from(@admin_email)
     |> subject("Novo usuário cadastrado")
     |> html_body("Um novo usuário realizou cadastro no EmCasa.<br>
