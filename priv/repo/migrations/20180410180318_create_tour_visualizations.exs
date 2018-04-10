@@ -5,7 +5,6 @@ defmodule Re.Repo.Migrations.CreateTourVisualizations do
     create table(:tour_visualizations) do
       add(:listing_id, references(:listings))
       add(:user_id, references(:users))
-      add(:matterport_code, :string)
       add(:details, :text)
 
       timestamps()
