@@ -49,5 +49,12 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Listings.unfavorite/2
     end
+
+    @desc "Tour visualization"
+    field :tour_visualized, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.ListingStats.tour_visualized/2
+    end
   end
 end
