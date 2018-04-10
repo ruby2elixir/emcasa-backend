@@ -11,7 +11,11 @@ defmodule ReWeb.Resolvers.ListingStats do
 
   def tour_visualized(%{id: id}, %{context: %{current_user: current_user, details: details}}) do
     with {:ok, listing} <- Listings.get(id) do
-      {@visualizations.tour(listing, current_user, "matterport_code:#{listing.matterport_code};#{details}"), listing}
+      {@visualizations.tour(
+         listing,
+         current_user,
+         "matterport_code:#{listing.matterport_code};#{details}"
+       ), listing}
     end
   end
 end

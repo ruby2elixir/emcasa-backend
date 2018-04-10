@@ -30,8 +30,7 @@ defmodule ReWeb.GraphQL.VisualizationsTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
       listing_id_str = to_string(listing_id)
       assert %{"tourVisualized" => %{"id" => ^listing_id_str}} = json_response(conn, 200)["data"]
@@ -48,8 +47,7 @@ defmodule ReWeb.GraphQL.VisualizationsTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
       listing_id_str = to_string(listing_id)
       assert %{"tourVisualized" => %{"id" => ^listing_id_str}} = json_response(conn, 200)["data"]
@@ -66,8 +64,7 @@ defmodule ReWeb.GraphQL.VisualizationsTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
       listing_id_str = to_string(listing_id)
       assert %{"tourVisualized" => %{"id" => ^listing_id_str}} = json_response(conn, 200)["data"]

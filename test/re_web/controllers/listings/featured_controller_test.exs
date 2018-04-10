@@ -94,8 +94,7 @@ defmodule ReWeb.FeaturedControllerTest do
 
       response = json_response(conn, 200)
 
-      assert [%{"id" => _}, %{"id" => _}, %{"id" => ^id3}, %{"id" => ^id4}] =
-               response["listings"]
+      assert [%{"id" => _}, %{"id" => _}, %{"id" => ^id3}, %{"id" => ^id4}] = response["listings"]
     end
 
     test "do not show listing without images", %{
@@ -113,8 +112,7 @@ defmodule ReWeb.FeaturedControllerTest do
 
       response = json_response(conn, 200)
 
-      assert [%{"id" => _}, %{"id" => _}, %{"id" => ^id3}, %{"id" => ^id5}] =
-               response["listings"]
+      assert [%{"id" => _}, %{"id" => _}, %{"id" => ^id3}, %{"id" => ^id5}] = response["listings"]
     end
   end
 end
