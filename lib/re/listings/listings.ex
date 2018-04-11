@@ -7,7 +7,7 @@ defmodule Re.Listings do
   alias Re.{
     Listings.Favorite,
     Listing,
-    Listings.Filter,
+    Filtering,
     Listings.Queries,
     Listings.Opts,
     Repo
@@ -54,7 +54,7 @@ defmodule Re.Listings do
     |> Queries.order_by()
     |> Queries.limit(params)
     |> Queries.preload()
-    |> Filter.apply(params)
+    |> Filtering.apply(params)
   end
 
   def get(id), do: do_get(Listing, id)

@@ -1,4 +1,4 @@
-defmodule Re.Listings.Relaxed do
+defmodule Re.Filtering.Relaxed do
   @moduledoc """
   Module to build relaxed queries from filters
   It expands the filters with more/less value than the max/min
@@ -6,17 +6,17 @@ defmodule Re.Listings.Relaxed do
   alias Re.{
     Listing,
     Listings,
-    Listings.Filter,
+    Filtering,
     Listings.Queries,
     Repo
   }
 
   def get(params) do
-    relaxed_filters = Filter.relax(params)
+    relaxed_filters = Filtering.relax(params)
 
     query =
       Listing
-      |> Filter.apply(relaxed_filters)
+      |> Filtering.apply(relaxed_filters)
       |> Queries.active()
       |> Queries.excluding(params)
       |> Queries.order_by()

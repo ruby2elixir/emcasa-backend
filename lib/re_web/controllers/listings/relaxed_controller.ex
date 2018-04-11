@@ -1,7 +1,7 @@
 defmodule ReWeb.RelaxedController do
   use ReWeb, :controller
 
-  alias Re.Listings.Relaxed
+  alias Re.Filtering.Relaxed
 
   action_fallback(ReWeb.FallbackController)
 
