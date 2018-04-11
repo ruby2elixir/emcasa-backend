@@ -91,7 +91,7 @@ defmodule Re.Listings do
   def favorite(listing, user) do
     %Favorite{}
     |> Favorite.changeset(%{listing_id: listing.id, user_id: user.id})
-    |> Repo.insert()
+    |> Repo.insert(on_conflict: :nothing)
   end
 
   def unfavorite(listing, user) do
