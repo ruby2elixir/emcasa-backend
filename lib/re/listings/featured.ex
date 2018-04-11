@@ -24,7 +24,8 @@ defmodule Re.Listings.Featured do
   defp check_if_exists([_, _, _, _] = featured), do: featured
 
   defp check_if_exists(_) do
-    Listings.Queries.order_by()
+    Listings.Queries.active()
+    |> Listings.Queries.order_by()
     |> Listings.Queries.preload()
     |> Repo.all()
     |> Enum.filter(&filter_no_images/1)
