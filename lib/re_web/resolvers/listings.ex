@@ -14,7 +14,7 @@ defmodule ReWeb.Resolvers.Listings do
   def deactivate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :deactivate_listing, current_user, %{}),
          {:ok, listing} <- Listings.get(id) do
-      Listings.delete(listing)
+      Listings.deactivate(listing)
     end
   end
 end

@@ -147,11 +147,11 @@ defmodule Re.ListingsTest do
     end
   end
 
-  describe "delete/1" do
+  describe "deactivate/1" do
     test "should set is_active to false" do
       listing = insert(:listing)
 
-      {:ok, listing} = Listings.delete(listing)
+      {:ok, listing} = Listings.deactivate(listing)
       refute listing.is_active
     end
   end

@@ -5,7 +5,6 @@ defmodule Re.Listings do
   @behaviour Bodyguard.Policy
 
   alias Re.{
-    Listings.Favorite,
     Listing,
     Filtering,
     Listings.Queries,
@@ -76,7 +75,7 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
-  def delete(listing) do
+  def deactivate(listing) do
     listing
     |> Changeset.change(is_active: false)
     |> Repo.update()

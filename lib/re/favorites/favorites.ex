@@ -10,8 +10,6 @@ defmodule Re.Favorites do
     Repo
   }
 
-  alias Ecto.Changeset
-
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
   def favorite(listing, user) do
