@@ -82,7 +82,7 @@ defmodule Re.Factory do
   end
 
   def listing_favorite_factory do
-    %Re.Listings.Favorite{}
+    %Re.Favorite{}
   end
 
   def listing_visualisation_factory do
@@ -90,7 +90,7 @@ defmodule Re.Factory do
   end
 
   def listings_favorites_factory do
-    %Re.Listings.Favorite{}
+    %Re.Favorite{}
   end
 
   defp random_postcode do

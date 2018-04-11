@@ -17,7 +17,7 @@ defmodule ReWeb.Schema do
     @desc "Get favorited users"
     field :show_favorited_users, list_of(:user) do
       arg :id, non_null(:id)
-      resolve &Resolvers.Listings.favorited_users/2
+      resolve &Resolvers.Favorites.favorited_users/2
     end
   end
 
@@ -40,14 +40,14 @@ defmodule ReWeb.Schema do
     field :favorite_listing, type: :listing_user do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.Listings.favorite/2
+      resolve &Resolvers.Favorites.favorite/2
     end
 
     @desc "Unfavorite listing"
     field :unfavorite_listing, type: :listing_user do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.Listings.unfavorite/2
+      resolve &Resolvers.Favorites.unfavorite/2
     end
 
     @desc "Tour visualization"
