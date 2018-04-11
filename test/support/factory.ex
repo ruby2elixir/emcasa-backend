@@ -69,6 +69,12 @@ defmodule Re.Factory do
     }
   end
 
+  def interest_factory do
+    %Re.Listings.Interest{
+      name: "John Doe"
+    }
+  end
+
   def interest_type_factory do
     %Re.Listings.InterestType{
       name: "Just looking"
@@ -76,6 +82,14 @@ defmodule Re.Factory do
   end
 
   def listing_favorite_factory do
+    %Re.Listings.Favorite{}
+  end
+
+  def listing_visualisation_factory do
+    %Re.Stats.ListingVisualization{}
+  end
+
+  def listings_favorites_factory do
     %Re.Listings.Favorite{}
   end
 

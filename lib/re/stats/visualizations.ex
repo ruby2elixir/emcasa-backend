@@ -9,30 +9,48 @@ defmodule Re.Stats.Visualizations do
   alias Re.{
     Listing,
     Stats.ListingVisualization,
+    Stats.TourVisualization,
     Repo,
     User
   }
 
-  def listing(listing, user, conn \\ %{})
+  @type action :: :listing_visualization | :tour_visualization
 
-  def listing(%Listing{} = listing, %User{} = user, _conn) do
-    GenServer.cast(__MODULE__, {:listing_user, listing.id, user.id})
+  @spec listing(Listing.t(), User.t() | nil, String.t()) :: GenServer.cast()
+  def listing(listing, user, details \\ %{})
+
+  def listing(%Listing{} = listing, %User{} = user, details) do
+    GenServer.cast(__MODULE__, {:listing_visualization, listing.id, user.id, details})
   end
 
   def listing(%Listing{} = listing, nil, details) do
-    GenServer.cast(__MODULE__, {:listing_anon, listing.id, details})
+    GenServer.cast(__MODULE__, {:listing_visualization, listing.id, nil, details})
   end
 
   def listing(_, _, _), do: Logger.warn("Listing visualization did not match.")
 
+  @spec tour(Listing.t(), User.t() | nil, String.t()) :: GenServer.cast()
+  def tour(%Listing{} = listing, %User{} = user, details) do
+    GenServer.cast(__MODULE__, {:tour_visualization, listing.id, user.id, details})
+  end
+
+  def tour(%Listing{} = listing, nil, details) do
+    GenServer.cast(__MODULE__, {:tour_visualization, listing.id, nil, details})
+  end
+
+  def tour(_, _, _), do: Logger.warn("Tour visualization did not match.")
+
+  @spec start_link :: GenServer.start_link()
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
+  @spec init(term) :: {:ok, term}
   def init(args), do: {:ok, args}
 
-  def handle_cast({:listing_user, listing_id, user_id}, state) do
-    case insert(%{listing_id: listing_id, user_id: user_id}) do
+  @spec handle_cast({action, integer(), integer() | nil, map()}, any) :: {:noreply, any}
+  def handle_cast({:listing_visualization, listing_id, user_id, details}, state) do
+    case insert_listing(%{listing_id: listing_id, user_id: user_id, details: details}) do
       {:ok, _} ->
         {:noreply, state}
 
@@ -42,20 +60,26 @@ defmodule Re.Stats.Visualizations do
     end
   end
 
-  def handle_cast({:listing_anon, listing_id, details}, state) do
-    case insert(%{listing_id: listing_id, details: details}) do
+  def handle_cast({:tour_visualization, listing_id, user_id, details}, state) do
+    case insert_tour(%{listing_id: listing_id, user_id: user_id, details: details}) do
       {:ok, _} ->
         {:noreply, state}
 
       {:error, reason} ->
-        Logger.warn("Listing visualization was not inserted: #{inspect(reason)}")
+        Logger.warn("Tour visualization was not inserted: #{inspect(reason)}")
         {:noreply, state}
     end
   end
 
-  defp insert(params) do
+  defp insert_listing(params) do
     %ListingVisualization{}
     |> ListingVisualization.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp insert_tour(params) do
+    %TourVisualization{}
+    |> TourVisualization.changeset(params)
     |> Repo.insert()
   end
 end

@@ -10,6 +10,17 @@ defmodule Re.ListingsTest do
   import Re.Factory
 
   describe "all/1" do
+    test "should return all listings sorted by id" do
+      %{id: id1} = insert(:listing, score: 4)
+      %{id: id2} = insert(:listing, score: 3)
+      %{id: id3} = insert(:listing, score: 4)
+      %{id: id4} = insert(:listing, score: 3)
+
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}, %{id: ^id4}] = Listings.all()
+    end
+  end
+
+  describe "paginated/1" do
     test "should filter by attributes" do
       laranjeiras =
         insert(
@@ -71,23 +82,41 @@ defmodule Re.ListingsTest do
           type: "Casa"
         )
 
-      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"max_price" => 105})
-      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"min_price" => 95})
-      assert %{entries: [%{id: ^id2}, %{id: ^id3}]} = Listings.paginated(%{"rooms" => 3})
-      assert %{entries: [%{id: ^id2}, %{id: ^id3}]} = Listings.paginated(%{"max_rooms" => 3})
-      assert %{entries: [%{id: ^id1}]} = Listings.paginated(%{"min_rooms" => 4})
-      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"max_area" => 55})
+      result = Listings.paginated(%{"max_price" => 105})
+      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
 
-      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} =
-               Listings.paginated(%{"neighborhoods" => ["Laranjeiras", "Leblon"]})
+      result = Listings.paginated(%{"min_price" => 95})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
-      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} =
-               Listings.paginated(%{"types" => ["Apartamento"]})
+      result = Listings.paginated(%{"rooms" => 3})
+      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
 
-      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"max_lat" => -22.95})
-      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"min_lat" => -22.98})
-      assert %{entries: [%{id: ^id1}, %{id: ^id2}]} = Listings.paginated(%{"max_lng" => -43.199})
-      assert %{entries: [%{id: ^id1}, %{id: ^id3}]} = Listings.paginated(%{"min_lng" => -43.203})
+      result = Listings.paginated(%{"max_rooms" => 3})
+      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"min_rooms" => 4})
+      assert [%{id: ^id1}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"max_area" => 55})
+      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"neighborhoods" => ["Laranjeiras", "Leblon"]})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"types" => ["Apartamento"]})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"max_lat" => -22.95})
+      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"min_lat" => -22.98})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"max_lng" => -43.199})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"min_lng" => -43.203})
+      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
     end
 
     test "should not filter for empty array" do
@@ -99,29 +128,23 @@ defmodule Re.ListingsTest do
       %{id: id2} = insert(:listing, score: 3, address_id: leblon.id, type: "Casa")
       %{id: id3} = insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento")
 
-      assert %{entries: [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}]} =
-               Listings.paginated(%{"neighborhoods" => []})
+      result = Listings.paginated(%{"neighborhoods" => []})
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
 
-      assert %{entries: [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}]} =
-               Listings.paginated(%{"types" => []})
+      result = Listings.paginated(%{"types" => []})
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
     end
-  end
 
-  describe "paginated/1" do
     test "should return paginated result" do
-      insert_list(3, :listing)
+      insert(:listing, score: 4)
+      insert(:listing, score: 4)
+      %{id: id3} = insert(:listing, score: 3)
 
-      page = Listings.paginated(%{page_size: 2, page: 1})
-      assert [_, _] = page.entries
-      assert 2 == page.page_size
-      assert 2 == page.total_pages
-      assert 3 == page.total_entries
+      assert %{remaining_count: 1, listings: [%{id: id1}, %{id: id2}]} =
+               Listings.paginated(%{page_size: 2})
 
-      page = Listings.paginated(%{page_size: 2, page: 2})
-      assert [_] = page.entries
-      assert 2 == page.page_size
-      assert 2 == page.total_pages
-      assert 3 == page.total_entries
+      assert %{remaining_count: 0, listings: [%{id: ^id3}]} =
+               Listings.paginated(%{page_size: 2, excluded_listing_ids: [id1, id2]})
     end
   end
 
@@ -191,15 +214,26 @@ defmodule Re.ListingsTest do
 
   describe "favorite/2" do
     test "should favorite only once" do
-      user = insert(:user)
-      listing = insert(:listing)
+      %{id: user_id} = user = insert(:user)
+      %{id: listing_id} = listing = insert(:listing)
 
-      assert {:ok, _} = Listings.favorite(listing, user)
+      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
+               Listings.favorite(listing, user)
 
-      assert {:error, %{errors: [listing_id: {"has already been taken", []}]}} =
+      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
+               Listings.favorite(listing, user)
+
+      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
                Listings.favorite(listing, user)
 
       assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
     end
+  end
+
+  defp chunk_and_short(listings) do
+    listings
+    |> Enum.chunk_by(& &1.score)
+    |> Enum.map(&Enum.sort/1)
+    |> List.flatten()
   end
 end

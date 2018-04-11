@@ -70,6 +70,7 @@ defmodule ReWeb.UserControllerTest do
       assert user.confirmation_token
       refute user.confirmed
       assert_email_sent(UserEmail.confirm(user))
+      assert_email_sent(UserEmail.user_registered(user))
     end
 
     test "fails when password is invalid", %{conn: conn} do

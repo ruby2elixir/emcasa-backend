@@ -15,7 +15,6 @@ defmodule ReWeb.SitemapControllerTest do
   end
 
   describe "index" do
-
     test "should return listings if authenticated", %{authenticated_conn: conn} do
       address = insert(:address)
       %{id: id1} = insert(:listing, address: address, is_active: true, score: 4)
@@ -24,11 +23,12 @@ defmodule ReWeb.SitemapControllerTest do
       insert_list(2, :listing, address: address, is_active: false)
 
       conn = get(conn, sitemap_path(conn, :index))
+
       assert [
-        %{"id" => ^id1, "updated_at" => _},
-        %{"id" => ^id2, "updated_at" => _},
-        %{"id" => ^id3, "updated_at" => _}
-        ] = json_response(conn, 200)["listings"]
+               %{"id" => ^id1, "updated_at" => _},
+               %{"id" => ^id2, "updated_at" => _},
+               %{"id" => ^id3, "updated_at" => _}
+             ] = json_response(conn, 200)["listings"]
     end
 
     test "should return listings if not authenticated", %{unauthenticated_conn: conn} do
@@ -39,11 +39,12 @@ defmodule ReWeb.SitemapControllerTest do
       insert_list(2, :listing, address: address, is_active: false)
 
       conn = get(conn, sitemap_path(conn, :index))
+
       assert [
-        %{"id" => ^id1, "updated_at" => _},
-        %{"id" => ^id2, "updated_at" => _},
-        %{"id" => ^id3, "updated_at" => _}
-        ] = json_response(conn, 200)["listings"]
+               %{"id" => ^id1, "updated_at" => _},
+               %{"id" => ^id2, "updated_at" => _},
+               %{"id" => ^id3, "updated_at" => _}
+             ] = json_response(conn, 200)["listings"]
     end
   end
 end

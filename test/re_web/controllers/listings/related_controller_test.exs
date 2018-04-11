@@ -59,19 +59,25 @@ defmodule ReWeb.RelatedControllerTest do
     test "should return only 4 related listings", %{conn: conn} do
       address = insert(:address)
       listing = insert(:listing, address: address)
-      insert_list(10, :listing, address: address)
+      insert_list(6, :listing, address: address)
 
       conn = get(conn, listing_related_path(conn, :index, listing, page_size: 4))
 
       response = json_response(conn, 200)
-      assert length(response["listings"]) == 4
-      assert response["total_entries"] == 10
 
-      conn = get(conn, listing_related_path(conn, :index, listing), page_size: 4, page: 3)
+      assert [%{"id" => id1}, %{"id" => id2}, %{"id" => id3}, %{"id" => id4}] =
+               response["listings"]
+
+      conn =
+        get(
+          conn,
+          listing_related_path(conn, :index, listing),
+          page_size: 4,
+          excluded_listing_ids: [id1, id2, id3, id4]
+        )
 
       response = json_response(conn, 200)
       assert length(response["listings"]) == 2
-      assert response["total_entries"] == 10
     end
   end
 end

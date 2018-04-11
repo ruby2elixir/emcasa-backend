@@ -3,10 +3,9 @@ defmodule Re.Listings.Relaxed do
   Module to build relaxed queries from filters
   It expands the filters with more/less value than the max/min
   """
-  import Ecto.Query
-
   alias Re.{
     Listing,
+    Listings,
     Listings.Filter,
     Listings.Queries,
     Repo
@@ -15,20 +14,21 @@ defmodule Re.Listings.Relaxed do
   def get(params) do
     relaxed_filters = Filter.relax(params)
 
-    Listing
-    |> Filter.apply(relaxed_filters)
-    |> Queries.active()
-    |> excluding(params)
-    |> Queries.order_by()
-    |> Queries.preload()
-    |> Repo.paginate(params)
-    |> include_filters(relaxed_filters)
+    query =
+      Listing
+      |> Filter.apply(relaxed_filters)
+      |> Queries.active()
+      |> Queries.excluding(params)
+      |> Queries.order_by()
+      |> Queries.limit(params)
+      |> Queries.preload()
+
+    listings = Repo.all(query)
+
+    %{
+      listings: listings,
+      filters: relaxed_filters,
+      remaining_count: Listings.remaining_count(query, params)
+    }
   end
-
-  defp include_filters(result, filters), do: Map.put(result, :filters, filters)
-
-  defp excluding(query, %{"excluded_listing_ids" => excluded_listing_ids}),
-    do: from(l in subquery(query), where: l.id not in ^excluded_listing_ids)
-
-  defp excluding(query, _), do: query
 end

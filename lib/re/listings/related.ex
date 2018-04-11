@@ -7,20 +7,28 @@ defmodule Re.Listings.Related do
 
   alias Re.{
     Listing,
+    Listings,
     Listings.Queries,
     Repo
   }
 
   def get(listing, params \\ %{}) do
-    ~w(price address)a
-    |> Enum.reduce(Listing, &build_query(&1, listing, &2))
-    |> exclude_current(listing)
-    |> Queries.active()
-    |> Queries.preload()
-    |> Repo.paginate(params)
+    query =
+      ~w(price address)a
+      |> Enum.reduce(Listing, &build_query(&1, listing, &2))
+      |> exclude_current(listing)
+      |> Queries.excluding(params)
+      |> Queries.active()
+      |> Queries.limit(params)
+      |> Queries.preload()
+
+    %{
+      listings: Repo.all(query),
+      remaining_count: Listings.remaining_count(query, params)
+    }
   end
 
-  defp exclude_current(query, listing), do: from(l in subquery(query), where: ^listing.id != l.id)
+  defp exclude_current(query, listing), do: from(l in query, where: ^listing.id != l.id)
 
   defp build_query(:address, listing, query) do
     from(

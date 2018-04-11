@@ -75,6 +75,19 @@ defmodule ReWeb.UserEmail do
     |> text_body("Você se cadastrou no EmCasa.")
   end
 
+  def user_registered(%User{name: name, email: email}) do
+    new()
+    |> to(@to)
+    |> from(@admin_email)
+    |> subject("Novo usuário cadastrado")
+    |> html_body("Um novo usuário realizou cadastro no EmCasa.<br>
+      Nome: #{name}<br>
+      Email: #{email}")
+    |> text_body("Um novo usuário realizou cadastro no EmCasa.
+      Nome: #{name}
+      Email: #{email}")
+  end
+
   def reset_password(%User{name: name, email: email, reset_token: token}) do
     reset_url = build_url(@reset_path, token)
 
