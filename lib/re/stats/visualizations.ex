@@ -17,7 +17,9 @@ defmodule Re.Stats.Visualizations do
   @type action :: :listing_visualization | :tour_visualization
 
   @spec listing(Listing.t(), User.t() | nil, String.t()) :: GenServer.cast()
-  def listing(listing, user, details \\ %{})
+  def listing(listing, user, details \\ "")
+
+  def listing(%Listing{}, %User{} = %{role: "admin"}, _), do: :ok
 
   def listing(%Listing{} = listing, %User{} = user, details) do
     GenServer.cast(__MODULE__, {:listing_visualization, listing.id, user.id, details})
@@ -30,6 +32,10 @@ defmodule Re.Stats.Visualizations do
   def listing(_, _, _), do: Logger.warn("Listing visualization did not match.")
 
   @spec tour(Listing.t(), User.t() | nil, String.t()) :: GenServer.cast()
+  def tour(listing, user, details \\ "")
+
+  def tour(%Listing{}, %User{} = %{role: "admin"}, _), do: :ok
+
   def tour(%Listing{} = listing, %User{} = user, details) do
     GenServer.cast(__MODULE__, {:tour_visualization, listing.id, user.id, details})
   end
