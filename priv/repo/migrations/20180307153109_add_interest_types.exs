@@ -18,10 +18,10 @@ defmodule Re.Repo.Migrations.AddInterestTypes do
 
     flush()
 
-    Re.Repo.insert(%Re.Listings.InterestType{name: "Me ligue dentro de 5 minutos"})
-    Re.Repo.insert(%Re.Listings.InterestType{name: "Me ligue em um horário específico"})
-    Re.Repo.insert(%Re.Listings.InterestType{name: "Agendamento por e-mail"})
-    Re.Repo.insert(%Re.Listings.InterestType{name: "Agendamento por Whatsapp"})
+    Re.Repo.insert(%Re.InterestType{name: "Me ligue dentro de 5 minutos"})
+    Re.Repo.insert(%Re.InterestType{name: "Me ligue em um horário específico"})
+    Re.Repo.insert(%Re.InterestType{name: "Agendamento por e-mail"})
+    Re.Repo.insert(%Re.InterestType{name: "Agendamento por Whatsapp"})
   end
 
   def down do
