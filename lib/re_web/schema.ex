@@ -44,7 +44,7 @@ defmodule ReWeb.Schema do
     end
 
     @desc "Unfavorite listing"
-    field :unfavorite_listing, type: :listing do
+    field :unfavorite_listing, type: :listing_user do
       arg :id, non_null(:id)
 
       resolve &Resolvers.Listings.unfavorite/2

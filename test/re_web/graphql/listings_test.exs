@@ -202,38 +202,54 @@ defmodule ReWeb.GraphQL.ListingsTest do
   end
 
   describe "unfavoriteListing" do
-    test "admin should unfavorite listing", %{admin_conn: conn, admin_user: user} do
-      listing = insert(:listing)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+    test "admin should unfavorite listing", %{admin_conn: conn, admin_user: %{id: user_id}} do
+      %{id: listing_id} = insert(:listing)
+      insert(:listing_favorite, listing_id: listing_id, user_id: user_id)
 
       mutation = """
         mutation {
-          unfavoriteListing(id: #{listing.id}) {
-            id
+          unfavoriteListing(id: #{listing_id}) {
+            listing {
+              id
+            }
+            user {
+              id
+            }
           }
         }
       """
 
-      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      refute Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
+      listing_id_str = to_string(listing_id)
+      user_id_str = to_string(user_id)
+      assert %{"unfavoriteListing" => %{"listing" => %{"id" => ^listing_id_str}, "user" => %{"id" => ^user_id_str}}} = json_response(conn, 200)["data"]
+      refute Repo.get_by(Favorite, listing_id: listing_id, user_id: user_id)
     end
 
-    test "user should unfavorite listing", %{user_conn: conn, user_user: user} do
-      listing = insert(:listing)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+    test "user should unfavorite listing", %{user_conn: conn, user_user: %{id: user_id}} do
+      %{id: listing_id} = insert(:listing)
+      insert(:listing_favorite, listing_id: listing_id, user_id: user_id)
 
       mutation = """
         mutation {
-          unfavoriteListing(id: #{listing.id}) {
-            id
+          unfavoriteListing(id: #{listing_id}) {
+            listing {
+              id
+            }
+            user {
+              id
+            }
           }
         }
       """
 
-      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      refute Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
+      listing_id_str = to_string(listing_id)
+      user_id_str = to_string(user_id)
+      assert %{"unfavoriteListing" => %{"listing" => %{"id" => ^listing_id_str}, "user" => %{"id" => ^user_id_str}}} = json_response(conn, 200)["data"]
+      refute Repo.get_by(Favorite, listing_id: listing_id, user_id: user_id)
     end
 
     test "anonymous should not unfavorite listing", %{unauthenticated_conn: conn} do
@@ -242,7 +258,12 @@ defmodule ReWeb.GraphQL.ListingsTest do
       mutation = """
         mutation {
           unfavoriteListing(id: #{listing.id}) {
-            id
+            listing {
+              id
+            }
+            user {
+              id
+            }
           }
         }
       """
