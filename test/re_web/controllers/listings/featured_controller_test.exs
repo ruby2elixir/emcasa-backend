@@ -121,7 +121,14 @@ defmodule ReWeb.FeaturedControllerTest do
       %{id: id1} = insert(:listing, address: build(:address), score: 4, images: [build(:image)])
       %{id: id2} = insert(:listing, address: build(:address), score: 3, images: [build(:image)])
       %{id: id3} = insert(:listing, address: build(:address), score: 2, images: [build(:image)])
-      insert(:listing, address: build(:address), score: 4, images: [build(:image)], is_active: false)
+
+      insert(
+        :listing,
+        address: build(:address),
+        score: 4,
+        images: [build(:image)],
+        is_active: false
+      )
 
       conn = dispatch(conn, @endpoint, "get", "/featured_listings")
 
