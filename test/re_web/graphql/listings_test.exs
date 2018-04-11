@@ -151,7 +151,13 @@ defmodule ReWeb.GraphQL.ListingsTest do
       listing_id = to_string(listing.id)
       user_id = to_string(user.id)
       assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
-      assert %{"favoriteListing" => %{"listing" => %{"id" => ^listing_id}, "user" => %{"id" => ^user_id}}} = json_response(conn, 200)["data"]
+
+      assert %{
+               "favoriteListing" => %{
+                 "listing" => %{"id" => ^listing_id},
+                 "user" => %{"id" => ^user_id}
+               }
+             } = json_response(conn, 200)["data"]
     end
 
     test "user should favorite listing", %{user_conn: conn, user_user: user} do
@@ -175,7 +181,13 @@ defmodule ReWeb.GraphQL.ListingsTest do
       listing_id = to_string(listing.id)
       user_id = to_string(user.id)
       assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
-      assert %{"favoriteListing" => %{"listing" => %{"id" => ^listing_id}, "user" => %{"id" => ^user_id}}} = json_response(conn, 200)["data"]
+
+      assert %{
+               "favoriteListing" => %{
+                 "listing" => %{"id" => ^listing_id},
+                 "user" => %{"id" => ^user_id}
+               }
+             } = json_response(conn, 200)["data"]
     end
 
     test "anonymous should not favorite listing", %{unauthenticated_conn: conn} do
@@ -223,7 +235,14 @@ defmodule ReWeb.GraphQL.ListingsTest do
 
       listing_id_str = to_string(listing_id)
       user_id_str = to_string(user_id)
-      assert %{"unfavoriteListing" => %{"listing" => %{"id" => ^listing_id_str}, "user" => %{"id" => ^user_id_str}}} = json_response(conn, 200)["data"]
+
+      assert %{
+               "unfavoriteListing" => %{
+                 "listing" => %{"id" => ^listing_id_str},
+                 "user" => %{"id" => ^user_id_str}
+               }
+             } = json_response(conn, 200)["data"]
+
       refute Repo.get_by(Favorite, listing_id: listing_id, user_id: user_id)
     end
 
@@ -248,7 +267,14 @@ defmodule ReWeb.GraphQL.ListingsTest do
 
       listing_id_str = to_string(listing_id)
       user_id_str = to_string(user_id)
-      assert %{"unfavoriteListing" => %{"listing" => %{"id" => ^listing_id_str}, "user" => %{"id" => ^user_id_str}}} = json_response(conn, 200)["data"]
+
+      assert %{
+               "unfavoriteListing" => %{
+                 "listing" => %{"id" => ^listing_id_str},
+                 "user" => %{"id" => ^user_id_str}
+               }
+             } = json_response(conn, 200)["data"]
+
       refute Repo.get_by(Favorite, listing_id: listing_id, user_id: user_id)
     end
 
