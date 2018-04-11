@@ -214,12 +214,16 @@ defmodule Re.ListingsTest do
 
   describe "favorite/2" do
     test "should favorite only once" do
-      user = insert(:user)
-      listing = insert(:listing)
+      %{id: user_id} = user = insert(:user)
+      %{id: listing_id} = listing = insert(:listing)
 
-      assert {:ok, _} = Listings.favorite(listing, user)
+      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
+               Listings.favorite(listing, user)
 
-      assert {:error, %{errors: [listing_id: {"has already been taken", []}]}} =
+      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
+               Listings.favorite(listing, user)
+
+      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
                Listings.favorite(listing, user)
 
       assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
