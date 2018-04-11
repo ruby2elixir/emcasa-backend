@@ -1,11 +1,11 @@
-defmodule Re.Listings.Interests do
+defmodule Re.Interests do
   @moduledoc """
   Context to manage operation between users and listings
   """
 
   alias Re.{
-    Listings.Interest,
-    Listings.InterestType,
+    Interest,
+    InterestType,
     Repo
   }
 

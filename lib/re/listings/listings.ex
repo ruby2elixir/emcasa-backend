@@ -5,9 +5,8 @@ defmodule Re.Listings do
   @behaviour Bodyguard.Policy
 
   alias Re.{
-    Listings.Favorite,
     Listing,
-    Listings.Filter,
+    Filtering,
     Listings.Queries,
     Listings.Opts,
     Repo
@@ -54,7 +53,7 @@ defmodule Re.Listings do
     |> Queries.order_by()
     |> Queries.limit(params)
     |> Queries.preload()
-    |> Filter.apply(params)
+    |> Filtering.apply(params)
   end
 
   def get(id), do: do_get(Listing, id)
@@ -76,7 +75,7 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
-  def delete(listing) do
+  def deactivate(listing) do
     listing
     |> Changeset.change(is_active: false)
     |> Repo.update()
@@ -86,25 +85,6 @@ defmodule Re.Listings do
     listing
     |> Changeset.change(is_active: true)
     |> Repo.update()
-  end
-
-  def favorite(listing, user) do
-    %Favorite{}
-    |> Favorite.changeset(%{listing_id: listing.id, user_id: user.id})
-    |> Repo.insert(on_conflict: :nothing)
-  end
-
-  def unfavorite(listing, user) do
-    case Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id) do
-      nil -> {:error, :not_found}
-      favorite -> Repo.delete(favorite)
-    end
-  end
-
-  def favorited_users(listing) do
-    listing
-    |> Repo.preload(:favorited)
-    |> Map.get(:favorited)
   end
 
   defp do_get(query, id) do

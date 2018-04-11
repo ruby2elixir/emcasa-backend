@@ -2,7 +2,6 @@ defmodule Re.ListingsTest do
   use Re.ModelCase
 
   alias Re.{
-    Listings.Favorite,
     Listing,
     Listings
   }
@@ -148,11 +147,11 @@ defmodule Re.ListingsTest do
     end
   end
 
-  describe "delete/1" do
+  describe "deactivate/1" do
     test "should set is_active to false" do
       listing = insert(:listing)
 
-      {:ok, listing} = Listings.delete(listing)
+      {:ok, listing} = Listings.deactivate(listing)
       refute listing.is_active
     end
   end
@@ -197,36 +196,6 @@ defmodule Re.ListingsTest do
       assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address, user)
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       refute retrieved_listing.is_active
-    end
-  end
-
-  describe "favorited_users/1" do
-    test "should return favorited users" do
-      [user1, user2, user3] = insert_list(3, :user)
-      listing = insert(:listing)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user1.id)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user2.id)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user3.id)
-
-      assert [^user1, ^user2, ^user3] = Listings.favorited_users(listing)
-    end
-  end
-
-  describe "favorite/2" do
-    test "should favorite only once" do
-      %{id: user_id} = user = insert(:user)
-      %{id: listing_id} = listing = insert(:listing)
-
-      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
-               Listings.favorite(listing, user)
-
-      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
-               Listings.favorite(listing, user)
-
-      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
-               Listings.favorite(listing, user)
-
-      assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
     end
   end
 

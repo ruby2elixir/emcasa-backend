@@ -22,7 +22,7 @@ defmodule Re.User do
 
     has_many :listings, Re.Listing
 
-    has_many :listings_favorites, Re.Listings.Favorite
+    has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :listing]
 
     timestamps()

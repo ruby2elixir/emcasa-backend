@@ -1,9 +1,9 @@
-defmodule Re.Listings.Interests.Queries do
+defmodule Re.Interests.Queries do
   @moduledoc """
   Module for grouping listing queries
   """
 
-  alias Re.Listings.Interest
+  alias Re.Interest
 
   import Ecto.Query
 

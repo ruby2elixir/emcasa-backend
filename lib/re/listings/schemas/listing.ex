@@ -34,9 +34,9 @@ defmodule Re.Listing do
     has_many :images, Re.Image
     has_many :listings_visualisations, Re.Stats.ListingVisualization
 
-    has_many :listings_favorites, Re.Listings.Favorite
+    has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :user]
-    has_many :interests, Re.Listings.Interest
+    has_many :interests, Re.Interest
 
     timestamps()
   end

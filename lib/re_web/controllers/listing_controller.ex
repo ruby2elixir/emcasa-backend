@@ -77,7 +77,7 @@ defmodule ReWeb.ListingController do
   def delete(conn, %{"id" => id}, user) do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :delete_listing, user, listing),
-         {:ok, _listing} <- Listings.delete(listing),
+         {:ok, _listing} <- Listings.deactivate(listing),
          do: send_resp(conn, :no_content, "")
   end
 

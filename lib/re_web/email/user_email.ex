@@ -5,7 +5,7 @@ defmodule ReWeb.UserEmail do
   import Swoosh.Email
 
   alias Re.{
-    Listings.Interest,
+    Interest,
     User
   }
 

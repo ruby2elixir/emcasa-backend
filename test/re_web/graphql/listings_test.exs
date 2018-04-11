@@ -5,7 +5,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
 
   alias Re.{
     Listing,
-    Listings.Favorite
+    Favorite
   }
 
   alias ReWeb.AbsintheHelpers

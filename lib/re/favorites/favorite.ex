@@ -1,4 +1,4 @@
-defmodule Re.Listings.Favorite do
+defmodule Re.Favorite do
   @moduledoc """
   Schema module for listing favorites
   """
