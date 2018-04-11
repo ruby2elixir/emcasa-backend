@@ -114,5 +114,20 @@ defmodule ReWeb.FeaturedControllerTest do
 
       assert [%{"id" => _}, %{"id" => _}, %{"id" => ^id3}, %{"id" => ^id5}] = response["listings"]
     end
+
+    test "do not show inactive listings", %{
+      unauthenticated_conn: conn
+    } do
+      %{id: id1} = insert(:listing, address: build(:address), score: 4, images: [build(:image)])
+      %{id: id2} = insert(:listing, address: build(:address), score: 3, images: [build(:image)])
+      %{id: id3} = insert(:listing, address: build(:address), score: 2, images: [build(:image)])
+      insert(:listing, address: build(:address), score: 4, images: [build(:image)], is_active: false)
+
+      conn = dispatch(conn, @endpoint, "get", "/featured_listings")
+
+      response = json_response(conn, 200)
+
+      assert [%{"id" => ^id1}, %{"id" => ^id2}, %{"id" => ^id3}] = response["listings"]
+    end
   end
 end
