@@ -70,13 +70,13 @@ defmodule Re.Factory do
   end
 
   def interest_factory do
-    %Re.Listings.Interest{
+    %Re.Interest{
       name: "John Doe"
     }
   end
 
   def interest_type_factory do
-    %Re.Listings.InterestType{
+    %Re.InterestType{
       name: "Just looking"
     }
   end

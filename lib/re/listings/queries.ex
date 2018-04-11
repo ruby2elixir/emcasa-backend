@@ -6,7 +6,7 @@ defmodule Re.Listings.Queries do
   alias Re.{
     Images,
     Listing,
-    Listings.Interests
+    Interests
   }
 
   import Ecto.Query

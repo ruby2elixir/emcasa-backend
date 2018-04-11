@@ -4,7 +4,7 @@ defmodule ReWeb.InterestControllerTest do
   import Re.Factory
   import Swoosh.TestAssertions
 
-  alias Re.Listings.Interest
+  alias Re.Interest
 
   @params %{name: "Test Name", email: "test@email.com", interest_type_id: 1}
 

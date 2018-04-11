@@ -1,7 +1,7 @@
 defmodule ReWeb.InterestTypeController do
   use ReWeb, :controller
 
-  alias Re.Listings.Interests
+  alias Re.Interests
 
   action_fallback(ReWeb.FallbackController)
 

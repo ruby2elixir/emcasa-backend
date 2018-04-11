@@ -1,7 +1,7 @@
 defmodule ReWeb.InterestController do
   use ReWeb, :controller
 
-  alias Re.Listings.Interests
+  alias Re.Interests
 
   alias ReWeb.{
     Mailer,

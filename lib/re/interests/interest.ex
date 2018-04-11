@@ -1,4 +1,4 @@
-defmodule Re.Listings.Interest do
+defmodule Re.Interest do
   @moduledoc """
   Schema module for storing interest in a listing
   """
@@ -13,7 +13,7 @@ defmodule Re.Listings.Interest do
     field :message, :string
 
     belongs_to :listing, Re.Listing
-    belongs_to :interest_type, Re.Listings.InterestType
+    belongs_to :interest_type, Re.InterestType
 
     timestamps()
   end

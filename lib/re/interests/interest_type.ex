@@ -1,4 +1,4 @@
-defmodule Re.Listings.InterestType do
+defmodule Re.InterestType do
   @moduledoc """
   Schema module for interest types
   """
