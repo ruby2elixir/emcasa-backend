@@ -2,7 +2,6 @@ defmodule ReWeb.InterestControllerTest do
   use ReWeb.ConnCase
 
   import Re.Factory
-  import Swoosh.TestAssertions
 
   alias Re.Interest
 
@@ -21,8 +20,7 @@ defmodule ReWeb.InterestControllerTest do
       response = json_response(conn, 201)
 
       interest_id = response["data"]["id"]
-      interest = Interest |> Repo.get(interest_id) |> Repo.preload(:interest_type)
-      assert_email_sent(ReWeb.UserEmail.notify_interest(interest))
+      assert Repo.get(Interest, interest_id)
     end
   end
 end

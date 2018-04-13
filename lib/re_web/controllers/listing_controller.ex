@@ -4,16 +4,11 @@ defmodule ReWeb.ListingController do
 
   alias Re.{
     Addresses,
-    Listings,
-    Stats.Visualizations
+    Listings
   }
 
-  alias ReWeb.{
-    Mailer,
-    UserEmail
-  }
-
-  @visualizations Application.get_env(:re, :visualizations, Visualizations)
+  @visualizations Application.get_env(:re, :visualizations, Re.Stats.Visualizations)
+  @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
 
   action_fallback(ReWeb.FallbackController)
 
@@ -90,13 +85,9 @@ defmodule ReWeb.ListingController do
   end
 
   defp send_email_if_not_admin(listing, %{role: "user"} = user) do
-    user
-    |> UserEmail.listing_added(listing)
-    |> Mailer.deliver()
+    @emails.listing_added(user, listing)
 
-    user
-    |> UserEmail.listing_added_admin(listing)
-    |> Mailer.deliver()
+    @emails.listing_added_admin(user, listing)
   end
 
   defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing

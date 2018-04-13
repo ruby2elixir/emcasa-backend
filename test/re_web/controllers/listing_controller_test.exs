@@ -6,13 +6,9 @@ defmodule ReWeb.ListingControllerTest do
     Listing
   }
 
-  alias ReWeb.{
-    Guardian,
-    UserEmail
-  }
+  alias ReWeb.Guardian
 
   import Re.Factory
-  import Swoosh.TestAssertions
 
   @valid_attrs_user %{
     type: "Casa",
@@ -406,14 +402,9 @@ defmodule ReWeb.ListingControllerTest do
       json_response(conn, 201)
       assert listing = Repo.get_by(Listing, @valid_attrs_user)
       assert listing.user_id == user.id
-      assert_email_sent(UserEmail.listing_added(user, listing))
-      assert_email_sent(UserEmail.listing_added_admin(user, listing))
     end
 
-    test "creates and renders resource with existing address", %{
-      admin_conn: conn,
-      admin_user: user
-    } do
+    test "creates and renders resource with existing address", %{admin_conn: conn} do
       insert(:address, @valid_address_attrs)
 
       conn =
@@ -426,10 +417,8 @@ defmodule ReWeb.ListingControllerTest do
 
       response = json_response(conn, 201)
       assert response["listing"]["id"]
-      assert listing = Repo.get_by(Listing, @valid_attrs_admin)
+      assert Repo.get_by(Listing, @valid_attrs_admin)
       assert length(Repo.all(Address)) == 1
-      assert_email_not_sent(UserEmail.listing_added(user, listing))
-      assert_email_not_sent(UserEmail.listing_added_admin(user, listing))
     end
 
     test "does not create resource and renders errors when data is invalid", %{admin_conn: conn} do

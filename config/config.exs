@@ -39,7 +39,7 @@ config :comeonin, :bcrypt_log_rounds, 4
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 
-config :re, ReWeb.Mailer,
+config :re, ReWeb.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: "SG.x.x"
 

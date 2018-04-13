@@ -3,19 +3,14 @@ defmodule ReWeb.InterestController do
 
   alias Re.Interests
 
-  alias ReWeb.{
-    Mailer,
-    UserEmail
-  }
+  @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
 
   action_fallback(ReWeb.FallbackController)
 
   def create(conn, %{"listing_id" => listing_id, "interest" => params}) do
     with {:ok, interest} <- Interests.show_interest(listing_id, params),
          interest <- Interests.preload(interest) do
-      interest
-      |> UserEmail.notify_interest()
-      |> Mailer.deliver()
+      @emails.notify_interest(interest)
 
       conn
       |> put_status(:created)

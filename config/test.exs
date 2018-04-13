@@ -33,6 +33,7 @@ config :re, Re.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
-config :re, ReWeb.Mailer, adapter: Swoosh.Adapters.Test
+config :re, ReWeb.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Test
 
 config :re, :visualizations, Re.TestVisualizations
+config :re, :emails, ReWeb.TestEmails
