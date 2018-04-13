@@ -2,7 +2,6 @@ defmodule ReWeb.UserControllerTest do
   use ReWeb.ConnCase
 
   import Re.Factory
-  import Swoosh.TestAssertions
 
   alias Re.{
     Repo,
@@ -10,7 +9,6 @@ defmodule ReWeb.UserControllerTest do
   }
 
   alias Comeonin.Bcrypt
-  alias ReWeb.UserEmail
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -69,8 +67,6 @@ defmodule ReWeb.UserControllerTest do
       assert user = Repo.get_by(User, email: "validemail@emcasa.com")
       assert user.confirmation_token
       refute user.confirmed
-      assert_email_sent(UserEmail.confirm(user))
-      assert_email_sent(UserEmail.user_registered(user))
     end
 
     test "fails when password is invalid", %{conn: conn} do
@@ -120,7 +116,6 @@ defmodule ReWeb.UserControllerTest do
       assert response["user"]["token"]
       assert user = Repo.get(User, user.id)
       assert user.confirmed
-      assert_email_sent(UserEmail.welcome(user))
     end
 
     test "does not confirm registration with wrong token", %{conn: conn} do
@@ -144,7 +139,6 @@ defmodule ReWeb.UserControllerTest do
       refute response["user"]["token"]
       assert user = Repo.get(User, user.id)
       refute user.confirmed
-      assert_email_not_sent(UserEmail.welcome(user))
     end
   end
 
@@ -161,8 +155,7 @@ defmodule ReWeb.UserControllerTest do
         )
 
       assert json_response(conn, 200)
-      assert user = Repo.get(User, user.id)
-      assert_email_sent(UserEmail.reset_password(user))
+      assert Repo.get(User, user.id)
     end
 
     test "does not confirm registration with wrong email", %{conn: conn} do
@@ -278,7 +271,6 @@ defmodule ReWeb.UserControllerTest do
       assert user = Repo.get(User, user.id)
       assert user.email == "newemail@emcasa.com"
       refute user.confirmed
-      assert_email_sent(UserEmail.change_email(user))
     end
 
     test "successfully for user", %{conn: conn} do
@@ -295,7 +287,6 @@ defmodule ReWeb.UserControllerTest do
       assert user = Repo.get(User, user.id)
       assert user.email == "newemail@emcasa.com"
       refute user.confirmed
-      assert_email_sent(UserEmail.change_email(user))
     end
 
     test "gives error when e-mail already exists", %{conn: conn} do
@@ -313,7 +304,6 @@ defmodule ReWeb.UserControllerTest do
       assert user = Repo.get(User, user.id)
       assert user.email == old_email
       assert user.confirmed
-      assert_email_not_sent(UserEmail.change_email(user))
     end
   end
 end

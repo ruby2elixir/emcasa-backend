@@ -7,10 +7,7 @@ defmodule ReWeb.UserController do
     Users
   }
 
-  alias ReWeb.{
-    Mailer,
-    UserEmail
-  }
+  @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
 
   action_fallback(ReWeb.FallbackController)
 
@@ -32,13 +29,9 @@ defmodule ReWeb.UserController do
   def register(conn, %{"user" => params}, _user) do
     with {:ok, user} <- Users.create(params),
          {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
-      user
-      |> UserEmail.confirm()
-      |> Mailer.deliver()
+      @emails.confirm(user)
 
-      user
-      |> UserEmail.user_registered()
-      |> Mailer.deliver()
+      @emails.user_registered(user)
 
       conn
       |> put_status(:created)
@@ -49,9 +42,7 @@ defmodule ReWeb.UserController do
   def confirm(conn, %{"user" => %{"token" => token}}, _user) do
     with {:ok, user} <- Users.confirm(token),
          {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
-      user
-      |> UserEmail.welcome()
-      |> Mailer.deliver()
+      @emails.welcome(user)
 
       render(conn, ReWeb.UserView, "login.json", jwt: jwt, user: user)
     end
@@ -60,9 +51,7 @@ defmodule ReWeb.UserController do
   def reset_password(conn, %{"user" => %{"email" => email}}, _user) do
     with {:ok, user} <- Users.get_by_email(email),
          {:ok, user} <- Users.reset_password(user) do
-      user
-      |> UserEmail.reset_password()
-      |> Mailer.deliver()
+      @emails.reset_password(user)
 
       render(conn, ReWeb.UserView, "show.json", user: user)
     end
@@ -96,9 +85,7 @@ defmodule ReWeb.UserController do
   def change_email(conn, %{"user" => %{"email" => new_email}}, %{id: id}) do
     with {:ok, user} <- Users.get(id),
          {:ok, user} <- Users.change_email(user, new_email) do
-      user
-      |> UserEmail.change_email()
-      |> Mailer.deliver()
+      @emails.change_email(user)
 
       render(conn, ReWeb.UserView, "show.json", user: user)
     end

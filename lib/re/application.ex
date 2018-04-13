@@ -5,7 +5,11 @@ defmodule Re.Application do
 
   use Application
 
-  alias ReWeb.Endpoint
+  alias ReWeb.{
+    Endpoint,
+    Notifications.Emails
+  }
+
   alias Re.Stats.Visualizations
 
   def start(_type, _args) do
@@ -14,7 +18,8 @@ defmodule Re.Application do
     children = [
       supervisor(Re.Repo, []),
       supervisor(ReWeb.Endpoint, []),
-      worker(Visualizations, [])
+      worker(Visualizations, []),
+      worker(Emails.Server, [])
     ]
 
     opts = [strategy: :one_for_one, name: Re.Supervisor]
