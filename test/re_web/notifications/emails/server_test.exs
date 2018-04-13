@@ -4,7 +4,10 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
   import Re.Factory
   import Swoosh.TestAssertions
 
-  alias Re.Repo
+  alias Re.{
+    Listing,
+    Repo
+  }
 
   alias ReWeb.Notifications.{
     Emails.Server,
@@ -61,6 +64,14 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       listing = insert(:listing)
       Server.handle_cast({UserEmail, :listing_added_admin, [user, listing]}, [])
       assert_email_sent(UserEmail.listing_added_admin(user, listing))
+    end
+
+    test "listing_updated/2" do
+      user = insert(:user)
+      listing = insert(:listing, price: 950_000, rooms: 3)
+      %{changes: changes} = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "user")
+      Server.handle_cast({UserEmail, :listing_updated, [user, listing, changes]}, [])
+      assert_email_sent(UserEmail.listing_updated(user, listing, changes))
     end
   end
 end
