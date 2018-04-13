@@ -14,17 +14,14 @@ defmodule ReWeb.Notifications.Emails do
     UserEmail
   }
 
-  def notify_interest(%Interest{} = interest), do:
-    GenServer.cast(Server, {UserEmail, :notify_interest, [interest]})
+  def notify_interest(%Interest{} = interest),
+    do: GenServer.cast(Server, {UserEmail, :notify_interest, [interest]})
 
-  def confirm(%User{} = user),
-    do: GenServer.cast(Server, {UserEmail, :confirm, [user]})
+  def confirm(%User{} = user), do: GenServer.cast(Server, {UserEmail, :confirm, [user]})
 
-  def change_email(%User{} = user),
-    do: GenServer.cast(Server, {UserEmail, :change_email, [user]})
+  def change_email(%User{} = user), do: GenServer.cast(Server, {UserEmail, :change_email, [user]})
 
-  def welcome(%User{} = user),
-    do: GenServer.cast(Server, {UserEmail, :welcome, [user]})
+  def welcome(%User{} = user), do: GenServer.cast(Server, {UserEmail, :welcome, [user]})
 
   def user_registered(%User{} = user),
     do: GenServer.cast(Server, {UserEmail, :user_registered, [user]})
@@ -37,5 +34,4 @@ defmodule ReWeb.Notifications.Emails do
 
   def listing_added_admin(%User{} = user, %Listing{} = listing),
     do: GenServer.cast(Server, {UserEmail, :listing_added_admin, [user, listing]})
-
 end

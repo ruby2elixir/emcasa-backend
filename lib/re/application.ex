@@ -9,6 +9,7 @@ defmodule Re.Application do
     Endpoint,
     Notifications.Emails
   }
+
   alias Re.Stats.Visualizations
 
   def start(_type, _args) do

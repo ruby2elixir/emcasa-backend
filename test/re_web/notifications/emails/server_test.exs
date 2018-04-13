@@ -5,6 +5,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
   import Swoosh.TestAssertions
 
   alias Re.Repo
+
   alias ReWeb.Notifications.{
     Emails.Server,
     UserEmail
