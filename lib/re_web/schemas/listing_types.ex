@@ -27,6 +27,7 @@ defmodule ReWeb.Schema.ListingTypes do
     field :matterport_code, :string
     field :is_active, :boolean
     field :is_exclusive, :boolean
+    field :is_release, :boolean
 
     field :images, list_of(:image)
 

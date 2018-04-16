@@ -44,6 +44,7 @@ defmodule ReWeb.ListingView do
       balconies: listing.balconies,
       has_elevator: listing.has_elevator,
       is_exclusive: listing.is_exclusive,
+      is_release: listing.is_release,
       is_active: listing.is_active,
       address: %{
         street: listing.address.street,
@@ -85,6 +86,7 @@ defmodule ReWeb.ListingView do
       balconies: listing.balconies,
       has_elevator: listing.has_elevator,
       is_exclusive: listing.is_exclusive,
+      is_release: listing.is_release,
       is_active: listing.is_active,
       address: %{
         street: listing.address.street,

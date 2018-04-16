@@ -27,7 +27,8 @@ defmodule ReWeb.ListingControllerTest do
     dependencies: 1,
     balconies: 1,
     has_elevator: true,
-    is_exclusive: true
+    is_exclusive: true,
+    is_release: true
   }
   @valid_attrs_admin %{
     type: "Casa",
@@ -47,7 +48,8 @@ defmodule ReWeb.ListingControllerTest do
     dependencies: 1,
     balconies: 1,
     has_elevator: true,
-    is_exclusive: true
+    is_exclusive: true,
+    is_release: true
   }
   @valid_address_attrs %{
     street: "A Street",
@@ -152,6 +154,7 @@ defmodule ReWeb.ListingControllerTest do
                  "balconies" => listing.balconies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_release" => listing.is_release,
                  "is_active" => listing.is_active,
                  "user_id" => listing.user_id,
                  "images" => [
@@ -207,6 +210,7 @@ defmodule ReWeb.ListingControllerTest do
                  "balconies" => listing.balconies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_release" => listing.is_release,
                  "is_active" => listing.is_active,
                  "user_id" => listing.user_id,
                  "images" => [
@@ -336,6 +340,7 @@ defmodule ReWeb.ListingControllerTest do
                  "balconies" => listing.balconies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_release" => listing.is_release,
                  "is_active" => listing.is_active,
                  "images" => [
                    %{
