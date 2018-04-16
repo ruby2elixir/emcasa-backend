@@ -8,10 +8,10 @@ defmodule Re.Listings.Opts do
 
   schema "params" do
     field :page_size, :integer, default: 10
-    field :excluded_listings_ids, {:array, :integer}, default: []
+    field :excluded_listing_ids, {:array, :integer}, default: []
   end
 
-  @fields ~w(page_size excluded_listings_ids)a
+  @fields ~w(page_size excluded_listing_ids)a
 
   def build(params \\ %{}) do
     %__MODULE__{}

@@ -145,6 +145,25 @@ defmodule Re.ListingsTest do
       assert %{remaining_count: 0, listings: [%{id: ^id3}]} =
                Listings.paginated(%{page_size: 2, excluded_listing_ids: [id1, id2]})
     end
+
+    test "should paginate excluding listings already returned" do
+      insert_list(12, :listing)
+
+      assert %{remaining_count: 8, listings: listings1} = Listings.paginated(%{page_size: 4})
+      assert 4 == length(listings1)
+      listing_ids1 = Enum.map(listings1, &Map.get(&1, :id))
+
+      assert %{remaining_count: 4, listings: listings2} = Listings.paginated(%{page_size: 4, excluded_listing_ids: listing_ids1})
+      assert 4 == length(listings2)
+      listing_ids2 = Enum.map(listings2, &Map.get(&1, :id))
+
+      assert %{remaining_count: 0, listings: listings3} = Listings.paginated(%{page_size: 4, excluded_listing_ids: listing_ids1 ++ listing_ids2})
+      assert 4 == length(listings3)
+      listing_ids3 = Enum.map(listings3, &Map.get(&1, :id))
+
+      result_ids = listing_ids1 ++ listing_ids2 ++ listing_ids3
+      assert result_ids == Enum.uniq(result_ids)
+    end
   end
 
   describe "deactivate/1" do
