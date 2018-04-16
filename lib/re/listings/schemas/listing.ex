@@ -27,6 +27,7 @@ defmodule Re.Listing do
     field :matterport_code, :string
     field :is_active, :boolean, default: false
     field :is_exclusive, :boolean, default: false
+    field :is_release, :boolean
     field :visualisations, :integer, virtual: true
     field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
@@ -49,7 +50,7 @@ defmodule Re.Listing do
   @user_optional ~w(description price rooms bathrooms area garage_spots
                     address_id user_id suites dependencies has_elevator
                     complement floor is_exclusive property_tax maintenance_fee
-                    balconies restrooms)a
+                    balconies restrooms is_release)a
   @user_attributes @user_required ++ @user_optional
   @doc """
   Builds a changeset based on the `struct` and `params` and user role.
@@ -68,7 +69,7 @@ defmodule Re.Listing do
                      area garage_spots score address_id user_id
                      suites dependencies has_elevator)a
   @admin_optional ~w(complement floor matterport_code is_active is_exclusive
-                     property_tax maintenance_fee balconies restrooms)a
+                     property_tax maintenance_fee balconies restrooms is_release)a
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
     struct

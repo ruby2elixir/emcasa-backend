@@ -24,7 +24,8 @@ defmodule Re.ListingTest do
     garage_spots: 2,
     score: 4,
     matterport_code: "",
-    is_exclusive: false
+    is_exclusive: false,
+    is_release: false
   }
   @invalid_attrs %{
     type: "ApartmentApartmentApartmentApartmentApartment",
@@ -39,7 +40,8 @@ defmodule Re.ListingTest do
     balconies: -1,
     garage_spots: -1,
     score: 5,
-    is_exclusive: "banana"
+    is_exclusive: "banana",
+    is_release: "banana"
   }
 
   describe "user" do
@@ -88,6 +90,9 @@ defmodule Re.ListingTest do
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :is_exclusive) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :is_release) ==
                {"is invalid", [type: :boolean, validation: :cast]}
     end
   end
@@ -145,6 +150,9 @@ defmodule Re.ListingTest do
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :is_exclusive) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :is_release) ==
                {"is invalid", [type: :boolean, validation: :cast]}
 
       changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000}, "admin")
