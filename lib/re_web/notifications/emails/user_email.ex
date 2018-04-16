@@ -6,6 +6,7 @@ defmodule ReWeb.Notifications.UserEmail do
 
   alias Re.{
     Interest,
+    Listing,
     User
   }
 
@@ -110,7 +111,7 @@ defmodule ReWeb.Notifications.UserEmail do
     |> URI.to_string()
   end
 
-  def listing_added(%User{name: name, email: email}, listing) do
+  def listing_added(%User{name: name, email: email}, %Listing{} = listing) do
     listing_url = build_url(@listing_path, to_string(listing.id))
 
     new()
@@ -130,7 +131,7 @@ defmodule ReWeb.Notifications.UserEmail do
                   Equipe EmCasa")
   end
 
-  def listing_added_admin(%User{name: name, email: email}, listing) do
+  def listing_added_admin(%User{name: name, email: email}, %Listing{} = listing) do
     listing_url = build_url(@listing_path, to_string(listing.id))
 
     new()
@@ -143,5 +144,28 @@ defmodule ReWeb.Notifications.UserEmail do
     |> text_body("Nome: #{name}
                   Email: #{email}
                   <a href=\"#{listing_url}\">Imóvel</a>")
+  end
+
+  def listing_updated(%User{name: name, email: email}, %Listing{} = listing, changes) do
+    listing_url = build_url(@listing_path, to_string(listing.id))
+    {changes_html, changes_txt} = build_changes(changes)
+
+    new()
+    |> to(@to)
+    |> from(@admin_email)
+    |> subject("Um usuário modificou o imóvel")
+    |> html_body("Nome: #{name}<br>
+                  Email: #{email}<br>
+                  <a href=\"#{listing_url}\">Imóvel</a><br>
+                  #{changes_html}")
+    |> text_body("Nome: #{name}
+                  Email: #{email}
+                  <a href=\"#{listing_url}\">Imóvel</a>
+                  #{changes_txt}")
+  end
+
+  defp build_changes(changes) do
+    {Enum.map(changes, fn {attr, value} -> "Atributo: #{attr}, novo valor: #{value}<br>" end),
+     Enum.map(changes, fn {attr, value} -> "Atributo: #{attr}, novo valor: #{value}" end)}
   end
 end

@@ -16,4 +16,6 @@ defmodule ReWeb.TestEmails do
   def listing_added(_, _), do: :ok
 
   def listing_added_admin(_, _), do: :ok
+
+  def listing_updated(_, _, _), do: :ok
 end

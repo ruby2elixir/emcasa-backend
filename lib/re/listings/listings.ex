@@ -69,10 +69,15 @@ defmodule Re.Listings do
   end
 
   def update(listing, params, address, user) do
-    listing
-    |> Changeset.change(address_id: address.id)
-    |> Listing.changeset(params, user.role)
-    |> Repo.update()
+    changeset =
+      listing
+      |> Changeset.change(address_id: address.id)
+      |> Listing.changeset(params, user.role)
+
+    case Repo.update(changeset) do
+      {:ok, listing} -> {:ok, listing, changeset}
+      error -> error
+    end
   end
 
   def deactivate(listing) do
