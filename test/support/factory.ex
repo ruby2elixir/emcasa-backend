@@ -34,6 +34,7 @@ defmodule Re.Factory do
       garage_spots: Enum.random(0..10),
       suites: Enum.random(0..10),
       dependencies: Enum.random(0..10),
+      balconies: Enum.random(0..10),
       has_elevator: Enum.random([true, false]),
       area: Enum.random(1..500),
       score: Enum.random(1..4),

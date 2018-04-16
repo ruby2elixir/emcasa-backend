@@ -17,6 +17,7 @@ defmodule Re.ListingTest do
     bathrooms: 4,
     suites: 1,
     dependencies: 1,
+    balconies: 1,
     has_elevator: true,
     area: 150,
     garage_spots: 2,
@@ -33,6 +34,7 @@ defmodule Re.ListingTest do
     bathrooms: -1,
     suites: -1,
     dependencies: -1,
+    balconies: -1,
     garage_spots: -1,
     score: 5,
     is_exclusive: "banana"
@@ -72,6 +74,9 @@ defmodule Re.ListingTest do
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :dependencies) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :balconies) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :garage_spots) ==
@@ -123,6 +128,9 @@ defmodule Re.ListingTest do
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :dependencies) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :balconies) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :garage_spots) ==
