@@ -17,6 +17,7 @@ defmodule ReWeb.Schema.ListingTypes do
     field :floor, :string
     field :rooms, :integer
     field :bathrooms, :integer
+    field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer
     field :suites, :integer
