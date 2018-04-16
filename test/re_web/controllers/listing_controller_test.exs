@@ -24,6 +24,7 @@ defmodule ReWeb.ListingControllerTest do
     garage_spots: 3,
     suites: 1,
     dependencies: 1,
+    balconies: 1,
     has_elevator: true,
     is_exclusive: true
   }
@@ -42,6 +43,7 @@ defmodule ReWeb.ListingControllerTest do
     garage_spots: 3,
     suites: 1,
     dependencies: 1,
+    balconies: 1,
     has_elevator: true,
     is_exclusive: true
   }
@@ -65,7 +67,8 @@ defmodule ReWeb.ListingControllerTest do
     area: -1,
     garage_spots: -1,
     suites: -1,
-    dependencies: -1
+    dependencies: -1,
+    balconies: -1
   }
 
   setup %{conn: conn} do
@@ -142,6 +145,7 @@ defmodule ReWeb.ListingControllerTest do
                  "matterport_code" => listing.matterport_code,
                  "suites" => listing.suites,
                  "dependencies" => listing.dependencies,
+                 "balconies" => listing.balconies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "is_active" => listing.is_active,
@@ -195,6 +199,7 @@ defmodule ReWeb.ListingControllerTest do
                  "matterport_code" => listing.matterport_code,
                  "suites" => listing.suites,
                  "dependencies" => listing.dependencies,
+                 "balconies" => listing.balconies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "is_active" => listing.is_active,
@@ -322,6 +327,7 @@ defmodule ReWeb.ListingControllerTest do
                  "matterport_code" => listing.matterport_code,
                  "suites" => listing.suites,
                  "dependencies" => listing.dependencies,
+                 "balconies" => listing.balconies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "is_active" => listing.is_active,

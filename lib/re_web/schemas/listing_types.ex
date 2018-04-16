@@ -21,6 +21,7 @@ defmodule ReWeb.Schema.ListingTypes do
     field :garage_spots, :integer
     field :suites, :integer
     field :dependencies, :integer
+    field :balconies, :integer
     field :has_elevator, :boolean
     field :matterport_code, :string
     field :is_active, :boolean
