@@ -10,6 +10,7 @@ defmodule Re.Image do
     field :filename, :string
     field :position, :integer
     field :is_active, :boolean, default: true
+    field :description, :string
 
     belongs_to :listing, Re.Listing
 
@@ -17,7 +18,7 @@ defmodule Re.Image do
   end
 
   @create_required ~w(filename position)a
-  @create_optional ~w(listing_id)a
+  @create_optional ~w(listing_id description)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
