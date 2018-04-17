@@ -10,14 +10,15 @@ defmodule Re.Image do
     field :filename, :string
     field :position, :integer
     field :is_active, :boolean, default: true
+    field :description, :string
 
     belongs_to :listing, Re.Listing
 
     timestamps()
   end
 
-  @create_required ~w(filename position)a
-  @create_optional ~w(listing_id)a
+  @create_required ~w(filename)a
+  @create_optional ~w(position description)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -25,24 +26,25 @@ defmodule Re.Image do
   def create_changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @create_required ++ @create_optional)
+    |> cast_assoc(:listing)
     |> validate_required(@create_required)
   end
 
-  @position_required ~w(position)a
-  @position_optional ~w()a
+  @update_required ~w()a
+  @update_optional ~w(position description)a
 
-  def position_changeset(struct, params \\ %{}) do
+  def update_changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @position_required ++ @position_optional)
-    |> validate_required(@position_required)
+    |> cast(params, @update_required ++ @update_optional)
+    |> validate_required(@update_required)
   end
 
-  @delete_required ~w(is_active)a
-  @delete_optional ~w()a
+  @deactivate_required ~w(is_active)a
+  @deactivate_optional ~w()a
 
-  def delete_changeset(struct, params \\ %{}) do
+  def deactivate_changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @delete_required ++ @delete_optional)
-    |> validate_required(@delete_required)
+    |> cast(params, @deactivate_required ++ @deactivate_optional)
+    |> validate_required(@deactivate_required)
   end
 end
