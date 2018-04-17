@@ -22,9 +22,9 @@ defmodule ReWeb.ImageController do
   end
 
   def create(conn, %{"listing_id" => listing_id, "image" => image_params}, user) do
-    with {:ok, listing} <- Listings.get(listing_id),
+    with {:ok, listing} <- Listings.get_preloaded(listing_id),
          :ok <- Bodyguard.permit(Images, :create_images, user, listing),
-         {:ok, image} <- Images.insert(image_params, listing.id) do
+         {:ok, image} <- Images.insert(image_params, listing) do
       conn
       |> put_status(:created)
       |> render("create.json", image: image)
@@ -35,7 +35,7 @@ defmodule ReWeb.ImageController do
     with {:ok, listing} <- Listings.get(listing_id),
          :ok <- Bodyguard.permit(Images, :delete_images, user, listing),
          {:ok, image} <- Images.get(image_id),
-         {:ok, _image} <- Images.delete(image),
+         {:ok, _image} <- Images.deactivate(image),
          do: send_resp(conn, :no_content, "")
   end
 

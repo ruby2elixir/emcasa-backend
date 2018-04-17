@@ -85,7 +85,8 @@ defmodule ReWeb.ImageControllerTest do
       conn = post(conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs)
       response = json_response(conn, 201)
       assert response["image"]["id"]
-      assert Repo.get_by(Image, @valid_attrs)
+      assert image = Repo.get_by(Image, @valid_attrs)
+      assert image.listing_id == listing.id
     end
 
     test "fails if not authenticated", %{unauthenticated_conn: conn, admin_user: user} do
@@ -99,7 +100,8 @@ defmodule ReWeb.ImageControllerTest do
       conn = post(conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs)
       response = json_response(conn, 201)
       assert response["image"]["id"]
-      assert Repo.get_by(Image, @valid_attrs)
+      assert image = Repo.get_by(Image, @valid_attrs)
+      assert image.listing_id == listing.id
     end
 
     test "does not create image if listing doesn't belong to user", %{
@@ -117,8 +119,9 @@ defmodule ReWeb.ImageControllerTest do
       listing = insert(:listing, images: [image1, image2], user: user)
       conn = post(conn, listing_image_path(conn, :create, listing.id), image: @valid_attrs)
       response = json_response(conn, 201)
-      assert inserted_image = Repo.get(Image, response["image"]["id"])
-      assert inserted_image.position == 0
+      assert image = Repo.get(Image, response["image"]["id"])
+      assert image.listing_id == listing.id
+      assert image.position == 0
     end
   end
 
