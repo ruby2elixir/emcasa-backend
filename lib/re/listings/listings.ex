@@ -41,7 +41,7 @@ defmodule Re.Listings do
   defp calculate_remaining(count, params) do
     opts = Opts.build(params)
 
-    case (count - opts.page_size) do
+    case count - opts.page_size do
       num when num > 0 -> num
       _ -> 0
     end

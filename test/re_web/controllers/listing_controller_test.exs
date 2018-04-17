@@ -15,6 +15,7 @@ defmodule ReWeb.ListingControllerTest do
     floor: "H1",
     complement: "basement",
     bathrooms: 2,
+    restrooms: 2,
     description: "some content",
     price: 1_000_000,
     property_tax: 500.00,
@@ -24,8 +25,10 @@ defmodule ReWeb.ListingControllerTest do
     garage_spots: 3,
     suites: 1,
     dependencies: 1,
+    balconies: 1,
     has_elevator: true,
-    is_exclusive: true
+    is_exclusive: true,
+    is_release: true
   }
   @valid_attrs_admin %{
     type: "Casa",
@@ -33,6 +36,7 @@ defmodule ReWeb.ListingControllerTest do
     floor: "H1",
     complement: "basement",
     bathrooms: 2,
+    restrooms: 2,
     description: "some content",
     price: 1_000_000,
     property_tax: 500.00,
@@ -42,8 +46,10 @@ defmodule ReWeb.ListingControllerTest do
     garage_spots: 3,
     suites: 1,
     dependencies: 1,
+    balconies: 1,
     has_elevator: true,
-    is_exclusive: true
+    is_exclusive: true,
+    is_release: true
   }
   @valid_address_attrs %{
     street: "A Street",
@@ -58,6 +64,7 @@ defmodule ReWeb.ListingControllerTest do
   @invalid_attrs %{
     score: 7,
     bathrooms: -1,
+    restrooms: -1,
     price: -1,
     property_tax: -500.00,
     maintenance_fee: -300.00,
@@ -65,7 +72,8 @@ defmodule ReWeb.ListingControllerTest do
     area: -1,
     garage_spots: -1,
     suites: -1,
-    dependencies: -1
+    dependencies: -1,
+    balconies: -1
   }
 
   setup %{conn: conn} do
@@ -137,13 +145,16 @@ defmodule ReWeb.ListingControllerTest do
                  "floor" => listing.floor,
                  "rooms" => listing.rooms,
                  "bathrooms" => listing.bathrooms,
+                 "restrooms" => listing.restrooms,
                  "area" => listing.area,
                  "garage_spots" => listing.garage_spots,
                  "matterport_code" => listing.matterport_code,
                  "suites" => listing.suites,
                  "dependencies" => listing.dependencies,
+                 "balconies" => listing.balconies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_release" => listing.is_release,
                  "is_active" => listing.is_active,
                  "user_id" => listing.user_id,
                  "images" => [
@@ -190,13 +201,16 @@ defmodule ReWeb.ListingControllerTest do
                  "floor" => listing.floor,
                  "rooms" => listing.rooms,
                  "bathrooms" => listing.bathrooms,
+                 "restrooms" => listing.restrooms,
                  "area" => listing.area,
                  "garage_spots" => listing.garage_spots,
                  "matterport_code" => listing.matterport_code,
                  "suites" => listing.suites,
                  "dependencies" => listing.dependencies,
+                 "balconies" => listing.balconies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_release" => listing.is_release,
                  "is_active" => listing.is_active,
                  "user_id" => listing.user_id,
                  "images" => [
@@ -316,14 +330,17 @@ defmodule ReWeb.ListingControllerTest do
                  "floor" => listing.floor,
                  "rooms" => listing.rooms,
                  "bathrooms" => listing.bathrooms,
+                 "restrooms" => listing.restrooms,
                  "area" => listing.area,
                  "garage_spots" => listing.garage_spots,
                  "score" => listing.score,
                  "matterport_code" => listing.matterport_code,
                  "suites" => listing.suites,
                  "dependencies" => listing.dependencies,
+                 "balconies" => listing.balconies,
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
+                 "is_release" => listing.is_release,
                  "is_active" => listing.is_active,
                  "images" => [
                    %{

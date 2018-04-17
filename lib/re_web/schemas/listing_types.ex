@@ -17,14 +17,17 @@ defmodule ReWeb.Schema.ListingTypes do
     field :floor, :string
     field :rooms, :integer
     field :bathrooms, :integer
+    field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer
     field :suites, :integer
     field :dependencies, :integer
+    field :balconies, :integer
     field :has_elevator, :boolean
     field :matterport_code, :string
     field :is_active, :boolean
     field :is_exclusive, :boolean
+    field :is_release, :boolean
 
     field :images, list_of(:image)
 

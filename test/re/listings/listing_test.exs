@@ -15,14 +15,17 @@ defmodule Re.ListingTest do
     floor: "3",
     rooms: 4,
     bathrooms: 4,
+    restrooms: 4,
     suites: 1,
     dependencies: 1,
+    balconies: 1,
     has_elevator: true,
     area: 150,
     garage_spots: 2,
     score: 4,
     matterport_code: "",
-    is_exclusive: false
+    is_exclusive: false,
+    is_release: false
   }
   @invalid_attrs %{
     type: "ApartmentApartmentApartmentApartmentApartment",
@@ -31,11 +34,14 @@ defmodule Re.ListingTest do
     property_tax: -500.00,
     maintenance_fee: -300.00,
     bathrooms: -1,
+    restrooms: -1,
     suites: -1,
     dependencies: -1,
+    balconies: -1,
     garage_spots: -1,
     score: 5,
-    is_exclusive: "banana"
+    is_exclusive: "banana",
+    is_release: "banana"
   }
 
   describe "user" do
@@ -68,16 +74,25 @@ defmodule Re.ListingTest do
       assert Keyword.get(changeset.errors, :bathrooms) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
+      assert Keyword.get(changeset.errors, :restrooms) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
       assert Keyword.get(changeset.errors, :suites) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :dependencies) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
+      assert Keyword.get(changeset.errors, :balconies) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
       assert Keyword.get(changeset.errors, :garage_spots) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :is_exclusive) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :is_release) ==
                {"is invalid", [type: :boolean, validation: :cast]}
     end
   end
@@ -119,16 +134,25 @@ defmodule Re.ListingTest do
       assert Keyword.get(changeset.errors, :bathrooms) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
+      assert Keyword.get(changeset.errors, :restrooms) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
       assert Keyword.get(changeset.errors, :suites) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :dependencies) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
+      assert Keyword.get(changeset.errors, :balconies) ==
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
       assert Keyword.get(changeset.errors, :garage_spots) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :is_exclusive) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :is_release) ==
                {"is invalid", [type: :boolean, validation: :cast]}
 
       changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000}, "admin")

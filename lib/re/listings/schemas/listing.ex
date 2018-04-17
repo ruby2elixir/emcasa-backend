@@ -16,15 +16,18 @@ defmodule Re.Listing do
     field :floor, :string
     field :rooms, :integer
     field :bathrooms, :integer
+    field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer
     field :score, :integer
     field :suites, :integer
     field :dependencies, :integer
+    field :balconies, :integer
     field :has_elevator, :boolean
     field :matterport_code, :string
     field :is_active, :boolean, default: false
     field :is_exclusive, :boolean, default: false
+    field :is_release, :boolean
     field :visualisations, :integer, virtual: true
     field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
@@ -46,7 +49,8 @@ defmodule Re.Listing do
   @user_required ~w(type)a
   @user_optional ~w(description price rooms bathrooms area garage_spots
                     address_id user_id suites dependencies has_elevator
-                    complement floor is_exclusive property_tax maintenance_fee)a
+                    complement floor is_exclusive property_tax maintenance_fee
+                    balconies restrooms is_release)a
   @user_attributes @user_required ++ @user_optional
   @doc """
   Builds a changeset based on the `struct` and `params` and user role.
@@ -65,7 +69,7 @@ defmodule Re.Listing do
                      area garage_spots score address_id user_id
                      suites dependencies has_elevator)a
   @admin_optional ~w(complement floor matterport_code is_active is_exclusive
-                     property_tax maintenance_fee)a
+                     property_tax maintenance_fee balconies restrooms is_release)a
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
     struct
@@ -85,7 +89,7 @@ defmodule Re.Listing do
 
   @more_than_zero_attributes ~w(property_tax maintenance_fee
                                 bathrooms garage_spots suites
-                                dependencies)a
+                                dependencies balconies restrooms)a
 
   defp validate_attributes(changeset) do
     Enum.reduce(@more_than_zero_attributes, changeset, &greater_than/2)

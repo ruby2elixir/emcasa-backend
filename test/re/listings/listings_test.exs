@@ -153,11 +153,18 @@ defmodule Re.ListingsTest do
       assert 4 == length(listings1)
       listing_ids1 = Enum.map(listings1, &Map.get(&1, :id))
 
-      assert %{remaining_count: 4, listings: listings2} = Listings.paginated(%{page_size: 4, excluded_listing_ids: listing_ids1})
+      assert %{remaining_count: 4, listings: listings2} =
+               Listings.paginated(%{page_size: 4, excluded_listing_ids: listing_ids1})
+
       assert 4 == length(listings2)
       listing_ids2 = Enum.map(listings2, &Map.get(&1, :id))
 
-      assert %{remaining_count: 0, listings: listings3} = Listings.paginated(%{page_size: 4, excluded_listing_ids: listing_ids1 ++ listing_ids2})
+      assert %{remaining_count: 0, listings: listings3} =
+               Listings.paginated(%{
+                 page_size: 4,
+                 excluded_listing_ids: listing_ids1 ++ listing_ids2
+               })
+
       assert 4 == length(listings3)
       listing_ids3 = Enum.map(listings3, &Map.get(&1, :id))
 
