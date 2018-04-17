@@ -60,7 +60,8 @@ defmodule Re.Factory do
     %Re.Image{
       filename: Internet.image_url(),
       position: Enum.random(-50..50),
-      is_active: true
+      is_active: true,
+      description: Shakespeare.hamlet()
     }
   end
 

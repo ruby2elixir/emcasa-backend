@@ -161,7 +161,8 @@ defmodule ReWeb.ListingControllerTest do
                    %{
                      "id" => image.id,
                      "filename" => image.filename,
-                     "position" => image.position
+                     "position" => image.position,
+                     "description" => image.description
                    }
                  ],
                  "address" => %{
@@ -217,7 +218,8 @@ defmodule ReWeb.ListingControllerTest do
                    %{
                      "id" => image.id,
                      "filename" => image.filename,
-                     "position" => image.position
+                     "position" => image.position,
+                     "description" => image.description
                    }
                  ],
                  "address" => %{
@@ -346,7 +348,8 @@ defmodule ReWeb.ListingControllerTest do
                    %{
                      "id" => image.id,
                      "filename" => image.filename,
-                     "position" => image.position
+                     "position" => image.position,
+                     "description" => image.description
                    }
                  ],
                  "address" => %{

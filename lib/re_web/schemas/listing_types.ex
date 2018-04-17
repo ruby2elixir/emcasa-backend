@@ -57,6 +57,7 @@ defmodule ReWeb.Schema.ListingTypes do
     field :filename, :string
     field :position, :integer
     field :is_active, :boolean
+    field :description, :string
   end
 
   object :listing_user do
