@@ -35,12 +35,14 @@ defmodule ReWeb.ImageControllerTest do
                %{
                  "filename" => image2.filename,
                  "id" => image2.id,
-                 "position" => image2.position
+                 "position" => image2.position,
+                 "description" => image2.description
                },
                %{
                  "filename" => image1.filename,
                  "id" => image1.id,
-                 "position" => image1.position
+                 "position" => image1.position,
+                 "description" => image1.description
                }
              ]
     end
