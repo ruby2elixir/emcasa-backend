@@ -17,7 +17,7 @@ config :re, ReWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "AFa6xCBxoVrAjCy3YRiSjY9e1TfUn75VT2QhSALdwJ+q/oA693/5mJ0OKptYSIID",
   render_errors: [view: ReWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Re.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: ReWeb.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,

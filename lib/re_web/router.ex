@@ -47,7 +47,9 @@ defmodule ReWeb.Router do
     pipe_through :graphql
 
     if Mix.env() == :dev do
-      forward "/graphiql", Absinthe.Plug.GraphiQL, schema: ReWeb.Schema
+      forward "/graphiql", Absinthe.Plug.GraphiQL,
+        schema: ReWeb.Schema,
+        socket: ReWeb.UserSocket
     end
 
     forward "/", Absinthe.Plug, schema: ReWeb.Schema

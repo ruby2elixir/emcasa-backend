@@ -1,5 +1,6 @@
 defmodule ReWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :re
+  use Absinthe.Phoenix.Endpoint
 
   socket("/socket", ReWeb.UserSocket)
 
