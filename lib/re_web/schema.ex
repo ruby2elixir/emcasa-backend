@@ -67,4 +67,17 @@ defmodule ReWeb.Schema do
       resolve &Resolvers.Messages.send/2
     end
   end
+
+  subscription do
+    @desc "Subscribe to your messages"
+    field :message_sent, :message do
+      config fn args, %{context: %{current_user: %{id: receiver_id}}} ->
+        {:ok, topic: receiver_id}
+      end
+
+      trigger :send_message, topic: fn message ->
+        message.receiver_id
+      end
+    end
+  end
 end
