@@ -56,5 +56,15 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.ListingStats.tour_visualized/2
     end
+
+    @desc "Send message"
+    field :send_message, type: :message do
+      arg :receiver_id,  non_null(:id)
+      arg :listing_id, :id
+
+      arg :message, :string
+
+      resolve &Resolvers.Messages.send/2
+    end
   end
 end
