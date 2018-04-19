@@ -59,7 +59,7 @@ defmodule ReWeb.Schema do
 
     @desc "Send message"
     field :send_message, type: :message do
-      arg :receiver_id,  non_null(:id)
+      arg :receiver_id, non_null(:id)
       arg :listing_id, :id
 
       arg :message, :string
@@ -71,16 +71,17 @@ defmodule ReWeb.Schema do
   subscription do
     @desc "Subscribe to your messages"
     field :message_sent, :message do
-      config fn args, %{context: %{current_user: current_user}} ->
+      config(fn args, %{context: %{current_user: current_user}} ->
         case current_user do
           %{id: receiver_id} -> {:ok, topic: receiver_id}
           _ -> {:error, :unauthenticated}
         end
-      end
+      end)
 
-      trigger :send_message, topic: fn message ->
-        message.receiver_id
-      end
+      trigger :send_message,
+        topic: fn message ->
+          message.receiver_id
+        end
     end
   end
 end

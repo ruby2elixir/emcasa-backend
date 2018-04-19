@@ -12,6 +12,8 @@
     import_types: 1,
     resolve: 1,
     arg: 2,
-    many_to_many: 3
+    many_to_many: 3,
+    config: 2,
+    trigger: 2
   ]
 ]

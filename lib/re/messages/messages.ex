@@ -14,5 +14,4 @@ defmodule Re.Messages do
     |> Message.changeset(params)
     |> Repo.insert()
   end
-
 end

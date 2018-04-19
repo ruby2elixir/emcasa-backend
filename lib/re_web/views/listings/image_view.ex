@@ -10,6 +10,11 @@ defmodule ReWeb.ImageView do
   end
 
   def render("image.json", %{image: image}) do
-    %{id: image.id, filename: image.filename, position: image.position, description: image.description}
+    %{
+      id: image.id,
+      filename: image.filename,
+      position: image.position,
+      description: image.description
+    }
   end
 end

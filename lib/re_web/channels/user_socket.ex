@@ -1,7 +1,6 @@
 defmodule ReWeb.UserSocket do
   use Phoenix.Socket
-  use Absinthe.Phoenix.Socket,
-    schema: ReWeb.Schema
+  use Absinthe.Phoenix.Socket, schema: ReWeb.Schema
 
   transport(:websocket, Phoenix.Transports.WebSocket, timeout: 45_000)
   transport(:longpoll, Phoenix.Transports.LongPoll)
