@@ -18,6 +18,7 @@ defmodule Re.Application do
     children = [
       supervisor(Re.Repo, []),
       supervisor(ReWeb.Endpoint, []),
+      supervisor(Absinthe.Subscription, [ReWeb.Endpoint]),
       worker(Visualizations, []),
       worker(Emails.Server, [])
     ]

@@ -18,8 +18,8 @@ defmodule Re.Message do
     timestamps()
   end
 
-  @required ~w(sender_id receiver_id listing_id)a
-  @optional ~w(message notified)a
+  @required ~w(sender_id receiver_id)a
+  @optional ~w(message notified read listing_id)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.

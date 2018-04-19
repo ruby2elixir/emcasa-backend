@@ -55,7 +55,8 @@ defmodule Re.Mixfile do
       {:faker, "~> 0.9.0", only: :test},
       {:email_checker, "~> 0.1"},
       {:absinthe, "~> 1.4"},
-      {:absinthe_plug, "~> 1.4"}
+      {:absinthe_plug, "~> 1.4"},
+      {:absinthe_phoenix, "~> 1.4"}
     ]
   end
 
