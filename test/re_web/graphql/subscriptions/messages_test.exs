@@ -44,7 +44,12 @@ defmodule ReWeb.GraphQL.Subscription.MessagesTest do
 
     ref = push_doc(admin_socket, mutation)
 
-    assert_reply(ref, :ok, %{data: %{"sendMessage" => %{"receiver" => %{"id" => ^user_id}}}}, 3000)
+    assert_reply(
+      ref,
+      :ok,
+      %{data: %{"sendMessage" => %{"receiver" => %{"id" => ^user_id}}}},
+      3000
+    )
 
     expected = %{
       result: %{
@@ -90,7 +95,12 @@ defmodule ReWeb.GraphQL.Subscription.MessagesTest do
 
     ref = push_doc(user_socket, mutation)
 
-    assert_reply(ref, :ok, %{data: %{"sendMessage" => %{"receiver" => %{"id" => ^admin_id}}}}, 3000)
+    assert_reply(
+      ref,
+      :ok,
+      %{data: %{"sendMessage" => %{"receiver" => %{"id" => ^admin_id}}}},
+      3000
+    )
 
     expected = %{
       result: %{
