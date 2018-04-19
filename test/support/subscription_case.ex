@@ -16,7 +16,9 @@ defmodule ReWeb.SubscriptionCase do
 
       setup do
         {:ok, unauthenticated_socket} = Phoenix.ChannelTest.connect(ReWeb.UserSocket, %{})
-        {:ok, unauthenticated_socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(unauthenticated_socket)
+
+        {:ok, unauthenticated_socket} =
+          Absinthe.Phoenix.SubscriptionTest.join_absinthe(unauthenticated_socket)
 
         admin = insert(:user, email: "admin@email.com", role: "admin")
         {:ok, admin_jwt, _full_claims} = Guardian.encode_and_sign(admin)
