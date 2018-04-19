@@ -46,6 +46,7 @@ defmodule ReWeb.ListingView do
       is_exclusive: listing.is_exclusive,
       is_release: listing.is_release,
       is_active: listing.is_active,
+      inserted_at: listing.inserted_at,
       address: %{
         street: listing.address.street,
         street_number: listing.address.street_number,
@@ -88,6 +89,7 @@ defmodule ReWeb.ListingView do
       is_exclusive: listing.is_exclusive,
       is_release: listing.is_release,
       is_active: listing.is_active,
+      inserted_at: listing.inserted_at,
       address: %{
         street: listing.address.street,
         street_number: listing.address.street_number,
