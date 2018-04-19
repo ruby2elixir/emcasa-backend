@@ -71,7 +71,7 @@ defmodule ReWeb.Schema do
   subscription do
     @desc "Subscribe to your messages"
     field :message_sent, :message do
-      config(fn args, %{context: %{current_user: current_user}} ->
+      config(fn _args, %{context: %{current_user: current_user}} ->
         case current_user do
           %{id: receiver_id} -> {:ok, topic: receiver_id}
           _ -> {:error, :unauthenticated}

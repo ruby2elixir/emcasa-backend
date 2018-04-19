@@ -90,12 +90,17 @@ defmodule ReWeb.GraphQL.UsersTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
       admin_id = to_string(admin.id)
       user_id = to_string(user.id)
-      assert %{"sendMessage" => %{"sender" => %{"id" => ^admin_id}, "receiver" => %{"id" => ^user_id}}} = json_response(conn, 200)["data"]
+
+      assert %{
+               "sendMessage" => %{
+                 "sender" => %{"id" => ^admin_id},
+                 "receiver" => %{"id" => ^user_id}
+               }
+             } = json_response(conn, 200)["data"]
     end
 
     test "user should send messages", %{user_conn: conn, user_user: user} do
@@ -114,12 +119,17 @@ defmodule ReWeb.GraphQL.UsersTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
       user_id = to_string(user.id)
       user2_id = to_string(user2.id)
-      assert %{"sendMessage" => %{"sender" => %{"id" => ^user_id}, "receiver" => %{"id" => ^user2_id}}} = json_response(conn, 200)["data"]
+
+      assert %{
+               "sendMessage" => %{
+                 "sender" => %{"id" => ^user_id},
+                 "receiver" => %{"id" => ^user2_id}
+               }
+             } = json_response(conn, 200)["data"]
     end
 
     test "anonymous should not send messages", %{unauthenticated_conn: conn} do
@@ -138,11 +148,9 @@ defmodule ReWeb.GraphQL.UsersTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert %{"errors" => [%{"message" => "unauthorized"}]} = json_response(conn, 200)
     end
   end
-
 end
