@@ -156,6 +156,7 @@ defmodule ReWeb.ListingControllerTest do
                  "is_exclusive" => listing.is_exclusive,
                  "is_release" => listing.is_release,
                  "is_active" => listing.is_active,
+                 "inserted_at" => NaiveDateTime.to_iso8601(listing.inserted_at),
                  "user_id" => listing.user_id,
                  "images" => [
                    %{
@@ -213,6 +214,7 @@ defmodule ReWeb.ListingControllerTest do
                  "is_exclusive" => listing.is_exclusive,
                  "is_release" => listing.is_release,
                  "is_active" => listing.is_active,
+                 "inserted_at" => NaiveDateTime.to_iso8601(listing.inserted_at),
                  "user_id" => listing.user_id,
                  "images" => [
                    %{
@@ -344,6 +346,7 @@ defmodule ReWeb.ListingControllerTest do
                  "is_exclusive" => listing.is_exclusive,
                  "is_release" => listing.is_release,
                  "is_active" => listing.is_active,
+                 "inserted_at" => NaiveDateTime.to_iso8601(listing.inserted_at),
                  "images" => [
                    %{
                      "id" => image.id,

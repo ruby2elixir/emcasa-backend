@@ -119,7 +119,9 @@ defmodule ReWeb.GraphQL.Subscription.MessagesTest do
     assert expected == push
   end
 
-  test "anonymous should not subscribe to messages", %{unauthenticated_socket: unauthenticated_socket} do
+  test "anonymous should not subscribe to messages", %{
+    unauthenticated_socket: unauthenticated_socket
+  } do
     ref = push_doc(unauthenticated_socket, @subscription)
 
     assert_reply(ref, :error, %{errors: [%{message: :unauthenticated}]})
