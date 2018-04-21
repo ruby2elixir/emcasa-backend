@@ -21,11 +21,19 @@ defmodule Re.Messages do
     |> Repo.insert()
   end
 
-  def get_listing(listing, user) do
+  def get(user, params) do
     Message
-    |> Queries.by_listing(listing.id)
+    |> by_listing(params)
+    |> by_user(user)
+    |> Repo.all()
+  end
+
+  defp by_listing(query, %{listing_id: listing_id}), do: Queries.by_listing(query, listing_id)
+  defp by_listing(query, _params), do: query
+
+  defp by_user(query, user) do
+    query
     |> Queries.belongs_to_user(user.id)
     |> Queries.order_by_insertion()
-    |> Repo.all()
   end
 end

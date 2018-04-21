@@ -20,11 +20,11 @@ defmodule ReWeb.Schema do
       resolve &Resolvers.Favorites.favorited_users/2
     end
 
-    @desc "List user messages in listing"
+    @desc "List user messages, optionally by listing"
     field :listing_user_messages, list_of(:message) do
-      arg :listing_id, non_null(:id)
+      arg :listing_id, :id
 
-      resolve &Resolvers.Messages.listing_user/2
+      resolve &Resolvers.Messages.get/2
     end
   end
 
