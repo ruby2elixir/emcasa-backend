@@ -95,6 +95,10 @@ defmodule Re.Factory do
     %Re.Favorite{}
   end
 
+  def message_factory do
+    %Re.Message{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999

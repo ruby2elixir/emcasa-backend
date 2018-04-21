@@ -8,6 +8,7 @@ defmodule Re.Messages.Policy do
   def authorize(_, %User{role: "admin"}, _), do: :ok
 
   def authorize(:send_message, %User{}, _), do: :ok
+  def authorize(:listing_user, %User{}, _), do: :ok
 
   def authorize(_, nil, _), do: {:error, :unauthorized}
 

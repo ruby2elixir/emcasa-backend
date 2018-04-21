@@ -153,4 +153,44 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert %{"errors" => [%{"message" => "unauthorized"}]} = json_response(conn, 200)
     end
   end
+
+  describe "listingUserMessages" do
+    test "admin should list messages per listing", %{admin_conn: conn, admin_user: admin_user} do
+      user = insert(:user)
+      listing = insert(:listing)
+
+      %{id: id1} =
+        insert(:message, sender_id: admin_user.id, receiver_id: user.id, listing_id: listing.id)
+
+      %{id: id2} =
+        insert(:message, sender_id: user.id, receiver_id: admin_user.id, listing_id: listing.id)
+
+      %{id: id3} =
+        insert(:message, sender_id: user.id, receiver_id: admin_user.id, listing_id: listing.id)
+
+      query = """
+        {
+          listingUserMessages (listingId: #{listing.id}) {
+            id
+            message
+          }
+        }
+      """
+
+      id1 = to_string(id1)
+      id2 = to_string(id2)
+      id3 = to_string(id3)
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+
+      assert %{
+               "listingUserMessages" => [
+                 %{"id" => ^id1},
+                 %{"id" => ^id2},
+                 %{"id" => ^id3}
+               ]
+             } = json_response(conn, 200)["data"]
+    end
+  end
 end
