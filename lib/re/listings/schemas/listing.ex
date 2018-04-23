@@ -36,6 +36,7 @@ defmodule Re.Listing do
     belongs_to :user, Re.User
     has_many :images, Re.Image
     has_many :listings_visualisations, Re.Stats.ListingVisualization
+    has_many :tour_visualisations, Re.Stats.TourVisualization
 
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :user]
