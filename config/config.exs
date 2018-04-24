@@ -45,6 +45,13 @@ config :re, ReWeb.Notifications.Emails.Mailer,
 
 config :email_checker, validations: [EmailChecker.Check.Format]
 
+config :re, ReWeb.ElasticsearchCluster,
+  url: "http://localhost:9200",
+  bulk_page_size: 5000,
+  bulk_wait_interval: 15_000,
+  api: Elasticsearch.API.HTTP,
+  json_library: Poison
+
 import_config "#{Mix.env()}.exs"
 
 # Import Timber, structured logging

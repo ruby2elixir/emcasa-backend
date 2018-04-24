@@ -56,7 +56,8 @@ defmodule Re.Mixfile do
       {:email_checker, "~> 0.1"},
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
-      {:absinthe_phoenix, "~> 1.4"}
+      {:absinthe_phoenix, "~> 1.4"},
+      {:elasticsearch, "~> 0.3.0"}
     ]
   end
 

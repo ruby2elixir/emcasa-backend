@@ -20,7 +20,8 @@ defmodule Re.Application do
       supervisor(ReWeb.Endpoint, []),
       supervisor(Absinthe.Subscription, [ReWeb.Endpoint]),
       worker(Visualizations, []),
-      worker(Emails.Server, [])
+      worker(Emails.Server, []),
+      ReWeb.ElasticsearchCluster
     ]
 
     opts = [strategy: :one_for_one, name: Re.Supervisor]
