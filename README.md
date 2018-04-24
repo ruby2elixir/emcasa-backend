@@ -11,6 +11,8 @@
 
   * Setup elasticsearch: `mix elasticsearch.install vendor --version 6.2.4`
   * Run elasticsearch: `./vendor/elasticsearch/bin/elasticsearch` and check `http://localhost:9200`
+  * Run kibana: `./vendor/kibana/bin/kibana` and check `http://localhost:5601`
+  * Optionally, uncomment the lines in `application.ex` to run `elasticsearch` and `kibana` together with the application
 
 
 ## Run
