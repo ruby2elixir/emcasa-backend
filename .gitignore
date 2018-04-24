@@ -15,3 +15,5 @@ erl_crash.dump
 # variables.
 /config/*.secret.exs
 .iex.exs
+
+/vendor

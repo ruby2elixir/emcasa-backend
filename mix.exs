@@ -57,7 +57,7 @@ defmodule Re.Mixfile do
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
       {:absinthe_phoenix, "~> 1.4"},
-      {:elasticsearch, "~> 0.3.0"}
+      {:elasticsearch, "~> 0.3.1"}
     ]
   end
 
