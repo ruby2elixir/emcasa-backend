@@ -9,4 +9,10 @@ defmodule ReWeb.Resolvers.Messages do
       Messages.send(current_user, params)
     end
   end
+
+  def get(params, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Messages, :index, current_user, %{}) do
+      {:ok, Messages.get(current_user, params)}
+    end
+  end
 end

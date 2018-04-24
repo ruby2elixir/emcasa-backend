@@ -95,6 +95,10 @@ defmodule Re.Factory do
     %Re.Favorite{}
   end
 
+  def message_factory do
+    %Re.Message{}
+  end
+
   def tour_visualisation_factory do
     %Re.Stats.TourVisualization{}
   end
