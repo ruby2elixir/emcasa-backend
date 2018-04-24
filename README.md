@@ -9,13 +9,8 @@
   * Create, migrate and seed your database with `mix ecto.setup`
   * Rename `config/dev.secret-example.exs` to `config/dev.secret.exs` and follow instructions at the top of the file to generate necessary keys.
 
-  * Setup elastic search with docker:
-  ```
-  docker pull elasticsearch
-  mkdir <data-dir>
-  docker run -d -p 9200:9200 -p 9300:9300 -v <data-dir> elasticsearch /elasticsearch/bin/elasticsearch -Des.config=<data-dir>/elasticsearch.yml
-  open http://localhost:9200
-  ```
+  * Setup elasticsearch: `mix elasticsearch.install vendor --version 6.2.4`
+  * Run elasticsearch: `./vendor/elasticsearch/bin/elasticsearch` and check `http://localhost:9200`
 
 
 ## Run
