@@ -99,6 +99,10 @@ defmodule Re.Factory do
     %Re.Message{}
   end
 
+  def tour_visualisation_factory do
+    %Re.Stats.TourVisualization{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999

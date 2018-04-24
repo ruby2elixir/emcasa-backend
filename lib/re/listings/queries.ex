@@ -28,6 +28,7 @@ defmodule Re.Listings.Queries do
     preload(query, [
       :address,
       :listings_visualisations,
+      :tour_visualisations,
       :listings_favorites,
       interests: ^Interests.Queries.with_type(),
       images: ^Images.Queries.listing_preload()
