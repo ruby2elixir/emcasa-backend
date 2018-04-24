@@ -1,4 +1,7 @@
 defmodule ReWeb.Search.Store do
+  @moduledoc """
+  Module to implement loading logic for the elasticsearch store
+  """
   @behaviour Elasticsearch.Store
 
   import Ecto.Query
