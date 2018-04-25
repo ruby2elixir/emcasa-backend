@@ -22,17 +22,17 @@ defmodule Re.Application do
       supervisor(Absinthe.Subscription, [ReWeb.Endpoint]),
       worker(Visualizations, []),
       worker(Emails.Server, []),
-      Cluster,
-      worker(Elasticsearch.Executable, [
-        "Elasticsearch",
-        "./elasticsearch/bin/elasticsearch",
-        9200
-      ], id: :elasticsearch),
-      worker(Elasticsearch.Executable, [
-        "Kibana",
-        "./kibana/bin/kibana",
-        5601
-      ], id: :kibana)
+      Cluster
+      # worker(Elasticsearch.Executable, [
+      #   "Elasticsearch",
+      #   "./elasticsearch/bin/elasticsearch",
+      #   9200
+      # ], id: :elasticsearch),
+      # worker(Elasticsearch.Executable, [
+      #   "Kibana",
+      #   "./kibana/bin/kibana",
+      #   5601
+      # ], id: :kibana)
     ]
 
     opts = [strategy: :one_for_one, name: Re.Supervisor]
