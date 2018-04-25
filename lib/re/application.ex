@@ -7,7 +7,8 @@ defmodule Re.Application do
 
   alias ReWeb.{
     Endpoint,
-    Notifications.Emails
+    Notifications.Emails,
+    Search.Cluster
   }
 
   alias Re.Stats.Visualizations
@@ -20,7 +21,18 @@ defmodule Re.Application do
       supervisor(ReWeb.Endpoint, []),
       supervisor(Absinthe.Subscription, [ReWeb.Endpoint]),
       worker(Visualizations, []),
-      worker(Emails.Server, [])
+      worker(Emails.Server, []),
+      Cluster
+      # worker(Elasticsearch.Executable, [
+      #   "Elasticsearch",
+      #   "./elasticsearch/bin/elasticsearch",
+      #   9200
+      # ], id: :elasticsearch),
+      # worker(Elasticsearch.Executable, [
+      #   "Kibana",
+      #   "./kibana/bin/kibana",
+      #   5601
+      # ], id: :kibana)
     ]
 
     opts = [strategy: :one_for_one, name: Re.Supervisor]

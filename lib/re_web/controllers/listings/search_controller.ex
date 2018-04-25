@@ -2,30 +2,22 @@ defmodule ReWeb.SearchController do
   use ReWeb, :controller
   use ReWeb.GuardedController
 
-  alias Re.Listings
+  alias ReWeb.Search.Cluster
 
   action_fallback(ReWeb.FallbackController)
 
-  plug(Guardian.Plug.EnsureAuthenticated)
+  def index(conn, %{"q" => query}, _user) do
 
-  def index(conn, _params, user) do
-    with :ok <- authorize(user) do
-      page = Listings.paginated()
+    {:ok, results} = Elasticsearch.post(
+      Cluster,
+      "/listings/_doc/_search",
+      %{"query" =>
+        %{"multi_match" =>
+          %{"query" => "#{query}",
+            "fields" => ["description", "neighborhood"],
+            "fuzziness" => "AUTO"
+    }}})
 
-      render(
-        conn,
-        ReWeb.ListingView,
-        "paginated_index.json",
-        listings: page.entries,
-        page_number: page.page_number,
-        page_size: page.page_size,
-        total_pages: page.total_pages,
-        total_entries: page.total_entries
-      )
-    end
+    render(conn, ReWeb.SearchView, "search.json", results: results)
   end
-
-  def authorize(%{role: "admin"}), do: :ok
-  def authorize(nil), do: {:error, :unauthorized}
-  def authorize(_), do: {:error, :forbidden}
 end
