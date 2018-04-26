@@ -23,7 +23,9 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
     end
 
     test "notify_interest/1 with online scheduling" do
-      interest = insert(:interest, interest_type: build(:interest_type, name: "Agendamento online"))
+      interest =
+        insert(:interest, interest_type: build(:interest_type, name: "Agendamento online"))
+
       Server.handle_cast({UserEmail, :notify_interest, [interest]}, [])
       interest = Repo.preload(interest, :interest_type)
       email = UserEmail.notify_interest(interest)

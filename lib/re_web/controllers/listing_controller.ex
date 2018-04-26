@@ -65,7 +65,8 @@ defmodule ReWeb.ListingController do
     with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, user, listing),
          {:ok, address, address_changeset} <- Addresses.insert_or_update(address_params),
-         {:ok, listing, listing_changeset} <- Listings.update(listing, listing_params, address, user) do
+         {:ok, listing, listing_changeset} <-
+           Listings.update(listing, listing_params, address, user) do
       send_email_if_not_admin(listing, user, listing_changeset, address_changeset)
 
       render(conn, "edit.json", listing: listing)
@@ -95,7 +96,12 @@ defmodule ReWeb.ListingController do
 
   defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing
 
-  def send_email_if_not_admin(listing, %{role: "user"} = user, listing_changeset, address_changeset) do
+  def send_email_if_not_admin(
+        listing,
+        %{role: "user"} = user,
+        listing_changeset,
+        address_changeset
+      ) do
     changes = Enum.concat(listing_changeset.changes, address_changeset.changes)
     @emails.listing_updated(user, listing, changes)
   end

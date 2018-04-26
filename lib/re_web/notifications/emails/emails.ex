@@ -14,8 +14,6 @@ defmodule ReWeb.Notifications.Emails do
     UserEmail
   }
 
-  alias Ecto.Changeset
-
   def notify_interest(%Interest{} = interest),
     do: GenServer.cast(Server, {UserEmail, :notify_interest, [interest]})
 
