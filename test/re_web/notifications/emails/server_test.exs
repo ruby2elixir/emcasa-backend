@@ -22,6 +22,15 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       assert_email_sent(UserEmail.notify_interest(interest))
     end
 
+    test "notify_interest/1 with online scheduling" do
+      interest = insert(:interest, interest_type: build(:interest_type, name: "Agendamento online"))
+      Server.handle_cast({UserEmail, :notify_interest, [interest]}, [])
+      interest = Repo.preload(interest, :interest_type)
+      email = UserEmail.notify_interest(interest)
+      assert_email_sent(email)
+      assert [{"", "contato@emcasa.com"}] == email.to
+    end
+
     test "confirm/1" do
       user = insert(:user)
       Server.handle_cast({UserEmail, :confirm, [user]}, [])

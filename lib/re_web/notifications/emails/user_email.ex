@@ -14,6 +14,7 @@ defmodule ReWeb.Notifications.UserEmail do
   @from Application.get_env(:re, :from)
   @frontend_url Application.get_env(:re, :frontend_url)
   @admin_email "admin@emcasa.com"
+  @contato_email "contato@emcasa.com"
   @confirm_path "/confirmar_cadastro/"
   @reset_path "/resetar_senha/"
   @listing_path "/imoveis/"
@@ -28,7 +29,7 @@ defmodule ReWeb.Notifications.UserEmail do
         inserted_at: inserted_at
       }) do
     new()
-    |> to(@to)
+    |> to(get_to_email(interest_type))
     |> from(@from)
     |> subject("Novo interesse em listagem EmCasa")
     |> html_body(
@@ -168,4 +169,7 @@ defmodule ReWeb.Notifications.UserEmail do
     {Enum.map(changes, fn {attr, value} -> "Atributo: #{attr}, novo valor: #{value}<br>" end),
      Enum.map(changes, fn {attr, value} -> "Atributo: #{attr}, novo valor: #{value}" end)}
   end
+
+  defp get_to_email(%{name: "Agendamento online"}), do: @contato_email
+  defp get_to_email(_), do: @to
 end
