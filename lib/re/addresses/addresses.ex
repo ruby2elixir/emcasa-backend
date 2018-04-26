@@ -21,12 +21,15 @@ defmodule Re.Addresses do
   end
 
   def insert_or_update(params) do
-    case get(params) do
+    changeset = case get(params) do
       {:error, :not_found} -> build_address(params)
       {:ok, address} -> address
     end
     |> Address.changeset(params)
-    |> Repo.insert_or_update()
+
+    case Repo.insert_or_update(changeset) do
+      {:ok, address} -> {:ok, address, changeset}
+    end
   end
 
   defp build_address(%{
