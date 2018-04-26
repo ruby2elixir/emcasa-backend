@@ -2,50 +2,40 @@ defmodule Re.AddressesTest do
   use Re.ModelCase
 
   alias Re.{
-    Addresses
+    Address,
+    Addresses,
+    Repo
   }
 
   import Re.Factory
 
-  describe "update" do
-    test "should do nothing when there's no change" do
+  describe "get/1" do
+    test "find address" do
       address = insert(:address)
-      listing = insert(:listing, address: address)
 
-      address_params =
-        address
-        |> Map.from_struct()
-        |> Map.delete(:__meta__)
-        |> stringify_keys()
+      {:ok, created_address} =
+        Addresses.get(%{
+          "street" => address.street,
+          "street_number" => address.street_number,
+          "postal_code" => address.postal_code
+        })
 
-      assert {:ok, address} == Addresses.update(listing, address_params)
-    end
-
-    test "should update address attributes" do
-      address = insert(:address)
-      listing = insert(:listing, address: address)
-
-      address_params =
-        address
-        |> Map.from_struct()
-        |> Map.put(:street, "new street name")
-        |> Map.put(:street_number, "55")
-        |> Map.put(:postal_code, "54321-876")
-        |> Map.delete(:__meta__)
-        |> stringify_keys()
-
-      {:ok, updated_address} = Addresses.update(listing, address_params)
-
-      assert updated_address.street == "new street name"
-      assert updated_address.street_number == "55"
-      assert updated_address.postal_code == "54321-876"
+      assert created_address.id == address.id
+      assert created_address.street == address.street
+      assert created_address.street_number == address.street_number
+      assert created_address.neighborhood == address.neighborhood
+      assert created_address.city == address.city
+      assert created_address.state == address.state
+      assert created_address.postal_code == address.postal_code
+      assert created_address.lat == address.lat
+      assert created_address.lng == address.lng
     end
   end
 
-  describe "find_or_create" do
+  describe "insert_or_update/1" do
     test "create new address" do
       {:ok, created_address} =
-        Addresses.find_or_create(%{
+        Addresses.insert_or_update(%{
           "street" => "test st",
           "street_number" => "101",
           "neighborhood" => "downtown",
@@ -67,37 +57,46 @@ defmodule Re.AddressesTest do
       assert created_address.lng == 1.0
     end
 
-    test "find address" do
+    test "should insert new address with different unique parameters" do
       address = insert(:address)
 
-      {:ok, created_address} =
-        Addresses.find_or_create(%{
-          "street" => address.street,
-          "street_number" => address.street_number,
-          "neighborhood" => address.neighborhood,
-          "city" => address.city,
-          "state" => address.state,
-          "postal_code" => address.postal_code,
-          "lat" => address.lat,
-          "lng" => address.lng
-        })
+      address_params =
+        address
+        |> Map.from_struct()
+        |> Map.put(:street, "new street name")
+        |> Map.put(:street_number, "55")
+        |> Map.put(:postal_code, "54321-876")
+        |> Map.delete(:__meta__)
+        |> stringify_keys()
 
-      assert created_address.id == address.id
-      assert created_address.street == address.street
-      assert created_address.street_number == address.street_number
-      assert created_address.neighborhood == address.neighborhood
-      assert created_address.city == address.city
-      assert created_address.state == address.state
-      assert created_address.postal_code == address.postal_code
-      assert created_address.lat == address.lat
-      assert created_address.lng == address.lng
+      {:ok, created_address} = Addresses.insert_or_update(address_params)
+
+      assert address.id != created_address.id
+      assert created_address.street == "new street name"
+      assert created_address.street_number == "55"
+      assert created_address.postal_code == "54321-876"
+
+      assert address == Repo.get(Address, address.id)
+    end
+
+    test "should do nothing when there's no change" do
+      address = insert(:address)
+
+      address_params =
+        address
+        |> Map.from_struct()
+        |> Map.delete(:__meta__)
+        |> stringify_keys()
+
+      assert {:ok, address} == Addresses.insert_or_update(address_params)
+      assert address == Repo.get(Address, address.id)
     end
 
     test "update address when exists but the not-unique parameters are different" do
       address = insert(:address)
 
       {:ok, updated_address} =
-        Addresses.find_or_create(%{
+        Addresses.insert_or_update(%{
           "street" => address.street,
           "street_number" => address.street_number,
           "neighborhood" => address.neighborhood,
@@ -117,32 +116,6 @@ defmodule Re.AddressesTest do
       assert updated_address.postal_code == address.postal_code
       assert updated_address.lat == -20.123
       assert updated_address.lng == -40.123
-    end
-
-    test "should maintain original address when passing unique parameter changes" do
-      address = insert(:address)
-
-      {:ok, created_address} =
-        Addresses.find_or_create(%{
-          "street" => "new street",
-          "street_number" => address.street_number,
-          "neighborhood" => address.neighborhood,
-          "city" => address.city,
-          "state" => address.state,
-          "postal_code" => address.postal_code,
-          "lat" => address.lat,
-          "lng" => address.lng
-        })
-
-      assert created_address.id != address.id
-      assert created_address.street == "new street"
-      assert created_address.street_number == address.street_number
-      assert created_address.neighborhood == address.neighborhood
-      assert created_address.city == address.city
-      assert created_address.state == address.state
-      assert created_address.postal_code == address.postal_code
-      assert created_address.lat == address.lat
-      assert created_address.lng == address.lng
     end
   end
 
