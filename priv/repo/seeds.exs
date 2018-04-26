@@ -244,4 +244,5 @@ if Mix.env() == :dev do
   Re.Repo.insert!(%InterestType{name: "Me ligue em um horário específico"})
   Re.Repo.insert!(%InterestType{name: "Agendamento por e-mail"})
   Re.Repo.insert!(%InterestType{name: "Agendamento por Whatsapp"})
+  Re.Repo.insert!(%InterestType{name: "Agendamento online"})
 end
