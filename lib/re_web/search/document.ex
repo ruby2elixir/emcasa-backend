@@ -14,24 +14,18 @@ defimpl Elasticsearch.Document, for: Re.Listing do
         #{map_price(listing)}
         #{map_property_tax(listing)}
         #{map_maintenance_fee(listing)}
-        #{map_rooms(listing)}
-        #{map_bathrooms(listing)}
-        #{map_garage_spots(listing)}
-        #{map_restrooms(listing)}
-        #{map_suites(listing)}
-        #{map_dependencies(listing)}
-        #{map_balconies(listing)}
         #{listing.is_exclusive && "exclusivo"}
         #{listing.is_release && "lançamento"}
-        #{listing.address.street}
-        #{listing.address.street_number}
-        #{listing.complement}
-        #{listing.address.neighborhood}
-        #{listing.address.city}
-        #{listing.address.state}
-        #{listing.address.postal_code}
         #{listing.matterport_code}
       """,
+      rooms: map_rooms(listing),
+      bathrooms: map_bathrooms(listing),
+      garage_spots: map_garage_spots(listing),
+      restrooms: map_restrooms(listing),
+      suites: map_suites(listing),
+      dependencies: map_dependencies(listing),
+      balconies: map_balconies(listing),
+      address: map_address(listing),
       inserted_at: listing.inserted_at,
       location: %{
         lat: listing.address.lat,
@@ -40,15 +34,38 @@ defimpl Elasticsearch.Document, for: Re.Listing do
     }
   end
 
+  defp map_address(%{
+         complement: complement,
+         address: %{
+           street: street,
+           street_number: street_number,
+           neighborhood: neighborhood,
+           city: city,
+           state: state,
+           postal_code: postal_code
+         }
+       }) do
+    "#{street} #{street_number} #{neighborhood} #{city} #{state} #{postal_code} #{complement}"
+  end
+
   defp map_price(%{price: price}), do: price && "#{price} valor"
   defp map_property_tax(%{property_tax: property_tax}), do: property_tax && "#{property_tax} IPTU"
-  defp map_maintenance_fee(%{maintenance_fee: maintenance_fee}), do: maintenance_fee && "#{maintenance_fee} condominio"
+
+  defp map_maintenance_fee(%{maintenance_fee: maintenance_fee}),
+    do: maintenance_fee && "#{maintenance_fee} condominio"
+
   defp map_rooms(%{rooms: rooms}), do: if_not_zero(rooms, "quarto", "quartos")
   defp map_bathrooms(%{bathrooms: bathrooms}), do: if_not_zero(bathrooms, "banheiro", "banheiros")
-  defp map_garage_spots(%{garage_spots: garage_spots}), do: if_not_zero(garage_spots, "garagem", "garagens")
+
+  defp map_garage_spots(%{garage_spots: garage_spots}),
+    do: if_not_zero(garage_spots, "garagem", "garagens")
+
   defp map_restrooms(%{restrooms: restrooms}), do: if_not_zero(restrooms, "lavabo", "lavabos")
   defp map_suites(%{suites: suites}), do: if_not_zero(suites, "suíte", "suítes")
-  defp map_dependencies(%{dependencies: dependencies}), do: if_not_zero(dependencies, "dependência", "dependências")
+
+  defp map_dependencies(%{dependencies: dependencies}),
+    do: if_not_zero(dependencies, "dependência", "dependências")
+
   defp map_balconies(%{balconies: balconies}), do: if_not_zero(balconies, "varanda", "varandas")
 
   defp if_not_zero(0, _, _), do: ""
