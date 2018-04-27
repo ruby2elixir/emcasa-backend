@@ -1,1 +1,38 @@
-{}
+{
+  "mappings": {
+    "_doc": {
+      "properties" : {
+        "everything" : {
+          "type" : "text",
+          "analyzer": "br_analyzer"
+        },
+        "inserted_at" : {
+          "type": "date"
+        },
+        "location" : {
+          "type": "geo_point"
+        }
+      }
+    }
+  },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "br_analyzer": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "stemmer_plural_portugues",
+            "asciifolding"
+          ]
+        }
+      },
+      "filter": {
+        "stemmer_plural_portugues": {
+          "type": "stemmer",
+          "name": "minimal_portuguese"
+        }
+      }
+    }
+  }
+}

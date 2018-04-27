@@ -3,34 +3,55 @@ defimpl Elasticsearch.Document, for: Re.Listing do
 
   def encode(listing) do
     %{
-      type: listing.type,
-      complement: listing.complement,
-      description: listing.description,
-      floor: listing.floor,
-      price: listing.price,
-      property_tax: listing.property_tax,
-      maintenance_fee: listing.maintenance_fee,
-      area: listing.area,
-      rooms: listing.rooms,
-      bathrooms: listing.bathrooms,
-      restrooms: listing.restrooms,
-      garage_spots: listing.garage_spots,
-      matterport_code: listing.matterport_code,
-      suites: listing.suites,
-      dependencies: listing.dependencies,
-      balconies: listing.balconies,
-      has_elevator: listing.has_elevator,
-      is_exclusive: listing.is_exclusive,
-      is_release: listing.is_release,
+      everything: """
+        #{listing.type}
+        #{listing.description}
+        #{listing.floor}
+        #{listing.price && "#{listing.price} valor"}
+        #{listing.property_tax && "#{listing.property_tax} IPTU"}
+        #{listing.maintenance_fee && "#{listing.maintenance_fee} condominio"}
+        #{listing.area}
+        #{map_price(listing)}
+        #{map_property_tax(listing)}
+        #{map_maintenance_fee(listing)}
+        #{map_rooms(listing)}
+        #{map_bathrooms(listing)}
+        #{map_garage_spots(listing)}
+        #{map_restrooms(listing)}
+        #{map_suites(listing)}
+        #{map_dependencies(listing)}
+        #{map_balconies(listing)}
+        #{listing.is_exclusive && "exclusivo"}
+        #{listing.is_release && "lançamento"}
+        #{listing.address.street}
+        #{listing.address.street_number}
+        #{listing.complement}
+        #{listing.address.neighborhood}
+        #{listing.address.city}
+        #{listing.address.state}
+        #{listing.address.postal_code}
+        #{listing.matterport_code}
+      """,
       inserted_at: listing.inserted_at,
-      street: listing.address.street,
-      street_number: listing.address.street_number,
-      neighborhood: listing.address.neighborhood,
-      city: listing.address.city,
-      state: listing.address.state,
-      postal_code: listing.address.postal_code,
-      lat: listing.address.lat,
-      lng: listing.address.lng
+      location: %{
+        lat: listing.address.lat,
+        lon: listing.address.lng
+      }
     }
   end
+
+  defp map_price(%{price: price}), do: price && "#{price} valor"
+  defp map_property_tax(%{property_tax: property_tax}), do: property_tax && "#{property_tax} IPTU"
+  defp map_maintenance_fee(%{maintenance_fee: maintenance_fee}), do: maintenance_fee && "#{maintenance_fee} condominio"
+  defp map_rooms(%{rooms: rooms}), do: if_not_zero(rooms, "quarto", "quartos")
+  defp map_bathrooms(%{bathrooms: bathrooms}), do: if_not_zero(bathrooms, "banheiro", "banheiros")
+  defp map_garage_spots(%{garage_spots: garage_spots}), do: if_not_zero(garage_spots, "garagem", "garagens")
+  defp map_restrooms(%{restrooms: restrooms}), do: if_not_zero(restrooms, "lavabo", "lavabos")
+  defp map_suites(%{suites: suites}), do: if_not_zero(suites, "suíte", "suítes")
+  defp map_dependencies(%{dependencies: dependencies}), do: if_not_zero(dependencies, "dependência", "dependências")
+  defp map_balconies(%{balconies: balconies}), do: if_not_zero(balconies, "varanda", "varandas")
+
+  defp if_not_zero(0, _, _), do: ""
+  defp if_not_zero(1, singular, _plural), do: "1 #{singular}"
+  defp if_not_zero(num, _singular, plural), do: "#{num} #{plural}"
 end

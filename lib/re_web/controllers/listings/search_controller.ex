@@ -8,11 +8,11 @@ defmodule ReWeb.SearchController do
 
   def index(conn, %{"q" => query}, _user) do
     {:ok, results} =
-      Elasticsearch.post(Cluster, "/listings/_doc/_search", %{
+      Elasticsearch.post(Cluster, "/listings/_search", %{
         "query" => %{
           "multi_match" => %{
             "query" => "#{query}",
-            "fields" => ["description", "neighborhood"],
+            "fields" => ["everything"],
             "fuzziness" => "AUTO"
           }
         }
