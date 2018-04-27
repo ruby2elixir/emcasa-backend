@@ -4,33 +4,58 @@
       "properties" : {
         "everything" : {
           "type" : "text",
-          "analyzer": "br_analyzer"
+          "analyzer" : "br_analyzer"
+        },
+        "rooms" :{
+          "type" : "keyword"
+        },
+        "bathrooms" :{
+          "type" : "keyword"
+        },
+        "garage_spots" :{
+          "type" : "keyword"
+        },
+        "restrooms" :{
+          "type" : "keyword"
+        },
+        "suites" :{
+          "type" : "keyword"
+        },
+        "dependencies" :{
+          "type" : "keyword"
+        },
+        "balconies" :{
+          "type" : "keyword"
+        },
+        "address" :{
+          "type" : "text",
+          "analyzer" : "br_analyzer"
         },
         "inserted_at" : {
-          "type": "date"
+          "type" : "date"
         },
         "location" : {
-          "type": "geo_point"
+          "type" : "geo_point"
         }
       }
     }
   },
-  "settings": {
-    "analysis": {
-      "analyzer": {
-        "br_analyzer": {
-          "tokenizer": "standard",
-          "filter": [
+  "settings" : {
+    "analysis" : {
+      "analyzer" : {
+        "br_analyzer" : {
+          "tokenizer" : "standard",
+          "filter" : [
             "lowercase",
             "stemmer_plural_portugues",
             "asciifolding"
           ]
         }
       },
-      "filter": {
-        "stemmer_plural_portugues": {
-          "type": "stemmer",
-          "name": "minimal_portuguese"
+      "filter" : {
+        "stemmer_plural_portugues" : {
+          "type" : "stemmer",
+          "name" : "minimal_portuguese"
         }
       }
     }
