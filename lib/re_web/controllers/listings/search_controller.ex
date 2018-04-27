@@ -15,7 +15,7 @@ defmodule ReWeb.SearchController do
     "suites^2",
     "dependencies^2",
     "balconies^2",
-    "address^2""
+    "address^2"
   ]
 
   def index(conn, %{"q" => query}, _user) do
