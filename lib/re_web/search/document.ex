@@ -1,5 +1,6 @@
 defimpl Elasticsearch.Document, for: Re.Listing do
   def id(listing), do: listing.id
+
   def encode(listing) do
     %{
       type: listing.type,

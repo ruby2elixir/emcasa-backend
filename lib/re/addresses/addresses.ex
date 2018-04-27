@@ -8,49 +8,38 @@ defmodule Re.Addresses do
     Repo
   }
 
-  def find_or_create(address_params) do
-    case find_unique(address_params) do
-      nil ->
-        insert(address_params)
-
-      address ->
-        address
-        |> Address.changeset(address_params)
-        |> Repo.update()
+  def get(params) do
+    case Repo.get_by(
+           Address,
+           street: params["street"] || "",
+           postal_code: params["postal_code"] || "",
+           street_number: params["street_number"] || ""
+         ) do
+      nil -> {:error, :not_found}
+      address -> {:ok, address}
     end
   end
 
-  defp find_unique(address_params) do
-    Repo.get_by(
-      Address,
-      street: address_params["street"] || "",
-      postal_code: address_params["postal_code"] || "",
-      street_number: address_params["street_number"] || ""
-    )
-  end
+  def insert_or_update(params) do
+    changeset =
+      params
+      |> get()
+      |> build_address(params)
+      |> Address.changeset(params)
 
-  def update(listing, address_params) do
-    address =
-      listing
-      |> Repo.preload(:address)
-      |> Map.get(:address)
-
-    if changed?(address, address_params) do
-      find_or_create(address_params)
-    else
-      {:ok, address}
+    case Repo.insert_or_update(changeset) do
+      {:ok, address} -> {:ok, address, changeset}
+      error -> error
     end
   end
 
-  defp changed?(address, address_params) do
-    %{changes: changes} = Address.changeset(address, address_params)
-
-    changes != %{}
+  defp build_address({:error, :not_found}, %{
+         "street" => street,
+         "postal_code" => postal_code,
+         "street_number" => street_number
+       }) do
+    %Address{street: street, postal_code: postal_code, street_number: street_number}
   end
 
-  defp insert(address_params) do
-    %Address{}
-    |> Address.changeset(address_params)
-    |> Repo.insert()
-  end
+  defp build_address({:ok, address}, _), do: address
 end

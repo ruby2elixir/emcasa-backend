@@ -47,7 +47,6 @@ config :re,
   from: System.get_env("ADMIN_EMAIL"),
   frontend_url: System.get_env("FRONTEND_URL")
 
-
 config :re, ReWeb.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
   username: System.get_env("ELASTICSEARCH_KEY"),

@@ -36,7 +36,7 @@ defmodule ReWeb.ListingController do
 
   def create(conn, %{"listing" => listing_params, "address" => address_params} = params, user) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
-         {:ok, address} <- Addresses.find_or_create(address_params),
+         {:ok, address, _changeset} <- Addresses.insert_or_update(address_params),
          {:ok, listing} <- Listings.insert(listing_params, address, user) do
       send_email_if_not_admin(listing, user)
 
@@ -64,9 +64,10 @@ defmodule ReWeb.ListingController do
   def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, user) do
     with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, user, listing),
-         {:ok, address} <- Addresses.update(listing, address_params),
-         {:ok, listing, changeset} <- Listings.update(listing, listing_params, address, user) do
-      send_email_if_not_admin(listing, user, changeset)
+         {:ok, address, address_changeset} <- Addresses.insert_or_update(address_params),
+         {:ok, listing, listing_changeset} <-
+           Listings.update(listing, listing_params, address, user) do
+      send_email_if_not_admin(listing, user, listing_changeset, address_changeset)
 
       render(conn, "edit.json", listing: listing)
     end
@@ -95,9 +96,15 @@ defmodule ReWeb.ListingController do
 
   defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing
 
-  def send_email_if_not_admin(listing, %{role: "user"} = user, changeset) do
-    @emails.listing_updated(user, listing, changeset)
+  def send_email_if_not_admin(
+        listing,
+        %{role: "user"} = user,
+        listing_changeset,
+        address_changeset
+      ) do
+    changes = Enum.concat(listing_changeset.changes, address_changeset.changes)
+    @emails.listing_updated(user, listing, changes)
   end
 
-  def send_email_if_not_admin(_, %{role: "admin"}, _), do: :nothing
+  def send_email_if_not_admin(_, %{role: "admin"}, _, _), do: :nothing
 end
