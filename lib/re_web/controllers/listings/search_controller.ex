@@ -16,7 +16,7 @@ defmodule ReWeb.SearchController do
             "fuzziness" => "AUTO"
           }
         }
-      }) |> IO.inspect
+      })
 
     render(conn, ReWeb.SearchView, "search.json", results: results)
   end

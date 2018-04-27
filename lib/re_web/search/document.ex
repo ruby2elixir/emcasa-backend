@@ -17,7 +17,9 @@ defimpl Elasticsearch.Document, for: Re.Listing do
         #{listing.garage_spots && if_not_zero(listing.garage_spots, "gargem", "garagens")}
         #{listing.matterport_code}
         #{listing.suites && if_not_zero(listing.suites, "suíte", "suítes")}
-        #{listing.dependencies && if_not_zero(listing.dependencies, "dependência", "dependências")}
+        #{
+        listing.dependencies && if_not_zero(listing.dependencies, "dependência", "dependências")
+      }
         #{listing.balconies && if_not_zero(listing.balconies, "varanda", "varandas")}
         #{listing.has_elevator && "elevador"}
         #{listing.is_exclusive && "exclusivo"}
