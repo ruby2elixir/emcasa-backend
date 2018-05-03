@@ -90,5 +90,37 @@ defmodule ReWeb.Schema do
           message.receiver_id
         end
     end
+
+    @desc "Subscribe to listing activation"
+    field :listing_activated, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          %{role: "admin"} -> {:ok, topic: "listing_activated"}
+          %{role: "user"} -> {:error, :unauthorized}
+          _ -> {:error, :unauthenticated}
+        end
+      end)
+
+      trigger :activate_listing,
+        topic: fn _ ->
+          "listing_activated"
+        end
+    end
+
+    @desc "Subscribe to listing deactivation"
+    field :listing_deactivated, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          %{role: "admin"} -> {:ok, topic: "listing_deactivated"}
+          %{role: "user"} -> {:error, :unauthorized}
+          _ -> {:error, :unauthenticated}
+        end
+      end)
+
+      trigger :deactivate_listing,
+        topic: fn _ ->
+          "listing_deactivated"
+        end
+    end
   end
 end
