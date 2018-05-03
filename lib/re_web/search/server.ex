@@ -17,7 +17,7 @@ defmodule ReWeb.Search.Server do
     settings: "priv/elasticsearch/listings.json",
     store: Store,
     sources: [Re.Listing]
-    }
+  }
 
   @type action :: :build_index | :cleanup_index | :put_document | :delete_document
 
@@ -50,8 +50,13 @@ defmodule ReWeb.Search.Server do
 
   def handle_cast({:put_document, listing}, state) do
     case Elasticsearch.put_document(Cluster, listing, @index) do
-      {:ok, _doc} -> Logger.debug("Listing #{listing.id} added to index")
-      error -> Logger.error("Adding listing #{listing.id} to the index failed. Reason: #{inspect(error)}")
+      {:ok, _doc} ->
+        Logger.debug("Listing #{listing.id} added to index")
+
+      error ->
+        Logger.error(
+          "Adding listing #{listing.id} to the index failed. Reason: #{inspect(error)}"
+        )
     end
 
     {:noreply, state}
@@ -59,9 +64,15 @@ defmodule ReWeb.Search.Server do
 
   def handle_cast({:delete_document, listing}, state) do
     case Elasticsearch.delete_document(Cluster, listing, @index) do
-      {:ok, _doc} -> Logger.debug("Listing #{listing.id} removed from index")
-      error -> Logger.error("Removing listing #{listing.id} from the index failed. Reason: #{inspect(error)}")
+      {:ok, _doc} ->
+        Logger.debug("Listing #{listing.id} removed from index")
+
+      error ->
+        Logger.error(
+          "Removing listing #{listing.id} from the index failed. Reason: #{inspect(error)}"
+        )
     end
+
     {:noreply, state}
   end
 end
