@@ -11,9 +11,13 @@ defmodule ReWeb.Search.Server do
     Search.Store
   }
 
-  @mappings "priv/elasticsearch/listings.json"
-
   @index "listings"
+
+  @settings %{
+    settings: "priv/elasticsearch/listings.json",
+    store: Store,
+    sources: [Re.Listing]
+    }
 
   @type action :: :build_index | :cleanup_index | :put_document | :delete_document
 
@@ -27,7 +31,7 @@ defmodule ReWeb.Search.Server do
 
   @spec handle_cast(action | {action, Listing.t()}, any) :: {:noreply, any}
   def handle_cast(:build_index, state) do
-    case Elasticsearch.Index.hot_swap(Cluster, @index, @mappings, Store, [Re.Listing]) do
+    case Elasticsearch.Index.hot_swap(Cluster, @index, @settings) do
       :ok -> Logger.debug("Listings index created.")
       error -> Logger.error("Listings index creation failed. Reason: #{inspect(error)}")
     end
