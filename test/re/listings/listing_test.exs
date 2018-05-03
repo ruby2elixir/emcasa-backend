@@ -166,20 +166,4 @@ defmodule Re.ListingTest do
                 [validation: :number, number: 100_000_000]}
     end
   end
-
-  describe "deactivate_changeset/3" do
-    test "should deactivate listing" do
-      listing = insert(:listing, is_active: true)
-      changeset = Listing.deactivate_changeset(listing, %{}, "admin")
-      assert changeset.valid?
-      refute Map.get(changeset.changes, :is_active)
-    end
-
-    test "should keep listing deactivated" do
-      listing = insert(:listing, is_active: false)
-      changeset = Listing.deactivate_changeset(listing, %{}, "admin")
-      assert changeset.valid?
-      assert changeset.changes == %{}
-    end
-  end
 end

@@ -69,7 +69,7 @@ defmodule Re.Listing do
   @admin_required ~w(type description price rooms bathrooms
                      area garage_spots score address_id user_id
                      suites dependencies has_elevator)a
-  @admin_optional ~w(complement floor matterport_code is_active is_exclusive
+  @admin_optional ~w(complement floor matterport_code is_exclusive
                      property_tax maintenance_fee balconies restrooms is_release)a
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
@@ -83,10 +83,7 @@ defmodule Re.Listing do
     )
     |> validate_number(:score, greater_than: 0, less_than: 5)
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
-    |> change(is_active: true)
   end
-
-  def deactivate_changeset(struct, _params, "admin"), do: change(struct, is_active: false)
 
   @more_than_zero_attributes ~w(property_tax maintenance_fee
                                 bathrooms garage_spots suites
