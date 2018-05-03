@@ -51,7 +51,7 @@ defmodule ReWeb.Search.Server do
   def handle_cast({:put_document, listing}, state) do
     case Elasticsearch.put_document(Cluster, listing, @index) do
       {:ok, _doc} ->
-        Logger.debug("Listing #{listing.id} added to index")
+        Logger.debug(fn -> "Listing #{listing.id} added to index" end)
 
       error ->
         Logger.error(
@@ -65,7 +65,7 @@ defmodule ReWeb.Search.Server do
   def handle_cast({:delete_document, listing}, state) do
     case Elasticsearch.delete_document(Cluster, listing, @index) do
       {:ok, _doc} ->
-        Logger.debug("Listing #{listing.id} removed from index")
+        Logger.debug(fn -> "Listing #{listing.id} removed from index" end)
 
       error ->
         Logger.error(

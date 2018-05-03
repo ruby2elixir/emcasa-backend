@@ -1,4 +1,7 @@
 defmodule ReWeb.Search do
+  @moduledoc """
+  Module to perform operations with elasticsearch
+  """
   @spec build_index() :: GenServer.cast()
   def build_index(), do: GenServer.cast(__MODULE__.Server, :build_index)
 

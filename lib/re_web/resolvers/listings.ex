@@ -5,7 +5,7 @@ defmodule ReWeb.Resolvers.Listings do
   alias Re.Listings
   alias ReWeb.Search
 
-  @elasticsearch Application.get_env(:re, :elasticsearch, ReWeb.Search)
+  @elasticsearch Application.get_env(:re, :elasticsearch, Search)
 
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
