@@ -39,22 +39,23 @@ defmodule ReWeb.Search.Server do
 
   @spec init(term) :: {:ok, term}
   def init(args) do
-    {:ok, %{"subscribed" => listing_activated_topic}} =
-      Absinthe.run(
-        "subscription { listingActivated { id } }",
-        Schema,
-        context: %{pubsub: PubSub, current_user: Repo.get_by(User, email: @admin)}
-      )
+    case Absinthe.run(
+           "subscription { listingActivated { id } }",
+           Schema,
+           context: %{pubsub: PubSub, current_user: Repo.get_by(User, email: @admin)}
+         ) do
+      {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
+      _ -> :nothing
+    end
 
-    {:ok, %{"subscribed" => listing_deactivated_topic}} =
-      Absinthe.run(
-        "subscription { listingDeactivated { id } }",
-        Schema,
-        context: %{pubsub: PubSub, current_user: Repo.get_by(User, email: @admin)}
-      )
-
-    PubSub.subscribe(listing_activated_topic)
-    PubSub.subscribe(listing_deactivated_topic)
+    case Absinthe.run(
+           "subscription { listingDeactivated { id } }",
+           Schema,
+           context: %{pubsub: PubSub, current_user: Repo.get_by(User, email: @admin)}
+         ) do
+      {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
+      _ -> :nothing
+    end
 
     {:ok, args}
   end
