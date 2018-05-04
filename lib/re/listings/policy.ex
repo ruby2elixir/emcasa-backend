@@ -23,6 +23,8 @@ defmodule Re.Listings.Policy do
   def authorize(:favorite_listing, %User{}, _), do: :ok
   def authorize(:unfavorite_listing, %User{}, _), do: :ok
 
+  def authorize(:per_user, %User{}, _), do: :ok
+
   def authorize(_, nil, _), do: {:error, :unauthorized}
 
   def authorize(_, _, _), do: {:error, :forbidden}

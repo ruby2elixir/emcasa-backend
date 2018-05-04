@@ -6,15 +6,18 @@ defmodule ReWeb.Resolvers.Listings do
 
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
-         {:ok, listing} <- Listings.get_preloaded(id) do
-      Listings.activate(listing)
-    end
+         {:ok, listing} <- Listings.get_preloaded(id),
+         do: Listings.activate(listing)
   end
 
   def deactivate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :deactivate_listing, current_user, %{}),
-         {:ok, listing} <- Listings.get(id) do
-      Listings.deactivate(listing)
-    end
+         {:ok, listing} <- Listings.get(id),
+         do: Listings.deactivate(listing)
+  end
+
+  def per_user(_, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Listings, :per_user, current_user, %{}),
+         do: {:ok, Listings.per_user(current_user)}
   end
 end
