@@ -182,7 +182,6 @@ defmodule Re.ListingsTest do
     end
   end
 
-
   describe "activate/1" do
     test "should set is_active to true" do
       listing = insert(:listing, is_active: false)
