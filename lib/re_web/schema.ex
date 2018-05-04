@@ -95,9 +95,8 @@ defmodule ReWeb.Schema do
     field :listing_activated, :listing do
       config(fn _args, %{context: %{current_user: current_user}} ->
         case current_user do
-          %{role: "admin"} -> {:ok, topic: "listing_activated"}
-          %{role: "user"} -> {:error, :unauthorized}
-          _ -> {:error, :unauthenticated}
+          :system -> {:ok, topic: "listing_activated"}
+          _ -> {:error, :unauthorized}
         end
       end)
 
@@ -111,9 +110,8 @@ defmodule ReWeb.Schema do
     field :listing_deactivated, :listing do
       config(fn _args, %{context: %{current_user: current_user}} ->
         case current_user do
-          %{role: "admin"} -> {:ok, topic: "listing_deactivated"}
-          %{role: "user"} -> {:error, :unauthorized}
-          _ -> {:error, :unauthenticated}
+          :system -> {:ok, topic: "listing_deactivated"}
+          _ -> {:error, :unauthorized}
         end
       end)
 

@@ -6,11 +6,7 @@ defmodule ReWeb.Search.Server do
 
   require Logger
 
-  alias Re.{
-    Listings,
-    User,
-    Repo
-  }
+  alias Re.Listings
 
   alias ReWeb.{
     Schema,
@@ -19,8 +15,6 @@ defmodule ReWeb.Search.Server do
   }
 
   alias ReWeb.Endpoint, as: PubSub
-
-  @admin Application.get_env(:re, :from)
 
   @index "listings"
 
@@ -42,7 +36,7 @@ defmodule ReWeb.Search.Server do
     case Absinthe.run(
            "subscription { listingActivated { id } }",
            Schema,
-           context: %{pubsub: PubSub, current_user: Repo.get_by(User, email: @admin)}
+           context: %{pubsub: PubSub, current_user: :system}
          ) do
       {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
       _ -> :nothing
@@ -51,7 +45,7 @@ defmodule ReWeb.Search.Server do
     case Absinthe.run(
            "subscription { listingDeactivated { id } }",
            Schema,
-           context: %{pubsub: PubSub, current_user: Repo.get_by(User, email: @admin)}
+           context: %{pubsub: PubSub, current_user: :system}
          ) do
       {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
       _ -> :nothing
