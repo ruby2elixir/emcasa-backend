@@ -38,9 +38,9 @@ defmodule ReWeb.Notifications.UserEmail do
         <br> Inserido em (UTC): #{inserted_at}"
     )
     |> text_body(
-      "Nome: #{name}\n Telefone: #{phone}\n Id da listagem: #{listing_id}<br> Mensagem: #{
-        message
-      } <br> #{interest_type && interest_type.name}
+      "Nome: #{name}\n Telefone: #{phone}\n Id da listagem: #{listing_id}<br> Mensagem: #{message} <br> #{
+        interest_type && interest_type.name
+      }
         <br> Inserido em (UTC): #{inserted_at}"
     )
   end

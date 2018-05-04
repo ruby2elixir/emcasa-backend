@@ -357,4 +357,56 @@ defmodule ReWeb.GraphQL.ListingsTest do
       assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "userListings" do
+    test "admin should see its own listings users", %{admin_conn: conn, admin_user: user} do
+      listing = insert(:listing, user: user)
+
+      query = """
+        {
+          userListings {
+            id
+          }
+        }
+      """
+
+      listing_id = to_string(listing.id)
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userListings"))
+
+      assert %{"userListings" => [%{"id" => ^listing_id}]} = json_response(conn, 200)["data"]
+    end
+
+    test "user should see its own listings users", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing, user: user)
+
+      query = """
+        {
+          userListings {
+            id
+          }
+        }
+      """
+
+      listing_id = to_string(listing.id)
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userListings"))
+
+      assert %{"userListings" => [%{"id" => ^listing_id}]} = json_response(conn, 200)["data"]
+    end
+
+    test "anonymous should not see own listings", %{unauthenticated_conn: conn} do
+      query = """
+        {
+          userListings {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userListings"))
+
+      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+    end
+  end
 end

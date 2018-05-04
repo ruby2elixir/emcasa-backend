@@ -92,6 +92,13 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
+  def per_user(user) do
+    Listing
+    |> Queries.per_user(user.id)
+    |> Queries.preload()
+    |> Repo.all()
+  end
+
   defp do_get(query, id) do
     case Repo.get(query, id) do
       nil -> {:error, :not_found}

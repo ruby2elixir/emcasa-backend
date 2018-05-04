@@ -26,6 +26,11 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Messages.get/2
     end
+
+    @desc "List user listings"
+    field :user_listings, list_of(:listing) do
+      resolve &Resolvers.Listings.per_user/2
+    end
   end
 
   mutation do
