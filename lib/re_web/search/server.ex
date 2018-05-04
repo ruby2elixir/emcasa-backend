@@ -6,10 +6,21 @@ defmodule ReWeb.Search.Server do
 
   require Logger
 
+  alias Re.{
+    Listings,
+    User,
+    Repo
+  }
+
   alias ReWeb.{
+    Schema,
     Search.Cluster,
     Search.Store
   }
+
+  alias ReWeb.Endpoint, as: PubSub
+
+  @admin Application.get_env(:re, :from)
 
   @index "listings"
 
@@ -19,7 +30,7 @@ defmodule ReWeb.Search.Server do
     sources: [Re.Listing]
   }
 
-  @type action :: :build_index | :cleanup_index | :put_document | :delete_document
+  @type action :: :build_index | :cleanup_index
 
   @spec start_link :: GenServer.start_link()
   def start_link do
@@ -27,9 +38,28 @@ defmodule ReWeb.Search.Server do
   end
 
   @spec init(term) :: {:ok, term}
-  def init(args), do: {:ok, args}
+  def init(args) do
+    {:ok, %{"subscribed" => listing_activated_topic}} =
+      Absinthe.run(
+        "subscription { listingActivated { id } }",
+        Schema,
+        context: %{pubsub: PubSub, current_user: Repo.get_by(User, email: @admin)}
+      )
 
-  @spec handle_cast(action | {action, Listing.t()}, any) :: {:noreply, any}
+    {:ok, %{"subscribed" => listing_deactivated_topic}} =
+      Absinthe.run(
+        "subscription { listingDeactivated { id } }",
+        Schema,
+        context: %{pubsub: PubSub, current_user: Repo.get_by(User, email: @admin)}
+      )
+
+    PubSub.subscribe(listing_activated_topic)
+    PubSub.subscribe(listing_deactivated_topic)
+
+    {:ok, args}
+  end
+
+  @spec handle_cast(action, any) :: {:noreply, any}
   def handle_cast(:build_index, state) do
     case Elasticsearch.Index.hot_swap(Cluster, @index, @settings) do
       :ok -> Logger.debug("Listings index created.")
@@ -48,7 +78,15 @@ defmodule ReWeb.Search.Server do
     {:noreply, state}
   end
 
-  def handle_cast({:put_document, listing}, state) do
+  def handle_info(%Phoenix.Socket.Broadcast{payload: %{result: %{data: data}}}, state) do
+    handle_data(data)
+
+    {:noreply, state}
+  end
+
+  defp handle_data(%{"listingActivated" => %{"id" => listing_id}}) do
+    {:ok, listing} = Listings.get_preloaded(listing_id)
+
     case Elasticsearch.put_document(Cluster, listing, @index) do
       {:ok, _doc} ->
         Logger.debug(fn -> "Listing #{listing.id} added to index" end)
@@ -58,11 +96,11 @@ defmodule ReWeb.Search.Server do
           "Adding listing #{listing.id} to the index failed. Reason: #{inspect(error)}"
         )
     end
-
-    {:noreply, state}
   end
 
-  def handle_cast({:delete_document, listing}, state) do
+  defp handle_data(%{"listingDeactivated" => %{"id" => listing_id}}) do
+    {:ok, listing} = Listings.get_preloaded(listing_id)
+
     case Elasticsearch.delete_document(Cluster, listing, @index) do
       {:ok, _doc} ->
         Logger.debug(fn -> "Listing #{listing.id} removed from index" end)
@@ -72,7 +110,5 @@ defmodule ReWeb.Search.Server do
           "Removing listing #{listing.id} from the index failed. Reason: #{inspect(error)}"
         )
     end
-
-    {:noreply, state}
   end
 end
