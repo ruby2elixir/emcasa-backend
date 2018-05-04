@@ -248,4 +248,58 @@ defmodule ReWeb.ImageControllerTest do
       assert json_response(conn, 403)
     end
   end
+
+  describe "zip" do
+    test "download images for admin", %{admin_conn: conn} do
+      listing =
+        insert(
+          :listing,
+          images: [
+            build(:image, filename: "test1.jpg"),
+            build(:image, filename: "test2.jpg"),
+            build(:image, filename: "test3.jpg")
+          ]
+        )
+
+      conn = get(conn, listing_image_path(conn, :zip, listing), id: listing.id)
+
+      assert response(conn, 200)
+      assert File.read!("./temp/listing-#{listing.id}/test1.jpg") == "test1.jpg"
+      assert File.read!("./temp/listing-#{listing.id}/test2.jpg") == "test2.jpg"
+      assert File.read!("./temp/listing-#{listing.id}/test3.jpg") == "test3.jpg"
+    end
+
+    test "do not download images for authenticated users", %{user_conn: conn, user_user: user} do
+      listing =
+        insert(
+          :listing,
+          images: [
+            build(:image, filename: "test1.jpg"),
+            build(:image, filename: "test2.jpg"),
+            build(:image, filename: "test3.jpg")
+          ],
+          user: user
+        )
+
+      conn = get(conn, listing_image_path(conn, :zip, listing), id: listing.id)
+
+      assert response(conn, 403)
+    end
+
+    test "do not download images for unauthenticated users", %{unauthenticated_conn: conn} do
+      listing =
+        insert(
+          :listing,
+          images: [
+            build(:image, filename: "test1.jpg"),
+            build(:image, filename: "test2.jpg"),
+            build(:image, filename: "test3.jpg")
+          ]
+        )
+
+      conn = get(conn, listing_image_path(conn, :zip, listing), id: listing.id)
+
+      assert response(conn, 401)
+    end
+  end
 end

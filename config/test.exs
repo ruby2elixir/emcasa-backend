@@ -38,3 +38,4 @@ config :re, ReWeb.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Test
 config :re, :visualizations, Re.TestVisualizations
 config :re, :emails, ReWeb.TestEmails
 config :re, :elasticsearch, ReWeb.TestSearch
+config :re, :http, Re.TestHTTP

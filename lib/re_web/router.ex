@@ -21,6 +21,7 @@ defmodule ReWeb.Router do
       resources("/related", RelatedController, only: [:index])
 
       put("/images_orders", ImageController, :order)
+      get("/download_images", ImageController, :zip)
     end
 
     resources("/featured_listings", FeaturedController, only: [:index])
