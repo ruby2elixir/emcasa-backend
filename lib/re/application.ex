@@ -8,7 +8,7 @@ defmodule Re.Application do
   alias ReWeb.{
     Endpoint,
     Notifications.Emails,
-    Search.Cluster
+    Search
   }
 
   alias Re.Stats.Visualizations
@@ -22,7 +22,8 @@ defmodule Re.Application do
       supervisor(Absinthe.Subscription, [ReWeb.Endpoint]),
       worker(Visualizations, []),
       worker(Emails.Server, []),
-      Cluster
+      worker(Search.Server, []),
+      Search.Cluster
       # worker(Elasticsearch.Executable, [
       #   "Elasticsearch",
       #   "./elasticsearch/bin/elasticsearch",

@@ -182,6 +182,15 @@ defmodule Re.ListingsTest do
     end
   end
 
+  describe "activate/1" do
+    test "should set is_active to true" do
+      listing = insert(:listing, is_active: false)
+
+      {:ok, listing} = Listings.activate(listing)
+      assert listing.is_active
+    end
+  end
+
   describe "insert/2" do
     @insert_listing_params %{
       "type" => "Apartamento",
@@ -206,16 +215,16 @@ defmodule Re.ListingsTest do
       assert retrieved_listing.user_id == user.id
     end
 
-    test "should activate for admin user" do
+    test "should insert inactive for admin user" do
       address = insert(:address)
       user = insert(:user, role: "admin")
 
       assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address, user)
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
-      assert retrieved_listing.is_active
+      refute retrieved_listing.is_active
     end
 
-    test "should not activate for normal user" do
+    test "should insert inactive for normal user" do
       address = insert(:address)
       user = insert(:user, role: "user")
 

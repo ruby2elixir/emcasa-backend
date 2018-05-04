@@ -47,15 +47,15 @@ config :email_checker, validations: [EmailChecker.Check.Format]
 
 config :re, ReWeb.Search.Cluster,
   url: "http://localhost:9200",
-  bulk_page_size: 5000,
-  bulk_wait_interval: 15_000,
   api: Elasticsearch.API.HTTP,
   json_library: Poison,
   indexes: %{
     listings: %{
       settings: "priv/elasticsearch/listings.json",
       store: ReWeb.Search.Store,
-      sources: [Re.Listing]
+      sources: [Re.Listing],
+      bulk_page_size: 5000,
+      bulk_wait_interval: 15_000
     }
   }
 
