@@ -251,10 +251,17 @@ defmodule ReWeb.ImageControllerTest do
 
   describe "zip" do
     test "download images for admin", %{admin_conn: conn} do
-      listing = insert(:listing, images: [build(:image, filename: "test1.jpg"), build(:image, filename: "test2.jpg"), build(:image, filename: "test3.jpg")])
+      listing =
+        insert(
+          :listing,
+          images: [
+            build(:image, filename: "test1.jpg"),
+            build(:image, filename: "test2.jpg"),
+            build(:image, filename: "test3.jpg")
+          ]
+        )
 
-      conn =
-        get(conn, listing_image_path(conn, :zip, listing), id: listing.id)
+      conn = get(conn, listing_image_path(conn, :zip, listing), id: listing.id)
 
       assert response(conn, 200)
       assert File.read!("./temp/listing-#{listing.id}/test1.jpg") == "test1.jpg"

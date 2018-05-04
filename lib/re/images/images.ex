@@ -78,7 +78,9 @@ defmodule Re.Images do
 
   defp download_image(%{filename: filename}, dir_name) do
     Task.async(fn ->
-      {:ok, %{body: body}} = @http.get("https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/#{filename}")
+      {:ok, %{body: body}} =
+        @http.get("https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/#{filename}")
+
       :ok = File.write(dir_name <> "#{filename}", body)
       filename
     end)
