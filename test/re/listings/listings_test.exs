@@ -206,7 +206,7 @@ defmodule Re.ListingsTest do
       assert retrieved_listing.user_id == user.id
     end
 
-    test "should insert inactivate for admin user" do
+    test "should insert inactive for admin user" do
       address = insert(:address)
       user = insert(:user, role: "admin")
 
@@ -215,7 +215,7 @@ defmodule Re.ListingsTest do
       refute retrieved_listing.is_active
     end
 
-    test "should insert inactivate for normal user" do
+    test "should insert inactive for normal user" do
       address = insert(:address)
       user = insert(:user, role: "user")
 
