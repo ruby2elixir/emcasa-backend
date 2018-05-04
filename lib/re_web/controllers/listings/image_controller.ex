@@ -11,7 +11,7 @@ defmodule ReWeb.ImageController do
 
   plug(
     Guardian.Plug.EnsureAuthenticated
-    when action in [:create, :delete, :order]
+    when action in [:create, :delete, :order, :zip]
   )
 
   def index(conn, %{"listing_id" => listing_id}, user) do
@@ -44,5 +44,12 @@ defmodule ReWeb.ImageController do
          :ok <- Bodyguard.permit(Listings, :order_listing_images, user, listing),
          :ok <- Images.update_per_listing(listing, images_params),
          do: send_resp(conn, :no_content, "")
+  end
+
+  def zip(conn, %{"listing_id" => id}, user) do
+    with {:ok, listing} <- Listings.get_preloaded(id),
+         :ok <- Bodyguard.permit(Images, :zip, user, listing),
+         {:ok, filename} <- Images.zip(listing),
+         do: send_file(conn, 200, filename)
   end
 end

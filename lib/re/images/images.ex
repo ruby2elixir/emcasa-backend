@@ -12,6 +12,8 @@ defmodule Re.Images do
 
   alias Ecto.Changeset
 
+  @http Application.get_env(:re, :http, HTTPoison)
+
   defdelegate authorize(action, user, params), to: Re.Images.Policy
 
   def all(listing_id) do
@@ -60,5 +62,32 @@ defmodule Re.Images do
     image
     |> Image.deactivate_changeset(%{is_active: false})
     |> Repo.update()
+  end
+
+  def zip(listing) do
+    dir_name = "./temp/listing-#{listing.id}/"
+
+    File.mkdir_p(dir_name)
+
+    listing
+    |> Map.get(:images)
+    |> Enum.map(&download_image(&1, dir_name))
+    |> Enum.map(&wait_download(&1))
+    |> create_zip(dir_name)
+  end
+
+  defp download_image(%{filename: filename}, dir_name) do
+    Task.async(fn ->
+      {:ok, %{body: body}} = @http.get("https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/#{filename}")
+      :ok = File.write(dir_name <> "#{filename}", body)
+      filename
+    end)
+  end
+
+  defp wait_download(image), do: Task.await(image)
+
+  defp create_zip(files, dir_name) do
+    charlist_files = Enum.map(files, &String.to_charlist/1)
+    :zip.create(dir_name <> "images.zip", charlist_files, cwd: dir_name)
   end
 end
