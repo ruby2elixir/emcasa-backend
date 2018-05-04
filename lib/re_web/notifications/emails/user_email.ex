@@ -21,7 +21,6 @@ defmodule ReWeb.Notifications.UserEmail do
 
   def notify_interest(%Interest{
         name: name,
-        email: email,
         phone: phone,
         message: message,
         listing_id: listing_id,
@@ -33,13 +32,13 @@ defmodule ReWeb.Notifications.UserEmail do
     |> from(@from)
     |> subject("Novo interesse em listagem EmCasa")
     |> html_body(
-      "Nome: #{name}<br> Email: #{email}<br> Telefone: #{phone}<br> Id da listagem: #{listing_id}<br> Mensagem: #{
+      "Nome: #{name}<br> Telefone: #{phone}<br> Id da listagem: #{listing_id}<br> Mensagem: #{
         message
       } <br> #{interest_type && interest_type.name}
         <br> Inserido em (UTC): #{inserted_at}"
     )
     |> text_body(
-      "Nome: #{name}\n Email: #{email}\n Telefone: #{phone}\n Id da listagem: #{listing_id}<br> Mensagem: #{
+      "Nome: #{name}\n Telefone: #{phone}\n Id da listagem: #{listing_id}<br> Mensagem: #{
         message
       } <br> #{interest_type && interest_type.name}
         <br> Inserido em (UTC): #{inserted_at}"
@@ -77,17 +76,15 @@ defmodule ReWeb.Notifications.UserEmail do
     |> text_body("Você se cadastrou no EmCasa.")
   end
 
-  def user_registered(%User{name: name, email: email}) do
+  def user_registered(%User{name: name}) do
     new()
     |> to(@to)
     |> from(@admin_email)
     |> subject("Novo usuário cadastrado")
     |> html_body("Um novo usuário realizou cadastro no EmCasa.<br>
-      Nome: #{name}<br>
-      Email: #{email}")
+      Nome: #{name}")
     |> text_body("Um novo usuário realizou cadastro no EmCasa.
-      Nome: #{name}
-      Email: #{email}")
+      Nome: #{name}")
   end
 
   def reset_password(%User{name: name, email: email, reset_token: token}) do
@@ -132,7 +129,7 @@ defmodule ReWeb.Notifications.UserEmail do
                   Equipe EmCasa")
   end
 
-  def listing_added_admin(%User{name: name, email: email}, %Listing{} = listing) do
+  def listing_added_admin(%User{name: name}, %Listing{} = listing) do
     listing_url = build_url(@listing_path, to_string(listing.id))
 
     new()
@@ -140,14 +137,12 @@ defmodule ReWeb.Notifications.UserEmail do
     |> from(@admin_email)
     |> subject("Um usuário cadastrou um imóvel")
     |> html_body("Nome: #{name}<br>
-                  Email: #{email}<br>
                   <a href=\"#{listing_url}\">Imóvel</a><br>")
     |> text_body("Nome: #{name}
-                  Email: #{email}
                   <a href=\"#{listing_url}\">Imóvel</a>")
   end
 
-  def listing_updated(%User{name: name, email: email}, %Listing{} = listing, changes) do
+  def listing_updated(%User{name: name}, %Listing{} = listing, changes) do
     listing_url = build_url(@listing_path, to_string(listing.id))
     {changes_html, changes_txt} = build_changes(changes)
 
@@ -156,11 +151,9 @@ defmodule ReWeb.Notifications.UserEmail do
     |> from(@admin_email)
     |> subject("Um usuário modificou o imóvel")
     |> html_body("Nome: #{name}<br>
-                  Email: #{email}<br>
                   <a href=\"#{listing_url}\">Imóvel</a><br>
                   #{changes_html}")
     |> text_body("Nome: #{name}
-                  Email: #{email}
                   <a href=\"#{listing_url}\">Imóvel</a>
                   #{changes_txt}")
   end
