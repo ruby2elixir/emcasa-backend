@@ -2,7 +2,10 @@ defmodule ReWeb.Resolvers.Users do
   @moduledoc """
   Resolver module for users queries and mutations
   """
-  alias Re.Accounts.Users
+  alias Re.Accounts.{
+    Auth,
+    Users
+  }
 
   def favorited(_args, %{context: %{current_user: current_user}}) do
     case Bodyguard.permit(Users, :favorited_listings, current_user, %{}) do
@@ -27,5 +30,15 @@ defmodule ReWeb.Resolvers.Users do
     with {:ok, user} <- Users.get(id),
          :ok <- Bodyguard.permit(Users, :edit_profile, current_user, user),
          do: Users.change_email(user, email)
+  end
+
+  def change_password(
+        %{id: id, new_password: new_password, current_password: current_password},
+        %{context: %{current_user: current_user}}
+      ) do
+    with {:ok, user} <- Users.get(id),
+         :ok <- Bodyguard.permit(Users, :change_password, current_user, user),
+         :ok <- Auth.check_password(current_password, user),
+         do: Users.edit_password(user, new_password)
   end
 end

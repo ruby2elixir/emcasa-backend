@@ -102,6 +102,15 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Users.change_email/2
     end
+
+    @desc "Change password"
+    field :change_password, type: :user do
+      arg :id, non_null(:id)
+      arg :current_password, :string
+      arg :new_password, :string
+
+      resolve &Resolvers.Users.change_password/2
+    end
   end
 
   subscription do

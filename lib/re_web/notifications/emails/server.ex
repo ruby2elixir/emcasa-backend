@@ -58,7 +58,7 @@ defmodule ReWeb.Notifications.Emails.Server do
     end
   end
 
-  @spec handle_info(Phoenix.Socket.Broadcast.t, any) :: {:noreply, any}
+  @spec handle_info(Phoenix.Socket.Broadcast.t(), any) :: {:noreply, any}
   def handle_info(%Phoenix.Socket.Broadcast{payload: %{result: %{data: data}}}, state) do
     handle_data(data, state)
   end

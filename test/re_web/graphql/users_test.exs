@@ -4,8 +4,8 @@ defmodule ReWeb.GraphQL.UsersTest do
   import Re.Factory
 
   alias ReWeb.AbsintheHelpers
-
   alias Re.User
+  alias Comeonin.Bcrypt
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
@@ -295,6 +295,72 @@ defmodule ReWeb.GraphQL.UsersTest do
       mutation = """
         mutation {
           changeEmail(id: #{user.id}, email: "newemail@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "changePassword" do
+    test "admin should change password", %{admin_conn: conn} do
+      user = insert(:user)
+
+      mutation = """
+        mutation {
+          changePassword(id: #{user.id}, currentPassword: "password", newPassword: "newpass") {
+            id
+          }
+        }
+      """
+
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert user = Repo.get(User, user.id)
+      assert Bcrypt.checkpw("newpass", user.password_hash)
+    end
+
+    test "user should change own email", %{user_conn: conn, user_user: user} do
+      mutation = """
+        mutation {
+          changePassword(id: #{user.id}, currentPassword: "password", newPassword: "newpass") {
+            id
+          }
+        }
+      """
+
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert user = Repo.get(User, user.id)
+      assert Bcrypt.checkpw("newpass", user.password_hash)
+    end
+
+    test "user should not edit other user's  email", %{user_conn: conn} do
+      inserted_user = insert(:user)
+
+      mutation = """
+        mutation {
+          changePassword(id: #{inserted_user.id}, currentPassword: "password", newPassword: "newpass") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+    end
+
+    test "anonymous should not edit user profile", %{unauthenticated_conn: conn} do
+      user = insert(:user)
+
+      mutation = """
+        mutation {
+          changePassword(id: #{user.id}, currentPassword: "password", newPassword: "newpass") {
             id
           }
         }
