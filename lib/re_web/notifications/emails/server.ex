@@ -63,6 +63,8 @@ defmodule ReWeb.Notifications.Emails.Server do
     handle_data(data, state)
   end
 
+  def handle_info(_, state), do: {:noreply, state}
+
   defp handle_data(%{"emailChanged" => %{"id" => user_id}}, state) do
     case Users.get(user_id) do
       {:ok, user} -> handle_cast({UserEmail, :change_email, [user]}, state)
