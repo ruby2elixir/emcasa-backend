@@ -239,4 +239,70 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "changeEmail" do
+    test "admin should change email", %{admin_conn: conn} do
+      user = insert(:user, email: "old_email@emcasa.com")
+
+      mutation = """
+        mutation {
+          changeEmail(id: #{user.id}, email: "newemail@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert user = Repo.get(User, user.id)
+      assert user.email == "newemail@emcasa.com"
+    end
+
+    test "user should change own email", %{user_conn: conn, user_user: user} do
+      mutation = """
+        mutation {
+          changeEmail(id: #{user.id}, email: "newemail@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert user = Repo.get(User, user.id)
+      assert user.email == "newemail@emcasa.com"
+    end
+
+    test "user should not edit other user's  email", %{user_conn: conn} do
+      inserted_user = insert(:user)
+
+      mutation = """
+        mutation {
+          changeEmail(id: #{inserted_user.id}, email: "newemail@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+    end
+
+    test "anonymous should not edit user profile", %{unauthenticated_conn: conn} do
+      user = insert(:user)
+
+      mutation = """
+        mutation {
+          changeEmail(id: #{user.id}, email: "newemail@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+    end
+  end
 end

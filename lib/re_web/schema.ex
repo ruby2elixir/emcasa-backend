@@ -94,6 +94,14 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Users.edit_profile/2
     end
+
+    @desc "Change email"
+    field :change_email, type: :user do
+      arg :id, non_null(:id)
+      arg :email, :string
+
+      resolve &Resolvers.Users.change_email/2
+    end
   end
 
   subscription do

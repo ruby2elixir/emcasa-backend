@@ -22,4 +22,10 @@ defmodule ReWeb.Resolvers.Users do
          :ok <- Bodyguard.permit(Users, :edit_profile, current_user, user),
          do: Users.update(user, params)
   end
+
+  def change_email(%{id: id, email: email}, %{context: %{current_user: current_user}}) do
+    with {:ok, user} <- Users.get(id),
+         :ok <- Bodyguard.permit(Users, :edit_profile, current_user, user),
+         do: Users.change_email(user, email)
+  end
 end
