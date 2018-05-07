@@ -72,4 +72,101 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "userProfile" do
+    test "admin should get any user profile", %{admin_conn: conn} do
+      inserted_user =
+        insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
+
+      query = """
+        {
+          userProfile(ID: #{inserted_user.id}) {
+            id
+            name
+            email
+            phone
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
+
+      user_id = to_string(inserted_user.id)
+      user_name = to_string(inserted_user.name)
+      user_email = to_string(inserted_user.email)
+      user_phone = to_string(inserted_user.phone)
+
+      assert %{
+               "userProfile" => %{
+                 "id" => ^user_id,
+                 "name" => ^user_name,
+                 "email" => ^user_email,
+                 "phone" => ^user_phone
+               }
+             } = json_response(conn, 200)["data"]
+    end
+
+    test "user should get his own profile", %{user_conn: conn, user_user: user} do
+      query = """
+        {
+          userProfile(ID: #{user.id}) {
+            id
+            name
+            email
+            phone
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
+
+      user_id = to_string(user.id)
+      user_name = to_string(user.name)
+      user_email = to_string(user.email)
+      user_phone = to_string(user.phone)
+
+      assert %{
+               "userProfile" => %{
+                 "id" => ^user_id,
+                 "name" => ^user_name,
+                 "email" => ^user_email,
+                 "phone" => ^user_phone
+               }
+             } = json_response(conn, 200)["data"]
+    end
+
+    test "anonymous should not get user profile", %{unauthenticated_conn: conn} do
+      user =
+        insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
+
+      query = """
+        {
+          userProfile(ID: #{user.id}) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
+
+      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+    end
+
+    test "user should not get other user's profile", %{user_conn: conn} do
+      inserted_user =
+        insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
+
+      query = """
+        {
+          userProfile(ID: #{inserted_user.id}) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
+
+      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+    end
+  end
 end

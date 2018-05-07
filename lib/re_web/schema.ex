@@ -31,6 +31,13 @@ defmodule ReWeb.Schema do
     field :user_listings, list_of(:listing) do
       resolve &Resolvers.Listings.per_user/2
     end
+
+    @desc "Get user profile"
+    field :user_profile, :user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Users.profile/2
+    end
   end
 
   mutation do
