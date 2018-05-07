@@ -149,5 +149,20 @@ defmodule ReWeb.Schema do
           "listing_deactivated"
         end
     end
+
+    @desc "Subscribe to email change"
+    field :email_changed, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "email_changed"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :change_email,
+        topic: fn _ ->
+          "email_changed"
+        end
+    end
   end
 end
