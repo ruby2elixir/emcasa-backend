@@ -85,6 +85,15 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Messages.send/2
     end
+
+    @desc "Edit user profile"
+    field :edit_user_profile, type: :user do
+      arg :id, non_null(:id)
+      arg :name, :string
+      arg :phone, :string
+
+      resolve &Resolvers.Users.edit_profile/2
+    end
   end
 
   subscription do

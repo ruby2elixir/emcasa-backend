@@ -5,6 +5,8 @@ defmodule ReWeb.GraphQL.UsersTest do
 
   alias ReWeb.AbsintheHelpers
 
+  alias Re.User
+
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
     admin_user = insert(:user, email: "admin@email.com", role: "admin")
@@ -167,6 +169,74 @@ defmodule ReWeb.GraphQL.UsersTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
 
       assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "editUserProfile" do
+    test "admin should edit any profile", %{admin_conn: conn} do
+      user = insert(:user)
+
+      mutation = """
+        mutation {
+          editUserProfile(id: #{user.id}, name: "Fixed Name", phone: "123321123") {
+            id
+          }
+        }
+      """
+
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert user = Repo.get(User, user.id)
+      assert user.name == "Fixed Name"
+      assert user.phone == "123321123"
+    end
+
+    test "user should edit own profile", %{user_conn: conn, user_user: user} do
+      mutation = """
+        mutation {
+          editUserProfile(id: #{user.id}, name: "Fixed Name", phone: "123321123") {
+            id
+          }
+        }
+      """
+
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert user = Repo.get(User, user.id)
+      assert user.name == "Fixed Name"
+      assert user.phone == "123321123"
+    end
+
+    test "user should not edit other user's  profile", %{user_conn: conn} do
+      inserted_user = insert(:user)
+
+      mutation = """
+        mutation {
+          editUserProfile(id: #{inserted_user.id}, name: "A Name") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+    end
+
+    test "anonymous should not edit user profile", %{unauthenticated_conn: conn} do
+      user = insert(:user)
+
+      mutation = """
+        mutation {
+          editUserProfile(id: #{user.id}, name: "A Name") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
     end
   end
 end

@@ -16,4 +16,10 @@ defmodule ReWeb.Resolvers.Users do
          :ok <- Bodyguard.permit(Users, :show_profile, current_user, user),
          do: {:ok, user}
   end
+
+  def edit_profile(%{id: id} = params, %{context: %{current_user: current_user}}) do
+    with {:ok, user} <- Users.get(id),
+         :ok <- Bodyguard.permit(Users, :edit_profile, current_user, user),
+         do: Users.update(user, params)
+  end
 end
