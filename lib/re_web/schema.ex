@@ -31,6 +31,13 @@ defmodule ReWeb.Schema do
     field :user_listings, list_of(:listing) do
       resolve &Resolvers.Listings.per_user/2
     end
+
+    @desc "Get user profile"
+    field :user_profile, :user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Users.profile/2
+    end
   end
 
   mutation do
@@ -78,6 +85,32 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Messages.send/2
     end
+
+    @desc "Edit user profile"
+    field :edit_user_profile, type: :user do
+      arg :id, non_null(:id)
+      arg :name, :string
+      arg :phone, :string
+
+      resolve &Resolvers.Users.edit_profile/2
+    end
+
+    @desc "Change email"
+    field :change_email, type: :user do
+      arg :id, non_null(:id)
+      arg :email, :string
+
+      resolve &Resolvers.Users.change_email/2
+    end
+
+    @desc "Change password"
+    field :change_password, type: :user do
+      arg :id, non_null(:id)
+      arg :current_password, :string
+      arg :new_password, :string
+
+      resolve &Resolvers.Users.change_password/2
+    end
   end
 
   subscription do
@@ -123,6 +156,21 @@ defmodule ReWeb.Schema do
       trigger :deactivate_listing,
         topic: fn _ ->
           "listing_deactivated"
+        end
+    end
+
+    @desc "Subscribe to email change"
+    field :email_changed, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "email_changed"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :change_email,
+        topic: fn _ ->
+          "email_changed"
         end
     end
   end
