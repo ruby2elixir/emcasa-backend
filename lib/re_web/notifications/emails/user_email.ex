@@ -77,17 +77,15 @@ defmodule ReWeb.Notifications.UserEmail do
     |> text_body("Você se cadastrou no EmCasa.")
   end
 
-  def user_registered(%User{name: name, email: email}) do
+  def user_registered(%User{name: name}) do
     new()
     |> to(@to)
     |> from(@admin_email)
     |> subject("Novo usuário cadastrado")
     |> html_body("Um novo usuário realizou cadastro no EmCasa.<br>
-      Nome: #{name}<br>
-      Email: #{email}")
+      Nome: #{name}")
     |> text_body("Um novo usuário realizou cadastro no EmCasa.
-      Nome: #{name}
-      Email: #{email}")
+      Nome: #{name}")
   end
 
   def reset_password(%User{name: name, email: email, reset_token: token}) do
