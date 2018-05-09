@@ -29,7 +29,12 @@ defmodule ReWeb.Resolvers.Users do
   def change_email(%{id: id, email: email}, %{context: %{current_user: current_user}}) do
     with {:ok, user} <- Users.get(id),
          :ok <- Bodyguard.permit(Users, :edit_profile, current_user, user),
-         do: Users.change_email(user, email)
+         {:ok, user} <- Users.change_email(user, email) do
+      {:ok, user}
+    else
+      {:error, %Ecto.Changeset{} = changeset} -> {:error, format_errors(changeset)}
+      error -> error
+    end
   end
 
   def change_password(
@@ -41,4 +46,12 @@ defmodule ReWeb.Resolvers.Users do
          :ok <- Auth.check_password(current_password, user),
          do: Users.edit_password(user, new_password)
   end
+
+  defp format_errors(%{errors: errors}) do
+    errors
+    |> Enum.map(&format_error/1)
+    |> Enum.into(%{})
+  end
+
+  defp format_error({type, {message, _}}), do: {:message, "#{type} #{message}"}
 end

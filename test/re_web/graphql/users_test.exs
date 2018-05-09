@@ -304,6 +304,22 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
     end
+
+    test "should fail when using existing e-mail", %{user_conn: conn, user_user: user} do
+      insert(:user, email: "existing@emcasa.com")
+
+      mutation = """
+        mutation {
+          changeEmail(id: #{user.id}, email: "existing@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "email has already been taken"}] = json_response(conn, 200)["errors"]
+    end
   end
 
   describe "changePassword" do
