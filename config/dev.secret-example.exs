@@ -28,4 +28,7 @@ config :re, ReWeb.Guardian,
 # or multiple emails, in which case use `|` as separator.
 config :re,
   to: "dev1@email.com|dev2@email.com",
-  from: "admin@email.com"
+  from: "admin@email.com",
+  pipedrive_url: "https://yourcompany.pipedrive.com/v1/",
+  pipedrive_token: "your_token"
+
