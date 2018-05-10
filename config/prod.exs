@@ -45,7 +45,9 @@ config :re, ReWeb.Notifications.Emails.Mailer,
 config :re,
   to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),
   from: System.get_env("ADMIN_EMAIL"),
-  frontend_url: System.get_env("FRONTEND_URL")
+  frontend_url: System.get_env("FRONTEND_URL"),
+  pipedrive_url: System.get_env("PIPEDRIVE_URL"),
+  pipedrive_token: System.get_env("PIPEDRIVE_TOKEN")
 
 config :re, ReWeb.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
