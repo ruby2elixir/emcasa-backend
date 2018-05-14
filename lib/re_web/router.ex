@@ -10,6 +10,10 @@ defmodule ReWeb.Router do
     plug(ReWeb.Auth.Context)
   end
 
+  pipeline :webhooks do
+    plug(:accepts, ["json"])
+  end
+
   scope "/", ReWeb do
     pipe_through(:api)
 
@@ -55,6 +59,12 @@ defmodule ReWeb.Router do
     end
 
     forward "/", Absinthe.Plug, schema: ReWeb.Schema
+  end
+
+  scope "/webhooks" do
+    pipe_through :webhooks
+
+    forward "/pipedrive", ReWeb.Integrations.Pipedrive.Plug
   end
 
   if Mix.env() == :dev do

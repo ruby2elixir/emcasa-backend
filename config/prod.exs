@@ -47,7 +47,9 @@ config :re,
   from: System.get_env("ADMIN_EMAIL"),
   frontend_url: System.get_env("FRONTEND_URL"),
   pipedrive_url: System.get_env("PIPEDRIVE_URL"),
-  pipedrive_token: System.get_env("PIPEDRIVE_TOKEN")
+  pipedrive_token: System.get_env("PIPEDRIVE_TOKEN"),
+  pipedrive_webhook_user: System.get_env("PIPEDRIVE_WEBHOOK_USER"),
+  pipedrive_webhook_pass: System.get_env("PIPEDRIVE_WEBHOOK_PASS")
 
 config :re, ReWeb.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
