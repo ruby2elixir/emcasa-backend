@@ -30,5 +30,6 @@ config :re,
   to: "dev1@email.com|dev2@email.com",
   from: "admin@email.com",
   pipedrive_url: "https://yourcompany.pipedrive.com/v1/",
-  pipedrive_token: "your_token"
-
+  pipedrive_token: "your_token",
+  pipedrive_webhook_user: "pipedrive_user",
+  pipedrive_webhook_pass: "pipedrive_pass"
