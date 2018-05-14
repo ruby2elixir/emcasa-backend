@@ -7,6 +7,7 @@ defmodule Re.Application do
 
   alias ReWeb.{
     Endpoint,
+    Integrations.Pipedrive,
     Notifications.Emails,
     Search
   }
@@ -23,6 +24,7 @@ defmodule Re.Application do
       worker(Visualizations, []),
       worker(Emails.Server, []),
       worker(Search.Server, []),
+      worker(Pipedrive.Server, []),
       Search.Cluster
       # worker(Elasticsearch.Executable, [
       #   "Elasticsearch",
