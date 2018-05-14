@@ -19,16 +19,23 @@ defmodule ReWeb.Integrations.Pipedrive.PlugTest do
   describe "updated.activity" do
     test "authenticated request", %{authenticated_conn: conn} do
 
-      conn = post(conn, "/webhooks/pipedrive", %{event: "update.activity"})
+      conn = post(conn, "/webhooks/pipedrive", %{event: "updated.activity", current: %{type: "visita_ao_imvel", done: true}, previous: %{done: false}})
 
-      text_response(conn, 200)
+      assert text_response(conn, 200) == "ok"
+    end
+
+    test "unhandled webhook", %{authenticated_conn: conn} do
+
+      conn = post(conn, "/webhooks/pipedrive", %{event: "updated.activity", current: %{type: "visita_ao_imvel", done: true}, previous: %{done: true}})
+
+      assert text_response(conn, 422) == "Webhook not handled"
     end
 
     test "unauthenticated request", %{unauthenticated_conn: conn} do
 
       conn = post(conn, "/webhooks/pipedrive", %{event: "update.activity"})
 
-      text_response(conn, 403)
+      assert text_response(conn, 403) == "Unauthorized"
     end
   end
 

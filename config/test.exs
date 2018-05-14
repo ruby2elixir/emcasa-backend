@@ -39,7 +39,7 @@ config :re, :visualizations, Re.TestVisualizations
 config :re, :emails, ReWeb.TestEmails
 config :re, :elasticsearch, ReWeb.TestSearch
 config :re, :http, Re.TestHTTP
-config :re, :pipedrive, ReWeb.TestPipedrive
+config :re, :pipedrive, ReWeb.TestPipedriveServer
 
 config :re,
   pipedrive_webhook_user: "testuser",
