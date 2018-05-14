@@ -16,5 +16,4 @@ defmodule ReWeb.Integrations.Pipedrive.Server do
   def handle_cast({:handle_webhook, params}, state) do
     {:noreply, state}
   end
-
 end

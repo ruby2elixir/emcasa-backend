@@ -33,4 +33,3 @@ config :re,
   pipedrive_token: "your_token",
   pipedrive_webhook_user: "pipedrive_user",
   pipedrive_webhook_pass: "pipedrive_pass"
-

@@ -10,22 +10,22 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
 
   def call(%{method: "POST", params: params} = conn, _args) do
     with :ok <- validate_credentials(conn),
-         :ok <- Pipedrive.validate_payload(params)
-      do
-        Pipedrive.handle_webhook(params)
+         :ok <- Pipedrive.validate_payload(params) do
+      Pipedrive.handle_webhook(params)
 
+      conn
+      |> put_resp_content_type("text/plain")
+      |> send_resp(200, "ok")
+    else
+      {:error, :not_authorized} ->
         conn
         |> put_resp_content_type("text/plain")
-        |> send_resp(200, "ok")
-      else
-        {:error, :not_authorized} ->
-          conn
-          |> put_resp_content_type("text/plain")
-          |> send_resp(403, "Unauthorized")
-        {:error, :not_handled} ->
-          conn
-          |> put_resp_content_type("text/plain")
-          |> send_resp(422, "Webhook not handled")
+        |> send_resp(403, "Unauthorized")
+
+      {:error, :not_handled} ->
+        conn
+        |> put_resp_content_type("text/plain")
+        |> send_resp(422, "Webhook not handled")
     end
   end
 
