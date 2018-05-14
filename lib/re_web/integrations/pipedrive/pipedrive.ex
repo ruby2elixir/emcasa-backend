@@ -1,4 +1,7 @@
 defmodule ReWeb.Integrations.Pipedrive do
+  @moduledoc """
+  Module for handling pipedrive webhook structure
+  """
   require Logger
 
   @activity_params ["deal_id", "marked_as_done_time"]

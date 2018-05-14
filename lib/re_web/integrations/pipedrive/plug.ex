@@ -1,4 +1,7 @@
 defmodule ReWeb.Integrations.Pipedrive.Plug do
+  @moduledoc """
+  Plug to handle pipedrive webhooks
+  """
   import Plug.Conn
 
   @user Application.get_env(:re, :pipedrive_webhook_user, "")
