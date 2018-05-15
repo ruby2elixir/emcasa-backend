@@ -229,18 +229,13 @@ defmodule ReWeb.ListingControllerTest do
                  ],
                  "address" => %{
                    "street" => listing.address.street,
-                   "street_number" => listing.address.street_number,
                    "neighborhood" => listing.address.neighborhood,
                    "city" => listing.address.city,
                    "state" => listing.address.state,
                    "postal_code" => listing.address.postal_code,
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
-                 },
-                 "visualisations" => 3,
-                 "tour_visualisations" => 3,
-                 "favorite_count" => 1,
-                 "interest_count" => 2
+                 }
                }
     end
 
