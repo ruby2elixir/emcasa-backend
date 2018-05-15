@@ -1,27 +1,27 @@
-defmodule ReWeb.ListingView do
+defmodule ReWeb.ListingAdminView do
   use ReWeb, :view
 
   def render("index.json", %{listings: listings, remaining_count: remaining_count}) do
     %{
-      listings: render_many(listings, ReWeb.ListingView, "listing.json"),
+      listings: render_many(listings, ReWeb.ListingAdminView, "listing.json", as: :listing),
       remaining_count: remaining_count
     }
   end
 
   def render("featured.json", %{listings: listings}) do
-    %{listings: render_many(listings, ReWeb.ListingView, "listing.json")}
+    %{listings: render_many(listings, ReWeb.ListingAdminView, "listing.json", as: :listing)}
   end
 
   def render("edit.json", %{listing: listing}) do
-    %{listing: render_one(listing, ReWeb.ListingView, "listing_edit.json")}
+    %{listing: render_one(listing, ReWeb.ListingAdminView, "listing_edit.json", as: :listing)}
   end
 
   def render("show.json", %{listing: listing}) do
-    %{listing: render_one(listing, ReWeb.ListingView, "listing.json")}
+    %{listing: render_one(listing, ReWeb.ListingAdminView, "listing.json", as: :listing)}
   end
 
   def render("create.json", %{listing: listing}) do
-    %{listing: render_one(listing, ReWeb.ListingView, "listing_id.json")}
+    %{listing: render_one(listing, ReWeb.ListingAdminView, "listing_id.json", as: :listing)}
   end
 
   def render("listing.json", %{listing: listing}) do
@@ -49,6 +49,7 @@ defmodule ReWeb.ListingView do
       inserted_at: listing.inserted_at,
       address: %{
         street: listing.address.street,
+        street_number: listing.address.street_number,
         neighborhood: listing.address.neighborhood,
         city: listing.address.city,
         state: listing.address.state,
@@ -57,7 +58,11 @@ defmodule ReWeb.ListingView do
         lng: listing.address.lng
       },
       user_id: listing.user_id,
-      images: render_many(listing.images, ReWeb.ImageView, "image.json")
+      images: render_many(listing.images, ReWeb.ImageView, "image.json"),
+      visualisations: Enum.count(listing.listings_visualisations),
+      tour_visualisations: Enum.count(listing.tour_visualisations),
+      favorite_count: Enum.count(listing.listings_favorites),
+      interest_count: Enum.count(listing.interests)
     }
   end
 

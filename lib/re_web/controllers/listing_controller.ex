@@ -23,11 +23,12 @@ defmodule ReWeb.ListingController do
          ]
   )
 
-  def index(conn, params, _user) do
+  def index(conn, params, user) do
     result = Listings.paginated(params)
 
     render(
       conn,
+      get_view(user),
       "index.json",
       listings: result.listings,
       remaining_count: result.remaining_count
@@ -42,7 +43,7 @@ defmodule ReWeb.ListingController do
 
       conn
       |> put_status(:created)
-      |> render("create.json", listing: listing)
+      |> render(get_view(user), "create.json", listing: listing)
     end
   end
 
@@ -51,14 +52,14 @@ defmodule ReWeb.ListingController do
          :ok <- Bodyguard.permit(Listings, :show_listing, user, listing) do
       @visualizations.listing(listing, user, extract_details(conn))
 
-      render(conn, "show.json", listing: listing)
+      render(conn, get_view(user), "show.json", listing: listing)
     end
   end
 
   def edit(conn, %{"id" => id}, user) do
     with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :edit_listing, user, listing),
-         do: render(conn, "edit.json", listing: listing)
+         do: render(conn, get_view(user), "edit.json", listing: listing)
   end
 
   def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, user) do
@@ -69,7 +70,7 @@ defmodule ReWeb.ListingController do
            Listings.update(listing, listing_params, address, user) do
       send_email_if_not_admin(listing, user, listing_changeset, address_changeset)
 
-      render(conn, "edit.json", listing: listing)
+      render(conn, get_view(user), "edit.json", listing: listing)
     end
   end
 
@@ -96,7 +97,7 @@ defmodule ReWeb.ListingController do
 
   defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing
 
-  def send_email_if_not_admin(
+  defp send_email_if_not_admin(
         listing,
         %{role: "user"} = user,
         listing_changeset,
@@ -106,5 +107,8 @@ defmodule ReWeb.ListingController do
     @emails.listing_updated(user, listing, changes)
   end
 
-  def send_email_if_not_admin(_, %{role: "admin"}, _, _), do: :nothing
+  defp send_email_if_not_admin(_, %{role: "admin"}, _, _), do: :nothing
+
+  defp get_view(%{role: "admin"}), do: ReWeb.ListingAdminView
+  defp get_view(_), do: ReWeb.ListingView
 end
