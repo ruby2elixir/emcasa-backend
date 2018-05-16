@@ -98,11 +98,11 @@ defmodule ReWeb.ListingController do
   defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing
 
   defp send_email_if_not_admin(
-        listing,
-        %{role: "user"} = user,
-        listing_changeset,
-        address_changeset
-      ) do
+         listing,
+         %{role: "user"} = user,
+         listing_changeset,
+         address_changeset
+       ) do
     changes = Enum.concat(listing_changeset.changes, address_changeset.changes)
     @emails.listing_updated(user, listing, changes)
   end
