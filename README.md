@@ -19,6 +19,8 @@
 ## Run
 
   * Start Phoenix endpoint with `mix phx.server`
+  * Check `http://localhost:4000/listings`
+  * WebSocket subscriptions at `ws://localhost:4000/socket`
 
 ## Production
 

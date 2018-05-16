@@ -52,7 +52,7 @@ defmodule ReWeb.ListingController do
          :ok <- Bodyguard.permit(Listings, :show_listing, user, listing) do
       @visualizations.listing(listing, user, extract_details(conn))
 
-      render(conn, get_view(user), "show.json", listing: listing)
+      render(conn, get_view(user, listing), "show.json", listing: listing)
     end
   end
 
@@ -98,11 +98,11 @@ defmodule ReWeb.ListingController do
   defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing
 
   defp send_email_if_not_admin(
-        listing,
-        %{role: "user"} = user,
-        listing_changeset,
-        address_changeset
-      ) do
+         listing,
+         %{role: "user"} = user,
+         listing_changeset,
+         address_changeset
+       ) do
     changes = Enum.concat(listing_changeset.changes, address_changeset.changes)
     @emails.listing_updated(user, listing, changes)
   end
@@ -111,4 +111,6 @@ defmodule ReWeb.ListingController do
 
   defp get_view(%{role: "admin"}), do: ReWeb.ListingAdminView
   defp get_view(_), do: ReWeb.ListingView
+  defp get_view(%{id: id}, %{user_id: id}), do: ReWeb.ListingAdminView
+  defp get_view(_, _), do: ReWeb.ListingView
 end

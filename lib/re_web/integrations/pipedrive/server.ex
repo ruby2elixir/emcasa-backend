@@ -14,7 +14,7 @@ defmodule ReWeb.Integrations.Pipedrive.Server do
 
   @spec handle_cast({atom, map}, any) :: {:noreply, any}
   def handle_cast({:handle_webhook, params}, state) do
-    Logger.info("Webhook received with params #{inspect params}")
+    Logger.info("Webhook received with params #{inspect(params)}")
 
     {:noreply, state}
   end
