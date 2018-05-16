@@ -184,6 +184,65 @@ defmodule ReWeb.ListingControllerTest do
                }
     end
 
+    test "resource for admin when listing doesn't belong to him", %{admin_conn: conn, user_user: user} do
+      image = insert(:image)
+      listing = insert(:listing, images: [image], address: build(:address), user: user)
+      insert_list(3, :listing_visualisation, listing_id: listing.id)
+      insert_list(3, :tour_visualisation, listing_id: listing.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
+      insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
+      insert(:interest, listing_id: listing.id)
+      conn = get(conn, listing_path(conn, :show, listing))
+
+      assert json_response(conn, 200)["listing"] ==
+               %{
+                 "id" => listing.id,
+                 "type" => listing.type,
+                 "description" => listing.description,
+                 "price" => listing.price,
+                 "property_tax" => listing.property_tax,
+                 "maintenance_fee" => listing.maintenance_fee,
+                 "floor" => listing.floor,
+                 "rooms" => listing.rooms,
+                 "bathrooms" => listing.bathrooms,
+                 "restrooms" => listing.restrooms,
+                 "area" => listing.area,
+                 "garage_spots" => listing.garage_spots,
+                 "matterport_code" => listing.matterport_code,
+                 "suites" => listing.suites,
+                 "dependencies" => listing.dependencies,
+                 "balconies" => listing.balconies,
+                 "has_elevator" => listing.has_elevator,
+                 "is_exclusive" => listing.is_exclusive,
+                 "is_release" => listing.is_release,
+                 "is_active" => listing.is_active,
+                 "inserted_at" => NaiveDateTime.to_iso8601(listing.inserted_at),
+                 "user_id" => listing.user_id,
+                 "images" => [
+                   %{
+                     "id" => image.id,
+                     "filename" => image.filename,
+                     "position" => image.position,
+                     "description" => image.description
+                   }
+                 ],
+                 "address" => %{
+                   "street" => listing.address.street,
+                   "street_number" => listing.address.street_number,
+                   "neighborhood" => listing.address.neighborhood,
+                   "city" => listing.address.city,
+                   "state" => listing.address.state,
+                   "postal_code" => listing.address.postal_code,
+                   "lat" => listing.address.lat,
+                   "lng" => listing.address.lng
+                 },
+                 "visualisations" => 3,
+                 "tour_visualisations" => 3,
+                 "favorite_count" => 1,
+                 "interest_count" => 2
+               }
+    end
+
     test "resource for owner user", %{user_conn: conn, user_user: user} do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)

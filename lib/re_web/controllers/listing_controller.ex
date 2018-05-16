@@ -111,6 +111,7 @@ defmodule ReWeb.ListingController do
 
   defp get_view(%{role: "admin"}), do: ReWeb.ListingAdminView
   defp get_view(_), do: ReWeb.ListingView
+  defp get_view(%{role: "admin"}, _), do: ReWeb.ListingAdminView
   defp get_view(%{id: id}, %{user_id: id}), do: ReWeb.ListingAdminView
   defp get_view(_, _), do: ReWeb.ListingView
 end
