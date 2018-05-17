@@ -58,7 +58,8 @@ defmodule ReWeb.UserControllerTest do
       user_params = %{
         "name" => "mahname",
         "email" => "validemail@emcasa.com",
-        "password" => "validpassword"
+        "password" => "validpassword",
+        "phone" => "(99)1234-5678"
       }
 
       conn = post(conn, user_path(conn, :register, %{"user" => user_params}))
@@ -66,6 +67,7 @@ defmodule ReWeb.UserControllerTest do
       assert response["user"]["token"]
       assert user = Repo.get_by(User, email: "validemail@emcasa.com")
       assert user.confirmation_token
+      assert user.phone == "(99)1234-5678"
       refute user.confirmed
     end
 
