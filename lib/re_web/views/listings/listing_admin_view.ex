@@ -28,6 +28,7 @@ defmodule ReWeb.ListingAdminView do
     %{
       id: listing.id,
       type: listing.type,
+      complement: listing.complement,
       description: listing.description,
       floor: listing.floor,
       price: listing.price,
