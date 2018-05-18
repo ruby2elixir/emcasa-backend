@@ -139,6 +139,7 @@ defmodule ReWeb.ListingControllerTest do
                %{
                  "id" => listing.id,
                  "type" => listing.type,
+                 "complement" => listing.complement,
                  "description" => listing.description,
                  "price" => listing.price,
                  "property_tax" => listing.property_tax,
@@ -198,6 +199,7 @@ defmodule ReWeb.ListingControllerTest do
                %{
                  "id" => listing.id,
                  "type" => listing.type,
+                 "complement" => listing.complement,
                  "description" => listing.description,
                  "price" => listing.price,
                  "property_tax" => listing.property_tax,
@@ -257,6 +259,7 @@ defmodule ReWeb.ListingControllerTest do
                %{
                  "id" => listing.id,
                  "type" => listing.type,
+                 "complement" => listing.complement,
                  "description" => listing.description,
                  "price" => listing.price,
                  "property_tax" => listing.property_tax,
