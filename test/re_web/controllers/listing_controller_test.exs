@@ -185,7 +185,10 @@ defmodule ReWeb.ListingControllerTest do
                }
     end
 
-    test "resource for admin when listing doesn't belong to him", %{admin_conn: conn, user_user: user} do
+    test "resource for admin when listing doesn't belong to him", %{
+      admin_conn: conn,
+      user_user: user
+    } do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
       insert_list(3, :listing_visualisation, listing_id: listing.id)

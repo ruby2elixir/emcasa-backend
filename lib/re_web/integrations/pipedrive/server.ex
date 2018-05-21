@@ -10,6 +10,7 @@ defmodule ReWeb.Integrations.Pipedrive.Server do
     Repo,
     Stats.InPersonVisit
   }
+
   alias ReWeb.Integrations.Pipedrive.Client
 
   @attribute_key "226c74dbe45d5db69bbda19d6de53371db8a964a"
@@ -21,7 +22,10 @@ defmodule ReWeb.Integrations.Pipedrive.Server do
   def init(args), do: {:ok, args}
 
   @spec handle_cast({atom, map}, any) :: {:noreply, any}
-  def handle_cast({:handle_webhook, %{"deal_id" => deal_id, "marked_as_done_time" => done_time} = params}, state) do
+  def handle_cast(
+        {:handle_webhook, %{"deal_id" => deal_id, "marked_as_done_time" => done_time} = params},
+        state
+      ) do
     Logger.info("Webhook received with params #{inspect(params)}")
 
     deal_id
@@ -34,7 +38,6 @@ defmodule ReWeb.Integrations.Pipedrive.Server do
   defp get_listing_id(deal_id) do
     deal_id
     |> fetch_deal()
-    |> IO.inspect
     |> extract_listing_id()
   end
 

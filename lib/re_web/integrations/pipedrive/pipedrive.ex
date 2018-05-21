@@ -9,7 +9,7 @@ defmodule ReWeb.Integrations.Pipedrive do
 
   def validate_payload(%{
         "event" => "updated.activity",
-        "current" => %{"type" => "visita_ao_imvel", "done" => true} = current,
+        "current" => %{"type" => "visita_ao_imvel", "done" => true},
         "previous" => %{"done" => false}
       }),
       do: :ok
