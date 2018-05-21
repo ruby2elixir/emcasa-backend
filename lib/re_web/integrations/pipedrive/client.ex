@@ -14,7 +14,7 @@ defmodule ReWeb.Integrations.Pipedrive.Client do
     params = Map.merge(params, %{api_token: @token})
 
     @url
-    |> build_uri(params, type)
+    |> build_uri(type, params)
     |> @http_client.get(@headers)
   end
 
