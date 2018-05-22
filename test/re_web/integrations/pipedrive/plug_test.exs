@@ -1,17 +1,14 @@
 defmodule ReWeb.Integrations.Pipedrive.PlugTest do
   use ReWeb.ConnCase
 
-  import Re.Factory
-
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
 
-    authenticated_conn =
-      conn
-      |> put_req_header("php-auth-user", "testuser")
-      |> put_req_header("php-auth-pw", "testpass")
+    encoded_user_pass = Base.encode64("testuser:testpass")
 
-    {:ok, unauthenticated_conn: conn, authenticated_conn: authenticated_conn}
+    {:ok,
+      unauthenticated_conn: conn,
+      authenticated_conn: put_req_header(conn, "authorization", "Basic #{encoded_user_pass}")}
   end
 
   describe "updated.activity" do

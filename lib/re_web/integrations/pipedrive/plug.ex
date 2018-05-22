@@ -14,8 +14,6 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
   def init(args), do: args
 
   def call(%{method: "POST", params: params} = conn, _args) do
-    Logger.info(fn -> "Pipedrive Webhook conn: #{inspect conn}" end)
-
     with :ok <- validate_credentials(conn),
          :ok <- Pipedrive.validate_payload(params) do
       Pipedrive.handle_webhook(params)
@@ -39,8 +37,12 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
   def call(%{method: method} = conn, _args), do: send_resp(conn, 405, "#{method} not allowed")
 
   defp validate_credentials(conn) do
-    case {get_req_header(conn, "php-auth-user"), get_req_header(conn, "php-auth-pw")} do
-      {[user], [pass]} when user == @user and pass == @pass -> :ok
+    with ["Basic " <> token] <- get_req_header(conn, "authorization"),
+         {:ok, user_pass} <- Base.decode64(token),
+         [@user, @pass] <- String.split(user_pass, ":", parts: 2)
+     do
+       :ok
+    else
       _ -> {:error, :not_authorized}
     end
   end
