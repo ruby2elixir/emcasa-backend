@@ -63,7 +63,8 @@ defmodule ReWeb.ListingAdminView do
       visualisations: Enum.count(listing.listings_visualisations),
       tour_visualisations: Enum.count(listing.tour_visualisations),
       favorite_count: Enum.count(listing.listings_favorites),
-      interest_count: Enum.count(listing.interests)
+      interest_count: Enum.count(listing.interests),
+      in_person_visit_count: Enum.count(listing.in_person_visits)
     }
   end
 

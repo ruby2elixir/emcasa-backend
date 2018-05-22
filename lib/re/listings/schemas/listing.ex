@@ -31,12 +31,14 @@ defmodule Re.Listing do
     field :visualisations, :integer, virtual: true
     field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
+    field :in_person_visit_count, :integer, virtual: true
 
     belongs_to :address, Re.Address
     belongs_to :user, Re.User
     has_many :images, Re.Image
     has_many :listings_visualisations, Re.Stats.ListingVisualization
     has_many :tour_visualisations, Re.Stats.TourVisualization
+    has_many :in_person_visits, Re.Stats.InPersonVisit
 
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :user]
