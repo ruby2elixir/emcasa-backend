@@ -4,6 +4,8 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
   """
   import Plug.Conn
 
+  require Logger
+
   @user Application.get_env(:re, :pipedrive_webhook_user, "")
   @pass Application.get_env(:re, :pipedrive_webhook_pass, "")
 
@@ -35,8 +37,12 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
   def call(%{method: method} = conn, _args), do: send_resp(conn, 405, "#{method} not allowed")
 
   defp validate_credentials(conn) do
-    case {get_req_header(conn, "php-auth-user"), get_req_header(conn, "php-auth-pw")} do
-      {[user], [pass]} when user == @user and pass == @pass -> :ok
+    with ["Basic " <> token] <- get_req_header(conn, "authorization"),
+         {:ok, user_pass} <- Base.decode64(token),
+         [@user, @pass] <- String.split(user_pass, ":", parts: 2)
+     do
+       :ok
+    else
       _ -> {:error, :not_authorized}
     end
   end
