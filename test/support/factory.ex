@@ -103,6 +103,10 @@ defmodule Re.Factory do
     %Re.Stats.TourVisualization{}
   end
 
+  def in_person_visit_factory do
+    %Re.Stats.InPersonVisit{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999

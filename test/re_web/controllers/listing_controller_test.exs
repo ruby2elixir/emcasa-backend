@@ -133,6 +133,7 @@ defmodule ReWeb.ListingControllerTest do
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
       insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
       insert(:interest, listing_id: listing.id)
+      insert_list(2, :in_person_visit, listing_id: listing.id, date: ~N[2018-05-05 10:00:00])
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -179,6 +180,7 @@ defmodule ReWeb.ListingControllerTest do
                    "lng" => listing.address.lng
                  },
                  "visualisations" => 3,
+                 "in_person_visit_count" => 2,
                  "tour_visualisations" => 3,
                  "favorite_count" => 1,
                  "interest_count" => 2
@@ -196,6 +198,7 @@ defmodule ReWeb.ListingControllerTest do
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
       insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
       insert(:interest, listing_id: listing.id)
+      insert_list(3, :in_person_visit, listing_id: listing.id, date: ~N[2018-05-05 10:00:00])
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -242,6 +245,7 @@ defmodule ReWeb.ListingControllerTest do
                    "lng" => listing.address.lng
                  },
                  "visualisations" => 3,
+                 "in_person_visit_count" => 3,
                  "tour_visualisations" => 3,
                  "favorite_count" => 1,
                  "interest_count" => 2
@@ -256,6 +260,7 @@ defmodule ReWeb.ListingControllerTest do
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
       insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
       insert(:interest, listing_id: listing.id)
+      insert_list(2, :in_person_visit, listing_id: listing.id, date: ~N[2018-05-05 10:00:00])
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -302,6 +307,7 @@ defmodule ReWeb.ListingControllerTest do
                    "lng" => listing.address.lng
                  },
                  "visualisations" => 3,
+                 "in_person_visit_count" => 2,
                  "tour_visualisations" => 3,
                  "favorite_count" => 1,
                  "interest_count" => 2
