@@ -4,6 +4,8 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
   """
   import Plug.Conn
 
+  require Logger
+
   @user Application.get_env(:re, :pipedrive_webhook_user, "")
   @pass Application.get_env(:re, :pipedrive_webhook_pass, "")
 
@@ -12,6 +14,8 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
   def init(args), do: args
 
   def call(%{method: "POST", params: params} = conn, _args) do
+    Logger.info(fn -> "Pipedrive Webhook conn: #{inspect conn}" end)
+
     with :ok <- validate_credentials(conn),
          :ok <- Pipedrive.validate_payload(params) do
       Pipedrive.handle_webhook(params)
