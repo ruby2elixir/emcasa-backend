@@ -39,9 +39,8 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
   defp validate_credentials(conn) do
     with ["Basic " <> token] <- get_req_header(conn, "authorization"),
          {:ok, user_pass} <- Base.decode64(token),
-         [@user, @pass] <- String.split(user_pass, ":", parts: 2)
-     do
-       :ok
+         [@user, @pass] <- String.split(user_pass, ":", parts: 2) do
+      :ok
     else
       _ -> {:error, :not_authorized}
     end

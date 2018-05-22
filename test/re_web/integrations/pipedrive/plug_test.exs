@@ -7,8 +7,8 @@ defmodule ReWeb.Integrations.Pipedrive.PlugTest do
     encoded_user_pass = Base.encode64("testuser:testpass")
 
     {:ok,
-      unauthenticated_conn: conn,
-      authenticated_conn: put_req_header(conn, "authorization", "Basic #{encoded_user_pass}")}
+     unauthenticated_conn: conn,
+     authenticated_conn: put_req_header(conn, "authorization", "Basic #{encoded_user_pass}")}
   end
 
   describe "updated.activity" do
