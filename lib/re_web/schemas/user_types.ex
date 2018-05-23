@@ -4,7 +4,10 @@ defmodule ReWeb.Schema.UserTypes do
   """
   use Absinthe.Schema.Notation
 
-  alias Re.User
+  alias Re.{
+    Listing,
+    User
+  }
 
   object :user do
     field :id, :id
@@ -40,7 +43,7 @@ defmodule ReWeb.Schema.UserTypes do
       end
     end
 
-    field :listing, :user do
+    field :listing, :listing do
       resolve fn message, _, _ ->
         batch(
           {ReWeb.Schema.Helpers, :by_id, Listing},
