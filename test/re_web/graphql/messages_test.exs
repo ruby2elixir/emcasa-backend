@@ -120,6 +120,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
           listingUserMessages (listingId: #{listing.id}) {
             id
             message
+            listing {
+              id
+            }
           }
         }
       """
@@ -127,15 +130,16 @@ defmodule ReWeb.GraphQL.MessagesTest do
       id1 = to_string(id1)
       id2 = to_string(id2)
       id3 = to_string(id3)
+      listing_id = to_string(listing.id)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
 
       assert %{
                "listingUserMessages" => [
-                 %{"id" => ^id1},
-                 %{"id" => ^id2},
-                 %{"id" => ^id3}
+                 %{"id" => ^id1, "listing" => %{"id" => ^listing_id}},
+                 %{"id" => ^id2, "listing" => %{"id" => ^listing_id}},
+                 %{"id" => ^id3, "listing" => %{"id" => ^listing_id}}
                ]
              } = json_response(conn, 200)["data"]
     end
@@ -160,6 +164,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
           listingUserMessages (listingId: #{listing.id}) {
             id
             message
+            listing {
+              id
+            }
           }
         }
       """
@@ -167,15 +174,16 @@ defmodule ReWeb.GraphQL.MessagesTest do
       id1 = to_string(id1)
       id2 = to_string(id2)
       id3 = to_string(id3)
+      listing_id = to_string(listing.id)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
 
       assert %{
                "listingUserMessages" => [
-                 %{"id" => ^id1},
-                 %{"id" => ^id2},
-                 %{"id" => ^id3}
+                 %{"id" => ^id1, "listing" => %{"id" => ^listing_id}},
+                 %{"id" => ^id2, "listing" => %{"id" => ^listing_id}},
+                 %{"id" => ^id3, "listing" => %{"id" => ^listing_id}}
                ]
              } = json_response(conn, 200)["data"]
     end
