@@ -31,7 +31,7 @@ defmodule ReWeb.Integrations.Pipedrive.PlugTest do
           previous: %{done: true}
         })
 
-      assert text_response(conn, 422) == "Webhook not handled"
+      assert text_response(conn, 200) == "Webhook not handled"
     end
 
     test "unauthenticated request", %{unauthenticated_conn: conn} do
