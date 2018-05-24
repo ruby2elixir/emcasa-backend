@@ -30,7 +30,7 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
       {:error, :not_handled} ->
         conn
         |> put_resp_content_type("text/plain")
-        |> send_resp(422, "Webhook not handled")
+        |> send_resp(200, "Webhook not handled")
     end
   end
 
