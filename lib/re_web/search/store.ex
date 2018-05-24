@@ -16,7 +16,7 @@ defmodule ReWeb.Search.Store do
     Listing
     |> offset(^offset)
     |> limit(^limit)
-    |> Queries.preload()
+    |> Queries.preload_relations()
     |> Queries.active()
     |> Repo.all()
   end
