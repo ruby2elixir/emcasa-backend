@@ -33,22 +33,24 @@ defmodule ReWeb.Search.Server do
 
   @spec init(term) :: {:ok, term}
   def init(args) do
-    case Absinthe.run(
-           "subscription { listingActivated { id } }",
-           Schema,
-           context: %{pubsub: PubSub, current_user: :system}
-         ) do
-      {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
-      _ -> :nothing
-    end
+    if Mix.env() != :test do
+      case Absinthe.run(
+             "subscription { listingActivated { id } }",
+             Schema,
+             context: %{pubsub: PubSub, current_user: :system}
+           ) do
+        {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
+        _ -> :nothing
+      end
 
-    case Absinthe.run(
-           "subscription { listingDeactivated { id } }",
-           Schema,
-           context: %{pubsub: PubSub, current_user: :system}
-         ) do
-      {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
-      _ -> :nothing
+      case Absinthe.run(
+             "subscription { listingDeactivated { id } }",
+             Schema,
+             context: %{pubsub: PubSub, current_user: :system}
+           ) do
+        {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
+        _ -> :nothing
+      end
     end
 
     {:ok, args}
