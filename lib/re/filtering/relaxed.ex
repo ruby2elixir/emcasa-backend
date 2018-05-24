@@ -21,7 +21,7 @@ defmodule Re.Filtering.Relaxed do
       |> Queries.excluding(params)
       |> Queries.order_by()
       |> Queries.limit(params)
-      |> Queries.preload()
+      |> Queries.preload_relations()
 
     listings = Repo.all(query)
 

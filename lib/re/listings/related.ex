@@ -20,7 +20,7 @@ defmodule Re.Listings.Related do
       |> Queries.excluding(params)
       |> Queries.active()
       |> Queries.limit(params)
-      |> Queries.preload()
+      |> Queries.preload_relations()
 
     %{
       listings: Repo.all(query),

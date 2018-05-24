@@ -18,6 +18,7 @@ defmodule Re.Listings do
 
   def all do
     Queries.active()
+    |> Queries.preload_relations([:address])
     |> Queries.order_by_id()
     |> Repo.all()
   end
@@ -52,13 +53,13 @@ defmodule Re.Listings do
     |> Queries.excluding(params)
     |> Queries.order_by()
     |> Queries.limit(params)
-    |> Queries.preload()
+    |> Queries.preload_relations()
     |> Filtering.apply(params)
   end
 
   def get(id), do: do_get(Listing, id)
 
-  def get_preloaded(id), do: do_get(Queries.preload(), id)
+  def get_preloaded(id), do: do_get(Queries.preload_relations(), id)
 
   def insert(params, address, user) do
     %Listing{}
@@ -95,7 +96,7 @@ defmodule Re.Listings do
   def per_user(user) do
     Listing
     |> Queries.per_user(user.id)
-    |> Queries.preload()
+    |> Queries.preload_relations()
     |> Repo.all()
   end
 

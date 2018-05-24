@@ -13,6 +13,16 @@ defmodule Re.Listings.Queries do
 
   @page_size 100
 
+  @full_preload [
+    :address,
+    :listings_visualisations,
+    :tour_visualisations,
+    :listings_favorites,
+    :in_person_visits,
+    interests: Interests.Queries.with_type(),
+    images: Images.Queries.listing_preload()
+  ]
+
   def active(query \\ Listing), do: where(query, [l], l.is_active == true)
 
   def order_by(query \\ Listing) do
@@ -24,17 +34,9 @@ defmodule Re.Listings.Queries do
 
   def order_by_id(query \\ Listing), do: order_by(query, [l], asc: l.id)
 
-  def preload(query \\ Listing) do
-    preload(query, [
-      :address,
-      :listings_visualisations,
-      :tour_visualisations,
-      :listings_favorites,
-      :in_person_visits,
-      interests: ^Interests.Queries.with_type(),
-      images: ^Images.Queries.listing_preload()
-    ])
-  end
+  def preload_relations(query \\ Listing, relations \\ @full_preload)
+
+  def preload_relations(query, relations), do: preload(query, ^relations)
 
   def randomize_within_score(%{entries: entries} = result) do
     randomized_entries =
