@@ -18,6 +18,7 @@ defmodule Re.Listings do
 
   def all do
     Queries.active()
+    |> Queries.preload_relations([:address])
     |> Queries.order_by_id()
     |> Repo.all()
   end

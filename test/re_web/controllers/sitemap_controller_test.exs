@@ -25,9 +25,9 @@ defmodule ReWeb.SitemapControllerTest do
       conn = get(conn, sitemap_path(conn, :index))
 
       assert [
-               %{"id" => ^id1, "updated_at" => _},
-               %{"id" => ^id2, "updated_at" => _},
-               %{"id" => ^id3, "updated_at" => _}
+               %{"id" => ^id1, "updated_at" => _, "address" => _},
+               %{"id" => ^id2, "updated_at" => _, "address" => _},
+               %{"id" => ^id3, "updated_at" => _, "address" => _}
              ] = json_response(conn, 200)["listings"]
     end
 
@@ -41,9 +41,9 @@ defmodule ReWeb.SitemapControllerTest do
       conn = get(conn, sitemap_path(conn, :index))
 
       assert [
-               %{"id" => ^id1, "updated_at" => _},
-               %{"id" => ^id2, "updated_at" => _},
-               %{"id" => ^id3, "updated_at" => _}
+               %{"id" => ^id1, "updated_at" => _, "address" => _},
+               %{"id" => ^id2, "updated_at" => _, "address" => _},
+               %{"id" => ^id3, "updated_at" => _, "address" => _}
              ] = json_response(conn, 200)["listings"]
     end
   end

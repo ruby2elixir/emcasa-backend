@@ -105,6 +105,15 @@ defmodule ReWeb.ListingView do
   end
 
   def render("sitemap_listing.json", %{listing: listing}) do
-    %{id: listing.id, updated_at: listing.updated_at}
+    %{
+      id: listing.id,
+      updated_at: listing.updated_at,
+      address: %{
+        street: listing.address.street,
+        neighborhood: listing.address.neighborhood,
+        city: listing.address.city,
+        state: listing.address.state
+      }
+    }
   end
 end
