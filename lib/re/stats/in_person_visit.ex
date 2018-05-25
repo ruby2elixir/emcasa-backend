@@ -21,6 +21,6 @@ defmodule Re.Stats.InPersonVisit do
     struct
     |> cast(params, @required ++ @optional)
     |> validate_required(@required)
-    |> foreign_key_constraint(:listing_id)
+    |> foreign_key_constraint(:listing_id, message: "does not exist")
   end
 end

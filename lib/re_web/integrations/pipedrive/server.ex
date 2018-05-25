@@ -54,8 +54,13 @@ defmodule ReWeb.Integrations.Pipedrive.Server do
     %InPersonVisit{}
     |> InPersonVisit.changeset(%{listing_id: listing_id, date: done_time})
     |> Repo.insert()
+    |> case do
+      {:ok, _visit} ->
+        Logger.info("In Person Visit recorded for listing #{listing_id} at #{done_time}")
 
-    Logger.info("In Person Visit recorded for listing #{listing_id} at #{done_time}")
+      error ->
+        Logger.info(fn -> "Error: #{inspect(error)}" end)
+    end
   end
 
   defp save_visit(_, _), do: Logger.info("Listing ID is empty")
