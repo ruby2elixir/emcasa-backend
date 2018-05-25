@@ -24,12 +24,16 @@ defmodule Re.Messages do
   def get(user, params) do
     Message
     |> by_listing(params)
+    |> by_sender(params)
     |> by_user(user)
     |> Repo.all()
   end
 
   defp by_listing(query, %{listing_id: listing_id}), do: Queries.by_listing(query, listing_id)
   defp by_listing(query, _params), do: query
+
+  defp by_sender(query, %{sender_id: sender_id}), do: Queries.by_sender(query, sender_id)
+  defp by_sender(query, _params), do: query
 
   defp by_user(query, user) do
     query

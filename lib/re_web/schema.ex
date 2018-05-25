@@ -23,6 +23,7 @@ defmodule ReWeb.Schema do
     @desc "List user messages, optionally by listing"
     field :listing_user_messages, list_of(:message) do
       arg :listing_id, :id
+      arg :sender_id, :id
 
       resolve &Resolvers.Messages.get/2
     end

@@ -189,6 +189,105 @@ defmodule ReWeb.GraphQL.MessagesTest do
              } = json_response(conn, 200)["data"]
     end
 
+    test "admin should filter messages by sender", %{admin_conn: conn, admin_user: admin} do
+      user1 = insert(:user, role: "user")
+      user2 = insert(:user, role: "user")
+      listing = insert(:listing)
+
+      %{id: id1} =
+        insert(:message, sender_id: user1.id, receiver_id: admin.id, listing_id: listing.id)
+
+      %{id: id2} = insert(:message, sender_id: user1.id, receiver_id: admin.id)
+
+      insert(:message, sender_id: user2.id, receiver_id: admin.id, listing_id: listing.id)
+
+      insert(:message, sender_id: user2.id, receiver_id: admin.id)
+
+      query = """
+        {
+          listingUserMessages (senderId: #{user1.id}) {
+            id
+            message
+            sender {
+              id
+            }
+            listing {
+              id
+            }
+          }
+        }
+      """
+
+      id1 = to_string(id1)
+      id2 = to_string(id2)
+      user1_id = to_string(user1.id)
+      listing_id = to_string(listing.id)
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+
+      assert %{
+               "listingUserMessages" => [
+                 %{
+                   "id" => ^id1,
+                   "listing" => %{"id" => ^listing_id},
+                   "sender" => %{"id" => ^user1_id}
+                 },
+                 %{"id" => ^id2, "sender" => %{"id" => ^user1_id}}
+               ]
+             } = json_response(conn, 200)["data"]
+    end
+
+    test "admin should filter messages by sender and listing", %{
+      admin_conn: conn,
+      admin_user: admin
+    } do
+      user1 = insert(:user, role: "user")
+      user2 = insert(:user, role: "user")
+      listing = insert(:listing)
+
+      %{id: id1} =
+        insert(:message, sender_id: user1.id, receiver_id: admin.id, listing_id: listing.id)
+
+      insert(:message, sender_id: user1.id, receiver_id: admin.id)
+
+      insert(:message, sender_id: user2.id, receiver_id: admin.id, listing_id: listing.id)
+
+      insert(:message, sender_id: user2.id, receiver_id: admin.id)
+
+      query = """
+        {
+          listingUserMessages (listingId: #{listing.id}, senderId: #{user1.id}) {
+            id
+            message
+            sender {
+              id
+            }
+            listing {
+              id
+            }
+          }
+        }
+      """
+
+      id1 = to_string(id1)
+      listing_id = to_string(listing.id)
+      user1_id = to_string(user1.id)
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+
+      assert %{
+               "listingUserMessages" => [
+                 %{
+                   "id" => ^id1,
+                   "listing" => %{"id" => ^listing_id},
+                   "sender" => %{"id" => ^user1_id}
+                 }
+               ]
+             } = json_response(conn, 200)["data"]
+    end
+
     test "anonymous should not list messages per listing", %{unauthenticated_conn: conn} do
       query = """
         {
