@@ -119,6 +119,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
         {
           listingUserMessages (listingId: #{listing.id}) {
             id
+            inserted_at
             message
             listing {
               id
@@ -137,9 +138,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
 
       assert %{
                "listingUserMessages" => [
-                 %{"id" => ^id1, "listing" => %{"id" => ^listing_id}},
-                 %{"id" => ^id2, "listing" => %{"id" => ^listing_id}},
-                 %{"id" => ^id3, "listing" => %{"id" => ^listing_id}}
+                 %{"id" => ^id1, "listing" => %{"id" => ^listing_id}, "inserted_at" => _},
+                 %{"id" => ^id2, "listing" => %{"id" => ^listing_id}, "inserted_at" => _},
+                 %{"id" => ^id3, "listing" => %{"id" => ^listing_id}, "inserted_at" => _}
                ]
              } = json_response(conn, 200)["data"]
     end
