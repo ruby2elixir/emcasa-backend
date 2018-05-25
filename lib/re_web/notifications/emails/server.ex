@@ -23,6 +23,8 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   @spec init(term) :: {:ok, term}
   def init(args) do
+    if Mix.env() != :test do
+
     case Absinthe.run(
            "subscription { emailChanged { id } }",
            Schema,
@@ -30,6 +32,7 @@ defmodule ReWeb.Notifications.Emails.Server do
          ) do
       {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
       _ -> :nothing
+    end
     end
 
     {:ok, args}
