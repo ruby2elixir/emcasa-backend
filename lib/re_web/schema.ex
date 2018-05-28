@@ -3,8 +3,7 @@ defmodule ReWeb.Schema do
   Module for defining graphQL schemas
   """
   use Absinthe.Schema
-  import_types ReWeb.Schema.ListingTypes
-  import_types ReWeb.Schema.UserTypes
+  import_types ReWeb.Schema.{ListingTypes, UserTypes, MessageTypes}
 
   alias ReWeb.Resolvers
 
@@ -21,7 +20,7 @@ defmodule ReWeb.Schema do
     end
 
     @desc "List user messages, optionally by listing"
-    field :listing_user_messages, list_of(:message) do
+    field :listing_user_messages, :user_messages do
       arg :listing_id, :id
       arg :sender_id, :id
 
