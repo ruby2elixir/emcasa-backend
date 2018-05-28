@@ -13,5 +13,5 @@ defmodule Re.Messages.Queries do
 
   def by_listing(query \\ Message, listing_id), do: where(query, [m], m.listing_id == ^listing_id)
 
-  def by_sender(query \\ Message, sender_id), do: where(query, [m], m.sender_id == ^sender_id)
+  def by_sender(query \\ Message, sender_id), do: where(query, [m], m.sender_id == ^sender_id or m.receiver_id == ^sender_id)
 end
