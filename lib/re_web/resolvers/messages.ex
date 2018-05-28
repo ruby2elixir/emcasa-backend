@@ -12,7 +12,7 @@ defmodule ReWeb.Resolvers.Messages do
 
   def get(params, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Messages, :index, current_user, %{}) do
-      {:ok, Messages.get(current_user, params)}
+      {:ok, %{user: current_user, messages: Messages.get(current_user, params)}}
     end
   end
 end
