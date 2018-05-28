@@ -18,9 +18,9 @@ defmodule Re.MessagesTest do
       insert(:message, receiver: user1, sender: user3, listing: listing)
 
       assert [
-          %{id: ^msg1},
-          %{id: ^msg2}
-        ] = Messages.get(user1, %{listing_id: listing.id, sender_id: user2.id})
+               %{id: ^msg1},
+               %{id: ^msg2}
+             ] = Messages.get(user1, %{listing_id: listing.id, sender_id: user2.id})
     end
   end
 end
