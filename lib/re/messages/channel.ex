@@ -1,4 +1,4 @@
-defmodule Re.Channel do
+defmodule Re.Messages.Channels.Channel do
   @moduledoc """
   Module for grouping messages into a channel.
   """

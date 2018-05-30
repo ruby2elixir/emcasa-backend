@@ -38,6 +38,11 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Users.profile/2
     end
+
+    @desc "Get user channels"
+    field :user_channels, list_of(:channel) do
+      resolve &Resolvers.Channels.get/2
+    end
   end
 
   mutation do

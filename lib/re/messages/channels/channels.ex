@@ -2,11 +2,21 @@ defmodule Re.Messages.Channels do
   @moduledoc """
   Context module for channels
   """
+  @behaviour Bodyguard.Policy
 
-  alias Re.{
+  alias Re.Repo
+
+  alias __MODULE__.{
     Channel,
-    Repo
+    Queries
   }
+
+  def all(user) do
+    Channel
+    |> Queries.by_participant(user.id)
+    |> Queries.preload()
+    |> Repo.all()
+  end
 
   def get(id) when is_integer(id), do: Repo.get(Channel, id)
   def get(params) when is_map(params), do: Repo.get_by(Channel, params)
