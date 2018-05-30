@@ -25,10 +25,13 @@ defmodule Re.Messages.Channels do
     params = translate_params(message_params)
 
     case get(params) do
-      nil -> %Channel{}
+      nil ->
+        %Channel{}
         |> Channel.changeset(params)
         |> Repo.insert()
-      channel -> {:ok, channel}
+
+      channel ->
+        {:ok, channel}
     end
   end
 

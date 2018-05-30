@@ -23,10 +23,30 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       user = insert(:user)
       listing = insert(:listing)
 
-      channel = insert(:channel, listing_id: listing.id, participant1_id: admin_user.id, participant2_id: user.id)
+      channel =
+        insert(
+          :channel,
+          listing_id: listing.id,
+          participant1_id: admin_user.id,
+          participant2_id: user.id
+        )
 
-      insert(:message, channel_id: channel.id, sender_id: admin_user.id, receiver_id: user.id, listing_id: listing.id)
-      m1 = insert(:message, channel_id: channel.id, sender_id: user.id, receiver_id: admin_user.id, listing_id: listing.id)
+      insert(
+        :message,
+        channel_id: channel.id,
+        sender_id: admin_user.id,
+        receiver_id: user.id,
+        listing_id: listing.id
+      )
+
+      m1 =
+        insert(
+          :message,
+          channel_id: channel.id,
+          sender_id: user.id,
+          receiver_id: admin_user.id,
+          listing_id: listing.id
+        )
 
       query = """
         {
@@ -50,15 +70,17 @@ defmodule ReWeb.GraphQL.ChannelsTest do
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
 
       assert %{
-               "userChannels" => [%{
-                 "id" => ^channel_id,
-                 "participant1" => %{"id" => ^user_id1},
-                 "participant2" => %{"id" => ^user_id2},
-                 "listing" => %{"id" => ^listing_id},
-                 "messages" => [
-                   %{"id" => ^m1_id}
-                 ]
-               }]
+               "userChannels" => [
+                 %{
+                   "id" => ^channel_id,
+                   "participant1" => %{"id" => ^user_id1},
+                   "participant2" => %{"id" => ^user_id2},
+                   "listing" => %{"id" => ^listing_id},
+                   "messages" => [
+                     %{"id" => ^m1_id}
+                   ]
+                 }
+               ]
              } = json_response(conn, 200)["data"]
     end
   end
