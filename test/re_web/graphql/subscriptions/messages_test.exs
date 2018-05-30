@@ -26,12 +26,13 @@ defmodule ReWeb.GraphQL.Subscription.MessagesTest do
     ref = push_doc(user_socket, @subscription)
     user_id = to_string(user_user.id)
     admin_id = to_string(admin_user.id)
+    listing = insert(:listing)
 
     assert_reply(ref, :ok, %{subscriptionId: subscription_id})
 
     mutation = """
       mutation {
-        sendMessage(receiverId: #{user_id}, message: "mah message") {
+        sendMessage(receiverId: #{user_id},listingId: #{listing.id} message: "mah message") {
           sender {
             id
           }
@@ -77,12 +78,13 @@ defmodule ReWeb.GraphQL.Subscription.MessagesTest do
     ref = push_doc(admin_socket, @subscription)
     user_id = to_string(user_user.id)
     admin_id = to_string(admin_user.id)
+    listing = insert(:listing)
 
     assert_reply(ref, :ok, %{subscriptionId: subscription_id})
 
     mutation = """
       mutation {
-        sendMessage(receiverId: #{admin_id}, message: "mah message") {
+        sendMessage(receiverId: #{admin_id}, listingId: #{listing.id} message: "mah message") {
           sender {
             id
           }
