@@ -20,4 +20,10 @@ defmodule Re.Images.Queries do
     |> active()
     |> order_by_position()
   end
+
+  def listing_partial_preload(query \\ Image) do
+    query
+    |> listing_preload()
+    |> limit(1)
+  end
 end
