@@ -7,6 +7,7 @@ defmodule Re.Listings do
   alias Re.{
     Listing,
     Filtering,
+    Images,
     Listings.Queries,
     Listings.Opts,
     Repo
@@ -48,12 +49,18 @@ defmodule Re.Listings do
     end
   end
 
+  @partial_preload [
+    :address,
+    :listings_favorites,
+    images: Images.Queries.listing_preload()
+  ]
+
   defp build_query(params) do
     Queries.active()
     |> Queries.excluding(params)
     |> Queries.order_by()
     |> Queries.limit(params)
-    |> Queries.preload_relations()
+    |> Queries.preload_relations(@partial_preload)
     |> Filtering.apply(params)
   end
 

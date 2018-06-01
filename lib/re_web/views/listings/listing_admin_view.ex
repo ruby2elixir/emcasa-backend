@@ -60,11 +60,11 @@ defmodule ReWeb.ListingAdminView do
       },
       user_id: listing.user_id,
       images: render_many(listing.images, ReWeb.ImageView, "image.json"),
-      visualisations: Enum.count(listing.listings_visualisations),
-      tour_visualisations: Enum.count(listing.tour_visualisations),
-      favorite_count: Enum.count(listing.listings_favorites),
-      interest_count: Enum.count(listing.interests),
-      in_person_visit_count: Enum.count(listing.in_person_visits)
+      visualisations: count_if_list(listing.listings_visualisations),
+      tour_visualisations: count_if_list(listing.tour_visualisations),
+      favorite_count: count_if_list(listing.listings_favorites),
+      interest_count: count_if_list(listing.interests),
+      in_person_visit_count: count_if_list(listing.in_person_visits)
     }
   end
 
@@ -114,4 +114,8 @@ defmodule ReWeb.ListingAdminView do
   def render("sitemap_listing.json", %{listing: listing}) do
     %{id: listing.id, updated_at: listing.updated_at}
   end
+
+  defp count_if_list(c) when is_list(c), do: Enum.count(c)
+
+  defp count_if_list(_), do: nil
 end
