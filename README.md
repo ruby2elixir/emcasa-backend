@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/em-casa/backend.svg?branch=master)](https://travis-ci.org/em-casa/backend)
-[![Ebert](https://ebertapp.io/github/em-casa/backend.svg)](https://ebertapp.io/github/em-casa/backend)
+[![Build Status](https://travis-ci.org/emcasa/backend.svg?branch=master)](https://travis-ci.org/emcasa/backend)
+[![Ebert](https://ebertapp.io/github/emcasa/backend.svg)](https://ebertapp.io/github/emcasa/backend)
 # Re WebService
 
 ## Install
