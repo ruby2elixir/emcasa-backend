@@ -31,7 +31,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
           participant2_id: user.id
         )
 
-      insert(
+      m1 = insert(
         :message,
         channel_id: channel.id,
         sender_id: admin_user.id,
@@ -39,7 +39,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
         listing_id: listing.id
       )
 
-      m1 =
+      m2 =
         insert(
           :message,
           channel_id: channel.id,
@@ -56,12 +56,14 @@ defmodule ReWeb.GraphQL.ChannelsTest do
             participant2 { id }
             listing { id }
             messages { id }
+            lastMessage { id }
           }
         }
       """
 
       channel_id = to_string(channel.id)
       m1_id = to_string(m1.id)
+      m2_id = to_string(m2.id)
       user_id1 = to_string(admin_user.id)
       user_id2 = to_string(user.id)
       listing_id = to_string(listing.id)
@@ -77,8 +79,10 @@ defmodule ReWeb.GraphQL.ChannelsTest do
                    "participant2" => %{"id" => ^user_id2},
                    "listing" => %{"id" => ^listing_id},
                    "messages" => [
-                     %{"id" => ^m1_id}
-                   ]
+                     %{"id" => ^m1_id},
+                     %{"id" => ^m2_id}
+                   ],
+                   "lastMessage" => %{"id" => ^m2_id}
                  }
                ]
              } = json_response(conn, 200)["data"]
