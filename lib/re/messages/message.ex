@@ -14,7 +14,7 @@ defmodule Re.Message do
     belongs_to :sender, Re.User
     belongs_to :receiver, Re.User
     belongs_to :listing, Re.Listing
-    belongs_to :channel, Re.Messages.Channel
+    belongs_to :channel, Re.Messages.Channels.Channel
 
     timestamps()
   end
