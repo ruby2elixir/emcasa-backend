@@ -2,8 +2,6 @@ defmodule Re.Messages.Channels do
   @moduledoc """
   Context module for channels
   """
-  @behaviour Bodyguard.Policy
-
   alias Re.Repo
 
   alias __MODULE__.{

@@ -139,6 +139,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
                 id
               }
             }
+            user {
+              id
+            }
           }
         }
       """
@@ -147,6 +150,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
       id2 = to_string(id2)
       id3 = to_string(id3)
       listing_id = to_string(listing.id)
+      user_id = to_string(user.id)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
@@ -157,7 +161,8 @@ defmodule ReWeb.GraphQL.MessagesTest do
                    %{"id" => ^id1, "listing" => %{"id" => ^listing_id}, "inserted_at" => _},
                    %{"id" => ^id2, "listing" => %{"id" => ^listing_id}, "inserted_at" => _},
                    %{"id" => ^id3, "listing" => %{"id" => ^listing_id}, "inserted_at" => _}
-                 ]
+                 ],
+                 "user" => %{"id" => ^user_id}
                }
              } = json_response(conn, 200)["data"]
     end
@@ -187,6 +192,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
                 id
               }
             }
+            user {
+              id
+            }
           }
         }
       """
@@ -195,6 +203,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
       id2 = to_string(id2)
       id3 = to_string(id3)
       listing_id = to_string(listing.id)
+      admin_user_id = to_string(admin_user.id)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
@@ -205,7 +214,8 @@ defmodule ReWeb.GraphQL.MessagesTest do
                    %{"id" => ^id1, "listing" => %{"id" => ^listing_id}},
                    %{"id" => ^id2, "listing" => %{"id" => ^listing_id}},
                    %{"id" => ^id3, "listing" => %{"id" => ^listing_id}}
-                 ]
+                 ],
+                 "user" => %{"id" => ^admin_user_id}
                }
              } = json_response(conn, 200)["data"]
     end
@@ -237,6 +247,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
                 id
               }
             }
+            user {
+              id
+            }
           }
         }
       """
@@ -258,7 +271,8 @@ defmodule ReWeb.GraphQL.MessagesTest do
                      "sender" => %{"id" => ^user1_id}
                    },
                    %{"id" => ^id2, "sender" => %{"id" => ^user1_id}}
-                 ]
+                 ],
+                 "user" => %{"id" => ^user1_id}
                }
              } = json_response(conn, 200)["data"]
     end
@@ -293,6 +307,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
                 id
               }
             }
+            user {
+              id
+            }
           }
         }
       """
@@ -312,7 +329,8 @@ defmodule ReWeb.GraphQL.MessagesTest do
                      "listing" => %{"id" => ^listing_id},
                      "sender" => %{"id" => ^user1_id}
                    }
-                 ]
+                 ],
+                 "user" => %{"id" => ^user1_id}
                }
              } = json_response(conn, 200)["data"]
     end

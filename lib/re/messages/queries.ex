@@ -21,4 +21,6 @@ defmodule Re.Messages.Queries do
     |> order_by([m], desc: m.inserted_at)
     |> limit(1)
   end
+
+  def preload_relations(query, relations), do: preload(query, ^relations)
 end
