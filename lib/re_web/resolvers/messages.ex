@@ -13,7 +13,7 @@ defmodule ReWeb.Resolvers.Messages do
   def get(params, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Messages, :index, current_user, %{}),
          messages <- Messages.get(current_user, params),
-         [user] <- find_participant(messages, current_user) do
+         user <- find_participant(messages, current_user) do
       {:ok, %{user: user, messages: messages}}
     end
   end
@@ -25,5 +25,9 @@ defmodule ReWeb.Resolvers.Messages do
     participant_users
     |> Enum.uniq()
     |> Enum.reject(fn %{id: id} -> id == current_user_id end)
+    |> case do
+      [user] -> user
+      _ -> nil
+    end
   end
 end
