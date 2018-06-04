@@ -19,6 +19,7 @@ defmodule Re.Messages do
     |> by_listing(params)
     |> by_sender(params)
     |> by_user(user)
+    |> Queries.preload_relations([:sender, :receiver])
     |> Repo.all()
   end
 
