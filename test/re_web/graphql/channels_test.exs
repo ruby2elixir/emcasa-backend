@@ -31,13 +31,14 @@ defmodule ReWeb.GraphQL.ChannelsTest do
           participant2_id: user.id
         )
 
-      m1 = insert(
-        :message,
-        channel_id: channel.id,
-        sender_id: admin_user.id,
-        receiver_id: user.id,
-        listing_id: listing.id
-      )
+      m1 =
+        insert(
+          :message,
+          channel_id: channel.id,
+          sender_id: admin_user.id,
+          receiver_id: user.id,
+          listing_id: listing.id
+        )
 
       m2 =
         insert(

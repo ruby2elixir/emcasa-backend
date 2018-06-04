@@ -12,7 +12,9 @@ defmodule Re.ChannelsTest do
       admin = insert(:user, role: "admin")
       user = insert(:user, role: "user")
       listing = insert(:listing)
-      %{id: channel_id} = insert(:channel, participant1: admin, participant2: user, listing: listing)
+
+      %{id: channel_id} =
+        insert(:channel, participant1: admin, participant2: user, listing: listing)
 
       assert [%{id: ^channel_id}] = Channels.all(admin)
       assert [%{id: ^channel_id}] = Channels.all(user)
@@ -25,9 +27,34 @@ defmodule Re.ChannelsTest do
       user = insert(:user)
       listing = insert(:listing)
       channel = insert(:channel, participant1: admin, participant2: user, listing: listing)
-      insert(:message, channel: channel, receiver: admin, sender: user, listing: listing, read: true)
-      insert(:message, channel: channel, receiver: admin, sender: user, listing: listing, read: false)
-      insert(:message, channel: channel, receiver: admin, sender: user, listing: listing, read: false)
+
+      insert(
+        :message,
+        channel: channel,
+        receiver: admin,
+        sender: user,
+        listing: listing,
+        read: true
+      )
+
+      insert(
+        :message,
+        channel: channel,
+        receiver: admin,
+        sender: user,
+        listing: listing,
+        read: false
+      )
+
+      insert(
+        :message,
+        channel: channel,
+        receiver: admin,
+        sender: user,
+        listing: listing,
+        read: false
+      )
+
       channel = Channels.get_preloaded(channel.id)
 
       assert %{unread_count: 2} = Channels.count_unread(channel)
@@ -42,7 +69,10 @@ defmodule Re.ChannelsTest do
       channel = insert(:channel, participant1: admin, participant2: user, listing: listing)
       insert(:message, channel: channel, receiver: admin, sender: user, listing: listing)
       insert(:message, channel: channel, receiver: admin, sender: user, listing: listing)
-      %{id: message_id} = insert(:message, channel: channel, receiver: admin, sender: user, listing: listing)
+
+      %{id: message_id} =
+        insert(:message, channel: channel, receiver: admin, sender: user, listing: listing)
+
       channel = Channels.get_preloaded(channel.id)
 
       assert %{last_message: %{id: ^message_id}} = Channels.set_last_message(channel)
