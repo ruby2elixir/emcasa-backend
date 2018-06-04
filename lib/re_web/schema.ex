@@ -38,6 +38,11 @@ defmodule ReWeb.Schema do
 
       resolve &Resolvers.Users.profile/2
     end
+
+    @desc "Get user channels"
+    field :user_channels, list_of(:channel) do
+      resolve &Resolvers.Channels.get/2
+    end
   end
 
   mutation do
@@ -79,7 +84,7 @@ defmodule ReWeb.Schema do
     @desc "Send message"
     field :send_message, type: :message do
       arg :receiver_id, non_null(:id)
-      arg :listing_id, :id
+      arg :listing_id, non_null(:id)
 
       arg :message, :string
 

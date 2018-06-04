@@ -96,7 +96,7 @@ defmodule Re.Factory do
   end
 
   def message_factory do
-    %Re.Message{}
+    %Re.Message{message: Shakespeare.hamlet()}
   end
 
   def tour_visualisation_factory do
@@ -105,6 +105,10 @@ defmodule Re.Factory do
 
   def in_person_visit_factory do
     %Re.Stats.InPersonVisit{}
+  end
+
+  def channel_factory do
+    %Re.Messages.Channels.Channel{}
   end
 
   defp random_postcode do

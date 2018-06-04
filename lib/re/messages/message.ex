@@ -14,12 +14,13 @@ defmodule Re.Message do
     belongs_to :sender, Re.User
     belongs_to :receiver, Re.User
     belongs_to :listing, Re.Listing
+    belongs_to :channel, Re.Messages.Channel
 
     timestamps()
   end
 
-  @required ~w(sender_id receiver_id)a
-  @optional ~w(message notified read listing_id)a
+  @required ~w(sender_id receiver_id listing_id channel_id)a
+  @optional ~w(message notified read)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.

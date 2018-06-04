@@ -21,14 +21,18 @@ defmodule ReWeb.GraphQL.MessagesTest do
   describe "sendMessage" do
     test "admin should send messages", %{admin_conn: conn, admin_user: admin} do
       user = insert(:user)
+      listing = insert(:listing)
 
       mutation = """
         mutation {
-          sendMessage (receiverId: #{user.id}){
+          sendMessage (receiverId: #{user.id}, listingId: #{listing.id}){
             sender {
               id
             }
             receiver {
+              id
+            }
+            listing {
               id
             }
           }
@@ -39,25 +43,31 @@ defmodule ReWeb.GraphQL.MessagesTest do
 
       admin_id = to_string(admin.id)
       user_id = to_string(user.id)
+      listing_id = to_string(listing.id)
 
       assert %{
                "sendMessage" => %{
                  "sender" => %{"id" => ^admin_id},
-                 "receiver" => %{"id" => ^user_id}
+                 "receiver" => %{"id" => ^user_id},
+                 "listing" => %{"id" => ^listing_id}
                }
              } = json_response(conn, 200)["data"]
     end
 
     test "user should send messages", %{user_conn: conn, user_user: user} do
       user2 = insert(:user)
+      listing = insert(:listing)
 
       mutation = """
         mutation {
-          sendMessage (receiverId: #{user2.id}){
+          sendMessage (receiverId: #{user2.id}, listingId: #{listing.id}){
             sender {
               id
             }
             receiver {
+              id
+            }
+            listing {
               id
             }
           }
@@ -68,21 +78,24 @@ defmodule ReWeb.GraphQL.MessagesTest do
 
       user_id = to_string(user.id)
       user2_id = to_string(user2.id)
+      listing_id = to_string(listing.id)
 
       assert %{
                "sendMessage" => %{
                  "sender" => %{"id" => ^user_id},
-                 "receiver" => %{"id" => ^user2_id}
+                 "receiver" => %{"id" => ^user2_id},
+                 "listing" => %{"id" => ^listing_id}
                }
              } = json_response(conn, 200)["data"]
     end
 
     test "anonymous should not send messages", %{unauthenticated_conn: conn} do
       user = insert(:user)
+      listing = insert(:listing)
 
       mutation = """
         mutation {
-          sendMessage (receiverId: #{user.id}){
+          sendMessage (receiverId: #{user.id}, listingId: #{listing.id}){
             sender {
               id
             }

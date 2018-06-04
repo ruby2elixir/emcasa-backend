@@ -5,6 +5,7 @@ defmodule Re.Messages do
   @behaviour Bodyguard.Policy
 
   alias Re.{
+    Messages.Channels,
     Message,
     Repo
   }
@@ -12,14 +13,6 @@ defmodule Re.Messages do
   alias __MODULE__.Queries
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
-
-  def send(sender, params) do
-    params = Map.merge(params, %{sender_id: sender.id})
-
-    %Message{}
-    |> Message.changeset(params)
-    |> Repo.insert()
-  end
 
   def get(user, params) do
     Message
@@ -39,5 +32,22 @@ defmodule Re.Messages do
     query
     |> Queries.belongs_to_user(user.id)
     |> Queries.order_by_insertion()
+  end
+
+  def send(sender, params) do
+    params =
+      params
+      |> Map.merge(%{sender_id: sender.id})
+      |> set_channel()
+
+    %Message{}
+    |> Message.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp set_channel(params) do
+    {:ok, channel} = Channels.find_or_create_channel(params)
+
+    Map.merge(params, %{channel_id: channel.id})
   end
 end

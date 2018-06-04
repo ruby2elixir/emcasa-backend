@@ -52,6 +52,42 @@ defmodule ReWeb.Schema.MessageTypes do
     field :messages, list_of(:message)
   end
 
+  object :channel do
+    field :id, :id
+
+    field :participant1, :user do
+      resolve fn channel, _, _ ->
+        batch(
+          {ReWeb.Schema.Helpers, :by_id, User},
+          channel.participant1_id,
+          &{:ok, Map.get(&1, channel.participant1_id)}
+        )
+      end
+    end
+
+    field :participant2, :user do
+      resolve fn channel, _, _ ->
+        batch(
+          {ReWeb.Schema.Helpers, :by_id, User},
+          channel.participant2_id,
+          &{:ok, Map.get(&1, channel.participant2_id)}
+        )
+      end
+    end
+
+    field :listing, :listing do
+      resolve fn channel, _, _ ->
+        batch(
+          {ReWeb.Schema.Helpers, :by_id, Listing},
+          channel.listing_id,
+          &{:ok, Map.get(&1, channel.listing_id)}
+        )
+      end
+    end
+
+    field :messages, list_of(:message)
+  end
+
   scalar :datetime, name: "DateTime" do
     serialize(&NaiveDateTime.to_iso8601/1)
     parse(&parse_datetime/1)
