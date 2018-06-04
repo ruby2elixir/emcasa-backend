@@ -16,11 +16,5 @@ defmodule Re.Messages.Queries do
   def by_sender(query \\ Message, sender_id),
     do: where(query, [m], m.sender_id == ^sender_id or m.receiver_id == ^sender_id)
 
-  def last_message(query \\ Message) do
-    query
-    |> order_by([m], desc: m.inserted_at)
-    |> limit(1)
-  end
-
   def preload_relations(query, relations), do: preload(query, ^relations)
 end

@@ -85,6 +85,8 @@ defmodule ReWeb.Schema.MessageTypes do
       end
     end
 
+    field :unread_count, :integer
+    field :last_message, :message
     field :messages, list_of(:message)
   end
 

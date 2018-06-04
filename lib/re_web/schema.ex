@@ -41,7 +41,7 @@ defmodule ReWeb.Schema do
 
     @desc "Get user channels"
     field :user_channels, list_of(:channel) do
-      resolve &Resolvers.Channels.get/2
+      resolve &Resolvers.Channels.all/2
     end
   end
 

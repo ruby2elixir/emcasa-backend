@@ -9,15 +9,15 @@ defmodule Re.Messages.Channels.Queries do
     Messages.Channels.Channel
   }
 
-  @shallow_preload [
+  @full_preload [
     :participant1,
     :participant2,
     :listing,
-    messages: Messages.Queries.last_message()
+    messages: Messages.Queries.order_by_insertion()
   ]
 
   def by_participant(query, user_id),
     do: where(query, [c], c.participant1_id == ^user_id or c.participant2_id == ^user_id)
 
-  def preload(query \\ Channel), do: preload(query, ^@shallow_preload)
+  def preload(query \\ Channel), do: preload(query, ^@full_preload)
 end
