@@ -86,7 +86,8 @@ defmodule Re.Filtering do
     from(
       l in query,
       join: ad in assoc(l, :address),
-      where: ad.neighborhood in ^neighborhoods and ad.id == l.address_id
+      on: ad.id == l.address_id,
+      where: ad.neighborhood in ^neighborhoods
     )
   end
 
