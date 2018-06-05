@@ -25,10 +25,11 @@ defmodule Re.Filtering do
     field :min_lat, :float
     field :max_lng, :float
     field :min_lng, :float
+    field :neighborhoods_slugs, {:array, :string}
   end
 
   @filters ~w(max_price min_price rooms max_rooms min_rooms min_area max_area neighborhoods types
-              max_lat min_lat max_lng min_lng)a
+              max_lat min_lat max_lng min_lng neighborhoods_slugs)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -88,6 +89,22 @@ defmodule Re.Filtering do
       join: ad in assoc(l, :address),
       on: ad.id == l.address_id,
       where: ad.neighborhood in ^neighborhoods
+    )
+  end
+
+  defp attr_filter({:neighborhoods_slugs, []}, query), do: query
+
+  defp attr_filter({:neighborhoods_slugs, neighborhoods}, query) do
+    neighborhoods =
+      neighborhoods
+      |> Enum.map(&String.split(&1, "-"))
+      |> Enum.map(&Enum.join(&1, " "))
+
+    from(
+      l in query,
+      join: ad in assoc(l, :address),
+      on: ad.id == l.address_id,
+      where: fragment("LOWER(?) = ANY(?)", ad.neighborhood, ^neighborhoods)
     )
   end
 
