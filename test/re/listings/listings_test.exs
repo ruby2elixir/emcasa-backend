@@ -21,11 +21,11 @@ defmodule Re.ListingsTest do
 
   describe "paginated/1" do
     test "should filter by attributes" do
-      laranjeiras =
+      sao_conrado =
         insert(
           :address,
           street: "astreet",
-          neighborhood: "Laranjeiras",
+          neighborhood: "São Conrado",
           lat: -22.9675614,
           lng: -43.20261119999998
         )
@@ -55,7 +55,7 @@ defmodule Re.ListingsTest do
           area: 40,
           rooms: 4,
           score: 4,
-          address_id: laranjeiras.id,
+          address_id: sao_conrado.id,
           type: "Apartamento"
         )
 
@@ -99,7 +99,10 @@ defmodule Re.ListingsTest do
       result = Listings.paginated(%{"max_area" => 55})
       assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
 
-      result = Listings.paginated(%{"neighborhoods" => ["Laranjeiras", "Leblon"]})
+      result = Listings.paginated(%{"neighborhoods" => ["São Conrado", "Leblon"]})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"neighborhoods_slugs" => ["são-conrado", "leblon"]})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"types" => ["Apartamento"]})
