@@ -65,12 +65,6 @@ defmodule Re.Factory do
     }
   end
 
-  def featured_listing_factory do
-    %Re.Listings.FeaturedListing{
-      position: 0
-    }
-  end
-
   def interest_factory do
     %Re.Interest{
       name: "John Doe"
