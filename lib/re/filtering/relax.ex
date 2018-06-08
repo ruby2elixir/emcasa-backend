@@ -10,7 +10,7 @@ defmodule Re.Filtering.Relax do
 
   defguardp is_not_nil(value) when not is_nil(value)
 
-  @types ~w(price area room neighborhoods)a
+  @types ~w(price area room neighborhoods garage_spots)a
 
   def apply(params) do
     Enum.reduce(@types, params, &do_apply/2)
@@ -39,6 +39,13 @@ defmodule Re.Filtering.Relax do
     |> min_rooms()
   end
 
+  defp do_apply(:garage_spots, params) do
+    params
+    |> Filtering.cast()
+    |> max_garage_spots()
+    |> min_garage_spots()
+  end
+
   defp do_apply(:neighborhoods, params) do
     params
     |> Filtering.cast()
@@ -58,6 +65,18 @@ defmodule Re.Filtering.Relax do
   end
 
   defp min_price(params), do: params
+
+  defp max_garage_spots(%{max_garage_spots: max_garage_spots} = params) when is_not_nil(max_garage_spots) do
+    %{params | max_garage_spots: trunc(max_garage_spots + 1)}
+  end
+
+  defp max_garage_spots(params), do: params
+
+  defp min_garage_spots(%{min_garage_spots: min_garage_spots} = params) when is_not_nil(min_garage_spots) do
+    %{params | min_garage_spots: trunc(min_garage_spots - 1)}
+  end
+
+  defp min_garage_spots(params), do: params
 
   defp max_area(%{max_area: max_area} = params) when is_not_nil(max_area) do
     %{params | max_area: trunc(max_area * 1.1)}
