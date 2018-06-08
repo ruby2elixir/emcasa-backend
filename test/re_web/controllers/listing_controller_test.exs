@@ -720,4 +720,48 @@ defmodule ReWeb.ListingControllerTest do
       assert listing.is_active
     end
   end
+
+  describe "coordinates" do
+    test "admin gets all coordinates", %{admin_conn: conn} do
+      %{id: id1} = insert(:listing, address: build(:address, lat: 10.0, lng: 10.0))
+      %{id: id2} = insert(:listing, address: build(:address, lat: 20.0, lng: 20.0))
+
+      conn = get(conn, listing_path(conn, :coordinates))
+
+      assert response = json_response(conn, 200)
+
+      assert [
+               %{"id" => ^id1, "address" => %{"lat" => 10.0, "lng" => 10.0}},
+               %{"id" => ^id2, "address" => %{"lat" => 20.0, "lng" => 20.0}}
+             ] = response["listings"]
+    end
+
+    test "user gets all coordinates", %{user_conn: conn} do
+      %{id: id1} = insert(:listing, address: build(:address, lat: 10.0, lng: 10.0))
+      %{id: id2} = insert(:listing, address: build(:address, lat: 20.0, lng: 20.0))
+
+      conn = get(conn, listing_path(conn, :coordinates))
+
+      assert response = json_response(conn, 200)
+
+      assert [
+               %{"id" => ^id1, "address" => %{"lat" => 10.0, "lng" => 10.0}},
+               %{"id" => ^id2, "address" => %{"lat" => 20.0, "lng" => 20.0}}
+             ] = response["listings"]
+    end
+
+    test "anonymous gets all coordinates", %{unauthenticated_conn: conn} do
+      %{id: id1} = insert(:listing, address: build(:address, lat: 10.0, lng: 10.0))
+      %{id: id2} = insert(:listing, address: build(:address, lat: 20.0, lng: 20.0))
+
+      conn = get(conn, listing_path(conn, :coordinates))
+
+      assert response = json_response(conn, 200)
+
+      assert [
+               %{"id" => ^id1, "address" => %{"lat" => 10.0, "lng" => 10.0}},
+               %{"id" => ^id2, "address" => %{"lat" => 20.0, "lng" => 20.0}}
+             ] = response["listings"]
+    end
+  end
 end

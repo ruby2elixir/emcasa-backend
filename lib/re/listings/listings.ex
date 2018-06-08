@@ -114,6 +114,12 @@ defmodule Re.Listings do
     end
   end
 
+  def coordinates do
+    Listing
+    |> Queries.preload_relations([:address])
+    |> Repo.all()
+  end
+
   @full_preload [
     :address,
     :listings_visualisations,

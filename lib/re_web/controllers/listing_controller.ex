@@ -81,6 +81,10 @@ defmodule ReWeb.ListingController do
          do: send_resp(conn, :no_content, "")
   end
 
+  def coordinates(conn, _, _) do
+    render(conn, "coordinates.json", listings: Listings.coordinates())
+  end
+
   @visualization_params ~w(remote_ip req_headers)a
 
   defp extract_details(conn) do
