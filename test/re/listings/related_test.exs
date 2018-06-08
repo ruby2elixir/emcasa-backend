@@ -30,8 +30,7 @@ defmodule Re.RelatedTest do
     end
 
     test "should return a room match listing" do
-      listing =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), rooms: 3)
+      listing = insert(:listing, address: build(:address, neighborhood: "Copacabana"), rooms: 3)
 
       %{id: id1} =
         insert(:listing, score: 3, address: build(:address, neighborhood: "Copacabana"), rooms: 4)

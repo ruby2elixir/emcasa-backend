@@ -8,12 +8,34 @@ defmodule Re.Filtering.RelaxedTest do
   describe "get/1" do
     test "should return query with relaxed filters" do
       %{id: id1} =
-        insert(:listing, price: 1_000_000, area: 100, score: 4, address: build(:address), garage_spots: 4)
+        insert(
+          :listing,
+          price: 1_000_000,
+          area: 100,
+          score: 4,
+          address: build(:address),
+          garage_spots: 4
+        )
 
-      %{id: id2} = insert(:listing, price: 950_000, area: 95, score: 3, address: build(:address), garage_spots: 3)
+      %{id: id2} =
+        insert(
+          :listing,
+          price: 950_000,
+          area: 95,
+          score: 3,
+          address: build(:address),
+          garage_spots: 3
+        )
 
       %{id: id3} =
-        insert(:listing, price: 1_050_000, area: 80, score: 2, address: build(:address), garage_spots: 2)
+        insert(
+          :listing,
+          price: 1_050_000,
+          area: 80,
+          score: 2,
+          address: build(:address),
+          garage_spots: 2
+        )
 
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], filters: %{max_price: 1_100_000}} =
                Relaxed.get(%{"max_price" => 1_000_000, "excluded_listing_ids" => [id1]})

@@ -66,13 +66,15 @@ defmodule Re.Filtering.Relax do
 
   defp min_price(params), do: params
 
-  defp max_garage_spots(%{max_garage_spots: max_garage_spots} = params) when is_not_nil(max_garage_spots) do
+  defp max_garage_spots(%{max_garage_spots: max_garage_spots} = params)
+       when is_not_nil(max_garage_spots) do
     %{params | max_garage_spots: max_garage_spots + 1}
   end
 
   defp max_garage_spots(params), do: params
 
-  defp min_garage_spots(%{min_garage_spots: min_garage_spots} = params) when is_not_nil(min_garage_spots) do
+  defp min_garage_spots(%{min_garage_spots: min_garage_spots} = params)
+       when is_not_nil(min_garage_spots) do
     %{params | min_garage_spots: min_garage_spots - 1}
   end
 

@@ -100,7 +100,8 @@ defmodule Re.Filtering.RelaxTest do
     end
 
     test "min and max garage_spots" do
-      assert %{min_garage_spots: 2, max_garage_spots: 5} = Relax.apply(%{min_garage_spots: 3, max_garage_spots: 4})
+      assert %{min_garage_spots: 2, max_garage_spots: 5} =
+               Relax.apply(%{min_garage_spots: 3, max_garage_spots: 4})
     end
 
     test "nil min garage_spots" do
@@ -111,5 +112,4 @@ defmodule Re.Filtering.RelaxTest do
       assert %{min_garage_spots: 2} = Relax.apply(%{min_garage_spots: 3, max_garage_spots: nil})
     end
   end
-
 end
