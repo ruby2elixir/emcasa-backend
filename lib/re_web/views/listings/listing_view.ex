@@ -116,4 +116,18 @@ defmodule ReWeb.ListingView do
       }
     }
   end
+
+  def render("coordinates.json", %{listings: listings}) do
+    %{listings: render_many(listings, ReWeb.ListingView, "coordinate.json")}
+  end
+
+  def render("coordinate.json", %{listing: listing}) do
+    %{
+      id: listing.id,
+      address: %{
+        lat: listing.address.lat,
+        lng: listing.address.lng
+      }
+    }
+  end
 end
