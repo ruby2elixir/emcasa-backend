@@ -119,4 +119,21 @@ defmodule Re.Listings do
     |> Queries.preload_relations([:address])
     |> Repo.all()
   end
+
+  @full_preload [
+    :address,
+    :listings_visualisations,
+    :tour_visualisations,
+    :in_person_visits,
+    :listings_favorites,
+    :interests,
+    images: Images.Queries.listing_preload()
+  ]
+
+  def with_stats do
+    Queries.active()
+    |> Queries.order_by()
+    |> Queries.preload_relations(@full_preload)
+    |> Repo.all()
+  end
 end
