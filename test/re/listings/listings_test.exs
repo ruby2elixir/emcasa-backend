@@ -56,7 +56,8 @@ defmodule Re.ListingsTest do
           rooms: 4,
           score: 4,
           address_id: sao_conrado.id,
-          type: "Apartamento"
+          type: "Apartamento",
+          garage_spots: 3
         )
 
       %{id: id2} =
@@ -67,7 +68,8 @@ defmodule Re.ListingsTest do
           rooms: 3,
           score: 3,
           address_id: leblon.id,
-          type: "Apartamento"
+          type: "Apartamento",
+          garage_spots: 2
         )
 
       %{id: id3} =
@@ -78,7 +80,8 @@ defmodule Re.ListingsTest do
           rooms: 3,
           score: 2,
           address_id: botafogo.id,
-          type: "Casa"
+          type: "Casa",
+          garage_spots: 1
         )
 
       result = Listings.paginated(%{"max_price" => 105})
@@ -119,6 +122,15 @@ defmodule Re.ListingsTest do
 
       result = Listings.paginated(%{"min_lng" => -43.203})
       assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"garage_spots" => 3})
+      assert [%{id: ^id1}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"max_garage_spots" => 2})
+      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"min_garage_spots" => 2})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
     end
 
     test "should not filter for empty array" do
