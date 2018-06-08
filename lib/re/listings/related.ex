@@ -14,7 +14,7 @@ defmodule Re.Listings.Related do
 
   def get(listing, params \\ %{}) do
     query =
-      ~w(price address)a
+      ~w(price address rooms)a
       |> Enum.reduce(Listing, &build_query(&1, listing, &2))
       |> exclude_current(listing)
       |> Queries.excluding(params)
@@ -44,5 +44,12 @@ defmodule Re.Listings.Related do
     ceiling = trunc(listing.price + price_diff)
 
     from(l in query, or_where: l.price >= ^floor and l.price <= ^ceiling)
+  end
+
+  defp build_query(:rooms, listing, query) do
+    rooms_ceiling = listing.rooms + 1
+    rooms_floor = listing.rooms - 1
+
+    from(l in query, or_where: l.rooms >= ^rooms_floor and l.rooms <= ^rooms_ceiling)
   end
 end

@@ -29,22 +29,17 @@ defmodule Re.RelatedTest do
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], remaining_count: 0} = Related.get(listing)
     end
 
-    test "should return a featured listing when there's no related one" do
-      %{id: id1} = insert(:listing, address: build(:address, neighborhood: "b"))
-      %{id: id2} = insert(:listing, address: build(:address, neighborhood: "b"))
-      %{id: id3} = insert(:listing, address: build(:address, neighborhood: "b"))
-      %{id: id4} = insert(:listing, address: build(:address, neighborhood: "b"))
-      insert(:featured_listing, listing_id: id1, position: 4)
-      insert(:featured_listing, listing_id: id2, position: 3)
-      insert(:featured_listing, listing_id: id3, position: 2)
-      insert(:featured_listing, listing_id: id4, position: 1)
-
+    test "should return a room match listing" do
       listing =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), rooms: 3)
 
-      insert(:listing, address: build(:address, neighborhood: "Botafogo"), price: 130_000)
+      %{id: id1} =
+        insert(:listing, score: 3, address: build(:address, neighborhood: "Copacabana"), rooms: 4)
 
-      assert %{listings: [], remaining_count: 0} = Related.get(listing)
+      %{id: id2} =
+        insert(:listing, score: 4, address: build(:address, neighborhood: "Copacabana"), rooms: 2)
+
+      assert %{listings: [%{id: ^id1}, %{id: ^id2}], remaining_count: 0} = Related.get(listing)
     end
   end
 end
