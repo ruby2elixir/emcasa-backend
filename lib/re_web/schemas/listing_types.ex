@@ -51,6 +51,11 @@ defmodule ReWeb.Schema.ListingTypes do
     field :postal_code, :string
     field :lat, :float
     field :lng, :float
+
+    field :street_slug, :string
+    field :neighborhood_slug, :string
+    field :city_slug, :string
+    field :state_slug, :string
   end
 
   object :image do

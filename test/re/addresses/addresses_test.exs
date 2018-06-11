@@ -22,10 +22,14 @@ defmodule Re.AddressesTest do
 
       assert created_address.id == address.id
       assert created_address.street == address.street
+      assert created_address.street_slug == address.street_slug
       assert created_address.street_number == address.street_number
       assert created_address.neighborhood == address.neighborhood
+      assert created_address.neighborhood_slug == address.neighborhood_slug
       assert created_address.city == address.city
+      assert created_address.city_slug == address.city_slug
       assert created_address.state == address.state
+      assert created_address.state_slug == address.state_slug
       assert created_address.postal_code == address.postal_code
       assert created_address.lat == address.lat
       assert created_address.lng == address.lng
@@ -38,8 +42,8 @@ defmodule Re.AddressesTest do
         Addresses.insert_or_update(%{
           "street" => "test st",
           "street_number" => "101",
-          "neighborhood" => "downtown",
-          "city" => "neverland",
+          "neighborhood" => "Dówntówn",
+          "city" => "Neverland Town",
           "state" => "ST",
           "postal_code" => "11111-111",
           "lat" => "-1",
@@ -48,10 +52,14 @@ defmodule Re.AddressesTest do
 
       assert created_address.id
       assert created_address.street == "test st"
+      assert created_address.street_slug == "test-st"
       assert created_address.street_number == "101"
-      assert created_address.neighborhood == "downtown"
-      assert created_address.city == "neverland"
+      assert created_address.neighborhood == "Dówntówn"
+      assert created_address.neighborhood_slug == "downtown"
+      assert created_address.city == "Neverland Town"
+      assert created_address.city_slug == "neverland-town"
       assert created_address.state == "ST"
+      assert created_address.state_slug == "st"
       assert created_address.postal_code == "11111-111"
       assert created_address.lat == -1.0
       assert created_address.lng == 1.0
@@ -73,6 +81,7 @@ defmodule Re.AddressesTest do
 
       assert address.id != created_address.id
       assert created_address.street == "new street name"
+      assert created_address.street_slug == "new-street-name"
       assert created_address.street_number == "55"
       assert created_address.postal_code == "54321-876"
 
@@ -110,10 +119,14 @@ defmodule Re.AddressesTest do
 
       assert updated_address.id == address.id
       assert updated_address.street == address.street
+      assert updated_address.street_slug == address.street_slug
       assert updated_address.street_number == address.street_number
       assert updated_address.neighborhood == address.neighborhood
+      assert updated_address.neighborhood_slug == address.neighborhood_slug
       assert updated_address.city == address.city
+      assert updated_address.city_slug == address.city_slug
       assert updated_address.state == address.state
+      assert updated_address.state_slug == address.state_slug
       assert updated_address.postal_code == address.postal_code
       assert updated_address.lat == -20.123
       assert updated_address.lng == -40.123

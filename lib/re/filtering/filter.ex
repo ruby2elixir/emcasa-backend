@@ -98,17 +98,12 @@ defmodule Re.Filtering do
 
   defp attr_filter({:neighborhoods_slugs, []}, query), do: query
 
-  defp attr_filter({:neighborhoods_slugs, neighborhoods}, query) do
-    neighborhoods =
-      neighborhoods
-      |> Enum.map(&String.split(&1, "-"))
-      |> Enum.map(&Enum.join(&1, " "))
-
+  defp attr_filter({:neighborhoods_slugs, neighborhood_slugs}, query) do
     from(
       l in query,
       join: ad in assoc(l, :address),
       on: ad.id == l.address_id,
-      where: fragment("LOWER(?) = ANY(?)", ad.neighborhood, ^neighborhoods)
+      where: ad.neighborhood_slug in ^neighborhood_slugs
     )
   end
 
