@@ -44,12 +44,28 @@ defmodule Re.Factory do
   end
 
   def address_factory do
+    street_name = Address.street_name()
+    street_slug = Re.Address.sluggify(street_name)
+
+    neighborhood_name = Pokemon.location()
+    neighborhood_slug = Re.Address.sluggify(neighborhood_name)
+
+    city_name = Address.city()
+    city_slug = Re.Address.sluggify(city_name)
+
+    state_name = Address.state_abbr()
+    state_slug = Re.Address.sluggify(state_name)
+
     %Re.Address{
-      street: Address.street_name(),
       street_number: Address.building_number(),
-      neighborhood: Pokemon.location(),
-      city: Address.city(),
-      state: Address.state_abbr(),
+      street: street_name,
+      street_slug: street_slug,
+      neighborhood: neighborhood_name,
+      neighborhood_slug: neighborhood_slug,
+      city: city_name,
+      city_slug: city_slug,
+      state: state_name,
+      state_slug: state_slug,
       postal_code: random_postcode(),
       lat: Address.latitude(),
       lng: Address.longitude()
