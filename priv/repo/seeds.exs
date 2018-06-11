@@ -2,8 +2,8 @@ if Mix.env() == :dev do
   alias Re.{
     Address,
     Image,
-    Listings.Interest,
-    Listings.InterestType,
+    Interest,
+    InterestType,
     Listing,
     Repo,
     User
