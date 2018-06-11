@@ -16,6 +16,10 @@ defmodule Re.Images do
 
   defdelegate authorize(action, user, params), to: Re.Images.Policy
 
+  def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
+
+  def query(queryable, _params), do: queryable
+
   def all(listing_id) do
     Queries.by_listing(listing_id)
     |> Queries.active()

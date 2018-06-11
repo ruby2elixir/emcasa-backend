@@ -4,6 +4,8 @@ defmodule ReWeb.Resolvers.Listings do
   """
   alias Re.Listings
 
+  def index(_, _), do: {:ok, Listings.index()}
+
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
          {:ok, listing} <- Listings.get_preloaded(id),

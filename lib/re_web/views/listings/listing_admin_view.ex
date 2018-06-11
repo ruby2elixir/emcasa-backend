@@ -10,7 +10,7 @@ defmodule ReWeb.ListingAdminView do
 
   def render("index_admin.json", %{listings: listings}) do
     %{
-      listings: render_many(listings, ReWeb.ListingAdminView, "listing.json", as: :listing),
+      listings: render_many(listings, ReWeb.ListingAdminView, "listing.json", as: :listing)
     }
   end
 
