@@ -171,10 +171,14 @@ defmodule ReWeb.ListingControllerTest do
                  ],
                  "address" => %{
                    "street" => listing.address.street,
+                   "street_slug" => listing.address.street_slug,
                    "street_number" => listing.address.street_number,
                    "neighborhood" => listing.address.neighborhood,
+                   "neighborhood_slug" => listing.address.neighborhood_slug,
                    "city" => listing.address.city,
+                   "city_slug" => listing.address.city_slug,
                    "state" => listing.address.state,
+                   "state_slug" => listing.address.state_slug,
                    "postal_code" => listing.address.postal_code,
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
@@ -236,10 +240,14 @@ defmodule ReWeb.ListingControllerTest do
                  ],
                  "address" => %{
                    "street" => listing.address.street,
+                   "street_slug" => listing.address.street_slug,
                    "street_number" => listing.address.street_number,
                    "neighborhood" => listing.address.neighborhood,
+                   "neighborhood_slug" => listing.address.neighborhood_slug,
                    "city" => listing.address.city,
+                   "city_slug" => listing.address.city_slug,
                    "state" => listing.address.state,
+                   "state_slug" => listing.address.state_slug,
                    "postal_code" => listing.address.postal_code,
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
@@ -298,10 +306,14 @@ defmodule ReWeb.ListingControllerTest do
                  ],
                  "address" => %{
                    "street" => listing.address.street,
+                   "street_slug" => listing.address.street_slug,
                    "street_number" => listing.address.street_number,
                    "neighborhood" => listing.address.neighborhood,
+                   "neighborhood_slug" => listing.address.neighborhood_slug,
                    "city" => listing.address.city,
+                   "city_slug" => listing.address.city_slug,
                    "state" => listing.address.state,
+                   "state_slug" => listing.address.state_slug,
                    "postal_code" => listing.address.postal_code,
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
@@ -359,9 +371,13 @@ defmodule ReWeb.ListingControllerTest do
                  ],
                  "address" => %{
                    "street" => listing.address.street,
+                   "street_slug" => listing.address.street_slug,
                    "neighborhood" => listing.address.neighborhood,
+                   "neighborhood_slug" => listing.address.neighborhood_slug,
                    "city" => listing.address.city,
+                   "city_slug" => listing.address.city_slug,
                    "state" => listing.address.state,
+                   "state_slug" => listing.address.state_slug,
                    "postal_code" => listing.address.postal_code,
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
@@ -486,10 +502,14 @@ defmodule ReWeb.ListingControllerTest do
                  ],
                  "address" => %{
                    "street" => listing.address.street,
+                   "street_slug" => listing.address.street_slug,
                    "street_number" => listing.address.street_number,
                    "neighborhood" => listing.address.neighborhood,
+                   "neighborhood_slug" => listing.address.neighborhood_slug,
                    "city" => listing.address.city,
+                   "city_slug" => listing.address.city_slug,
                    "state" => listing.address.state,
+                   "state_slug" => listing.address.state_slug,
                    "postal_code" => listing.address.postal_code,
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
