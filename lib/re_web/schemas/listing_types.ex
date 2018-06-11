@@ -31,7 +31,11 @@ defmodule ReWeb.Schema.ListingTypes do
 
     field :address, :address, resolve: dataloader(Re.Addresses)
 
-    field :images, list_of(:image), resolve: dataloader(Re.Images)
+    field :images, list_of(:image) do
+      arg :is_active, :boolean
+
+      resolve dataloader(Re.Images)
+    end
   end
 
   object :address do

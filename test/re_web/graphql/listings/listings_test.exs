@@ -23,7 +23,7 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
       insert(
         :listing,
         address: build(:address, street_number: "12B"),
-        images: [build(:image, filename: "test.jpg")]
+        images: [build(:image, filename: "test.jpg"), build(:image, filename: "test2.jpg", is_active: false)]
       )
 
       query = """
@@ -32,7 +32,10 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
             address {
               street_number
             }
-            images {
+            activeImages: images (isActive: true) {
+              filename
+            }
+            inactiveImages: images (isActive: false) {
               filename
             }
           }
@@ -45,7 +48,8 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                "listings" => [
                  %{
                    "address" => %{"street_number" => "12B"},
-                   "images" => [%{"filename" => "test.jpg"}]
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}]
                  }
                ]
              } = json_response(conn, 200)["data"]
@@ -55,7 +59,7 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
       insert(
         :listing,
         address: build(:address, street_number: "12B"),
-        images: [build(:image, filename: "test.jpg")]
+        images: [build(:image, filename: "test.jpg"), build(:image, filename: "test2.jpg", is_active: false)]
       )
 
       query = """
@@ -64,7 +68,10 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
             address {
               street_number
             }
-            images {
+            activeImages: images (isActive: true) {
+              filename
+            }
+            inactiveImages: images (isActive: false) {
               filename
             }
           }
@@ -77,7 +84,8 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                "listings" => [
                  %{
                    "address" => %{"street_number" => nil},
-                   "images" => [%{"filename" => "test.jpg"}]
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test.jpg"}]
                  }
                ]
              } = json_response(conn, 200)["data"]
