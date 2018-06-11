@@ -26,6 +26,7 @@ defmodule Re.ListingsTest do
           :address,
           street: "astreet",
           neighborhood: "São Conrado",
+          neighborhood_slug: "sao-conrado",
           lat: -22.9675614,
           lng: -43.20261119999998
         )
@@ -35,6 +36,7 @@ defmodule Re.ListingsTest do
           :address,
           street: "anotherstreet",
           neighborhood: "Leblon",
+          neighborhood_slug: "leblon",
           lat: -22.9461014,
           lng: -43.21675540000001
         )
@@ -44,6 +46,7 @@ defmodule Re.ListingsTest do
           :address,
           street: "onemorestreet",
           neighborhood: "Botafogo",
+          neighborhood_slug: "botafogo",
           lat: -22.9961014,
           lng: -43.19675540000001
         )
@@ -105,7 +108,7 @@ defmodule Re.ListingsTest do
       result = Listings.paginated(%{"neighborhoods" => ["São Conrado", "Leblon"]})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
-      result = Listings.paginated(%{"neighborhoods_slugs" => ["são-conrado", "leblon"]})
+      result = Listings.paginated(%{"neighborhoods_slugs" => ["sao-conrado", "leblon"]})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"types" => ["Apartamento"]})
