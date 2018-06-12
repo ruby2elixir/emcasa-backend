@@ -17,6 +17,8 @@ defmodule Re.Listings do
 
   defdelegate authorize(action, user, params), to: Re.Listings.Policy
 
+  def index, do: Repo.all(Listing)
+
   def all do
     Queries.active()
     |> Queries.preload_relations([:address])

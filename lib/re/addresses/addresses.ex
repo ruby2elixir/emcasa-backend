@@ -3,10 +3,18 @@ defmodule Re.Addresses do
   Context for handling addresses
   """
 
+  import Ecto.Query
+
   alias Re.{
     Address,
     Repo
   }
+
+  def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
+
+  def query(query, %{current_user: %{role: "admin"}}), do: query
+
+  def query(query, _), do: from(a in query, select_merge: %{street_number: nil})
 
   def get(params) do
     case Repo.get_by(

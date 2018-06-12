@@ -6,6 +6,7 @@ defmodule Re.Images do
 
   alias Re.{
     Image,
+    Images.DataloaderQueries,
     Images.Queries,
     Repo
   }
@@ -15,6 +16,12 @@ defmodule Re.Images do
   @http Application.get_env(:re, :http, HTTPoison)
 
   defdelegate authorize(action, user, params), to: Re.Images.Policy
+
+  def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
+
+  def query(Image, args), do: DataloaderQueries.build(Image, args)
+
+  def query(query, _args), do: query
 
   def all(listing_id) do
     Queries.by_listing(listing_id)
