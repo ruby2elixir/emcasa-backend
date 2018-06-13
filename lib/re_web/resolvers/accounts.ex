@@ -1,7 +1,9 @@
-defmodule ReWeb.Resolvers.Users do
+defmodule ReWeb.Resolvers.Accounts do
   @moduledoc """
   Resolver module for users queries and mutations
   """
+  import Absinthe.Resolution.Helpers, only: [on_load: 2]
+
   alias Re.Accounts.{
     Auth,
     Users
@@ -46,6 +48,22 @@ defmodule ReWeb.Resolvers.Users do
          :ok <- Auth.check_password(current_password, user),
          do: Users.edit_password(user, new_password)
   end
+
+  def owner(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
+    if is_admin(listing, current_user) do
+      loader
+      |> Dataloader.load(Re.Accounts, :user, listing)
+      |> on_load(fn loader ->
+        {:ok, Dataloader.get(loader, Re.Accounts, :user, listing)}
+      end)
+    else
+      {:ok, nil}
+    end
+  end
+
+  defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
+  defp is_admin(_, %{role: "admin"}), do: true
+  defp is_admin(_, _), do: false
 
   defp format_errors(%{errors: errors}) do
     errors

@@ -20,6 +20,8 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
 
   describe "listings" do
     test "admin should query listings", %{admin_conn: conn} do
+      user = insert(:user)
+
       insert(
         :listing,
         address: build(:address, street_number: "12B"),
@@ -27,7 +29,8 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
           build(:image, filename: "test.jpg", position: 3),
           build(:image, filename: "test2.jpg", position: 2, is_active: false),
           build(:image, filename: "test3.jpg", position: 1)
-        ]
+        ],
+        user: user
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -47,11 +50,16 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
             inactiveImages: images (isActive: false) {
               filename
             }
+            owner {
+              name
+            }
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+
+      name = user.name
 
       assert %{
                "listings" => [
@@ -59,7 +67,8 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                    "address" => %{"street_number" => "12B"},
                    "activeImages" => [%{"filename" => "test3.jpg"}],
                    "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
-                   "inactiveImages" => [%{"filename" => "test2.jpg"}]
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}],
+                   "owner" => %{"name" => ^name}
                  }
                ]
              } = json_response(conn, 200)["data"]
@@ -90,31 +99,40 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
             inactiveImages: images (isActive: false) {
               filename
             }
+            owner {
+              name
+            }
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+
+      name = user.name
 
       assert %{
                "listings" => [
                  %{
                    "address" => %{"street_number" => "12B"},
                    "activeImages" => [%{"filename" => "test.jpg"}],
-                   "inactiveImages" => [%{"filename" => "test2.jpg"}]
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}],
+                   "owner" => %{"name" => ^name}
                  }
                ]
              } = json_response(conn, 200)["data"]
     end
 
     test "user should query listings", %{user_conn: conn} do
+      user = insert(:user)
+
       insert(
         :listing,
         address: build(:address, street_number: "12B"),
         images: [
           build(:image, filename: "test.jpg"),
           build(:image, filename: "test2.jpg", is_active: false)
-        ]
+        ],
+        user: user
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -131,6 +149,9 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
             inactiveImages: images (isActive: false) {
               filename
             }
+            owner {
+              name
+            }
           }
         }
       """
@@ -142,20 +163,24 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                  %{
                    "address" => %{"street_number" => nil},
                    "activeImages" => [%{"filename" => "test.jpg"}],
-                   "inactiveImages" => [%{"filename" => "test.jpg"}]
+                   "inactiveImages" => [%{"filename" => "test.jpg"}],
+                   "owner" => nil
                  }
                ]
              } = json_response(conn, 200)["data"]
     end
 
     test "anonymous should query listings", %{unauthenticated_conn: conn} do
+      user = insert(:user)
+
       insert(
         :listing,
         address: build(:address, street_number: "12B"),
         images: [
           build(:image, filename: "test.jpg"),
           build(:image, filename: "test2.jpg", is_active: false)
-        ]
+        ],
+        user: user
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -172,6 +197,9 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
             inactiveImages: images (isActive: false) {
               filename
             }
+            owner {
+              name
+            }
           }
         }
       """
@@ -183,7 +211,8 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                  %{
                    "address" => %{"street_number" => nil},
                    "activeImages" => [%{"filename" => "test.jpg"}],
-                   "inactiveImages" => [%{"filename" => "test.jpg"}]
+                   "inactiveImages" => [%{"filename" => "test.jpg"}],
+                   "owner" => nil
                  }
                ]
              } = json_response(conn, 200)["data"]

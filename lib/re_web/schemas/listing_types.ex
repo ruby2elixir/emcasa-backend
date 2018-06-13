@@ -40,6 +40,8 @@ defmodule ReWeb.Schema.ListingTypes do
 
       resolve dataloader(Re.Images, &Resolvers.Images.per_listing/3)
     end
+
+    field :owner, :user, resolve: &Resolvers.Accounts.owner/3
   end
 
   object :address do
