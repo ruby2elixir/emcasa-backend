@@ -4,9 +4,7 @@ defmodule Re.Images.DataloaderQueries do
   """
   import Ecto.Query
 
-  alias Re.Image
-
-  def build(query, %{current_user: %{role: "admin"}} = args), do: Enum.reduce(args, query, &admin_query/2)
+  def build(query, %{has_admin_rights: true} = args), do: Enum.reduce(args, query, &admin_query/2)
 
   def build(query, _args), do: user_query(query)
 

@@ -23,8 +23,55 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
       insert(
         :listing,
         address: build(:address, street_number: "12B"),
-        images: [build(:image, filename: "test.jpg"), build(:image, filename: "test2.jpg", is_active: false)]
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ]
       )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
+
+      query = """
+        {
+          listings {
+            address {
+              street_number
+            }
+            activeImages: images (isActive: true) {
+              filename
+            }
+            inactiveImages: images (isActive: false) {
+              filename
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => "12B"},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}]
+                 }
+               ]
+             } = json_response(conn, 200)["data"]
+    end
+
+    test "owner should query listings", %{user_conn: conn, user_user: user} do
+      insert(
+        :listing,
+        address: build(:address, street_number: "12B"),
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ],
+        user: user
+      )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
 
       query = """
         {
@@ -59,8 +106,13 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
       insert(
         :listing,
         address: build(:address, street_number: "12B"),
-        images: [build(:image, filename: "test.jpg"), build(:image, filename: "test2.jpg", is_active: false)]
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ]
       )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
 
       query = """
         {

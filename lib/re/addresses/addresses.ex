@@ -12,7 +12,7 @@ defmodule Re.Addresses do
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
 
-  def query(query, %{current_user: %{role: "admin"}}), do: query
+  def query(query, %{has_admin_rights: true}), do: query
 
   def query(query, _), do: from(a in query, select_merge: %{street_number: nil})
 

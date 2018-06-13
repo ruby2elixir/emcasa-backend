@@ -4,7 +4,9 @@ defmodule ReWeb.Schema.ListingTypes do
   """
   use Absinthe.Schema.Notation
 
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+  import Absinthe.Resolution.Helpers, only: [dataloader: 2]
+
+  alias ReWeb.Resolvers
 
   object :listing do
     field :id, :id
@@ -29,12 +31,13 @@ defmodule ReWeb.Schema.ListingTypes do
     field :is_exclusive, :boolean
     field :is_release, :boolean
 
-    field :address, :address, resolve: dataloader(Re.Addresses)
+    field :address, :address,
+      resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
 
     field :images, list_of(:image) do
       arg :is_active, :boolean
 
-      resolve dataloader(Re.Images)
+      resolve dataloader(Re.Images, &Resolvers.Images.per_listing/3)
     end
   end
 
