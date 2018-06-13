@@ -147,5 +147,46 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                ]
              } = json_response(conn, 200)["data"]
     end
+
+    test "anonymous should query listings", %{unauthenticated_conn: conn} do
+      insert(
+        :listing,
+        address: build(:address, street_number: "12B"),
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ]
+      )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
+
+      query = """
+        {
+          listings {
+            address {
+              street_number
+            }
+            activeImages: images (isActive: true) {
+              filename
+            }
+            inactiveImages: images (isActive: false) {
+              filename
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => nil},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test.jpg"}]
+                 }
+               ]
+             } = json_response(conn, 200)["data"]
+    end
   end
 end
