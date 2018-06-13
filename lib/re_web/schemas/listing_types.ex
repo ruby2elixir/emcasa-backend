@@ -36,6 +36,7 @@ defmodule ReWeb.Schema.ListingTypes do
 
     field :images, list_of(:image) do
       arg :is_active, :boolean
+      arg :limit, :integer
 
       resolve dataloader(Re.Images, &Resolvers.Images.per_listing/3)
     end

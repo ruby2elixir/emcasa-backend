@@ -24,8 +24,9 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
         :listing,
         address: build(:address, street_number: "12B"),
         images: [
-          build(:image, filename: "test.jpg"),
-          build(:image, filename: "test2.jpg", is_active: false)
+          build(:image, filename: "test.jpg", position: 3),
+          build(:image, filename: "test2.jpg", position: 2, is_active: false),
+          build(:image, filename: "test3.jpg", position: 1)
         ]
       )
 
@@ -37,7 +38,10 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
             address {
               street_number
             }
-            activeImages: images (isActive: true) {
+            activeImages: images (isActive: true, limit: 1) {
+              filename
+            }
+            twoImages: images (limit: 2) {
               filename
             }
             inactiveImages: images (isActive: false) {
@@ -53,7 +57,8 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                "listings" => [
                  %{
                    "address" => %{"street_number" => "12B"},
-                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "activeImages" => [%{"filename" => "test3.jpg"}],
+                   "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}]
                  }
                ]
