@@ -2,9 +2,6 @@ defmodule ReWeb.Resolvers.Addresses do
   @moduledoc """
   Resolver module for addresses
   """
-  import Absinthe.Resolution.Helpers, only: [on_load: 2]
-
-  alias Re.Images
 
   def per_listing(listing, params, %{context: %{current_user: current_user}}) do
     admin? = is_admin(listing, current_user)

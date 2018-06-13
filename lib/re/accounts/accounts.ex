@@ -1,8 +1,8 @@
 defmodule Re.Accounts do
-  alias Re.{
-    Accounts.DataloaderQueries,
-    Repo
-  }
+  @moduledoc """
+  Context boundary to Accounts management
+  """
+  alias __MODULE__.DataloaderQueries
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
 
