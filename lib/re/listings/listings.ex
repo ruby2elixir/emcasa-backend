@@ -15,7 +15,7 @@ defmodule Re.Listings do
 
   alias Ecto.Changeset
 
-  defdelegate authorize(action, user, params), to: Re.Listings.Policy
+  defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def index, do: Repo.all(Listing)
 

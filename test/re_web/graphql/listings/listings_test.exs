@@ -20,11 +20,20 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
 
   describe "listings" do
     test "admin should query listings", %{admin_conn: conn} do
+      user = insert(:user)
+
       insert(
         :listing,
         address: build(:address, street_number: "12B"),
-        images: [build(:image, filename: "test.jpg"), build(:image, filename: "test2.jpg", is_active: false)]
+        images: [
+          build(:image, filename: "test.jpg", position: 3),
+          build(:image, filename: "test2.jpg", position: 2, is_active: false),
+          build(:image, filename: "test3.jpg", position: 1)
+        ],
+        user: user
       )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
 
       query = """
         {
@@ -32,11 +41,17 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
             address {
               street_number
             }
-            activeImages: images (isActive: true) {
+            activeImages: images (isActive: true, limit: 1) {
+              filename
+            }
+            twoImages: images (limit: 2) {
               filename
             }
             inactiveImages: images (isActive: false) {
               filename
+            }
+            owner {
+              name
             }
           }
         }
@@ -44,23 +59,33 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
 
+      name = user.name
+
       assert %{
                "listings" => [
                  %{
                    "address" => %{"street_number" => "12B"},
-                   "activeImages" => [%{"filename" => "test.jpg"}],
-                   "inactiveImages" => [%{"filename" => "test2.jpg"}]
+                   "activeImages" => [%{"filename" => "test3.jpg"}],
+                   "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}],
+                   "owner" => %{"name" => ^name}
                  }
                ]
              } = json_response(conn, 200)["data"]
     end
 
-    test "user should query listings", %{user_conn: conn} do
+    test "owner should query listings", %{user_conn: conn, user_user: user} do
       insert(
         :listing,
         address: build(:address, street_number: "12B"),
-        images: [build(:image, filename: "test.jpg"), build(:image, filename: "test2.jpg", is_active: false)]
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ],
+        user: user
       )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
 
       query = """
         {
@@ -73,6 +98,59 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
             }
             inactiveImages: images (isActive: false) {
               filename
+            }
+            owner {
+              name
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+
+      name = user.name
+
+      assert %{
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => "12B"},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}],
+                   "owner" => %{"name" => ^name}
+                 }
+               ]
+             } = json_response(conn, 200)["data"]
+    end
+
+    test "user should query listings", %{user_conn: conn} do
+      user = insert(:user)
+
+      insert(
+        :listing,
+        address: build(:address, street_number: "12B"),
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ],
+        user: user
+      )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
+
+      query = """
+        {
+          listings {
+            address {
+              street_number
+            }
+            activeImages: images (isActive: true) {
+              filename
+            }
+            inactiveImages: images (isActive: false) {
+              filename
+            }
+            owner {
+              name
             }
           }
         }
@@ -85,7 +163,56 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                  %{
                    "address" => %{"street_number" => nil},
                    "activeImages" => [%{"filename" => "test.jpg"}],
-                   "inactiveImages" => [%{"filename" => "test.jpg"}]
+                   "inactiveImages" => [%{"filename" => "test.jpg"}],
+                   "owner" => nil
+                 }
+               ]
+             } = json_response(conn, 200)["data"]
+    end
+
+    test "anonymous should query listings", %{unauthenticated_conn: conn} do
+      user = insert(:user)
+
+      insert(
+        :listing,
+        address: build(:address, street_number: "12B"),
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ],
+        user: user
+      )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
+
+      query = """
+        {
+          listings {
+            address {
+              street_number
+            }
+            activeImages: images (isActive: true) {
+              filename
+            }
+            inactiveImages: images (isActive: false) {
+              filename
+            }
+            owner {
+              name
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => nil},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test.jpg"}],
+                   "owner" => nil
                  }
                ]
              } = json_response(conn, 200)["data"]

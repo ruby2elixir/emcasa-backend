@@ -17,7 +17,7 @@ defmodule ReWeb.Schema do
     field :listings, list_of(:listing), resolve: &Resolvers.Listings.index/2
 
     @desc "Get favorited listings"
-    field :favorited_listings, list_of(:listing), resolve: &Resolvers.Users.favorited/2
+    field :favorited_listings, list_of(:listing), resolve: &Resolvers.Accounts.favorited/2
 
     @desc "Get favorited users"
     field :show_favorited_users, list_of(:user) do
@@ -40,7 +40,7 @@ defmodule ReWeb.Schema do
     field :user_profile, :user do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.Users.profile/2
+      resolve &Resolvers.Accounts.profile/2
     end
 
     @desc "Get user channels"
@@ -99,7 +99,7 @@ defmodule ReWeb.Schema do
       arg :name, :string
       arg :phone, :string
 
-      resolve &Resolvers.Users.edit_profile/2
+      resolve &Resolvers.Accounts.edit_profile/2
     end
 
     @desc "Change email"
@@ -107,7 +107,7 @@ defmodule ReWeb.Schema do
       arg :id, non_null(:id)
       arg :email, :string
 
-      resolve &Resolvers.Users.change_email/2
+      resolve &Resolvers.Accounts.change_email/2
     end
 
     @desc "Change password"
@@ -116,7 +116,7 @@ defmodule ReWeb.Schema do
       arg :current_password, :string
       arg :new_password, :string
 
-      resolve &Resolvers.Users.change_password/2
+      resolve &Resolvers.Accounts.change_password/2
     end
   end
 
@@ -188,6 +188,7 @@ defmodule ReWeb.Schema do
     Dataloader.new()
     |> Dataloader.add_source(Re.Addresses, Re.Addresses.data(default_params))
     |> Dataloader.add_source(Re.Images, Re.Images.data(default_params))
+    |> Dataloader.add_source(Re.Accounts, Re.Accounts.data(default_params))
   end
 
   defp default_params(%{current_user: current_user}), do: %{current_user: current_user}
