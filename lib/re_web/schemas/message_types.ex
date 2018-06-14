@@ -8,6 +8,7 @@ defmodule ReWeb.Schema.MessageTypes do
     Listing,
     User
   }
+  alias ReWeb.Resolvers.Messages, as: MessagesResolver
 
   object :message do
     field :id, :id
@@ -88,6 +89,18 @@ defmodule ReWeb.Schema.MessageTypes do
     field :unread_count, :integer
     field :last_message, :message
     field :messages, list_of(:message)
+  end
+
+  object :message_mutations do
+    @desc "Send message"
+    field :send_message, type: :message do
+      arg :receiver_id, non_null(:id)
+      arg :listing_id, non_null(:id)
+
+      arg :message, :string
+
+      resolve &MessagesResolver.send/2
+    end
   end
 
   scalar :datetime, name: "DateTime" do

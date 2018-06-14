@@ -48,76 +48,9 @@ defmodule ReWeb.Schema do
   end
 
   mutation do
-    @desc "Activate listing"
-    field :activate_listing, type: :listing do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Listings.activate/2
-    end
-
-    @desc "Deactivate listing"
-    field :deactivate_listing, type: :listing do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Listings.deactivate/2
-    end
-
-    @desc "Favorite listing"
-    field :favorite_listing, type: :listing_user do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Favorites.favorite/2
-    end
-
-    @desc "Unfavorite listing"
-    field :unfavorite_listing, type: :listing_user do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Favorites.unfavorite/2
-    end
-
-    @desc "Tour visualization"
-    field :tour_visualized, type: :listing do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.ListingStats.tour_visualized/2
-    end
-
-    @desc "Send message"
-    field :send_message, type: :message do
-      arg :receiver_id, non_null(:id)
-      arg :listing_id, non_null(:id)
-
-      arg :message, :string
-
-      resolve &Resolvers.Messages.send/2
-    end
-
-    @desc "Edit user profile"
-    field :edit_user_profile, type: :user do
-      arg :id, non_null(:id)
-      arg :name, :string
-      arg :phone, :string
-
-      resolve &Resolvers.Accounts.edit_profile/2
-    end
-
-    @desc "Change email"
-    field :change_email, type: :user do
-      arg :id, non_null(:id)
-      arg :email, :string
-
-      resolve &Resolvers.Accounts.change_email/2
-    end
-
-    @desc "Change password"
-    field :change_password, type: :user do
-      arg :id, non_null(:id)
-      arg :current_password, :string
-      arg :new_password, :string
-
-      resolve &Resolvers.Accounts.change_password/2
-    end
+    import_fields(:listing_mutations)
+    import_fields(:message_mutations)
+    import_fields(:user_mutations)
   end
 
   subscription do

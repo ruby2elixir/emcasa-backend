@@ -71,4 +71,41 @@ defmodule ReWeb.Schema.ListingTypes do
     field :listing, :listing
     field :user, :user
   end
+
+  object :listing_mutations do
+    @desc "Activate listing"
+    field :activate_listing, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.activate/2
+    end
+
+    @desc "Deactivate listing"
+    field :deactivate_listing, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.deactivate/2
+    end
+
+    @desc "Favorite listing"
+    field :favorite_listing, type: :listing_user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Favorites.favorite/2
+    end
+
+    @desc "Unfavorite listing"
+    field :unfavorite_listing, type: :listing_user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Favorites.unfavorite/2
+    end
+
+    @desc "Tour visualization"
+    field :tour_visualized, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.ListingStats.tour_visualized/2
+    end
+  end
 end
