@@ -4,6 +4,8 @@ defmodule ReWeb.Schema.MessageTypes do
   """
   use Absinthe.Schema.Notation
 
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
   alias Re.{
     Listing,
     User
@@ -17,35 +19,9 @@ defmodule ReWeb.Schema.MessageTypes do
     field :notified, :boolean
     field :inserted_at, :datetime
 
-    field :sender, :user do
-      resolve fn message, _, _ ->
-        batch(
-          {ReWeb.Schema.Helpers, :by_id, User},
-          message.sender_id,
-          &{:ok, Map.get(&1, message.sender_id)}
-        )
-      end
-    end
-
-    field :receiver, :user do
-      resolve fn message, _, _ ->
-        batch(
-          {ReWeb.Schema.Helpers, :by_id, User},
-          message.receiver_id,
-          &{:ok, Map.get(&1, message.receiver_id)}
-        )
-      end
-    end
-
-    field :listing, :listing do
-      resolve fn message, _, _ ->
-        batch(
-          {ReWeb.Schema.Helpers, :by_id, Listing},
-          message.listing_id,
-          &{:ok, Map.get(&1, message.listing_id)}
-        )
-      end
-    end
+    field :sender, :user, resolve: dataloader(Re.Accounts)
+    field :receiver, :user, resolve: dataloader(Re.Accounts)
+    field :listing, :listing, resolve: dataloader(Re.Listings)
   end
 
   object :user_messages do
@@ -56,35 +32,9 @@ defmodule ReWeb.Schema.MessageTypes do
   object :channel do
     field :id, :id
 
-    field :participant1, :user do
-      resolve fn channel, _, _ ->
-        batch(
-          {ReWeb.Schema.Helpers, :by_id, User},
-          channel.participant1_id,
-          &{:ok, Map.get(&1, channel.participant1_id)}
-        )
-      end
-    end
-
-    field :participant2, :user do
-      resolve fn channel, _, _ ->
-        batch(
-          {ReWeb.Schema.Helpers, :by_id, User},
-          channel.participant2_id,
-          &{:ok, Map.get(&1, channel.participant2_id)}
-        )
-      end
-    end
-
-    field :listing, :listing do
-      resolve fn channel, _, _ ->
-        batch(
-          {ReWeb.Schema.Helpers, :by_id, Listing},
-          channel.listing_id,
-          &{:ok, Map.get(&1, channel.listing_id)}
-        )
-      end
-    end
+    field :participant1, :user, resolve: dataloader(Re.Accounts)
+    field :participant2, :user, resolve: dataloader(Re.Accounts)
+    field :listing, :listing, resolve: dataloader(Re.Listings)
 
     field :unread_count, :integer
     field :last_message, :message

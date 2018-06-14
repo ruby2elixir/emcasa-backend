@@ -118,10 +118,13 @@ defmodule ReWeb.Schema do
   defp loader(ctx) do
     default_params = default_params(ctx)
 
-    Dataloader.new()
-    |> Dataloader.add_source(Re.Addresses, Re.Addresses.data(default_params))
-    |> Dataloader.add_source(Re.Images, Re.Images.data(default_params))
-    |> Dataloader.add_source(Re.Accounts, Re.Accounts.data(default_params))
+    [
+      Re.Accounts,
+      Re.Addresses,
+      Re.Images,
+      Re.Listings,
+    ]
+    |> Enum.reduce(Dataloader.new(), &Dataloader.add_source(&2, &1, :erlang.apply(&1, :data, [default_params])))
   end
 
   defp default_params(%{current_user: current_user}), do: %{current_user: current_user}
