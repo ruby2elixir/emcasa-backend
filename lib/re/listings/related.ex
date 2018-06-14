@@ -46,10 +46,12 @@ defmodule Re.Listings.Related do
     from(l in query, or_where: l.price >= ^floor and l.price <= ^ceiling)
   end
 
-  defp build_query(:rooms, listing, query) do
-    rooms_ceiling = listing.rooms + 1
-    rooms_floor = listing.rooms - 1
+  defp build_query(:rooms, %{rooms: rooms}, query) when not is_nil(rooms) do
+    rooms_ceiling = rooms + 1
+    rooms_floor = rooms - 1
 
     from(l in query, or_where: l.rooms >= ^rooms_floor and l.rooms <= ^rooms_ceiling)
   end
+
+  defp build_query(_, _, query), do: query
 end
