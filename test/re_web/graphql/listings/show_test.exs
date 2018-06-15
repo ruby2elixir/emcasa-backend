@@ -49,6 +49,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           interestCount
           inPersonVisitCount
           listingFavoriteCount
+          tourVisualisationCount
         }
       }
     """
@@ -65,7 +66,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "owner" => %{"name" => ^name},
                "interestCount" => 3,
                "inPersonVisitCount" => 3,
-               "listingFavoriteCount" => 3
+               "listingFavoriteCount" => 3,
+               "tourVisualisationCount" => 0
              }
            } = json_response(conn, 200)["data"]
   end
@@ -101,6 +103,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           interestCount
           inPersonVisitCount
           listingFavoriteCount
+          tourVisualisationCount
         }
       }
     """
@@ -117,7 +120,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "owner" => %{"name" => ^name},
                "interestCount" => 3,
                "inPersonVisitCount" => 3,
-               "listingFavoriteCount" => 3
+               "listingFavoriteCount" => 3,
+               "tourVisualisationCount" => 0
              }
            } = json_response(conn, 200)["data"]
   end
@@ -150,6 +154,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           interestCount
           inPersonVisitCount
           listingFavoriteCount
+          tourVisualisationCount
         }
       }
     """
@@ -164,7 +169,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "owner" => nil,
                "interestCount" => nil,
                "inPersonVisitCount" => nil,
-               "listingFavoriteCount" => nil
+               "listingFavoriteCount" => nil,
+               "tourVisualisationCount" => nil
              }
            } = json_response(conn, 200)["data"]
   end
@@ -197,6 +203,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           interestCount
           inPersonVisitCount
           listingFavoriteCount
+          tourVisualisationCount
         }
       }
     """
@@ -211,7 +218,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "owner" => nil,
                "interestCount" => nil,
                "inPersonVisitCount" => nil,
-               "listingFavoriteCount" => nil
+               "listingFavoriteCount" => nil,
+               "tourVisualisationCount" => nil
              }
            } = json_response(conn, 200)["data"]
   end
