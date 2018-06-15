@@ -1,4 +1,4 @@
-defmodule ReWeb.Schema.ListingTypes do
+defmodule ReWeb.Types.Listing do
   @moduledoc """
   GraphQL types for listings
   """
@@ -70,5 +70,70 @@ defmodule ReWeb.Schema.ListingTypes do
   object :listing_user do
     field :listing, :listing
     field :user, :user
+  end
+
+  object :listing_index do
+    field :listings, list_of(:listing)
+    field :remaining_count, :integer
+  end
+
+  input_object :listing_pagination do
+    field :page_size, :integer
+    field :excluded_listing_ids, list_of(:id)
+  end
+
+  input_object :listing_filter do
+    field :max_price, :integer
+    field :min_price, :integer
+    field :max_rooms, :integer
+    field :min_rooms, :integer
+    field :min_area, :integer
+    field :max_area, :integer
+    field :neighborhoods, list_of(:string)
+    field :types, list_of(:string)
+    field :max_lat, :float
+    field :min_lat, :float
+    field :max_lng, :float
+    field :min_lng, :float
+    field :neighborhoods_slugs, list_of(:string)
+    field :max_garage_spots, :integer
+    field :min_garage_spots, :integer
+  end
+
+  object :listing_mutations do
+    @desc "Activate listing"
+    field :activate_listing, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.activate/2
+    end
+
+    @desc "Deactivate listing"
+    field :deactivate_listing, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.deactivate/2
+    end
+
+    @desc "Favorite listing"
+    field :favorite_listing, type: :listing_user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Favorites.favorite/2
+    end
+
+    @desc "Unfavorite listing"
+    field :unfavorite_listing, type: :listing_user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Favorites.unfavorite/2
+    end
+
+    @desc "Tour visualization"
+    field :tour_visualized, type: :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.ListingStats.tour_visualized/2
+    end
   end
 end

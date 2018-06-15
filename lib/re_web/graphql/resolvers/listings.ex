@@ -4,7 +4,12 @@ defmodule ReWeb.Resolvers.Listings do
   """
   alias Re.Listings
 
-  def index(_, _), do: {:ok, Listings.index()}
+  def index(params, _) do
+    pagination = Map.get(params, :pagination, %{})
+    filtering = Map.get(params, :filters, %{})
+
+    {:ok, Listings.paginated(Map.merge(pagination, filtering))}
+  end
 
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),

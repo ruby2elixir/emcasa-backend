@@ -4,7 +4,7 @@ defmodule ReWeb.Schema do
   """
   use Absinthe.Schema
 
-  import_types ReWeb.Schema.{ListingTypes, UserTypes, MessageTypes}
+  import_types ReWeb.Types.{Listing, User, Message}
 
   alias ReWeb.Resolvers
 
@@ -14,7 +14,12 @@ defmodule ReWeb.Schema do
 
   query do
     @desc "Get listings"
-    field :listings, list_of(:listing), resolve: &Resolvers.Listings.index/2
+    field :listings, :listing_index do
+      arg :pagination, :listing_pagination
+      arg :filters, :listing_filter
+
+      resolve &Resolvers.Listings.index/2
+    end
 
     @desc "Get favorited listings"
     field :favorited_listings, list_of(:listing), resolve: &Resolvers.Accounts.favorited/2
@@ -48,76 +53,9 @@ defmodule ReWeb.Schema do
   end
 
   mutation do
-    @desc "Activate listing"
-    field :activate_listing, type: :listing do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Listings.activate/2
-    end
-
-    @desc "Deactivate listing"
-    field :deactivate_listing, type: :listing do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Listings.deactivate/2
-    end
-
-    @desc "Favorite listing"
-    field :favorite_listing, type: :listing_user do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Favorites.favorite/2
-    end
-
-    @desc "Unfavorite listing"
-    field :unfavorite_listing, type: :listing_user do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Favorites.unfavorite/2
-    end
-
-    @desc "Tour visualization"
-    field :tour_visualized, type: :listing do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.ListingStats.tour_visualized/2
-    end
-
-    @desc "Send message"
-    field :send_message, type: :message do
-      arg :receiver_id, non_null(:id)
-      arg :listing_id, non_null(:id)
-
-      arg :message, :string
-
-      resolve &Resolvers.Messages.send/2
-    end
-
-    @desc "Edit user profile"
-    field :edit_user_profile, type: :user do
-      arg :id, non_null(:id)
-      arg :name, :string
-      arg :phone, :string
-
-      resolve &Resolvers.Accounts.edit_profile/2
-    end
-
-    @desc "Change email"
-    field :change_email, type: :user do
-      arg :id, non_null(:id)
-      arg :email, :string
-
-      resolve &Resolvers.Accounts.change_email/2
-    end
-
-    @desc "Change password"
-    field :change_password, type: :user do
-      arg :id, non_null(:id)
-      arg :current_password, :string
-      arg :new_password, :string
-
-      resolve &Resolvers.Accounts.change_password/2
-    end
+    import_fields(:listing_mutations)
+    import_fields(:message_mutations)
+    import_fields(:user_mutations)
   end
 
   subscription do
@@ -185,12 +123,22 @@ defmodule ReWeb.Schema do
   defp loader(ctx) do
     default_params = default_params(ctx)
 
-    Dataloader.new()
-    |> Dataloader.add_source(Re.Addresses, Re.Addresses.data(default_params))
-    |> Dataloader.add_source(Re.Images, Re.Images.data(default_params))
-    |> Dataloader.add_source(Re.Accounts, Re.Accounts.data(default_params))
+    Enum.reduce(
+      sources(),
+      Dataloader.new(),
+      &Dataloader.add_source(&2, &1, :erlang.apply(&1, :data, [default_params]))
+    )
   end
 
   defp default_params(%{current_user: current_user}), do: %{current_user: current_user}
   defp default_params(_), do: %{current_user: nil}
+
+  defp sources do
+    [
+      Re.Accounts,
+      Re.Addresses,
+      Re.Images,
+      Re.Listings
+    ]
+  end
 end

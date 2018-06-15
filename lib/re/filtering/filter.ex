@@ -14,7 +14,6 @@ defmodule Re.Filtering do
   schema "listings_filter" do
     field :max_price, :integer
     field :min_price, :integer
-    field :rooms, :integer
     field :max_rooms, :integer
     field :min_rooms, :integer
     field :min_area, :integer
@@ -26,13 +25,12 @@ defmodule Re.Filtering do
     field :max_lng, :float
     field :min_lng, :float
     field :neighborhoods_slugs, {:array, :string}
-    field :garage_spots, :integer
     field :max_garage_spots, :integer
     field :min_garage_spots, :integer
   end
 
-  @filters ~w(max_price min_price rooms max_rooms min_rooms min_area max_area neighborhoods types
-              max_lat min_lat max_lng min_lng neighborhoods_slugs garage_spots max_garage_spots
+  @filters ~w(max_price min_price max_rooms min_rooms min_area max_area neighborhoods types
+              max_lat min_lat max_lng min_lng neighborhoods_slugs max_garage_spots
               min_garage_spots)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
@@ -63,10 +61,6 @@ defmodule Re.Filtering do
 
   defp attr_filter({:min_price, min_price}, query) do
     from(l in query, where: l.price >= ^min_price)
-  end
-
-  defp attr_filter({:rooms, rooms}, query) do
-    from(l in query, where: l.rooms == ^rooms)
   end
 
   defp attr_filter({:max_rooms, max_rooms}, query) do
@@ -143,10 +137,6 @@ defmodule Re.Filtering do
       join: ad in assoc(l, :address),
       where: ad.lng >= ^min_lng
     )
-  end
-
-  defp attr_filter({:garage_spots, garage_spots}, query) do
-    from(l in query, where: l.garage_spots == ^garage_spots)
   end
 
   defp attr_filter({:max_garage_spots, max_garage_spots}, query) do

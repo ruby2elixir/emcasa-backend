@@ -93,9 +93,6 @@ defmodule Re.ListingsTest do
       result = Listings.paginated(%{"min_price" => 95})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
 
-      result = Listings.paginated(%{"rooms" => 3})
-      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
-
       result = Listings.paginated(%{"max_rooms" => 3})
       assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
 
@@ -125,9 +122,6 @@ defmodule Re.ListingsTest do
 
       result = Listings.paginated(%{"min_lng" => -43.203})
       assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
-
-      result = Listings.paginated(%{"garage_spots" => 3})
-      assert [%{id: ^id1}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"max_garage_spots" => 2})
       assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
