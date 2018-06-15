@@ -6,6 +6,8 @@ defmodule ReWeb.Schema do
 
   import_types ReWeb.Types.{Listing, User, Message}
 
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
   alias ReWeb.Resolvers
 
   def context(ctx), do: Map.put(ctx, :loader, loader(ctx))
@@ -19,6 +21,13 @@ defmodule ReWeb.Schema do
       arg :filters, :listing_filter
 
       resolve &Resolvers.Listings.index/2
+    end
+
+    @desc "Get listings"
+    field :listing, :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.show/2
     end
 
     @desc "Get favorited listings"
