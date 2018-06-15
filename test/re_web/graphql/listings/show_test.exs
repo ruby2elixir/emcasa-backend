@@ -30,7 +30,17 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     listings_visualisations = insert_list(3, :listing_visualisation)
 
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits, listings_favorites: listings_favorites, tour_visualisations: tour_visualisations, listings_visualisations: listings_visualisations)
+      insert(
+        :listing,
+        address: address,
+        images: active_images ++ inactive_images,
+        user: user,
+        interests: interests,
+        in_person_visits: in_person_visits,
+        listings_favorites: listings_favorites,
+        tour_visualisations: tour_visualisations,
+        listings_visualisations: listings_visualisations
+      )
 
     query = """
       {
@@ -88,7 +98,17 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     listings_visualisations = insert_list(3, :listing_visualisation)
 
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits, listings_favorites: listings_favorites, tour_visualisations: tour_visualisations, listings_visualisations: listings_visualisations)
+      insert(
+        :listing,
+        address: address,
+        images: active_images ++ inactive_images,
+        user: user,
+        interests: interests,
+        in_person_visits: in_person_visits,
+        listings_favorites: listings_favorites,
+        tour_visualisations: tour_visualisations,
+        listings_visualisations: listings_visualisations
+      )
 
     query = """
       {

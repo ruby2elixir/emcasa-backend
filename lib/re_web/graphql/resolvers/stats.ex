@@ -16,7 +16,9 @@ defmodule ReWeb.Resolvers.Stats do
     end
   end
 
-  def in_person_visit_count(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
+  def in_person_visit_count(listing, _params, %{
+        context: %{loader: loader, current_user: current_user}
+      }) do
     if is_admin(listing, current_user) do
       loader
       |> Dataloader.load(Re.Listings, :in_person_visits, listing)
@@ -28,7 +30,9 @@ defmodule ReWeb.Resolvers.Stats do
     end
   end
 
-  def listings_favorite_count(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
+  def listings_favorite_count(listing, _params, %{
+        context: %{loader: loader, current_user: current_user}
+      }) do
     if is_admin(listing, current_user) do
       loader
       |> Dataloader.load(Re.Listings, :listings_favorites, listing)
@@ -40,7 +44,9 @@ defmodule ReWeb.Resolvers.Stats do
     end
   end
 
-  def tour_visualisation_count(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
+  def tour_visualisation_count(listing, _params, %{
+        context: %{loader: loader, current_user: current_user}
+      }) do
     if is_admin(listing, current_user) do
       loader
       |> Dataloader.load(Re.Listings, :tour_visualisations, listing)
@@ -52,7 +58,9 @@ defmodule ReWeb.Resolvers.Stats do
     end
   end
 
-  def listing_visualisation_count(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
+  def listing_visualisation_count(listing, _params, %{
+        context: %{loader: loader, current_user: current_user}
+      }) do
     if is_admin(listing, current_user) do
       loader
       |> Dataloader.load(Re.Listings, :listings_visualisations, listing)
