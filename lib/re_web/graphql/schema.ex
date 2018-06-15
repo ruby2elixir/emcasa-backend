@@ -145,9 +145,7 @@ defmodule ReWeb.Schema do
       Re.Accounts,
       Re.Addresses,
       Re.Images,
-      Re.Interests,
-      Re.Listings,
-      Re.Stats.Visualizations
+      Re.Listings
     ]
   end
 end

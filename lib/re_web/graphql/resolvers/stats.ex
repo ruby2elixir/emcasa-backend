@@ -7,9 +7,9 @@ defmodule ReWeb.Resolvers.Stats do
   def interest_count(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
     if is_admin(listing, current_user) do
       loader
-      |> Dataloader.load(Re.Interests, :interests, listing)
+      |> Dataloader.load(Re.Listings, :interests, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Interests, :interests, listing))}
+        {:ok, Enum.count(Dataloader.get(loader, Re.Listings, :interests, listing))}
       end)
     else
       {:ok, nil}
@@ -19,9 +19,9 @@ defmodule ReWeb.Resolvers.Stats do
   def in_person_visit_count(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
     if is_admin(listing, current_user) do
       loader
-      |> Dataloader.load(Re.Stats.Visualizations, :in_person_visits, listing)
+      |> Dataloader.load(Re.Listings, :in_person_visits, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Stats.Visualizations, :in_person_visits, listing))}
+        {:ok, Enum.count(Dataloader.get(loader, Re.Listings, :in_person_visits, listing))}
       end)
     else
       {:ok, nil}
