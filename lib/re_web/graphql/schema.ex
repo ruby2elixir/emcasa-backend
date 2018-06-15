@@ -14,7 +14,12 @@ defmodule ReWeb.Schema do
 
   query do
     @desc "Get listings"
-    field :listings, :listing_index, resolve: &Resolvers.Listings.index/2
+    field :listings, :listing_index do
+      arg :pagination, :listing_pagination
+      arg :filters, :listing_filter
+
+      resolve &Resolvers.Listings.index/2
+    end
 
     @desc "Get favorited listings"
     field :favorited_listings, list_of(:listing), resolve: &Resolvers.Accounts.favorited/2

@@ -2,11 +2,14 @@ defmodule ReWeb.Resolvers.Listings do
   @moduledoc """
   Resolver module for listing queries and mutations
   """
-  import Absinthe.Resolution.Helpers, only: [on_load: 2]
-
   alias Re.Listings
 
-  def index(params, _), do: {:ok, Listings.paginated(params)}
+  def index(params, _) do
+    pagination = Map.get(params, :pagination, %{})
+    filtering = Map.get(params, :filters, %{})
+
+    {:ok, Listings.paginated(Map.merge(pagination, filtering))}
+  end
 
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
