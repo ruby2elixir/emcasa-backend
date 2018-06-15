@@ -14,6 +14,10 @@ defmodule Re.Stats.Visualizations do
     User
   }
 
+  def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
+
+  def query(query, _args), do: query
+
   @type action :: :listing_visualization | :tour_visualization
 
   @spec listing(Listing.t(), User.t() | nil, String.t()) :: GenServer.cast()

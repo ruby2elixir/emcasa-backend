@@ -45,6 +45,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
             name
           }
           interestCount
+          inPersonVisitCount
         }
       }
     """
@@ -59,7 +60,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "activeImages" => [_, _, _],
                "inactiveImages" => [_, _],
                "owner" => %{"name" => ^name},
-               "interestCount" => 3
+               "interestCount" => 3,
+               "inPersonVisitCount" => 0
              }
            } = json_response(conn, 200)["data"]
   end
@@ -91,6 +93,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
             name
           }
           interestCount
+          inPersonVisitCount
         }
       }
     """
@@ -105,7 +108,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "activeImages" => [_, _, _],
                "inactiveImages" => [_, _],
                "owner" => %{"name" => ^name},
-               "interestCount" => 3
+               "interestCount" => 3,
+               "inPersonVisitCount" => 0
              }
            } = json_response(conn, 200)["data"]
   end
@@ -136,6 +140,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
             name
           }
           interestCount
+          inPersonVisitCount
         }
       }
     """
@@ -148,7 +153,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "activeImages" => [_, _, _],
                "inactiveImages" => [_, _, _],
                "owner" => nil,
-               "interestCount" => nil
+               "interestCount" => nil,
+               "inPersonVisitCount" => nil
              }
            } = json_response(conn, 200)["data"]
   end
@@ -179,6 +185,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
             name
           }
           interestCount
+          inPersonVisitCount
         }
       }
     """
@@ -191,7 +198,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "activeImages" => [_, _, _],
                "inactiveImages" => [_, _, _],
                "owner" => nil,
-               "interestCount" => nil
+               "interestCount" => nil,
+               "inPersonVisitCount" => nil
              }
            } = json_response(conn, 200)["data"]
   end

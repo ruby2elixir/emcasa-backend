@@ -44,6 +44,7 @@ defmodule ReWeb.Types.Listing do
     field :owner, :user, resolve: &Resolvers.Accounts.owner/3
 
     field :interest_count, :integer, resolve: &Resolvers.Stats.interest_count/3
+    field :in_person_visit_count, :integer, resolve: &Resolvers.Stats.in_person_visit_count/3
   end
 
   object :address do
