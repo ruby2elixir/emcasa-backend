@@ -1,19 +1,7 @@
-defmodule ReWeb.Schema.Helpers do
+defmodule ReWeb.Graphql.SchemaHelpers do
   @moduledoc """
   Module for absinthe helper functions
   """
-  import Ecto.Query
-
-  alias Re.Repo
-
-  def by_id(model, ids) do
-    ids = Enum.uniq(ids)
-
-    model
-    |> where([m], m.id in ^ids)
-    |> Repo.all()
-    |> Map.new(&{&1.id, &1})
-  end
 
   @spec parse_datetime(Absinthe.Blueprint.Input.String.t()) :: {:ok, DateTime.t()} | :error
   @spec parse_datetime(Absinthe.Blueprint.Input.Null.t()) :: {:ok, nil}

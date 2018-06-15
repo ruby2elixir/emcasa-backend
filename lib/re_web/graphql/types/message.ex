@@ -51,7 +51,7 @@ defmodule ReWeb.Types.Message do
 
   scalar :datetime, name: "DateTime" do
     serialize(&NaiveDateTime.to_iso8601/1)
-    parse(&ReWeb.Schema.Helpers.parse_datetime/1)
+    parse(&ReWeb.Graphql.SchemaHelpers.parse_datetime/1)
   end
 
 end
