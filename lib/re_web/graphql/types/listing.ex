@@ -47,6 +47,7 @@ defmodule ReWeb.Types.Listing do
     field :in_person_visit_count, :integer, resolve: &Resolvers.Stats.in_person_visit_count/3
     field :listing_favorite_count, :integer, resolve: &Resolvers.Stats.listings_favorite_count/3
     field :tour_visualisation_count, :integer, resolve: &Resolvers.Stats.tour_visualisation_count/3
+    field :listing_visualisation_count, :integer, resolve: &Resolvers.Stats.listing_visualisation_count/3
   end
 
   object :address do

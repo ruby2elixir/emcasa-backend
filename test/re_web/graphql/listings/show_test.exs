@@ -26,9 +26,11 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     interests = insert_list(3, :interest)
     in_person_visits = insert_list(3, :in_person_visit)
     listings_favorites = insert_list(3, :listings_favorites)
+    tour_visualisations = insert_list(3, :tour_visualisation)
+    listings_visualisations = insert_list(3, :listing_visualisation)
 
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits, listings_favorites: listings_favorites)
+      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits, listings_favorites: listings_favorites, tour_visualisations: tour_visualisations, listings_visualisations: listings_visualisations)
 
     query = """
       {
@@ -50,6 +52,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           inPersonVisitCount
           listingFavoriteCount
           tourVisualisationCount
+          listingVisualisationCount
         }
       }
     """
@@ -67,7 +70,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "interestCount" => 3,
                "inPersonVisitCount" => 3,
                "listingFavoriteCount" => 3,
-               "tourVisualisationCount" => 0
+               "tourVisualisationCount" => 3,
+               "listingVisualisationCount" => 3
              }
            } = json_response(conn, 200)["data"]
   end
@@ -80,9 +84,11 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     interests = insert_list(3, :interest)
     in_person_visits = insert_list(3, :in_person_visit)
     listings_favorites = insert_list(3, :listings_favorites)
+    tour_visualisations = insert_list(3, :tour_visualisation)
+    listings_visualisations = insert_list(3, :listing_visualisation)
 
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits, listings_favorites: listings_favorites)
+      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits, listings_favorites: listings_favorites, tour_visualisations: tour_visualisations, listings_visualisations: listings_visualisations)
 
     query = """
       {
@@ -104,6 +110,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           inPersonVisitCount
           listingFavoriteCount
           tourVisualisationCount
+          listingVisualisationCount
         }
       }
     """
@@ -121,7 +128,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "interestCount" => 3,
                "inPersonVisitCount" => 3,
                "listingFavoriteCount" => 3,
-               "tourVisualisationCount" => 0
+               "tourVisualisationCount" => 3,
+               "listingVisualisationCount" => 3
              }
            } = json_response(conn, 200)["data"]
   end
@@ -155,6 +163,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           inPersonVisitCount
           listingFavoriteCount
           tourVisualisationCount
+          listingVisualisationCount
         }
       }
     """
@@ -170,7 +179,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "interestCount" => nil,
                "inPersonVisitCount" => nil,
                "listingFavoriteCount" => nil,
-               "tourVisualisationCount" => nil
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil
              }
            } = json_response(conn, 200)["data"]
   end
@@ -204,6 +214,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           inPersonVisitCount
           listingFavoriteCount
           tourVisualisationCount
+          listingVisualisationCount
         }
       }
     """
@@ -219,7 +230,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "interestCount" => nil,
                "inPersonVisitCount" => nil,
                "listingFavoriteCount" => nil,
-               "tourVisualisationCount" => nil
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil
              }
            } = json_response(conn, 200)["data"]
   end
