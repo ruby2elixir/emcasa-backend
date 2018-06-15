@@ -24,9 +24,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     %{street: street, street_number: street_number} = address = insert(:address)
     user = insert(:user)
     interests = insert_list(3, :interest)
+    in_person_visits = insert_list(3, :in_person_visit)
 
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests)
+      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits)
 
     query = """
       {
@@ -61,7 +62,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inactiveImages" => [_, _],
                "owner" => %{"name" => ^name},
                "interestCount" => 3,
-               "inPersonVisitCount" => 0
+               "inPersonVisitCount" => 3
              }
            } = json_response(conn, 200)["data"]
   end
@@ -72,9 +73,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     %{street: street, street_number: street_number} = address = insert(:address)
 
     interests = insert_list(3, :interest)
+    in_person_visits = insert_list(3, :in_person_visit)
 
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests)
+      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits)
 
     query = """
       {
@@ -109,7 +111,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inactiveImages" => [_, _],
                "owner" => %{"name" => ^name},
                "interestCount" => 3,
-               "inPersonVisitCount" => 0
+               "inPersonVisitCount" => 3
              }
            } = json_response(conn, 200)["data"]
   end
