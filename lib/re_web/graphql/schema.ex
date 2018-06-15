@@ -123,13 +123,8 @@ defmodule ReWeb.Schema do
   defp loader(ctx) do
     default_params = default_params(ctx)
 
-    [
-      Re.Accounts,
-      Re.Addresses,
-      Re.Images,
-      Re.Listings
-    ]
-    |> Enum.reduce(
+    Enum.reduce(
+      sources(),
       Dataloader.new(),
       &Dataloader.add_source(&2, &1, :erlang.apply(&1, :data, [default_params]))
     )
@@ -137,4 +132,13 @@ defmodule ReWeb.Schema do
 
   defp default_params(%{current_user: current_user}), do: %{current_user: current_user}
   defp default_params(_), do: %{current_user: nil}
+
+  defp sources do
+    [
+      Re.Accounts,
+      Re.Addresses,
+      Re.Images,
+      Re.Listings
+    ]
+  end
 end
