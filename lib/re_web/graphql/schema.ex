@@ -4,7 +4,7 @@ defmodule ReWeb.Schema do
   """
   use Absinthe.Schema
 
-  import_types ReWeb.Schema.{ListingTypes, UserTypes, MessageTypes}
+  import_types ReWeb.Types.{Listing, User, Message}
 
   alias ReWeb.Resolvers
 

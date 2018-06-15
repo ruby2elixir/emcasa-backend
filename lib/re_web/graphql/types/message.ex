@@ -1,4 +1,4 @@
-defmodule ReWeb.Schema.MessageTypes do
+defmodule ReWeb.Types.Message do
   @moduledoc """
   GraphQL types for messages
   """

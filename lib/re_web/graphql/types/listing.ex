@@ -1,4 +1,4 @@
-defmodule ReWeb.Schema.ListingTypes do
+defmodule ReWeb.Types.Listing do
   @moduledoc """
   GraphQL types for listings
   """

@@ -1,4 +1,4 @@
-defmodule ReWeb.Schema.UserTypes do
+defmodule ReWeb.Types.User do
   @moduledoc """
   GraphQL types for users
   """
