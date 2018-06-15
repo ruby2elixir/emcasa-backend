@@ -25,9 +25,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     user = insert(:user)
     interests = insert_list(3, :interest)
     in_person_visits = insert_list(3, :in_person_visit)
+    listings_favorites = insert_list(3, :listings_favorites)
 
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits)
+      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits, listings_favorites: listings_favorites)
 
     query = """
       {
@@ -47,6 +48,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           }
           interestCount
           inPersonVisitCount
+          listingFavoriteCount
         }
       }
     """
@@ -62,7 +64,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inactiveImages" => [_, _],
                "owner" => %{"name" => ^name},
                "interestCount" => 3,
-               "inPersonVisitCount" => 3
+               "inPersonVisitCount" => 3,
+               "listingFavoriteCount" => 3
              }
            } = json_response(conn, 200)["data"]
   end
@@ -74,9 +77,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
 
     interests = insert_list(3, :interest)
     in_person_visits = insert_list(3, :in_person_visit)
+    listings_favorites = insert_list(3, :listings_favorites)
 
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits)
+      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests, in_person_visits: in_person_visits, listings_favorites: listings_favorites)
 
     query = """
       {
@@ -96,6 +100,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           }
           interestCount
           inPersonVisitCount
+          listingFavoriteCount
         }
       }
     """
@@ -111,7 +116,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inactiveImages" => [_, _],
                "owner" => %{"name" => ^name},
                "interestCount" => 3,
-               "inPersonVisitCount" => 3
+               "inPersonVisitCount" => 3,
+               "listingFavoriteCount" => 3
              }
            } = json_response(conn, 200)["data"]
   end
@@ -143,6 +149,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           }
           interestCount
           inPersonVisitCount
+          listingFavoriteCount
         }
       }
     """
@@ -156,7 +163,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inactiveImages" => [_, _, _],
                "owner" => nil,
                "interestCount" => nil,
-               "inPersonVisitCount" => nil
+               "inPersonVisitCount" => nil,
+               "listingFavoriteCount" => nil
              }
            } = json_response(conn, 200)["data"]
   end
@@ -188,6 +196,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           }
           interestCount
           inPersonVisitCount
+          listingFavoriteCount
         }
       }
     """
@@ -201,7 +210,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inactiveImages" => [_, _, _],
                "owner" => nil,
                "interestCount" => nil,
-               "inPersonVisitCount" => nil
+               "inPersonVisitCount" => nil,
+               "listingFavoriteCount" => nil
              }
            } = json_response(conn, 200)["data"]
   end
