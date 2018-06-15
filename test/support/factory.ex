@@ -93,10 +93,6 @@ defmodule Re.Factory do
     }
   end
 
-  def listing_favorite_factory do
-    %Re.Favorite{}
-  end
-
   def listing_visualisation_factory do
     %Re.Stats.ListingVisualization{}
   end
