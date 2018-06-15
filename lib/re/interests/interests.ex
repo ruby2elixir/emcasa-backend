@@ -9,6 +9,10 @@ defmodule Re.Interests do
     Repo
   }
 
+  def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
+
+  def query(query, _args), do: query
+
   def show_interest(listing_id, params) do
     params = Map.put(params, "listing_id", listing_id)
 

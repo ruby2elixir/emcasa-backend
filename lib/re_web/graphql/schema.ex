@@ -6,8 +6,6 @@ defmodule ReWeb.Schema do
 
   import_types ReWeb.Types.{Listing, User, Message}
 
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
-
   alias ReWeb.Resolvers
 
   def context(ctx), do: Map.put(ctx, :loader, loader(ctx))
@@ -147,6 +145,7 @@ defmodule ReWeb.Schema do
       Re.Accounts,
       Re.Addresses,
       Re.Images,
+      Re.Interests,
       Re.Listings
     ]
   end

@@ -23,9 +23,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     inactive_images = insert_list(2, :image, is_active: false)
     %{street: street, street_number: street_number} = address = insert(:address)
     user = insert(:user)
+    interests = insert_list(3, :interest)
 
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user)
+      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests)
 
     query = """
       {
@@ -43,6 +44,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           owner {
             name
           }
+          interestCount
         }
       }
     """
@@ -56,7 +58,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "address" => %{"street" => ^street, "street_number" => ^street_number},
                "activeImages" => [_, _, _],
                "inactiveImages" => [_, _],
-               "owner" => %{"name" => ^name}
+               "owner" => %{"name" => ^name},
+               "interestCount" => 3
              }
            } = json_response(conn, 200)["data"]
   end
@@ -66,8 +69,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     inactive_images = insert_list(2, :image, is_active: false)
     %{street: street, street_number: street_number} = address = insert(:address)
 
+    interests = insert_list(3, :interest)
+
     %{id: listing_id} =
-      insert(:listing, address: address, images: active_images ++ inactive_images, user: user)
+      insert(:listing, address: address, images: active_images ++ inactive_images, user: user, interests: interests)
 
     query = """
       {
@@ -85,6 +90,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           owner {
             name
           }
+          interestCount
         }
       }
     """
@@ -98,7 +104,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "address" => %{"street" => ^street, "street_number" => ^street_number},
                "activeImages" => [_, _, _],
                "inactiveImages" => [_, _],
-               "owner" => %{"name" => ^name}
+               "owner" => %{"name" => ^name},
+               "interestCount" => 3
              }
            } = json_response(conn, 200)["data"]
   end
@@ -128,6 +135,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           owner {
             name
           }
+          interestCount
         }
       }
     """
@@ -139,7 +147,51 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "address" => %{"street" => ^street, "street_number" => nil},
                "activeImages" => [_, _, _],
                "inactiveImages" => [_, _, _],
-               "owner" => nil
+               "owner" => nil,
+               "interestCount" => nil
+             }
+           } = json_response(conn, 200)["data"]
+  end
+
+  test "anonymous should query listing show", %{unauthenticated_conn: conn} do
+    active_images = insert_list(3, :image, is_active: true)
+    inactive_images = insert_list(2, :image, is_active: false)
+    %{street: street} = address = insert(:address)
+    user = insert(:user)
+
+    %{id: listing_id} =
+      insert(:listing, address: address, images: active_images ++ inactive_images, user: user)
+
+    query = """
+      {
+        listing (id: #{listing_id}) {
+          address {
+            street
+            street_number
+          }
+          activeImages: images (isActive: true) {
+            filename
+          }
+          inactiveImages: images (isActive: false) {
+            filename
+          }
+          owner {
+            name
+          }
+          interestCount
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+
+    assert %{
+             "listing" => %{
+               "address" => %{"street" => ^street, "street_number" => nil},
+               "activeImages" => [_, _, _],
+               "inactiveImages" => [_, _, _],
+               "owner" => nil,
+               "interestCount" => nil
              }
            } = json_response(conn, 200)["data"]
   end
