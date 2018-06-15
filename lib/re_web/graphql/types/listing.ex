@@ -72,6 +72,11 @@ defmodule ReWeb.Types.Listing do
     field :user, :user
   end
 
+  object :listing_index do
+    field :listings, list_of(:listing)
+    field :remaining_count, :integer
+  end
+
   object :listing_mutations do
     @desc "Activate listing"
     field :activate_listing, type: :listing do

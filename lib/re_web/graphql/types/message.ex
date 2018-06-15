@@ -53,5 +53,4 @@ defmodule ReWeb.Types.Message do
     serialize(&NaiveDateTime.to_iso8601/1)
     parse(&ReWeb.Graphql.SchemaHelpers.parse_datetime/1)
   end
-
 end

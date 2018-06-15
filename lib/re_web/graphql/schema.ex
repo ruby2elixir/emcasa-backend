@@ -14,7 +14,7 @@ defmodule ReWeb.Schema do
 
   query do
     @desc "Get listings"
-    field :listings, list_of(:listing), resolve: &Resolvers.Listings.index/2
+    field :listings, :listing_index, resolve: &Resolvers.Listings.index/2
 
     @desc "Get favorited listings"
     field :favorited_listings, list_of(:listing), resolve: &Resolvers.Accounts.favorited/2
@@ -122,9 +122,12 @@ defmodule ReWeb.Schema do
       Re.Accounts,
       Re.Addresses,
       Re.Images,
-      Re.Listings,
+      Re.Listings
     ]
-    |> Enum.reduce(Dataloader.new(), &Dataloader.add_source(&2, &1, :erlang.apply(&1, :data, [default_params])))
+    |> Enum.reduce(
+      Dataloader.new(),
+      &Dataloader.add_source(&2, &1, :erlang.apply(&1, :data, [default_params]))
+    )
   end
 
   defp default_params(%{current_user: current_user}), do: %{current_user: current_user}

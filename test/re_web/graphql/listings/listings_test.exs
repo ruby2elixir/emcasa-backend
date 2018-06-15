@@ -38,21 +38,24 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
       query = """
         {
           listings {
-            address {
-              street_number
+            listings {
+              address {
+                street_number
+              }
+              activeImages: images (isActive: true, limit: 1) {
+                filename
+              }
+              twoImages: images (limit: 2) {
+                filename
+              }
+              inactiveImages: images (isActive: false) {
+                filename
+              }
+              owner {
+                name
+              }
             }
-            activeImages: images (isActive: true, limit: 1) {
-              filename
-            }
-            twoImages: images (limit: 2) {
-              filename
-            }
-            inactiveImages: images (isActive: false) {
-              filename
-            }
-            owner {
-              name
-            }
+            remaining_count
           }
         }
       """
@@ -61,7 +64,7 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
 
       name = user.name
 
-      assert %{
+      assert %{"listings" => %{
                "listings" => [
                  %{
                    "address" => %{"street_number" => "12B"},
@@ -70,7 +73,9 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => ^name}
                  }
-               ]
+               ],
+               "remaining_count" => 0
+             }
              } = json_response(conn, 200)["data"]
     end
 
@@ -90,18 +95,21 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
       query = """
         {
           listings {
-            address {
-              street_number
+            listings {
+              address {
+                street_number
+              }
+              activeImages: images (isActive: true) {
+                filename
+              }
+              inactiveImages: images (isActive: false) {
+                filename
+              }
+              owner {
+                name
+              }
             }
-            activeImages: images (isActive: true) {
-              filename
-            }
-            inactiveImages: images (isActive: false) {
-              filename
-            }
-            owner {
-              name
-            }
+            remaining_count
           }
         }
       """
@@ -110,7 +118,7 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
 
       name = user.name
 
-      assert %{
+      assert %{"listings" => %{
                "listings" => [
                  %{
                    "address" => %{"street_number" => "12B"},
@@ -118,7 +126,9 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => ^name}
                  }
-               ]
+               ],
+               "remaining_count" => 0
+             }
              } = json_response(conn, 200)["data"]
     end
 
@@ -140,25 +150,28 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
       query = """
         {
           listings {
-            address {
-              street_number
+            listings {
+              address {
+                street_number
+              }
+              activeImages: images (isActive: true) {
+                filename
+              }
+              inactiveImages: images (isActive: false) {
+                filename
+              }
+              owner {
+                name
+              }
             }
-            activeImages: images (isActive: true) {
-              filename
-            }
-            inactiveImages: images (isActive: false) {
-              filename
-            }
-            owner {
-              name
-            }
+            remaining_count
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
 
-      assert %{
+      assert %{"listings" => %{
                "listings" => [
                  %{
                    "address" => %{"street_number" => nil},
@@ -166,7 +179,9 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil
                  }
-               ]
+               ],
+               "remaining_count" => 0
+             }
              } = json_response(conn, 200)["data"]
     end
 
@@ -188,25 +203,28 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
       query = """
         {
           listings {
-            address {
-              street_number
+            listings {
+              address {
+                street_number
+              }
+              activeImages: images (isActive: true) {
+                filename
+              }
+              inactiveImages: images (isActive: false) {
+                filename
+              }
+              owner {
+                name
+              }
             }
-            activeImages: images (isActive: true) {
-              filename
-            }
-            inactiveImages: images (isActive: false) {
-              filename
-            }
-            owner {
-              name
-            }
+            remaining_count
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
 
-      assert %{
+      assert %{"listings" => %{
                "listings" => [
                  %{
                    "address" => %{"street_number" => nil},
@@ -214,7 +232,9 @@ defmodule ReWeb.GraphQL.Listings.ListingsTest do
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil
                  }
-               ]
+               ],
+               "remaining_count" => 0
+             }
              } = json_response(conn, 200)["data"]
     end
   end

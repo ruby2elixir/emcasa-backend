@@ -43,7 +43,12 @@ defmodule Re.RelatedTest do
 
     test "should return a neighborhood and price match listing with nil rooms" do
       listing =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000, rooms: nil)
+        insert(
+          :listing,
+          address: build(:address, neighborhood: "Copacabana"),
+          price: 100_000,
+          rooms: nil
+        )
 
       %{id: id2} =
         insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_000)
