@@ -38,7 +38,7 @@ defmodule ReWeb.Types.Listing do
       arg :is_active, :boolean
       arg :limit, :integer
 
-      resolve dataloader(Re.Images, &Resolvers.Images.per_listing/3)
+      resolve &Resolvers.Images.per_listing/3
     end
 
     field :owner, :user, resolve: &Resolvers.Accounts.owner/3

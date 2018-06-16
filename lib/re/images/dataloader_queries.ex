@@ -10,15 +10,7 @@ defmodule Re.Images.DataloaderQueries do
     |> queries_by_role(args)
   end
 
-  defp common_queries(query, args) do
-    args
-    |> Enum.reduce(query, &common_query/2)
-    |> order_by([i], asc: i.position)
-  end
-
-  defp common_query({:limit, limit}, q), do: limit(q, ^limit)
-
-  defp common_query(_, q), do: q
+  defp common_queries(query, _args), do: order_by(query, [i], asc: i.position)
 
   defp queries_by_role(query, %{has_admin_rights: true} = args) do
     Enum.reduce(args, query, &admin_query/2)

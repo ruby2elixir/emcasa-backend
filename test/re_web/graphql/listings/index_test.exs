@@ -576,4 +576,36 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
              }
            } = json_response(conn, 200)["data"]
   end
+
+  test "should query listing index with respective images", %{unauthenticated_conn: conn} do
+    insert(:listing, images: [build(:image), build(:image), build(:image)])
+    insert(:listing, images: [build(:image), build(:image), build(:image)])
+
+    query = """
+      {
+        listings {
+          listings {
+            images (limit: 2) {
+              filename
+            }
+          }
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+
+    assert %{
+             "listings" => %{
+               "listings" => [
+                 %{
+                   "images" => [_,_]
+                 },
+                 %{
+                   "images" => [_,_]
+                 },
+               ]
+             }
+           } = json_response(conn, 200)["data"]
+  end
 end
