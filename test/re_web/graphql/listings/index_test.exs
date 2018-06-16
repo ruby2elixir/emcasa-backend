@@ -599,11 +599,11 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
              "listings" => %{
                "listings" => [
                  %{
-                   "images" => [_,_]
+                   "images" => [_, _]
                  },
                  %{
-                   "images" => [_,_]
-                 },
+                   "images" => [_, _]
+                 }
                ]
              }
            } = json_response(conn, 200)["data"]

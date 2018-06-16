@@ -8,12 +8,21 @@ defmodule ReWeb.Resolvers.Images do
     is_admin? = is_admin(listing, current_user)
 
     loader
-    |> Dataloader.load(Re.Images, {:images, Map.put(params, :has_admin_rights, is_admin?)}, listing)
+    |> Dataloader.load(
+      Re.Images,
+      {:images, Map.put(params, :has_admin_rights, is_admin?)},
+      listing
+    )
     |> on_load(fn loader ->
       images =
         loader
-        |> Dataloader.get(Re.Images, {:images, Map.put(params, :has_admin_rights, is_admin?)}, listing)
+        |> Dataloader.get(
+          Re.Images,
+          {:images, Map.put(params, :has_admin_rights, is_admin?)},
+          listing
+        )
         |> limit(params)
+
       {:ok, images}
     end)
   end
