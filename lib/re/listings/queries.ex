@@ -11,8 +11,6 @@ defmodule Re.Listings.Queries do
 
   import Ecto.Query
 
-  @page_size 100
-
   @full_preload [
     :address,
     :listings_visualisations,
@@ -60,7 +58,7 @@ defmodule Re.Listings.Queries do
 
   def limit(query, %{page_size: page_size}), do: from(l in query, limit: ^page_size)
 
-  def limit(query, _), do: from(l in query, limit: @page_size)
+  def limit(query, _), do: query
 
   def remaining_count(query) do
     query
