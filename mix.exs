@@ -58,7 +58,8 @@ defmodule Re.Mixfile do
       {:absinthe_plug, "~> 1.4"},
       {:absinthe_phoenix, "~> 1.4"},
       {:elasticsearch, "~> 0.4"},
-      {:dataloader, "~> 1.0"}
+      {:dataloader, "~> 1.0"},
+      {:currency_formatter, "~> 0.4"}
     ]
   end
 
