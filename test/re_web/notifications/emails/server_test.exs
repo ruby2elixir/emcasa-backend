@@ -84,5 +84,16 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       Server.handle_cast({UserEmail, :listing_updated, [user, listing, changes]}, [])
       assert_email_sent(UserEmail.listing_updated(user, listing, changes))
     end
+
+    test "price_updated/2" do
+      user1 = insert(:user)
+      user2 = insert(:user)
+      listing = insert(:listing, price: 950_000)
+      insert(:listings_favorites, user: user1, listing: listing)
+      insert(:listings_favorites, user: user2, listing: listing)
+      Server.handle_cast({UserEmail, :price_updated, 1_000_000, listing}, [])
+      assert_email_sent(UserEmail.price_updated(user1, 1_000_000, listing))
+      assert_email_sent(UserEmail.price_updated(user2, 1_000_000, listing))
+    end
   end
 end
