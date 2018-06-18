@@ -7,13 +7,14 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.{Listing, User, Message}
 
   alias ReWeb.Resolvers
+  alias ReWeb.GraphQL.Middlewares
 
   def context(ctx), do: Map.put(ctx, :loader, loader(ctx))
 
   def plugins, do: [Absinthe.Middleware.Dataloader | Absinthe.Plugin.defaults()]
 
   query do
-    @desc "Get listings"
+    @desc "Listings index"
     field :listings, :listing_index do
       arg :pagination, :listing_pagination
       arg :filters, :listing_filter
@@ -21,11 +22,12 @@ defmodule ReWeb.Schema do
       resolve &Resolvers.Listings.index/2
     end
 
-    @desc "Get listings"
+    @desc "Show listing"
     field :listing, :listing do
       arg :id, non_null(:id)
 
       resolve &Resolvers.Listings.show/2
+      middleware Middlewares.Visualizations
     end
 
     @desc "Get favorited listings"
