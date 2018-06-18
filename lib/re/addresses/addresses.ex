@@ -49,5 +49,13 @@ defmodule Re.Addresses do
     %Address{street: street, postal_code: postal_code, street_number: street_number}
   end
 
+  defp build_address({:error, :not_found}, %{
+         street: street,
+         postal_code: postal_code,
+         street_number: street_number
+       }) do
+    %Address{street: street, postal_code: postal_code, street_number: street_number}
+  end
+
   defp build_address({:ok, address}, _), do: address
 end

@@ -125,6 +125,16 @@ defmodule ReWeb.Schema do
           "email_changed"
         end
     end
+
+    @desc "Subscribe to listing show"
+    field :listing_visualized, :listing do
+      config(fn _args, _ -> {:ok, topic: "listing_visualized"} end)
+
+      trigger :listing,
+        topic: fn _ ->
+          "listing_visualized"
+        end
+    end
   end
 
   defp loader(ctx) do
