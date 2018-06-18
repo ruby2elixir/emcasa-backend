@@ -38,10 +38,20 @@ defmodule ReWeb.Types.Listing do
       arg :is_active, :boolean
       arg :limit, :integer
 
-      resolve dataloader(Re.Images, &Resolvers.Images.per_listing/3)
+      resolve &Resolvers.Images.per_listing/3
     end
 
     field :owner, :user, resolve: &Resolvers.Accounts.owner/3
+
+    field :interest_count, :integer, resolve: &Resolvers.Stats.interest_count/3
+    field :in_person_visit_count, :integer, resolve: &Resolvers.Stats.in_person_visit_count/3
+    field :listing_favorite_count, :integer, resolve: &Resolvers.Stats.listings_favorite_count/3
+
+    field :tour_visualisation_count, :integer,
+      resolve: &Resolvers.Stats.tour_visualisation_count/3
+
+    field :listing_visualisation_count, :integer,
+      resolve: &Resolvers.Stats.listing_visualisation_count/3
   end
 
   object :address do

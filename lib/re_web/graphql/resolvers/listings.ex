@@ -11,6 +11,8 @@ defmodule ReWeb.Resolvers.Listings do
     {:ok, Listings.paginated(Map.merge(pagination, filtering))}
   end
 
+  def show(%{id: id}, _), do: Listings.get(id)
+
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
          {:ok, listing} <- Listings.get_preloaded(id),

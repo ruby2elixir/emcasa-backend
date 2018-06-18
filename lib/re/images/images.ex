@@ -19,9 +19,7 @@ defmodule Re.Images do
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
 
-  def query(Image, args), do: DataloaderQueries.build(Image, args)
-
-  def query(query, _args), do: query
+  def query(query, args), do: DataloaderQueries.build(query, args)
 
   def all(listing_id) do
     Queries.by_listing(listing_id)

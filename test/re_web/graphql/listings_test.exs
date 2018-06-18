@@ -216,7 +216,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
   describe "unfavoriteListing" do
     test "admin should unfavorite listing", %{admin_conn: conn, admin_user: %{id: user_id}} do
       %{id: listing_id} = insert(:listing)
-      insert(:listing_favorite, listing_id: listing_id, user_id: user_id)
+      insert(:listings_favorites, listing_id: listing_id, user_id: user_id)
 
       mutation = """
         mutation {
@@ -248,7 +248,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
 
     test "user should unfavorite listing", %{user_conn: conn, user_user: %{id: user_id}} do
       %{id: listing_id} = insert(:listing)
-      insert(:listing_favorite, listing_id: listing_id, user_id: user_id)
+      insert(:listings_favorites, listing_id: listing_id, user_id: user_id)
 
       mutation = """
         mutation {
@@ -302,7 +302,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
   describe "showFavoritedUsers" do
     test "admin should see favorited users", %{admin_conn: conn, admin_user: user} do
       listing = insert(:listing)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
       query = """
         {
@@ -322,7 +322,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
 
     test "admin should not see favorited users", %{user_conn: conn, user_user: user} do
       listing = insert(:listing)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
       query = """
         {
@@ -341,7 +341,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
     test "anonymous should not see favorited users", %{unauthenticated_conn: conn} do
       listing = insert(:listing)
       user = insert(:user)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
       query = """
         {

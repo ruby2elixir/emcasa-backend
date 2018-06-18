@@ -21,6 +21,13 @@ defmodule ReWeb.Schema do
       resolve &Resolvers.Listings.index/2
     end
 
+    @desc "Get listings"
+    field :listing, :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.show/2
+    end
+
     @desc "Get favorited listings"
     field :favorited_listings, list_of(:listing), resolve: &Resolvers.Accounts.favorited/2
 

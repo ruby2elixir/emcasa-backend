@@ -23,7 +23,7 @@ defmodule ReWeb.GraphQL.UsersTest do
   describe "activateListing" do
     test "admin should get favorited listings", %{admin_conn: conn, admin_user: user} do
       listing = insert(:listing)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
       query = """
         {
@@ -42,7 +42,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
     test "user should get favorited listings", %{user_conn: conn, user_user: user} do
       listing = insert(:listing)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
       query = """
         {
