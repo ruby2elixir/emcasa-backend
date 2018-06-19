@@ -55,11 +55,16 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
      user_conn: login_as(conn, user_user),
      insert_input: insert_input,
      listing: listing,
-     address: address
-   }
+     address: address}
   end
 
-  test "admin should insert listing", %{admin_conn: conn, admin_user: user, insert_input: insert_input, listing: listing, address: address} do
+  test "admin should insert listing", %{
+    admin_conn: conn,
+    admin_user: user,
+    insert_input: insert_input,
+    listing: listing,
+    address: address
+  } do
     mutation = """
       mutation {
         insertListing(input: #{insert_input}) {
@@ -103,7 +108,11 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert %{"insertListing" => %{"address" => inserted_address, "owner" => owner} = inserted_listing} = json_response(conn, 200)["data"]
+    assert %{
+             "insertListing" =>
+               %{"address" => inserted_address, "owner" => owner} = inserted_listing
+           } = json_response(conn, 200)["data"]
+
     assert inserted_listing["id"]
     assert inserted_listing["type"] == listing.type
     assert inserted_listing["price"] == listing.price
@@ -139,7 +148,13 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
     assert owner["id"] == to_string(user.id)
   end
 
-  test "user should insert listing", %{user_conn: conn, user_user: user, insert_input: insert_input, listing: listing, address: address} do
+  test "user should insert listing", %{
+    user_conn: conn,
+    user_user: user,
+    insert_input: insert_input,
+    listing: listing,
+    address: address
+  } do
     mutation = """
       mutation {
         insertListing(input: #{insert_input}) {
@@ -182,7 +197,11 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert %{"insertListing" => %{"address" => inserted_address, "owner" => owner} = inserted_listing} = json_response(conn, 200)["data"]
+    assert %{
+             "insertListing" =>
+               %{"address" => inserted_address, "owner" => owner} = inserted_listing
+           } = json_response(conn, 200)["data"]
+
     assert inserted_listing["id"]
     assert inserted_listing["type"] == listing.type
     assert inserted_listing["price"] == listing.price
@@ -218,7 +237,10 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
     assert owner["id"] == to_string(user.id)
   end
 
-  test "anonymous should not insert listing", %{unauthenticated_conn: conn, insert_input: insert_input} do
+  test "anonymous should not insert listing", %{
+    unauthenticated_conn: conn,
+    insert_input: insert_input
+  } do
     mutation = """
       mutation {
         insertListing(input: #{insert_input}) {

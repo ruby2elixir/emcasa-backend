@@ -86,12 +86,17 @@ defmodule ReWeb.Notifications.Emails.Server do
     end
   end
 
-  defp handle_data(%{"listingInserted" => %{"id" => listing_id, "owner" => %{"id" => user_id}}}, state) do
+  defp handle_data(
+         %{"listingInserted" => %{"id" => listing_id, "owner" => %{"id" => user_id}}},
+         state
+       ) do
     case {Users.get(user_id), Listings.get(listing_id)} do
       {{:ok, user}, {:ok, listing}} ->
         handle_cast({UserEmail, :listing_added, [user, listing]}, state)
         handle_cast({UserEmail, :listing_added_admin, [user, listing]}, state)
-      _ -> {:noreply, state}
+
+      _ ->
+        {:noreply, state}
     end
   end
 end
