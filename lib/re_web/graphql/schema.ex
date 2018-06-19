@@ -7,13 +7,14 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.{Listing, User, Message}
 
   alias ReWeb.Resolvers
+  alias ReWeb.GraphQL.Middlewares
 
   def context(ctx), do: Map.put(ctx, :loader, loader(ctx))
 
   def plugins, do: [Absinthe.Middleware.Dataloader | Absinthe.Plugin.defaults()]
 
   query do
-    @desc "Get listings"
+    @desc "Listings index"
     field :listings, :listing_index do
       arg :pagination, :listing_pagination
       arg :filters, :listing_filter
@@ -21,11 +22,12 @@ defmodule ReWeb.Schema do
       resolve &Resolvers.Listings.index/2
     end
 
-    @desc "Get listings"
+    @desc "Show listing"
     field :listing, :listing do
       arg :id, non_null(:id)
 
       resolve &Resolvers.Listings.show/2
+      middleware Middlewares.Visualizations
     end
 
     @desc "Get favorited listings"
@@ -123,6 +125,21 @@ defmodule ReWeb.Schema do
       trigger :change_email,
         topic: fn _ ->
           "email_changed"
+        end
+    end
+
+    @desc "Subscribe to listing show"
+    field :listing_inserted, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "listing_inserted"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :insert_listing,
+        topic: fn _ ->
+          "listing_inserted"
         end
     end
   end

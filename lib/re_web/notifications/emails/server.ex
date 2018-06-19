@@ -8,6 +8,7 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   alias Re.{
     Accounts.Users,
+    Listings,
     Repo
   }
 
@@ -29,6 +30,15 @@ defmodule ReWeb.Notifications.Emails.Server do
     if Mix.env() != :test do
       case Absinthe.run(
              "subscription { emailChanged { id } }",
+             Schema,
+             context: %{pubsub: PubSub, current_user: :system}
+           ) do
+        {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
+        _ -> :nothing
+      end
+
+      case Absinthe.run(
+             "subscription { listingInserted { id owner { id } } }",
              Schema,
              context: %{pubsub: PubSub, current_user: :system}
            ) do
@@ -82,6 +92,20 @@ defmodule ReWeb.Notifications.Emails.Server do
     case Users.get(user_id) do
       {:ok, user} -> handle_cast({UserEmail, :change_email, [user]}, state)
       _ -> {:noreply, state}
+    end
+  end
+
+  defp handle_data(
+         %{"listingInserted" => %{"id" => listing_id, "owner" => %{"id" => user_id}}},
+         state
+       ) do
+    case {Users.get(user_id), Listings.get(listing_id)} do
+      {{:ok, user}, {:ok, listing}} ->
+        handle_cast({UserEmail, :listing_added, [user, listing]}, state)
+        handle_cast({UserEmail, :listing_added_admin, [user, listing]}, state)
+
+      _ ->
+        {:noreply, state}
     end
   end
 end

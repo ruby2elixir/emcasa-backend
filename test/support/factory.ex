@@ -31,6 +31,7 @@ defmodule Re.Factory do
       floor: random(:floor),
       rooms: Enum.random(1..10),
       bathrooms: Enum.random(1..10),
+      restrooms: Enum.random(1..10),
       garage_spots: Enum.random(0..10),
       suites: Enum.random(0..10),
       dependencies: Enum.random(0..10),
@@ -39,7 +40,9 @@ defmodule Re.Factory do
       area: Enum.random(1..500),
       score: Enum.random(1..4),
       matterport_code: Faker.String.base64(),
-      is_active: true
+      is_active: true,
+      is_exclusive: Enum.random([true, false]),
+      is_release: Enum.random([true, false])
     }
   end
 
@@ -134,7 +137,7 @@ defmodule Re.Factory do
   end
 
   defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura))
-  defp random(:price), do: Enum.random(1..999_999_999)
+  defp random(:price), do: Enum.random(1..99_999_999)
   defp random(:price_float), do: Enum.random(1..999_999_999) / 100
 
   defp random(:floor) do

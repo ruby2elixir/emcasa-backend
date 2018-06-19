@@ -19,9 +19,9 @@ defmodule Re.Addresses do
   def get(params) do
     case Repo.get_by(
            Address,
-           street: params["street"] || "",
-           postal_code: params["postal_code"] || "",
-           street_number: params["street_number"] || ""
+           street: params["street"] || Map.get(params, :street, ""),
+           postal_code: params["postal_code"] || Map.get(params, :postal_code, ""),
+           street_number: params["street_number"] || Map.get(params, :street_number, "")
          ) do
       nil -> {:error, :not_found}
       address -> {:ok, address}
@@ -45,6 +45,14 @@ defmodule Re.Addresses do
          "street" => street,
          "postal_code" => postal_code,
          "street_number" => street_number
+       }) do
+    %Address{street: street, postal_code: postal_code, street_number: street_number}
+  end
+
+  defp build_address({:error, :not_found}, %{
+         street: street,
+         postal_code: postal_code,
+         street_number: street_number
        }) do
     %Address{street: street, postal_code: postal_code, street_number: street_number}
   end
