@@ -61,6 +61,7 @@ defmodule ReWeb.Resolvers.Accounts do
     end
   end
 
+  defp is_admin(_, :system), do: true
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true
   defp is_admin(_, _), do: false

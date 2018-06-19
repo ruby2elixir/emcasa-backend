@@ -127,12 +127,17 @@ defmodule ReWeb.Schema do
     end
 
     @desc "Subscribe to listing show"
-    field :listing_visualized, :listing do
-      config(fn _args, _ -> {:ok, topic: "listing_visualized"} end)
+    field :listing_inserted, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "listing_inserted"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
 
-      trigger :listing,
+      trigger :insert_listing,
         topic: fn _ ->
-          "listing_visualized"
+          "listing_inserted"
         end
     end
   end
