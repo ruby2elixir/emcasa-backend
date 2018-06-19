@@ -127,6 +127,21 @@ defmodule ReWeb.Schema do
           "email_changed"
         end
     end
+
+    @desc "Subscribe to listing show"
+    field :listing_inserted, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "listing_inserted"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :insert_listing,
+        topic: fn _ ->
+          "listing_inserted"
+        end
+    end
   end
 
   defp loader(ctx) do

@@ -54,6 +54,30 @@ defmodule ReWeb.Types.Listing do
       resolve: &Resolvers.Stats.listing_visualisation_count/3
   end
 
+  input_object :listing_input do
+    field :type, non_null(:string)
+    field :complement, :string
+    field :description, :string
+    field :price, :integer
+    field :property_tax, :float
+    field :maintenance_fee, :float
+    field :floor, :string
+    field :rooms, :integer
+    field :bathrooms, :integer
+    field :restrooms, :integer
+    field :area, :integer
+    field :garage_spots, :integer
+    field :suites, :integer
+    field :dependencies, :integer
+    field :balconies, :integer
+    field :has_elevator, :boolean
+    field :matterport_code, :string
+    field :is_exclusive, :boolean
+    field :is_release, :boolean
+
+    field :address, non_null(:address_input)
+  end
+
   object :address do
     field :street, :string
     field :street_number, :string
@@ -70,9 +94,27 @@ defmodule ReWeb.Types.Listing do
     field :state_slug, :string
   end
 
+  input_object :address_input do
+    field :street, non_null(:string)
+    field :street_number, non_null(:string)
+    field :neighborhood, non_null(:string)
+    field :city, non_null(:string)
+    field :state, non_null(:string)
+    field :postal_code, non_null(:string)
+    field :lat, non_null(:float)
+    field :lng, non_null(:float)
+  end
+
   object :image do
     field :filename, :string
     field :position, :integer
+    field :is_active, :boolean
+    field :description, :string
+  end
+
+  input_object :image_input do
+    field :filename, non_null(:string)
+    field :position, non_null(:integer)
     field :is_active, :boolean
     field :description, :string
   end
@@ -111,6 +153,13 @@ defmodule ReWeb.Types.Listing do
   end
 
   object :listing_mutations do
+    @desc "Insert listing"
+    field :insert_listing, type: :listing do
+      arg :input, non_null(:listing_input)
+
+      resolve &Resolvers.Listings.insert/2
+    end
+
     @desc "Activate listing"
     field :activate_listing, type: :listing do
       arg :id, non_null(:id)
