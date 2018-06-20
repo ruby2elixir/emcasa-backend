@@ -24,6 +24,16 @@ defmodule ReWeb.Resolvers.Listings do
          do: Listings.insert(listing_params, address, current_user)
   end
 
+  def update(%{id: id, input: %{address: address_params} = listing_params}, %{
+        context: %{current_user: current_user}
+      }) do
+    with {:ok, listing} <- Listings.get(id),
+         :ok <- Bodyguard.permit(Listings, :update_listing, current_user, listing),
+         {:ok, address, _changeset} <- Addresses.insert_or_update(address_params),
+         {:ok, listing, _changeset} <- Listings.update(listing, listing_params, address, current_user),
+      do: {:ok, listing}
+  end
+
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
          {:ok, listing} <- Listings.get_preloaded(id),
