@@ -8,7 +8,8 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   alias Re.{
     Accounts.Users,
-    Listings
+    Listings,
+    Repo
   }
 
   alias ReWeb.{
@@ -50,6 +51,14 @@ defmodule ReWeb.Notifications.Emails.Server do
   end
 
   @spec handle_cast({atom(), atom(), [any]}, any) :: {:noreply, any}
+
+  def handle_cast({module, :price_updated, new_price, listing}, state) do
+    listing
+    |> Repo.preload(:favorited)
+    |> Map.get(:favorited)
+    |> Enum.each(&handle_cast({module, :price_updated, [&1, new_price, listing]}, state))
+  end
+
   def handle_cast({module, function, args}, state) do
     case :erlang.apply(module, function, args) do
       %Swoosh.Email{} = email ->

@@ -59,6 +59,8 @@ config :re, ReWeb.Search.Cluster,
     }
   }
 
+config :currency_formatter, :whitelist, ["BRL"]
+
 import_config "#{Mix.env()}.exs"
 
 # Import Timber, structured logging

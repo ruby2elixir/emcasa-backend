@@ -35,7 +35,9 @@ defmodule ReWeb.Notifications.Emails do
   def listing_added_admin(%User{} = user, %Listing{} = listing),
     do: GenServer.cast(Server, {UserEmail, :listing_added_admin, [user, listing]})
 
-  def listing_updated(%User{} = user, %Listing{} = listing, changes) do
-    GenServer.cast(Server, {UserEmail, :listing_updated, [user, listing, changes]})
-  end
+  def listing_updated(%User{} = user, %Listing{} = listing, changes),
+    do: GenServer.cast(Server, {UserEmail, :listing_updated, [user, listing, changes]})
+
+  def price_updated(new_price, listing),
+    do: GenServer.cast(Server, {UserEmail, :price_updated, new_price, listing})
 end

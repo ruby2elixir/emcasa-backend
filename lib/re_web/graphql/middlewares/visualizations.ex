@@ -6,7 +6,7 @@ defmodule ReWeb.GraphQL.Middlewares.Visualizations do
 
   @visualizations Application.get_env(:re, :visualizations, Re.Stats.Visualizations)
 
-  def call(%{value: listing, context: %{current_user: user, details: details}} = res, arg) do
+  def call(%{value: listing, context: %{current_user: user, details: details}} = res, _arg) do
     @visualizations.listing(listing, user, details)
 
     res

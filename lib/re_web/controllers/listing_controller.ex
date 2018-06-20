@@ -111,6 +111,14 @@ defmodule ReWeb.ListingController do
     @emails.listing_updated(user, listing, changes)
   end
 
+  defp send_email_if_not_admin(
+         %{is_active: true} = listing,
+         %{role: "admin"},
+         %{changes: %{price: new_price}},
+         _
+       ),
+       do: @emails.price_updated(new_price, listing)
+
   defp send_email_if_not_admin(_, %{role: "admin"}, _, _), do: :nothing
 
   defp get_view(%{role: "admin"}), do: ReWeb.ListingAdminView

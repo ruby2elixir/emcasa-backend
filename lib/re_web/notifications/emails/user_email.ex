@@ -168,6 +168,23 @@ defmodule ReWeb.Notifications.UserEmail do
      Enum.map(changes, fn {attr, value} -> "Atributo: #{attr}, novo valor: #{value}" end)}
   end
 
+  def price_updated(%User{name: name, email: email}, new_price, listing) do
+    listing_url = build_url(@listing_path, to_string(listing.id))
+
+    new()
+    |> to(email)
+    |> from(@admin_email)
+    |> subject("Um imóvel que você favoritu teve alteração de preço")
+    |> html_body("Olá, #{name}<br>
+                  Um imóvel que você favoritou na EmCasa sofreu alteração de preço<br>
+                  Novo preço: #{CurrencyFormatter.format(new_price * 100, "BRL")}<br>
+                  <a href=\"#{listing_url}\">Confira</a><br>")
+    |> text_body("Olá, #{name}
+                  Um imóvel que você favoritou na EmCasa sofreu alteração de preço
+                  Novo preço: #{CurrencyFormatter.format(new_price * 100, "BRL")}
+                  <a href=\"#{listing_url}\">Confira</a>")
+  end
+
   defp get_to_email(%{name: "Agendamento online"}), do: @contato_email
   defp get_to_email(_), do: @to
 end
