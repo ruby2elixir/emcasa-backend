@@ -12,9 +12,15 @@ defmodule ReWeb.Types.User do
     field :email, :string
     field :phone, :string
     field :role, :string
+    field :notification_preferences, :notification_preferences
   end
 
-  input_object :notification_preferences do
+  object :notification_preferences do
+    field :email, :boolean
+    field :app, :boolean
+  end
+
+  input_object :notification_preferences_input do
     field :email, :boolean
     field :app, :boolean
   end
@@ -25,7 +31,7 @@ defmodule ReWeb.Types.User do
       arg :id, non_null(:id)
       arg :name, :string
       arg :phone, :string
-      arg :notification_preferences, :notification_preferences
+      arg :notification_preferences, :notification_preferences_input
 
       resolve &AccountsResolver.edit_profile/2
     end
