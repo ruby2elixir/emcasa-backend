@@ -29,9 +29,13 @@ defmodule ReWeb.Resolvers.Listings do
       }) do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, current_user, listing),
-         {:ok, address, _changeset} <- Addresses.insert_or_update(address_params),
-         {:ok, listing, _changeset} <- Listings.update(listing, listing_params, address, current_user),
-      do: {:ok, listing}
+         {:ok, address, address_changeset} <- Addresses.insert_or_update(address_params),
+         {:ok, listing, listing_changeset} <- Listings.update(listing, listing_params, address, current_user)
+      do
+        send_email_if_not_admin(listing, current_user, listing_changeset, address_changeset)
+
+        {:ok, listing}
+     end
   end
 
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
@@ -50,4 +54,31 @@ defmodule ReWeb.Resolvers.Listings do
     with :ok <- Bodyguard.permit(Listings, :per_user, current_user, %{}),
          do: {:ok, Listings.per_user(current_user)}
   end
+
+  @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
+  @env Application.get_env(:re, :env)
+
+  defp send_email_if_not_admin(
+         listing,
+         %{role: "user"} = user,
+         listing_changeset,
+         address_changeset
+       ) do
+    changes = Enum.concat(listing_changeset.changes, address_changeset.changes)
+    @emails.listing_updated(user, listing, changes)
+  end
+
+  defp send_email_if_not_admin(
+         %{is_active: true} = listing,
+         %{role: "admin"},
+         %{changes: %{price: new_price}},
+         _
+       ) do
+    case @env do
+      "staging" -> :nothing
+      _ -> @emails.price_updated(new_price, listing)
+    end
+  end
+
+  defp send_email_if_not_admin(_, %{role: "admin"}, _, _), do: :nothing
 end
