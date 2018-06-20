@@ -27,7 +27,7 @@ defmodule ReWeb.Schema do
       arg :id, non_null(:id)
 
       resolve &Resolvers.Listings.show/2
-      middleware Middlewares.Visualizations
+      middleware(Middlewares.Visualizations)
     end
 
     @desc "Get favorited listings"

@@ -160,6 +160,14 @@ defmodule ReWeb.Types.Listing do
       resolve &Resolvers.Listings.insert/2
     end
 
+    @desc "Update listing"
+    field :update_listing, type: :listing do
+      arg :id, non_null(:id)
+      arg :input, non_null(:listing_input)
+
+      resolve &Resolvers.Listings.update/2
+    end
+
     @desc "Activate listing"
     field :activate_listing, type: :listing do
       arg :id, non_null(:id)

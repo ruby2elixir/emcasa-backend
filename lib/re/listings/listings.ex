@@ -87,12 +87,18 @@ defmodule Re.Listings do
       listing
       |> Changeset.change(address_id: address.id)
       |> Listing.changeset(params, user.role)
+      |> deactivate_if_not_admin(user)
 
     case Repo.update(changeset) do
       {:ok, listing} -> {:ok, listing, changeset}
       error -> error
     end
   end
+
+  defp deactivate_if_not_admin(changeset, %{role: "user"}),
+    do: Changeset.change(changeset, is_active: false)
+
+  defp deactivate_if_not_admin(changeset, %{role: "admin"}), do: changeset
 
   def deactivate(listing) do
     listing
