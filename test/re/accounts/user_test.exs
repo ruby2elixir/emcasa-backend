@@ -15,7 +15,8 @@ defmodule Re.UserTest do
     password: "validpassword",
     role: "user",
     confirmation_token: "97971cce-eb6e-418a-8529-e717ca1dcf62",
-    confirmed: true
+    confirmed: true,
+    notification_preferences: %{email: false, app: false}
   }
   @invalid_attrs %{
     name: nil,
