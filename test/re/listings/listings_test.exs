@@ -246,6 +246,19 @@ defmodule Re.ListingsTest do
     end
   end
 
+  describe "update/4" do
+    test "should deactivate if non-admin updates" do
+      user = insert(:user)
+      address = insert(:address)
+      listing = insert(:listing, user: user)
+
+      Listings.update(listing, %{price: listing.price + 50_000}, address, user)
+
+      updated_listing = Repo.get(Listing, listing.id)
+      refute updated_listing.is_active
+    end
+  end
+
   defp chunk_and_short(listings) do
     listings
     |> Enum.chunk_by(& &1.score)
