@@ -20,7 +20,11 @@ defmodule Re.User do
     field :confirmed, :boolean
     field :reset_token, :string
 
-    embeds_one :notification_preferences, Re.Accounts.NotificationPreferences, on_replace: :update
+    embeds_one(
+      :notification_preferences,
+      Re.Accounts.NotificationPreferences,
+      on_replace: :update
+    )
 
     has_many :listings, Re.Listing
 
@@ -41,7 +45,10 @@ defmodule Re.User do
   def create_changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @create_required ++ @optional)
-    |> cast_embed(:notification_preferences, with: &Re.Accounts.NotificationPreferences.changeset/2)
+    |> cast_embed(
+      :notification_preferences,
+      with: &Re.Accounts.NotificationPreferences.changeset/2
+    )
     |> validate_required(@create_required)
     |> base_changeset()
     |> hash_password()
@@ -53,7 +60,10 @@ defmodule Re.User do
   def update_changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @update_required ++ @update_optional)
-    |> cast_embed(:notification_preferences, with: &Re.Accounts.NotificationPreferences.changeset/2)
+    |> cast_embed(
+      :notification_preferences,
+      with: &Re.Accounts.NotificationPreferences.changeset/2
+    )
     |> validate_required(@update_required)
     |> base_changeset()
   end
