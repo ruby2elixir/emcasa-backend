@@ -20,6 +20,8 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   alias ReWeb.Endpoint, as: PubSub
 
+  @env Application.get_env(:re, :env)
+
   @spec start_link :: GenServer.start_link()
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -28,26 +30,19 @@ defmodule ReWeb.Notifications.Emails.Server do
   @spec init(term) :: {:ok, term}
   def init(args) do
     if Mix.env() != :test do
-      case Absinthe.run(
-             "subscription { emailChanged { id } }",
-             Schema,
-             context: %{pubsub: PubSub, current_user: :system}
-           ) do
-        {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
-        _ -> :nothing
-      end
-
-      case Absinthe.run(
-             "subscription { listingInserted { id owner { id } } }",
-             Schema,
-             context: %{pubsub: PubSub, current_user: :system}
-           ) do
-        {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
-        _ -> :nothing
-      end
+      subscribe("subscription { emailChanged { id } }", true)
+      subscribe("subscription { listingInserted { id owner { id } } }", @env != "staging")
     end
 
     {:ok, args}
+  end
+
+  defp subscribe(_, false), do: :nothing
+  defp subscribe(subscription, true) do
+    case Absinthe.run(subscription, Schema, context: %{pubsub: PubSub, current_user: :system}) do
+      {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
+      _ -> :nothing
+    end
   end
 
   @spec handle_cast({atom(), atom(), [any]}, any) :: {:noreply, any}
