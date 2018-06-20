@@ -14,12 +14,18 @@ defmodule ReWeb.Types.User do
     field :role, :string
   end
 
+  input_object :notification_preferences do
+    field :email, :boolean
+    field :app, :boolean
+  end
+
   object :user_mutations do
     @desc "Edit user profile"
     field :edit_user_profile, type: :user do
       arg :id, non_null(:id)
       arg :name, :string
       arg :phone, :string
+      arg :notification_preferences, :notification_preferences
 
       resolve &AccountsResolver.edit_profile/2
     end

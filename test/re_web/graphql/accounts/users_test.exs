@@ -178,7 +178,12 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       mutation = """
         mutation {
-          editUserProfile(id: #{user.id}, name: "Fixed Name", phone: "123321123") {
+          editUserProfile(
+            id: #{user.id},
+            name: "Fixed Name",
+            phone: "123321123",
+            notificationPreferences: {email: false, app: false})
+          {
             id
           }
         }
@@ -189,12 +194,19 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert user = Repo.get(User, user.id)
       assert user.name == "Fixed Name"
       assert user.phone == "123321123"
+      refute user.notification_preferences.email
+      refute user.notification_preferences.app
     end
 
     test "user should edit own profile", %{user_conn: conn, user_user: user} do
       mutation = """
         mutation {
-          editUserProfile(id: #{user.id}, name: "Fixed Name", phone: "123321123") {
+          editUserProfile(
+            id: #{user.id},
+            name: "Fixed Name",
+            phone: "123321123",
+            notificationPreferences: {email: false, app: false})
+          {
             id
           }
         }
@@ -205,6 +217,8 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert user = Repo.get(User, user.id)
       assert user.name == "Fixed Name"
       assert user.phone == "123321123"
+      refute user.notification_preferences.email
+      refute user.notification_preferences.app
     end
 
     test "user should not edit other user's  profile", %{user_conn: conn} do
