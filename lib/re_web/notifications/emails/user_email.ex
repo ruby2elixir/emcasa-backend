@@ -174,7 +174,7 @@ defmodule ReWeb.Notifications.UserEmail do
     new()
     |> to(email)
     |> from(@admin_email)
-    |> subject("Um imóvel que você favoritu teve alteração de preço")
+    |> subject("Um imóvel que você favoritou teve alteração de preço")
     |> html_body("Olá, #{name}<br>
                   Um imóvel que você favoritou na EmCasa sofreu alteração de preço<br>
                   Novo preço: #{CurrencyFormatter.format(new_price * 100, "BRL")}<br>
