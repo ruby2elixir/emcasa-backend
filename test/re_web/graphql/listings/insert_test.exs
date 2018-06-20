@@ -13,39 +13,7 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
     listing = build(:listing)
     address = build(:address)
 
-    insert_input = """
-      {
-        type: "#{listing.type}",
-        address: {
-          city: "#{address.city}",
-          state: "#{address.state}",
-          lat: #{address.lat},
-          lng: #{address.lng},
-          neighborhood: "#{address.neighborhood}",
-          street: "#{address.street}",
-          streetNumber: "#{address.street_number}",
-          postalCode: "#{address.postal_code}"
-        }
-        price: #{listing.price},
-        complement: "#{listing.complement}",
-        description: "#{listing.description}",
-        propertyTax: #{listing.property_tax},
-        maintenanceFee: #{listing.maintenance_fee},
-        floor: "#{listing.floor}",
-        rooms: #{listing.rooms},
-        bathrooms: #{listing.bathrooms},
-        restrooms: #{listing.restrooms},
-        area: #{listing.area},
-        garageSpots: #{listing.garage_spots},
-        suites: #{listing.suites},
-        dependencies: #{listing.dependencies},
-        balconies: #{listing.balconies},
-        hasElevator: #{listing.has_elevator},
-        matterportCode: "#{listing.matterport_code}",
-        isExclusive: #{listing.is_exclusive},
-        isRelease: #{listing.is_release}
-      }
-    """
+    insert_input = AbsintheHelpers.listing_input(listing, address)
 
     {:ok,
      unauthenticated_conn: conn,
@@ -65,46 +33,7 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
     listing: listing,
     address: address
   } do
-    mutation = """
-      mutation {
-        insertListing(input: #{insert_input}) {
-          id
-          type
-          address {
-            city
-            state
-            lat
-            lng
-            neighborhood
-            street
-            streetNumber
-            postalCode
-          }
-          owner {
-            id
-          }
-          price
-          complement
-          description
-          propertyTax
-          maintenanceFee
-          floor
-          rooms
-          bathrooms
-          restrooms
-          area
-          garageSpots
-          suites
-          dependencies
-          balconies
-          hasElevator
-          matterportCode
-          isActive
-          isExclusive
-          isRelease
-        }
-      }
-    """
+    mutation = AbsintheHelpers.listing_mutation(insert_input, "insertListing")
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
@@ -155,45 +84,7 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
     listing: listing,
     address: address
   } do
-    mutation = """
-      mutation {
-        insertListing(input: #{insert_input}) {
-          id
-          type
-          address {
-            city
-            state
-            lat
-            lng
-            neighborhood
-            street
-            streetNumber
-            postalCode
-          }
-          owner {
-            id
-          }
-          price
-          complement
-          description
-          propertyTax
-          maintenanceFee
-          floor
-          rooms
-          bathrooms
-          restrooms
-          area
-          garageSpots
-          suites
-          dependencies
-          balconies
-          hasElevator
-          matterportCode
-          isExclusive
-          isRelease
-        }
-      }
-    """
+    mutation = AbsintheHelpers.listing_mutation(insert_input, "insertListing")
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
