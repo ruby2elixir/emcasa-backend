@@ -57,8 +57,7 @@ defmodule ReWeb.GraphQL.Listings.UpdateTest do
      old_listing: insert(:listing, user: user_user),
      old_address: insert(:address),
      new_listing: listing,
-     new_address: address,
-   }
+     new_address: address}
   end
 
   test "admin should update listing", %{
@@ -111,8 +110,8 @@ defmodule ReWeb.GraphQL.Listings.UpdateTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert %{"updateListing" => %{"address" => inserted_address} = updated_listing}
-         = json_response(conn, 200)["data"]
+    assert %{"updateListing" => %{"address" => inserted_address} = updated_listing} =
+             json_response(conn, 200)["data"]
 
     assert updated_listing["type"] == new_listing.type
     assert updated_listing["price"] == new_listing.price
@@ -194,8 +193,8 @@ defmodule ReWeb.GraphQL.Listings.UpdateTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert %{"updateListing" => %{"address" => inserted_address} = updated_listing}
-         = json_response(conn, 200)["data"]
+    assert %{"updateListing" => %{"address" => inserted_address} = updated_listing} =
+             json_response(conn, 200)["data"]
 
     assert updated_listing["type"] == new_listing.type
     assert updated_listing["price"] == new_listing.price

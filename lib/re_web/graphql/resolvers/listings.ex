@@ -30,12 +30,12 @@ defmodule ReWeb.Resolvers.Listings do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, current_user, listing),
          {:ok, address, address_changeset} <- Addresses.insert_or_update(address_params),
-         {:ok, listing, listing_changeset} <- Listings.update(listing, listing_params, address, current_user)
-      do
-        send_email_if_not_admin(listing, current_user, listing_changeset, address_changeset)
+         {:ok, listing, listing_changeset} <-
+           Listings.update(listing, listing_params, address, current_user) do
+      send_email_if_not_admin(listing, current_user, listing_changeset, address_changeset)
 
-        {:ok, listing}
-     end
+      {:ok, listing}
+    end
   end
 
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do

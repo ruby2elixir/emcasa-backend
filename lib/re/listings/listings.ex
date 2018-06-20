@@ -95,7 +95,9 @@ defmodule Re.Listings do
     end
   end
 
-  defp deactivate_if_not_admin(changeset, %{role: "user"}), do: Changeset.change(changeset, is_active: false)
+  defp deactivate_if_not_admin(changeset, %{role: "user"}),
+    do: Changeset.change(changeset, is_active: false)
+
   defp deactivate_if_not_admin(changeset, %{role: "admin"}), do: changeset
 
   def deactivate(listing) do

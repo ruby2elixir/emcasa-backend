@@ -11,5 +11,4 @@ defmodule ReWeb.GraphQL.Middlewares.Visualizations do
 
     res
   end
-
 end
