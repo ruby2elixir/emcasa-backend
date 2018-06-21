@@ -56,6 +56,14 @@ defmodule ReWeb.Notifications.Emails.Server do
     {:noreply, Enum.reduce(replies, state, fn {:noreply, st}, state -> [ st | state ] end)}
   end
 
+  def handle_cast({module, :listing_added, user, listing}, state) do
+    if notify?(user) do
+      handle_cast({module, :listing_added, [user, listing]}, state)
+    else
+      {:noreply, state}
+    end
+  end
+
   def handle_cast({module, function, args}, state) do
     case :erlang.apply(module, function, args) do
       %Swoosh.Email{} = email ->

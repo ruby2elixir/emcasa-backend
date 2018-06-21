@@ -30,7 +30,7 @@ defmodule ReWeb.Notifications.Emails do
     do: GenServer.cast(Server, {UserEmail, :reset_password, [user]})
 
   def listing_added(%User{} = user, %Listing{} = listing),
-    do: GenServer.cast(Server, {UserEmail, :listing_added, [user, listing]})
+    do: GenServer.cast(Server, {UserEmail, :listing_added, user, listing})
 
   def listing_added_admin(%User{} = user, %Listing{} = listing),
     do: GenServer.cast(Server, {UserEmail, :listing_added_admin, [user, listing]})

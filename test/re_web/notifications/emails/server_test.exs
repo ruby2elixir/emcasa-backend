@@ -70,6 +70,13 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       assert_email_sent(UserEmail.listing_added(user, listing))
     end
 
+    test "listing_added/2 should not notify when user email is not confirmed" do
+      user = insert(:user, confirmed: false)
+      listing = insert(:listing)
+      Server.handle_cast({UserEmail, :listing_added, user, listing}, [])
+      assert_email_not_sent(UserEmail.listing_added(user, listing))
+    end
+
     test "listing_added_admin/2" do
       user = insert(:user)
       listing = insert(:listing)
