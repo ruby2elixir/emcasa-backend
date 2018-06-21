@@ -69,6 +69,7 @@ defmodule ReWeb.UserControllerTest do
       assert user.confirmation_token
       assert user.phone == "(99)1234-5678"
       refute user.confirmed
+      assert %{id: _, email: true, app: true} = user.notification_preferences
     end
 
     test "fails when password is invalid", %{conn: conn} do
