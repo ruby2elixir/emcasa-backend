@@ -37,6 +37,7 @@ defmodule Re.Accounts.Users do
       |> Map.put("role", "user")
       |> Map.put("confirmation_token", UUID.uuid4())
       |> Map.put("confirmed", false)
+      |> Map.put("notification_preferences", %{})
 
     %User{}
     |> User.create_changeset(params)
