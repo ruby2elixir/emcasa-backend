@@ -47,10 +47,13 @@ defmodule ReWeb.Notifications.Emails.Server do
   @spec handle_cast({atom(), atom(), [any]}, any) :: {:noreply, any}
 
   def handle_cast({module, :price_updated, new_price, listing}, state) do
-    listing
-    |> Repo.preload(:favorited)
-    |> Map.get(:favorited)
-    |> Enum.each(&handle_cast({module, :price_updated, [&1, new_price, listing]}, state))
+    replies = listing
+      |> Repo.preload(:favorited)
+      |> Map.get(:favorited)
+      |> Enum.filter(&notify?/1)
+      |> Enum.map(&handle_cast({module, :price_updated, [&1, new_price, listing]}, state))
+
+    {:noreply, Enum.reduce(replies, state, fn {:noreply, st}, state -> [ st | state ] end)}
   end
 
   def handle_cast({module, function, args}, state) do
@@ -63,6 +66,10 @@ defmodule ReWeb.Notifications.Emails.Server do
         {:noreply, [{:error, error, {module, function, args}} | state]}
     end
   end
+
+  defp notify?(%{notification_preferences: %{email: false}}), do: false
+  defp notify?(%{confirmed: false}), do: false
+  defp notify?(_), do: true
 
   defp deliver(email, state) do
     case Mailer.deliver(email) do
