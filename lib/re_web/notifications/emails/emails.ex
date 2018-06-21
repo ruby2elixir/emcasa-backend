@@ -40,4 +40,6 @@ defmodule ReWeb.Notifications.Emails do
 
   def price_updated(new_price, listing),
     do: GenServer.cast(Server, {UserEmail, :price_updated, new_price, listing})
+
+  def inspect, do: GenServer.call(Server, :inspect)
 end

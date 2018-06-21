@@ -35,6 +35,8 @@ defmodule ReWeb.Notifications.Emails.Server do
     {:ok, args}
   end
 
+  def handle_call(:inspect, _caller, state), do: {:reply, state, state}
+
   defp subscribe(subscription) do
     case Absinthe.run(subscription, Schema, context: %{pubsub: PubSub, current_user: :system}) do
       {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
