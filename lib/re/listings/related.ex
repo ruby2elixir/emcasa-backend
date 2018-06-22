@@ -38,10 +38,10 @@ defmodule Re.Listings.Related do
     )
   end
 
-  defp build_query(:price, listing, query) do
-    price_diff = listing.price * 0.25
-    floor = trunc(listing.price - price_diff)
-    ceiling = trunc(listing.price + price_diff)
+  defp build_query(:price, %{price: price}, query) when not is_nil(price) do
+    price_diff = price * 0.25
+    floor = trunc(price - price_diff)
+    ceiling = trunc(price + price_diff)
 
     from(l in query, or_where: l.price >= ^floor and l.price <= ^ceiling)
   end

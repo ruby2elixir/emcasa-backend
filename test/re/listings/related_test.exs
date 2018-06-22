@@ -58,5 +58,22 @@ defmodule Re.RelatedTest do
 
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], remaining_count: 0} = Related.get(listing)
     end
+
+    test "should return a neighborhood and price match listing with nil price" do
+      listing =
+        insert(
+          :listing,
+          address: build(:address, neighborhood: "Copacabana"),
+          price: nil
+        )
+
+      %{id: id2} =
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_000)
+
+      %{id: id3} =
+        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000)
+
+      assert %{listings: [%{id: ^id2}, %{id: ^id3}], remaining_count: 0} = Related.get(listing)
+    end
   end
 end
