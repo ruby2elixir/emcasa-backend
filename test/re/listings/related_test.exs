@@ -70,10 +70,9 @@ defmodule Re.RelatedTest do
       %{id: id2} =
         insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_000)
 
-      %{id: id3} =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000)
+      insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000)
 
-      assert %{listings: [%{id: ^id2}, %{id: ^id3}], remaining_count: 0} = Related.get(listing)
+      assert %{listings: [%{id: ^id2}], remaining_count: 0} = Related.get(listing)
     end
   end
 end
