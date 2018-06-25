@@ -2,6 +2,8 @@ defmodule ReWeb.Resolvers.Listings do
   @moduledoc """
   Resolver module for listing queries and mutations
   """
+  import Absinthe.Resolution.Helpers, only: [on_load: 2]
+
   alias Re.{
     Addresses,
     Listings
@@ -53,6 +55,18 @@ defmodule ReWeb.Resolvers.Listings do
   def per_user(_, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :per_user, current_user, %{}),
          do: {:ok, Listings.per_user(current_user)}
+  end
+
+  def price_history(listing, _, %{context: %{loader: loader, current_user: current_user}}) do
+    case Bodyguard.permit(Listings, :show_stats, current_user, listing) do
+      :ok ->
+        loader
+        |> Dataloader.load(Re.Listings, :price_history, listing)
+        |> on_load(fn loader ->
+          {:ok, Dataloader.get(loader, Re.Listings, :price_history, listing)}
+        end)
+      _ -> {:ok, nil}
+    end
   end
 
   @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
