@@ -250,12 +250,25 @@ defmodule Re.ListingsTest do
     test "should deactivate if non-admin updates" do
       user = insert(:user)
       address = insert(:address)
-      listing = insert(:listing, user: user)
+      listing = insert(:listing, user: user, price: 1_000_000)
 
       Listings.update(listing, %{price: listing.price + 50_000}, address, user)
 
       updated_listing = Repo.get(Listing, listing.id)
       refute updated_listing.is_active
+      assert [%{price: 1_000_000}] = Repo.all(Re.Listings.PriceHistory)
+    end
+
+    test "should not save price history if price is not changed" do
+      user = insert(:user)
+      address = insert(:address)
+      listing = insert(:listing, user: user, rooms: 3)
+
+      Listings.update(listing, %{rooms: 4}, address, user)
+
+      updated_listing = Repo.get(Listing, listing.id)
+      refute updated_listing.is_active
+      assert [] = Repo.all(Re.Listings.PriceHistory)
     end
   end
 
