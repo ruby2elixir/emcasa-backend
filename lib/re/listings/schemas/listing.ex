@@ -36,6 +36,7 @@ defmodule Re.Listing do
     belongs_to :address, Re.Address
     belongs_to :user, Re.User
     has_many :images, Re.Image
+    has_many :price_history, Re.Listings.PriceHistory
     has_many :listings_visualisations, Re.Stats.ListingVisualization
     has_many :tour_visualisations, Re.Stats.TourVisualization
     has_many :in_person_visits, Re.Stats.InPersonVisit

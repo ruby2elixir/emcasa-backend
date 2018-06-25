@@ -12,6 +12,12 @@ defmodule ReWeb.FallbackController do
     |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
   end
 
+  def call(conn, {:error, _, %Ecto.Changeset{} = changeset, _}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> render(ReWeb.ChangesetView, "error.json", changeset: changeset)
+  end
+
   def call(conn, {:error, :bad_request}) do
     conn
     |> put_status(:bad_request)

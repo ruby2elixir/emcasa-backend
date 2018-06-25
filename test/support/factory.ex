@@ -120,6 +120,10 @@ defmodule Re.Factory do
     %Re.Messages.Channels.Channel{}
   end
 
+  def price_history_factory do
+    %Re.Listings.PriceHistory{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999

@@ -52,6 +52,9 @@ defmodule ReWeb.Types.Listing do
 
     field :listing_visualisation_count, :integer,
       resolve: &Resolvers.Stats.listing_visualisation_count/3
+
+    field :previous_prices, list_of(:price_history),
+      resolve: &Resolvers.Listings.price_history/3
   end
 
   input_object :listing_input do
@@ -150,6 +153,11 @@ defmodule ReWeb.Types.Listing do
     field :neighborhoods_slugs, list_of(:string)
     field :max_garage_spots, :integer
     field :min_garage_spots, :integer
+  end
+
+  object :price_history do
+    field :price, :integer
+    field :inserted_at, :datetime
   end
 
   object :listing_mutations do

@@ -28,6 +28,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     listings_favorites = insert_list(3, :listings_favorites)
     tour_visualisations = insert_list(3, :tour_visualisation)
     listings_visualisations = insert_list(3, :listing_visualisation)
+    price_history = insert_list(3, :price_history)
 
     %{id: listing_id} =
       insert(
@@ -39,7 +40,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
         in_person_visits: in_person_visits,
         listings_favorites: listings_favorites,
         tour_visualisations: tour_visualisations,
-        listings_visualisations: listings_visualisations
+        listings_visualisations: listings_visualisations,
+        price_history: price_history
       )
 
     query = """
@@ -63,6 +65,9 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           listingFavoriteCount
           tourVisualisationCount
           listingVisualisationCount
+          previousPrices {
+            price
+          }
         }
       }
     """
@@ -81,7 +86,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inPersonVisitCount" => 3,
                "listingFavoriteCount" => 3,
                "tourVisualisationCount" => 3,
-               "listingVisualisationCount" => 3
+               "listingVisualisationCount" => 3,
+               "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}]
              }
            } = json_response(conn, 200)["data"]
   end
@@ -96,6 +102,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     listings_favorites = insert_list(3, :listings_favorites)
     tour_visualisations = insert_list(3, :tour_visualisation)
     listings_visualisations = insert_list(3, :listing_visualisation)
+    price_history = insert_list(3, :price_history)
 
     %{id: listing_id} =
       insert(
@@ -107,7 +114,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
         in_person_visits: in_person_visits,
         listings_favorites: listings_favorites,
         tour_visualisations: tour_visualisations,
-        listings_visualisations: listings_visualisations
+        listings_visualisations: listings_visualisations,
+        price_history: price_history
       )
 
     query = """
@@ -131,6 +139,9 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           listingFavoriteCount
           tourVisualisationCount
           listingVisualisationCount
+          previousPrices {
+            price
+          }
         }
       }
     """
@@ -149,7 +160,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inPersonVisitCount" => 3,
                "listingFavoriteCount" => 3,
                "tourVisualisationCount" => 3,
-               "listingVisualisationCount" => 3
+               "listingVisualisationCount" => 3,
+               "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}]
              }
            } = json_response(conn, 200)["data"]
   end
@@ -184,6 +196,9 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           listingFavoriteCount
           tourVisualisationCount
           listingVisualisationCount
+          previousPrices {
+            price
+          }
         }
       }
     """
@@ -200,7 +215,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inPersonVisitCount" => nil,
                "listingFavoriteCount" => nil,
                "tourVisualisationCount" => nil,
-               "listingVisualisationCount" => nil
+               "listingVisualisationCount" => nil,
+               "previousPrices" => nil
              }
            } = json_response(conn, 200)["data"]
   end
@@ -235,6 +251,9 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           listingFavoriteCount
           tourVisualisationCount
           listingVisualisationCount
+          previousPrices {
+            price
+          }
         }
       }
     """
@@ -251,7 +270,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "inPersonVisitCount" => nil,
                "listingFavoriteCount" => nil,
                "tourVisualisationCount" => nil,
-               "listingVisualisationCount" => nil
+               "listingVisualisationCount" => nil,
+               "previousPrices" => nil
              }
            } = json_response(conn, 200)["data"]
   end

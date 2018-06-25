@@ -8,12 +8,16 @@ defmodule Re.Listings do
     Listing,
     Filtering,
     Images,
-    Listings.Queries,
     Listings.Opts,
+    Listings.PriceHistory,
+    Listings.Queries,
     Repo
   }
 
-  alias Ecto.Changeset
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
@@ -83,17 +87,32 @@ defmodule Re.Listings do
   end
 
   def update(listing, params, address, user) do
-    changeset =
-      listing
-      |> Changeset.change(address_id: address.id)
-      |> Listing.changeset(params, user.role)
-      |> deactivate_if_not_admin(user)
+    listing_changeset = update_listing(listing, params, address, user)
 
-    case Repo.update(changeset) do
-      {:ok, listing} -> {:ok, listing, changeset}
+    Multi.new()
+    |> Multi.update(:listing, listing_changeset)
+    |> save_old_price(listing_changeset)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{listing: listing}} -> {:ok, listing, listing_changeset}
       error -> error
     end
   end
+
+  defp update_listing(listing, params, address, user) do
+    listing
+    |> Changeset.change(address_id: address.id)
+    |> Listing.changeset(params, user.role)
+    |> deactivate_if_not_admin(user)
+  end
+
+  defp save_old_price(multi, %{changes: %{price: _}, data: %{id: id, price: old_price}}) do
+    changeset = PriceHistory.changeset(%PriceHistory{}, %{price: old_price, listing_id: id})
+
+    Multi.insert(multi, :price_history, changeset)
+  end
+
+  defp save_old_price(multi, _), do: multi
 
   defp deactivate_if_not_admin(changeset, %{role: "user"}),
     do: Changeset.change(changeset, is_active: false)
