@@ -18,7 +18,7 @@ defmodule Re.Listings.PriceHistory do
 
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(@attributes)
-    |> validate_required()
+    |> cast(params, @attributes)
+    |> validate_required(@attributes)
   end
 end
