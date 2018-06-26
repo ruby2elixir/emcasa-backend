@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/emcasa/backend.svg?branch=master)](https://travis-ci.org/emcasa/backend)
 [![Ebert](https://ebertapp.io/github/emcasa/backend.svg)](https://ebertapp.io/github/emcasa/backend)
+[![Coverage Status](https://coveralls.io/repos/github/emcasa/backend/badge.svg)](https://coveralls.io/github/emcasa/backend)
 # Re WebService
 
 ## Install
