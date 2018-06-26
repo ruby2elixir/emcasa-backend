@@ -11,7 +11,9 @@ defmodule Re.Mixfile do
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test]
     ]
   end
 
@@ -59,7 +61,8 @@ defmodule Re.Mixfile do
       {:absinthe_phoenix, "~> 1.4"},
       {:elasticsearch, "~> 0.4"},
       {:dataloader, "~> 1.0"},
-      {:currency_formatter, "~> 0.4"}
+      {:currency_formatter, "~> 0.4"},
+      {:excoveralls, "~> 0.8", only: :test}
     ]
   end
 
