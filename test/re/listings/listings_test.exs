@@ -244,6 +244,22 @@ defmodule Re.ListingsTest do
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       refute retrieved_listing.is_active
     end
+
+    test "should insert if user provides a phone" do
+      address = insert(:address)
+      user = insert(:user, role: "user", phone: nil)
+
+      assert {:ok, inserted_listing} = Listings.insert(Map.put(@insert_listing_params, "phone", "123321"), address, user)
+      assert inserted_listing = Repo.get(Listing, inserted_listing.id)
+      refute inserted_listing.is_active
+    end
+
+    test "should fail if user doesn't have phone" do
+      address = insert(:address)
+      user = insert(:user, role: "user", phone: nil)
+
+      assert {:error, :has_no_phone} = Listings.insert(@insert_listing_params, address, user)
+    end
   end
 
   describe "update/4" do
