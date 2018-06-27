@@ -30,7 +30,8 @@ defmodule Re.Mixfile do
         :postgrex,
         :comeonin,
         :swoosh,
-        :timber
+        :timber,
+        :timex
       ]
     ]
   end
@@ -62,7 +63,9 @@ defmodule Re.Mixfile do
       {:elasticsearch, "~> 0.4"},
       {:dataloader, "~> 1.0"},
       {:currency_formatter, "~> 0.4"},
-      {:excoveralls, "~> 0.8", only: :test}
+      {:excoveralls, "~> 0.8", only: :test},
+      {:timex, "~> 3.3"},
+      {:tzdata, "~> 0.5"}
     ]
   end
 

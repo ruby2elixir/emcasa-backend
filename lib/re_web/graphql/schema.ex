@@ -162,7 +162,8 @@ defmodule ReWeb.Schema do
       Re.Accounts,
       Re.Addresses,
       Re.Images,
-      Re.Listings
+      Re.Listings,
+      Re.Listings.PriceHistories
     ]
   end
 end

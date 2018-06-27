@@ -55,6 +55,9 @@ defmodule ReWeb.Types.Listing do
 
     field :previous_prices, list_of(:price_history),
       resolve: &Resolvers.Listings.price_history/3
+
+    field :price_recently_reduced, :boolean,
+      resolve: &Resolvers.Listings.price_recently_reduced/3
   end
 
   input_object :listing_input do
