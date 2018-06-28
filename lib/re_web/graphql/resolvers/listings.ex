@@ -66,12 +66,17 @@ defmodule ReWeb.Resolvers.Listings do
         |> on_load(fn loader ->
           {:ok, Dataloader.get(loader, Listings, :price_history, listing)}
         end)
-      _ -> {:ok, nil}
+
+      _ ->
+        {:ok, nil}
     end
   end
 
   def price_recently_reduced(listing, _, %{context: %{loader: loader}}) do
-    params = %{datetime: Timex.now() |> Timex.shift(weeks: -2)}
+    params = %{
+      datetime: Timex.now() |> Timex.shift(weeks: -2),
+      current_price: listing.price
+    }
 
     loader
     |> Dataloader.load(PriceHistories, {:price_history, params}, listing)

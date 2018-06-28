@@ -610,8 +610,32 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
   end
 
   test "should query listing index with price reduction attribute", %{unauthenticated_conn: conn} do
+    now = Timex.now()
     insert(:listing, score: 4, price_history: [])
-    insert(:listing, score: 3, price_history: [build(:price_history, inserted_at: Timex.now() |> Timex.shift(weeks: -1))])
+
+    insert(
+      :listing,
+      price: 1_000_000,
+      score: 3,
+      price_history: [
+        build(:price_history, price: 1_100_000, inserted_at: Timex.shift(now, weeks: -1))
+      ]
+    )
+
+    insert(
+      :listing,
+      score: 2,
+      price_history: [build(:price_history, inserted_at: Timex.shift(now, weeks: -3))]
+    )
+
+    insert(
+      :listing,
+      price: 1_000_000,
+      score: 1,
+      price_history: [
+        build(:price_history, price: 900_000, inserted_at: Timex.shift(now, weeks: -1))
+      ]
+    )
 
     query = """
       {
@@ -629,7 +653,9 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
              "listings" => %{
                "listings" => [
                  %{"priceRecentlyReduced" => false},
-                 %{"priceRecentlyReduced" => true}
+                 %{"priceRecentlyReduced" => true},
+                 %{"priceRecentlyReduced" => false},
+                 %{"priceRecentlyReduced" => false}
                ]
              }
            } = json_response(conn, 200)["data"]

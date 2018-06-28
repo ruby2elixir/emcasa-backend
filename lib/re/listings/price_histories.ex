@@ -1,15 +1,17 @@
 defmodule Re.Listings.PriceHistories do
-
   import Ecto.Query
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
 
   def query(query, args) do
-    query
+    args
+    |> Enum.reduce(query, &build_query/2)
     |> order_by([ph], desc: ph.inserted_at)
-    |> price_change_since(args)
   end
 
-  defp price_change_since(query, %{datetime: datetime}), do: where(query, [ph], ph.inserted_at > ^datetime)
-  defp price_change_since(query, _), do: query
+  defp build_query({:datetime, datetime}, query),
+    do: where(query, [ph], ph.inserted_at > ^datetime)
+
+  defp build_query({:current_price, price}, query), do: where(query, [ph], ph.price > ^price)
+  defp build_query(_, query), do: query
 end
