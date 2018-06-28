@@ -69,7 +69,12 @@ defmodule Re.RelatedTest do
         )
 
       %{id: id2} =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_000, rooms: 1)
+        insert(
+          :listing,
+          address: build(:address, neighborhood: "Copacabana"),
+          price: 74_000,
+          rooms: 1
+        )
 
       insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000, rooms: 1)
 
