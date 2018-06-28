@@ -3,6 +3,8 @@ defmodule Re.PriceSuggestionsTest do
 
   doctest Re.PriceSuggestions
 
+  import Re.Factory
+
   alias Re.{
     PriceSuggestions,
     PriceSuggestions.Factors
@@ -52,6 +54,12 @@ defmodule Re.PriceSuggestionsTest do
                  r2: 0.09128
                }
              ] = Repo.all(Factors)
+    end
+
+    test "should suggest price for listing" do
+      listing = insert(:listing, rooms: 2, area: 80, address: build(:address, street: "Mah Street"), garage_spots: 1, bathrooms: 1)
+      insert(:factors, street: "Mah Street", intercept: 10.10, rooms: 123.321, area: 321.123, bathrooms: 111.222, garage_spots: 222.111)
+      assert 26279.915 == PriceSuggestions.suggest_price(listing)
     end
   end
 end

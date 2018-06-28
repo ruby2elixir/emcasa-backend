@@ -6,6 +6,21 @@ defmodule Re.PriceSuggestions do
     Repo
   }
 
+  def suggest_price(listing) do
+    listing
+    |> get_factor_by_street()
+    |> do_suggest_price(listing)
+  end
+
+  defp get_factor_by_street(%{address: %{street: street}}), do: Repo.get_by(Factors, street: street)
+
+  defp do_suggest_price(nil, _), do: {:error, :street_not_covered}
+
+  defp do_suggest_price(factors, listing) do
+    factors.intercept + listing.area * factors.area + listing.bathrooms * factors.bathrooms +
+      listing.rooms * factors.rooms + listing.garage_spots * factors.garage_spots
+  end
+
   def save_factors(file) do
     file
     |> PriceSuggestionsParser.parse_string()

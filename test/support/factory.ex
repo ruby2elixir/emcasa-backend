@@ -124,6 +124,10 @@ defmodule Re.Factory do
     %Re.Listings.PriceHistory{}
   end
 
+  def factors_factory do
+    %Re.PriceSuggestions.Factors{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
