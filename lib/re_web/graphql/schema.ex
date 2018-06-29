@@ -4,7 +4,7 @@ defmodule ReWeb.Schema do
   """
   use Absinthe.Schema
 
-  import_types ReWeb.Types.{Listing, User, Message}
+  import_types ReWeb.Types.{Listing, User, Message, Interest}
 
   alias ReWeb.Resolvers
   alias ReWeb.GraphQL.Middlewares
@@ -65,6 +65,7 @@ defmodule ReWeb.Schema do
     import_fields(:listing_mutations)
     import_fields(:message_mutations)
     import_fields(:user_mutations)
+    import_fields(:interest_mutations)
   end
 
   subscription do
