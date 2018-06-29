@@ -54,6 +54,7 @@ defmodule ReWeb.Types.Listing do
       resolve: &Resolvers.Stats.listing_visualisation_count/3
 
     field :previous_prices, list_of(:price_history), resolve: &Resolvers.Listings.price_history/3
+    field :suggested_price, :float, resolve: &Resolvers.Listings.suggested_price/3
   end
 
   input_object :listing_input do

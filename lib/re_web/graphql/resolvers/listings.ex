@@ -6,7 +6,8 @@ defmodule ReWeb.Resolvers.Listings do
 
   alias Re.{
     Addresses,
-    Listings
+    Listings,
+    PriceSuggestions
   }
 
   def index(params, _) do
@@ -68,6 +69,13 @@ defmodule ReWeb.Resolvers.Listings do
 
       _ ->
         {:ok, nil}
+    end
+  end
+
+  def suggested_price(listing, _, %{context: %{current_user: current_user}}) do
+    case Bodyguard.permit(Listings, :suggested_price, current_user, listing) do
+      :ok -> {:ok, PriceSuggestions.suggest_price(listing)}
+      _ -> {:ok, nil}
     end
   end
 
