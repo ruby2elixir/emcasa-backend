@@ -113,26 +113,79 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
 
   describe "handle_info/2" do
     test "contact requested by anonymous" do
-      %{id: id} = insert(:contact_request, name: "mahname", email: "mahemail@emcasa.com", phone: "123321123", message: "cool website")
-      Server.handle_info(%Phoenix.Socket.Broadcast{payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}}, [])
+      %{id: id} =
+        insert(
+          :contact_request,
+          name: "mahname",
+          email: "mahemail@emcasa.com",
+          phone: "123321123",
+          message: "cool website"
+        )
 
-      assert_email_sent(UserEmail.contact_request(%{name: "mahname", email: "mahemail@emcasa.com", phone: "123321123", message: "cool website"}))
+      Server.handle_info(
+        %Phoenix.Socket.Broadcast{
+          payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
+        },
+        []
+      )
+
+      assert_email_sent(
+        UserEmail.contact_request(%{
+          name: "mahname",
+          email: "mahemail@emcasa.com",
+          phone: "123321123",
+          message: "cool website"
+        })
+      )
     end
 
     test "contact requested by user" do
       user = insert(:user)
       %{id: id} = insert(:contact_request, message: "cool website", user: user)
-      Server.handle_info(%Phoenix.Socket.Broadcast{payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}}, [])
 
-      assert_email_sent(UserEmail.contact_request(%{name: user.name, email: user.email, phone: user.phone, message: "cool website"}))
+      Server.handle_info(
+        %Phoenix.Socket.Broadcast{
+          payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
+        },
+        []
+      )
+
+      assert_email_sent(
+        UserEmail.contact_request(%{
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          message: "cool website"
+        })
+      )
     end
 
     test "contact requested by user with new email" do
       user = insert(:user)
-      %{id: id} = insert(:contact_request, message: "cool website", user: user, email: "different@email.com")
-      Server.handle_info(%Phoenix.Socket.Broadcast{payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}}, [])
 
-      assert_email_sent(UserEmail.contact_request(%{name: user.name, email: "different@email.com", phone: user.phone, message: "cool website"}))
+      %{id: id} =
+        insert(
+          :contact_request,
+          message: "cool website",
+          user: user,
+          email: "different@email.com"
+        )
+
+      Server.handle_info(
+        %Phoenix.Socket.Broadcast{
+          payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
+        },
+        []
+      )
+
+      assert_email_sent(
+        UserEmail.contact_request(%{
+          name: user.name,
+          email: "different@email.com",
+          phone: user.phone,
+          message: "cool website"
+        })
+      )
     end
   end
 end

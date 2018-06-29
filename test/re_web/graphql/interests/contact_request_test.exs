@@ -14,11 +14,7 @@ defmodule ReWeb.GraphQL.Interests.ContactRequestTest do
     conn = put_req_header(conn, "accept", "application/json")
     user_user = insert(:user, email: "user@email.com", role: "user")
 
-    {:ok,
-     unauthenticated_conn: conn,
-     user_user: user_user,
-     user_conn: login_as(conn, user_user)
-    }
+    {:ok, unauthenticated_conn: conn, user_user: user_user, user_conn: login_as(conn, user_user)}
   end
 
   @request_contact_input """
@@ -42,12 +38,14 @@ defmodule ReWeb.GraphQL.Interests.ContactRequestTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert %{"requestContact" =>
-              %{"name" => "Mah Name",
-                "email" => "testemail@emcasa.com",
-                "phone" => "123321123",
-                "message" => "this website is cool"
-            }} = json_response(conn, 200)["data"]
+    assert %{
+             "requestContact" => %{
+               "name" => "Mah Name",
+               "email" => "testemail@emcasa.com",
+               "phone" => "123321123",
+               "message" => "this website is cool"
+             }
+           } = json_response(conn, 200)["data"]
 
     assert Repo.get_by(ContactRequest, name: "Mah Name")
   end
@@ -66,12 +64,15 @@ defmodule ReWeb.GraphQL.Interests.ContactRequestTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert %{"requestContact" =>
-              %{"name" => "Mah Name",
-                "email" => "testemail@emcasa.com",
-                "phone" => "123321123",
-                "message" => "this website is cool"
-            }} = json_response(conn, 200)["data"]
+    assert %{
+             "requestContact" => %{
+               "name" => "Mah Name",
+               "email" => "testemail@emcasa.com",
+               "phone" => "123321123",
+               "message" => "this website is cool"
+             }
+           } = json_response(conn, 200)["data"]
+
     assert contact_request = Repo.get_by(ContactRequest, name: "Mah Name")
     assert contact_request.user_id == user.id
   end

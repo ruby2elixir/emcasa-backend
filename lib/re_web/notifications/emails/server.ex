@@ -127,10 +127,17 @@ defmodule ReWeb.Notifications.Emails.Server do
     |> preload(:user)
     |> Repo.get(id)
     |> case do
-      nil -> {:noreply, [{:error, "Request Contact id #{id} does not exist"} | state]}
-      %{user: nil} = contact_request -> handle_cast({UserEmail, :contact_request, [contact_request]}, state)
-      %{user: user} = contact_request -> handle_cast({UserEmail, :contact_request, [merge_params(user, contact_request)]}, state)
-      error -> {:noreply, [{:error, error} | state]}
+      nil ->
+        {:noreply, [{:error, "Request Contact id #{id} does not exist"} | state]}
+
+      %{user: nil} = contact_request ->
+        handle_cast({UserEmail, :contact_request, [contact_request]}, state)
+
+      %{user: user} = contact_request ->
+        handle_cast({UserEmail, :contact_request, [merge_params(user, contact_request)]}, state)
+
+      error ->
+        {:noreply, [{:error, error} | state]}
     end
   end
 

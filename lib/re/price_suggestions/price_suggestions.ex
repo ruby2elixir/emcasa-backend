@@ -12,7 +12,8 @@ defmodule Re.PriceSuggestions do
     |> do_suggest_price(listing)
   end
 
-  defp get_factor_by_street(%{address: %{street: street}}), do: Repo.get_by(Factors, street: street)
+  defp get_factor_by_street(%{address: %{street: street}}),
+    do: Repo.get_by(Factors, street: street)
 
   defp do_suggest_price(nil, _), do: {:error, :street_not_covered}
 

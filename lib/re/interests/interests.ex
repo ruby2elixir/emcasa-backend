@@ -32,7 +32,8 @@ defmodule Re.Interests do
     |> Repo.insert()
   end
 
-  defp attach_user(changeset, %User{id: id}), do: ContactRequest.changeset(changeset, %{user_id: id})
+  defp attach_user(changeset, %User{id: id}),
+    do: ContactRequest.changeset(changeset, %{user_id: id})
 
   defp attach_user(changeset, _), do: changeset
 end
