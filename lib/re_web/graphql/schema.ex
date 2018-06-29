@@ -69,6 +69,8 @@ defmodule ReWeb.Schema do
   end
 
   subscription do
+    import_fields(:interest_subscriptions)
+
     @desc "Subscribe to your messages"
     field :message_sent, :message do
       config(fn _args, %{context: %{current_user: current_user}} ->

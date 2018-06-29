@@ -187,4 +187,19 @@ defmodule ReWeb.Notifications.UserEmail do
 
   defp get_to_email(%{name: "Agendamento online"}), do: @contato_email
   defp get_to_email(_), do: @to
+
+  def contact_request(%{name: name, email: email, phone: phone, message: message}) do
+    new()
+    |> to(@to)
+    |> from(@admin_email)
+    |> subject("Um usuário requisitou contato pela calculadora")
+    |> html_body("Nome: #{name}<br>
+                  Email: #{email}<br>
+                  Telefone: #{phone}<br>
+                  Mensagem: #{message}")
+    |> text_body("Nome: #{name}
+                  Email: #{email}
+                  Telefone: #{phone}
+                  Mensagem: #{message}")
+  end
 end
