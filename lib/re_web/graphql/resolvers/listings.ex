@@ -71,7 +71,9 @@ defmodule ReWeb.Resolvers.Listings do
         |> on_load(fn loader ->
           {:ok, Dataloader.get(loader, Re.Listings, :price_history, listing)}
         end)
-      _ -> {:ok, nil}
+
+      _ ->
+        {:ok, nil}
     end
   end
 

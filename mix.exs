@@ -30,7 +30,8 @@ defmodule Re.Mixfile do
         :postgrex,
         :comeonin,
         :swoosh,
-        :timber
+        :timber,
+        :nimble_csv
       ]
     ]
   end
@@ -62,7 +63,8 @@ defmodule Re.Mixfile do
       {:elasticsearch, "~> 0.4"},
       {:dataloader, "~> 1.0"},
       {:currency_formatter, "~> 0.4"},
-      {:excoveralls, "~> 0.8", only: :test}
+      {:excoveralls, "~> 0.8", only: :test},
+      {:nimble_csv, "~> 0.3"}
     ]
   end
 
