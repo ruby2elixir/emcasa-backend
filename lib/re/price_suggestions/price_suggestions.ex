@@ -1,4 +1,7 @@
 defmodule Re.PriceSuggestions do
+  @moduledoc """
+  Module for suggesting prices according to stored factors
+  """
   NimbleCSV.define(PriceSuggestionsParser, separator: ",", escape: "\"")
 
   alias Re.{
@@ -32,12 +35,12 @@ defmodule Re.PriceSuggestions do
   defp csv_to_map([street, intercept, area, bathrooms, rooms, garage_spots, r2]) do
     %{
       street: :binary.copy(street),
-      intercept: Float.parse(intercept) |> elem(0),
-      area: Float.parse(area) |> elem(0),
-      bathrooms: Float.parse(bathrooms) |> elem(0),
-      rooms: Float.parse(rooms) |> elem(0),
-      garage_spots: Float.parse(garage_spots) |> elem(0),
-      r2: Float.parse(r2) |> elem(0)
+      intercept: intercept |> Float.parse() |> elem(0),
+      area: area |> Float.parse() |> elem(0),
+      bathrooms: bathrooms |> Float.parse() |> elem(0),
+      rooms: rooms |> Float.parse() |> elem(0),
+      garage_spots: garage_spots |> Float.parse() |> elem(0),
+      r2: r2 |> Float.parse() |> elem(0)
     }
   end
 
