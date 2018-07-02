@@ -64,7 +64,8 @@ defmodule Re.Mixfile do
       {:dataloader, "~> 1.0"},
       {:currency_formatter, "~> 0.4"},
       {:excoveralls, "~> 0.8", only: :test},
-      {:nimble_csv, "~> 0.3"}
+      {:nimble_csv, "~> 0.3"},
+      {:apollo_tracing, "~> 0.4.0"}
     ]
   end
 

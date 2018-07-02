@@ -58,7 +58,8 @@ defmodule ReWeb.Router do
       forward "/graphiql", Absinthe.Plug.GraphiQL,
         schema: ReWeb.Schema,
         socket: ReWeb.UserSocket,
-        interface: :playground
+        interface: :playground,
+        pipeline: {ApolloTracing.Pipeline, :plug}
     end
 
     forward "/", Absinthe.Plug, schema: ReWeb.Schema

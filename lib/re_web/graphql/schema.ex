@@ -3,6 +3,7 @@ defmodule ReWeb.Schema do
   Module for defining graphQL schemas
   """
   use Absinthe.Schema
+  use ApolloTracing
 
   import_types ReWeb.Types.{Listing, User, Message, Interest}
 
