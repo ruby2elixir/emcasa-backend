@@ -30,6 +30,7 @@ defmodule ReWeb.Notifications.Emails.Server do
     if Mix.env() != :test do
       subscribe("subscription { emailChanged { id } }")
       subscribe("subscription { listingInserted { id owner { id } } }")
+      subscribe("subscription { contactRequested { id } }")
     end
 
     {:ok, args}
@@ -118,4 +119,35 @@ defmodule ReWeb.Notifications.Emails.Server do
         {:noreply, state}
     end
   end
+
+  import Ecto.Query, only: [preload: 2]
+
+  defp handle_data(%{"contactRequested" => %{"id" => id}}, state) do
+    Re.Interests.ContactRequest
+    |> preload(:user)
+    |> Repo.get(id)
+    |> case do
+      nil ->
+        {:noreply, [{:error, "Request Contact id #{id} does not exist"} | state]}
+
+      %{user: nil} = contact_request ->
+        handle_cast({UserEmail, :contact_request, [contact_request]}, state)
+
+      %{user: user} = contact_request ->
+        handle_cast({UserEmail, :contact_request, [merge_params(user, contact_request)]}, state)
+
+      error ->
+        {:noreply, [{:error, error} | state]}
+    end
+  end
+
+  defp merge_params(user, contact_request) do
+    user = Map.take(user, ~w(name email phone)a)
+    contact_request = Map.take(contact_request, ~w(name email phone message)a)
+    Map.merge(user, contact_request, &map_merger/3)
+  end
+
+  defp map_merger(_key, nil, v2), do: v2
+  defp map_merger(_key, v1, nil), do: v1
+  defp map_merger(_key, _v1, v2), do: v2
 end

@@ -128,6 +128,10 @@ defmodule Re.Factory do
     %Re.PriceSuggestions.Factors{}
   end
 
+  def contact_request_factory do
+    %Re.Interests.ContactRequest{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
