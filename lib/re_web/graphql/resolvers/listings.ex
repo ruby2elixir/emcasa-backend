@@ -74,7 +74,7 @@ defmodule ReWeb.Resolvers.Listings do
 
   def price_recently_reduced(listing, _, %{context: %{loader: loader}}) do
     params = %{
-      datetime: Timex.now() |> Timex.shift(weeks: -2),
+      datetime: Timex.shift(Timex.now(), weeks: -2),
       current_price: listing.price
     }
 

@@ -1,4 +1,7 @@
 defmodule Re.Listings.PriceHistories do
+  @moduledoc """
+  Context for handling listing's price history
+  """
   import Ecto.Query
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
