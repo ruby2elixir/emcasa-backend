@@ -77,7 +77,7 @@ defmodule Re.PriceSuggestionsTest do
         garage_spots: 222.111
       )
 
-      assert 26279.915 == PriceSuggestions.suggest_price(listing)
+      assert 26_279.915 == PriceSuggestions.suggest_price(listing)
     end
   end
 end
