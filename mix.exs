@@ -31,6 +31,7 @@ defmodule Re.Mixfile do
         :comeonin,
         :swoosh,
         :timber,
+        :timex,
         :nimble_csv
       ]
     ]
@@ -64,6 +65,8 @@ defmodule Re.Mixfile do
       {:dataloader, "~> 1.0"},
       {:currency_formatter, "~> 0.4"},
       {:excoveralls, "~> 0.8", only: :test},
+      {:timex, "~> 3.3"},
+      {:tzdata, "~> 0.5"},
       {:nimble_csv, "~> 0.3"}
     ]
   end

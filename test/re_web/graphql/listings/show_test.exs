@@ -29,7 +29,16 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     tour_visualisations = insert_list(3, :tour_visualisation)
     listings_visualisations = insert_list(3, :listing_visualisation)
     price_history = insert_list(3, :price_history)
-    insert(:factors, street: street, intercept: 10.10, rooms: 123.321, area: 321.123, bathrooms: 111.222, garage_spots: 222.111)
+
+    insert(
+      :factors,
+      street: street,
+      intercept: 10.10,
+      rooms: 123.321,
+      area: 321.123,
+      bathrooms: 111.222,
+      garage_spots: 222.111
+    )
 
     %{id: listing_id} =
       insert(
@@ -43,7 +52,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
         tour_visualisations: tour_visualisations,
         listings_visualisations: listings_visualisations,
         price_history: price_history,
-        rooms: 2, area: 80, garage_spots: 1, bathrooms: 1
+        rooms: 2,
+        area: 80,
+        garage_spots: 1,
+        bathrooms: 1
       )
 
     query = """

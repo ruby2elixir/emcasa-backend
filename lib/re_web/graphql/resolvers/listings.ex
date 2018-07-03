@@ -7,6 +7,7 @@ defmodule ReWeb.Resolvers.Listings do
   alias Re.{
     Addresses,
     Listings,
+    Listings.PriceHistories,
     PriceSuggestions
   }
 
@@ -62,9 +63,9 @@ defmodule ReWeb.Resolvers.Listings do
     case Bodyguard.permit(Listings, :show_stats, current_user, listing) do
       :ok ->
         loader
-        |> Dataloader.load(Re.Listings, :price_history, listing)
+        |> Dataloader.load(Listings, :price_history, listing)
         |> on_load(fn loader ->
-          {:ok, Dataloader.get(loader, Re.Listings, :price_history, listing)}
+          {:ok, Dataloader.get(loader, Listings, :price_history, listing)}
         end)
 
       _ ->
@@ -76,6 +77,25 @@ defmodule ReWeb.Resolvers.Listings do
     case Bodyguard.permit(Listings, :suggested_price, current_user, listing) do
       :ok -> {:ok, PriceSuggestions.suggest_price(listing)}
       _ -> {:ok, nil}
+    end
+  end
+
+  def price_recently_reduced(listing, _, %{context: %{loader: loader}}) do
+    params = %{
+      datetime: Timex.shift(Timex.now(), weeks: -2),
+      current_price: listing.price
+    }
+
+    loader
+    |> Dataloader.load(PriceHistories, {:price_history, params}, listing)
+    |> on_load(&price_reduced?(&1, params, listing))
+  end
+
+  defp price_reduced?(loader, params, listing) do
+    case Dataloader.get(loader, PriceHistories, {:price_history, params}, listing) do
+      [] -> {:ok, false}
+      prices when is_list(prices) -> {:ok, true}
+      _ -> {:ok, false}
     end
   end
 
