@@ -30,6 +30,16 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     listings_visualisations = insert_list(3, :listing_visualisation)
     price_history = insert_list(3, :price_history)
 
+    insert(
+      :factors,
+      street: street,
+      intercept: 10.10,
+      rooms: 123.321,
+      area: 321.123,
+      bathrooms: 111.222,
+      garage_spots: 222.111
+    )
+
     %{id: listing_id} =
       insert(
         :listing,
@@ -41,7 +51,11 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
         listings_favorites: listings_favorites,
         tour_visualisations: tour_visualisations,
         listings_visualisations: listings_visualisations,
-        price_history: price_history
+        price_history: price_history,
+        rooms: 2,
+        area: 80,
+        garage_spots: 1,
+        bathrooms: 1
       )
 
     query = """
@@ -68,6 +82,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           previousPrices {
             price
           }
+          suggestedPrice
         }
       }
     """
@@ -87,7 +102,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "listingFavoriteCount" => 3,
                "tourVisualisationCount" => 3,
                "listingVisualisationCount" => 3,
-               "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}]
+               "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}],
+               "suggestedPrice" => 26279.915
              }
            } = json_response(conn, 200)["data"]
   end
@@ -142,6 +158,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           previousPrices {
             price
           }
+          suggestedPrice
         }
       }
     """
@@ -161,7 +178,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "listingFavoriteCount" => 3,
                "tourVisualisationCount" => 3,
                "listingVisualisationCount" => 3,
-               "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}]
+               "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}],
+               "suggestedPrice" => nil
              }
            } = json_response(conn, 200)["data"]
   end
@@ -199,6 +217,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           previousPrices {
             price
           }
+          suggestedPrice
         }
       }
     """
@@ -216,7 +235,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "listingFavoriteCount" => nil,
                "tourVisualisationCount" => nil,
                "listingVisualisationCount" => nil,
-               "previousPrices" => nil
+               "previousPrices" => nil,
+               "suggestedPrice" => nil
              }
            } = json_response(conn, 200)["data"]
   end
@@ -254,6 +274,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
           previousPrices {
             price
           }
+          suggestedPrice
         }
       }
     """
@@ -271,7 +292,8 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "listingFavoriteCount" => nil,
                "tourVisualisationCount" => nil,
                "listingVisualisationCount" => nil,
-               "previousPrices" => nil
+               "previousPrices" => nil,
+               "suggestedPrice" => nil
              }
            } = json_response(conn, 200)["data"]
   end
