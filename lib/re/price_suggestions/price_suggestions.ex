@@ -5,12 +5,14 @@ defmodule Re.PriceSuggestions do
   NimbleCSV.define(PriceSuggestionsParser, separator: ",", escape: "\"")
 
   alias Re.{
+    Listing,
     PriceSuggestions.Factors,
     Repo
   }
 
   def suggest_price(listing) do
     listing
+    |> preload_if_struct()
     |> get_factor_by_street()
     |> do_suggest_price(listing)
   end
@@ -24,6 +26,10 @@ defmodule Re.PriceSuggestions do
     factors.intercept + listing.area * factors.area + listing.bathrooms * factors.bathrooms +
       listing.rooms * factors.rooms + listing.garage_spots * factors.garage_spots
   end
+
+  defp preload_if_struct(%Listing{} = listing), do: Repo.preload(listing, :address)
+
+  defp preload_if_struct(listing), do: listing
 
   def save_factors(file) do
     file
