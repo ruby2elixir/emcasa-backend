@@ -5,7 +5,7 @@ defmodule ReWeb.Schema do
   use Absinthe.Schema
   use ApolloTracing
 
-  import_types ReWeb.Types.{Listing, User, Message, Interest}
+  import_types ReWeb.Types.{Listing, User, Message, Interest, Dashboard}
 
   alias ReWeb.Resolvers
   alias ReWeb.GraphQL.Middlewares
@@ -60,6 +60,9 @@ defmodule ReWeb.Schema do
 
     @desc "Get user channels"
     field :user_channels, list_of(:channel), do: resolve(&Resolvers.Channels.all/2)
+
+    @desc "Get dashboard stats"
+    field :dashboard, :dashboard, resolve: &Resolvers.Dashboard.index/2
   end
 
   mutation do
