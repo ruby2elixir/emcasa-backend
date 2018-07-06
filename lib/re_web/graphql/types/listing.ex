@@ -116,9 +116,9 @@ defmodule ReWeb.Types.Listing do
     field :description, :string
   end
 
-  input_object :image_input do
+  input_object :image_insert_input do
+    field :listing_id, non_null(:id)
     field :filename, non_null(:string)
-    field :position, non_null(:integer)
     field :is_active, :boolean
     field :description, :string
   end
@@ -210,6 +210,13 @@ defmodule ReWeb.Types.Listing do
       arg :id, non_null(:id)
 
       resolve &Resolvers.ListingStats.tour_visualized/2
+    end
+
+    @desc "Inser image"
+    field :insert_image, type: :image do
+      arg :input, non_null(:image_insert_input)
+
+      resolve &Resolvers.Images.insert_image/2
     end
   end
 end

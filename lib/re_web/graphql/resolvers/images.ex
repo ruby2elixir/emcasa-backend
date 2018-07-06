@@ -4,6 +4,11 @@ defmodule ReWeb.Resolvers.Images do
   """
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
+  alias Re.{
+    Images,
+    Listings
+  }
+
   def per_listing(listing, params, %{context: %{loader: loader, current_user: current_user}}) do
     is_admin? = is_admin(listing, current_user)
 
@@ -25,6 +30,12 @@ defmodule ReWeb.Resolvers.Images do
 
       {:ok, images}
     end)
+  end
+
+  def insert_image(%{input: %{listing_id: listing_id} = params}, %{context: %{current_user: current_user}}) do
+    with {:ok, listing} <- Listings.get_preloaded(listing_id),
+         :ok <- Bodyguard.permit(Images, :create_images, current_user, listing),
+      do: Images.insert(params, listing)
   end
 
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
