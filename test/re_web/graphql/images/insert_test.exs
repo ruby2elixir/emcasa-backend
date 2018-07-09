@@ -47,6 +47,57 @@ defmodule ReWeb.GraphQL.Images.InsertTest do
            } = json_response(conn, 200)["data"]
   end
 
+  test "owner should insert image", %{user_conn: conn, user_user: user} do
+    %{id: listing_id} = insert(:listing, user: user)
+
+    mutation = """
+      mutation {
+        insertImage(input: {
+          listingId: #{listing_id},
+          filename: "test.jpg"
+        }) {
+          description
+          filename
+          isActive
+          position
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert %{
+             "insertImage" => %{
+               "description" => nil,
+               "filename" => "test.jpg",
+               "isActive" => true,
+               "position" => 1
+             }
+           } = json_response(conn, 200)["data"]
+  end
+
+  test "user should not insert image if not owner", %{user_conn: conn, admin_user: user} do
+    %{id: listing_id} = insert(:listing, user: user)
+
+    mutation = """
+      mutation {
+        insertImage(input: {
+          listingId: #{listing_id},
+          filename: "test.jpg"
+        }) {
+          description
+          filename
+          isActive
+          position
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+  end
+
   test "anonymous should not insert image", %{unauthenticated_conn: conn} do
     %{id: listing_id} = insert(:listing)
 
