@@ -103,7 +103,7 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "tourVisualisationCount" => 3,
                "listingVisualisationCount" => 3,
                "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}],
-               "suggestedPrice" => 26279.915
+               "suggestedPrice" => 26_279.915
              }
            } = json_response(conn, 200)["data"]
   end
