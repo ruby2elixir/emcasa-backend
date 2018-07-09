@@ -110,6 +110,7 @@ defmodule ReWeb.Types.Listing do
   end
 
   object :image do
+    field :id, :id
     field :filename, :string
     field :position, :integer
     field :is_active, :boolean
@@ -120,6 +121,12 @@ defmodule ReWeb.Types.Listing do
     field :listing_id, non_null(:id)
     field :filename, non_null(:string)
     field :is_active, :boolean
+    field :description, :string
+  end
+
+  input_object :image_update_input do
+    field :id, non_null(:id)
+    field :position, :integer
     field :description, :string
   end
 
@@ -217,6 +224,13 @@ defmodule ReWeb.Types.Listing do
       arg :input, non_null(:image_insert_input)
 
       resolve &Resolvers.Images.insert_image/2
+    end
+
+    @desc "Update images"
+    field :update_images, type: list_of(:image) do
+      arg :input, non_null(list_of(non_null(:image_update_input)))
+
+      resolve &Resolvers.Images.update_images/2
     end
   end
 end

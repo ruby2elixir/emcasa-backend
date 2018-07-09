@@ -12,6 +12,7 @@ defmodule Re.Images.Policy do
   def authorize(_, nil, _), do: {:error, :unauthorized}
   def authorize(:index_images, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
   def authorize(:create_images, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
+  def authorize(:update_images, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
   def authorize(:delete_images, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
 
   def authorize(_, _, _), do: {:error, :forbidden}
