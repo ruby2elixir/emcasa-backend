@@ -8,12 +8,13 @@ defmodule Re.InterestType do
 
   schema "interest_types" do
     field :name, :string
+    field :enabled, :boolean
 
     timestamps()
   end
 
   @required ~w(name)a
-  @optional ~w()a
+  @optional ~w(enabled)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
