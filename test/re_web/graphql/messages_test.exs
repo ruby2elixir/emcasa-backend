@@ -441,6 +441,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
                  "read" => true
                }
              } = json_response(conn, 200)["data"]
+
+      assert Repo.get(Message, message_id1).read
+      assert Repo.get(Message, message_id2).read
     end
 
     test "owner cannot mark sent messages as read", %{
@@ -509,6 +512,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
                  %{"message" => "forbidden"}
                ]
              } = json_response(conn, 200)
+
+      refute Repo.get(Message, message_id1).read
+      refute Repo.get(Message, message_id2).read
     end
 
     test "admin can mark received messages as read", %{
@@ -593,6 +599,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
                  "read" => true
                }
              } = json_response(conn, 200)["data"]
+
+      assert Repo.get(Message, message_id1).read
+      assert Repo.get(Message, message_id2).read
     end
 
     test "admin cannot mark sent messages as read", %{
@@ -661,6 +670,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
                  %{"message" => "forbidden"}
                ]
              } = json_response(conn, 200)
+
+      refute Repo.get(Message, message_id1).read
+      refute Repo.get(Message, message_id2).read
     end
 
     test "anonymous cannot mark any messages as read", %{
@@ -729,6 +741,9 @@ defmodule ReWeb.GraphQL.MessagesTest do
                  %{"message" => "forbidden"}
                ]
              } = json_response(conn, 200)
+
+      refute Repo.get(Message, message_id1).read
+      refute Repo.get(Message, message_id2).read
     end
   end
 end
