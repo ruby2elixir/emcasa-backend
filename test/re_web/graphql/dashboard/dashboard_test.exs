@@ -19,7 +19,9 @@ defmodule ReWeb.GraphQL.DashboardTest do
   describe "dashboard" do
     test "admin should query dashboard", %{admin_conn: conn} do
       insert(:listing, is_active: false)
-      insert(:listing,
+
+      insert(
+        :listing,
         listings_visualisations: [build(:listing_visualisation)],
         tour_visualisations: [build(:tour_visualisation)],
         listings_favorites: [build(:listings_favorites)],
@@ -28,7 +30,9 @@ defmodule ReWeb.GraphQL.DashboardTest do
         matterport_code: "asdsa",
         area: 50
       )
-      insert(:listing,
+
+      insert(
+        :listing,
         maintenance_fee: nil,
         property_tax: nil,
         matterport_code: nil,
@@ -50,8 +54,7 @@ defmodule ReWeb.GraphQL.DashboardTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "dashboard"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "dashboard"))
 
       assert %{
                "dashboard" => %{
@@ -83,8 +86,7 @@ defmodule ReWeb.GraphQL.DashboardTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "dashbard"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "dashbard"))
 
       assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
     end
@@ -105,8 +107,7 @@ defmodule ReWeb.GraphQL.DashboardTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "dashbard"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "dashbard"))
 
       assert [%{"message" => "unautenticated"}] = json_response(conn, 200)["errors"]
     end

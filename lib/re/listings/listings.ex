@@ -51,7 +51,8 @@ defmodule Re.Listings do
   end
 
   defp calculate_remaining(count, params) do
-    page_size = params
+    page_size =
+      params
       |> Opts.build()
       |> Map.get(:page_size)
 
