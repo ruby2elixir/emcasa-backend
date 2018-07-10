@@ -15,8 +15,7 @@ defmodule ReWeb.GraphQL.Images.InsertTest do
      admin_user: admin_user,
      user_user: user_user,
      admin_conn: login_as(conn, admin_user),
-     user_conn: login_as(conn, user_user),
-     }
+     user_conn: login_as(conn, user_user)}
   end
 
   test "admin should insert image", %{admin_conn: conn} do
@@ -39,12 +38,12 @@ defmodule ReWeb.GraphQL.Images.InsertTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
     assert %{
-             "insertImage" =>
-               %{"description" => nil,
-                 "filename" => "test.jpg",
-                 "isActive" => true,
-                 "position" => 1
-               }
+             "insertImage" => %{
+               "description" => nil,
+               "filename" => "test.jpg",
+               "isActive" => true,
+               "position" => 1
+             }
            } = json_response(conn, 200)["data"]
   end
 

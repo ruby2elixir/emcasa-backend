@@ -32,10 +32,12 @@ defmodule ReWeb.Resolvers.Images do
     end)
   end
 
-  def insert_image(%{input: %{listing_id: listing_id} = params}, %{context: %{current_user: current_user}}) do
+  def insert_image(%{input: %{listing_id: listing_id} = params}, %{
+        context: %{current_user: current_user}
+      }) do
     with {:ok, listing} <- Listings.get_preloaded(listing_id),
          :ok <- Bodyguard.permit(Images, :create_images, current_user, listing),
-      do: Images.insert(params, listing)
+         do: Images.insert(params, listing)
   end
 
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
