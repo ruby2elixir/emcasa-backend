@@ -12,10 +12,16 @@ defmodule ReWeb.Resolvers.Messages do
 
   def get(params, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Messages, :index, current_user, %{}),
-         messages <- Messages.get(current_user, params),
+         messages <- Messages.get_by_user(current_user, params),
          user <- find_participant(messages, current_user) do
       {:ok, %{user: user, messages: messages}}
     end
+  end
+
+  def mark_as_read(%{id: id}, %{context: %{current_user: current_user}}) do
+    with {:ok, message} <- Messages.get(id),
+         :ok <- Bodyguard.permit(Messages, :mark_as_read, current_user, message),
+         do: Messages.mark_as_read(message)
   end
 
   defp find_participant(messages, %{id: current_user_id}) do

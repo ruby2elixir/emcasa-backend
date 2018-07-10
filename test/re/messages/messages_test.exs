@@ -7,7 +7,7 @@ defmodule Re.MessagesTest do
 
   alias Re.Messages
 
-  describe "get/1" do
+  describe "get_by_user/1" do
     test "should return received messages as well when filtering by sender" do
       [user1, user2, user3] = insert_list(3, :user)
       listing = insert(:listing)
@@ -20,7 +20,7 @@ defmodule Re.MessagesTest do
       assert [
                %{id: ^msg1},
                %{id: ^msg2}
-             ] = Messages.get(user1, %{listing_id: listing.id, sender_id: user2.id})
+             ] = Messages.get_by_user(user1, %{listing_id: listing.id, sender_id: user2.id})
     end
   end
 end
