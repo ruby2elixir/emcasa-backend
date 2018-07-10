@@ -40,6 +40,13 @@ defmodule ReWeb.Resolvers.Images do
          do: Images.insert(params, listing)
   end
 
+  def update_images(%{input: inputs}, %{context: %{current_user: current_user}}) do
+    with {:ok, images_and_inputs} <- Images.get_list(inputs),
+         {:ok, listing} <- Images.check_same_listing(images_and_inputs),
+         :ok <- Bodyguard.permit(Images, :update_images, current_user, listing),
+         do: Images.update_images(images_and_inputs)
+  end
+
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true
   defp is_admin(_, _), do: false
