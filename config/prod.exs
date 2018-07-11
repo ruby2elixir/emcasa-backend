@@ -57,3 +57,8 @@ config :re, ReWeb.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
   username: System.get_env("ELASTICSEARCH_KEY"),
   password: System.get_env("ELASTICSEARCH_SECRET")
+
+config :re, Re.Stats.Scheduler,
+  jobs: [
+    {"@monthly", {Re.Stats.Reports, :monthly_stats, []}}
+  ]

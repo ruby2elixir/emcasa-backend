@@ -68,7 +68,8 @@ defmodule Re.Mixfile do
       {:nimble_csv, "~> 0.3"},
       {:apollo_tracing, "~> 0.4.0"},
       {:timex, "~> 3.3"},
-      {:tzdata, "~> 0.5"}
+      {:tzdata, "~> 0.5"},
+      {:quantum, "~> 2.2"}
     ]
   end
 
