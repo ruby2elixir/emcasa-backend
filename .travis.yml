@@ -13,3 +13,7 @@ addons:
 before_script: mix deps.get --only test
 
 script: mix coveralls.travis
+
+notifications:
+  email:
+    on_success: never
