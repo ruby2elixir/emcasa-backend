@@ -86,30 +86,33 @@ defmodule Re.Listings do
   def get_preloaded(id), do: do_get(Queries.preload_relations(), id)
 
   def insert(params, address, user) do
-    case get_phone_number(params, user) do
-      nil -> {:error, :has_no_phone}
-      phone -> do_insert(params, address, user, phone)
+    with {:ok, user} <- validate_phone_number(params, user),
+     do: do_insert(params, address, user)
+  end
+
+  defp do_insert(params, address, user) do
+    %Listing{}
+    |> Changeset.change(address_id: address.id)
+    |> Changeset.change(user_id: user.id)
+    |> Listing.changeset(params, user.role)
+    |> Repo.insert()
+  end
+
+  defp validate_phone_number(params, user) do
+    phone = params["phone"] || params[:phone] || user.phone
+
+    case {phone, user} do
+      {nil, %{role: "admin"}} -> {:ok, user}
+      {nil, _user} -> {:error, :phone_number_required}
+      {phone, user} -> save_phone_number(user, phone)
     end
   end
 
-  defp do_insert(params, address, user, phone) do
-    listing_changeset =
-      %Listing{}
-      |> Changeset.change(address_id: address.id)
-      |> Changeset.change(user_id: user.id)
-      |> Listing.changeset(params, user.role)
-
-    Multi.new()
-    |> Multi.insert(:listing, listing_changeset)
-    |> Multi.update(:user, User.update_changeset(user, %{phone: phone}))
-    |> Repo.transaction()
-    |> case do
-      {:ok, %{listing: listing}} -> {:ok, listing}
-      error -> error
-    end
+  defp save_phone_number(user, phone) do
+    user
+    |> User.update_changeset(%{phone: phone})
+    |> Repo.update()
   end
-
-  defp get_phone_number(params, user), do: params["phone"] || params[:phone] || user.phone
 
   def update(listing, params, address, user) do
     listing_changeset = update_listing(listing, params, address, user)

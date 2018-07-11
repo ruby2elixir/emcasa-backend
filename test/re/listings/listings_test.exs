@@ -281,7 +281,15 @@ defmodule Re.ListingsTest do
       address = insert(:address)
       user = insert(:user, role: "user", phone: nil)
 
-      assert {:error, :has_no_phone} = Listings.insert(@insert_listing_params, address, user)
+      assert {:error, :phone_number_required} = Listings.insert(@insert_listing_params, address, user)
+    end
+
+    test "should insert if user doesn't have phone but is admin" do
+      address = insert(:address)
+      user = insert(:user, role: "admin", phone: nil)
+
+      assert {:ok, listing} = Listings.insert(@insert_listing_params, address, user)
+      assert Repo.get(Listing, listing.id)
     end
   end
 
