@@ -11,6 +11,7 @@ defmodule ReWeb.Notifications.Emails do
 
   alias ReWeb.Notifications.{
     Emails.Server,
+    ReportEmail,
     UserEmail
   }
 
@@ -40,6 +41,9 @@ defmodule ReWeb.Notifications.Emails do
 
   def price_updated(new_price, listing),
     do: GenServer.cast(Server, {UserEmail, :price_updated, new_price, listing})
+
+  def monthly_report(user, listings),
+    do: GenServer.cast(Server, {ReportEmail, :monthly_report, [user, listings]})
 
   def inspect, do: GenServer.call(Server, :inspect)
 end
