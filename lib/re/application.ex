@@ -25,7 +25,8 @@ defmodule Re.Application do
       worker(Emails.Server, []),
       worker(Search.Server, []),
       worker(Pipedrive.Server, []),
-      Search.Cluster
+      Search.Cluster,
+      worker(Re.Stats.Scheduler, [])
       # worker(Elasticsearch.Executable, [
       #   "Elasticsearch",
       #   "./elasticsearch/bin/elasticsearch",
