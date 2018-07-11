@@ -11,6 +11,8 @@ defmodule Re.Interests do
     User
   }
 
+  import Ecto.Query
+
   def show_interest(listing_id, params) do
     params = Map.put(params, "listing_id", listing_id)
 
@@ -22,7 +24,7 @@ defmodule Re.Interests do
   def preload(interest), do: Repo.preload(interest, :interest_type)
 
   def get_types do
-    Repo.all(InterestType)
+    Repo.all(from it in InterestType, where: it.enabled == true)
   end
 
   def request_contact(params, user) do
