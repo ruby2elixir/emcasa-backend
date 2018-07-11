@@ -3,8 +3,9 @@ defmodule ReWeb.Schema do
   Module for defining graphQL schemas
   """
   use Absinthe.Schema
+  use ApolloTracing
 
-  import_types ReWeb.Types.{Listing, User, Message}
+  import_types ReWeb.Types.{Listing, User, Message, Interest, Dashboard}
 
   alias ReWeb.Resolvers
   alias ReWeb.GraphQL.Middlewares
@@ -59,15 +60,21 @@ defmodule ReWeb.Schema do
 
     @desc "Get user channels"
     field :user_channels, list_of(:channel), do: resolve(&Resolvers.Channels.all/2)
+
+    @desc "Get dashboard stats"
+    field :dashboard, :dashboard, resolve: &Resolvers.Dashboard.index/2
   end
 
   mutation do
     import_fields(:listing_mutations)
     import_fields(:message_mutations)
     import_fields(:user_mutations)
+    import_fields(:interest_mutations)
   end
 
   subscription do
+    import_fields(:interest_subscriptions)
+
     @desc "Subscribe to your messages"
     field :message_sent, :message do
       config(fn _args, %{context: %{current_user: current_user}} ->
@@ -162,7 +169,8 @@ defmodule ReWeb.Schema do
       Re.Accounts,
       Re.Addresses,
       Re.Images,
-      Re.Listings
+      Re.Listings,
+      Re.Listings.PriceHistories
     ]
   end
 end

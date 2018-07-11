@@ -61,7 +61,9 @@ defmodule ReWeb.Router do
         interface: :playground
     end
 
-    forward "/", Absinthe.Plug, schema: ReWeb.Schema
+    forward "/", Absinthe.Plug,
+      schema: ReWeb.Schema,
+      pipeline: {ApolloTracing.Pipeline, :plug}
   end
 
   scope "/webhooks" do

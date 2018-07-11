@@ -54,6 +54,8 @@ defmodule ReWeb.Types.Listing do
       resolve: &Resolvers.Stats.listing_visualisation_count/3
 
     field :previous_prices, list_of(:price_history), resolve: &Resolvers.Listings.price_history/3
+    field :suggested_price, :float, resolve: &Resolvers.Listings.suggested_price/3
+    field :price_recently_reduced, :boolean, resolve: &Resolvers.Listings.price_recently_reduced/3
   end
 
   input_object :listing_input do
@@ -110,16 +112,23 @@ defmodule ReWeb.Types.Listing do
   end
 
   object :image do
+    field :id, :id
     field :filename, :string
     field :position, :integer
     field :is_active, :boolean
     field :description, :string
   end
 
-  input_object :image_input do
+  input_object :image_insert_input do
+    field :listing_id, non_null(:id)
     field :filename, non_null(:string)
-    field :position, non_null(:integer)
     field :is_active, :boolean
+    field :description, :string
+  end
+
+  input_object :image_update_input do
+    field :id, non_null(:id)
+    field :position, :integer
     field :description, :string
   end
 
@@ -210,6 +219,20 @@ defmodule ReWeb.Types.Listing do
       arg :id, non_null(:id)
 
       resolve &Resolvers.ListingStats.tour_visualized/2
+    end
+
+    @desc "Inser image"
+    field :insert_image, type: :image do
+      arg :input, non_null(:image_insert_input)
+
+      resolve &Resolvers.Images.insert_image/2
+    end
+
+    @desc "Update images"
+    field :update_images, type: list_of(:image) do
+      arg :input, non_null(list_of(non_null(:image_update_input)))
+
+      resolve &Resolvers.Images.update_images/2
     end
   end
 end

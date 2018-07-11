@@ -47,6 +47,13 @@ defmodule ReWeb.Types.Message do
 
       resolve &MessagesResolver.send/2
     end
+
+    @desc "Mark message as read"
+    field :mark_as_read, type: :message do
+      arg :id, non_null(:id)
+
+      resolve &MessagesResolver.mark_as_read/2
+    end
   end
 
   scalar :datetime, name: "DateTime" do

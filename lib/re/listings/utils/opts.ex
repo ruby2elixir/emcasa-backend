@@ -7,7 +7,7 @@ defmodule Re.Listings.Opts do
   import Ecto.Changeset
 
   schema "params" do
-    field :page_size, :integer, default: 10
+    field :page_size, :integer
     field :excluded_listing_ids, {:array, :integer}, default: []
   end
 

@@ -14,7 +14,7 @@ defmodule Re.Messages do
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
-  def get(user, params) do
+  def get_by_user(user, params) do
     Message
     |> by_listing(params)
     |> by_sender(params)
@@ -44,6 +44,19 @@ defmodule Re.Messages do
     %Message{}
     |> Message.changeset(params)
     |> Repo.insert()
+  end
+
+  def get(id) do
+    case Repo.get(Message, id) do
+      nil -> {:error, :not_found}
+      message -> {:ok, message}
+    end
+  end
+
+  def mark_as_read(messages) do
+    messages
+    |> Message.changeset(%{read: true})
+    |> Repo.update()
   end
 
   defp set_channel(params) do

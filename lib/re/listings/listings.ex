@@ -52,13 +52,19 @@ defmodule Re.Listings do
   end
 
   defp calculate_remaining(count, params) do
-    opts = Opts.build(params)
+    page_size =
+      params
+      |> Opts.build()
+      |> Map.get(:page_size)
 
-    case count - opts.page_size do
-      num when num > 0 -> num
-      _ -> 0
+    case page_size do
+      nil -> 0
+      page_size -> zero_if_negative(count - page_size)
     end
   end
+
+  defp zero_if_negative(num) when num > 0, do: num
+  defp zero_if_negative(_num), do: 0
 
   @partial_preload [
     :address,

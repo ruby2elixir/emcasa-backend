@@ -29,4 +29,25 @@ defmodule Re.ImagesTest do
       assert Repo.get(Image, id4).position == 0
     end
   end
+
+  describe "check_same_listing/1" do
+    test "should return error when images are from distinct listings" do
+      assert {:error, :distinct_listings} == Images.check_same_listing([
+        {:ok, %{listing_id: 1}, %{position: 1}},
+        {:ok, %{listing_id: 2}, %{position: 2}}
+      ])
+    end
+  end
+
+  describe "update_images/1" do
+    test "should error when input is invalid" do
+      [image1, image2, image3] = insert_list(3, :image)
+
+      assert {:ok, [_, %Ecto.Changeset{}, _]} = Images.update_images([
+        {:ok, image1, %{position: 1, description: "waow1"}},
+        {:ok, image2, %{position: false, description: "waow2"}},
+        {:ok, image3, %{position: 3, description: "waow3"}}
+      ])
+    end
+  end
 end

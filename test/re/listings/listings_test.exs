@@ -89,45 +89,59 @@ defmodule Re.ListingsTest do
 
       result = Listings.paginated(%{"max_price" => 105})
       assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_price" => 95})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_rooms" => 3})
       assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_rooms" => 4})
       assert [%{id: ^id1}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_area" => 55})
       assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"neighborhoods" => ["São Conrado", "Leblon"]})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"neighborhoods_slugs" => ["sao-conrado", "leblon"]})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"types" => ["Apartamento"]})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_lat" => -22.95})
       assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_lat" => -22.98})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_lng" => -43.199})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_lng" => -43.203})
       assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_garage_spots" => 2})
       assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_garage_spots" => 2})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
     end
 
     test "should not filter for empty array" do
@@ -182,6 +196,15 @@ defmodule Re.ListingsTest do
 
       result_ids = listing_ids1 ++ listing_ids2 ++ listing_ids3
       assert result_ids == Enum.uniq(result_ids)
+    end
+
+    test "should return paginated with filter" do
+      insert(:listing, score: 4, garage_spots: 5)
+      %{id: id} = insert(:listing, score: 3, garage_spots: 3)
+      insert(:listing, score: 2, garage_spots: 3)
+
+      assert %{remaining_count: 1, listings: [%{id: ^id}]} =
+               Listings.paginated(%{page_size: 1, max_garage_spots: 4})
     end
   end
 

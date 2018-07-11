@@ -8,6 +8,7 @@ defmodule Re.Images do
     Image,
     Images.DataloaderQueries,
     Images.Queries,
+    Listings,
     Repo
   }
 
@@ -60,6 +61,45 @@ defmodule Re.Images do
       image
       |> Image.update_changeset(params)
       |> Repo.update()
+    end
+  end
+
+  def get_list(inputs) do
+    inputs
+    |> Enum.map(&do_get/1)
+    |> Enum.split_with(fn
+      {:ok, _, _} -> true
+      {:error, :not_found, _} -> false
+    end)
+    |> case do
+      {images, []} -> {:ok, images}
+      {_, some_not_found} -> {:error, "Some images were not found. Inputs: #{some_not_found}"}
+    end
+  end
+
+  defp do_get(input) do
+    case Repo.get(Image, input.id) do
+      nil -> {:error, :not_found, input}
+      image -> {:ok, image, input}
+    end
+  end
+
+  def check_same_listing(images_and_inputs) do
+    case Enum.uniq_by(images_and_inputs, fn {:ok, %{listing_id: listing_id}, _} -> listing_id end) do
+      [{:ok, %{listing_id: listing_id}, _}] -> Listings.get(listing_id)
+      _ -> {:error, :distinct_listings}
+    end
+  end
+
+  def update_images(images_and_inputs), do: {:ok, Enum.map(images_and_inputs, &do_update_image/1)}
+
+  defp do_update_image({:ok, image, input}) do
+    image
+    |> Image.update_changeset(input)
+    |> Repo.update()
+    |> case do
+      {:ok, image} -> image
+      {:error, error} -> error
     end
   end
 
