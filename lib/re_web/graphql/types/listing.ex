@@ -79,6 +79,8 @@ defmodule ReWeb.Types.Listing do
     field :is_exclusive, :boolean
     field :is_release, :boolean
 
+    field :phone, :string
+
     field :address, non_null(:address_input)
   end
 

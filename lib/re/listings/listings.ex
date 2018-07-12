@@ -11,7 +11,8 @@ defmodule Re.Listings do
     Listings.Opts,
     Listings.PriceHistory,
     Listings.Queries,
-    Repo
+    Repo,
+    User
   }
 
   alias Ecto.{
@@ -85,11 +86,32 @@ defmodule Re.Listings do
   def get_preloaded(id), do: do_get(Queries.preload_relations(), id)
 
   def insert(params, address, user) do
+    with {:ok, user} <- validate_phone_number(params, user),
+     do: do_insert(params, address, user)
+  end
+
+  defp do_insert(params, address, user) do
     %Listing{}
     |> Changeset.change(address_id: address.id)
     |> Changeset.change(user_id: user.id)
     |> Listing.changeset(params, user.role)
     |> Repo.insert()
+  end
+
+  defp validate_phone_number(params, user) do
+    phone = params["phone"] || params[:phone] || user.phone
+
+    case {phone, user} do
+      {nil, %{role: "admin"}} -> {:ok, user}
+      {nil, _user} -> {:error, :phone_number_required}
+      {phone, user} -> save_phone_number(user, phone)
+    end
+  end
+
+  defp save_phone_number(user, phone) do
+    user
+    |> User.update_changeset(%{phone: phone})
+    |> Repo.update()
   end
 
   def update(listing, params, address, user) do
