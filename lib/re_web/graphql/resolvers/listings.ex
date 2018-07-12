@@ -75,8 +75,15 @@ defmodule ReWeb.Resolvers.Listings do
 
   def suggested_price(listing, _, %{context: %{current_user: current_user}}) do
     case Bodyguard.permit(Listings, :suggested_price, current_user, listing) do
-      :ok -> {:ok, PriceSuggestions.suggest_price(listing)}
+      :ok -> do_suggest_price(listing)
       _ -> {:ok, nil}
+    end
+  end
+
+  defp do_suggest_price(listing) do
+    case PriceSuggestions.suggest_price(listing) do
+      {:error, :street_not_covered} -> {:error, :street_not_covered}
+      suggested_price -> {:ok, suggested_price}
     end
   end
 
