@@ -25,7 +25,9 @@ defmodule ReWeb.Notifications.ReportEmail do
     {html, text} =
       listings
       |> Enum.map(&report_listing/1)
-      |> Enum.reduce({"", ""}, fn {html_fragment, text_fragment}, {html_acc, text_acc} -> {html_acc <> html_fragment, text_acc <> text_fragment} end)
+      |> Enum.reduce({"", ""}, fn {html_fragment, text_fragment}, {html_acc, text_acc} ->
+        {html_acc <> html_fragment, text_acc <> text_fragment}
+      end)
 
     html_body = """
     Olá, #{name}.<br>

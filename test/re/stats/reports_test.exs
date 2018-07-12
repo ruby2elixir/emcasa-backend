@@ -7,7 +7,7 @@ defmodule Re.Stats.ReportsTest do
 
   describe "users_to_be_notified/0" do
     test "get users with active listings only" do
-      %{id: id1}  = insert(:user, listings: [build(:listing)])
+      %{id: id1} = insert(:user, listings: [build(:listing)])
       insert(:user, listings: [build(:listing, is_active: false)])
       %{id: id3} = insert(:user, listings: [build(:listing, is_active: false), build(:listing)])
       insert(:user)
@@ -16,10 +16,31 @@ defmodule Re.Stats.ReportsTest do
     end
 
     test "get users with email notifications enabled only" do
-      %{id: id1} = insert(:user, notification_preferences: %{email: true, app: true}, listings: [build(:listing)])
-      insert(:user, notification_preferences: %{email: false, app: true}, listings: [build(:listing)])
-      %{id: id2} = insert(:user, notification_preferences: %{email: true, app: false}, listings: [build(:listing)])
-      insert(:user, notification_preferences: %{email: false, app: false}, listings: [build(:listing)])
+      %{id: id1} =
+        insert(
+          :user,
+          notification_preferences: %{email: true, app: true},
+          listings: [build(:listing)]
+        )
+
+      insert(
+        :user,
+        notification_preferences: %{email: false, app: true},
+        listings: [build(:listing)]
+      )
+
+      %{id: id2} =
+        insert(
+          :user,
+          notification_preferences: %{email: true, app: false},
+          listings: [build(:listing)]
+        )
+
+      insert(
+        :user,
+        notification_preferences: %{email: false, app: false},
+        listings: [build(:listing)]
+      )
 
       assert [%{id: ^id1}, %{id: ^id2}] = Reports.users_to_be_notified()
     end
@@ -43,21 +64,33 @@ defmodule Re.Stats.ReportsTest do
     test "get only last month's stats" do
       now = Timex.now()
 
-      listing = insert(:listing,
-        listings_visualisations: [build_list(5, :listing_visualisation)] ++ [build_list(5, :listing_visualisation, inserted_at: Timex.shift(now, months: -2))],
-        tour_visualisations: [build_list(5, :tour_visualisation)] ++ [build_list(5, :tour_visualisation, inserted_at: Timex.shift(now, months: -2))],
-        in_person_visits: [build_list(5, :in_person_visit)] ++ [build_list(5, :in_person_visit, inserted_at: Timex.shift(now, months: -2))],
-        listings_favorites: [build_list(5, :listings_favorites)] ++ [build_list(5, :listings_favorites, inserted_at: Timex.shift(now, months: -2))],
-        interests: [build_list(5, :interest)] ++ [build_list(5, :interest, inserted_at: Timex.shift(now, months: -2))]
-      )
+      listing =
+        insert(
+          :listing,
+          listings_visualisations:
+            [build_list(5, :listing_visualisation)] ++
+              [build_list(5, :listing_visualisation, inserted_at: Timex.shift(now, months: -2))],
+          tour_visualisations:
+            [build_list(5, :tour_visualisation)] ++
+              [build_list(5, :tour_visualisation, inserted_at: Timex.shift(now, months: -2))],
+          in_person_visits:
+            [build_list(5, :in_person_visit)] ++
+              [build_list(5, :in_person_visit, inserted_at: Timex.shift(now, months: -2))],
+          listings_favorites:
+            [build_list(5, :listings_favorites)] ++
+              [build_list(5, :listings_favorites, inserted_at: Timex.shift(now, months: -2))],
+          interests:
+            [build_list(5, :interest)] ++
+              [build_list(5, :interest, inserted_at: Timex.shift(now, months: -2))]
+        )
 
       assert %{
-        listings_visualisations_count: 5,
-        tour_visualisations_count: 5,
-        in_person_visits_count: 5,
-        listings_favorites_count: 5,
-        interests_count: 5
-      } = Reports.get_listings_stats(listing, now)
+               listings_visualisations_count: 5,
+               tour_visualisations_count: 5,
+               in_person_visits_count: 5,
+               listings_favorites_count: 5,
+               interests_count: 5
+             } = Reports.get_listings_stats(listing, now)
     end
   end
 end

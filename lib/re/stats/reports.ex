@@ -1,5 +1,4 @@
 defmodule Re.Stats.Reports do
-
   import Ecto.Query
 
   alias Re.{
@@ -18,10 +17,10 @@ defmodule Re.Stats.Reports do
 
   def users_to_be_notified do
     User
-    |> preload([listings: ^where(Listing, [l], l.is_active == true)])
+    |> preload(listings: ^where(Listing, [l], l.is_active == true))
     |> where([u], u.confirmed == true and u.role == "user")
     |> order_by([u], u.id)
-    |> Repo.all
+    |> Repo.all()
     |> Enum.filter(fn
       %{listings: []} -> false
       %{listings: nil} -> false
@@ -31,7 +30,8 @@ defmodule Re.Stats.Reports do
   end
 
   def generate_report(user, time) do
-    listings = user
+    listings =
+      user
       |> Map.get(:listings)
       |> Enum.map(&get_listings_stats(&1, time))
 
@@ -42,13 +42,14 @@ defmodule Re.Stats.Reports do
     month = Timex.shift(time, months: -1)
 
     listing
-    |> Repo.preload([
-      listings_visualisations: (from lv in Re.Stats.ListingVisualization, where: lv.inserted_at > ^month),
-      tour_visualisations: (from tv in Re.Stats.TourVisualization, where: tv.inserted_at > ^month),
-      in_person_visits: (from ipv in Re.Stats.InPersonVisit, where: ipv.inserted_at > ^month),
-      listings_favorites: (from f in Re.Favorite, where: f.inserted_at > ^month),
-      interests: (from i in Re.Interest, where: i.inserted_at > ^month)
-    ])
+    |> Repo.preload(
+      listings_visualisations:
+        from(lv in Re.Stats.ListingVisualization, where: lv.inserted_at > ^month),
+      tour_visualisations: from(tv in Re.Stats.TourVisualization, where: tv.inserted_at > ^month),
+      in_person_visits: from(ipv in Re.Stats.InPersonVisit, where: ipv.inserted_at > ^month),
+      listings_favorites: from(f in Re.Favorite, where: f.inserted_at > ^month),
+      interests: from(i in Re.Interest, where: i.inserted_at > ^month)
+    )
     |> replace_with_count()
   end
 
@@ -61,7 +62,9 @@ defmodule Re.Stats.Reports do
     |> count_interests()
   end
 
-  defp count_listings_visualisations(%{listings_visualisations: listings_visualisations} = listing) do
+  defp count_listings_visualisations(
+         %{listings_visualisations: listings_visualisations} = listing
+       ) do
     listing
     |> Map.put(:listings_visualisations_count, Enum.count(listings_visualisations))
     |> Map.delete(:listings_visualisations)

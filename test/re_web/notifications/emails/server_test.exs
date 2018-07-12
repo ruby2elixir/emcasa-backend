@@ -113,6 +113,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
 
     test "monthly_report/2" do
       user = insert(:user)
+
       listing1 =
         :listing
         |> build(user: user)
