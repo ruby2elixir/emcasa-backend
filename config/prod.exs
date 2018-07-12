@@ -60,5 +60,5 @@ config :re, ReWeb.Search.Cluster,
 
 config :re, Re.Stats.Scheduler,
   jobs: [
-    {"@monthly", {Re.Stats.Reports, :monthly_stats, []}}
+    {"@monthly", {Re.Stats.Reports, :monthly_stats, [Timex.now()]}}
   ]
