@@ -82,7 +82,7 @@ defmodule ReWeb.Resolvers.Listings do
 
   defp do_suggest_price(listing) do
     case PriceSuggestions.suggest_price(listing) do
-      {:error, :street_not_covered} -> {:error, :street_not_covered}
+      {:error, :street_not_covered} -> {:ok, nil}
       suggested_price -> {:ok, suggested_price}
     end
   end
