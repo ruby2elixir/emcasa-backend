@@ -20,6 +20,7 @@ defmodule Re.Stats.Reports do
     User
     |> preload([listings: ^where(Listing, [l], l.is_active == true)])
     |> where([u], u.confirmed == true and u.role == "user")
+    |> order_by([u], u.id)
     |> Repo.all
     |> Enum.filter(fn
       %{listings: []} -> false

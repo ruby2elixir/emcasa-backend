@@ -11,6 +11,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
 
   alias ReWeb.Notifications.{
     Emails.Server,
+    ReportEmail,
     UserEmail
   }
 
@@ -108,6 +109,30 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       assert_email_sent(UserEmail.price_updated(user2, 1_000_000, listing))
       assert_email_not_sent(UserEmail.price_updated(user3, 1_000_000, listing))
       assert_email_not_sent(UserEmail.price_updated(user4, 1_000_000, listing))
+    end
+
+    test "monthly_report/2" do
+      user = insert(:user)
+      listing1 =
+        :listing
+        |> build(user: user)
+        |> Map.put(:listings_visualisations_count, 3)
+        |> Map.put(:tour_visualisations_count, 2)
+        |> Map.put(:in_person_visits_count, 4)
+        |> Map.put(:listings_favorites_count, 5)
+        |> Map.put(:interests_count, 8)
+
+      listing2 =
+        :listing
+        |> build(user: user)
+        |> Map.put(:listings_visualisations_count, 4)
+        |> Map.put(:tour_visualisations_count, 12)
+        |> Map.put(:in_person_visits_count, 4)
+        |> Map.put(:listings_favorites_count, 3)
+        |> Map.put(:interests_count, 0)
+
+      Server.handle_cast({ReportEmail, :monthly_report, [user, [listing1, listing2]]}, [])
+      assert_email_sent(ReportEmail.monthly_report(user, [listing1, listing2]))
     end
   end
 
