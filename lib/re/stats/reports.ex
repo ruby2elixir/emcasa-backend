@@ -1,4 +1,7 @@
 defmodule Re.Stats.Reports do
+  @moduledoc """
+  Module for reporting listing stats to users
+  """
   import Ecto.Query
 
   alias Re.{

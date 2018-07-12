@@ -5,8 +5,6 @@ defmodule ReWeb.Notifications.ReportEmail do
   import Swoosh.Email
 
   alias Re.{
-    Interest,
-    Listing,
     User
   }
 
