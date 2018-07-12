@@ -64,25 +64,45 @@ defmodule Re.Stats.ReportsTest do
     test "get only last month's stats" do
       now = Timex.now()
 
-      listing =
-        insert(
-          :listing,
-          listings_visualisations:
-            [build_list(5, :listing_visualisation)] ++
-              [build_list(5, :listing_visualisation, inserted_at: Timex.shift(now, months: -2))],
-          tour_visualisations:
-            [build_list(5, :tour_visualisation)] ++
-              [build_list(5, :tour_visualisation, inserted_at: Timex.shift(now, months: -2))],
-          in_person_visits:
-            [build_list(5, :in_person_visit)] ++
-              [build_list(5, :in_person_visit, inserted_at: Timex.shift(now, months: -2))],
-          listings_favorites:
-            [build_list(5, :listings_favorites)] ++
-              [build_list(5, :listings_favorites, inserted_at: Timex.shift(now, months: -2))],
-          interests:
-            [build_list(5, :interest)] ++
-              [build_list(5, :interest, inserted_at: Timex.shift(now, months: -2))]
-        )
+      listing = insert(:listing)
+      insert_list(5, :listing_visualisation, listing: listing)
+
+      insert_list(
+        5,
+        :listing_visualisation,
+        listing: listing,
+        inserted_at: Timex.shift(now, months: -2)
+      )
+
+      insert_list(5, :tour_visualisation, listing: listing)
+
+      insert_list(
+        5,
+        :tour_visualisation,
+        listing: listing,
+        inserted_at: Timex.shift(now, months: -2)
+      )
+
+      insert_list(5, :in_person_visit, listing: listing)
+
+      insert_list(
+        5,
+        :in_person_visit,
+        listing: listing,
+        inserted_at: Timex.shift(now, months: -2)
+      )
+
+      insert_list(5, :listings_favorites, listing: listing)
+
+      insert_list(
+        5,
+        :listings_favorites,
+        listing: listing,
+        inserted_at: Timex.shift(now, months: -2)
+      )
+
+      insert_list(5, :interest, listing: listing)
+      insert_list(5, :interest, listing: listing, inserted_at: Timex.shift(now, months: -2))
 
       assert %{
                listings_visualisations_count: 5,
