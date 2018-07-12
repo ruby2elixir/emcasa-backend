@@ -24,7 +24,7 @@ defmodule Re.Interests do
   def preload(interest), do: Repo.preload(interest, :interest_type)
 
   def get_types do
-    Repo.all(from it in InterestType, where: it.enabled == true)
+    Repo.all(from(it in InterestType, where: it.enabled == true))
   end
 
   def request_contact(params, user) do
