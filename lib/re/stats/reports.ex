@@ -12,7 +12,9 @@ defmodule Re.Stats.Reports do
 
   alias ReWeb.Notifications.Emails
 
-  def monthly_stats(time) do
+  def monthly_stats() do
+    time = Timex.now()
+
     users_to_be_notified()
     |> Enum.map(&generate_report(&1, time))
     |> Enum.each(fn {user, listing} -> Emails.monthly_report(user, listing) end)
