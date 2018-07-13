@@ -25,13 +25,12 @@ defmodule ReWeb.Resolvers.Listings do
       }) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, current_user, listing_params),
          {:ok, address, _changeset} <- Addresses.insert_or_update(address_params),
-         {:ok, listing} <- Listings.insert(listing_params, address, current_user)
-      do
-        {:ok, listing}
-      else
-        {:error, _, error, _} -> {:error, error}
-        error -> error
-      end
+         {:ok, listing} <- Listings.insert(listing_params, address, current_user) do
+      {:ok, listing}
+    else
+      {:error, _, error, _} -> {:error, error}
+      error -> error
+    end
   end
 
   def update(%{id: id, input: %{address: address_params} = listing_params}, %{

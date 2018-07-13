@@ -142,6 +142,34 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+    assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+  end
+
+  test "invalid listing", %{admin_conn: conn} do
+    mutation = """
+      mutation {
+        insertListing(input:{
+        price: 1
+        type: "Casa",
+        address: {
+          street: "st",
+          streetNumber: "1",
+          postalCode: "123321123",
+          state: "RJ",
+          city: "Rio de J",
+          neighborhood: "copa",
+          lat: 10,
+          lng: 10
+        }})
+        {
+          id
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert [%{"message" => "price: must be greater than or equal to 650000", "code" => 422}] =
+             json_response(conn, 200)["errors"]
   end
 end

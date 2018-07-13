@@ -87,7 +87,7 @@ defmodule Re.Listings do
 
   def insert(params, address, user) do
     with {:ok, user} <- validate_phone_number(params, user),
-     do: do_insert(params, address, user)
+         do: do_insert(params, address, user)
   end
 
   defp do_insert(params, address, user) do

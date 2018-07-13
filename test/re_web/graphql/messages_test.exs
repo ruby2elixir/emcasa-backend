@@ -113,7 +113,8 @@ defmodule ReWeb.GraphQL.MessagesTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert %{"errors" => [%{"message" => "unauthorized"}]} = json_response(conn, 200)
+      assert %{"errors" => [%{"message" => "Unauthorized", "code" => 401}]} =
+               json_response(conn, 200)
     end
   end
 
@@ -354,7 +355,8 @@ defmodule ReWeb.GraphQL.MessagesTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
 
-      assert %{"errors" => [%{"message" => "unauthorized"}]} = json_response(conn, 200)
+      assert %{"errors" => [%{"message" => "Unauthorized", "code" => 401}]} =
+               json_response(conn, 200)
     end
   end
 
@@ -508,8 +510,8 @@ defmodule ReWeb.GraphQL.MessagesTest do
 
       assert %{
                "errors" => [
-                 %{"message" => "forbidden"},
-                 %{"message" => "forbidden"}
+                 %{"message" => "Forbidden", "code" => 403},
+                 %{"message" => "Forbidden", "code" => 403}
                ]
              } = json_response(conn, 200)
 
@@ -666,8 +668,8 @@ defmodule ReWeb.GraphQL.MessagesTest do
 
       assert %{
                "errors" => [
-                 %{"message" => "forbidden"},
-                 %{"message" => "forbidden"}
+                 %{"message" => "Forbidden", "code" => 403},
+                 %{"message" => "Forbidden", "code" => 403}
                ]
              } = json_response(conn, 200)
 
@@ -737,8 +739,8 @@ defmodule ReWeb.GraphQL.MessagesTest do
 
       assert %{
                "errors" => [
-                 %{"message" => "forbidden"},
-                 %{"message" => "forbidden"}
+                 %{"message" => "Forbidden", "code" => 403},
+                 %{"message" => "Forbidden", "code" => 403}
                ]
              } = json_response(conn, 200)
 

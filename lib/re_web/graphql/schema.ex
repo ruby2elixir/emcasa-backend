@@ -3,7 +3,6 @@ defmodule ReWeb.Schema do
   Module for defining graphQL schemas
   """
   use Absinthe.Schema
-  use ApolloTracing
 
   import_types ReWeb.Types.{Listing, User, Message, Interest, Dashboard}
 
@@ -13,6 +12,11 @@ defmodule ReWeb.Schema do
   def context(ctx), do: Map.put(ctx, :loader, loader(ctx))
 
   def plugins, do: [Absinthe.Middleware.Dataloader | Absinthe.Plugin.defaults()]
+
+  def middleware(middleware, _field, _object) do
+    [ApolloTracing.Middleware.Tracing, ApolloTracing.Middleware.Caching] ++
+      middleware ++ [Middlewares.ErrorHandler]
+  end
 
   query do
     @desc "Listings index"
