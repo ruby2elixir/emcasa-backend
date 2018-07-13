@@ -209,7 +209,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert [] == Repo.all(Favorite)
-      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
 
@@ -295,7 +295,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
 
@@ -335,7 +335,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "showFavoritedUsers"))
 
-      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
 
     test "anonymous should not see favorited users", %{unauthenticated_conn: conn} do
@@ -354,7 +354,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "showFavoritedUsers"))
 
-      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
 
@@ -406,7 +406,7 @@ defmodule ReWeb.GraphQL.ListingsTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userListings"))
 
-      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
 end

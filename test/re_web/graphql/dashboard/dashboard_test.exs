@@ -88,7 +88,7 @@ defmodule ReWeb.GraphQL.DashboardTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "dashbard"))
 
-      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
 
     test "anonymous should not query dashboard", %{unauthenticated_conn: conn} do

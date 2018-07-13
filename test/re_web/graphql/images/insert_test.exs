@@ -95,7 +95,7 @@ defmodule ReWeb.GraphQL.Images.InsertTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+    assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
   end
 
   test "anonymous should not insert image", %{unauthenticated_conn: conn} do
@@ -117,6 +117,6 @@ defmodule ReWeb.GraphQL.Images.InsertTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+    assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
   end
 end

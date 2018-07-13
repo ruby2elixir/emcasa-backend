@@ -272,7 +272,9 @@ defmodule Re.ListingsTest do
       address = insert(:address)
       user = insert(:user, role: "user", phone: nil)
 
-      assert {:ok, inserted_listing} = Listings.insert(Map.put(@insert_listing_params, "phone", "123321"), address, user)
+      assert {:ok, inserted_listing} =
+               Listings.insert(Map.put(@insert_listing_params, "phone", "123321"), address, user)
+
       assert inserted_listing = Repo.get(Listing, inserted_listing.id)
       refute inserted_listing.is_active
     end
@@ -281,7 +283,8 @@ defmodule Re.ListingsTest do
       address = insert(:address)
       user = insert(:user, role: "user", phone: nil)
 
-      assert {:error, :phone_number_required} = Listings.insert(@insert_listing_params, address, user)
+      assert {:error, :phone_number_required} =
+               Listings.insert(@insert_listing_params, address, user)
     end
 
     test "should insert if user doesn't have phone but is admin" do

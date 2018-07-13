@@ -71,7 +71,7 @@ defmodule ReWeb.GraphQL.UsersTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
 
-      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
 
@@ -151,7 +151,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
 
-      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
 
     test "user should not get other user's profile", %{user_conn: conn} do
@@ -168,7 +168,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
 
-      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
   end
 
@@ -234,7 +234,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
 
     test "anonymous should not edit user profile", %{unauthenticated_conn: conn} do
@@ -250,7 +250,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
 
@@ -300,7 +300,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
 
     test "anonymous should not edit user profile", %{unauthenticated_conn: conn} do
@@ -316,7 +316,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
 
     test "should fail when using existing e-mail", %{user_conn: conn, user_user: user} do
@@ -382,7 +382,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert [%{"message" => "forbidden"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
 
     test "anonymous should not edit user profile", %{unauthenticated_conn: conn} do
@@ -398,7 +398,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert [%{"message" => "unauthorized"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
 end
