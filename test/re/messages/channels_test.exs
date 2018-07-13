@@ -57,7 +57,7 @@ defmodule Re.ChannelsTest do
 
       channel = Channels.get_preloaded(channel.id)
 
-      assert %{unread_count: 2} = Channels.count_unread(channel)
+      assert 2 == Channels.count_unread(channel)
     end
   end
 
@@ -75,7 +75,7 @@ defmodule Re.ChannelsTest do
 
       channel = Channels.get_preloaded(channel.id)
 
-      assert %{last_message: %{id: ^message_id}} = Channels.set_last_message(channel)
+      assert %{id: ^message_id} = Channels.set_last_message(channel)
     end
   end
 end

@@ -63,7 +63,12 @@ defmodule ReWeb.Schema do
     end
 
     @desc "Get user channels"
-    field :user_channels, list_of(:channel), do: resolve(&Resolvers.Channels.all/2)
+    field :user_channels, list_of(:channel) do
+      arg :other_participant_id, :id
+      arg :listing_id, :id
+
+      resolve(&Resolvers.Channels.all/2)
+    end
 
     @desc "Get dashboard stats"
     field :dashboard, :dashboard, resolve: &Resolvers.Dashboard.index/2
@@ -174,7 +179,8 @@ defmodule ReWeb.Schema do
       Re.Addresses,
       Re.Images,
       Re.Listings,
-      Re.Listings.PriceHistories
+      Re.Listings.PriceHistories,
+      Re.Messages
     ]
   end
 end

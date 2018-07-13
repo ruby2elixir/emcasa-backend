@@ -9,10 +9,10 @@ defmodule Re.Messages.Channels do
     Queries
   }
 
-  def all(user) do
+  def all(user, params \\ %{}) do
     Channel
     |> Queries.by_participant(user.id)
-    |> Queries.preload()
+    |> Queries.by_params(params)
     |> Repo.all()
   end
 
@@ -45,15 +45,7 @@ defmodule Re.Messages.Channels do
     }
   end
 
-  def count_unread(channel) do
-    unread_count = Enum.count(channel.messages, fn %{read: read} -> !read end)
+  def count_unread(channel), do: Enum.count(channel.messages, fn %{read: read} -> !read end)
 
-    Map.put(channel, :unread_count, unread_count)
-  end
-
-  def set_last_message(channel) do
-    last_message = List.last(channel.messages)
-
-    Map.put(channel, :last_message, last_message)
-  end
+  def set_last_message(channel), do: List.last(channel.messages)
 end

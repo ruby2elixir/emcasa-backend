@@ -4,13 +4,7 @@ defmodule ReWeb.Resolvers.Channels do
   """
   alias Re.Messages.Channels
 
-  def all(_, %{context: %{current_user: current_user}}) do
-    channels =
-      current_user
-      |> Channels.all()
-      |> Enum.map(&Channels.count_unread/1)
-      |> Enum.map(&Channels.set_last_message/1)
-
-    {:ok, channels}
+  def all(params, %{context: %{current_user: current_user}}) do
+    {:ok, Channels.all(current_user, params)}
   end
 end

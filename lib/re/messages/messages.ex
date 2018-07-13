@@ -10,9 +10,16 @@ defmodule Re.Messages do
     Repo
   }
 
-  alias __MODULE__.Queries
+  alias __MODULE__.{
+    DataloaderQueries,
+    Queries
+  }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
+
+  def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
+
+  def query(query, args), do: DataloaderQueries.build(query, args)
 
   def get_by_user(user, params) do
     Message

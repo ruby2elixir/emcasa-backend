@@ -32,9 +32,14 @@ defmodule ReWeb.Types.Message do
     field :participant2, :user, resolve: dataloader(Re.Accounts)
     field :listing, :listing, resolve: dataloader(Re.Listings)
 
-    field :unread_count, :integer
-    field :last_message, :message
-    field :messages, list_of(:message)
+    field :unread_count, :integer, resolve: &MessagesResolver.count_unread/3
+
+    field :messages, list_of(:message) do
+      arg :limit, :integer
+      arg :offset, :integer
+
+      resolve dataloader(Re.Messages)
+    end
   end
 
   object :message_mutations do

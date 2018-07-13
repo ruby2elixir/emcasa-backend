@@ -2,6 +2,8 @@ defmodule ReWeb.Resolvers.Messages do
   @moduledoc """
   Resolver module for messages
   """
+  import Absinthe.Resolution.Helpers, only: [on_load: 2]
+
   alias Re.Messages
 
   def send(params, %{context: %{current_user: current_user}}) do
@@ -35,5 +37,17 @@ defmodule ReWeb.Resolvers.Messages do
       [user] -> user
       _ -> nil
     end
+  end
+
+  def count_unread(channel, _, %{context: %{loader: loader, current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Messages, :index, current_user, channel) do
+      loader
+      |> Dataloader.load(Messages, {:messages, %{read: false}}, channel)
+      |> on_load(&do_count_unread(&1, channel))
+    end
+  end
+
+  defp do_count_unread(loader, channel) do
+    {:ok, Enum.count(Dataloader.get(loader, Messages, {:messages, %{read: false}}, channel))}
   end
 end
