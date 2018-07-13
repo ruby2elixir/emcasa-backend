@@ -4,7 +4,7 @@ defmodule Re.Messages.DataloaderQueries do
   """
   import Ecto.Query
 
-  def build(query, args), do: Enum.reduce(args, query, &build_query/2) |> IO.inspect
+  def build(query, args), do: Enum.reduce(args, query, &build_query/2)
 
   defp build_query({:limit, limit}, query), do: limit(query, ^limit)
 

@@ -16,7 +16,7 @@ defmodule Re.Messages.Channels.Queries do
     messages: Messages.Queries.order_by_insertion()
   ]
 
-  def by_participant(query, user_id) ,
+  def by_participant(query, user_id),
     do: where(query, [c], c.participant1_id == ^user_id or c.participant2_id == ^user_id)
 
   def preload(query \\ Channel), do: preload(query, ^@full_preload)

@@ -25,7 +25,13 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       listing = insert(:listing)
       listing2 = insert(:listing)
 
-      insert(:channel, participant1_id: admin_user.id, participant2_id: user.id, listing_id: listing2.id)
+      insert(
+        :channel,
+        participant1_id: admin_user.id,
+        participant2_id: user.id,
+        listing_id: listing2.id
+      )
+
       insert(:channel, participant1_id: admin2.id, participant2_id: user.id)
 
       channel =
@@ -55,7 +61,6 @@ defmodule ReWeb.GraphQL.ChannelsTest do
           listing_id: listing.id,
           read: false
         )
-
 
       query = """
         {
