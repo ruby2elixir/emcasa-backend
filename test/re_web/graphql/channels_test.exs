@@ -21,7 +21,18 @@ defmodule ReWeb.GraphQL.ChannelsTest do
   describe "userChannels" do
     test "admin should list its channels", %{admin_conn: conn, admin_user: admin_user} do
       user = insert(:user)
+      admin2 = insert(:user, role: "admin")
       listing = insert(:listing)
+      listing2 = insert(:listing)
+
+      insert(
+        :channel,
+        participant1_id: admin_user.id,
+        participant2_id: user.id,
+        listing_id: listing2.id
+      )
+
+      insert(:channel, participant1_id: admin2.id, participant2_id: user.id)
 
       channel =
         insert(
@@ -37,7 +48,8 @@ defmodule ReWeb.GraphQL.ChannelsTest do
           channel_id: channel.id,
           sender_id: admin_user.id,
           receiver_id: user.id,
-          listing_id: listing.id
+          listing_id: listing.id,
+          read: true
         )
 
       m2 =
@@ -46,18 +58,28 @@ defmodule ReWeb.GraphQL.ChannelsTest do
           channel_id: channel.id,
           sender_id: user.id,
           receiver_id: admin_user.id,
-          listing_id: listing.id
+          listing_id: listing.id,
+          read: false
         )
 
       query = """
         {
-          userChannels {
+          userChannels (
+            listingId: #{listing.id},
+            otherParticipantId: #{admin_user.id}
+          ) {
             id
             participant1 { id }
             participant2 { id }
             listing { id }
+            unreadCount
             messages { id }
-            lastMessage { id }
+            lastMessage: messages (limit: 1) {
+              id
+            }
+            subsequentMessage: messages(offset: 1) {
+              id
+            }
           }
         }
       """
@@ -72,21 +94,21 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
 
-      assert %{
-               "userChannels" => [
-                 %{
-                   "id" => ^channel_id,
-                   "participant1" => %{"id" => ^user_id1},
-                   "participant2" => %{"id" => ^user_id2},
-                   "listing" => %{"id" => ^listing_id},
-                   "messages" => [
-                     %{"id" => ^m1_id},
-                     %{"id" => ^m2_id}
-                   ],
-                   "lastMessage" => %{"id" => ^m2_id}
-                 }
-               ]
-             } = json_response(conn, 200)["data"]
+      assert [
+               %{
+                 "id" => channel_id,
+                 "participant1" => %{"id" => user_id1},
+                 "participant2" => %{"id" => user_id2},
+                 "listing" => %{"id" => listing_id},
+                 "unreadCount" => 1,
+                 "messages" => [
+                   %{"id" => m2_id},
+                   %{"id" => m1_id}
+                 ],
+                 "lastMessage" => [%{"id" => m2_id}],
+                 "subsequentMessage" => [%{"id" => m1_id}]
+               }
+             ] == json_response(conn, 200)["data"]["userChannels"]
     end
   end
 end

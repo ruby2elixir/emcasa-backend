@@ -5,7 +5,10 @@ defmodule Re.ChannelsTest do
 
   import Re.Factory
 
-  alias Re.Messages.Channels
+  alias Re.Messages.{
+    Channels,
+    Channels.Channel
+  }
 
   describe "all/1" do
     test "should return channels belonging to user" do
@@ -16,8 +19,8 @@ defmodule Re.ChannelsTest do
       %{id: channel_id} =
         insert(:channel, participant1: admin, participant2: user, listing: listing)
 
-      assert [%{id: ^channel_id}] = Channels.all(admin)
-      assert [%{id: ^channel_id}] = Channels.all(user)
+      assert [%{id: ^channel_id}] = Channels.all(%{user: admin})
+      assert [%{id: ^channel_id}] = Channels.all(%{user: user})
     end
   end
 
@@ -57,7 +60,7 @@ defmodule Re.ChannelsTest do
 
       channel = Channels.get_preloaded(channel.id)
 
-      assert %{unread_count: 2} = Channels.count_unread(channel)
+      assert 2 == Channels.count_unread(channel)
     end
   end
 
@@ -75,7 +78,14 @@ defmodule Re.ChannelsTest do
 
       channel = Channels.get_preloaded(channel.id)
 
-      assert %{last_message: %{id: ^message_id}} = Channels.set_last_message(channel)
+      assert %{id: ^message_id} = Channels.set_last_message(channel)
+    end
+  end
+
+  describe "queries" do
+    test "should ignore irrelevant params" do
+      assert Channels.Queries.build_query(Channel, %{current_user_id: "1234"}) ==
+               Channels.Queries.build_query(Channel, %{current_user_id: "1234", whatever: true})
     end
   end
 end
