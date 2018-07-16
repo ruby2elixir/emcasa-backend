@@ -56,6 +56,56 @@ defmodule Re.PriceSuggestionsTest do
              ] = Repo.all(Factors)
     end
 
+    test "should replace existing records" do
+      {:ok, file} = File.read("test/support/factors.csv")
+
+      insert(:factors, street: "Manhattan Street 1", intercept: -399.23068199, area: 237.0332, bathrooms: 83.74290, rooms: -578.5033, garage_spots: 962.982, r2: 0.09128)
+      insert(:factors, street: "Manhattan Street 2", intercept: -399.23068199, area: 237.0332, bathrooms: 83.74290, rooms: -578.5033, garage_spots: 962.982, r2: 0.09128)
+      insert(:factors, street: "Manhattan Street 3", intercept: -399.23068199, area: 237.0332, bathrooms: 83.74290, rooms: -578.5033, garage_spots: 962.982, r2: 0.09128)
+      insert(:factors, street: "Manhattan Street 4", intercept: -399.23068199, area: 237.0332, bathrooms: 83.74290, rooms: -578.5033, garage_spots: 962.982, r2: 0.09128)
+
+      PriceSuggestions.save_factors(file)
+
+      assert [
+               %{
+                 street: "Manhattan Street" <> _,
+                 intercept: -399.23068199,
+                 area: 237.0332,
+                 bathrooms: 83.74290,
+                 rooms: -578.5033,
+                 garage_spots: 962.982,
+                 r2: 0.09128
+               },
+               %{
+                 street: "Manhattan Street" <> _,
+                 intercept: -399.23068199,
+                 area: 237.0332,
+                 bathrooms: 83.74290,
+                 rooms: -578.5033,
+                 garage_spots: 962.982,
+                 r2: 0.09128
+               },
+               %{
+                 street: "Manhattan Street" <> _,
+                 intercept: -399.23068199,
+                 area: 237.0332,
+                 bathrooms: 83.74290,
+                 rooms: -578.5033,
+                 garage_spots: 962.982,
+                 r2: 0.09128
+               },
+               %{
+                 street: "Manhattan Street" <> _,
+                 intercept: -399.23068199,
+                 area: 237.0332,
+                 bathrooms: 83.74290,
+                 rooms: -578.5033,
+                 garage_spots: 962.982,
+                 r2: 0.09128
+               }
+             ] = Repo.all(Factors)
+    end
+
     test "should suggest price for listing" do
       listing =
         insert(
