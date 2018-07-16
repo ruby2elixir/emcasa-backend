@@ -30,6 +30,7 @@ defmodule ReWeb.Types.Listing do
     field :is_active, :boolean
     field :is_exclusive, :boolean
     field :is_release, :boolean
+    field :inserted_at, :datetime
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
