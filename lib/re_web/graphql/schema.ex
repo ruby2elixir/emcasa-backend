@@ -79,6 +79,7 @@ defmodule ReWeb.Schema do
     import_fields(:message_mutations)
     import_fields(:user_mutations)
     import_fields(:interest_mutations)
+    import_fields(:dashboard_mutations)
   end
 
   subscription do

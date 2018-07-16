@@ -6,15 +6,15 @@ defmodule ReWeb.Resolvers.Dashboard do
 
   alias Re.{
     Listing,
+    PriceSuggestions,
     Repo
   }
 
-  def index(_params, %{context: %{current_user: %{role: "admin"}}}) do
-    {:ok, %{}}
+  def index(_params, %{context: %{current_user: current_user}}) do
+    with :ok <- is_admin(current_user) do
+      {:ok, %{}}
+    end
   end
-
-  def index(_params, %{context: %{current_user: nil}}), do: {:error, :unautenticated}
-  def index(_params, _res), do: {:error, :forbidden}
 
   def active_listing_count(_params, _res) do
     {:ok, Repo.one(from(l in Re.Listing, where: l.is_active == true, select: count(l.id)))}
@@ -71,4 +71,17 @@ defmodule ReWeb.Resolvers.Dashboard do
        from(l in Listing, where: not is_nil(l.area) and l.is_active == true, select: count(l.id))
      )}
   end
+
+  def upload_factors_csv(%{factors: %Plug.Upload{path: path}}, %{context: %{current_user: current_user}}) do
+    with :ok <- is_admin(current_user),
+         {:ok, file_content} <- File.read(path) do
+      PriceSuggestions.save_factors(file_content)
+
+      {:ok, "ok"}
+    end
+  end
+
+  defp is_admin(nil), do: {:error, :unautenticated}
+  defp is_admin(%{role: "admin"}), do: :ok
+  defp is_admin(_), do: {:error, :forbidden}
 end
