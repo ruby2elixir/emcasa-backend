@@ -4,7 +4,11 @@ defmodule Re.Messages.DataloaderQueries do
   """
   import Ecto.Query
 
-  def build(query, args), do: Enum.reduce(args, query, &build_query/2)
+  def build(query, args) do
+    args
+    |> Enum.reduce(query, &build_query/2)
+    |> order_by([m], desc: m.inserted_at)
+  end
 
   defp build_query({:limit, limit}, query), do: limit(query, ^limit)
 

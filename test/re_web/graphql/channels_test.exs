@@ -77,6 +77,9 @@ defmodule ReWeb.GraphQL.ChannelsTest do
             lastMessage: messages (limit: 1) {
               id
             }
+            subsequentMessage: messages(offset: 1) {
+              id
+            }
           }
         }
       """
@@ -91,22 +94,21 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
 
-      assert %{
-               "userChannels" => [
-                 %{
-                   "id" => ^channel_id,
-                   "participant1" => %{"id" => ^user_id1},
-                   "participant2" => %{"id" => ^user_id2},
-                   "listing" => %{"id" => ^listing_id},
-                   "unreadCount" => 1,
-                   "messages" => [
-                     %{"id" => ^m1_id},
-                     %{"id" => ^m2_id}
-                   ],
-                   "lastMessage" => [%{"id" => ^m2_id}]
-                 }
-               ]
-             } = json_response(conn, 200)["data"]
+      assert [
+               %{
+                 "id" => channel_id,
+                 "participant1" => %{"id" => user_id1},
+                 "participant2" => %{"id" => user_id2},
+                 "listing" => %{"id" => listing_id},
+                 "unreadCount" => 1,
+                 "messages" => [
+                   %{"id" => m2_id},
+                   %{"id" => m1_id}
+                 ],
+                 "lastMessage" => [%{"id" => m2_id}],
+                 "subsequentMessage" => [%{"id" => m1_id}]
+               }
+             ] == json_response(conn, 200)["data"]["userChannels"]
     end
   end
 end

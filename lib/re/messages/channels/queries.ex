@@ -16,18 +16,18 @@ defmodule Re.Messages.Channels.Queries do
     messages: Messages.Queries.order_by_insertion()
   ]
 
-  def by_participant(query, user_id),
-    do: where(query, [c], c.participant1_id == ^user_id or c.participant2_id == ^user_id)
+  def build_query(query, params), do: Enum.reduce(params, query, &do_build_query/2)
 
   def preload(query \\ Channel), do: preload(query, ^@full_preload)
 
-  def by_params(query, params), do: Enum.reduce(params, query, &build_query/2)
+  defp do_build_query({:other_participant_id, user_id}, query),
+    do: where(query, [c], c.participant1_id == ^user_id or c.participant2_id == ^user_id)
 
-  defp build_query({:other_participant_id, other_participant_id}, query),
-    do: by_participant(query, other_participant_id)
-
-  defp build_query({:listing_id, listing_id}, query),
+  defp do_build_query({:listing_id, listing_id}, query),
     do: where(query, [c], c.listing_id == ^listing_id)
 
-  defp build_query(_, query), do: query
+  defp do_build_query({:current_user_id, user_id}, query),
+    do: where(query, [c], c.participant1_id == ^user_id or c.participant2_id == ^user_id)
+
+  defp do_build_query(_, query), do: query
 end

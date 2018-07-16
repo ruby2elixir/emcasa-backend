@@ -9,10 +9,9 @@ defmodule Re.Messages.Channels do
     Queries
   }
 
-  def all(user, params \\ %{}) do
+  def all(params) do
     Channel
-    |> Queries.by_participant(user.id)
-    |> Queries.by_params(params)
+    |> Queries.build_query(params)
     |> Repo.all()
   end
 
