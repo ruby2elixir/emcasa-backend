@@ -50,4 +50,20 @@ defmodule ReWeb.Resolvers.Messages do
   defp do_count_unread(loader, channel) do
     {:ok, Enum.count(Dataloader.get(loader, Messages, {:messages, %{read: false}}, channel))}
   end
+
+  def per_channel(channel, params, %{context: %{loader: loader, current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Messages, :index, current_user, channel) do
+      loader
+      |> Dataloader.load(Messages, {:messages, params}, channel)
+      |> on_load(&do_per_channel(&1, params, channel))
+    end
+  end
+
+  defp do_per_channel(loader, params, channel) do
+    messages = Dataloader.get(loader, Messages, {:messages, params}, channel)
+    limit = Map.get(params, :limit, Enum.count(messages))
+    offset = Map.get(params, :offset, 0)
+
+    {:ok, Enum.slice(messages, offset..(limit + offset - 1))}
+  end
 end
