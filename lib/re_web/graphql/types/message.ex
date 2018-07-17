@@ -38,7 +38,7 @@ defmodule ReWeb.Types.Message do
       arg :limit, :integer
       arg :offset, :integer
 
-      resolve dataloader(Re.Messages)
+      resolve &MessagesResolver.per_channel/3
     end
   end
 

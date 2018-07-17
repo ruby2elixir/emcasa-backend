@@ -16,7 +16,11 @@ defmodule Re.Messages.Channels.Queries do
     messages: Messages.Queries.order_by_insertion()
   ]
 
-  def build_query(query, params), do: Enum.reduce(params, query, &do_build_query/2)
+  def build_query(query, params) do
+    params
+    |> Enum.reduce(query, &do_build_query/2)
+    |> order_by([c], desc: c.id)
+  end
 
   def preload(query \\ Channel), do: preload(query, ^@full_preload)
 
