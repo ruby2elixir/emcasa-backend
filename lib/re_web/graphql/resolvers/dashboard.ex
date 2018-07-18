@@ -72,7 +72,9 @@ defmodule ReWeb.Resolvers.Dashboard do
      )}
   end
 
-  def upload_factors_csv(%{factors: %Plug.Upload{path: path}}, %{context: %{current_user: current_user}}) do
+  def upload_factors_csv(%{factors: %Plug.Upload{path: path}}, %{
+        context: %{current_user: current_user}
+      }) do
     with :ok <- is_admin(current_user),
          {:ok, file_content} <- File.read(path) do
       PriceSuggestions.save_factors(file_content)

@@ -56,6 +56,7 @@ defmodule Re.PriceSuggestions do
         %Factors{}
         |> Factors.changeset(line)
         |> Repo.insert()
+
       factor ->
         factor
         |> Factors.changeset(line)
