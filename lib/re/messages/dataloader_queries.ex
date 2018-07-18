@@ -5,12 +5,14 @@ defmodule Re.Messages.DataloaderQueries do
   import Ecto.Query
 
   def build(query, args) do
-    args
-    |> Enum.reduce(query, &build_query/2)
+    query
+    |> unread_only(args)
     |> order_by([m], desc: m.inserted_at)
   end
 
-  defp build_query({:read, read}, query), do: where(query, [m], m.read == ^read)
+  defp unread_only(query, %{read: read, current_user: %{id: user_id}}) do
+    where(query, [m], m.read == ^read and m.receiver_id == ^user_id)
+  end
 
-  defp build_query(_, query), do: query
+  defp unread_only(query, _), do: query
 end
