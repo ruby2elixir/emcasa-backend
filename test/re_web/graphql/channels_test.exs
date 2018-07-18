@@ -24,16 +24,20 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       admin_user: admin_user,
       user_user: user
     } do
-      listing = insert(:listing)
+      listing1 = insert(:listing)
       listing2 = insert(:listing)
 
-      {c1_id, m1c1_id, m2c1_id} = insert_channel_and_messages(listing.id, user.id, admin_user.id)
+      %{
+        channel: %{id: c1_id},
+        messages: [%{id: m1c1_id}, %{id: m2c1_id}, %{id: m3c1_id}, %{id: m4c1_id}]
+      } = insert_channel_and_messages(listing1.id, user.id, admin_user.id)
+
       insert_channel_and_messages(listing2.id, user.id, admin_user.id)
 
       query = """
         {
           userChannels (
-            listingId: #{listing.id},
+            listingId: #{listing1.id},
             otherParticipantId: #{admin_user.id}
           ) {
             id
@@ -60,14 +64,16 @@ defmodule ReWeb.GraphQL.ChannelsTest do
                  "id" => to_string(c1_id),
                  "participant1" => %{"id" => to_string(admin_user.id)},
                  "participant2" => %{"id" => to_string(user.id)},
-                 "listing" => %{"id" => to_string(listing.id)},
+                 "listing" => %{"id" => to_string(listing1.id)},
                  "unreadCount" => 1,
                  "messages" => [
+                   %{"id" => to_string(m4c1_id)},
+                   %{"id" => to_string(m3c1_id)},
                    %{"id" => to_string(m2c1_id)},
                    %{"id" => to_string(m1c1_id)}
                  ],
-                 "lastMessage" => [%{"id" => to_string(m2c1_id)}],
-                 "subsequentMessage" => [%{"id" => to_string(m1c1_id)}]
+                 "lastMessage" => [%{"id" => to_string(m4c1_id)}],
+                 "subsequentMessage" => [%{"id" => to_string(m3c1_id)}]
                }
              ] == json_response(conn, 200)["data"]["userChannels"]
     end
@@ -80,8 +86,15 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       listing1 = insert(:listing)
       listing2 = insert(:listing)
 
-      {c1_id, m1c1_id, m2c1_id} = insert_channel_and_messages(listing1.id, user.id, admin_user.id)
-      {c2_id, m1c2_id, m2c2_id} = insert_channel_and_messages(listing2.id, user.id, admin_user.id)
+      %{
+        channel: %{id: c1_id},
+        messages: [%{id: m1c1_id}, %{id: m2c1_id}, %{id: m3c1_id}, %{id: m4c1_id}]
+      } = insert_channel_and_messages(listing1.id, user.id, admin_user.id)
+
+      %{
+        channel: %{id: c2_id},
+        messages: [%{id: m1c2_id}, %{id: m2c2_id}, %{id: m3c2_id}, %{id: m4c2_id}]
+      } = insert_channel_and_messages(listing2.id, user.id, admin_user.id)
 
       query = """
         {
@@ -113,11 +126,13 @@ defmodule ReWeb.GraphQL.ChannelsTest do
                  "listing" => %{"id" => to_string(listing2.id)},
                  "unreadCount" => 1,
                  "messages" => [
+                   %{"id" => to_string(m4c2_id)},
+                   %{"id" => to_string(m3c2_id)},
                    %{"id" => to_string(m2c2_id)},
                    %{"id" => to_string(m1c2_id)}
                  ],
-                 "lastMessage" => [%{"id" => to_string(m2c2_id)}],
-                 "subsequentMessage" => [%{"id" => to_string(m1c2_id)}]
+                 "lastMessage" => [%{"id" => to_string(m4c2_id)}],
+                 "subsequentMessage" => [%{"id" => to_string(m3c2_id)}]
                },
                %{
                  "id" => to_string(c1_id),
@@ -126,11 +141,13 @@ defmodule ReWeb.GraphQL.ChannelsTest do
                  "listing" => %{"id" => to_string(listing1.id)},
                  "unreadCount" => 1,
                  "messages" => [
+                   %{"id" => to_string(m4c1_id)},
+                   %{"id" => to_string(m3c1_id)},
                    %{"id" => to_string(m2c1_id)},
                    %{"id" => to_string(m1c1_id)}
                  ],
-                 "lastMessage" => [%{"id" => to_string(m2c1_id)}],
-                 "subsequentMessage" => [%{"id" => to_string(m1c1_id)}]
+                 "lastMessage" => [%{"id" => to_string(m4c1_id)}],
+                 "subsequentMessage" => [%{"id" => to_string(m3c1_id)}]
                }
              ] == json_response(conn, 200)["data"]["userChannels"]
     end
@@ -144,8 +161,15 @@ defmodule ReWeb.GraphQL.ChannelsTest do
     listing1 = insert(:listing)
     listing2 = insert(:listing)
 
-    {c1_id, m1c1_id, m2c1_id} = insert_channel_and_messages(listing1.id, user.id, admin_user.id)
-    {c2_id, m1c2_id, m2c2_id} = insert_channel_and_messages(listing2.id, user.id, admin_user.id)
+    %{
+      channel: %{id: c1_id},
+      messages: [%{id: m1c1_id}, %{id: m2c1_id}, %{id: m3c1_id}, %{id: m4c1_id}]
+    } = insert_channel_and_messages(listing1.id, user.id, admin_user.id)
+
+    %{
+      channel: %{id: c2_id},
+      messages: [%{id: m1c2_id}, %{id: m2c2_id}, %{id: m3c2_id}, %{id: m4c2_id}]
+    } = insert_channel_and_messages(listing2.id, user.id, admin_user.id)
 
     query = """
       {
@@ -177,11 +201,13 @@ defmodule ReWeb.GraphQL.ChannelsTest do
                "listing" => %{"id" => to_string(listing2.id)},
                "unreadCount" => 1,
                "messages" => [
+                 %{"id" => to_string(m4c2_id)},
+                 %{"id" => to_string(m3c2_id)},
                  %{"id" => to_string(m2c2_id)},
                  %{"id" => to_string(m1c2_id)}
                ],
-               "lastMessage" => [%{"id" => to_string(m2c2_id)}],
-               "subsequentMessage" => [%{"id" => to_string(m1c2_id)}]
+               "lastMessage" => [%{"id" => to_string(m4c2_id)}],
+               "subsequentMessage" => [%{"id" => to_string(m3c2_id)}]
              },
              %{
                "id" => to_string(c1_id),
@@ -190,11 +216,13 @@ defmodule ReWeb.GraphQL.ChannelsTest do
                "listing" => %{"id" => to_string(listing1.id)},
                "unreadCount" => 1,
                "messages" => [
+                 %{"id" => to_string(m4c1_id)},
+                 %{"id" => to_string(m3c1_id)},
                  %{"id" => to_string(m2c1_id)},
                  %{"id" => to_string(m1c1_id)}
                ],
-               "lastMessage" => [%{"id" => to_string(m2c1_id)}],
-               "subsequentMessage" => [%{"id" => to_string(m1c1_id)}]
+               "lastMessage" => [%{"id" => to_string(m4c1_id)}],
+               "subsequentMessage" => [%{"id" => to_string(m3c1_id)}]
              }
            ] == json_response(conn, 200)["data"]["userChannels"]
   end
@@ -226,8 +254,44 @@ defmodule ReWeb.GraphQL.ChannelsTest do
              json_response(conn, 200)
   end
 
+  test "should count unread messages", %{
+    admin_conn: conn,
+    admin_user: admin_user,
+    user_user: user
+  } do
+    listing1 = insert(:listing)
+    listing2 = insert(:listing)
+
+    %{channel: %{id: c1_id}} = insert_channel_and_messages(listing1.id, user.id, admin_user.id)
+    %{channel: %{id: c2_id}} = insert_channel_and_messages(listing2.id, user.id, admin_user.id)
+
+    query = """
+      {
+        userChannels {
+          id
+          unreadCount
+        }
+      }
+    """
+
+    conn =
+      post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+
+    assert [
+             %{
+               "id" => to_string(c2_id),
+               "unreadCount" => 1
+             },
+             %{
+               "id" => to_string(c1_id),
+               "unreadCount" => 1
+             }
+           ] == json_response(conn, 200)["data"]["userChannels"]
+  end
+
   defp insert_channel_and_messages(listing_id, user1_id, user2_id) do
     %{id: channel_id} =
+      channel =
       insert(
         :channel,
         listing_id: listing_id,
@@ -235,7 +299,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
         participant2_id: user1_id
       )
 
-    %{id: m1} =
+    message1 =
       insert(
         :message,
         channel_id: channel_id,
@@ -245,7 +309,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
         read: true
       )
 
-    %{id: m2} =
+    message2 =
       insert(
         :message,
         channel_id: channel_id,
@@ -255,6 +319,26 @@ defmodule ReWeb.GraphQL.ChannelsTest do
         read: false
       )
 
-    {channel_id, m1, m2}
+    message3 =
+      insert(
+        :message,
+        channel_id: channel_id,
+        sender_id: user2_id,
+        receiver_id: user1_id,
+        listing_id: listing_id,
+        read: false
+      )
+
+    message4 =
+      insert(
+        :message,
+        channel_id: channel_id,
+        sender_id: user1_id,
+        receiver_id: user2_id,
+        listing_id: listing_id,
+        read: true
+      )
+
+    %{channel: channel, messages: [message1, message2, message3, message4]}
   end
 end
