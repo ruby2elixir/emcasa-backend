@@ -4,6 +4,8 @@ defmodule ReWeb.Types.Dashboard do
   """
   use Absinthe.Schema.Notation
 
+  import_types Absinthe.Plug.Types
+
   alias ReWeb.Resolvers.Dashboard, as: DashboardResolvers
 
   object :dashboard do
@@ -18,5 +20,13 @@ defmodule ReWeb.Types.Dashboard do
     field :property_tax_count, :integer, resolve: &DashboardResolvers.property_tax_count/2
     field :tour_count, :integer, resolve: &DashboardResolvers.tour_count/2
     field :area_count, :integer, resolve: &DashboardResolvers.area_count/2
+  end
+
+  object :dashboard_mutations do
+    field :upload_factors_csv, :string do
+      arg :factors, non_null(:upload)
+
+      resolve &DashboardResolvers.upload_factors_csv/2
+    end
   end
 end

@@ -50,9 +50,16 @@ defmodule Re.PriceSuggestions do
     }
   end
 
-  defp persist(line) do
-    %Factors{}
-    |> Factors.changeset(line)
-    |> Repo.insert()
+  defp persist(%{street: street} = line) do
+    case Repo.get_by(Factors, street: street) do
+      nil ->
+        %Factors{}
+        |> Factors.changeset(line)
+        |> Repo.insert()
+      factor ->
+        factor
+        |> Factors.changeset(line)
+        |> Repo.update()
+    end
   end
 end
