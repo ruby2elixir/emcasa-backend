@@ -7,9 +7,9 @@ defmodule ReWeb.Resolvers.Stats do
   def interest_count(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
     if is_admin(listing, current_user) do
       loader
-      |> Dataloader.load(Re.Listings, :interests, listing)
+      |> Dataloader.load(Re.Interests, :interests, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Listings, :interests, listing))}
+        {:ok, Enum.count(Dataloader.get(loader, Re.Interests, :interests, listing))}
       end)
     else
       {:ok, nil}
@@ -21,9 +21,9 @@ defmodule ReWeb.Resolvers.Stats do
       }) do
     if is_admin(listing, current_user) do
       loader
-      |> Dataloader.load(Re.Listings, :in_person_visits, listing)
+      |> Dataloader.load(Re.Stats.InPersonVisits, :in_person_visits, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Listings, :in_person_visits, listing))}
+        {:ok, Enum.count(Dataloader.get(loader, Re.Stats.InPersonVisits, :in_person_visits, listing))}
       end)
     else
       {:ok, nil}
@@ -35,9 +35,9 @@ defmodule ReWeb.Resolvers.Stats do
       }) do
     if is_admin(listing, current_user) do
       loader
-      |> Dataloader.load(Re.Listings, :listings_favorites, listing)
+      |> Dataloader.load(Re.Favorites, :listings_favorites, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Listings, :listings_favorites, listing))}
+        {:ok, Enum.count(Dataloader.get(loader, Re.Favorites, :listings_favorites, listing))}
       end)
     else
       {:ok, nil}
@@ -49,9 +49,9 @@ defmodule ReWeb.Resolvers.Stats do
       }) do
     if is_admin(listing, current_user) do
       loader
-      |> Dataloader.load(Re.Listings, :tour_visualisations, listing)
+      |> Dataloader.load(Re.Stats.TourVisualizations, :tour_visualisations, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Listings, :tour_visualisations, listing))}
+        {:ok, Enum.count(Dataloader.get(loader, Re.Stats.TourVisualizations, :tour_visualisations, listing))}
       end)
     else
       {:ok, nil}
@@ -63,9 +63,9 @@ defmodule ReWeb.Resolvers.Stats do
       }) do
     if is_admin(listing, current_user) do
       loader
-      |> Dataloader.load(Re.Listings, :listings_visualisations, listing)
+      |> Dataloader.load(Re.Stats.ListingVisualizations, :listings_visualisations, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Listings, :listings_visualisations, listing))}
+        {:ok, Enum.count(Dataloader.get(loader, Re.Stats.ListingVisualizations, :listings_visualisations, listing))}
       end)
     else
       {:ok, nil}

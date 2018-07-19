@@ -181,7 +181,12 @@ defmodule ReWeb.Schema do
       Re.Images,
       Re.Listings,
       Re.Listings.PriceHistories,
-      Re.Messages
+      Re.Messages,
+      Re.Interests,
+      Re.Favorites,
+      Re.Stats.ListingVisualizations,
+      Re.Stats.TourVisualizations,
+      Re.Stats.InPersonVisits
     ]
   end
 end

@@ -88,9 +88,9 @@ defmodule ReWeb.Resolvers.Listings do
     case Bodyguard.permit(Listings, :show_stats, current_user, listing) do
       :ok ->
         loader
-        |> Dataloader.load(Listings, :price_history, listing)
+        |> Dataloader.load(Re.Listings.PriceHistories, :price_history, listing)
         |> on_load(fn loader ->
-          {:ok, Dataloader.get(loader, Listings, :price_history, listing)}
+          {:ok, Dataloader.get(loader, Re.Listings.PriceHistories, :price_history, listing)}
         end)
 
       _ ->
