@@ -16,6 +16,7 @@ defmodule ReWeb.Types.User do
     field :notification_preferences, :notification_preferences
 
     field :favorites, list_of(:listing), resolve: &ListingsResolver.favorites/3
+    field :listings, list_of(:listing), resolve: &ListingsResolver.owned/3
   end
 
   object :notification_preferences do
