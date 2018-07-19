@@ -64,6 +64,16 @@ defmodule ReWeb.Resolvers.Listings do
          do: {:ok, Listings.per_user(current_user)}
   end
 
+  def favorites(user, params, %{context: %{loader: loader, current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Listings, :per_user, current_user, user) do
+      loader
+      |> Dataloader.load(Listings, {:favorited, params}, user)
+      |> on_load(fn loader ->
+        {:ok, Dataloader.get(loader, Listings, {:favorited, params}, user)}
+      end)
+    end
+  end
+
   def price_history(listing, _, %{context: %{loader: loader, current_user: current_user}}) do
     case Bodyguard.permit(Listings, :show_stats, current_user, listing) do
       :ok ->

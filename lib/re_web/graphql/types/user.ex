@@ -5,6 +5,7 @@ defmodule ReWeb.Types.User do
   use Absinthe.Schema.Notation
 
   alias ReWeb.Resolvers.Accounts, as: AccountsResolver
+  alias ReWeb.Resolvers.Listings, as: ListingsResolver
 
   object :user do
     field :id, :id
@@ -13,6 +14,8 @@ defmodule ReWeb.Types.User do
     field :phone, :string
     field :role, :string
     field :notification_preferences, :notification_preferences
+
+    field :favorites, list_of(:listing), resolve: &ListingsResolver.favorites/3
   end
 
   object :notification_preferences do

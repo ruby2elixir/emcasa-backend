@@ -17,6 +17,8 @@ defmodule Re.Listings.Policy do
   def authorize(:update_listing, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
   def authorize(:delete_listing, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
 
+  def authorize(:per_user, %User{id: id}, %User{id: id}), do: :ok
+
   def authorize(:order_listing_images, %User{id: id, role: "user"}, %Listing{user_id: id}),
     do: :ok
 
