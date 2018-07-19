@@ -11,6 +11,7 @@ defmodule Re.Listings.DataloaderQueries do
     |> where([l], l.is_active == true)
     |> paginate(args)
     |> filter(args)
+    |> order_by([l], desc: l.score)
   end
 
   defp paginate(query, %{pagination: args}), do: Enum.reduce(args, query, &attr_queries/2)
