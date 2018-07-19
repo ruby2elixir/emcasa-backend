@@ -15,8 +15,19 @@ defmodule ReWeb.Types.User do
     field :role, :string
     field :notification_preferences, :notification_preferences
 
-    field :favorites, list_of(:listing), resolve: &ListingsResolver.favorites/3
-    field :listings, list_of(:listing), resolve: &ListingsResolver.owned/3
+    field :favorites, list_of(:listing) do
+      arg :pagination, non_null(:listing_pagination)
+      arg :filters, non_null(:listing_filter)
+
+      resolve &ListingsResolver.favorites/3
+    end
+
+    field :listings, list_of(:listing) do
+      arg :pagination, non_null(:listing_pagination)
+      arg :filters, non_null(:listing_filter)
+
+      resolve &ListingsResolver.owned/3
+    end
   end
 
   object :notification_preferences do

@@ -8,6 +8,7 @@ defmodule Re.Listings do
     Listing,
     Filtering,
     Images,
+    Listings.DataloaderQueries,
     Listings.Opts,
     Listings.PriceHistory,
     Listings.Queries,
@@ -24,7 +25,7 @@ defmodule Re.Listings do
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
 
-  def query(query, _args), do: query
+  def query(query, params), do: DataloaderQueries.build(query, params)
 
   def index, do: Repo.all(Listing)
 
