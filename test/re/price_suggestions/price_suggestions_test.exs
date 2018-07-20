@@ -169,4 +169,12 @@ defmodule Re.PriceSuggestionsTest do
       assert 26_279.915 == PriceSuggestions.suggest_price(listing)
     end
   end
+
+  describe "suggest_price/1" do
+    test "should suggest for nil values" do
+      insert(:factors, street: "Mah Street", intercept: 10.10, rooms: 123.321, area: 321.123, bathrooms: 111.222, garage_spots: 222.111)
+
+      assert 10.10 == PriceSuggestions.suggest_price(%{address: %{street: "Mah Street"}, rooms: nil, area: nil, bathrooms: nil, garage_spots: nil})
+    end
+  end
 end
