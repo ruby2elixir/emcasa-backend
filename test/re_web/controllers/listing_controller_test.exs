@@ -89,41 +89,6 @@ defmodule ReWeb.ListingControllerTest do
      user_conn: login_as(conn, user_user)}
   end
 
-  describe "index" do
-    test "admin user", %{admin_conn: conn, admin_user: user} do
-      listing = insert(:listing, address: build(:address), user: user)
-
-      conn = get(conn, listing_path(conn, :index))
-
-      listings = json_response(conn, 200)["listings"]
-      retrieved_listing = List.first(listings)
-      assert retrieved_listing["description"] == listing.description
-    end
-
-    test "not admin user", %{user_conn: conn, user_user: user} do
-      listing = insert(:listing, address: build(:address), user: user)
-
-      conn = get(conn, listing_path(conn, :index))
-
-      listings = json_response(conn, 200)["listings"]
-      retrieved_listing = List.first(listings)
-      assert retrieved_listing["description"] == listing.description
-    end
-
-    test "paginated query", %{admin_conn: conn, admin_user: user} do
-      insert_list(5, :listing, address: insert(:address), user: user)
-
-      conn = get(conn, listing_path(conn, :index, %{page_size: 2}))
-
-      assert [_, _] = json_response(conn, 200)["listings"]
-      assert 3 = json_response(conn, 200)["remaining_count"]
-
-      conn = get(conn, listing_path(conn, :index, %{page_size: 2}))
-
-      assert [_, _] = json_response(conn, 200)["listings"]
-    end
-  end
-
   describe "show" do
     test "resource for admin user", %{admin_conn: conn, admin_user: user} do
       image = insert(:image)

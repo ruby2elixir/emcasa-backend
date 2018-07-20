@@ -24,18 +24,6 @@ defmodule ReWeb.ListingController do
          ]
   )
 
-  def index(conn, params, user) do
-    result = Listings.paginated(params)
-
-    render(
-      conn,
-      get_view(user),
-      "index.json",
-      listings: result.listings,
-      remaining_count: result.remaining_count
-    )
-  end
-
   def create(conn, %{"listing" => listing_params, "address" => address_params} = params, user) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
          {:ok, address, _changeset} <- Addresses.insert_or_update(address_params),

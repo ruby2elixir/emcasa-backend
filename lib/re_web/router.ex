@@ -19,7 +19,7 @@ defmodule ReWeb.Router do
 
     resources("/neighborhoods", NeighborhoodController, only: [:index])
 
-    resources "/listings", ListingController, except: [:new] do
+    resources "/listings", ListingController, except: [:new, :index] do
       resources("/images", ImageController, only: [:index, :create, :delete])
       resources("/interests", InterestController, only: [:create])
       resources("/related", RelatedController, only: [:index])
