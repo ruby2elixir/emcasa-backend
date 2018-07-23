@@ -4,9 +4,11 @@ defmodule Re.Interests do
   """
 
   alias Re.{
+    Addresses,
     Interest,
     Interests.ContactRequest,
     InterestType,
+    PriceSuggestions,
     Repo,
     User
   }
@@ -36,6 +38,14 @@ defmodule Re.Interests do
     |> ContactRequest.changeset(params)
     |> attach_user(user)
     |> Repo.insert()
+  end
+
+  def request_price_suggestion(params, user) do
+    with {:ok, address, _changeset} <- Addresses.insert_or_update(params.address),
+         {:ok, request} <- PriceSuggestions.create_request(params, address, user),
+         request <- Repo.preload(request, :address) do
+      PriceSuggestions.suggest_price(request)
+    end
   end
 
   defp attach_user(changeset, %User{id: id}),

@@ -7,8 +7,12 @@ defmodule Re.PriceSuggestions do
   alias Re.{
     Listing,
     PriceSuggestions.Factors,
-    Repo
+    PriceSuggestions.Request,
+    Repo,
+    User
   }
+
+  alias Ecto.Changeset
 
   def suggest_price(listing) do
     listing
@@ -63,4 +67,17 @@ defmodule Re.PriceSuggestions do
         |> Repo.update()
     end
   end
+
+  def create_request(params, %{id: address_id}, user) do
+    %Request{}
+    |> Changeset.change(address_id: address_id)
+    |> attach_user(user)
+    |> Request.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp attach_user(changeset, %User{id: id}),
+    do: Changeset.change(changeset, user_id: id)
+
+  defp attach_user(changeset, _), do: changeset
 end
