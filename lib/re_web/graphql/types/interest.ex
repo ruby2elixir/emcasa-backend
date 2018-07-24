@@ -28,6 +28,20 @@ defmodule ReWeb.Types.Interest do
 
       resolve &InterestsResolver.request_contact/2
     end
+
+    @desc "Request price suggestion"
+    field :request_price_suggestion, type: :float do
+      arg :name, :string
+      arg :email, :string
+      arg :area, :integer
+      arg :rooms, :integer
+      arg :bathrooms, :integer
+      arg :garage_spots, :integer
+
+      arg :address, :address_input
+
+      resolve &InterestsResolver.request_price_suggestion/2
+    end
   end
 
   object :interest_subscriptions do
