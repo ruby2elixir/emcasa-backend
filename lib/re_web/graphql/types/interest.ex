@@ -45,14 +45,14 @@ defmodule ReWeb.Types.Interest do
 
     @desc "Request price suggestion"
     field :request_price_suggestion, type: :price_request do
-      arg :name, :string
-      arg :email, :string
-      arg :area, :integer
-      arg :rooms, :integer
-      arg :bathrooms, :integer
-      arg :garage_spots, :integer
+      arg :name, non_null(:string)
+      arg :email, non_null(:string)
+      arg :area, non_null(:integer)
+      arg :rooms, non_null(:integer)
+      arg :bathrooms, non_null(:integer)
+      arg :garage_spots, non_null(:integer)
 
-      arg :address, :address_input
+      arg :address, non_null(:address_input)
 
       resolve &InterestsResolver.request_price_suggestion/2
     end
