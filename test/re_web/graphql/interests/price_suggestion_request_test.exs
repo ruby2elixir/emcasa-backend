@@ -41,13 +41,15 @@ defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
 
     mutation = """
       mutation {
-        requestPriceSuggestion(#{@request_price_suggestion_input})
+        requestPriceSuggestion(#{@request_price_suggestion_input}) {
+          suggestedPrice
+        }
       }
     """
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert %{"requestPriceSuggestion" => 26613.248} = json_response(conn, 200)["data"]
+    assert %{"requestPriceSuggestion" => %{"suggestedPrice" => 26613.248}} = json_response(conn, 200)["data"]
 
     assert Repo.get_by(Request, name: "Mah Name")
   end
@@ -57,13 +59,15 @@ defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
 
     mutation = """
       mutation {
-        requestPriceSuggestion(#{@request_price_suggestion_input})
+        requestPriceSuggestion(#{@request_price_suggestion_input}) {
+          suggestedPrice
+        }
       }
     """
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert %{"requestPriceSuggestion" => 26613.248} = json_response(conn, 200)["data"]
+    assert %{"requestPriceSuggestion" => %{"suggestedPrice" => 26613.248}} = json_response(conn, 200)["data"]
 
     assert request = Repo.get_by(Request, name: "Mah Name")
     assert request.user_id == user.id
@@ -72,13 +76,15 @@ defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
   test "anonymous should request price suggestion when street is not covered", %{unauthenticated_conn: conn} do
     mutation = """
       mutation {
-        requestPriceSuggestion(#{@request_price_suggestion_input})
+        requestPriceSuggestion(#{@request_price_suggestion_input}) {
+          suggestedPrice
+        }
       }
     """
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert [%{"message" => "Street not covered", "code" => 422}] = json_response(conn, 200)["errors"]
+    assert %{"requestPriceSuggestion" => %{"suggestedPrice" => nil}} = json_response(conn, 200)["data"]
 
     assert Repo.get_by(Request, name: "Mah Name")
   end
@@ -86,13 +92,15 @@ defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
   test "user should request price suggestion when street is not covered", %{user_conn: conn, user_user: user} do
     mutation = """
       mutation {
-        requestPriceSuggestion(#{@request_price_suggestion_input})
+        requestPriceSuggestion(#{@request_price_suggestion_input}) {
+          suggestedPrice
+        }
       }
     """
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert [%{"message" => "Street not covered", "code" => 422}] = json_response(conn, 200)["errors"]
+    assert %{"requestPriceSuggestion" => %{"suggestedPrice" => nil}} = json_response(conn, 200)["data"]
 
     assert request = Repo.get_by(Request, name: "Mah Name")
     assert request.user_id == user.id

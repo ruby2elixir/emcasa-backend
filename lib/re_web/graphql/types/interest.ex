@@ -18,6 +18,20 @@ defmodule ReWeb.Types.Interest do
     field :user, :user, resolve: dataloader(Re.Accounts)
   end
 
+  object :price_request do
+    field :id, :id
+    field :name, :string
+    field :email, :string
+    field :area, :integer
+    field :rooms, :integer
+    field :bathrooms, :integer
+    field :garage_spots, :integer
+    field :suggested_price, :float
+
+    field :address, :address, resolve: dataloader(Re.Addresses)
+    field :user, :user, resolve: dataloader(Re.Accounts)
+  end
+
   object :interest_mutations do
     @desc "Request contact"
     field :request_contact, type: :contact do
@@ -30,7 +44,7 @@ defmodule ReWeb.Types.Interest do
     end
 
     @desc "Request price suggestion"
-    field :request_price_suggestion, type: :float do
+    field :request_price_suggestion, type: :price_request do
       arg :name, :string
       arg :email, :string
       arg :area, :integer
