@@ -30,6 +30,7 @@ defmodule Re.Mixfile do
         :postgrex,
         :comeonin,
         :swoosh,
+        :phoenix_swoosh,
         :timber,
         :timex,
         :nimble_csv
@@ -69,7 +70,8 @@ defmodule Re.Mixfile do
       {:apollo_tracing, "~> 0.4.0"},
       {:timex, "~> 3.3"},
       {:tzdata, "~> 0.5"},
-      {:quantum, "~> 2.2"}
+      {:quantum, "~> 2.2"},
+      {:phoenix_swoosh, "~> 0.2"}
     ]
   end
 
