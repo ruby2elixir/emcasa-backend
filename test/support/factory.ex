@@ -136,6 +136,17 @@ defmodule Re.Factory do
     %Re.Interests.ContactRequest{}
   end
 
+  def price_suggestion_request_factory do
+    %Re.PriceSuggestions.Request{
+      name: Name.name(),
+      email: Internet.email(),
+      rooms: Enum.random(1..10),
+      bathrooms: Enum.random(1..10),
+      garage_spots: Enum.random(0..10),
+      area: Enum.random(1..500)
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999

@@ -9,6 +9,7 @@ defmodule ReWeb.Notifications.Emails.Server do
   alias Re.{
     Accounts.Users,
     Listings,
+    PriceSuggestions.Request,
     Repo
   }
 
@@ -31,6 +32,7 @@ defmodule ReWeb.Notifications.Emails.Server do
       subscribe("subscription { emailChanged { id } }")
       subscribe("subscription { listingInserted { id owner { id } } }")
       subscribe("subscription { contactRequested { id } }")
+      subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
     end
 
     {:ok, args}
@@ -103,6 +105,16 @@ defmodule ReWeb.Notifications.Emails.Server do
     case Users.get(user_id) do
       {:ok, user} -> handle_cast({UserEmail, :change_email, [user]}, state)
       _ -> {:noreply, state}
+    end
+  end
+
+  defp handle_data(%{"priceSuggestionRequested" => %{"id" => request_id, "suggestedPrice" => suggested_price}}, state) do
+    case Repo.get(Request, request_id) do
+      nil -> {:noreply, state}
+      request ->
+        request = Repo.preload(request, [:address, :user])
+
+        handle_cast({UserEmail, :price_suggestion_requested, [request, suggested_price]}, state)
     end
   end
 

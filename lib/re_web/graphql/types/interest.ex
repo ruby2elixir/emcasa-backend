@@ -73,5 +73,20 @@ defmodule ReWeb.Types.Interest do
           "contact_requested"
         end
     end
+
+    @desc "Subscribe to price suggestion requests"
+    field :price_suggestion_requested, :price_request do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "price_suggestion_requested"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :request_price_suggestion,
+        topic: fn _ ->
+          "price_suggestion_requested"
+        end
+    end
   end
 end
