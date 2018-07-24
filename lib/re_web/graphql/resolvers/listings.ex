@@ -18,7 +18,12 @@ defmodule ReWeb.Resolvers.Listings do
     {:ok, Listings.paginated(Map.merge(pagination, filtering))}
   end
 
-  def show(%{id: id}, _), do: Listings.get(id)
+  def show(%{id: id}, %{context: %{current_user: current_user}}) do
+    with {:ok, listing} <- Listings.get(id),
+         :ok <- Bodyguard.permit(Listings, :show_listing, current_user, listing) do
+      {:ok, listing}
+    end
+  end
 
   def insert(%{input: %{address: address_params} = listing_params}, %{
         context: %{current_user: current_user}
