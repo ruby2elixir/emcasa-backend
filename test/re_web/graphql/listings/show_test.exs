@@ -297,4 +297,72 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
              }
            } = json_response(conn, 200)["data"]
   end
+
+  test "admin should see inactive listing", %{admin_conn: conn} do
+    %{id: listing_id} = insert(:listing, is_active: false)
+
+    query = """
+      {
+        listing (id: #{listing_id}) {
+          id
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+
+    listing_id = to_string(listing_id)
+
+    assert %{"listing" => %{"id" => ^listing_id}} = json_response(conn, 200)["data"]
+  end
+
+  test "owner should see inactive listing", %{user_conn: conn, user_user: user} do
+    %{id: listing_id} = insert(:listing, is_active: false, user: user)
+
+    query = """
+      {
+        listing (id: #{listing_id}) {
+          id
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+
+    listing_id = to_string(listing_id)
+
+    assert %{"listing" => %{"id" => ^listing_id}} = json_response(conn, 200)["data"]
+  end
+
+  test "user should not see inactive listing", %{user_conn: conn} do
+    %{id: listing_id} = insert(:listing, is_active: false)
+
+    query = """
+      {
+        listing (id: #{listing_id}) {
+          id
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+
+    assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
+  end
+
+  test "anonymous should not see inactive listing", %{unauthenticated_conn: conn} do
+    %{id: listing_id} = insert(:listing, is_active: false)
+
+    query = """
+      {
+        listing (id: #{listing_id}) {
+          id
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+
+    assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
+  end
 end
