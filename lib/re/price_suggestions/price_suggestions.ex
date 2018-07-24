@@ -7,8 +7,12 @@ defmodule Re.PriceSuggestions do
   alias Re.{
     Listing,
     PriceSuggestions.Factors,
-    Repo
+    PriceSuggestions.Request,
+    Repo,
+    User
   }
+
+  alias Ecto.Changeset
 
   def suggest_price(listing) do
     listing
@@ -23,8 +27,10 @@ defmodule Re.PriceSuggestions do
   defp do_suggest_price(nil, _), do: {:error, :street_not_covered}
 
   defp do_suggest_price(factors, listing) do
-    factors.intercept + (listing.area || 0) * factors.area + (listing.bathrooms || 0) * factors.bathrooms +
-      (listing.rooms || 0) * factors.rooms + (listing.garage_spots || 0) * factors.garage_spots
+    {:ok,
+     factors.intercept + (listing.area || 0) * factors.area +
+       (listing.bathrooms || 0) * factors.bathrooms + (listing.rooms || 0) * factors.rooms +
+       (listing.garage_spots || 0) * factors.garage_spots}
   end
 
   defp preload_if_struct(%Listing{} = listing), do: Repo.preload(listing, :address)
@@ -63,4 +69,17 @@ defmodule Re.PriceSuggestions do
         |> Repo.update()
     end
   end
+
+  def create_request(params, %{id: address_id}, user) do
+    %Request{}
+    |> Changeset.change(address_id: address_id)
+    |> attach_user(user)
+    |> Request.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp attach_user(changeset, %User{id: id}),
+    do: Changeset.change(changeset, user_id: id)
+
+  defp attach_user(changeset, _), do: changeset
 end

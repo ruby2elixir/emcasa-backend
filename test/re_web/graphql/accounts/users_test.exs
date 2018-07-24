@@ -131,10 +131,10 @@ defmodule ReWeb.GraphQL.UsersTest do
                  "email" => ^user_email,
                  "phone" => ^user_phone,
                  "listings" => [
-                  %{"id" => ^listing1_id}
+                   %{"id" => ^listing1_id}
                  ],
                  "favorites" => [
-                  %{"id" => ^favorited_listing1_id}
+                   %{"id" => ^favorited_listing1_id}
                  ]
                }
              } = json_response(conn, 200)["data"]
@@ -152,6 +152,7 @@ defmodule ReWeb.GraphQL.UsersTest do
       insert(:listings_favorites, listing: favorited_listing1, user: user)
       insert(:listings_favorites, listing: favorited_listing2, user: user)
       insert(:listings_favorites, listing: favorited_listing3, user: user)
+
       query = """
         {
           userProfile(ID: #{user.id}) {
@@ -191,10 +192,10 @@ defmodule ReWeb.GraphQL.UsersTest do
                  "email" => ^user_email,
                  "phone" => ^user_phone,
                  "listings" => [
-                  %{"id" => ^listing1_id}
+                   %{"id" => ^listing1_id}
                  ],
                  "favorites" => [
-                  %{"id" => ^favorited_listing1_id}
+                   %{"id" => ^favorited_listing1_id}
                  ]
                }
              } = json_response(conn, 200)["data"]
