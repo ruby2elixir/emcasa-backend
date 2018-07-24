@@ -108,9 +108,19 @@ defmodule ReWeb.Notifications.Emails.Server do
     end
   end
 
-  defp handle_data(%{"priceSuggestionRequested" => %{"id" => request_id, "suggestedPrice" => suggested_price}}, state) do
+  defp handle_data(
+         %{
+           "priceSuggestionRequested" => %{
+             "id" => request_id,
+             "suggestedPrice" => suggested_price
+           }
+         },
+         state
+       ) do
     case Repo.get(Request, request_id) do
-      nil -> {:noreply, state}
+      nil ->
+        {:noreply, state}
+
       request ->
         request = Repo.preload(request, [:address, :user])
 

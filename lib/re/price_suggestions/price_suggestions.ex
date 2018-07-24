@@ -27,8 +27,10 @@ defmodule Re.PriceSuggestions do
   defp do_suggest_price(nil, _), do: {:error, :street_not_covered}
 
   defp do_suggest_price(factors, listing) do
-    {:ok, factors.intercept + (listing.area || 0) * factors.area + (listing.bathrooms || 0) * factors.bathrooms +
-      (listing.rooms || 0) * factors.rooms + (listing.garage_spots || 0) * factors.garage_spots}
+    {:ok,
+     factors.intercept + (listing.area || 0) * factors.area +
+       (listing.bathrooms || 0) * factors.bathrooms + (listing.rooms || 0) * factors.rooms +
+       (listing.garage_spots || 0) * factors.garage_spots}
   end
 
   defp preload_if_struct(%Listing{} = listing), do: Repo.preload(listing, :address)

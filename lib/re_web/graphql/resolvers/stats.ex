@@ -23,7 +23,8 @@ defmodule ReWeb.Resolvers.Stats do
       loader
       |> Dataloader.load(Re.Stats.InPersonVisits, :in_person_visits, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Stats.InPersonVisits, :in_person_visits, listing))}
+        {:ok,
+         Enum.count(Dataloader.get(loader, Re.Stats.InPersonVisits, :in_person_visits, listing))}
       end)
     else
       {:ok, nil}
@@ -51,7 +52,10 @@ defmodule ReWeb.Resolvers.Stats do
       loader
       |> Dataloader.load(Re.Stats.TourVisualizations, :tour_visualisations, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Stats.TourVisualizations, :tour_visualisations, listing))}
+        {:ok,
+         Enum.count(
+           Dataloader.get(loader, Re.Stats.TourVisualizations, :tour_visualisations, listing)
+         )}
       end)
     else
       {:ok, nil}
@@ -65,7 +69,15 @@ defmodule ReWeb.Resolvers.Stats do
       loader
       |> Dataloader.load(Re.Stats.ListingVisualizations, :listings_visualisations, listing)
       |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Stats.ListingVisualizations, :listings_visualisations, listing))}
+        {:ok,
+         Enum.count(
+           Dataloader.get(
+             loader,
+             Re.Stats.ListingVisualizations,
+             :listings_visualisations,
+             listing
+           )
+         )}
       end)
     else
       {:ok, nil}

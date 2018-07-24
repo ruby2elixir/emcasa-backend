@@ -29,7 +29,8 @@ defmodule ReWeb.GraphQL.Middlewares.ErrorHandler do
 
   defp handle_error(:forbidden, errors), do: [%{message: "Forbidden", code: 403} | errors]
 
-  defp handle_error(:street_not_covered, errors), do: [%{message: "Street not covered", code: 422} | errors]
+  defp handle_error(:street_not_covered, errors),
+    do: [%{message: "Street not covered", code: 422} | errors]
 
   defp handle_error(error, errors), do: [error | errors]
 end
