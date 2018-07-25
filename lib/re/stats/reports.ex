@@ -12,12 +12,17 @@ defmodule Re.Stats.Reports do
 
   alias ReWeb.Notifications.Emails
 
-  def monthly_stats() do
-    time = Timex.now()
+  @env Application.get_env(:re, :env)
 
-    users_to_be_notified()
-    |> Enum.map(&generate_report(&1, time))
-    |> Enum.each(fn {user, listing} -> Emails.monthly_report(user, listing) end)
+  def monthly_stats() do
+    unless @env == "staging" do
+      time = Timex.now()
+
+      users_to_be_notified()
+      |> Enum.map(&generate_report(&1, time))
+      |> Enum.each(fn {user, listing} -> Emails.monthly_report(user, listing) end)
+    end
+
   end
 
   def users_to_be_notified do
