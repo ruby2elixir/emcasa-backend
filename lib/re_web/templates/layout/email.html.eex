@@ -1,0 +1,27 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Responsive Email Template</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+    <style type="text/css">
+        body   {width: 100%; background-color: #ffffff; margin:0; padding:0; -webkit-font-smoothing: antialiased;font-family: 'Open Sans', -apple-system, BlinkMacSystemFont,
+         'Segoe UI', Helvetica, Arial, sans-serif;}
+         table {border-collapse: collapse;}
+         @media only screen and (max-width: 640px)  {
+         body[emcasa] .deviceWidth {width:440px!important; padding:0;}
+         body[emcasa] .center {text-align: center!important;}
+         }
+         @media only screen and (max-width: 479px) {
+         body[emcasa] .deviceWidth {width:280px!important; padding:0;}
+         body[emcasa] .center {text-align: center!important;}
+         }
+    </style>
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" emcasa="fix">
+    <%= render @view_module, @view_template, assigns %>
+</body>
+
+</html>

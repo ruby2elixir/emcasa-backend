@@ -213,5 +213,73 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         })
       )
     end
+
+    test "price suggestion requested when price" do
+      address = insert(:address)
+      %{id: id} = request = insert(:price_suggestion_request, address: address)
+
+      Server.handle_info(
+        %Phoenix.Socket.Broadcast{
+          payload: %{
+            result: %{
+              data: %{"priceSuggestionRequested" => %{"id" => id, "suggestedPrice" => 10.10}}
+            }
+          }
+        },
+        []
+      )
+
+      assert_email_sent(
+        UserEmail.price_suggestion_requested(
+          %{
+            name: request.name,
+            email: request.email,
+            area: request.area,
+            rooms: request.rooms,
+            bathrooms: request.bathrooms,
+            garage_spots: request.garage_spots,
+            address: %{
+              street: address.street,
+              street_number: address.street_number
+            }
+          },
+          10.10
+        )
+      )
+    end
+
+    test "price suggestion requested for not covered street" do
+      address = insert(:address)
+      %{id: id} = request = insert(:price_suggestion_request, address: address)
+
+      Server.handle_info(
+        %Phoenix.Socket.Broadcast{
+          payload: %{
+            result: %{
+              data: %{"priceSuggestionRequested" => %{"id" => id, "suggestedPrice" => nil}}
+            }
+          }
+        },
+        []
+      )
+
+      assert_email_sent(
+        UserEmail.price_suggestion_requested(
+          %{
+            name: request.name,
+            email: request.email,
+            area: request.area,
+            rooms: request.rooms,
+            bathrooms: request.bathrooms,
+            garage_spots: request.garage_spots,
+            address: %{
+              street: address.street,
+              street_number: address.street_number
+            }
+          },
+          nil
+        )
+      )
+    end
   end
 end

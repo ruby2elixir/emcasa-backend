@@ -202,4 +202,29 @@ defmodule ReWeb.Notifications.UserEmail do
                   Telefone: #{phone}
                   Mensagem: #{message}")
   end
+
+  def price_suggestion_requested(request, suggested_price) do
+    new()
+    |> to(@to)
+    |> from(@admin_email)
+    |> subject("Um usuário requisitou sugestão de preço pelo lead magnet")
+    |> html_body("Nome: #{request.name}<br>
+                  Email: #{request.email}<br>
+                  Area: #{request.area}<br>
+                  Quartos: #{request.rooms}<br>
+                  Banheiros: #{request.bathrooms}<br>
+                  Vagas: #{request.garage_spots}<br>
+                  Rua: #{request.address.street}<br>
+                  Número: #{request.address.street_number}<br>
+                  Preço sugerido: #{suggested_price || "Rua não coberta"}")
+    |> text_body("Nome: #{request.name}
+                  Email: #{request.email}
+                  Area: #{request.area}
+                  Quartos: #{request.rooms}
+                  Banheiros: #{request.bathrooms}
+                  Vagas: #{request.garage_spots}
+                  Rua: #{request.address.street}
+                  Número: #{request.address.street_number}
+                  Preço sugerido: #{suggested_price || "Rua não coberta"}")
+  end
 end
