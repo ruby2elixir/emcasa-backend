@@ -26,7 +26,7 @@ defmodule ReWeb.Types.Interest do
     field :rooms, :integer
     field :bathrooms, :integer
     field :garage_spots, :integer
-    feild :is_covered, :boolean
+    field :is_covered, :boolean
     field :suggested_price, :float
 
     field :address, :address, resolve: dataloader(Re.Addresses)
