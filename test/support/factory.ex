@@ -108,6 +108,10 @@ defmodule Re.Factory do
     %Re.Favorite{}
   end
 
+  def listing_blacklist_factory do
+    %Re.Blacklist{}
+  end
+
   def message_factory do
     %Re.Message{message: Shakespeare.hamlet()}
   end
