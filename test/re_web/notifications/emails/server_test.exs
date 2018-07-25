@@ -216,7 +216,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
 
     test "price suggestion requested when price" do
       address = insert(:address)
-      %{id: id} = request = insert(:price_suggestion_request, address: address)
+      %{id: id} = request = insert(:price_suggestion_request, address: address, is_covered: false)
 
       Server.handle_info(
         %Phoenix.Socket.Broadcast{
@@ -241,7 +241,8 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
             address: %{
               street: address.street,
               street_number: address.street_number
-            }
+            },
+            is_covered: false
           },
           10.10
         )
@@ -250,7 +251,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
 
     test "price suggestion requested for not covered street" do
       address = insert(:address)
-      %{id: id} = request = insert(:price_suggestion_request, address: address)
+      %{id: id} = request = insert(:price_suggestion_request, address: address, is_covered: true)
 
       Server.handle_info(
         %Phoenix.Socket.Broadcast{
@@ -275,7 +276,8 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
             address: %{
               street: address.street,
               street_number: address.street_number
-            }
+            },
+            is_covered: true
           },
           nil
         )
