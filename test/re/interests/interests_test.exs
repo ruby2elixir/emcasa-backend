@@ -39,7 +39,8 @@ defmodule Re.InterestsTest do
         rooms: 2,
         bathrooms: 2,
         area: 2,
-        garage_spots: 2
+        garage_spots: 2,
+        is_covered: true
       }
 
       assert {:ok, %{id: request_id}, {:ok, 1565.654}} =
@@ -79,7 +80,8 @@ defmodule Re.InterestsTest do
         rooms: 2,
         bathrooms: 2,
         area: 2,
-        garage_spots: 2
+        garage_spots: 2,
+        is_covered: true
       }
 
       assert {:ok, %{id: request_id}, {:ok, 1565.654}} =
@@ -117,7 +119,8 @@ defmodule Re.InterestsTest do
         rooms: 2,
         bathrooms: 2,
         area: 2,
-        garage_spots: 2
+        garage_spots: 2,
+        is_covered: false
       }
 
       assert {:ok, %{id: request_id}, {:error, :street_not_covered}} =
