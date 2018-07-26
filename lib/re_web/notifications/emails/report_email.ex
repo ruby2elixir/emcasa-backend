@@ -4,6 +4,7 @@ defmodule ReWeb.Notifications.ReportEmail do
   @frontend_url Application.get_env(:re, :frontend_url)
   @contato_email "contato@emcasa.com"
   @listing_path "/imoveis/"
+  @reply_to Application.get_env(:re, :reply_to)
 
   def monthly_report(user, listings) do
     listings = Enum.map(listings, &put_url/1)
@@ -11,6 +12,7 @@ defmodule ReWeb.Notifications.ReportEmail do
     new()
     |> to(user.email)
     |> from(@contato_email)
+    |> reply_to(@reply_to)
     |> subject("Relatório mensal de acesso dos seus imóveis")
     |> render_body("monthly_report.html", %{user: user, listings: listings})
   end

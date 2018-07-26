@@ -10,6 +10,7 @@ config :re,
   ecto_repos: [Re.Repo],
   to: "dev1@email.com|dev2@email.com",
   from: "admin@email.com",
+  reply_to: "admin@email.com",
   frontend_url: "http://localhost:3000",
   env: "dev"
 
