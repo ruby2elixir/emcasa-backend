@@ -215,6 +215,20 @@ defmodule ReWeb.Types.Listing do
       resolve &Resolvers.Favorites.remove/2
     end
 
+    @desc "Blacklist listing"
+    field :listing_blacklist, type: :listing_user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Blacklists.add/2
+    end
+
+    @desc "Unblacklist listing"
+    field :listing_unblacklist, type: :listing_user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Blacklists.remove/2
+    end
+
     @desc "Tour visualization"
     field :tour_visualized, type: :listing do
       arg :id, non_null(:id)
