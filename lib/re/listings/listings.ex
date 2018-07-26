@@ -76,6 +76,7 @@ defmodule Re.Listings do
   defp build_query(params) do
     Queries.active()
     |> Queries.excluding(params)
+    |> Queries.exclude_blacklisted(params)
     |> Queries.order_by()
     |> Queries.limit(params)
     |> Queries.preload_relations(@partial_preload)

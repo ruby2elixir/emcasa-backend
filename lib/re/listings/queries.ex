@@ -71,4 +71,14 @@ defmodule Re.Listings.Queries do
   def count(query \\ Listing), do: from(l in query, select: count(l.id))
 
   def per_user(query \\ Listing, user_id), do: from(l in query, where: l.user_id == ^user_id)
+
+  def exclude_blacklisted(query \\ Listing, user)
+
+  def exclude_blacklisted(query, %{current_user: %{id: user_id}}) do
+    query
+    |> join(:left, [l], b in Re.Blacklist, l.id == b.listing_id and b.user_id == ^user_id)
+    |> where([_l, b], is_nil(b.user_id))
+  end
+
+  def exclude_blacklisted(query, _), do: query
 end
