@@ -31,6 +31,9 @@ defmodule Re.User do
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :listing]
 
+    has_many :listings_blacklists, Re.Blacklist
+    has_many :blacklisted, through: [:listings_blacklists, :listing]
+
     timestamps()
   end
 
