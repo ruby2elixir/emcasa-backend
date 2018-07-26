@@ -169,7 +169,7 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert [%{"message" => "price: must be greater than or equal to 650000", "code" => 422}] =
+    assert [%{"message" => "price: must be greater than or equal to 550000", "code" => 422}] =
              json_response(conn, 200)["errors"]
   end
 end
