@@ -12,7 +12,9 @@ defmodule Re.PriceSuggestions do
     User
   }
 
-  alias Ecto.Changeset
+  import Ecto.Query
+
+alias Ecto.Changeset
 
   def suggest_price(listing) do
     listing
@@ -82,4 +84,32 @@ defmodule Re.PriceSuggestions do
     do: Changeset.change(changeset, user_id: id)
 
   defp attach_user(changeset, _), do: changeset
+  
+  
+  def generate_price_comparison do
+    to_write = Listing
+      |> where([l], l.is_active == true)
+      |> preload(:address)
+      |> Repo.all()
+      |> Enum.map(&compare_prices/1)
+      |> Enum.filter(fn
+          {:error, _} -> false
+          _other -> true
+        end)
+      |> Enum.map(&encode/1)
+      |> Enum.join("\n")
+
+    File.write("export.txt", to_write)
+  end
+
+  defp compare_prices(listing) do
+    case suggest_price(listing) do
+      {:error, :street_not_covered} -> {:error, :street_not_covered}
+      suggested_price -> %{listing_id: listing.id, actual_price: listing.price, suggested_price: suggested_price}
+    end
+  end
+
+  defp encode(%{listing_id: listing_id, actual_price: actual_price, suggested_price: suggested_price}) do
+    "ID: #{listing_id}, Preço atual: #{actual_price}, Preço Sugerido: #{suggested_price}"
+  end
 end
