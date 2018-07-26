@@ -19,6 +19,7 @@ defmodule Re.Filtering.Relaxed do
       |> Filtering.apply(relaxed_filters)
       |> Queries.active()
       |> Queries.excluding(params)
+      |> Queries.exclude_blacklisted(params)
       |> Queries.order_by()
       |> Queries.limit(params)
       |> Queries.preload_relations()
