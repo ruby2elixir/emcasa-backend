@@ -205,14 +205,14 @@ defmodule ReWeb.Types.Listing do
     field :favorite_listing, type: :listing_user do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.Favorites.favorite/2
+      resolve &Resolvers.Favorites.add/2
     end
 
     @desc "Unfavorite listing"
     field :unfavorite_listing, type: :listing_user do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.Favorites.unfavorite/2
+      resolve &Resolvers.Favorites.remove/2
     end
 
     @desc "Tour visualization"

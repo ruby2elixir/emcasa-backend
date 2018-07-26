@@ -22,9 +22,6 @@ defmodule Re.Listings.Policy do
   def authorize(:order_listing_images, %User{id: id, role: "user"}, %Listing{user_id: id}),
     do: :ok
 
-  def authorize(:favorite_listing, %User{}, _), do: :ok
-  def authorize(:unfavorite_listing, %User{}, _), do: :ok
-
   def authorize(:per_user, %User{}, _), do: :ok
 
   def authorize(:show_stats, %User{id: id}, %{user_id: id}), do: :ok

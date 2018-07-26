@@ -3,8 +3,7 @@ defmodule Re.FavoritesTest do
 
   alias Re.{
     Favorite,
-    Listing,
-    Listings
+    Favorites
   }
 
   import Re.Factory
@@ -13,11 +12,11 @@ defmodule Re.FavoritesTest do
     test "should return favorited users" do
       [user1, user2, user3] = insert_list(3, :user)
       listing = insert(:listing)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user1.id)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user2.id)
-      insert(:listing_favorite, listing_id: listing.id, user_id: user3.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user1.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user2.id)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user3.id)
 
-      assert [^user1, ^user2, ^user3] = Listings.favorited_users(listing)
+      assert [^user1, ^user2, ^user3] = Favorites.users(listing)
     end
   end
 
@@ -27,13 +26,13 @@ defmodule Re.FavoritesTest do
       %{id: listing_id} = listing = insert(:listing)
 
       assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
-               Listings.favorite(listing, user)
+               Favorites.add(listing, user)
 
       assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
-               Listings.favorite(listing, user)
+               Favorites.add(listing, user)
 
       assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
-               Listings.favorite(listing, user)
+               Favorites.add(listing, user)
 
       assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
     end
