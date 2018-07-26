@@ -11,11 +11,17 @@ defmodule ReWeb.Resolvers.Listings do
     PriceSuggestions
   }
 
-  def index(params, _) do
+  def index(params, %{context: %{current_user: current_user}}) do
     pagination = Map.get(params, :pagination, %{})
     filtering = Map.get(params, :filters, %{})
 
-    {:ok, Listings.paginated(Map.merge(pagination, filtering))}
+    params =
+      params
+      |> Map.merge(pagination)
+      |> Map.merge(filtering)
+      |> Map.merge(%{current_user: current_user})
+
+    {:ok, Listings.paginated(params)}
   end
 
   def show(%{id: id}, %{context: %{current_user: current_user}}) do
