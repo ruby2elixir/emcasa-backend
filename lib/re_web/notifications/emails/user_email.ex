@@ -216,6 +216,7 @@ defmodule ReWeb.Notifications.UserEmail do
                   Vagas: #{request.garage_spots}<br>
                   Rua: #{request.address.street}<br>
                   Número: #{request.address.street_number}<br>
+                  #{unless request.is_covered, do: "Área fora de cobertura"}<br>
                   Preço sugerido: #{suggested_price || "Rua não coberta"}")
     |> text_body("Nome: #{request.name}
                   Email: #{request.email}
@@ -225,6 +226,7 @@ defmodule ReWeb.Notifications.UserEmail do
                   Vagas: #{request.garage_spots}
                   Rua: #{request.address.street}
                   Número: #{request.address.street_number}
+                  #{unless request.is_covered, do: "Área fora de cobertura"}
                   Preço sugerido: #{suggested_price || "Rua não coberta"}")
   end
 end

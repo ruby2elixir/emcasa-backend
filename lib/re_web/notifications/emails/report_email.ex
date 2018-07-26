@@ -27,5 +27,4 @@ defmodule ReWeb.Notifications.ReportEmail do
 
     Map.put(listing, :url, url)
   end
-
 end

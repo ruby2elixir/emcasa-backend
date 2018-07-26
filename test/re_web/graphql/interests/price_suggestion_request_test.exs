@@ -23,7 +23,8 @@ defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
       area: 80,
       rooms: 2,
       bathrooms: 2,
-      garage_spots: 2
+      garage_spots: 2,
+      isCovered: true,
       address: {
         street: "street",
         street_number: "street_number",
@@ -50,6 +51,23 @@ defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
     mutation = """
       mutation {
         requestPriceSuggestion(#{@request_price_suggestion_input}) {
+          name
+          email
+          area
+          rooms
+          bathrooms
+          garage_spots
+          isCovered
+          address {
+            street
+            street_number
+            neighborhood
+            city
+            state
+            postal_code
+            lat
+            lng
+          }
           suggestedPrice
         }
       }
@@ -77,6 +95,23 @@ defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
     mutation = """
       mutation {
         requestPriceSuggestion(#{@request_price_suggestion_input}) {
+          name
+          email
+          area
+          rooms
+          bathrooms
+          garage_spots
+          isCovered
+          address {
+            street
+            street_number
+            neighborhood
+            city
+            state
+            postal_code
+            lat
+            lng
+          }
           suggestedPrice
         }
       }
@@ -97,6 +132,23 @@ defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
     mutation = """
       mutation {
         requestPriceSuggestion(#{@request_price_suggestion_input}) {
+          name
+          email
+          area
+          rooms
+          bathrooms
+          garage_spots
+          isCovered
+          address {
+            street
+            street_number
+            neighborhood
+            city
+            state
+            postal_code
+            lat
+            lng
+          }
           suggestedPrice
         }
       }
@@ -117,6 +169,23 @@ defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
     mutation = """
       mutation {
         requestPriceSuggestion(#{@request_price_suggestion_input}) {
+          name
+          email
+          area
+          rooms
+          bathrooms
+          garage_spots
+          isCovered
+          address {
+            street
+            street_number
+            neighborhood
+            city
+            state
+            postal_code
+            lat
+            lng
+          }
           suggestedPrice
         }
       }
