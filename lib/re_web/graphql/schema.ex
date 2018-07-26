@@ -184,6 +184,7 @@ defmodule ReWeb.Schema do
       Re.Messages,
       Re.Interests,
       Re.Favorites,
+      Re.Blacklists,
       Re.Stats.ListingVisualizations,
       Re.Stats.TourVisualizations,
       Re.Stats.InPersonVisits

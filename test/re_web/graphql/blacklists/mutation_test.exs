@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.BlacklistsTest do
+defmodule ReWeb.GraphQL.Blacklists.MutationTest do
   use ReWeb.ConnCase
 
   import Re.Factory
