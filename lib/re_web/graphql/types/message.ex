@@ -7,6 +7,7 @@ defmodule ReWeb.Types.Message do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias ReWeb.Resolvers.Messages, as: MessagesResolver
+  alias ReWeb.Resolvers.Channels, as: ChannelsResolver
 
   object :message do
     field :id, :id
@@ -30,7 +31,7 @@ defmodule ReWeb.Types.Message do
 
     field :participant1, :user, resolve: dataloader(Re.Accounts)
     field :participant2, :user, resolve: dataloader(Re.Accounts)
-    field :listing, :listing, resolve: dataloader(Re.Listings)
+    field :listing, :listing, resolve: &ChannelsResolver.get_listing/3
 
     field :unread_count, :integer, resolve: &MessagesResolver.count_unread/3
 

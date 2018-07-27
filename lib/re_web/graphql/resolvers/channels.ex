@@ -3,6 +3,7 @@ defmodule ReWeb.Resolvers.Channels do
   Resolver module for channels
   """
   alias Re.{
+    Listings,
     Messages,
     Messages.Channels
   }
@@ -15,6 +16,12 @@ defmodule ReWeb.Resolvers.Channels do
         |> Channels.all()
 
       {:ok, channels}
+    end
+  end
+
+  def get_listing(channel, _, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Messages, :listing, current_user, %{}) do
+      Listings.get(channel.listing_id)
     end
   end
 end
