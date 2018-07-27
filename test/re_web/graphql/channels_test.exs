@@ -341,4 +341,32 @@ defmodule ReWeb.GraphQL.ChannelsTest do
 
     %{channel: channel, messages: [message1, message2, message3, message4]}
   end
+
+  test "should list channel when listing is deactivated", %{
+    user_conn: conn,
+    admin_user: admin_user,
+    user_user: user
+  } do
+    listing1 = insert(:listing, is_active: false)
+    listing2 = insert(:listing)
+
+    insert_channel_and_messages(listing1.id, user.id, admin_user.id)
+    insert_channel_and_messages(listing2.id, user.id, admin_user.id)
+
+    query = """
+      {
+        userChannels {
+          listing { id }
+        }
+      }
+    """
+
+    conn =
+      post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+
+    assert [
+             %{"listing" => %{"id" => to_string(listing2.id)}},
+             %{"listing" => %{"id" => to_string(listing1.id)}}
+           ] == json_response(conn, 200)["data"]["userChannels"]
+  end
 end
