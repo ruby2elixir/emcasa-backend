@@ -41,7 +41,8 @@ defmodule ReWeb.Schema do
     @desc "Get favorited users"
     field :show_favorited_users, list_of(:user) do
       arg :id, non_null(:id)
-      resolve &Resolvers.Favorites.favorited_users/2
+
+      resolve &Resolvers.Favorites.users/2
     end
 
     @desc "List user messages, optionally by listing"

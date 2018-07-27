@@ -205,14 +205,28 @@ defmodule ReWeb.Types.Listing do
     field :favorite_listing, type: :listing_user do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.Favorites.favorite/2
+      resolve &Resolvers.Favorites.add/2
     end
 
     @desc "Unfavorite listing"
     field :unfavorite_listing, type: :listing_user do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.Favorites.unfavorite/2
+      resolve &Resolvers.Favorites.remove/2
+    end
+
+    @desc "Blacklist listing"
+    field :listing_blacklist, type: :listing_user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Blacklists.add/2
+    end
+
+    @desc "Unblacklist listing"
+    field :listing_unblacklist, type: :listing_user do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Blacklists.remove/2
     end
 
     @desc "Blacklist listing"

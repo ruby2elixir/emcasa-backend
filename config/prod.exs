@@ -51,7 +51,8 @@ config :re,
   pipedrive_token: System.get_env("PIPEDRIVE_TOKEN"),
   pipedrive_webhook_user: System.get_env("PIPEDRIVE_WEBHOOK_USER"),
   pipedrive_webhook_pass: System.get_env("PIPEDRIVE_WEBHOOK_PASS"),
-  env: System.get_env("ENV")
+  env: System.get_env("ENV"),
+  reply_to: System.get_env("REPORT_REPLY_EMAIL")
 
 config :re, ReWeb.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),

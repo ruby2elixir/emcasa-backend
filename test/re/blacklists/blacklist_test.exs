@@ -1,4 +1,4 @@
-defmodule Re.FavoritesTest do
+defmodule Re.BlacklistsTest do
   use Re.ModelCase
 
   alias Re.{
