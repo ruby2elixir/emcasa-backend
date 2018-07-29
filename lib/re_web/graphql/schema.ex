@@ -58,7 +58,7 @@ defmodule ReWeb.Schema do
 
     @desc "Get user profile"
     field :user_profile, :user do
-      arg :id, non_null(:id)
+      arg :id, :id
 
       resolve &Resolvers.Accounts.profile/2
     end
