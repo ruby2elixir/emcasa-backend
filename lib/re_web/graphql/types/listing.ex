@@ -6,7 +6,10 @@ defmodule ReWeb.Types.Listing do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
-  alias ReWeb.Resolvers
+  alias ReWeb.{
+    GraphQL.Middlewares,
+    Resolvers
+  }
 
   object :listing do
     field :id, :id
@@ -171,6 +174,30 @@ defmodule ReWeb.Types.Listing do
     field :inserted_at, :datetime
   end
 
+  object :listing_queries do
+    @desc "Listings index"
+    field :listings, :listing_index do
+      arg :pagination, :listing_pagination
+      arg :filters, :listing_filter
+
+      resolve &Resolvers.Listings.index/2
+    end
+
+    @desc "Show listing"
+    field :listing, :listing do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Listings.show/2
+      middleware(Middlewares.Visualizations)
+    end
+
+    @desc "List user listings"
+    field :user_listings, list_of(:listing), do: resolve(&Resolvers.Listings.per_user/2)
+
+    @desc "Get favorited listings"
+    field :favorited_listings, list_of(:listing), resolve: &Resolvers.Accounts.favorited/2
+  end
+
   object :listing_mutations do
     @desc "Insert listing"
     field :insert_listing, type: :listing do
@@ -234,6 +261,53 @@ defmodule ReWeb.Types.Listing do
       arg :input, non_null(list_of(non_null(:image_update_input)))
 
       resolve &Resolvers.Images.update_images/2
+    end
+  end
+
+  object :listing_subscriptions do
+    @desc "Subscribe to listing activation"
+    field :listing_activated, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "listing_activated"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :activate_listing,
+        topic: fn _ ->
+          "listing_activated"
+        end
+    end
+
+    @desc "Subscribe to listing deactivation"
+    field :listing_deactivated, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "listing_deactivated"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :deactivate_listing,
+        topic: fn _ ->
+          "listing_deactivated"
+        end
+    end
+
+    @desc "Subscribe to listing show"
+    field :listing_inserted, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "listing_inserted"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :insert_listing,
+        topic: fn _ ->
+          "listing_inserted"
+        end
     end
   end
 end

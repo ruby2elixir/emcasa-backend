@@ -22,6 +22,11 @@ defmodule ReWeb.Types.Dashboard do
     field :area_count, :integer, resolve: &DashboardResolvers.area_count/2
   end
 
+  object :dashboard_queries do
+    @desc "Get dashboard stats"
+    field :dashboard, :dashboard, resolve: &DashboardResolvers.index/2
+  end
+
   object :dashboard_mutations do
     field :upload_factors_csv, :string do
       arg :factors, non_null(:upload)

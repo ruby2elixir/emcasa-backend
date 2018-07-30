@@ -43,6 +43,25 @@ defmodule ReWeb.Types.Message do
     end
   end
 
+  object :message_queries do
+    @desc "List user messages, optionally by listing"
+    field :listing_user_messages, :user_messages do
+      arg :listing_id, :id
+      arg :sender_id, :id
+
+      resolve &MessagesResolver.get/2
+    end
+
+
+    @desc "Get user channels"
+    field :user_channels, list_of(:channel) do
+      arg :other_participant_id, :id
+      arg :listing_id, :id
+
+      resolve(&ChannelsResolver.all/2)
+    end
+  end
+
   object :message_mutations do
     @desc "Send message"
     field :send_message, type: :message do
@@ -65,5 +84,37 @@ defmodule ReWeb.Types.Message do
   scalar :datetime, name: "DateTime" do
     serialize(&NaiveDateTime.to_iso8601/1)
     parse(&ReWeb.Graphql.SchemaHelpers.parse_datetime/1)
+  end
+
+  object :message_subscriptions do
+    @desc "Subscribe to your messages"
+    field :message_sent, :message do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          %{id: receiver_id} -> {:ok, topic: receiver_id}
+          _ -> {:error, :unauthenticated}
+        end
+      end)
+
+      trigger :send_message,
+        topic: fn message ->
+          message.receiver_id
+        end
+    end
+
+    @desc "Send e-mail notification for new messages"
+    field :message_sent_admin, :message do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "message_sent_admin"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :send_message,
+        topic: fn _ ->
+          "message_sent_admin"
+        end
+    end
   end
 end
