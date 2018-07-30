@@ -19,7 +19,10 @@ config :re, ReWeb.Endpoint,
   check_origin: false
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger,
+  level: :info,
+  backends: [Timber.LoggerBackends.HTTP],
+  utc_log: true
 
 config :re, ReWeb.Guardian,
   allowed_algos: ["ES512"],
