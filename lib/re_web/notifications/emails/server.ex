@@ -21,6 +21,8 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   alias ReWeb.Endpoint, as: PubSub
 
+  @env Application.get_env(:re, :env)
+
   @spec start_link :: GenServer.start_link()
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -87,7 +89,7 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   defp notify?(%{notification_preferences: %{email: false}}), do: false
   defp notify?(%{confirmed: false}), do: false
-  defp notify?(_), do: true
+  defp notify?(_), do: @env != "staging"
 
   defp deliver(email, state) do
     case Mailer.deliver(email) do
@@ -181,10 +183,10 @@ defmodule ReWeb.Notifications.Emails.Server do
        ) do
     with {:ok, sender} <- Users.get(sender_id),
          {:ok, receiver} <- Users.get(receiver_id),
-         :ok <- send_message?(receiver) do
+         true <- notify?(receiver) do
       handle_cast({UserEmail, :message_sent, [sender, receiver, message]}, state)
     else
-      :notifications_disabled ->
+      false ->
         Logger.info("User disabled notification")
 
         {:noreply, state}
@@ -195,9 +197,6 @@ defmodule ReWeb.Notifications.Emails.Server do
         {:noreply, state}
     end
   end
-
-  defp send_message?(%{notification_preferences: %{email: true}}), do: :ok
-  defp send_message?(_receiver), do: :notifications_disabled
 
   defp merge_params(user, contact_request) do
     user = Map.take(user, ~w(name email phone)a)
