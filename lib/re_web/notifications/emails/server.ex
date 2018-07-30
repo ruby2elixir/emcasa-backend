@@ -43,9 +43,11 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   defp subscribe(subscription) do
     case Absinthe.run(subscription, Schema, context: %{pubsub: PubSub, current_user: :system}) do
-      {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
+      {:ok, %{"subscribed" => topic}} ->
+        PubSub.subscribe(topic)
+
       error ->
-        Logger.warn("Subscription error: #{inspect error}")
+        Logger.warn("Subscription error: #{inspect(error)}")
 
         :nothing
     end
@@ -167,7 +169,16 @@ defmodule ReWeb.Notifications.Emails.Server do
     end
   end
 
-  defp handle_data(%{"messageSentAdmin" => %{"message" => message, "receiver" => %{"id" => receiver_id}, "sender" => %{"id" => sender_id}}}, state) do
+  defp handle_data(
+         %{
+           "messageSentAdmin" => %{
+             "message" => message,
+             "receiver" => %{"id" => receiver_id},
+             "sender" => %{"id" => sender_id}
+           }
+         },
+         state
+       ) do
     with {:ok, sender} <- Users.get(sender_id),
          {:ok, receiver} <- Users.get(receiver_id),
          :ok <- send_message?(receiver) do
@@ -177,8 +188,9 @@ defmodule ReWeb.Notifications.Emails.Server do
         Logger.info("User disabled notification")
 
         {:noreply, state}
+
       error ->
-        Logger.warn("Error sending message notification to user: #{inspect error}")
+        Logger.warn("Error sending message notification to user: #{inspect(error)}")
 
         {:noreply, state}
     end

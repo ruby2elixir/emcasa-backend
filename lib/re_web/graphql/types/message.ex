@@ -52,7 +52,6 @@ defmodule ReWeb.Types.Message do
       resolve &MessagesResolver.get/2
     end
 
-
     @desc "Get user channels"
     field :user_channels, list_of(:channel) do
       arg :other_participant_id, :id

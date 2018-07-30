@@ -238,13 +238,17 @@ defmodule ReWeb.Notifications.UserEmail do
     |> to(receiver_email)
     |> from(sender_email)
     |> subject("Você recebeu uma nova mensagem")
-    |> html_body("Mensagem: #{message}<br>
+    |> html_body(
+      "Mensagem: #{message}<br>
                   De: #{sender_email}<br>
-                  Se você não quer mais receber e-mails, desabilite suas notificações <a href=\"#{url}\">no seu perfil</a><br>")
+                  Se você não quer mais receber e-mails, desabilite suas notificações <a href=\"#{
+        url
+      }\">no seu perfil</a><br>"
+    )
     |> text_body("""
-      Mensagem: #{message}
-      De: #{sender_email}
-      Se você não quer mais receber e-mails, desabilite suas notificações <a href=\"#{url}\">no seu perfil</a><br>
-      """)
+    Mensagem: #{message}
+    De: #{sender_email}
+    Se você não quer mais receber e-mails, desabilite suas notificações <a href=\"#{url}\">no seu perfil</a><br>
+    """)
   end
 end

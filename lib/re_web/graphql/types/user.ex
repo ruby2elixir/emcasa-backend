@@ -42,7 +42,6 @@ defmodule ReWeb.Types.User do
   end
 
   object :user_queries do
-
     @desc "Get favorited users"
     field :show_favorited_users, list_of(:user) do
       arg :id, non_null(:id)
