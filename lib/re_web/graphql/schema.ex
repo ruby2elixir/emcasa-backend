@@ -101,6 +101,21 @@ defmodule ReWeb.Schema do
         end
     end
 
+    @desc "Send e-mail notification for new messages"
+    field :message_sent_admin, :message do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "message_sent_admin"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :send_message,
+        topic: fn _ ->
+          "message_sent_admin"
+        end
+    end
+
     @desc "Subscribe to listing activation"
     field :listing_activated, :listing do
       config(fn _args, %{context: %{current_user: current_user}} ->

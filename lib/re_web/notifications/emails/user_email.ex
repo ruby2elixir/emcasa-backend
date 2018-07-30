@@ -18,6 +18,7 @@ defmodule ReWeb.Notifications.UserEmail do
   @confirm_path "/confirmar_cadastro/"
   @reset_path "/resetar_senha/"
   @listing_path "/imoveis/"
+  @profile_path "/meu-perfil"
 
   def notify_interest(%Interest{
         name: name,
@@ -228,5 +229,22 @@ defmodule ReWeb.Notifications.UserEmail do
                   Número: #{request.address.street_number}
                   #{unless request.is_covered, do: "Área fora de cobertura"}
                   Preço sugerido: #{suggested_price || "Rua não coberta"}")
+  end
+
+  def message_sent(%{email: sender_email}, %{email: receiver_email}, message) do
+    url = build_url(@profile_path, "")
+
+    new()
+    |> to(receiver_email)
+    |> from(sender_email)
+    |> subject("Você recebeu uma nova mensagem")
+    |> html_body("Mensagem: #{message}<br>
+                  De: #{sender_email}<br>
+                  Se você não quer mais receber e-mails, desabilite suas notificações <a href=\"#{url}\">no seu perfil</a><br>")
+    |> text_body("""
+      Mensagem: #{message}
+      De: #{sender_email}
+      Se você não quer mais receber e-mails, desabilite suas notificações <a href=\"#{url}\">no seu perfil</a><br>
+      """)
   end
 end

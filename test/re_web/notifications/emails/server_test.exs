@@ -283,5 +283,41 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         )
       )
     end
+
+    test "notify user of new message" do
+      %{id: sender_id} = sender = insert(:user, email: "admin@emcasa.com")
+      %{id: receiver_id} = receiver = insert(:user, email: "user@emcasa.com")
+
+      insert(:message, sender_id: sender_id, receiver_id: receiver_id, message: "message")
+
+      Server.handle_info(
+        %Phoenix.Socket.Broadcast{
+          payload: %{result: %{data: %{"messageSentAdmin" => %{"receiver" => %{"id" => receiver_id}, "sender" => %{"id" => sender_id}, "message" => "message"}}}}
+        },
+        []
+      )
+
+      assert_email_sent(
+        UserEmail.message_sent(sender, receiver, "message")
+      )
+    end
+
+    test "do not notify user of new message if email notification is disabled" do
+      %{id: sender_id} = sender = insert(:user, email: "admin@emcasa.com")
+      %{id: receiver_id} = receiver = insert(:user, email: "user@emcasa.com", notification_preferences: %{email: false, app: true})
+
+      insert(:message, sender_id: sender_id, receiver_id: receiver_id, message: "message")
+
+      Server.handle_info(
+        %Phoenix.Socket.Broadcast{
+          payload: %{result: %{data: %{"messageSentAdmin" => %{"receiver" => %{"id" => receiver_id}, "sender" => %{"id" => sender_id}, "message" => "message"}}}}
+        },
+        []
+      )
+
+      assert_email_not_sent(
+        UserEmail.message_sent(sender, receiver, "message")
+      )
+    end
   end
 end
