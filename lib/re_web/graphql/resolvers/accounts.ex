@@ -16,8 +16,9 @@ defmodule ReWeb.Resolvers.Accounts do
     end
   end
 
-  def profile(%{id: id}, %{context: %{current_user: current_user}}) do
-    with {:ok, user} <- Users.get(id),
+  def profile(params, %{context: %{current_user: current_user}}) do
+    with {:ok, id} <- get_user_id(params, current_user),
+         {:ok, user} <- Users.get(id),
          :ok <- Bodyguard.permit(Users, :show_profile, current_user, user),
          do: {:ok, user}
   end
@@ -73,4 +74,8 @@ defmodule ReWeb.Resolvers.Accounts do
   end
 
   defp format_error({type, {message, _}}), do: {:message, "#{type} #{message}"}
+
+  defp get_user_id(%{id: id}, _), do: {:ok, id}
+  defp get_user_id(_, %{id: id}), do: {:ok, id}
+  defp get_user_id(_, _), do: {:error, :unauthorized}
 end

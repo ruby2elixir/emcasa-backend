@@ -201,6 +201,38 @@ defmodule ReWeb.GraphQL.UsersTest do
              } = json_response(conn, 200)["data"]
     end
 
+    test "user should get his own profile without passing id as parameter", %{
+      user_conn: conn,
+      user_user: user
+    } do
+      query = """
+        {
+          userProfile {
+            id
+            name
+            email
+            phone
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
+
+      user_id = to_string(user.id)
+      user_name = to_string(user.name)
+      user_email = to_string(user.email)
+      user_phone = to_string(user.phone)
+
+      assert %{
+               "userProfile" => %{
+                 "id" => ^user_id,
+                 "name" => ^user_name,
+                 "email" => ^user_email,
+                 "phone" => ^user_phone
+               }
+             } = json_response(conn, 200)["data"]
+    end
+
     test "anonymous should not get user profile", %{unauthenticated_conn: conn} do
       user =
         insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
