@@ -89,7 +89,7 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   defp notify?(%{notification_preferences: %{email: false}}), do: false
   defp notify?(%{confirmed: false}), do: false
-  defp notify?(_), do: @env != "staging"
+  defp notify?(_), do: @env not in ~w(staging test)
 
   defp deliver(email, state) do
     case Mailer.deliver(email) do
