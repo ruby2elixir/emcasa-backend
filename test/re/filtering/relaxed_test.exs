@@ -52,16 +52,32 @@ defmodule Re.Filtering.RelaxedTest do
       insert(:listing_blacklist, listing: listing4, user: user)
 
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], filters: %{max_price: 1_100_000}} =
-               Relaxed.get(%{"max_price" => 1_000_000, "excluded_listing_ids" => [id1], "current_user" => user})
+               Relaxed.get(%{
+                 "max_price" => 1_000_000,
+                 "excluded_listing_ids" => [id1],
+                 "current_user" => user
+               })
 
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], filters: %{min_price: 900_000}} =
-               Relaxed.get(%{"min_price" => 1_000_000, "excluded_listing_ids" => [id1], "current_user" => user})
+               Relaxed.get(%{
+                 "min_price" => 1_000_000,
+                 "excluded_listing_ids" => [id1],
+                 "current_user" => user
+               })
 
       assert %{listings: [%{id: ^id3}], filters: %{max_area: 99}} =
-               Relaxed.get(%{"max_area" => 90, "excluded_listing_ids" => [id2], "current_user" => user})
+               Relaxed.get(%{
+                 "max_area" => 90,
+                 "excluded_listing_ids" => [id2],
+                 "current_user" => user
+               })
 
       assert %{listings: [%{id: ^id2}], filters: %{min_area: 90}} =
-               Relaxed.get(%{"min_area" => 100, "excluded_listing_ids" => [id1], "current_user" => user})
+               Relaxed.get(%{
+                 "min_area" => 100,
+                 "excluded_listing_ids" => [id1],
+                 "current_user" => user
+               })
 
       assert %{listings: [%{id: ^id3}], filters: %{max_area: 99, max_price: 1_100_000}} =
                Relaxed.get(%{
@@ -80,10 +96,18 @@ defmodule Re.Filtering.RelaxedTest do
                })
 
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], filters: %{max_garage_spots: 3}} =
-               Relaxed.get(%{"max_garage_spots" => 2, "excluded_listing_ids" => [id1], "current_user" => user})
+               Relaxed.get(%{
+                 "max_garage_spots" => 2,
+                 "excluded_listing_ids" => [id1],
+                 "current_user" => user
+               })
 
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], filters: %{min_garage_spots: 2}} =
-               Relaxed.get(%{"min_garage_spots" => 3, "excluded_listing_ids" => [id1], "current_user" => user})
+               Relaxed.get(%{
+                 "min_garage_spots" => 3,
+                 "excluded_listing_ids" => [id1],
+                 "current_user" => user
+               })
     end
   end
 end

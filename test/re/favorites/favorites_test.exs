@@ -25,14 +25,11 @@ defmodule Re.FavoritesTest do
       %{id: user_id} = user = insert(:user)
       %{id: listing_id} = listing = insert(:listing)
 
-      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
-               Favorites.add(listing, user)
+      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} = Favorites.add(listing, user)
 
-      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
-               Favorites.add(listing, user)
+      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} = Favorites.add(listing, user)
 
-      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} =
-               Favorites.add(listing, user)
+      assert {:ok, %{listing_id: ^listing_id, user_id: ^user_id}} = Favorites.add(listing, user)
 
       assert Repo.get_by(Favorite, listing_id: listing.id, user_id: user.id)
     end

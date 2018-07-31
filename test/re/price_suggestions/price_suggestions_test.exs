@@ -62,52 +62,51 @@ defmodule Re.PriceSuggestionsTest do
       insert(
         :factors,
         street: "Manhattan Street 1",
-        intercept: -399.23068199,
-        area: 237.0332,
-        bathrooms: 83.74290,
-        rooms: -578.5033,
-        garage_spots: 962.982,
-        r2: 0.09128
+        intercept: -39.23068199,
+        area: 23.0332,
+        bathrooms: 8.74290,
+        rooms: -57.5033,
+        garage_spots: 96.982,
+        r2: 0.0928
       )
 
       insert(
         :factors,
         street: "Manhattan Street 2",
-        intercept: -399.23068199,
-        area: 237.0332,
-        bathrooms: 83.74290,
-        rooms: -578.5033,
-        garage_spots: 962.982,
-        r2: 0.09128
+        intercept: -39.23068199,
+        area: 23.0332,
+        bathrooms: 8.74290,
+        rooms: -57.5033,
+        garage_spots: 96.982,
+        r2: 0.0928
       )
 
       insert(
         :factors,
         street: "Manhattan Street 3",
-        intercept: -399.23068199,
-        area: 237.0332,
-        bathrooms: 83.74290,
-        rooms: -578.5033,
-        garage_spots: 962.982,
-        r2: 0.09128
+        intercept: -39.23068199,
+        area: 23.0332,
+        bathrooms: 8.74290,
+        rooms: -57.5033,
+        garage_spots: 96.982,
+        r2: 0.0928
       )
 
       insert(
         :factors,
         street: "Manhattan Street 4",
-        intercept: -399.23068199,
-        area: 237.0332,
-        bathrooms: 83.74290,
-        rooms: -578.5033,
-        garage_spots: 962.982,
-        r2: 0.09128
+        intercept: -39.23068199,
+        area: 23.0332,
+        bathrooms: 8.74290,
+        rooms: -57.5033,
+        garage_spots: 96.982,
+        r2: 0.0928
       )
 
       PriceSuggestions.save_factors(file)
 
       assert [
                %{
-                 street: "Manhattan Street" <> _,
                  intercept: -399.23068199,
                  area: 237.0332,
                  bathrooms: 83.74290,
@@ -116,7 +115,6 @@ defmodule Re.PriceSuggestionsTest do
                  r2: 0.09128
                },
                %{
-                 street: "Manhattan Street" <> _,
                  intercept: -399.23068199,
                  area: 237.0332,
                  bathrooms: 83.74290,
@@ -125,7 +123,6 @@ defmodule Re.PriceSuggestionsTest do
                  r2: 0.09128
                },
                %{
-                 street: "Manhattan Street" <> _,
                  intercept: -399.23068199,
                  area: 237.0332,
                  bathrooms: 83.74290,
@@ -134,7 +131,6 @@ defmodule Re.PriceSuggestionsTest do
                  r2: 0.09128
                },
                %{
-                 street: "Manhattan Street" <> _,
                  intercept: -399.23068199,
                  area: 237.0332,
                  bathrooms: 83.74290,

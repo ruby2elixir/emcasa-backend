@@ -95,7 +95,8 @@ defmodule Re.RelatedTest do
 
       insert(:listing_blacklist, listing: listing3, user: user)
 
-      assert %{listings: [%{id: ^id2}], remaining_count: 0} = Related.get(listing, %{current_user: user})
+      assert %{listings: [%{id: ^id2}], remaining_count: 0} =
+               Related.get(listing, %{current_user: user})
     end
   end
 end

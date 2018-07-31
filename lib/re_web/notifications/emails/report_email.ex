@@ -1,4 +1,7 @@
 defmodule ReWeb.Notifications.ReportEmail do
+  @moduledoc """
+  Module for building report emails
+  """
   use Phoenix.Swoosh, view: ReWeb.Notifications.ReportView, layout: {ReWeb.LayoutView, :email}
 
   @frontend_url Application.get_env(:re, :frontend_url)

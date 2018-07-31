@@ -9,9 +9,7 @@ defmodule ReWeb.GraphQL.Blacklists.QueryTest do
     conn = put_req_header(conn, "accept", "application/json")
     user_user = insert(:user, email: "user@email.com", role: "user")
 
-    {:ok,
-     user_user: user_user,
-     user_conn: login_as(conn, user_user)}
+    {:ok, user_user: user_user, user_conn: login_as(conn, user_user)}
   end
 
   describe "userProfile" do
