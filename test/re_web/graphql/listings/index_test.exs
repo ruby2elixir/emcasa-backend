@@ -275,7 +275,7 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
            } = json_response(conn, 200)["data"]
   end
 
-  test "should query listing index with filtering", %{unauthenticated_conn: conn} do
+  test "should query listing index with filtering", %{user_conn: conn, user_user: user} do
     insert(
       :listing,
       price: 1_100_000,
@@ -514,7 +514,7 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
       garage_spots: 4
     )
 
-    listing =
+    listing1 =
       insert(
         :listing,
         price: 900_000,
@@ -531,6 +531,26 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
           ),
         garage_spots: 2
       )
+
+    listing2 =
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+    insert(:listing_blacklist, listing: listing2, user: user)
 
     filter_input = """
       {
@@ -562,7 +582,7 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
       }
     """
 
-    listing_id = to_string(listing.id)
+    listing1_id = to_string(listing1.id)
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
 
@@ -570,7 +590,7 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
              "listings" => %{
                "listings" => [
                  %{
-                   "id" => ^listing_id
+                   "id" => ^listing1_id
                  }
                ]
              }

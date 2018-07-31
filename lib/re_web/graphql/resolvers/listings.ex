@@ -11,11 +11,17 @@ defmodule ReWeb.Resolvers.Listings do
     PriceSuggestions
   }
 
-  def index(params, _) do
+  def index(params, %{context: %{current_user: current_user}}) do
     pagination = Map.get(params, :pagination, %{})
     filtering = Map.get(params, :filters, %{})
 
-    {:ok, Listings.paginated(Map.merge(pagination, filtering))}
+    params =
+      params
+      |> Map.merge(pagination)
+      |> Map.merge(filtering)
+      |> Map.merge(%{current_user: current_user})
+
+    {:ok, Listings.paginated(params)}
   end
 
   def show(%{id: id}, %{context: %{current_user: current_user}}) do
@@ -75,6 +81,16 @@ defmodule ReWeb.Resolvers.Listings do
       |> Dataloader.load(Listings, {:favorited, params}, user)
       |> on_load(fn loader ->
         {:ok, Dataloader.get(loader, Listings, {:favorited, params}, user)}
+      end)
+    end
+  end
+
+  def blacklists(user, params, %{context: %{loader: loader, current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Listings, :per_user, current_user, user) do
+      loader
+      |> Dataloader.load(Listings, {:blacklisted, params}, user)
+      |> on_load(fn loader ->
+        {:ok, Dataloader.get(loader, Listings, {:blacklisted, params}, user)}
       end)
     end
   end
