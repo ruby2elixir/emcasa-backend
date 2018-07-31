@@ -15,7 +15,7 @@ defmodule Re.Stats.Reports do
   @env Application.get_env(:re, :env)
 
   def monthly_stats() do
-    unless @env == "staging" do
+    unless @env in ~w(staging test) do
       time = Timex.now()
 
       users_to_be_notified()

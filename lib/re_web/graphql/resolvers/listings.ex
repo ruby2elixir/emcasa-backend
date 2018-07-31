@@ -173,6 +173,7 @@ defmodule ReWeb.Resolvers.Listings do
        ) do
     case @env do
       "staging" -> :nothing
+      "test" -> :nothing
       _ -> @emails.price_updated(new_price, listing)
     end
   end
