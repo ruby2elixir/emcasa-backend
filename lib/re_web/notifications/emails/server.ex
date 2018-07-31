@@ -21,6 +21,8 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   alias ReWeb.Endpoint, as: PubSub
 
+  @env Application.get_env(:re, :env)
+
   @spec start_link :: GenServer.start_link()
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -33,6 +35,7 @@ defmodule ReWeb.Notifications.Emails.Server do
       subscribe("subscription { listingInserted { id owner { id } } }")
       subscribe("subscription { contactRequested { id } }")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
+      subscribe("subscription { messageSentAdmin { sender { id } receiver { id } message } }")
     end
 
     {:ok, args}
@@ -42,8 +45,13 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   defp subscribe(subscription) do
     case Absinthe.run(subscription, Schema, context: %{pubsub: PubSub, current_user: :system}) do
-      {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
-      _ -> :nothing
+      {:ok, %{"subscribed" => topic}} ->
+        PubSub.subscribe(topic)
+
+      error ->
+        Logger.warn("Subscription error: #{inspect(error)}")
+
+        :nothing
     end
   end
 
@@ -81,7 +89,7 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   defp notify?(%{notification_preferences: %{email: false}}), do: false
   defp notify?(%{confirmed: false}), do: false
-  defp notify?(_), do: true
+  defp notify?(_), do: @env != "staging"
 
   defp deliver(email, state) do
     case Mailer.deliver(email) do
@@ -160,6 +168,33 @@ defmodule ReWeb.Notifications.Emails.Server do
 
       error ->
         {:noreply, [{:error, error} | state]}
+    end
+  end
+
+  defp handle_data(
+         %{
+           "messageSentAdmin" => %{
+             "message" => message,
+             "receiver" => %{"id" => receiver_id},
+             "sender" => %{"id" => sender_id}
+           }
+         },
+         state
+       ) do
+    with {:ok, sender} <- Users.get(sender_id),
+         {:ok, receiver} <- Users.get(receiver_id),
+         true <- notify?(receiver) do
+      handle_cast({UserEmail, :message_sent, [sender, receiver, message]}, state)
+    else
+      false ->
+        Logger.info("User disabled notification")
+
+        {:noreply, state}
+
+      error ->
+        Logger.warn("Error sending message notification to user: #{inspect(error)}")
+
+        {:noreply, state}
     end
   end
 

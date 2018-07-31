@@ -6,6 +6,7 @@ defmodule ReWeb.Types.User do
 
   alias ReWeb.Resolvers.Accounts, as: AccountsResolver
   alias ReWeb.Resolvers.Listings, as: ListingsResolver
+  alias ReWeb.Resolvers.Favorites, as: FavoritesResolver
 
   object :user do
     field :id, :id
@@ -40,6 +41,22 @@ defmodule ReWeb.Types.User do
     field :app, :boolean
   end
 
+  object :user_queries do
+    @desc "Get favorited users"
+    field :show_favorited_users, list_of(:user) do
+      arg :id, non_null(:id)
+
+      resolve &FavoritesResolver.users/2
+    end
+
+    @desc "Get user profile"
+    field :user_profile, :user do
+      arg :id, :id
+
+      resolve &AccountsResolver.profile/2
+    end
+  end
+
   object :user_mutations do
     @desc "Edit user profile"
     field :edit_user_profile, type: :user do
@@ -66,6 +83,23 @@ defmodule ReWeb.Types.User do
       arg :new_password, :string
 
       resolve &AccountsResolver.change_password/2
+    end
+  end
+
+  object :user_subscriptions do
+    @desc "Subscribe to email change"
+    field :email_changed, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "email_changed"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :change_email,
+        topic: fn _ ->
+          "email_changed"
+        end
     end
   end
 end
