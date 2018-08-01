@@ -597,6 +597,55 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
            } = json_response(conn, 200)["data"]
   end
 
+  test "should query listing index with order by", %{user_conn: conn} do
+    %{id: id1} = insert(:listing, garage_spots: 1, price: 1_000_000, rooms: 2)
+    %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 4)
+    %{id: id3} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 4)
+    %{id: id4} = insert(:listing, garage_spots: 2, price: 1_000_000, rooms: 3)
+    %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 3)
+    %{id: id6} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 5)
+
+    order_by_input = """
+      [
+        {field: PRICE, type: DESC},
+        {field: GARAGE_SPOTS, type: DESC},
+        {field: ROOMS, type: ASC}
+      ]
+    """
+
+    query = """
+      {
+        listings (orderBy: #{order_by_input}) {
+          listings {
+            id
+          }
+        }
+      }
+    """
+
+    string_id1 = to_string(id1)
+    string_id2 = to_string(id2)
+    string_id3 = to_string(id3)
+    string_id4 = to_string(id4)
+    string_id5 = to_string(id5)
+    string_id6 = to_string(id6)
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+
+    assert %{
+             "listings" => %{
+               "listings" => [
+                 %{"id" => ^string_id3},
+                 %{"id" => ^string_id6},
+                 %{"id" => ^string_id4},
+                 %{"id" => ^string_id1},
+                 %{"id" => ^string_id2},
+                 %{"id" => ^string_id5}
+               ]
+             }
+           } = json_response(conn, 200)["data"]
+  end
+
   test "should query listing index with respective images", %{unauthenticated_conn: conn} do
     insert(:listing, images: [build(:image), build(:image), build(:image)])
     insert(:listing, images: [build(:image), build(:image), build(:image)])
