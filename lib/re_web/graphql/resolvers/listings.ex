@@ -9,6 +9,7 @@ defmodule ReWeb.Resolvers.Listings do
     Listings,
     Listings.PriceHistories,
     Listings.Related,
+    Neighborhoods,
     PriceSuggestions
   }
 
@@ -165,6 +166,8 @@ defmodule ReWeb.Resolvers.Listings do
 
     {:ok, Related.get(listing, params)}
   end
+
+  def neighborhoods(_, _), do: {:ok, Neighborhoods.all()}
 
   @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
   @env Application.get_env(:re, :env)

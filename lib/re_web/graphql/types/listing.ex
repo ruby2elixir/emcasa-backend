@@ -203,6 +203,8 @@ defmodule ReWeb.Types.Listing do
 
     @desc "Get favorited listings"
     field :favorited_listings, list_of(:listing), resolve: &Resolvers.Accounts.favorited/2
+
+    field :neighborhoods, list_of(:string), resolve: &Resolvers.Listings.neighborhoods/2
   end
 
   object :listing_mutations do
