@@ -32,6 +32,8 @@ defmodule Re.Listings.Related do
   defp exclude_current(query, listing), do: from(l in query, where: ^listing.id != l.id)
 
   defp build_query(:address, listing, query) do
+    listing = Repo.preload(listing, :address)
+
     from(
       l in query,
       join: a in assoc(l, :address),
