@@ -19,9 +19,7 @@ defmodule Re.Neighborhoods do
                distinct: a.neighborhood
              )
 
-  def all do
-    Repo.all(@all_query)
-  end
+  def all, do: Repo.all(@all_query)
 
   @doc """
   Temporary mapping to find nearby neighborhood
