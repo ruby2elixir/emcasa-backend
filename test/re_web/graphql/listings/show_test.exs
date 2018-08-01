@@ -58,6 +58,9 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
         bathrooms: 1
       )
 
+    insert(:listing, address: address)
+    insert(:listing, address: address)
+
     query = """
       {
         listing (id: #{listing_id}) {
@@ -83,6 +86,11 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
             price
           }
           suggestedPrice
+          related (pagination: {pageSize: 2}, filters: {}) {
+            listings {
+              id
+            }
+          }
         }
       }
     """
@@ -103,7 +111,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "tourVisualisationCount" => 3,
                "listingVisualisationCount" => 3,
                "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}],
-               "suggestedPrice" => 26_279.915
+               "suggestedPrice" => 26_279.915,
+               "related" => %{
+                 "listings" => [_, _]
+               }
              }
            } = json_response(conn, 200)["data"]
   end
@@ -134,6 +145,9 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
         price_history: price_history
       )
 
+    insert(:listing, address: address)
+    insert(:listing, address: address)
+
     query = """
       {
         listing (id: #{listing_id}) {
@@ -159,6 +173,11 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
             price
           }
           suggestedPrice
+          related (pagination: {pageSize: 2}, filters: {}) {
+            listings {
+              id
+            }
+          }
         }
       }
     """
@@ -179,7 +198,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "tourVisualisationCount" => 3,
                "listingVisualisationCount" => 3,
                "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}],
-               "suggestedPrice" => nil
+               "suggestedPrice" => nil,
+               "related" => %{
+                 "listings" => [_, _]
+               }
              }
            } = json_response(conn, 200)["data"]
   end
@@ -193,6 +215,9 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     %{id: listing_id} =
       insert(:listing, address: address, images: active_images ++ inactive_images, user: user)
 
+    insert(:listing, address: address)
+    insert(:listing, address: address)
+
     query = """
       {
         listing (id: #{listing_id}) {
@@ -218,6 +243,11 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
             price
           }
           suggestedPrice
+          related (pagination: {pageSize: 2}, filters: {}) {
+            listings {
+              id
+            }
+          }
         }
       }
     """
@@ -236,7 +266,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "tourVisualisationCount" => nil,
                "listingVisualisationCount" => nil,
                "previousPrices" => nil,
-               "suggestedPrice" => nil
+               "suggestedPrice" => nil,
+               "related" => %{
+                 "listings" => [_, _]
+               }
              }
            } = json_response(conn, 200)["data"]
   end
@@ -250,6 +283,9 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
     %{id: listing_id} =
       insert(:listing, address: address, images: active_images ++ inactive_images, user: user)
 
+    insert(:listing, address: address)
+    insert(:listing, address: address)
+
     query = """
       {
         listing (id: #{listing_id}) {
@@ -275,6 +311,11 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
             price
           }
           suggestedPrice
+          related (pagination: {pageSize: 2}, filters: {}) {
+            listings {
+              id
+            }
+          }
         }
       }
     """
@@ -293,7 +334,10 @@ defmodule ReWeb.GraphQL.Listings.ShowTest do
                "tourVisualisationCount" => nil,
                "listingVisualisationCount" => nil,
                "previousPrices" => nil,
-               "suggestedPrice" => nil
+               "suggestedPrice" => nil,
+               "related" => %{
+                 "listings" => [_, _]
+               }
              }
            } = json_response(conn, 200)["data"]
   end

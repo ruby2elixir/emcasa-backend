@@ -8,6 +8,7 @@ defmodule ReWeb.Resolvers.Listings do
     Addresses,
     Listings,
     Listings.PriceHistories,
+    Listings.Related,
     Neighborhoods,
     PriceSuggestions
   }
@@ -151,6 +152,19 @@ defmodule ReWeb.Resolvers.Listings do
       prices when is_list(prices) -> {:ok, true}
       _ -> {:ok, false}
     end
+  end
+
+  def related(listing, params, %{context: %{current_user: current_user}}) do
+    pagination = Map.get(params, :pagination, %{})
+    filtering = Map.get(params, :filters, %{})
+
+    params =
+      params
+      |> Map.merge(pagination)
+      |> Map.merge(filtering)
+      |> Map.merge(%{current_user: current_user})
+
+    {:ok, Related.get(listing, params)}
   end
 
   def neighborhoods(_, _), do: {:ok, Neighborhoods.all()}
