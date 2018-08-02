@@ -158,6 +158,17 @@ defmodule ReWeb.Types.Listing do
     field :excluded_listing_ids, list_of(:id)
   end
 
+  input_object :order_by do
+    field :field, :orderable_field
+    field :type, :order_type
+  end
+
+  enum :orderable_field,
+    values:
+      ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies)a
+
+  enum :order_type, values: ~w(desc asc)a
+
   input_object :listing_filter do
     field :max_price, :integer
     field :min_price, :integer
@@ -186,6 +197,7 @@ defmodule ReWeb.Types.Listing do
     field :listings, :listing_index do
       arg :pagination, :listing_pagination
       arg :filters, :listing_filter
+      arg :order_by, list_of(:order_by)
 
       resolve &Resolvers.Listings.index/2
     end
@@ -204,6 +216,7 @@ defmodule ReWeb.Types.Listing do
     @desc "Get favorited listings"
     field :favorited_listings, list_of(:listing), resolve: &Resolvers.Accounts.favorited/2
 
+    @desc "Get all neighborhoods"
     field :neighborhoods, list_of(:string), resolve: &Resolvers.Listings.neighborhoods/2
   end
 

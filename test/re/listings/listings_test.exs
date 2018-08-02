@@ -206,6 +206,33 @@ defmodule Re.ListingsTest do
       assert %{remaining_count: 1, listings: [%{id: ^id}]} =
                Listings.paginated(%{page_size: 1, max_garage_spots: 4})
     end
+
+    test "should order by attributes" do
+      %{id: id1} = insert(:listing, garage_spots: 1, price: 1_000_000, rooms: 2)
+      %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 4)
+      %{id: id3} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 4)
+      %{id: id4} = insert(:listing, garage_spots: 2, price: 1_000_000, rooms: 3)
+      %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 3)
+      %{id: id6} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 5)
+
+      assert %{
+               listings: [
+                 %{id: ^id3},
+                 %{id: ^id6},
+                 %{id: ^id4},
+                 %{id: ^id1},
+                 %{id: ^id2},
+                 %{id: ^id5}
+               ]
+             } =
+               Listings.paginated(%{
+                 order_by: [
+                   %{field: :price, type: :desc},
+                   %{field: :garage_spots, type: :desc},
+                   %{field: :rooms, type: :asc}
+                 ]
+               })
+    end
   end
 
   describe "deactivate/1" do

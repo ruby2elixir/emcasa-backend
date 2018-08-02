@@ -21,7 +21,23 @@ defmodule Re.Listings.Queries do
     images: Images.Queries.listing_preload()
   ]
 
+  @orderable_fields ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies)a
+
   def active(query \\ Listing), do: where(query, [l], l.is_active == true)
+
+  def order_by(query, %{order_by: orders}) do
+    orders
+    |> Enum.reduce(query, &order_by_criterias/2)
+    |> order_by()
+  end
+
+  def order_by(query, _), do: query
+
+  defp order_by_criterias(%{field: field, type: type}, query) when field in @orderable_fields do
+    order_by(query, [l], {^type, ^field})
+  end
+
+  defp order_by_criterias(_, query), do: query
 
   def order_by(query \\ Listing) do
     query
