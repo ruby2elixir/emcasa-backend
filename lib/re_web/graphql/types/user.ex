@@ -43,6 +43,11 @@ defmodule ReWeb.Types.User do
     field :app, :boolean
   end
 
+  object :credentials do
+    field :jwt, :string
+    field :user, :user
+  end
+
   input_object :notification_preferences_input do
     field :email, :boolean
     field :app, :boolean
@@ -65,6 +70,14 @@ defmodule ReWeb.Types.User do
   end
 
   object :user_mutations do
+    @desc "Sign in"
+    field :sign_in, type: :credentials do
+      arg :email, non_null(:string)
+      arg :password, non_null(:string)
+
+      resolve &AccountsResolver.sign_in/2
+    end
+
     @desc "Edit user profile"
     field :edit_user_profile, type: :user do
       arg :id, non_null(:id)

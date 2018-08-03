@@ -497,4 +497,146 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "signIn" do
+    test "should sign in as admin", %{unauthenticated_conn: conn} do
+      user =
+        insert(:user,
+          role: "admin",
+          email: "admin@emcasa.com",
+          password_hash: Bcrypt.hashpwsalt("password")
+        )
+
+      mutation = """
+        mutation {
+          signIn(email: "admin@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(user.id)
+      user_name = to_string(user.name)
+      user_email = to_string(user.email)
+      user_phone = to_string(user.phone)
+
+      assert %{
+               "signIn" => %{
+                 "jwt" => jwt,
+                 "user" => %{
+                   "id" => ^user_id,
+                   "name" => ^user_name,
+                   "email" => ^user_email,
+                   "phone" => ^user_phone
+                 }
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert jwt
+    end
+
+    test "should sign in as user", %{unauthenticated_conn: conn} do
+      user =
+        insert(:user,
+          role: "user",
+          email: "user@emcasa.com",
+          password_hash: Bcrypt.hashpwsalt("password")
+        )
+
+      mutation = """
+        mutation {
+          signIn(email: "user@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(user.id)
+      user_name = to_string(user.name)
+      user_email = to_string(user.email)
+      user_phone = to_string(user.phone)
+
+      assert %{
+               "signIn" => %{
+                 "jwt" => jwt,
+                 "user" => %{
+                   "id" => ^user_id,
+                   "name" => ^user_name,
+                   "email" => ^user_email,
+                   "phone" => ^user_phone
+                 }
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert jwt
+    end
+
+    test "should not sign in on wrong e-mail", %{unauthenticated_conn: conn} do
+      insert(:user,
+        role: "user",
+        email: "user@emcasa.com",
+        password_hash: Bcrypt.hashpwsalt("password")
+      )
+
+      mutation = """
+        mutation {
+          signIn(email: "wrongemail@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+    end
+
+    test "should not sign in on wrong password", %{unauthenticated_conn: conn} do
+      insert(:user,
+        role: "user",
+        email: "user@emcasa.com",
+        password_hash: Bcrypt.hashpwsalt("password")
+      )
+
+      mutation = """
+        mutation {
+          signIn(email: "user@emcasa.com", password: "wrongpass") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+    end
+  end
 end
