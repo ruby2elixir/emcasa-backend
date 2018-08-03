@@ -36,6 +36,7 @@ defmodule ReWeb.Notifications.Emails.Server do
       subscribe("subscription { contactRequested { id } }")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
       subscribe("subscription { messageSentAdmin { sender { id } receiver { id } message } }")
+      subscribe("subscription { userRegistered { user { id } } }")
     end
 
     {:ok, args}
@@ -195,6 +196,18 @@ defmodule ReWeb.Notifications.Emails.Server do
         Logger.warn("Error sending message notification to user: #{inspect(error)}")
 
         {:noreply, state}
+    end
+  end
+
+  defp handle_data(%{"userRegistered" => %{"user" => %{"id" => id}}}, state) do
+    with {:ok, user} <- Users.get(id) do
+      {:noreply, state} = handle_cast({UserEmail, :user_registered, [user]}, state)
+      handle_cast({UserEmail, :confirm, [user]}, state)
+    else
+      {:error, :not_found} ->
+        Logger.warn("Error notifying user registration: user id #{id} not found")
+
+        {:noreply, [{:error, :not_found, "ID: #{id}"} | state]}
     end
   end
 

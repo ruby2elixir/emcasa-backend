@@ -639,4 +639,67 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "register" do
+    test "should register user", %{unauthenticated_conn: conn} do
+      mutation = """
+        mutation {
+          register(name: "name", phone: "11223344", email: "user@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert %{
+               "register" => %{
+                 "jwt" => jwt,
+                 "user" => %{
+                   "id" => _,
+                   "name" => "name",
+                   "email" => "user@emcasa.com",
+                   "phone" => "11223344"
+                 }
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert jwt
+      assert user = Repo.get_by(User, email: "user@emcasa.com")
+      assert "name" == user.name
+      assert "11223344" == user.phone
+      assert Bcrypt.checkpw("password", user.password_hash)
+      refute user.confirmed
+      assert user.confirmation_token
+      assert "user" == user.role
+    end
+
+    test "should not register with same email", %{unauthenticated_conn: conn} do
+      insert(:user, email: "user@emcasa.com")
+
+      mutation = """
+        mutation {
+          register(name: "name", phone: "11223344", email: "user@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "email: has already been taken", "code" => 422}] = json_response(conn, 200)["errors"]
+    end
+  end
 end
