@@ -17,6 +17,13 @@ defmodule ReWeb.Resolvers.Accounts do
     end
   end
 
+  def register(params, _) do
+    with {:ok, user} <- Users.create(params),
+         {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
+      {:ok, %{jwt: jwt, user: user}}
+    end
+  end
+
   def favorited(_args, %{context: %{current_user: current_user}}) do
     case Bodyguard.permit(Users, :favorited_listings, current_user, %{}) do
       :ok -> {:ok, Users.favorited(current_user)}

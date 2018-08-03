@@ -78,6 +78,16 @@ defmodule ReWeb.Types.User do
       resolve &AccountsResolver.sign_in/2
     end
 
+    @desc "Register"
+    field :register, type: :credentials do
+      arg :name, non_null(:string)
+      arg :email, non_null(:string)
+      arg :phone, :string
+      arg :password, non_null(:string)
+
+      resolve &AccountsResolver.register/2
+    end
+
     @desc "Edit user profile"
     field :edit_user_profile, type: :user do
       arg :id, non_null(:id)
@@ -119,6 +129,21 @@ defmodule ReWeb.Types.User do
       trigger :change_email,
         topic: fn _ ->
           "email_changed"
+        end
+    end
+
+    @desc "Subscribe to email change"
+    field :user_registered, :credentials do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "user_registered"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :register,
+        topic: fn _ ->
+          "user_registered"
         end
     end
   end
