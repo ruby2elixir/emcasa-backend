@@ -139,7 +139,7 @@ defmodule ReWeb.Types.User do
         end
     end
 
-    @desc "Subscribe to email change"
+    @desc "Subscribe to user registration"
     field :user_registered, :credentials do
       config(fn _args, %{context: %{current_user: current_user}} ->
         case current_user do
@@ -151,6 +151,21 @@ defmodule ReWeb.Types.User do
       trigger :register,
         topic: fn _ ->
           "user_registered"
+        end
+    end
+
+    @desc "Subscribe to user confirmation"
+    field :user_confirmed, :credentials do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "user_confirmed"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :confirm,
+        topic: fn _ ->
+          "user_confirmed"
         end
     end
   end
