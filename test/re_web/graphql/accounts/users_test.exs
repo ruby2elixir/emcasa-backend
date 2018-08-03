@@ -699,7 +699,8 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert [%{"message" => "email: has already been taken", "code" => 422}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "email: has already been taken", "code" => 422}] =
+               json_response(conn, 200)["errors"]
     end
   end
 
@@ -726,7 +727,7 @@ defmodule ReWeb.GraphQL.UsersTest do
                "confirm" => %{
                  "jwt" => jwt,
                  "user" => %{
-                   "id" => ^user_id,
+                   "id" => ^user_id
                  }
                }
              } = json_response(conn, 200)["data"]
@@ -755,7 +756,8 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert [%{"message" => "email: has already been taken", "code" => 422}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "email: has already been taken", "code" => 422}] =
+               json_response(conn, 200)["errors"]
     end
   end
 
@@ -777,7 +779,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       assert %{
                "resetPassword" => %{
-                  "id" => ^user_id,
+                 "id" => ^user_id
                }
              } = json_response(conn, 200)["data"]
 
@@ -818,7 +820,7 @@ defmodule ReWeb.GraphQL.UsersTest do
 
       assert %{
                "redefinePassword" => %{
-                  "id" => ^user_id,
+                 "id" => ^user_id
                }
              } = json_response(conn, 200)["data"]
 

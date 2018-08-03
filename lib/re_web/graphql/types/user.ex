@@ -183,6 +183,7 @@ defmodule ReWeb.Types.User do
           "user_confirmed"
         end
     end
+
     @desc "Subscribe to password reset"
     field :password_reset_requested, :user do
       config(fn _args, %{context: %{current_user: current_user}} ->
