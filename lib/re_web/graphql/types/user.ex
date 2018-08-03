@@ -121,6 +121,21 @@ defmodule ReWeb.Types.User do
 
       resolve &AccountsResolver.change_password/2
     end
+
+    @desc "Request password reset"
+    field :reset_password, type: :user do
+      arg :email, non_null(:string)
+
+      resolve &AccountsResolver.reset_password/2
+    end
+
+    @desc "Request password redefinition"
+    field :redefine_password, type: :user do
+      arg :reset_token, non_null(:string)
+      arg :new_password, non_null(:string)
+
+      resolve &AccountsResolver.redefine_password/2
+    end
   end
 
   object :user_subscriptions do
@@ -166,6 +181,20 @@ defmodule ReWeb.Types.User do
       trigger :confirm,
         topic: fn _ ->
           "user_confirmed"
+        end
+    end
+    @desc "Subscribe to password reset"
+    field :password_reset_requested, :user do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "password_reset_requested"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :reset_password,
+        topic: fn _ ->
+          "password_reset_requested"
         end
     end
   end

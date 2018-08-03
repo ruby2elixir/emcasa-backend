@@ -31,6 +31,20 @@ defmodule ReWeb.Resolvers.Accounts do
     end
   end
 
+  def reset_password(%{email: email}, _) do
+    with {:ok, user} <- Users.get_by_email(email),
+         {:ok, user} <- Users.reset_password(user) do
+      {:ok, user}
+    end
+  end
+
+  def redefine_password(%{reset_token: reset_token, new_password: new_password}, _) do
+    with {:ok, user} <- Users.get_by_reset_token(reset_token),
+         {:ok, user} <- Users.redefine_password(user, new_password) do
+      {:ok, user}
+    end
+  end
+
   def favorited(_args, %{context: %{current_user: current_user}}) do
     case Bodyguard.permit(Users, :favorited_listings, current_user, %{}) do
       :ok -> {:ok, Users.favorited(current_user)}

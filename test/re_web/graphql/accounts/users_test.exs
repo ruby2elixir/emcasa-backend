@@ -758,4 +758,87 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert [%{"message" => "email: has already been taken", "code" => 422}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "resetPassword" do
+    test "should request password reset", %{unauthenticated_conn: conn} do
+      %{id: id} = insert(:user, email: "user@emcasa.com")
+
+      mutation = """
+        mutation {
+          resetPassword(email: "user@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(id)
+
+      assert %{
+               "resetPassword" => %{
+                  "id" => ^user_id,
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert user = Repo.get(User, id)
+      assert user.reset_token
+    end
+
+    test "should not request password reset with wrong e-mail", %{unauthenticated_conn: conn} do
+      mutation = """
+        mutation {
+          resetPassword(email: "inexistinguser@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "redefinePassword" do
+    test "should request password reset", %{unauthenticated_conn: conn} do
+      %{id: id} = insert(:user, reset_token: "token")
+
+      mutation = """
+        mutation {
+          redefinePassword(resetToken: "token", newPassword: "newpassword") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(id)
+
+      assert %{
+               "redefinePassword" => %{
+                  "id" => ^user_id,
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert user = Repo.get(User, id)
+      assert Bcrypt.checkpw("newpassword", user.password_hash)
+      refute user.reset_token
+    end
+
+    test "should not request password reset with wrong e-mail", %{unauthenticated_conn: conn} do
+      mutation = """
+        mutation {
+          resetPassword(email: "inexistinguser@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
+    end
+  end
 end
