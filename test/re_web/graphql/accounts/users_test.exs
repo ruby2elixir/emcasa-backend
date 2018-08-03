@@ -702,4 +702,60 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert [%{"message" => "email: has already been taken", "code" => 422}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "confirm" do
+    test "should confirm user registration", %{unauthenticated_conn: conn} do
+      %{id: id} = insert(:user, confirmed: false, confirmation_token: "token")
+
+      mutation = """
+        mutation {
+          confirm(token: "token") {
+            jwt
+            user {
+              id
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(id)
+
+      assert %{
+               "confirm" => %{
+                 "jwt" => jwt,
+                 "user" => %{
+                   "id" => ^user_id,
+                 }
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert jwt
+      assert user = Repo.get(User, id)
+      assert user.confirmed
+    end
+
+    test "should not register with same email", %{unauthenticated_conn: conn} do
+      insert(:user, email: "user@emcasa.com")
+
+      mutation = """
+        mutation {
+          register(name: "name", phone: "11223344", email: "user@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "email: has already been taken", "code" => 422}] = json_response(conn, 200)["errors"]
+    end
+  end
 end

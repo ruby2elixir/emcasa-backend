@@ -88,6 +88,13 @@ defmodule ReWeb.Types.User do
       resolve &AccountsResolver.register/2
     end
 
+    @desc "Confirm registration"
+    field :confirm, type: :credentials do
+      arg :token, non_null(:string)
+
+      resolve &AccountsResolver.confirm/2
+    end
+
     @desc "Edit user profile"
     field :edit_user_profile, type: :user do
       arg :id, non_null(:id)
