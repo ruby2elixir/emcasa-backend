@@ -20,4 +20,6 @@ defmodule ReWeb.Resolvers.Interests do
         error
     end
   end
+
+  def interest_types(_, _), do: {:ok, Interests.get_types()}
 end

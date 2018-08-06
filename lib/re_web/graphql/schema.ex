@@ -22,6 +22,7 @@ defmodule ReWeb.Schema do
     import_fields(:user_queries)
     import_fields(:message_queries)
     import_fields(:dashboard_queries)
+    import_fields(:interest_queries)
   end
 
   mutation do
