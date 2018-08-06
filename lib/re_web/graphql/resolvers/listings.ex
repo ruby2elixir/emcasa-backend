@@ -25,7 +25,12 @@ defmodule ReWeb.Resolvers.Listings do
       |> Map.merge(filtering)
       |> Map.merge(%{current_user: current_user})
 
-    {:ok, Listings.paginated(params)}
+    listing_index =
+      params
+      |> Listings.paginated()
+      |> Map.put(:filters, filtering)
+
+    {:ok, listing_index}
   end
 
   def show(%{id: id}, %{context: %{current_user: current_user}}) do
