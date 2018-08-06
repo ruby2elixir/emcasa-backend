@@ -8,6 +8,8 @@ defmodule Re.Accounts.Users do
     User
   }
 
+  alias Ecto.Changeset
+
   defdelegate authorize(action, user, params), to: Re.Users.Policy
 
   def get(id) do
@@ -32,14 +34,11 @@ defmodule Re.Accounts.Users do
   end
 
   def create(params) do
-    params =
-      params
-      |> Map.put("role", "user")
-      |> Map.put("confirmation_token", UUID.uuid4())
-      |> Map.put("confirmed", false)
-      |> Map.put("notification_preferences", %{})
-
     %User{}
+    |> Changeset.change(role: "user")
+    |> Changeset.change(confirmation_token: UUID.uuid4())
+    |> Changeset.change(confirmed: false)
+    |> Changeset.change(notification_preferences: %{})
     |> User.create_changeset(params)
     |> Repo.insert()
   end

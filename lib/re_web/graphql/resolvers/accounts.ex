@@ -9,6 +9,42 @@ defmodule ReWeb.Resolvers.Accounts do
     Users
   }
 
+  def sign_in(%{email: email, password: password}, _) do
+    with {:ok, user} <- Auth.find_user(email),
+         :ok <- Auth.check_password(password, user),
+         {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
+      {:ok, %{jwt: jwt, user: user}}
+    end
+  end
+
+  def register(params, _) do
+    with {:ok, user} <- Users.create(params),
+         {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
+      {:ok, %{jwt: jwt, user: user}}
+    end
+  end
+
+  def confirm(%{token: token}, _) do
+    with {:ok, user} <- Users.confirm(token),
+         {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
+      {:ok, %{jwt: jwt, user: user}}
+    end
+  end
+
+  def reset_password(%{email: email}, _) do
+    with {:ok, user} <- Users.get_by_email(email),
+         {:ok, user} <- Users.reset_password(user) do
+      {:ok, user}
+    end
+  end
+
+  def redefine_password(%{reset_token: reset_token, new_password: new_password}, _) do
+    with {:ok, user} <- Users.get_by_reset_token(reset_token),
+         {:ok, user} <- Users.redefine_password(user, new_password) do
+      {:ok, user}
+    end
+  end
+
   def favorited(_args, %{context: %{current_user: current_user}}) do
     case Bodyguard.permit(Users, :favorited_listings, current_user, %{}) do
       :ok -> {:ok, Users.favorited(current_user)}

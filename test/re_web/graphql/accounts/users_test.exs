@@ -497,4 +497,350 @@ defmodule ReWeb.GraphQL.UsersTest do
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "signIn" do
+    test "should sign in as admin", %{unauthenticated_conn: conn} do
+      user =
+        insert(:user,
+          role: "admin",
+          email: "admin@emcasa.com",
+          password_hash: Bcrypt.hashpwsalt("password")
+        )
+
+      mutation = """
+        mutation {
+          signIn(email: "admin@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(user.id)
+      user_name = to_string(user.name)
+      user_email = to_string(user.email)
+      user_phone = to_string(user.phone)
+
+      assert %{
+               "signIn" => %{
+                 "jwt" => jwt,
+                 "user" => %{
+                   "id" => ^user_id,
+                   "name" => ^user_name,
+                   "email" => ^user_email,
+                   "phone" => ^user_phone
+                 }
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert jwt
+    end
+
+    test "should sign in as user", %{unauthenticated_conn: conn} do
+      user =
+        insert(:user,
+          role: "user",
+          email: "user@emcasa.com",
+          password_hash: Bcrypt.hashpwsalt("password")
+        )
+
+      mutation = """
+        mutation {
+          signIn(email: "user@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(user.id)
+      user_name = to_string(user.name)
+      user_email = to_string(user.email)
+      user_phone = to_string(user.phone)
+
+      assert %{
+               "signIn" => %{
+                 "jwt" => jwt,
+                 "user" => %{
+                   "id" => ^user_id,
+                   "name" => ^user_name,
+                   "email" => ^user_email,
+                   "phone" => ^user_phone
+                 }
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert jwt
+    end
+
+    test "should not sign in on wrong e-mail", %{unauthenticated_conn: conn} do
+      insert(:user,
+        role: "user",
+        email: "user@emcasa.com",
+        password_hash: Bcrypt.hashpwsalt("password")
+      )
+
+      mutation = """
+        mutation {
+          signIn(email: "wrongemail@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+    end
+
+    test "should not sign in on wrong password", %{unauthenticated_conn: conn} do
+      insert(:user,
+        role: "user",
+        email: "user@emcasa.com",
+        password_hash: Bcrypt.hashpwsalt("password")
+      )
+
+      mutation = """
+        mutation {
+          signIn(email: "user@emcasa.com", password: "wrongpass") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "register" do
+    test "should register user", %{unauthenticated_conn: conn} do
+      mutation = """
+        mutation {
+          register(name: "name", phone: "11223344", email: "user@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert %{
+               "register" => %{
+                 "jwt" => jwt,
+                 "user" => %{
+                   "id" => _,
+                   "name" => "name",
+                   "email" => "user@emcasa.com",
+                   "phone" => "11223344"
+                 }
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert jwt
+      assert user = Repo.get_by(User, email: "user@emcasa.com")
+      assert "name" == user.name
+      assert "11223344" == user.phone
+      assert Bcrypt.checkpw("password", user.password_hash)
+      refute user.confirmed
+      assert user.confirmation_token
+      assert "user" == user.role
+    end
+
+    test "should not register with same email", %{unauthenticated_conn: conn} do
+      insert(:user, email: "user@emcasa.com")
+
+      mutation = """
+        mutation {
+          register(name: "name", phone: "11223344", email: "user@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "email: has already been taken", "code" => 422}] =
+               json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "confirm" do
+    test "should confirm user registration", %{unauthenticated_conn: conn} do
+      %{id: id} = insert(:user, confirmed: false, confirmation_token: "token")
+
+      mutation = """
+        mutation {
+          confirm(token: "token") {
+            jwt
+            user {
+              id
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(id)
+
+      assert %{
+               "confirm" => %{
+                 "jwt" => jwt,
+                 "user" => %{
+                   "id" => ^user_id
+                 }
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert jwt
+      assert user = Repo.get(User, id)
+      assert user.confirmed
+    end
+
+    test "should not register with same email", %{unauthenticated_conn: conn} do
+      insert(:user, email: "user@emcasa.com")
+
+      mutation = """
+        mutation {
+          register(name: "name", phone: "11223344", email: "user@emcasa.com", password: "password") {
+            jwt
+            user {
+              id
+              name
+              email
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "email: has already been taken", "code" => 422}] =
+               json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "resetPassword" do
+    test "should request password reset", %{unauthenticated_conn: conn} do
+      %{id: id} = insert(:user, email: "user@emcasa.com")
+
+      mutation = """
+        mutation {
+          resetPassword(email: "user@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(id)
+
+      assert %{
+               "resetPassword" => %{
+                 "id" => ^user_id
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert user = Repo.get(User, id)
+      assert user.reset_token
+    end
+
+    test "should not request password reset with wrong e-mail", %{unauthenticated_conn: conn} do
+      mutation = """
+        mutation {
+          resetPassword(email: "inexistinguser@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "redefinePassword" do
+    test "should request password reset", %{unauthenticated_conn: conn} do
+      %{id: id} = insert(:user, reset_token: "token")
+
+      mutation = """
+        mutation {
+          redefinePassword(resetToken: "token", newPassword: "newpassword") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      user_id = to_string(id)
+
+      assert %{
+               "redefinePassword" => %{
+                 "id" => ^user_id
+               }
+             } = json_response(conn, 200)["data"]
+
+      assert user = Repo.get(User, id)
+      assert Bcrypt.checkpw("newpassword", user.password_hash)
+      refute user.reset_token
+    end
+
+    test "should not request password reset with wrong e-mail", %{unauthenticated_conn: conn} do
+      mutation = """
+        mutation {
+          resetPassword(email: "inexistinguser@emcasa.com") {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
+    end
+  end
 end
