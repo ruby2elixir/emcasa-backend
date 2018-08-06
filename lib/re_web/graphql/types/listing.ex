@@ -218,6 +218,9 @@ defmodule ReWeb.Types.Listing do
 
     @desc "Get all neighborhoods"
     field :neighborhoods, list_of(:string), resolve: &Resolvers.Listings.neighborhoods/2
+
+    @desc "Featured listings"
+    field :featured_listings, list_of(:listing), resolve: &Resolvers.Listings.featured/2
   end
 
   object :listing_mutations do

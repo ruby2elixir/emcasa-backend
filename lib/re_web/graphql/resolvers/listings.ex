@@ -7,6 +7,7 @@ defmodule ReWeb.Resolvers.Listings do
   alias Re.{
     Addresses,
     Listings,
+    Listings.Featured,
     Listings.PriceHistories,
     Listings.Related,
     Neighborhoods,
@@ -168,6 +169,8 @@ defmodule ReWeb.Resolvers.Listings do
   end
 
   def neighborhoods(_, _), do: {:ok, Neighborhoods.all()}
+
+  def featured(_, _), do: {:ok, Featured.get_graphql()}
 
   @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
   @env Application.get_env(:re, :env)

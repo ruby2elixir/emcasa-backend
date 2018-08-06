@@ -21,6 +21,15 @@ defmodule Re.Listings.Featured do
     |> Enum.take(4)
   end
 
+  def get_graphql do
+    Listings.Queries.active()
+    |> Listings.Queries.order_by()
+    |> Listings.Queries.preload_relations(images: Images.Queries.listing_preload())
+    |> Repo.all()
+    |> Enum.filter(&filter_no_images/1)
+    |> Enum.take(4)
+  end
+
   defp filter_no_images(%{images: []}), do: false
   defp filter_no_images(_), do: true
 end
