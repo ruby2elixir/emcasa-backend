@@ -18,21 +18,21 @@ defmodule ReWeb.Types.User do
 
     field :favorites, list_of(:listing) do
       arg :pagination, non_null(:listing_pagination)
-      arg :filters, non_null(:listing_filter)
+      arg :filters, non_null(:listing_filter_input)
 
       resolve &ListingsResolver.favorites/3
     end
 
     field :blacklists, list_of(:listing) do
       arg :pagination, non_null(:listing_pagination)
-      arg :filters, non_null(:listing_filter)
+      arg :filters, non_null(:listing_filter_input)
 
       resolve &ListingsResolver.blacklists/3
     end
 
     field :listings, list_of(:listing) do
       arg :pagination, non_null(:listing_pagination)
-      arg :filters, non_null(:listing_filter)
+      arg :filters, non_null(:listing_filter_input)
 
       resolve &ListingsResolver.owned/3
     end
