@@ -6,6 +6,7 @@ defmodule ReWeb.Resolvers.Listings do
 
   alias Re.{
     Addresses,
+    Filtering,
     Listings,
     Listings.Featured,
     Listings.PriceHistories,
@@ -166,6 +167,28 @@ defmodule ReWeb.Resolvers.Listings do
       |> Map.merge(%{current_user: current_user})
 
     {:ok, Related.get(listing, params)}
+  end
+
+  def relaxed(params, %{context: %{current_user: current_user}}) do
+    pagination = Map.get(params, :pagination, %{})
+
+    relaxed_filters =
+      params
+      |> Map.get(:filters, %{})
+      |> Filtering.relax()
+
+    params =
+      params
+      |> Map.merge(pagination)
+      |> Map.merge(relaxed_filters)
+      |> Map.merge(%{current_user: current_user})
+
+    listing_index =
+      params
+      |> Listings.paginated()
+      |> Map.put(:filters, relaxed_filters)
+
+    {:ok, listing_index}
   end
 
   def neighborhoods(_, _), do: {:ok, Neighborhoods.all()}

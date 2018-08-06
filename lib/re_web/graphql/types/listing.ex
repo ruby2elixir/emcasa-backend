@@ -63,7 +63,7 @@ defmodule ReWeb.Types.Listing do
 
     field :related, :listing_index do
       arg :pagination, non_null(:listing_pagination)
-      arg :filters, non_null(:listing_filter)
+      arg :filters, non_null(:listing_filter_input)
 
       resolve &Resolvers.Listings.related/3
     end
@@ -151,6 +151,7 @@ defmodule ReWeb.Types.Listing do
   object :listing_index do
     field :listings, list_of(:listing)
     field :remaining_count, :integer
+    field :filters, :listing_filter
   end
 
   input_object :listing_pagination do
@@ -169,7 +170,25 @@ defmodule ReWeb.Types.Listing do
 
   enum :order_type, values: ~w(desc asc)a
 
-  input_object :listing_filter do
+  input_object :listing_filter_input do
+    field :max_price, :integer
+    field :min_price, :integer
+    field :max_rooms, :integer
+    field :min_rooms, :integer
+    field :min_area, :integer
+    field :max_area, :integer
+    field :neighborhoods, list_of(:string)
+    field :types, list_of(:string)
+    field :max_lat, :float
+    field :min_lat, :float
+    field :max_lng, :float
+    field :min_lng, :float
+    field :neighborhoods_slugs, list_of(:string)
+    field :max_garage_spots, :integer
+    field :min_garage_spots, :integer
+  end
+
+  object :listing_filter do
     field :max_price, :integer
     field :min_price, :integer
     field :max_rooms, :integer
@@ -196,7 +215,7 @@ defmodule ReWeb.Types.Listing do
     @desc "Listings index"
     field :listings, :listing_index do
       arg :pagination, :listing_pagination
-      arg :filters, :listing_filter
+      arg :filters, :listing_filter_input
       arg :order_by, list_of(:order_by)
 
       resolve &Resolvers.Listings.index/2
@@ -221,6 +240,15 @@ defmodule ReWeb.Types.Listing do
 
     @desc "Featured listings"
     field :featured_listings, list_of(:listing), resolve: &Resolvers.Listings.featured/2
+
+    @desc "Get listings with relaxed filters"
+    field :relaxed_listings, :listing_index do
+      arg :pagination, :listing_pagination
+      arg :filters, :listing_filter_input
+      arg :order_by, list_of(:order_by)
+
+      resolve &Resolvers.Listings.relaxed/2
+    end
   end
 
   object :listing_mutations do

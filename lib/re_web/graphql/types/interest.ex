@@ -33,6 +33,18 @@ defmodule ReWeb.Types.Interest do
     field :user, :user, resolve: dataloader(Re.Accounts)
   end
 
+  object :interest_type do
+    field :id, :id
+    field :name, :string
+  end
+
+  object :interest_queries do
+    @desc "Interest types"
+    field :interest_types,
+      type: list_of(:interest_type),
+      resolve: &InterestsResolver.interest_types/2
+  end
+
   object :interest_mutations do
     @desc "Request contact"
     field :request_contact, type: :contact do
