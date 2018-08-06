@@ -578,6 +578,9 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
           listings {
             id
           }
+          filters {
+            maxPrice
+          }
         }
       }
     """
@@ -592,7 +595,10 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
                  %{
                    "id" => ^listing1_id
                  }
-               ]
+               ],
+               "filters" => %{
+                "maxPrice" => 1_000_000
+               }
              }
            } = json_response(conn, 200)["data"]
   end
