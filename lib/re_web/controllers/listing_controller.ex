@@ -26,7 +26,7 @@ defmodule ReWeb.ListingController do
 
   def create(conn, %{"listing" => listing_params, "address" => address_params} = params, user) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
-         {:ok, address, _changeset} <- Addresses.insert_or_update(address_params),
+         {:ok, address} <- Addresses.insert_or_update(address_params),
          {:ok, listing} <- Listings.insert(listing_params, address, user) do
       send_email_if_not_admin(listing, user)
 
@@ -54,10 +54,10 @@ defmodule ReWeb.ListingController do
   def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, user) do
     with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, user, listing),
-         {:ok, address, address_changeset} <- Addresses.insert_or_update(address_params),
+         {:ok, address} <- Addresses.insert_or_update(address_params),
          {:ok, listing, listing_changeset} <-
            Listings.update(listing, listing_params, address, user) do
-      send_email_if_not_admin(listing, user, listing_changeset, address_changeset)
+      send_email_if_not_admin(listing, user, listing_changeset)
 
       render(conn, get_view(user), "edit.json", listing: listing)
     end
@@ -93,18 +93,15 @@ defmodule ReWeb.ListingController do
   defp send_email_if_not_admin(
          listing,
          %{role: "user"} = user,
-         listing_changeset,
-         address_changeset
+         listing_changeset
        ) do
-    changes = Enum.concat(listing_changeset.changes, address_changeset.changes)
-    @emails.listing_updated(user, listing, changes)
+    @emails.listing_updated(user, listing, listing_changeset.changes)
   end
 
   defp send_email_if_not_admin(
          %{is_active: true} = listing,
          %{role: "admin"},
-         %{changes: %{price: new_price}},
-         _
+         %{changes: %{price: new_price}}
        ) do
     case @env do
       "staging" -> :nothing
@@ -113,7 +110,7 @@ defmodule ReWeb.ListingController do
     end
   end
 
-  defp send_email_if_not_admin(_, %{role: "admin"}, _, _), do: :nothing
+  defp send_email_if_not_admin(_, %{role: "admin"}, _), do: :nothing
 
   defp get_view(%{role: "admin"}), do: ReWeb.ListingAdminView
   defp get_view(_), do: ReWeb.ListingView

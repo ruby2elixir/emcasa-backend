@@ -30,17 +30,19 @@ defmodule Re.Addresses do
     end
   end
 
-  def insert_or_update(params) do
-    changeset =
-      params
-      |> get()
-      |> build_address(params)
-      |> Address.changeset(params)
-
-    case Repo.insert_or_update(changeset) do
-      {:ok, address} -> {:ok, address, changeset}
-      error -> error
+  def get_by_id(id) do
+    case Repo.get(Address, id) do
+      nil -> {:error, :not_found}
+      address -> {:ok, address}
     end
+  end
+
+  def insert_or_update(params) do
+    params
+    |> get()
+    |> build_address(params)
+    |> Address.changeset(params)
+    |> Repo.insert_or_update()
   end
 
   defp build_address({:error, :not_found}, %{

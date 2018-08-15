@@ -40,11 +40,9 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
-  def insert(%{input: %{address: address_params} = listing_params}, %{
-        context: %{current_user: current_user}
-      }) do
+  def insert(%{input: listing_params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, current_user, listing_params),
-         {:ok, address, _changeset} <- Addresses.insert_or_update(address_params),
+         {:ok, address} <- get_address(listing_params),
          {:ok, listing} <- Listings.insert(listing_params, address, current_user) do
       {:ok, listing}
     else
@@ -53,15 +51,19 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
-  def update(%{id: id, input: %{address: address_params} = listing_params}, %{
+  defp get_address(%{address: address_params}), do: Addresses.insert_or_update(address_params)
+  defp get_address(%{address_id: id}), do: Addresses.get_by_id(id)
+  defp get_address(_), do: {:error, :bad_request}
+
+  def update(%{id: id, input: listing_params}, %{
         context: %{current_user: current_user}
       }) do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, current_user, listing),
-         {:ok, address, address_changeset} <- Addresses.insert_or_update(address_params),
+         {:ok, address} <- get_address(listing_params),
          {:ok, listing, listing_changeset} <-
            Listings.update(listing, listing_params, address, current_user) do
-      send_email_if_not_admin(listing, current_user, listing_changeset, address_changeset)
+      send_email_if_not_admin(listing, current_user, listing_changeset)
 
       {:ok, listing}
     end
@@ -206,18 +208,15 @@ defmodule ReWeb.Resolvers.Listings do
   defp send_email_if_not_admin(
          listing,
          %{role: "user"} = user,
-         listing_changeset,
-         address_changeset
+         listing_changeset
        ) do
-    changes = Enum.concat(listing_changeset.changes, address_changeset.changes)
-    @emails.listing_updated(user, listing, changes)
+    @emails.listing_updated(user, listing, listing_changeset.changes)
   end
 
   defp send_email_if_not_admin(
          %{is_active: true} = listing,
          %{role: "admin"},
-         %{changes: %{price: new_price}},
-         _
+         %{changes: %{price: new_price}}
        ) do
     case @env do
       "staging" -> :nothing
@@ -226,5 +225,5 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
-  defp send_email_if_not_admin(_, %{role: "admin"}, _, _), do: :nothing
+  defp send_email_if_not_admin(_, %{role: "admin"}, _), do: :nothing
 end

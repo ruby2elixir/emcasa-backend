@@ -13,7 +13,7 @@ defmodule ReWeb.Resolvers.Addresses do
 
   def insert(%{input: params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Addresses, :insert, current_user, %{}),
-         {:ok, address, _changeset} <- Addresses.insert_or_update(params) do
+         {:ok, address} <- Addresses.insert_or_update(params) do
       {:ok, address}
     end
   end

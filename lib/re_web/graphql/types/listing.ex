@@ -92,7 +92,8 @@ defmodule ReWeb.Types.Listing do
 
     field :phone, :string
 
-    field :address, non_null(:address_input)
+    field :address, :address_input
+    field :address_id, :id
   end
 
   object :address do
