@@ -96,6 +96,7 @@ defmodule ReWeb.Types.Listing do
   end
 
   object :address do
+    field :id, :id
     field :street, :string
     field :street_number, :string
     field :neighborhood, :string
@@ -252,6 +253,13 @@ defmodule ReWeb.Types.Listing do
   end
 
   object :listing_mutations do
+    @desc "Insert address"
+    field :address_insert, type: :address do
+      arg :input, non_null(:address_input)
+
+      resolve &Resolvers.Addresses.insert/2
+    end
+
     @desc "Insert listing"
     field :insert_listing, type: :listing do
       arg :input, non_null(:listing_input)

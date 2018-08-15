@@ -10,6 +10,8 @@ defmodule Re.Addresses do
     Repo
   }
 
+  defdelegate authorize(action, user, params), to: __MODULE__.Policy
+
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
 
   def query(query, %{has_admin_rights: true}), do: query
