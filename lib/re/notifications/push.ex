@@ -19,17 +19,17 @@ defmodule Re.Notifications.Push do
   def notify_user(user, listings) do
     user.device_id
     |> Pigeon.FCM.Notification.new()
-    |> put_notification(%{
-      "title" => "Relatório mensal"
+    |> Pigeon.FCM.Notification.put_notification(%{
+      "title" => "Relatório mensal",
       "body" => "Visualize seu relatório mensal de acesso aos seus imóveis",
       })
-    |> put_data(%{"listings" => listings})
+    |> Pigeon.FCM.Notification.put_data(%{"listings" => listings})
     |> Pigeon.FCM.push(&on_response/1)
   end
 
   defp on_response(%{status: :success} = n) do
-    FCM.Notification.remove?(n)
-    FCM.Notification.retry?(n)
+    Pigeon.FCM.Notification.remove?(n)
+    Pigeon.FCM.Notification.retry?(n)
   end
 
   defp on_response(%{status: :unauthorized}), do: Logger.warn("Push notification unauthorized")
