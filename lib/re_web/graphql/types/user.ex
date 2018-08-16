@@ -84,6 +84,7 @@ defmodule ReWeb.Types.User do
       arg :email, non_null(:string)
       arg :phone, :string
       arg :password, non_null(:string)
+      arg :device_token, :string
 
       resolve &AccountsResolver.register/2
     end
@@ -101,6 +102,7 @@ defmodule ReWeb.Types.User do
       arg :name, :string
       arg :phone, :string
       arg :notification_preferences, :notification_preferences_input
+      arg :device_token, :string
 
       resolve &AccountsResolver.edit_profile/2
     end
