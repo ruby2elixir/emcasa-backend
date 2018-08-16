@@ -38,11 +38,11 @@ defmodule ReWeb.GraphQL.Relaxed.IndexTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "relaxedListings"))
 
     assert %{
-              "listings" => [%{"id" => _}],
-               "remainingCount" => 0,
-               "filters" => %{
-                 "maxRooms" => 3
-               }
+             "listings" => [%{"id" => _}],
+             "remainingCount" => 0,
+             "filters" => %{
+               "maxRooms" => 3
+             }
            } = json_response(conn, 200)["data"]["relaxedListings"]
   end
 
@@ -66,11 +66,11 @@ defmodule ReWeb.GraphQL.Relaxed.IndexTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "relaxedListings"))
 
     assert %{
-              "listings" => [%{"id" => _}],
-               "remainingCount" => 0,
-               "filters" => %{
-                 "maxRooms" => 3
-               }
+             "listings" => [%{"id" => _}],
+             "remainingCount" => 0,
+             "filters" => %{
+               "maxRooms" => 3
+             }
            } = json_response(conn, 200)["data"]["relaxedListings"]
   end
 
@@ -94,12 +94,11 @@ defmodule ReWeb.GraphQL.Relaxed.IndexTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "relaxedListings"))
 
     assert %{
-              "listings" => [%{"id" => _}],
-               "remainingCount" => 0,
-               "filters" => %{
-                 "maxRooms" => 3
-               }
+             "listings" => [%{"id" => _}],
+             "remainingCount" => 0,
+             "filters" => %{
+               "maxRooms" => 3
+             }
            } = json_response(conn, 200)["data"]["relaxedListings"]
   end
-
 end

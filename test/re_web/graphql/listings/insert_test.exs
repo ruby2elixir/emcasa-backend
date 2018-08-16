@@ -153,14 +153,15 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
     assert %{
-             "insertListing" =>
-               %{"type" => "Apartamento",
-                 "address" => %{
-                    "id" => to_string(address.id),
-                    "street" => address.street,
-                    "postalCode" => address.postal_code,
-                    "streetNumber" => address.street_number
-                  }}
+             "insertListing" => %{
+               "type" => "Apartamento",
+               "address" => %{
+                 "id" => to_string(address.id),
+                 "street" => address.street,
+                 "postalCode" => address.postal_code,
+                 "streetNumber" => address.street_number
+               }
+             }
            } == json_response(conn, 200)["data"]
   end
 
@@ -189,14 +190,15 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
     assert %{
-             "insertListing" =>
-               %{"type" => "Apartamento",
-                 "address" => %{
-                    "id" => to_string(address.id),
-                    "street" => address.street,
-                    "postalCode" => address.postal_code,
-                    "streetNumber" => address.street_number
-                  }}
+             "insertListing" => %{
+               "type" => "Apartamento",
+               "address" => %{
+                 "id" => to_string(address.id),
+                 "street" => address.street,
+                 "postalCode" => address.postal_code,
+                 "streetNumber" => address.street_number
+               }
+             }
            } == json_response(conn, 200)["data"]
   end
 
@@ -221,8 +223,7 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert [%{"message" => "Bad request", "code" => 400}] =
-             json_response(conn, 200)["errors"]
+    assert [%{"message" => "Bad request", "code" => 400}] = json_response(conn, 200)["errors"]
   end
 
   test "user should not insert listing without address", %{
@@ -246,8 +247,7 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert [%{"message" => "Bad request", "code" => 400}] =
-             json_response(conn, 200)["errors"]
+    assert [%{"message" => "Bad request", "code" => 400}] = json_response(conn, 200)["errors"]
   end
 
   test "anonymous should not insert listing", %{

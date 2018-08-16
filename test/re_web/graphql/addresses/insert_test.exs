@@ -48,14 +48,14 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
     assert %{
-               "city" => address.city,
-               "state" => address.state,
-               "lat" => address.lat,
-               "lng" => address.lng,
-               "neighborhood" => address.neighborhood,
-               "street" => address.street,
-               "streetNumber" => address.street_number,
-               "postalCode" => address.postal_code
+             "city" => address.city,
+             "state" => address.state,
+             "lat" => address.lat,
+             "lng" => address.lng,
+             "neighborhood" => address.neighborhood,
+             "street" => address.street,
+             "streetNumber" => address.street_number,
+             "postalCode" => address.postal_code
            } == json_response(conn, 200)["data"]["addressInsert"]
   end
 
@@ -89,14 +89,14 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
     assert %{
-               "city" => address.city,
-               "state" => address.state,
-               "lat" => address.lat,
-               "lng" => address.lng,
-               "neighborhood" => address.neighborhood,
-               "street" => address.street,
-               "streetNumber" => address.street_number,
-               "postalCode" => address.postal_code
+             "city" => address.city,
+             "state" => address.state,
+             "lat" => address.lat,
+             "lng" => address.lng,
+             "neighborhood" => address.neighborhood,
+             "street" => address.street,
+             "streetNumber" => address.street_number,
+             "postalCode" => address.postal_code
            } == json_response(conn, 200)["data"]["addressInsert"]
   end
 
@@ -131,15 +131,15 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
     assert %{
-               "id" => to_string(address.id),
-               "city" => address.city,
-               "state" => address.state,
-               "lat" => address.lat,
-               "lng" => address.lng,
-               "neighborhood" => address.neighborhood,
-               "street" => address.street,
-               "streetNumber" => address.street_number,
-               "postalCode" => address.postal_code
+             "id" => to_string(address.id),
+             "city" => address.city,
+             "state" => address.state,
+             "lat" => address.lat,
+             "lng" => address.lng,
+             "neighborhood" => address.neighborhood,
+             "street" => address.street,
+             "streetNumber" => address.street_number,
+             "postalCode" => address.postal_code
            } == json_response(conn, 200)["data"]["addressInsert"]
   end
 
@@ -174,15 +174,15 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
 
     assert %{
-               "id" => to_string(address.id),
-               "city" => address.city,
-               "state" => address.state,
-               "lat" => address.lat,
-               "lng" => address.lng,
-               "neighborhood" => address.neighborhood,
-               "street" => address.street,
-               "streetNumber" => address.street_number,
-               "postalCode" => address.postal_code
+             "id" => to_string(address.id),
+             "city" => address.city,
+             "state" => address.state,
+             "lat" => address.lat,
+             "lng" => address.lng,
+             "neighborhood" => address.neighborhood,
+             "street" => address.street,
+             "streetNumber" => address.street_number,
+             "postalCode" => address.postal_code
            } == json_response(conn, 200)["data"]["addressInsert"]
   end
 
