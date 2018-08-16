@@ -597,7 +597,7 @@ defmodule ReWeb.GraphQL.Listings.IndexTest do
                  }
                ],
                "filters" => %{
-                "maxPrice" => 1_000_000
+                 "maxPrice" => 1_000_000
                }
              }
            } = json_response(conn, 200)["data"]

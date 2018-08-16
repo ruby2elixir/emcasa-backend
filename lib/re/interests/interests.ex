@@ -41,7 +41,7 @@ defmodule Re.Interests do
   end
 
   def request_price_suggestion(params, user) do
-    with {:ok, address, _changeset} <- Addresses.insert_or_update(params.address),
+    with {:ok, address} <- Addresses.insert_or_update(params.address),
          {:ok, request} <- PriceSuggestions.create_request(params, address, user),
          request <- Repo.preload(request, :address),
          suggested_price <- PriceSuggestions.suggest_price(request) do
