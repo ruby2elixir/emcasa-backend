@@ -200,6 +200,56 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
            } == json_response(conn, 200)["data"]
   end
 
+  test "admin should not insert listing without address", %{
+    admin_conn: conn
+  } do
+    mutation = """
+      mutation {
+        insertListing(input: {
+          type: "Apartamento"
+          }) {
+            type
+            address {
+              id
+              street
+              postalCode
+              streetNumber
+            }
+          }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert [%{"message" => "Bad request", "code" => 400}] =
+             json_response(conn, 200)["errors"]
+  end
+
+  test "user should not insert listing without address", %{
+    user_conn: conn
+  } do
+    mutation = """
+      mutation {
+        insertListing(input: {
+          type: "Apartamento"
+          }) {
+            type
+            address {
+              id
+              street
+              postalCode
+              streetNumber
+            }
+          }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert [%{"message" => "Bad request", "code" => 400}] =
+             json_response(conn, 200)["errors"]
+  end
+
   test "anonymous should not insert listing", %{
     unauthenticated_conn: conn,
     insert_input: insert_input
