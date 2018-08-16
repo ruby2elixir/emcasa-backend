@@ -128,6 +128,78 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
     assert owner["id"] == to_string(user.id)
   end
 
+  test "admin should insert listing with address id", %{
+    admin_conn: conn
+  } do
+    address = insert(:address)
+
+    mutation = """
+      mutation {
+        insertListing(input: {
+          type: "Apartamento",
+          addressId: #{address.id}
+          }) {
+            type
+            address {
+              id
+              street
+              postalCode
+              streetNumber
+            }
+          }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert %{
+             "insertListing" =>
+               %{"type" => "Apartamento",
+                 "address" => %{
+                    "id" => to_string(address.id),
+                    "street" => address.street,
+                    "postalCode" => address.postal_code,
+                    "streetNumber" => address.street_number
+                  }}
+           } == json_response(conn, 200)["data"]
+  end
+
+  test "user should insert listing with address id", %{
+    user_conn: conn
+  } do
+    address = insert(:address)
+
+    mutation = """
+      mutation {
+        insertListing(input: {
+          type: "Apartamento",
+          addressId: #{address.id}
+          }) {
+            type
+            address {
+              id
+              street
+              postalCode
+              streetNumber
+            }
+          }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert %{
+             "insertListing" =>
+               %{"type" => "Apartamento",
+                 "address" => %{
+                    "id" => to_string(address.id),
+                    "street" => address.street,
+                    "postalCode" => address.postal_code,
+                    "streetNumber" => address.street_number
+                  }}
+           } == json_response(conn, 200)["data"]
+  end
+
   test "anonymous should not insert listing", %{
     unauthenticated_conn: conn,
     insert_input: insert_input
