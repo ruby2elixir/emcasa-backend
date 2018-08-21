@@ -169,7 +169,7 @@ defmodule Re.Factory do
   end
 
   defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura))
-  defp random(:price), do: Enum.random(1..99_999_999)
+  defp random(:price), do: Enum.random(550_000..99_999_999)
   defp random(:price_float), do: Enum.random(1..999_999_999) / 100
 
   defp random(:floor) do
