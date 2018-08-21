@@ -10,11 +10,25 @@ defmodule ReWeb.AbsintheHelpers do
     }
   end
 
+  def query_wrapper(query, variables \\ %{}) do
+    %{
+      "query" => query,
+      "variables" => variables
+    }
+  end
+
   def mutation_skeleton(query) do
     %{
       "operationName" => "",
       "query" => "#{query}",
       "variables" => ""
+    }
+  end
+
+  def mutation_wrapper(query, variables \\ %{}) do
+    %{
+      "query" => "#{query}",
+      "variables" => variables
     }
   end
 

@@ -28,9 +28,14 @@ defmodule ReWeb.GraphQL.MessagesTest do
       user = insert(:user)
       listing = insert(:listing)
 
+      variables = %{
+        "receiverId" => user.id,
+        "listingId" => listing.id
+      }
+
       mutation = """
-        mutation {
-          sendMessage (receiverId: #{user.id}, listingId: #{listing.id}){
+        mutation SendMessage($receiverId: ID!, $listingId: ID!) {
+          sendMessage (receiverId: $receiverId, listingId: $listingId){
             sender {
               id
             }
@@ -44,7 +49,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       admin_id = to_string(admin.id)
       user_id = to_string(user.id)
@@ -63,9 +68,14 @@ defmodule ReWeb.GraphQL.MessagesTest do
       user2 = insert(:user)
       listing = insert(:listing)
 
+      variables = %{
+        "receiverId" => user2.id,
+        "listingId" => listing.id
+      }
+
       mutation = """
-        mutation {
-          sendMessage (receiverId: #{user2.id}, listingId: #{listing.id}){
+        mutation SendMessage($receiverId: ID!, $listingId: ID!) {
+          sendMessage (receiverId: $receiverId, listingId: $listingId){
             sender {
               id
             }
@@ -79,7 +89,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       user_id = to_string(user.id)
       user2_id = to_string(user2.id)
@@ -98,9 +108,14 @@ defmodule ReWeb.GraphQL.MessagesTest do
       user = insert(:user)
       listing = insert(:listing)
 
+      variables = %{
+        "receiverId" => user.id,
+        "listingId" => listing.id
+      }
+
       mutation = """
-        mutation {
-          sendMessage (receiverId: #{user.id}, listingId: #{listing.id}){
+        mutation SendMessage($receiverId: ID!, $listingId: ID!) {
+          sendMessage (receiverId: $receiverId, listingId: $listingId){
             sender {
               id
             }
@@ -111,7 +126,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{"errors" => [%{"message" => "Unauthorized", "code" => 401}]} =
                json_response(conn, 200)
@@ -388,9 +403,14 @@ defmodule ReWeb.GraphQL.MessagesTest do
           channel: build(:channel)
         )
 
+      variables = %{
+        "id1" => message_id1,
+        "id2" => message_id2
+      }
+
       mutation = """
-        mutation {
-          markAsRead1: markAsRead (id: #{message_id1}){
+        mutation MarkAsRead($id1: ID!, $id2: ID!) {
+          markAsRead1: markAsRead (id: $id1){
             id
             sender {
               id
@@ -403,7 +423,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
             }
             read
           }
-          markAsRead2: markAsRead (id: #{message_id2}){
+          markAsRead2: markAsRead (id: $id2){
             id
             sender {
               id
@@ -419,7 +439,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       admin_id = to_string(admin_user.id)
       user_id = to_string(user.id)
@@ -475,9 +495,14 @@ defmodule ReWeb.GraphQL.MessagesTest do
           channel: build(:channel)
         )
 
+      variables = %{
+        "id1" => message_id1,
+        "id2" => message_id2
+      }
+
       mutation = """
-        mutation {
-          markAsRead1: markAsRead (id: #{message_id1}){
+        mutation MarkAsRead($id1: ID!, $id2: ID!) {
+          markAsRead1: markAsRead (id: $id1){
             id
             sender {
               id
@@ -490,7 +515,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
             }
             read
           }
-          markAsRead2: markAsRead (id: #{message_id2}){
+          markAsRead2: markAsRead (id: $id2){
             id
             sender {
               id
@@ -506,7 +531,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
                "errors" => [
@@ -546,9 +571,14 @@ defmodule ReWeb.GraphQL.MessagesTest do
           channel: build(:channel)
         )
 
+      variables = %{
+        "id1" => message_id1,
+        "id2" => message_id2
+      }
+
       mutation = """
-        mutation {
-          markAsRead1: markAsRead (id: #{message_id1}){
+        mutation MarkAsRead($id1: ID!, $id2: ID!) {
+          markAsRead1: markAsRead (id: $id1){
             id
             sender {
               id
@@ -561,7 +591,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
             }
             read
           }
-          markAsRead2: markAsRead (id: #{message_id2}){
+          markAsRead2: markAsRead (id: $id2){
             id
             sender {
               id
@@ -577,7 +607,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       admin_id = to_string(admin_user.id)
       user_id = to_string(user.id)
@@ -633,9 +663,14 @@ defmodule ReWeb.GraphQL.MessagesTest do
           channel: build(:channel)
         )
 
+      variables = %{
+        "id1" => message_id1,
+        "id2" => message_id2
+      }
+
       mutation = """
-        mutation {
-          markAsRead1: markAsRead (id: #{message_id1}){
+        mutation MarkAsRead($id1: ID!, $id2: ID!) {
+          markAsRead1: markAsRead (id: $id1){
             id
             sender {
               id
@@ -648,7 +683,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
             }
             read
           }
-          markAsRead2: markAsRead (id: #{message_id2}){
+          markAsRead2: markAsRead (id: $id2){
             id
             sender {
               id
@@ -664,7 +699,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
                "errors" => [
@@ -704,9 +739,14 @@ defmodule ReWeb.GraphQL.MessagesTest do
           channel: build(:channel)
         )
 
+      variables = %{
+        "id1" => message_id1,
+        "id2" => message_id2
+      }
+
       mutation = """
-        mutation {
-          markAsRead1: markAsRead (id: #{message_id1}){
+        mutation MarkAsRead($id1: ID!, $id2: ID!) {
+          markAsRead1: markAsRead (id: $id1){
             id
             sender {
               id
@@ -719,7 +759,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
             }
             read
           }
-          markAsRead2: markAsRead (id: #{message_id2}){
+          markAsRead2: markAsRead (id: $id2){
             id
             sender {
               id
@@ -735,7 +775,7 @@ defmodule ReWeb.GraphQL.MessagesTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
                "errors" => [
