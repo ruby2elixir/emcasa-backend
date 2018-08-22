@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Images.UpdateTest do
+defmodule ReWeb.GraphQL.Images.MutationTest do
   use ReWeb.ConnCase
 
   import Re.Factory
