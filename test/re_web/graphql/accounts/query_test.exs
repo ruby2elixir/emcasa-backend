@@ -20,37 +20,59 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
 
   describe "userProfile" do
     test "admin should get any user profile", %{admin_conn: conn} do
-      inserted_user =
+      user =
         insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
 
-      listing1 = insert(:listing, user: inserted_user, type: "Casa", score: 4)
-      insert(:listing, user: inserted_user, type: "Casa", score: 3)
-      insert(:listing, user: inserted_user, type: "Apartamento")
+      listing1 = insert(:listing, user: user, type: "Casa", score: 4)
+      insert(:listing, user: user, type: "Casa", score: 3)
+      insert(:listing, user: user, type: "Apartamento")
 
       favorited_listing1 = insert(:listing, type: "Casa", score: 4)
       favorited_listing2 = insert(:listing, type: "Casa", score: 3)
       favorited_listing3 = insert(:listing, type: "Apartamento")
 
-      insert(:listings_favorites, listing: favorited_listing1, user: inserted_user)
-      insert(:listings_favorites, listing: favorited_listing2, user: inserted_user)
-      insert(:listings_favorites, listing: favorited_listing3, user: inserted_user)
+      insert(:listings_favorites, listing: favorited_listing1, user: user)
+      insert(:listings_favorites, listing: favorited_listing2, user: user)
+      insert(:listings_favorites, listing: favorited_listing3, user: user)
+
+      variables = %{
+        "id" => user.id,
+        "listingPagination" => %{
+          "pageSize" => 1
+        },
+        "listingFilters" => %{
+          "types" => ["Casa"]
+        },
+        "favoritesPagination" => %{
+          "pageSize" => 1
+        },
+        "favoritesFilters" => %{
+          "types" => ["Casa"]
+        }
+      }
 
       query = """
-        {
-          userProfile(ID: #{inserted_user.id}) {
+        query UserProfile(
+          $id: ID,
+          $listingPagination: ListingPagination,
+          $listingFilters: ListingFilterInput,
+          $favoritesPagination: ListingPagination,
+          $favoritesFilters: ListingFilterInput
+          ) {
+          userProfile(id: $id) {
             id
             name
             email
             phone
             listings (
-              pagination: {pageSize: 1}
-              filters: {types: ["Casa"]}
+              pagination: $listingPagination
+              filters: $listingFilters
             ) {
               id
             }
             favorites (
-              pagination: {pageSize: 1}
-              filters: {types: ["Casa"]}
+              pagination: $favoritesPagination
+              filters: $favoritesFilters
             ) {
               id
             }
@@ -58,29 +80,20 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
-
-      user_id = to_string(inserted_user.id)
-      user_name = to_string(inserted_user.name)
-      user_email = to_string(inserted_user.email)
-      user_phone = to_string(inserted_user.phone)
-      listing1_id = to_string(listing1.id)
-      favorited_listing1_id = to_string(favorited_listing1.id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "userProfile" => %{
-                 "id" => ^user_id,
-                 "name" => ^user_name,
-                 "email" => ^user_email,
-                 "phone" => ^user_phone,
-                 "listings" => [
-                   %{"id" => ^listing1_id}
-                 ],
-                 "favorites" => [
-                   %{"id" => ^favorited_listing1_id}
-                 ]
-               }
-             } = json_response(conn, 200)["data"]
+               "id" => to_string(user.id),
+               "name" => user.name,
+               "email" => user.email,
+               "phone" => user.phone,
+               "listings" => [
+                 %{"id" => to_string(listing1.id)}
+               ],
+               "favorites" => [
+                 %{"id" => to_string(favorited_listing1.id)}
+               ]
+             } == json_response(conn, 200)["data"]["userProfile"]
     end
 
     test "user should get his own profile", %{user_conn: conn, user_user: user} do
@@ -96,22 +109,44 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
       insert(:listings_favorites, listing: favorited_listing2, user: user)
       insert(:listings_favorites, listing: favorited_listing3, user: user)
 
+      variables = %{
+        "id" => user.id,
+        "listingPagination" => %{
+          "pageSize" => 1
+        },
+        "listingFilters" => %{
+          "types" => ["Casa"]
+        },
+        "favoritesPagination" => %{
+          "pageSize" => 1
+        },
+        "favoritesFilters" => %{
+          "types" => ["Casa"]
+        }
+      }
+
       query = """
-        {
-          userProfile(ID: #{user.id}) {
+        query UserProfile(
+          $id: ID,
+          $listingPagination: ListingPagination,
+          $listingFilters: ListingFilterInput,
+          $favoritesPagination: ListingPagination,
+          $favoritesFilters: ListingFilterInput
+          ) {
+          userProfile(id: $id) {
             id
             name
             email
             phone
             listings (
-              pagination: {pageSize: 1}
-              filters: {types: ["Casa"]}
+              pagination: $listingPagination
+              filters: $listingFilters
             ) {
               id
             }
             favorites (
-              pagination: {pageSize: 1}
-              filters: {types: ["Casa"]}
+              pagination: $favoritesPagination
+              filters: $favoritesFilters
             ) {
               id
             }
@@ -119,29 +154,20 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
-
-      user_id = to_string(user.id)
-      user_name = to_string(user.name)
-      user_email = to_string(user.email)
-      user_phone = to_string(user.phone)
-      listing1_id = to_string(listing1.id)
-      favorited_listing1_id = to_string(favorited_listing1.id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "userProfile" => %{
-                 "id" => ^user_id,
-                 "name" => ^user_name,
-                 "email" => ^user_email,
-                 "phone" => ^user_phone,
-                 "listings" => [
-                   %{"id" => ^listing1_id}
-                 ],
-                 "favorites" => [
-                   %{"id" => ^favorited_listing1_id}
-                 ]
-               }
-             } = json_response(conn, 200)["data"]
+               "id" => to_string(user.id),
+               "name" => user.name,
+               "email" => user.email,
+               "phone" => user.phone,
+               "listings" => [
+                 %{"id" => to_string(listing1.id)}
+               ],
+               "favorites" => [
+                 %{"id" => to_string(favorited_listing1.id)}
+               ]
+             } == json_response(conn, 200)["data"]["userProfile"]
     end
 
     test "user should get his own profile without passing id as parameter", %{
@@ -149,7 +175,7 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
       user_user: user
     } do
       query = """
-        {
+        query UserProfile {
           userProfile {
             id
             name
@@ -159,53 +185,50 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
-
-      user_id = to_string(user.id)
-      user_name = to_string(user.name)
-      user_email = to_string(user.email)
-      user_phone = to_string(user.phone)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert %{
-               "userProfile" => %{
-                 "id" => ^user_id,
-                 "name" => ^user_name,
-                 "email" => ^user_email,
-                 "phone" => ^user_phone
-               }
-             } = json_response(conn, 200)["data"]
+               "id" => to_string(user.id),
+               "name" => user.name,
+               "email" => user.email,
+               "phone" => user.phone
+             } == json_response(conn, 200)["data"]["userProfile"]
     end
 
     test "anonymous should not get user profile", %{unauthenticated_conn: conn} do
       user =
         insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
 
+      variables = %{"id" => user.id}
+
       query = """
-        {
-          userProfile(ID: #{user.id}) {
+        query UserProfile($id: ID) {
+          userProfile(ID: $id) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
 
     test "user should not get other user's profile", %{user_conn: conn} do
-      inserted_user =
+      user =
         insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
 
+      variables = %{"id" => user.id}
+
       query = """
-        {
-          userProfile(ID: #{inserted_user.id}) {
+        query UserProfile($id: ID) {
+          userProfile(ID: $id) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
