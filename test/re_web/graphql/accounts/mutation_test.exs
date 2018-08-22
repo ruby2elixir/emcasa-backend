@@ -26,7 +26,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
       query = """
-        {
+        query FavoritedListings {
           favoritedListings {
             id
           }
@@ -34,10 +34,10 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       """
 
       conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
+        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       listing_id = to_string(listing.id)
-      assert %{"favoritedListings" => [%{"id" => ^listing_id}]} = json_response(conn, 200)["data"]
+      assert [%{"id" => listing_id}] == json_response(conn, 200)["data"]["favoritedListings"]
     end
 
     test "user should get favorited listings", %{user_conn: conn, user_user: user} do
@@ -45,7 +45,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
       query = """
-        {
+        query FavoritedListings {
           favoritedListings {
             id
           }
@@ -53,15 +53,15 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       """
 
       conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
+        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       listing_id = to_string(listing.id)
-      assert %{"favoritedListings" => [%{"id" => ^listing_id}]} = json_response(conn, 200)["data"]
+      assert [%{"id" => listing_id}] == json_response(conn, 200)["data"]["favoritedListings"]
     end
 
     test "anonymous should not get favorited listing", %{unauthenticated_conn: conn} do
       query = """
-        {
+        query FavoritedListings {
           favoritedListings {
             id
           }
@@ -69,29 +69,43 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       """
 
       conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "favoritedListings"))
+        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+      [errors] = json_response(conn, 200)["errors"]
+
+      assert errors["message"] == "Unauthorized"
+      assert errors["code"] == 401
     end
   end
 
   describe "editUserProfile" do
     test "admin should edit any profile", %{admin_conn: conn, user_user: user} do
+      variables = %{
+        "id" => user.id,
+        "name" => "Fixed Name",
+        "phone" => "123321123",
+        "notificationPreferences" => %{
+          "email" => false,
+          "app" => false
+        },
+        "deviceToken" => "asdasdasd"
+      }
+
       mutation = """
-        mutation {
+        mutation EditUserProfile($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String) {
           editUserProfile(
-            id: #{user.id},
-            name: "Fixed Name",
-            phone: "123321123",
-            notificationPreferences: {email: false, app: false},
-            deviceToken: "asdasdasd"
+            id: $id,
+            name: $name,
+            phone: $phone,
+            notificationPreferences: $notificationPreferences,
+            deviceToken: $deviceToken
           ){
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editUserProfile"]
 
@@ -104,21 +118,32 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     end
 
     test "user should edit own profile", %{user_conn: conn, user_user: user} do
+      variables = %{
+        "id" => user.id,
+        "name" => "Fixed Name",
+        "phone" => "123321123",
+        "notificationPreferences" => %{
+          "email" => false,
+          "app" => false
+        },
+        "deviceToken" => "asdasdasd"
+      }
+
       mutation = """
-        mutation {
+        mutation EditUserProfile($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String) {
           editUserProfile(
-            id: #{user.id},
-            name: "Fixed Name",
-            phone: "123321123",
-            notificationPreferences: {email: false, app: false},
-            deviceToken: "asdasdasd"
+            id: $id,
+            name: $name,
+            phone: $phone,
+            notificationPreferences: $notificationPreferences,
+            deviceToken: $deviceToken
           ){
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editUserProfile"]
 
@@ -133,15 +158,20 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "user should not edit other user's  profile", %{user_conn: conn} do
       inserted_user = insert(:user)
 
+      variables = %{
+        "id" => inserted_user.id,
+        "name" => "Fixed Name"
+      }
+
       mutation = """
-        mutation {
-          editUserProfile(id: #{inserted_user.id}, name: "A Name") {
+        mutation EditUserProfile($id: ID!, $name: String) {
+          editUserProfile(id: $id, name: $name) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
@@ -149,15 +179,20 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "anonymous should not edit user profile", %{unauthenticated_conn: conn} do
       user = insert(:user)
 
+      variables = %{
+        "id" => user.id,
+        "name" => "Fixed Name"
+      }
+
       mutation = """
-        mutation {
-          editUserProfile(id: #{user.id}, name: "A Name") {
+        mutation EditUserProfile($id: ID!, $name: String) {
+          editUserProfile(id: $id, name: $name) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
@@ -167,30 +202,40 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "admin should change email", %{admin_conn: conn} do
       user = insert(:user, email: "old_email@emcasa.com")
 
+      variables = %{
+        "id" => user.id,
+        "email" => "newemail@emcasa.com"
+      }
+
       mutation = """
-        mutation {
-          changeEmail(id: #{user.id}, email: "newemail@emcasa.com") {
+        mutation ChangeEmail($id: ID!, $email: String) {
+          changeEmail(id: $id, email: $email) {
             id
           }
         }
       """
 
-      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert user = Repo.get(User, user.id)
       assert user.email == "newemail@emcasa.com"
     end
 
     test "user should change own email", %{user_conn: conn, user_user: user} do
+      variables = %{
+        "id" => user.id,
+        "email" => "newemail@emcasa.com"
+      }
+
       mutation = """
-        mutation {
-          changeEmail(id: #{user.id}, email: "newemail@emcasa.com") {
+        mutation ChangeEmail($id: ID!, $email: String) {
+          changeEmail(id: $id, email: $email) {
             id
           }
         }
       """
 
-      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert user = Repo.get(User, user.id)
       assert user.email == "newemail@emcasa.com"
@@ -199,15 +244,20 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "user should not edit other user's  email", %{user_conn: conn} do
       inserted_user = insert(:user)
 
+      variables = %{
+        "id" => inserted_user.id,
+        "email" => "newemail@emcasa.com"
+      }
+
       mutation = """
-        mutation {
-          changeEmail(id: #{inserted_user.id}, email: "newemail@emcasa.com") {
+        mutation ChangeEmail($id: ID!, $email: String) {
+          changeEmail(id: $id, email: $email) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
@@ -215,15 +265,20 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "anonymous should not edit user profile", %{unauthenticated_conn: conn} do
       user = insert(:user)
 
+      variables = %{
+        "id" => user.id,
+        "email" => "newemail@emcasa.com"
+      }
+
       mutation = """
-        mutation {
-          changeEmail(id: #{user.id}, email: "newemail@emcasa.com") {
+        mutation ChangeEmail($id: ID!, $email: String) {
+          changeEmail(id: $id, email: $email) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
@@ -231,15 +286,20 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "should fail when using existing e-mail", %{user_conn: conn, user_user: user} do
       insert(:user, email: "existing@emcasa.com")
 
+      variables = %{
+        "id" => user.id,
+        "email" => "existing@emcasa.com"
+      }
+
       mutation = """
-        mutation {
-          changeEmail(id: #{user.id}, email: "existing@emcasa.com") {
+        mutation ChangeEmail($id: ID!, $email: String) {
+          changeEmail(id: $id, email: $email) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "email has already been taken"}] = json_response(conn, 200)["errors"]
     end
@@ -249,30 +309,46 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "admin should change password", %{admin_conn: conn} do
       user = insert(:user)
 
+      variables = %{
+        "id" => user.id,
+        "currentPassword" => "password",
+        "newPassword" => "newpass"
+      }
+
       mutation = """
-        mutation {
-          changePassword(id: #{user.id}, currentPassword: "password", newPassword: "newpass") {
+        mutation ChangePassword($id: ID!, $currentPassword: String, $newPassword: String) {
+          changePassword(id: $id, currentPassword: $currentPassword, newPassword: $newPassword) {
             id
           }
         }
       """
 
-      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["changePassword"]
 
       assert user = Repo.get(User, user.id)
       assert Bcrypt.checkpw("newpass", user.password_hash)
     end
 
     test "user should change own email", %{user_conn: conn, user_user: user} do
+      variables = %{
+        "id" => user.id,
+        "currentPassword" => "password",
+        "newPassword" => "newpass"
+      }
+
       mutation = """
-        mutation {
-          changePassword(id: #{user.id}, currentPassword: "password", newPassword: "newpass") {
+        mutation ChangePassword($id: ID!, $currentPassword: String, $newPassword: String) {
+          changePassword(id: $id, currentPassword: $currentPassword, newPassword: $newPassword) {
             id
           }
         }
       """
 
-      post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["changePassword"]
 
       assert user = Repo.get(User, user.id)
       assert Bcrypt.checkpw("newpass", user.password_hash)
@@ -281,15 +357,21 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "user should not edit other user's  email", %{user_conn: conn} do
       inserted_user = insert(:user)
 
+      variables = %{
+        "id" => inserted_user.id,
+        "currentPassword" => "password",
+        "newPassword" => "newpass"
+      }
+
       mutation = """
-        mutation {
-          changePassword(id: #{inserted_user.id}, currentPassword: "password", newPassword: "newpass") {
+        mutation ChangePassword($id: ID!, $currentPassword: String, $newPassword: String) {
+          changePassword(id: $id, currentPassword: $currentPassword, newPassword: $newPassword) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
@@ -297,15 +379,21 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "anonymous should not edit user profile", %{unauthenticated_conn: conn} do
       user = insert(:user)
 
+      variables = %{
+        "id" => user.id,
+        "currentPassword" => "password",
+        "newPassword" => "newpass"
+      }
+
       mutation = """
-        mutation {
-          changePassword(id: #{user.id}, currentPassword: "password", newPassword: "newpass") {
+        mutation ChangePassword($id: ID!, $currentPassword: String, $newPassword: String) {
+          changePassword(id: $id, currentPassword: $currentPassword, newPassword: $newPassword) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
@@ -320,9 +408,14 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
           password_hash: Bcrypt.hashpwsalt("password")
         )
 
+      variables = %{
+        "email" => "admin@emcasa.com",
+        "password" => "password"
+      }
+
       mutation = """
-        mutation {
-          signIn(email: "admin@emcasa.com", password: "password") {
+        mutation SignIn($email: String!, $password: String!) {
+          signIn(email: $email, password: $password) {
             jwt
             user {
               id
@@ -334,26 +427,16 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      user_id = to_string(user.id)
-      user_name = to_string(user.name)
-      user_email = to_string(user.email)
-      user_phone = to_string(user.phone)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "signIn" => %{
-                 "jwt" => jwt,
-                 "user" => %{
-                   "id" => ^user_id,
-                   "name" => ^user_name,
-                   "email" => ^user_email,
-                   "phone" => ^user_phone
-                 }
-               }
-             } = json_response(conn, 200)["data"]
+               "id" => to_string(user.id),
+               "name" => user.name,
+               "email" => user.email,
+               "phone" => user.phone
+              } == json_response(conn, 200)["data"]["signIn"]["user"]
 
-      assert jwt
+      assert json_response(conn, 200)["data"]["signIn"]["jwt"]
     end
 
     test "should sign in as user", %{unauthenticated_conn: conn} do
@@ -364,9 +447,14 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
           password_hash: Bcrypt.hashpwsalt("password")
         )
 
+      variables = %{
+        "email" => "user@emcasa.com",
+        "password" => "password"
+      }
+
       mutation = """
-        mutation {
-          signIn(email: "user@emcasa.com", password: "password") {
+        mutation SignIn($email: String!, $password: String!) {
+          signIn(email: $email, password: $password) {
             jwt
             user {
               id
@@ -378,26 +466,16 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      user_id = to_string(user.id)
-      user_name = to_string(user.name)
-      user_email = to_string(user.email)
-      user_phone = to_string(user.phone)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "signIn" => %{
-                 "jwt" => jwt,
-                 "user" => %{
-                   "id" => ^user_id,
-                   "name" => ^user_name,
-                   "email" => ^user_email,
-                   "phone" => ^user_phone
-                 }
-               }
-             } = json_response(conn, 200)["data"]
+               "id" => to_string(user.id),
+               "name" => user.name,
+               "email" => user.email,
+               "phone" => user.phone
+              } == json_response(conn, 200)["data"]["signIn"]["user"]
 
-      assert jwt
+      assert json_response(conn, 200)["data"]["signIn"]["jwt"]
     end
 
     test "should not sign in on wrong e-mail", %{unauthenticated_conn: conn} do
@@ -407,9 +485,14 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         password_hash: Bcrypt.hashpwsalt("password")
       )
 
+      variables = %{
+        "email" => "wrongemail@emcasa.com",
+        "password" => "password"
+      }
+
       mutation = """
-        mutation {
-          signIn(email: "wrongemail@emcasa.com", password: "password") {
+        mutation SignIn($email: String!, $password: String!) {
+          signIn(email: $email, password: $password) {
             jwt
             user {
               id
@@ -421,7 +504,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
@@ -433,9 +516,14 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         password_hash: Bcrypt.hashpwsalt("password")
       )
 
+      variables = %{
+        "email" => "user@emcasa.com",
+        "password" => "wrongpass"
+      }
+
       mutation = """
-        mutation {
-          signIn(email: "user@emcasa.com", password: "wrongpass") {
+        mutation SignIn($email: String!, $password: String!) {
+          signIn(email: $email, password: $password) {
             jwt
             user {
               id
@@ -447,7 +535,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
@@ -455,18 +543,25 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
   describe "register" do
     test "should register user", %{unauthenticated_conn: conn} do
+      variables = %{
+        "name" => "name",
+        "phone" => "11223344",
+        "email" => "user@emcasa.com",
+        "password" => "password",
+        "deviceToken" => "asdasdasd"
+      }
+
       mutation = """
-        mutation {
+        mutation Register($name: String!, $phone: String, $email: String!, $password: String!, $deviceToken: String){
           register(
-            name: "name",
-            phone: "11223344",
-            email: "user@emcasa.com",
-            password: "password",
-            deviceToken: "asdasdasd"
+            name: $name,
+            phone: $phone,
+            email: $email,
+            password: $password,
+            deviceToken: $deviceToken
           ){
             jwt
             user {
-              id
               name
               email
               phone
@@ -475,21 +570,15 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "register" => %{
-                 "jwt" => jwt,
-                 "user" => %{
-                   "id" => _,
-                   "name" => "name",
-                   "email" => "user@emcasa.com",
-                   "phone" => "11223344"
-                 }
-               }
-             } = json_response(conn, 200)["data"]
+               "name" => "name",
+               "email" => "user@emcasa.com",
+               "phone" => "11223344"
+             } == json_response(conn, 200)["data"]["register"]["user"]
 
-      assert jwt
+      assert json_response(conn, 200)["data"]["register"]["jwt"]
       assert user = Repo.get_by(User, email: "user@emcasa.com")
       assert "name" == user.name
       assert "11223344" == user.phone
@@ -503,18 +592,25 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "should not register with same email", %{unauthenticated_conn: conn} do
       insert(:user, email: "user@emcasa.com")
 
+      variables = %{
+        "name" => "name",
+        "phone" => "11223344",
+        "email" => "user@emcasa.com",
+        "password" => "password",
+        "deviceToken" => "asdasdasd"
+      }
+
       mutation = """
-        mutation {
+        mutation Register($name: String!, $phone: String, $email: String!, $password: String!, $deviceToken: String){
           register(
-            name: "name",
-            phone: "11223344",
-            email: "user@emcasa.com",
-            password: "password",
-            deviceToken: "asdasdasd"
+            name: $name,
+            phone: $phone,
+            email: $email,
+            password: $password,
+            deviceToken: $deviceToken
           ){
             jwt
             user {
-              id
               name
               email
               phone
@@ -523,7 +619,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "email: has already been taken", "code" => 422}] =
                json_response(conn, 200)["errors"]
@@ -534,9 +630,11 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "should confirm user registration", %{unauthenticated_conn: conn} do
       %{id: id} = insert(:user, confirmed: false, confirmation_token: "token")
 
+      variables = %{"token" => "token"}
+
       mutation = """
-        mutation {
-          confirm(token: "token") {
+        mutation Confirm($token: String!) {
+          confirm(token: $token) {
             jwt
             user {
               id
@@ -545,45 +643,39 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      user_id = to_string(id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "confirm" => %{
-                 "jwt" => jwt,
-                 "user" => %{
-                   "id" => ^user_id
-                 }
-               }
-             } = json_response(conn, 200)["data"]
+               "id" => to_string(id)
+             } == json_response(conn, 200)["data"]["confirm"]["user"]
 
-      assert jwt
+      assert json_response(conn, 200)["data"]["confirm"]["jwt"]
       assert user = Repo.get(User, id)
       assert user.confirmed
     end
 
-    test "should not register with same email", %{unauthenticated_conn: conn} do
-      insert(:user, email: "user@emcasa.com")
+    test "should not confirm user with wrong token", %{unauthenticated_conn: conn} do
+      %{id: id} = insert(:user, confirmed: false, confirmation_token: "token")
+
+      variables = %{"token" => "wrongtoken"}
 
       mutation = """
-        mutation {
-          register(name: "name", phone: "11223344", email: "user@emcasa.com", password: "password") {
+        mutation Confirm($token: String!) {
+          confirm(token: $token) {
             jwt
             user {
               id
-              name
-              email
-              phone
             }
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [%{"message" => "email: has already been taken", "code" => 422}] =
-               json_response(conn, 200)["errors"]
+      assert [%{"message" => "Bad request", "code" => 400}] = json_response(conn, 200)["errors"]
+
+      assert user = Repo.get(User, id)
+      refute user.confirmed
     end
   end
 
@@ -591,38 +683,38 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "should request password reset", %{unauthenticated_conn: conn} do
       %{id: id} = insert(:user, email: "user@emcasa.com")
 
+      variables = %{"email" => "user@emcasa.com"}
+
       mutation = """
-        mutation {
-          resetPassword(email: "user@emcasa.com") {
+        mutation ResetPassword($email: String!) {
+          resetPassword(email: $email) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      user_id = to_string(id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "resetPassword" => %{
-                 "id" => ^user_id
-               }
-             } = json_response(conn, 200)["data"]
+                 "id" => to_string(id)
+             } == json_response(conn, 200)["data"]["resetPassword"]
 
       assert user = Repo.get(User, id)
       assert user.reset_token
     end
 
     test "should not request password reset with wrong e-mail", %{unauthenticated_conn: conn} do
+      variables = %{"email" => "inexistinguser@emcasa.com"}
+
       mutation = """
-        mutation {
-          resetPassword(email: "inexistinguser@emcasa.com") {
+        mutation ResetPassword($email: String!) {
+          resetPassword(email: $email) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
     end
@@ -632,39 +724,47 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "should request password reset", %{unauthenticated_conn: conn} do
       %{id: id} = insert(:user, reset_token: "token")
 
+      variables = %{
+        "resetToken" => "token",
+        "newPassword" => "newpassword"
+      }
+
       mutation = """
-        mutation {
-          redefinePassword(resetToken: "token", newPassword: "newpassword") {
+        mutation RedefinePassword($resetToken: String!, $newPassword: String!) {
+          redefinePassword(resetToken: $resetToken, newPassword: $newPassword) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      user_id = to_string(id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "redefinePassword" => %{
-                 "id" => ^user_id
-               }
-             } = json_response(conn, 200)["data"]
+                 "id" => to_string(id)
+             } == json_response(conn, 200)["data"]["redefinePassword"]
 
       assert user = Repo.get(User, id)
       assert Bcrypt.checkpw("newpassword", user.password_hash)
       refute user.reset_token
     end
 
-    test "should not request password reset with wrong e-mail", %{unauthenticated_conn: conn} do
+    test "should not redefine password with wrong token", %{unauthenticated_conn: conn} do
+      insert(:user, reset_token: "token")
+
+      variables = %{
+        "resetToken" => "wrongtoken",
+        "newPassword" => "newpassword"
+      }
+
       mutation = """
-        mutation {
-          resetPassword(email: "inexistinguser@emcasa.com") {
+        mutation RedefinePassword($resetToken: String!, $newPassword: String!) {
+          redefinePassword(resetToken: $resetToken, newPassword: $newPassword) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
     end
