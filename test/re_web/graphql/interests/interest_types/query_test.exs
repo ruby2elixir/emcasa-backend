@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.InterestType.IndexTest do
+defmodule ReWeb.GraphQL.InterestType.QueryTest do
   use ReWeb.ConnCase
 
   import Re.Factory
