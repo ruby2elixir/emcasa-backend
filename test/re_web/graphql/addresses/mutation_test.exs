@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Addresses.InsertTest do
+defmodule ReWeb.GraphQL.Addresses.MutationTest do
   use ReWeb.ConnCase
 
   import Re.Factory
@@ -21,18 +21,22 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
   test "admin should insert address", %{admin_conn: conn} do
     address = build(:address)
 
+    variables = %{
+      "input" => %{
+        "city" => address.city,
+        "state" => address.state,
+        "lat" => address.lat,
+        "lng" => address.lng,
+        "neighborhood" => address.neighborhood,
+        "street" => address.street,
+        "streetNumber" => address.street_number,
+        "postalCode" => address.postal_code
+      }
+    }
+
     mutation = """
-      mutation {
-        addressInsert(input: {
-          city: "#{address.city}",
-          state: "#{address.state}",
-          lat: #{address.lat},
-          lng: #{address.lng},
-          neighborhood: "#{address.neighborhood}",
-          street: "#{address.street}",
-          streetNumber: "#{address.street_number}",
-          postalCode: "#{address.postal_code}"
-        }) {
+      mutation AddressInsert($input: AddressInput!) {
+        addressInsert(input: $input) {
           city
           state
           lat
@@ -45,7 +49,7 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
     assert %{
              "city" => address.city,
@@ -62,18 +66,22 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
   test "user should insert address", %{user_conn: conn} do
     address = build(:address)
 
+    variables = %{
+      "input" => %{
+        "city" => address.city,
+        "state" => address.state,
+        "lat" => address.lat,
+        "lng" => address.lng,
+        "neighborhood" => address.neighborhood,
+        "street" => address.street,
+        "streetNumber" => address.street_number,
+        "postalCode" => address.postal_code
+      }
+    }
+
     mutation = """
-      mutation {
-        addressInsert(input: {
-          city: "#{address.city}",
-          state: "#{address.state}",
-          lat: #{address.lat},
-          lng: #{address.lng},
-          neighborhood: "#{address.neighborhood}",
-          street: "#{address.street}",
-          streetNumber: "#{address.street_number}",
-          postalCode: "#{address.postal_code}"
-        }) {
+      mutation AddressInsert($input: AddressInput!) {
+        addressInsert(input: $input) {
           city
           state
           lat
@@ -86,7 +94,7 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
     assert %{
              "city" => address.city,
@@ -103,18 +111,22 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
   test "admin should update address", %{admin_conn: conn} do
     address = insert(:address)
 
+    variables = %{
+      "input" => %{
+        "city" => address.city,
+        "state" => address.state,
+        "lat" => address.lat,
+        "lng" => address.lng,
+        "neighborhood" => address.neighborhood,
+        "street" => address.street,
+        "streetNumber" => address.street_number,
+        "postalCode" => address.postal_code
+      }
+    }
+
     mutation = """
-      mutation {
-        addressInsert(input: {
-          city: "#{address.city}",
-          state: "#{address.state}",
-          lat: #{address.lat},
-          lng: #{address.lng},
-          neighborhood: "#{address.neighborhood}",
-          street: "#{address.street}",
-          streetNumber: "#{address.street_number}",
-          postalCode: "#{address.postal_code}"
-        }) {
+      mutation AddressInsert($input: AddressInput!) {
+        addressInsert(input: $input) {
           id
           city
           state
@@ -128,7 +140,7 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
     assert %{
              "id" => to_string(address.id),
@@ -146,18 +158,22 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
   test "user should update address", %{user_conn: conn} do
     address = insert(:address)
 
+    variables = %{
+      "input" => %{
+        "city" => address.city,
+        "state" => address.state,
+        "lat" => address.lat,
+        "lng" => address.lng,
+        "neighborhood" => address.neighborhood,
+        "street" => address.street,
+        "streetNumber" => address.street_number,
+        "postalCode" => address.postal_code
+      }
+    }
+
     mutation = """
-      mutation {
-        addressInsert(input: {
-          city: "#{address.city}",
-          state: "#{address.state}",
-          lat: #{address.lat},
-          lng: #{address.lng},
-          neighborhood: "#{address.neighborhood}",
-          street: "#{address.street}",
-          streetNumber: "#{address.street_number}",
-          postalCode: "#{address.postal_code}"
-        }) {
+      mutation AddressInsert($input: AddressInput!) {
+        addressInsert(input: $input) {
           id
           city
           state
@@ -171,7 +187,7 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
     assert %{
              "id" => to_string(address.id),
@@ -186,21 +202,25 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
            } == json_response(conn, 200)["data"]["addressInsert"]
   end
 
-  test "anonymous should not insert image", %{unauthenticated_conn: conn} do
+  test "anonymous should not insert address", %{unauthenticated_conn: conn} do
     address = build(:address)
 
+    variables = %{
+      "input" => %{
+        "city" => address.city,
+        "state" => address.state,
+        "lat" => address.lat,
+        "lng" => address.lng,
+        "neighborhood" => address.neighborhood,
+        "street" => address.street,
+        "streetNumber" => address.street_number,
+        "postalCode" => address.postal_code
+      }
+    }
+
     mutation = """
-      mutation {
-        addressInsert(input: {
-          city: "#{address.city}",
-          state: "#{address.state}",
-          lat: #{address.lat},
-          lng: #{address.lng},
-          neighborhood: "#{address.neighborhood}",
-          street: "#{address.street}",
-          streetNumber: "#{address.street_number}",
-          postalCode: "#{address.postal_code}"
-        }) {
+      mutation AddressInsert($input: AddressInput!) {
+        addressInsert(input: $input) {
           city
           state
           lat
@@ -213,7 +233,7 @@ defmodule ReWeb.GraphQL.Addresses.InsertTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
     assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
   end
