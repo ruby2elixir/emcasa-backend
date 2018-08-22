@@ -17,25 +17,25 @@ defmodule ReWeb.GraphQL.PriceSuggestions.QueryTest do
     {:ok, unauthenticated_conn: conn, user_user: user_user, user_conn: login_as(conn, user_user)}
   end
 
-  @request_price_suggestion_input """
-      name: "Mah Name",
-      email: "testemail@emcasa.com",
-      area: 80,
-      rooms: 2,
-      bathrooms: 2,
-      garage_spots: 2,
-      isCovered: true,
-      address: {
-        street: "street",
-        street_number: "street_number",
-        neighborhood: "neighborhood",
-        city: "city",
-        state: "ST",
-        postal_code: "postal_code",
-        lat: 10.10,
-        lng: 10.10
+  @variables %{
+      "name" => "Mah Name",
+      "email" => "testemail@emcasa.com",
+      "area" => 80,
+      "rooms" => 2,
+      "bathrooms" => 2,
+      "garageSpots" => 2,
+      "isCovered" => true,
+      "addressInput" => %{
+        "street" => "street",
+        "streetNumber" => "street_number",
+        "neighborhood" => "neighborhood",
+        "city" => "city",
+        "state" => "ST",
+        "postalCode" => "postal_code",
+        "lat" => 10.10,
+        "lng" => 10.10
       }
-  """
+  }
 
   test "anonymous should request price suggestion", %{unauthenticated_conn: conn} do
     insert(
@@ -49,34 +49,35 @@ defmodule ReWeb.GraphQL.PriceSuggestions.QueryTest do
     )
 
     mutation = """
-      mutation {
-        requestPriceSuggestion(#{@request_price_suggestion_input}) {
-          name
-          email
-          area
-          rooms
-          bathrooms
-          garage_spots
-          isCovered
-          address {
-            street
-            street_number
-            neighborhood
-            city
-            state
-            postal_code
-            lat
-            lng
-          }
+      mutation RequestPriceSuggestion (
+        $name: String!,
+        $email: String!,
+        $area: Int!,
+        $rooms: Int!,
+        $bathrooms: Int!,
+        $garageSpots: Int!,
+        $isCovered: Boolean!,
+        $addressInput: AddressInput!
+        ) {
+        requestPriceSuggestion(
+          name: $name
+          email: $email
+          area: $area
+          rooms: $rooms
+          bathrooms: $bathrooms
+          garageSpots: $garageSpots
+          isCovered: $isCovered
+          address: $addressInput
+        ) {
           suggestedPrice
         }
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
 
-    assert %{"requestPriceSuggestion" => %{"suggestedPrice" => 26_613.248}} =
-             json_response(conn, 200)["data"]
+    assert %{"suggestedPrice" => 26_613.248} ==
+             json_response(conn, 200)["data"]["requestPriceSuggestion"]
 
     assert Repo.get_by(Request, name: "Mah Name")
   end
@@ -93,34 +94,35 @@ defmodule ReWeb.GraphQL.PriceSuggestions.QueryTest do
     )
 
     mutation = """
-      mutation {
-        requestPriceSuggestion(#{@request_price_suggestion_input}) {
-          name
-          email
-          area
-          rooms
-          bathrooms
-          garage_spots
-          isCovered
-          address {
-            street
-            street_number
-            neighborhood
-            city
-            state
-            postal_code
-            lat
-            lng
-          }
+      mutation RequestPriceSuggestion (
+        $name: String!,
+        $email: String!,
+        $area: Int!,
+        $rooms: Int!,
+        $bathrooms: Int!,
+        $garageSpots: Int!,
+        $isCovered: Boolean!,
+        $addressInput: AddressInput!
+        ) {
+        requestPriceSuggestion(
+          name: $name
+          email: $email
+          area: $area
+          rooms: $rooms
+          bathrooms: $bathrooms
+          garageSpots: $garageSpots
+          isCovered: $isCovered
+          address: $addressInput
+        ) {
           suggestedPrice
         }
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
 
-    assert %{"requestPriceSuggestion" => %{"suggestedPrice" => 26_613.248}} =
-             json_response(conn, 200)["data"]
+    assert %{"suggestedPrice" => 26_613.248} ==
+             json_response(conn, 200)["data"]["requestPriceSuggestion"]
 
     assert request = Repo.get_by(Request, name: "Mah Name")
     assert request.user_id == user.id
@@ -130,34 +132,35 @@ defmodule ReWeb.GraphQL.PriceSuggestions.QueryTest do
     unauthenticated_conn: conn
   } do
     mutation = """
-      mutation {
-        requestPriceSuggestion(#{@request_price_suggestion_input}) {
-          name
-          email
-          area
-          rooms
-          bathrooms
-          garage_spots
-          isCovered
-          address {
-            street
-            street_number
-            neighborhood
-            city
-            state
-            postal_code
-            lat
-            lng
-          }
+      mutation RequestPriceSuggestion (
+        $name: String!,
+        $email: String!,
+        $area: Int!,
+        $rooms: Int!,
+        $bathrooms: Int!,
+        $garageSpots: Int!,
+        $isCovered: Boolean!,
+        $addressInput: AddressInput!
+        ) {
+        requestPriceSuggestion(
+          name: $name
+          email: $email
+          area: $area
+          rooms: $rooms
+          bathrooms: $bathrooms
+          garageSpots: $garageSpots
+          isCovered: $isCovered
+          address: $addressInput
+        ) {
           suggestedPrice
         }
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
 
-    assert %{"requestPriceSuggestion" => %{"suggestedPrice" => nil}} =
-             json_response(conn, 200)["data"]
+    assert %{"suggestedPrice" => nil} ==
+             json_response(conn, 200)["data"]["requestPriceSuggestion"]
 
     assert Repo.get_by(Request, name: "Mah Name")
   end
@@ -167,34 +170,35 @@ defmodule ReWeb.GraphQL.PriceSuggestions.QueryTest do
     user_user: user
   } do
     mutation = """
-      mutation {
-        requestPriceSuggestion(#{@request_price_suggestion_input}) {
-          name
-          email
-          area
-          rooms
-          bathrooms
-          garage_spots
-          isCovered
-          address {
-            street
-            street_number
-            neighborhood
-            city
-            state
-            postal_code
-            lat
-            lng
-          }
+      mutation RequestPriceSuggestion (
+        $name: String!,
+        $email: String!,
+        $area: Int!,
+        $rooms: Int!,
+        $bathrooms: Int!,
+        $garageSpots: Int!,
+        $isCovered: Boolean!,
+        $addressInput: AddressInput!
+        ) {
+        requestPriceSuggestion(
+          name: $name
+          email: $email
+          area: $area
+          rooms: $rooms
+          bathrooms: $bathrooms
+          garageSpots: $garageSpots
+          isCovered: $isCovered
+          address: $addressInput
+        ) {
           suggestedPrice
         }
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
 
-    assert %{"requestPriceSuggestion" => %{"suggestedPrice" => nil}} =
-             json_response(conn, 200)["data"]
+    assert %{"suggestedPrice" => nil} ==
+             json_response(conn, 200)["data"]["requestPriceSuggestion"]
 
     assert request = Repo.get_by(Request, name: "Mah Name")
     assert request.user_id == user.id
