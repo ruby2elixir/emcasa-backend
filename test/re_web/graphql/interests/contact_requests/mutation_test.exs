@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Interests.ContactRequestTest do
+defmodule ReWeb.GraphQL.Interests.MutationTest do
   use ReWeb.ConnCase
 
   alias ReWeb.AbsintheHelpers
@@ -17,17 +17,17 @@ defmodule ReWeb.GraphQL.Interests.ContactRequestTest do
     {:ok, unauthenticated_conn: conn, user_user: user_user, user_conn: login_as(conn, user_user)}
   end
 
-  @request_contact_input """
-      name: "Mah Name",
-      email: "testemail@emcasa.com",
-      phone: "123321123",
-      message: "this website is cool"
-  """
+  @variables %{
+    "name" => "Mah Name",
+    "email" => "testemail@emcasa.com",
+    "phone" => "123321123",
+    "message" => "this website is cool"
+  }
 
   test "anonymous should request contact", %{unauthenticated_conn: conn} do
     mutation = """
-      mutation {
-        requestContact(#{@request_contact_input}) {
+      mutation RequestContact($name: String, $email: String, $phone: String, $message: String) {
+        requestContact(name: $name, email: $email, phone: $phone, message: $message) {
           name
           email
           phone
@@ -36,24 +36,22 @@ defmodule ReWeb.GraphQL.Interests.ContactRequestTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
 
     assert %{
-             "requestContact" => %{
                "name" => "Mah Name",
                "email" => "testemail@emcasa.com",
                "phone" => "123321123",
                "message" => "this website is cool"
-             }
-           } = json_response(conn, 200)["data"]
+           } == json_response(conn, 200)["data"]["requestContact"]
 
     assert Repo.get_by(ContactRequest, name: "Mah Name")
   end
 
   test "user should request contact", %{user_conn: conn, user_user: user} do
     mutation = """
-      mutation {
-        requestContact(#{@request_contact_input}) {
+      mutation RequestContact($name: String, $email: String, $phone: String, $message: String) {
+        requestContact(name: $name, email: $email, phone: $phone, message: $message) {
           name
           email
           phone
@@ -62,16 +60,14 @@ defmodule ReWeb.GraphQL.Interests.ContactRequestTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
 
     assert %{
-             "requestContact" => %{
                "name" => "Mah Name",
                "email" => "testemail@emcasa.com",
                "phone" => "123321123",
                "message" => "this website is cool"
-             }
-           } = json_response(conn, 200)["data"]
+           } == json_response(conn, 200)["data"]["requestContact"]
 
     assert contact_request = Repo.get_by(ContactRequest, name: "Mah Name")
     assert contact_request.user_id == user.id
