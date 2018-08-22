@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.PriceSuggestions.RequestTest do
+defmodule ReWeb.GraphQL.PriceSuggestions.QueryTest do
   use ReWeb.ConnCase
 
   alias ReWeb.AbsintheHelpers
