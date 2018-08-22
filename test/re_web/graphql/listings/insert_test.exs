@@ -183,6 +183,7 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
               postalCode
               streetNumber
             }
+            garageSpots
           }
       }
     """
@@ -197,7 +198,8 @@ defmodule ReWeb.GraphQL.Listings.InsertTest do
                  "street" => address.street,
                  "postalCode" => address.postal_code,
                  "streetNumber" => address.street_number
-               }
+               },
+               "garageSpots" => 0
              }
            } == json_response(conn, 200)["data"]
   end
