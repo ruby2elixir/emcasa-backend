@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Featured.IndexTest do
+defmodule ReWeb.GraphQL.Featured.QueryTest do
   use ReWeb.ConnCase
 
   import Re.Factory
@@ -48,7 +48,7 @@ defmodule ReWeb.GraphQL.Featured.IndexTest do
     )
 
     query = """
-      {
+      query FeaturedListing {
         featuredListings {
           address {
             street
@@ -60,7 +60,7 @@ defmodule ReWeb.GraphQL.Featured.IndexTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert [
              %{
@@ -112,7 +112,7 @@ defmodule ReWeb.GraphQL.Featured.IndexTest do
     )
 
     query = """
-      {
+      query FeaturedListing {
         featuredListings {
           address {
             street
@@ -124,7 +124,7 @@ defmodule ReWeb.GraphQL.Featured.IndexTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert [
              %{
@@ -176,7 +176,7 @@ defmodule ReWeb.GraphQL.Featured.IndexTest do
     )
 
     query = """
-      {
+      query FeaturedListing {
         featuredListings {
           address {
             street
@@ -188,7 +188,7 @@ defmodule ReWeb.GraphQL.Featured.IndexTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert [
              %{
