@@ -1356,48 +1356,46 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       listing = insert(:listing, user: user)
 
       query = """
-        {
+        query UserListings {
           userListings {
             id
           }
         }
       """
 
-      listing_id = to_string(listing.id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userListings"))
-
-      assert %{"userListings" => [%{"id" => ^listing_id}]} = json_response(conn, 200)["data"]
+      assert [%{"id" => to_string(listing.id)}] ==
+               json_response(conn, 200)["data"]["userListings"]
     end
 
     test "user should see its own listings users", %{user_conn: conn, user_user: user} do
       listing = insert(:listing, user: user)
 
       query = """
-        {
+        query UserListings {
           userListings {
             id
           }
         }
       """
 
-      listing_id = to_string(listing.id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userListings"))
-
-      assert %{"userListings" => [%{"id" => ^listing_id}]} = json_response(conn, 200)["data"]
+      assert [%{"id" => to_string(listing.id)}] ==
+               json_response(conn, 200)["data"]["userListings"]
     end
 
     test "anonymous should not see own listings", %{unauthenticated_conn: conn} do
       query = """
-        {
+        query UserListings {
           userListings {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userListings"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
