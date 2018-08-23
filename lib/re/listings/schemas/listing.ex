@@ -18,7 +18,7 @@ defmodule Re.Listing do
     field :bathrooms, :integer
     field :restrooms, :integer
     field :area, :integer
-    field :garage_spots, :integer
+    field :garage_spots, :integer, default: 0
     field :score, :integer
     field :suites, :integer
     field :dependencies, :integer
