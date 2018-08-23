@@ -3,7 +3,10 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
   import Re.Factory
 
-  alias ReWeb.AbsintheHelpers
+  alias ReWeb.{
+    AbsintheHelpers,
+    Listing.MutationHelpers
+  }
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
@@ -13,17 +16,12 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     listing = build(:listing)
     address = build(:address)
 
-    insert_input = AbsintheHelpers.listing_input(listing, address)
-    update_input = AbsintheHelpers.listing_input(listing, address)
-
     {:ok,
      unauthenticated_conn: conn,
      admin_user: admin_user,
      user_user: user_user,
      admin_conn: login_as(conn, admin_user),
      user_conn: login_as(conn, user_user),
-     insert_input: insert_input,
-     update_input: update_input,
      old_listing: insert(:listing, user: user_user),
      old_address: insert(:address),
      listing: listing,
@@ -34,13 +32,14 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     test "admin should insert listing", %{
       admin_conn: conn,
       admin_user: user,
-      insert_input: insert_input,
       listing: listing,
       address: address
     } do
-      mutation = AbsintheHelpers.listing_mutation(insert_input, "insertListing")
+      variables = MutationHelpers.insert_listing_variables(listing, address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      mutation = MutationHelpers.insert_listing_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
                "insertListing" =>
@@ -85,13 +84,14 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     test "user should insert listing", %{
       user_conn: conn,
       user_user: user,
-      insert_input: insert_input,
       listing: listing,
       address: address
     } do
-      mutation = AbsintheHelpers.listing_mutation(insert_input, "insertListing")
+      variables = MutationHelpers.insert_listing_variables(listing, address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      mutation = MutationHelpers.insert_listing_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
                "insertListing" =>
@@ -133,17 +133,17 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert owner["id"] == to_string(user.id)
     end
 
-    test "admin should insert listing with address id", %{
-      admin_conn: conn
-    } do
-      address = insert(:address)
+    test "admin should insert listing with address id", %{admin_conn: conn, old_address: address} do
+      variables = %{
+        "input" => %{
+          "type" => "Apartamento",
+          "addressId" => address.id
+        }
+      }
 
       mutation = """
-        mutation {
-          insertListing(input: {
-            type: "Apartamento",
-            addressId: #{address.id}
-            }) {
+        mutation InsertListing ($input: ListingInput!) {
+          insertListing(input: $input) {
               type
               address {
                 id
@@ -155,7 +155,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
                "insertListing" => %{
@@ -170,17 +170,17 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
              } == json_response(conn, 200)["data"]
     end
 
-    test "user should insert listing with address id", %{
-      user_conn: conn
-    } do
-      address = insert(:address)
+    test "user should insert listing with address id", %{user_conn: conn, old_address: address} do
+      variables = %{
+        "input" => %{
+          "type" => "Apartamento",
+          "addressId" => address.id
+        }
+      }
 
       mutation = """
-        mutation {
-          insertListing(input: {
-            type: "Apartamento",
-            addressId: #{address.id}
-            }) {
+        mutation InsertListing ($input: ListingInput!) {
+          insertListing(input: $input) {
               type
               address {
                 id
@@ -192,7 +192,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
                "insertListing" => %{
@@ -207,14 +207,12 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
              } == json_response(conn, 200)["data"]
     end
 
-    test "admin should not insert listing without address", %{
-      admin_conn: conn
-    } do
+    test "admin should not insert listing without address", %{admin_conn: conn} do
+      variables = %{"input" => %{"type" => "Apartamento"}}
+
       mutation = """
-        mutation {
-          insertListing(input: {
-            type: "Apartamento"
-            }) {
+        mutation InsertListing($input: ListingInput!) {
+          insertListing(input: $input) {
               type
               address {
                 id
@@ -226,19 +224,17 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Bad request", "code" => 400}] = json_response(conn, 200)["errors"]
     end
 
-    test "user should not insert listing without address", %{
-      user_conn: conn
-    } do
+    test "user should not insert listing without address", %{user_conn: conn} do
+      variables = %{"input" => %{"type" => "Apartamento"}}
+
       mutation = """
-        mutation {
-          insertListing(input: {
-            type: "Apartamento"
-            }) {
+        mutation InsertListing ($input: ListingInput!) {
+          insertListing(input: $input) {
               type
               address {
                 id
@@ -250,51 +246,59 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Bad request", "code" => 400}] = json_response(conn, 200)["errors"]
     end
 
     test "anonymous should not insert listing", %{
       unauthenticated_conn: conn,
-      insert_input: insert_input
+      listing: listing,
+      address: address
     } do
+      variables = MutationHelpers.insert_listing_variables(listing, address)
+
       mutation = """
-        mutation {
-          insertListing(input: #{insert_input}) {
+        mutation InsertListing($input: ListingInput!) {
+          insertListing(input: $input) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
 
     test "invalid listing", %{admin_conn: conn} do
+      variables = %{
+        "input" => %{
+          "price" => 1,
+          "type" => "Casa",
+          "address" => %{
+            "street" => "st",
+            "streetNumber" => "1",
+            "postalCode" => "123321123",
+            "state" => "RJ",
+            "city" => "Rio de J",
+            "neighborhood" => "copa",
+            "lat" => 10,
+            "lng" => 10
+          }
+        }
+      }
+
       mutation = """
-        mutation {
-          insertListing(input:{
-          price: 1
-          type: "Casa",
-          address: {
-            street: "st",
-            streetNumber: "1",
-            postalCode: "123321123",
-            state: "RJ",
-            city: "Rio de J",
-            neighborhood: "copa",
-            lat: 10,
-            lng: 10
-          }})
+        mutation InsertListing ($input: ListingInput!) {
+          insertListing(input: $input)
           {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "price: must be greater than or equal to 550000", "code" => 422}] =
                json_response(conn, 200)["errors"]
@@ -304,14 +308,16 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
   describe "updateListing" do
     test "admin should update listing", %{
       admin_conn: conn,
-      update_input: update_input,
       old_listing: old_listing,
       listing: new_listing,
       address: new_address
     } do
-      mutation = AbsintheHelpers.listing_mutation(update_input, "updateListing", old_listing.id)
+      variables =
+        MutationHelpers.update_listing_variables(old_listing.id, new_listing, new_address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      mutation = MutationHelpers.update_listing_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{"updateListing" => %{"address" => inserted_address} = updated_listing} =
                json_response(conn, 200)["data"]
@@ -348,14 +354,16 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
     test "owner should update listing", %{
       user_conn: conn,
-      update_input: update_input,
       old_listing: old_listing,
       listing: new_listing,
       address: new_address
     } do
-      mutation = AbsintheHelpers.listing_mutation(update_input, "updateListing", old_listing.id)
+      variables =
+        MutationHelpers.update_listing_variables(old_listing.id, new_listing, new_address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      mutation = MutationHelpers.update_listing_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{"updateListing" => %{"address" => inserted_address} = updated_listing} =
                json_response(conn, 200)["data"]
@@ -392,33 +400,31 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_address["postalCode"] == new_address.postal_code
     end
 
-    test "user should not update listing", %{
-      user_conn: conn,
-      update_input: update_input
-    } do
+    test "user should not update listing", %{user_conn: conn, address: address, listing: listing} do
       not_current_user = insert(:user)
       old_listing = insert(:listing, user: not_current_user)
 
-      mutation = AbsintheHelpers.listing_mutation(update_input, "updateListing", old_listing.id)
+      variables = MutationHelpers.update_listing_variables(old_listing.id, listing, address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      mutation = MutationHelpers.update_listing_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
 
     test "anonymous should not update listing", %{
       unauthenticated_conn: conn,
-      update_input: update_input
+      old_listing: old_listing,
+      listing: new_listing,
+      address: new_address
     } do
-      mutation = """
-        mutation {
-          insertListing(input: #{update_input}) {
-            id
-          }
-        }
-      """
+      variables =
+        MutationHelpers.update_listing_variables(old_listing.id, new_listing, new_address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      mutation = MutationHelpers.update_listing_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
