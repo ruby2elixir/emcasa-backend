@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.MessagesTest do
+defmodule ReWeb.GraphQL.Messages.MutationTest do
   use ReWeb.ConnCase
 
   import Re.Factory

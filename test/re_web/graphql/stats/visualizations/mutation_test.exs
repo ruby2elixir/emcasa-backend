@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.VisualizationsTest do
+defmodule ReWeb.GraphQL.Stats.Visualizations.MutationTest do
   use ReWeb.ConnCase
 
   import Re.Factory

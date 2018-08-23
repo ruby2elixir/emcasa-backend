@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.ChannelsTest do
+defmodule ReWeb.GraphQL.Channels.QueryTest do
   use ReWeb.ConnCase
 
   import Re.Factory
