@@ -35,20 +35,32 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       insert(:image, filename: "not_in_listing_image.jpg")
 
+      variables = %{
+        "activeImagesIsActive" => true,
+        "activeImagesLimit" => 1,
+        "twoImagesLimit" => 2,
+        "inactiveImagesIsActive" => false
+      }
+
       query = """
-        {
+        query Listings (
+          $activeImagesIsActive: Boolean,
+          $activeImagesLimit: Int,
+          $twoImagesLimit: Int,
+          $inactiveImagesIsActive: Int
+          ) {
           listings {
             listings {
               address {
                 street_number
               }
-              activeImages: images (isActive: true, limit: 1) {
+              activeImages: images (isActive: $activeImagesIsActive, limit: $activeImagesLimit) {
                 filename
               }
-              twoImages: images (limit: 2) {
+              twoImages: images (limit: $twoImagesLimit) {
                 filename
               }
-              inactiveImages: images (isActive: false) {
+              inactiveImages: images (isActive: $inactiveImagesIsActive) {
                 filename
               }
               owner {
@@ -60,24 +72,20 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
-
-      name = user.name
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listings" => %{
-                 "listings" => [
-                   %{
-                     "address" => %{"street_number" => "12B"},
-                     "activeImages" => [%{"filename" => "test3.jpg"}],
-                     "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
-                     "inactiveImages" => [%{"filename" => "test2.jpg"}],
-                     "owner" => %{"name" => ^name}
-                   }
-                 ],
-                 "remaining_count" => 0
-               }
-             } = json_response(conn, 200)["data"]
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => "12B"},
+                   "activeImages" => [%{"filename" => "test3.jpg"}],
+                   "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}],
+                   "owner" => %{"name" => user.name}
+                 }
+               ],
+               "remaining_count" => 0
+             } == json_response(conn, 200)["data"]["listings"]
     end
 
     test "owner should query listing index", %{user_conn: conn, user_user: user} do
@@ -93,17 +101,22 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       insert(:image, filename: "not_in_listing_image.jpg")
 
+      variables = %{
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false
+      }
+
       query = """
-        {
+        query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
           listings {
             listings {
               address {
                 street_number
               }
-              activeImages: images (isActive: true) {
+              activeImages: images (isActive: $activeImagesIsActive) {
                 filename
               }
-              inactiveImages: images (isActive: false) {
+              inactiveImages: images (isActive: $inactiveImagesIsActive) {
                 filename
               }
               owner {
@@ -115,23 +128,19 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
-
-      name = user.name
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listings" => %{
-                 "listings" => [
-                   %{
-                     "address" => %{"street_number" => "12B"},
-                     "activeImages" => [%{"filename" => "test.jpg"}],
-                     "inactiveImages" => [%{"filename" => "test2.jpg"}],
-                     "owner" => %{"name" => ^name}
-                   }
-                 ],
-                 "remaining_count" => 0
-               }
-             } = json_response(conn, 200)["data"]
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => "12B"},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}],
+                   "owner" => %{"name" => user.name}
+                 }
+               ],
+               "remaining_count" => 0
+             } == json_response(conn, 200)["data"]["listings"]
     end
 
     test "user should query listing index", %{user_conn: conn} do
@@ -149,17 +158,22 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       insert(:image, filename: "not_in_listing_image.jpg")
 
+      variables = %{
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false
+      }
+
       query = """
-        {
+        query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
           listings {
             listings {
               address {
                 street_number
               }
-              activeImages: images (isActive: true) {
+              activeImages: images (isActive: $activeImagesIsActive) {
                 filename
               }
-              inactiveImages: images (isActive: false) {
+              inactiveImages: images (isActive: $inactiveImagesIsActive) {
                 filename
               }
               owner {
@@ -171,21 +185,19 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listings" => %{
-                 "listings" => [
-                   %{
-                     "address" => %{"street_number" => nil},
-                     "activeImages" => [%{"filename" => "test.jpg"}],
-                     "inactiveImages" => [%{"filename" => "test.jpg"}],
-                     "owner" => nil
-                   }
-                 ],
-                 "remaining_count" => 0
-               }
-             } = json_response(conn, 200)["data"]
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => nil},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test.jpg"}],
+                   "owner" => nil
+                 }
+               ],
+               "remaining_count" => 0
+             } == json_response(conn, 200)["data"]["listings"]
     end
 
     test "anonymous should query listing index", %{unauthenticated_conn: conn} do
@@ -203,17 +215,22 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       insert(:image, filename: "not_in_listing_image.jpg")
 
+      variables = %{
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false
+      }
+
       query = """
-        {
+        query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
           listings {
             listings {
               address {
                 street_number
               }
-              activeImages: images (isActive: true) {
+              activeImages: images (isActive: $activeImagesIsActive) {
                 filename
               }
-              inactiveImages: images (isActive: false) {
+              inactiveImages: images (isActive: $inactiveImagesIsActive) {
                 filename
               }
               owner {
@@ -225,21 +242,19 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listings" => %{
-                 "listings" => [
-                   %{
-                     "address" => %{"street_number" => nil},
-                     "activeImages" => [%{"filename" => "test.jpg"}],
-                     "inactiveImages" => [%{"filename" => "test.jpg"}],
-                     "owner" => nil
-                   }
-                 ],
-                 "remaining_count" => 0
-               }
-             } = json_response(conn, 200)["data"]
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => nil},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test.jpg"}],
+                   "owner" => nil
+                 }
+               ],
+               "remaining_count" => 0
+             } == json_response(conn, 200)["data"]["listings"]
     end
 
     test "should query listing index with pagination", %{unauthenticated_conn: conn} do
@@ -247,11 +262,16 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       [%{id: listing2_id}, %{id: listing3_id}] = insert_list(2, :listing, score: 4)
       insert_list(3, :listing, score: 3)
 
-      pagination_input = "{pageSize: 1, excludedListingIds: [#{listing2_id}, #{listing3_id}]}"
+      variables = %{
+        "pagination" => %{
+          "pageSize" => 1,
+          "excludedListingIds" => [listing2_id, listing3_id]
+        }
+      }
 
       query = """
-        {
-          listings (pagination: #{pagination_input}) {
+        query Listings ($pagination: ListingPagination) {
+          listings (pagination: $pagination) {
             listings {
               id
             }
@@ -260,20 +280,16 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      listing1_id = to_string(listing1.id)
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listings" => %{
-                 "listings" => [
-                   %{
-                     "id" => ^listing1_id
-                   }
-                 ],
-                 "remaining_count" => 3
-               }
-             } = json_response(conn, 200)["data"]
+               "listings" => [
+                 %{
+                   "id" => to_string(listing1.id)
+                 }
+               ],
+               "remaining_count" => 3
+             } == json_response(conn, 200)["data"]["listings"]
     end
 
     test "should query listing index with filtering", %{user_conn: conn, user_user: user} do
@@ -553,29 +569,29 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       insert(:listing_blacklist, listing: listing2, user: user)
 
-      filter_input = """
-        {
-          maxPrice: 1000000
-          minPrice: 800000
-          maxRooms: 4
-          minRooms: 2
-          minArea: 80
-          maxArea: 100
-          neighborhoods: ["Copacabana", "Leblon"]
-          types: ["Apartamento"]
-          maxLat: 60.0
-          minLat: 40.0
-          maxLng: 60.0
-          minLng: 40.0
-          neighborhoodsSlugs: ["copacabana", "leblon"]
-          maxGarageSpots: 3
-          minGarageSpots: 1
+      variables = %{
+        "filters" => %{
+          "maxPrice" => 1_000_000,
+          "minPrice" => 800_000,
+          "maxRooms" => 4,
+          "minRooms" => 2,
+          "minArea" => 80,
+          "maxArea" => 100,
+          "neighborhoods" => ["Copacabana", "Leblon"],
+          "types" => ["Apartamento"],
+          "maxLat" => 60.0,
+          "minLat" => 40.0,
+          "maxLng" => 60.0,
+          "minLng" => 40.0,
+          "neighborhoodsSlugs" => ["copacabana", "leblon"],
+          "maxGarageSpots" => 3,
+          "minGarageSpots" => 1
         }
-      """
+      }
 
       query = """
-        {
-          listings (filters: #{filter_input}) {
+        query Listings($filters: ListingFilterInput) {
+          listings (filters: $filters) {
             listings {
               id
             }
@@ -586,22 +602,18 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      listing1_id = to_string(listing1.id)
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listings" => %{
-                 "listings" => [
-                   %{
-                     "id" => ^listing1_id
-                   }
-                 ],
-                 "filters" => %{
-                   "maxPrice" => 1_000_000
+               "listings" => [
+                 %{
+                   "id" => to_string(listing1.id)
                  }
+               ],
+               "filters" => %{
+                 "maxPrice" => 1_000_000
                }
-             } = json_response(conn, 200)["data"]
+             } == json_response(conn, 200)["data"]["listings"]
     end
 
     test "should query listing index with order by", %{user_conn: conn} do
@@ -612,17 +624,17 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 3)
       %{id: id6} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 5)
 
-      order_by_input = """
-        [
-          {field: PRICE, type: DESC},
-          {field: GARAGE_SPOTS, type: DESC},
-          {field: ROOMS, type: ASC}
+      variables = %{
+        "orderBy" => [
+          %{"field" => "PRICE", "type" => "DESC"},
+          %{"field" => "GARAGE_SPOTS", "type" => "DESC"},
+          %{"field" => "ROOMS", "type" => "ASC"}
         ]
-      """
+      }
 
       query = """
-        {
-          listings (orderBy: #{order_by_input}) {
+        query Listings ($orderBy: [OrderBy]) {
+          listings (orderBy: $orderBy) {
             listings {
               id
             }
@@ -630,38 +642,33 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      string_id1 = to_string(id1)
-      string_id2 = to_string(id2)
-      string_id3 = to_string(id3)
-      string_id4 = to_string(id4)
-      string_id5 = to_string(id5)
-      string_id6 = to_string(id6)
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listings" => %{
-                 "listings" => [
-                   %{"id" => ^string_id3},
-                   %{"id" => ^string_id6},
-                   %{"id" => ^string_id4},
-                   %{"id" => ^string_id1},
-                   %{"id" => ^string_id2},
-                   %{"id" => ^string_id5}
-                 ]
-               }
-             } = json_response(conn, 200)["data"]
+               "listings" => [
+                 %{"id" => to_string(id3)},
+                 %{"id" => to_string(id6)},
+                 %{"id" => to_string(id4)},
+                 %{"id" => to_string(id1)},
+                 %{"id" => to_string(id2)},
+                 %{"id" => to_string(id5)}
+               ]
+             } == json_response(conn, 200)["data"]["listings"]
     end
 
     test "should query listing index with respective images", %{unauthenticated_conn: conn} do
       insert(:listing, images: [build(:image), build(:image), build(:image)])
       insert(:listing, images: [build(:image), build(:image), build(:image)])
 
+      variables = %{
+        "limit" => 2
+      }
+
       query = """
-        {
+        query Listings ($limit: Int) {
           listings {
             listings {
-              images (limit: 2) {
+              images (limit: $limit) {
                 filename
               }
             }
@@ -669,10 +676,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listings" => %{
                  "listings" => [
                    %{
                      "images" => [_, _]
@@ -681,8 +687,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                      "images" => [_, _]
                    }
                  ]
-               }
-             } = json_response(conn, 200)["data"]
+             } = json_response(conn, 200)["data"]["listings"]
     end
 
     test "should query listing index with price reduction attribute", %{
@@ -716,7 +721,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       )
 
       query = """
-        {
+        query Listings {
           listings {
             listings {
               priceRecentlyReduced
@@ -725,18 +730,16 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert %{
-               "listings" => %{
                  "listings" => [
                    %{"priceRecentlyReduced" => false},
                    %{"priceRecentlyReduced" => true},
                    %{"priceRecentlyReduced" => false},
                    %{"priceRecentlyReduced" => false}
                  ]
-               }
-             } = json_response(conn, 200)["data"]
+             } == json_response(conn, 200)["data"]["listings"]
     end
   end
 
