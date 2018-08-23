@@ -1295,36 +1295,37 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       listing = insert(:listing)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
+      variables = %{"id" => listing.id}
+
       query = """
-        {
-          showFavoritedUsers(id: #{listing.id}) {
+        query ShowFavoritedUsers ($id: ID!) {
+          showFavoritedUsers(id: $id) {
             id
           }
         }
       """
 
-      user_id = to_string(user.id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "showFavoritedUsers"))
-
-      assert %{"showFavoritedUsers" => [%{"id" => ^user_id}]} = json_response(conn, 200)["data"]
+      assert [%{"id" => to_string(user.id)}] ==
+               json_response(conn, 200)["data"]["showFavoritedUsers"]
     end
 
     test "admin should not see favorited users", %{user_conn: conn, user_user: user} do
       listing = insert(:listing)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
+      variables = %{"id" => listing.id}
+
       query = """
-        {
-          showFavoritedUsers(id: #{listing.id}) {
+        query ShowFavoritedUsers ($id: ID!) {
+          showFavoritedUsers(id: $id) {
             id
           }
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "showFavoritedUsers"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
@@ -1334,16 +1335,17 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       user = insert(:user)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
 
+      variables = %{"id" => listing.id}
+
       query = """
-        {
-          showFavoritedUsers(id: #{listing.id}) {
+        query ShowFavoritedUsers ($id: ID!) {
+          showFavoritedUsers(id: $id) {
             id
           }
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "showFavoritedUsers"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
