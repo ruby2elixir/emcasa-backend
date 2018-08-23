@@ -21,10 +21,10 @@ defmodule Re.RelatedTest do
         insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
 
       %{id: id2} =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_000)
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_000, score: 4)
 
       %{id: id3} =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000)
+        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000, score: 3)
 
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], remaining_count: 0} = Related.get(listing)
     end
@@ -33,10 +33,10 @@ defmodule Re.RelatedTest do
       listing = insert(:listing, address: build(:address, neighborhood: "Copacabana"), rooms: 3)
 
       %{id: id1} =
-        insert(:listing, score: 3, address: build(:address, neighborhood: "Copacabana"), rooms: 4)
+        insert(:listing, score: 3, address: build(:address, neighborhood: "Copacabana"), rooms: 4, score: 4)
 
       %{id: id2} =
-        insert(:listing, score: 4, address: build(:address, neighborhood: "Copacabana"), rooms: 2)
+        insert(:listing, score: 4, address: build(:address, neighborhood: "Copacabana"), rooms: 2, score: 3)
 
       assert %{listings: [%{id: ^id1}, %{id: ^id2}], remaining_count: 0} = Related.get(listing)
     end
@@ -51,10 +51,10 @@ defmodule Re.RelatedTest do
         )
 
       %{id: id2} =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_000)
+        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_000, score: 4)
 
       %{id: id3} =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000)
+        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000, score: 3)
 
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], remaining_count: 0} = Related.get(listing)
     end
