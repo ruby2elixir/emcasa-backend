@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Relaxed.IndexTest do
+defmodule ReWeb.GraphQL.Relaxed.QueryTest do
   use ReWeb.ConnCase
 
   import Re.Factory
