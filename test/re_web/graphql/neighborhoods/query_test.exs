@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Neighborhoods.IndexTest do
+defmodule ReWeb.GraphQL.Neighborhoods.QueryTest do
   use ReWeb.ConnCase
 
   import Re.Factory
@@ -21,9 +21,9 @@ defmodule ReWeb.GraphQL.Neighborhoods.IndexTest do
     insert(:listing, address: build(:address, neighborhood: "Botafogo"), is_active: false)
     insert(:listing, address: build(:address, neighborhood: "Leblon"), is_active: true)
 
-    query = "{ neighborhoods } "
+    query = "query Neighborhoods { neighborhoods } "
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert %{"neighborhoods" => ["Copacabana", "Leblon"]} = json_response(conn, 200)["data"]
   end
@@ -33,9 +33,9 @@ defmodule ReWeb.GraphQL.Neighborhoods.IndexTest do
     insert(:listing, address: build(:address, neighborhood: "Botafogo"), is_active: false)
     insert(:listing, address: build(:address, neighborhood: "Leblon"), is_active: true)
 
-    query = "{ neighborhoods } "
+    query = "query Neighborhoods { neighborhoods } "
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert %{"neighborhoods" => ["Copacabana", "Leblon"]} = json_response(conn, 200)["data"]
   end
@@ -45,9 +45,9 @@ defmodule ReWeb.GraphQL.Neighborhoods.IndexTest do
     insert(:listing, address: build(:address, neighborhood: "Botafogo"), is_active: false)
     insert(:listing, address: build(:address, neighborhood: "Leblon"), is_active: true)
 
-    query = "{ neighborhoods } "
+    query = "query Neighborhoods { neighborhoods } "
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listings"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert %{"neighborhoods" => ["Copacabana", "Leblon"]} = json_response(conn, 200)["data"]
   end
