@@ -19,11 +19,17 @@ defmodule ReWeb.GraphQL.Relaxed.QueryTest do
   end
 
   test "should return listings with relaxed filters for admin", %{admin_conn: conn} do
-    insert(:listing, rooms: 3)
+    %{id: listing_id} = insert(:listing, rooms: 3)
+
+    variables = %{
+      "filters" => %{
+        "maxRooms" => 2
+      }
+    }
 
     query = """
-      {
-        relaxedListings (filters: {maxRooms: 2}) {
+      query RelaxedListings ($filters: ListingFilterInput) {
+        relaxedListings (filters: $filters) {
           remainingCount
           listings {
             id
@@ -35,23 +41,29 @@ defmodule ReWeb.GraphQL.Relaxed.QueryTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "relaxedListings"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
     assert %{
-             "listings" => [%{"id" => _}],
+             "listings" => [%{"id" => to_string(listing_id)}],
              "remainingCount" => 0,
              "filters" => %{
                "maxRooms" => 3
              }
-           } = json_response(conn, 200)["data"]["relaxedListings"]
+           } == json_response(conn, 200)["data"]["relaxedListings"]
   end
 
   test "should return listings with relaxed filters for user", %{user_conn: conn} do
-    insert(:listing, rooms: 3)
+    %{id: listing_id} = insert(:listing, rooms: 3)
+
+    variables = %{
+      "filters" => %{
+        "maxRooms" => 2
+      }
+    }
 
     query = """
-      {
-        relaxedListings (filters: {maxRooms: 2}) {
+      query RelaxedListings ($filters: ListingFilterInput) {
+        relaxedListings (filters: $filters) {
           remainingCount
           listings {
             id
@@ -63,23 +75,29 @@ defmodule ReWeb.GraphQL.Relaxed.QueryTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "relaxedListings"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
     assert %{
-             "listings" => [%{"id" => _}],
+             "listings" => [%{"id" => to_string(listing_id)}],
              "remainingCount" => 0,
              "filters" => %{
                "maxRooms" => 3
              }
-           } = json_response(conn, 200)["data"]["relaxedListings"]
+           } == json_response(conn, 200)["data"]["relaxedListings"]
   end
 
   test "should return listings with relaxed filters for anonymous", %{unauthenticated_conn: conn} do
-    insert(:listing, rooms: 3)
+    %{id: listing_id} = insert(:listing, rooms: 3)
+
+    variables = %{
+      "filters" => %{
+        "maxRooms" => 2
+      }
+    }
 
     query = """
-      {
-        relaxedListings (filters: {maxRooms: 2}) {
+      query RelaxedListings ($filters: ListingFilterInput) {
+        relaxedListings (filters: $filters) {
           remainingCount
           listings {
             id
@@ -91,14 +109,14 @@ defmodule ReWeb.GraphQL.Relaxed.QueryTest do
       }
     """
 
-    conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "relaxedListings"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
     assert %{
-             "listings" => [%{"id" => _}],
+             "listings" => [%{"id" => to_string(listing_id)}],
              "remainingCount" => 0,
              "filters" => %{
                "maxRooms" => 3
              }
-           } = json_response(conn, 200)["data"]["relaxedListings"]
+           } == json_response(conn, 200)["data"]["relaxedListings"]
   end
 end
