@@ -20,6 +20,7 @@ defmodule Re.Listings.Related do
       |> Queries.excluding(params)
       |> Queries.exclude_blacklisted(params)
       |> Queries.active()
+      |> Queries.order_by()
       |> Queries.limit(params)
       |> Queries.preload_relations()
 
