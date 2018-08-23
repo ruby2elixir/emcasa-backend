@@ -1,77 +1,75 @@
 defmodule ReWeb.Listing.MutationHelpers do
-
-
   def insert_listing_variables(listing, address) do
-      %{
-        "input" => %{
-          "type" => listing.type,
-          "address" => %{
-            "city" => address.city,
-            "state" => address.state,
-            "lat" => address.lat,
-            "lng" => address.lng,
-            "neighborhood" => address.neighborhood,
-            "street" => address.street,
-            "streetNumber" => address.street_number,
-            "postalCode" => address.postal_code
-          },
-          "price" => listing.price,
-          "complement" => listing.complement,
-          "description" => listing.description,
-          "propertyTax" => listing.property_tax,
-          "maintenanceFee" => listing.maintenance_fee,
-          "floor" => listing.floor,
-          "rooms" => listing.rooms,
-          "bathrooms" => listing.bathrooms,
-          "restrooms" => listing.restrooms,
-          "area" => listing.area,
-          "garageSpots" => listing.garage_spots,
-          "suites" => listing.suites,
-          "dependencies" => listing.dependencies,
-          "balconies" => listing.balconies,
-          "hasElevator" => listing.has_elevator,
-          "matterportCode" => listing.matterport_code,
-          "isExclusive" => listing.is_exclusive,
-          "isRelease" => listing.is_release
-        }
+    %{
+      "input" => %{
+        "type" => listing.type,
+        "address" => %{
+          "city" => address.city,
+          "state" => address.state,
+          "lat" => address.lat,
+          "lng" => address.lng,
+          "neighborhood" => address.neighborhood,
+          "street" => address.street,
+          "streetNumber" => address.street_number,
+          "postalCode" => address.postal_code
+        },
+        "price" => listing.price,
+        "complement" => listing.complement,
+        "description" => listing.description,
+        "propertyTax" => listing.property_tax,
+        "maintenanceFee" => listing.maintenance_fee,
+        "floor" => listing.floor,
+        "rooms" => listing.rooms,
+        "bathrooms" => listing.bathrooms,
+        "restrooms" => listing.restrooms,
+        "area" => listing.area,
+        "garageSpots" => listing.garage_spots,
+        "suites" => listing.suites,
+        "dependencies" => listing.dependencies,
+        "balconies" => listing.balconies,
+        "hasElevator" => listing.has_elevator,
+        "matterportCode" => listing.matterport_code,
+        "isExclusive" => listing.is_exclusive,
+        "isRelease" => listing.is_release
       }
+    }
   end
 
   def update_listing_variables(id, listing, address) do
-      %{
-        "id" => id,
-        "input" => %{
-          "type" => listing.type,
-          "address" => %{
-            "city" => address.city,
-            "state" => address.state,
-            "lat" => address.lat,
-            "lng" => address.lng,
-            "neighborhood" => address.neighborhood,
-            "street" => address.street,
-            "streetNumber" => address.street_number,
-            "postalCode" => address.postal_code
-          },
-          "price" => listing.price,
-          "complement" => listing.complement,
-          "description" => listing.description,
-          "propertyTax" => listing.property_tax,
-          "maintenanceFee" => listing.maintenance_fee,
-          "floor" => listing.floor,
-          "rooms" => listing.rooms,
-          "bathrooms" => listing.bathrooms,
-          "restrooms" => listing.restrooms,
-          "area" => listing.area,
-          "garageSpots" => listing.garage_spots,
-          "suites" => listing.suites,
-          "dependencies" => listing.dependencies,
-          "balconies" => listing.balconies,
-          "hasElevator" => listing.has_elevator,
-          "matterportCode" => listing.matterport_code,
-          "isExclusive" => listing.is_exclusive,
-          "isRelease" => listing.is_release
-        }
+    %{
+      "id" => id,
+      "input" => %{
+        "type" => listing.type,
+        "address" => %{
+          "city" => address.city,
+          "state" => address.state,
+          "lat" => address.lat,
+          "lng" => address.lng,
+          "neighborhood" => address.neighborhood,
+          "street" => address.street,
+          "streetNumber" => address.street_number,
+          "postalCode" => address.postal_code
+        },
+        "price" => listing.price,
+        "complement" => listing.complement,
+        "description" => listing.description,
+        "propertyTax" => listing.property_tax,
+        "maintenanceFee" => listing.maintenance_fee,
+        "floor" => listing.floor,
+        "rooms" => listing.rooms,
+        "bathrooms" => listing.bathrooms,
+        "restrooms" => listing.restrooms,
+        "area" => listing.area,
+        "garageSpots" => listing.garage_spots,
+        "suites" => listing.suites,
+        "dependencies" => listing.dependencies,
+        "balconies" => listing.balconies,
+        "hasElevator" => listing.has_elevator,
+        "matterportCode" => listing.matterport_code,
+        "isExclusive" => listing.is_exclusive,
+        "isRelease" => listing.is_release
       }
+    }
   end
 
   def insert_listing_mutation do

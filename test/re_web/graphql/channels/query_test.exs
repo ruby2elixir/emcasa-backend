@@ -58,8 +58,7 @@ defmodule ReWeb.GraphQL.Channels.QueryTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert [
                %{
@@ -117,8 +116,7 @@ defmodule ReWeb.GraphQL.Channels.QueryTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert [
                %{
@@ -192,8 +190,7 @@ defmodule ReWeb.GraphQL.Channels.QueryTest do
       }
     """
 
-    conn =
-      post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert [
              %{
@@ -249,8 +246,7 @@ defmodule ReWeb.GraphQL.Channels.QueryTest do
       }
     """
 
-    conn =
-      post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert %{"errors" => [%{"message" => "Unauthorized", "code" => 401}]} =
              json_response(conn, 200)
@@ -276,8 +272,7 @@ defmodule ReWeb.GraphQL.Channels.QueryTest do
       }
     """
 
-    conn =
-      post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert [
              %{
@@ -363,8 +358,7 @@ defmodule ReWeb.GraphQL.Channels.QueryTest do
       }
     """
 
-    conn =
-      post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert [
              %{"listing" => %{"id" => to_string(listing2.id)}},

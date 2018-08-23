@@ -56,14 +56,14 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert %{
-               "activeListingCount" => 2,
-               "favoriteCount" => 1,
-               "visualizationCount" => 1,
-               "tourVisualizationCount" => 1,
-               "maintenanceFeeCount" => 1,
-               "propertyTaxCount" => 1,
-               "tourCount" => 1,
-               "areaCount" => 1
+             "activeListingCount" => 2,
+             "favoriteCount" => 1,
+             "visualizationCount" => 1,
+             "tourVisualizationCount" => 1,
+             "maintenanceFeeCount" => 1,
+             "propertyTaxCount" => 1,
+             "tourCount" => 1,
+             "areaCount" => 1
            } == json_response(conn, 200)["data"]["dashboard"]
   end
 

@@ -49,10 +49,10 @@ defmodule ReWeb.GraphQL.Blacklists.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-                 "id" => to_string(user.id),
-                 "blacklists" => [
-                   %{"id" => to_string(blacklisted_listing1.id)}
-                 ]
+               "id" => to_string(user.id),
+               "blacklists" => [
+                 %{"id" => to_string(blacklisted_listing1.id)}
+               ]
              } == json_response(conn, 200)["data"]["userProfile"]
     end
   end

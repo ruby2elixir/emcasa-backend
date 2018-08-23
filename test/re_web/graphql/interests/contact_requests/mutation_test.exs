@@ -39,10 +39,10 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
 
     assert %{
-               "name" => "Mah Name",
-               "email" => "testemail@emcasa.com",
-               "phone" => "123321123",
-               "message" => "this website is cool"
+             "name" => "Mah Name",
+             "email" => "testemail@emcasa.com",
+             "phone" => "123321123",
+             "message" => "this website is cool"
            } == json_response(conn, 200)["data"]["requestContact"]
 
     assert Repo.get_by(ContactRequest, name: "Mah Name")
@@ -63,10 +63,10 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
 
     assert %{
-               "name" => "Mah Name",
-               "email" => "testemail@emcasa.com",
-               "phone" => "123321123",
-               "message" => "this website is cool"
+             "name" => "Mah Name",
+             "email" => "testemail@emcasa.com",
+             "phone" => "123321123",
+             "message" => "this website is cool"
            } == json_response(conn, 200)["data"]["requestContact"]
 
     assert contact_request = Repo.get_by(ContactRequest, name: "Mah Name")

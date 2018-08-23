@@ -18,23 +18,23 @@ defmodule ReWeb.GraphQL.PriceSuggestions.QueryTest do
   end
 
   @variables %{
-      "name" => "Mah Name",
-      "email" => "testemail@emcasa.com",
-      "area" => 80,
-      "rooms" => 2,
-      "bathrooms" => 2,
-      "garageSpots" => 2,
-      "isCovered" => true,
-      "addressInput" => %{
-        "street" => "street",
-        "streetNumber" => "street_number",
-        "neighborhood" => "neighborhood",
-        "city" => "city",
-        "state" => "ST",
-        "postalCode" => "postal_code",
-        "lat" => 10.10,
-        "lng" => 10.10
-      }
+    "name" => "Mah Name",
+    "email" => "testemail@emcasa.com",
+    "area" => 80,
+    "rooms" => 2,
+    "bathrooms" => 2,
+    "garageSpots" => 2,
+    "isCovered" => true,
+    "addressInput" => %{
+      "street" => "street",
+      "streetNumber" => "street_number",
+      "neighborhood" => "neighborhood",
+      "city" => "city",
+      "state" => "ST",
+      "postalCode" => "postal_code",
+      "lat" => 10.10,
+      "lng" => 10.10
+    }
   }
 
   test "anonymous should request price suggestion", %{unauthenticated_conn: conn} do

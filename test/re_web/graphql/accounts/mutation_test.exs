@@ -33,8 +33,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       listing_id = to_string(listing.id)
       assert [%{"id" => listing_id}] == json_response(conn, 200)["data"]["favoritedListings"]
@@ -52,8 +51,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       listing_id = to_string(listing.id)
       assert [%{"id" => listing_id}] == json_response(conn, 200)["data"]["favoritedListings"]
@@ -68,8 +66,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       [errors] = json_response(conn, 200)["errors"]
 
@@ -434,7 +431,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
                "name" => user.name,
                "email" => user.email,
                "phone" => user.phone
-              } == json_response(conn, 200)["data"]["signIn"]["user"]
+             } == json_response(conn, 200)["data"]["signIn"]["user"]
 
       assert json_response(conn, 200)["data"]["signIn"]["jwt"]
     end
@@ -473,7 +470,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
                "name" => user.name,
                "email" => user.email,
                "phone" => user.phone
-              } == json_response(conn, 200)["data"]["signIn"]["user"]
+             } == json_response(conn, 200)["data"]["signIn"]["user"]
 
       assert json_response(conn, 200)["data"]["signIn"]["jwt"]
     end
@@ -696,7 +693,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-                 "id" => to_string(id)
+               "id" => to_string(id)
              } == json_response(conn, 200)["data"]["resetPassword"]
 
       assert user = Repo.get(User, id)
@@ -740,7 +737,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-                 "id" => to_string(id)
+               "id" => to_string(id)
              } == json_response(conn, 200)["data"]["redefinePassword"]
 
       assert user = Repo.get(User, id)
