@@ -679,14 +679,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-                 "listings" => [
-                   %{
-                     "images" => [_, _]
-                   },
-                   %{
-                     "images" => [_, _]
-                   }
-                 ]
+               "listings" => [
+                 %{
+                   "images" => [_, _]
+                 },
+                 %{
+                   "images" => [_, _]
+                 }
+               ]
              } = json_response(conn, 200)["data"]["listings"]
     end
 
@@ -733,20 +733,28 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert %{
-                 "listings" => [
-                   %{"priceRecentlyReduced" => false},
-                   %{"priceRecentlyReduced" => true},
-                   %{"priceRecentlyReduced" => false},
-                   %{"priceRecentlyReduced" => false}
-                 ]
+               "listings" => [
+                 %{"priceRecentlyReduced" => false},
+                 %{"priceRecentlyReduced" => true},
+                 %{"priceRecentlyReduced" => false},
+                 %{"priceRecentlyReduced" => false}
+               ]
              } == json_response(conn, 200)["data"]["listings"]
     end
   end
 
   describe "listing" do
     test "admin should query listing show", %{admin_conn: conn} do
-      active_images = insert_list(3, :image, is_active: true)
-      inactive_images = insert_list(2, :image, is_active: false)
+      %{filename: active_image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: active_image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+      %{filename: active_image_filename3} = image3 = insert(:image, is_active: true, position: 3)
+
+      %{filename: inactive_image_filename1} =
+        image4 = insert(:image, is_active: false, position: 4)
+
+      %{filename: inactive_image_filename2} =
+        image5 = insert(:image, is_active: false, position: 5)
+
       %{street: street, street_number: street_number} = address = insert(:address)
       user = insert(:user)
       interests = insert_list(3, :interest)
@@ -754,7 +762,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       listings_favorites = insert_list(3, :listings_favorites)
       tour_visualisations = insert_list(3, :tour_visualisation)
       listings_visualisations = insert_list(3, :listing_visualisation)
-      price_history = insert_list(3, :price_history)
+
+      [%{price: price1}, %{price: price2}, %{price: price3}] =
+        price_history = insert_list(3, :price_history)
 
       insert(
         :factors,
@@ -770,7 +780,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         insert(
           :listing,
           address: address,
-          images: active_images ++ inactive_images,
+          images: [image1, image2, image3, image4, image5],
           user: user,
           interests: interests,
           in_person_visits: in_person_visits,
@@ -784,20 +794,36 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           bathrooms: 1
         )
 
-      insert(:listing, address: address)
-      insert(:listing, address: address)
+      %{id: related_id1} = insert(:listing, address: address, score: 4)
+      %{id: related_id2} = insert(:listing, address: address, score: 3)
+
+      variables = %{
+        "id" => listing_id,
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false,
+        "pagination" => %{
+          "pageSize" => 2
+        },
+        "filters" => %{}
+      }
 
       query = """
-        {
-          listing (id: #{listing_id}) {
+        query Listing (
+          $id: ID!,
+          $activeImagesIsActive: Boolean,
+          $inactiveImagesIsActive: Boolean,
+          $pagination: ListingPagination,
+          $filters: ListingFilterInput
+          ) {
+          listing (id: $id) {
             address {
               street
               street_number
             }
-            activeImages: images (isActive: true) {
+            activeImages: images (isActive: $activeImagesIsActive) {
               filename
             }
-            inactiveImages: images (isActive: false) {
+            inactiveImages: images (isActive: $inactiveImagesIsActive) {
               filename
             }
             owner {
@@ -812,7 +838,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               price
             }
             suggestedPrice
-            related (pagination: {pageSize: 2}, filters: {}) {
+            related (pagination: $pagination, filters: $filters) {
               listings {
                 id
               }
@@ -821,70 +847,119 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
-
-      name = user.name
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listing" => %{
-                 "address" => %{"street" => ^street, "street_number" => ^street_number},
-                 "activeImages" => [_, _, _],
-                 "inactiveImages" => [_, _],
-                 "owner" => %{"name" => ^name},
-                 "interestCount" => 3,
-                 "inPersonVisitCount" => 3,
-                 "listingFavoriteCount" => 3,
-                 "tourVisualisationCount" => 3,
-                 "listingVisualisationCount" => 3,
-                 "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}],
-                 "suggestedPrice" => 26_279.915,
-                 "related" => %{
-                   "listings" => [_, _]
-                 }
+               "address" => %{"street" => street, "street_number" => street_number},
+               "activeImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "inactiveImages" => [
+                 %{"filename" => to_string(inactive_image_filename1)},
+                 %{"filename" => to_string(inactive_image_filename2)}
+               ],
+               "owner" => %{"name" => user.name},
+               "interestCount" => 3,
+               "inPersonVisitCount" => 3,
+               "listingFavoriteCount" => 3,
+               "tourVisualisationCount" => 3,
+               "listingVisualisationCount" => 3,
+               "previousPrices" => [
+                 %{"price" => price1},
+                 %{"price" => price2},
+                 %{"price" => price3}
+               ],
+               "suggestedPrice" => 26_279.915,
+               "related" => %{
+                 "listings" => [
+                   %{"id" => to_string(related_id1)},
+                   %{"id" => to_string(related_id2)}
+                 ]
                }
-             } = json_response(conn, 200)["data"]
+             } == json_response(conn, 200)["data"]["listing"]
     end
 
     test "owner should query listing show", %{user_conn: conn, user_user: user} do
-      active_images = insert_list(3, :image, is_active: true)
-      inactive_images = insert_list(2, :image, is_active: false)
-      %{street: street, street_number: street_number} = address = insert(:address)
+      %{filename: active_image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: active_image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+      %{filename: active_image_filename3} = image3 = insert(:image, is_active: true, position: 3)
 
+      %{filename: inactive_image_filename1} =
+        image4 = insert(:image, is_active: false, position: 4)
+
+      %{filename: inactive_image_filename2} =
+        image5 = insert(:image, is_active: false, position: 5)
+
+      %{street: street, street_number: street_number} = address = insert(:address)
       interests = insert_list(3, :interest)
       in_person_visits = insert_list(3, :in_person_visit)
       listings_favorites = insert_list(3, :listings_favorites)
       tour_visualisations = insert_list(3, :tour_visualisation)
       listings_visualisations = insert_list(3, :listing_visualisation)
-      price_history = insert_list(3, :price_history)
+
+      [%{price: price1}, %{price: price2}, %{price: price3}] =
+        price_history = insert_list(3, :price_history)
+
+      insert(
+        :factors,
+        street: street,
+        intercept: 10.10,
+        rooms: 123.321,
+        area: 321.123,
+        bathrooms: 111.222,
+        garage_spots: 222.111
+      )
 
       %{id: listing_id} =
         insert(
           :listing,
           address: address,
-          images: active_images ++ inactive_images,
+          images: [image1, image2, image3, image4, image5],
           user: user,
           interests: interests,
           in_person_visits: in_person_visits,
           listings_favorites: listings_favorites,
           tour_visualisations: tour_visualisations,
           listings_visualisations: listings_visualisations,
-          price_history: price_history
+          price_history: price_history,
+          rooms: 2,
+          area: 80,
+          garage_spots: 1,
+          bathrooms: 1
         )
 
-      insert(:listing, address: address)
-      insert(:listing, address: address)
+      %{id: related_id1} = insert(:listing, address: address, score: 4)
+      %{id: related_id2} = insert(:listing, address: address, score: 3)
+
+      variables = %{
+        "id" => listing_id,
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false,
+        "pagination" => %{
+          "pageSize" => 2
+        },
+        "filters" => %{}
+      }
 
       query = """
-        {
-          listing (id: #{listing_id}) {
+        query Listing (
+          $id: ID!,
+          $activeImagesIsActive: Boolean,
+          $inactiveImagesIsActive: Boolean,
+          $pagination: ListingPagination,
+          $filters: ListingFilterInput
+          ) {
+          listing (id: $id) {
             address {
               street
               street_number
             }
-            activeImages: images (isActive: true) {
+            activeImages: images (isActive: $activeImagesIsActive) {
               filename
             }
-            inactiveImages: images (isActive: false) {
+            inactiveImages: images (isActive: $inactiveImagesIsActive) {
               filename
             }
             owner {
@@ -899,7 +974,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               price
             }
             suggestedPrice
-            related (pagination: {pageSize: 2}, filters: {}) {
+            related (pagination: $pagination, filters: $filters) {
               listings {
                 id
               }
@@ -908,53 +983,86 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
-
-      name = user.name
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listing" => %{
-                 "address" => %{"street" => ^street, "street_number" => ^street_number},
-                 "activeImages" => [_, _, _],
-                 "inactiveImages" => [_, _],
-                 "owner" => %{"name" => ^name},
-                 "interestCount" => 3,
-                 "inPersonVisitCount" => 3,
-                 "listingFavoriteCount" => 3,
-                 "tourVisualisationCount" => 3,
-                 "listingVisualisationCount" => 3,
-                 "previousPrices" => [%{"price" => _}, %{"price" => _}, %{"price" => _}],
-                 "suggestedPrice" => nil,
-                 "related" => %{
-                   "listings" => [_, _]
-                 }
+               "address" => %{"street" => street, "street_number" => street_number},
+               "activeImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "inactiveImages" => [
+                 %{"filename" => to_string(inactive_image_filename1)},
+                 %{"filename" => to_string(inactive_image_filename2)}
+               ],
+               "owner" => %{"name" => user.name},
+               "interestCount" => 3,
+               "inPersonVisitCount" => 3,
+               "listingFavoriteCount" => 3,
+               "tourVisualisationCount" => 3,
+               "listingVisualisationCount" => 3,
+               "previousPrices" => [
+                 %{"price" => price1},
+                 %{"price" => price2},
+                 %{"price" => price3}
+               ],
+               "suggestedPrice" => nil,
+               "related" => %{
+                 "listings" => [
+                   %{"id" => to_string(related_id1)},
+                   %{"id" => to_string(related_id2)}
+                 ]
                }
-             } = json_response(conn, 200)["data"]
+             } == json_response(conn, 200)["data"]["listing"]
     end
 
     test "user should query listing show", %{user_conn: conn} do
-      active_images = insert_list(3, :image, is_active: true)
-      inactive_images = insert_list(2, :image, is_active: false)
+      %{filename: active_image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: active_image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+      %{filename: active_image_filename3} = image3 = insert(:image, is_active: true, position: 3)
+      image4 = insert(:image, is_active: false, position: 4)
+      image5 = insert(:image, is_active: false, position: 5)
       %{street: street} = address = insert(:address)
       user = insert(:user)
 
       %{id: listing_id} =
-        insert(:listing, address: address, images: active_images ++ inactive_images, user: user)
+        insert(:listing,
+          address: address,
+          images: [image1, image2, image3, image4, image5],
+          user: user
+        )
 
-      insert(:listing, address: address)
-      insert(:listing, address: address)
+      %{id: related_id1} = insert(:listing, address: address, score: 4)
+      %{id: related_id2} = insert(:listing, address: address, score: 3)
+
+      variables = %{
+        "id" => listing_id,
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false,
+        "pagination" => %{
+          "pageSize" => 2
+        },
+        "filters" => %{}
+      }
 
       query = """
-        {
-          listing (id: #{listing_id}) {
+        query Listing (
+          $id: ID!,
+          $activeImagesIsActive: Boolean,
+          $inactiveImagesIsActive: Boolean,
+          $pagination: ListingPagination,
+          $filters: ListingFilterInput
+          ) {
+          listing (id: $id) {
             address {
               street
               street_number
             }
-            activeImages: images (isActive: true) {
+            activeImages: images (isActive: $activeImagesIsActive) {
               filename
             }
-            inactiveImages: images (isActive: false) {
+            inactiveImages: images (isActive: $inactiveImagesIsActive) {
               filename
             }
             owner {
@@ -969,7 +1077,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               price
             }
             suggestedPrice
-            related (pagination: {pageSize: 2}, filters: {}) {
+            related (pagination: $pagination, filters: $filters) {
               listings {
                 id
               }
@@ -978,51 +1086,83 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listing" => %{
-                 "address" => %{"street" => ^street, "street_number" => nil},
-                 "activeImages" => [_, _, _],
-                 "inactiveImages" => [_, _, _],
-                 "owner" => nil,
-                 "interestCount" => nil,
-                 "inPersonVisitCount" => nil,
-                 "listingFavoriteCount" => nil,
-                 "tourVisualisationCount" => nil,
-                 "listingVisualisationCount" => nil,
-                 "previousPrices" => nil,
-                 "suggestedPrice" => nil,
-                 "related" => %{
-                   "listings" => [_, _]
-                 }
+               "address" => %{"street" => street, "street_number" => nil},
+               "activeImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "inactiveImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "owner" => nil,
+               "interestCount" => nil,
+               "inPersonVisitCount" => nil,
+               "listingFavoriteCount" => nil,
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil,
+               "previousPrices" => nil,
+               "suggestedPrice" => nil,
+               "related" => %{
+                 "listings" => [
+                   %{"id" => to_string(related_id1)},
+                   %{"id" => to_string(related_id2)}
+                 ]
                }
-             } = json_response(conn, 200)["data"]
+             } == json_response(conn, 200)["data"]["listing"]
     end
 
     test "anonymous should query listing show", %{unauthenticated_conn: conn} do
-      active_images = insert_list(3, :image, is_active: true)
-      inactive_images = insert_list(2, :image, is_active: false)
+      %{filename: active_image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: active_image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+      %{filename: active_image_filename3} = image3 = insert(:image, is_active: true, position: 3)
+      image4 = insert(:image, is_active: false, position: 4)
+      image5 = insert(:image, is_active: false, position: 5)
       %{street: street} = address = insert(:address)
       user = insert(:user)
 
       %{id: listing_id} =
-        insert(:listing, address: address, images: active_images ++ inactive_images, user: user)
+        insert(:listing,
+          address: address,
+          images: [image1, image2, image3, image4, image5],
+          user: user
+        )
 
-      insert(:listing, address: address)
-      insert(:listing, address: address)
+      %{id: related_id1} = insert(:listing, address: address, score: 4)
+      %{id: related_id2} = insert(:listing, address: address, score: 3)
+
+      variables = %{
+        "id" => listing_id,
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false,
+        "pagination" => %{
+          "pageSize" => 2
+        },
+        "filters" => %{}
+      }
 
       query = """
-        {
-          listing (id: #{listing_id}) {
+        query Listing (
+          $id: ID!,
+          $activeImagesIsActive: Boolean,
+          $inactiveImagesIsActive: Boolean,
+          $pagination: ListingPagination,
+          $filters: ListingFilterInput
+          ) {
+          listing (id: $id) {
             address {
               street
               street_number
             }
-            activeImages: images (isActive: true) {
+            activeImages: images (isActive: $activeImagesIsActive) {
               filename
             }
-            inactiveImages: images (isActive: false) {
+            inactiveImages: images (isActive: $inactiveImagesIsActive) {
               filename
             }
             owner {
@@ -1037,7 +1177,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               price
             }
             suggestedPrice
-            related (pagination: {pageSize: 2}, filters: {}) {
+            related (pagination: $pagination, filters: $filters) {
               listings {
                 id
               }
@@ -1046,76 +1186,87 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "listing" => %{
-                 "address" => %{"street" => ^street, "street_number" => nil},
-                 "activeImages" => [_, _, _],
-                 "inactiveImages" => [_, _, _],
-                 "owner" => nil,
-                 "interestCount" => nil,
-                 "inPersonVisitCount" => nil,
-                 "listingFavoriteCount" => nil,
-                 "tourVisualisationCount" => nil,
-                 "listingVisualisationCount" => nil,
-                 "previousPrices" => nil,
-                 "suggestedPrice" => nil,
-                 "related" => %{
-                   "listings" => [_, _]
-                 }
+               "address" => %{"street" => street, "street_number" => nil},
+               "activeImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "inactiveImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "owner" => nil,
+               "interestCount" => nil,
+               "inPersonVisitCount" => nil,
+               "listingFavoriteCount" => nil,
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil,
+               "previousPrices" => nil,
+               "suggestedPrice" => nil,
+               "related" => %{
+                 "listings" => [
+                   %{"id" => to_string(related_id1)},
+                   %{"id" => to_string(related_id2)}
+                 ]
                }
-             } = json_response(conn, 200)["data"]
+             } == json_response(conn, 200)["data"]["listing"]
     end
 
     test "admin should see inactive listing", %{admin_conn: conn} do
       %{id: listing_id} = insert(:listing, is_active: false)
 
+      variables = %{"id" => listing_id}
+
       query = """
-        {
-          listing (id: #{listing_id}) {
+        query Listing ($id: ID!) {
+          listing (id: $id) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
-      listing_id = to_string(listing_id)
-
-      assert %{"listing" => %{"id" => ^listing_id}} = json_response(conn, 200)["data"]
+      assert %{"id" => to_string(listing_id)} == json_response(conn, 200)["data"]["listing"]
     end
 
     test "owner should see inactive listing", %{user_conn: conn, user_user: user} do
       %{id: listing_id} = insert(:listing, is_active: false, user: user)
 
+      variables = %{"id" => listing_id}
+
       query = """
-        {
-          listing (id: #{listing_id}) {
+        query Listing ($id: ID!) {
+          listing (id: $id) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
-      listing_id = to_string(listing_id)
-
-      assert %{"listing" => %{"id" => ^listing_id}} = json_response(conn, 200)["data"]
+      assert %{"id" => to_string(listing_id)} == json_response(conn, 200)["data"]["listing"]
     end
 
     test "user should not see inactive listing", %{user_conn: conn} do
       %{id: listing_id} = insert(:listing, is_active: false)
 
+      variables = %{"id" => listing_id}
+
       query = """
-        {
-          listing (id: #{listing_id}) {
+        query Listing ($id: ID!) {
+          listing (id: $id) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
     end
@@ -1123,15 +1274,17 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     test "anonymous should not see inactive listing", %{unauthenticated_conn: conn} do
       %{id: listing_id} = insert(:listing, is_active: false)
 
+      variables = %{"id" => listing_id}
+
       query = """
-        {
-          listing (id: #{listing_id}) {
+        query Listing ($id: ID!) {
+          listing (id: $id) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listing"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
     end
