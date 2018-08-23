@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Subscription.MessagesTest do
+defmodule ReWeb.GraphQL.Messages.SubscriptionTest do
   use ReWeb.SubscriptionCase
 
   @subscription """

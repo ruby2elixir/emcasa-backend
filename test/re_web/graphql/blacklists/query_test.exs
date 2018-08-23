@@ -22,13 +22,23 @@ defmodule ReWeb.GraphQL.Blacklists.QueryTest do
       insert(:listing_blacklist, listing: blacklisted_listing2, user: user)
       insert(:listing_blacklist, listing: blacklisted_listing3, user: user)
 
+      variables = %{
+        "id" => user.id,
+        "pagination" => %{
+          "pageSize" => 1
+        },
+        "filters" => %{
+          "types" => ["Casa"]
+        }
+      }
+
       query = """
-        {
-          userProfile(ID: #{user.id}) {
+        query UserProfile($id: ID, $pagination: ListingPagination, $filters: ListingFilterInput) {
+          userProfile(ID: $id) {
             id
             blacklists (
-              pagination: {pageSize: 1}
-              filters: {types: ["Casa"]}
+              pagination: $pagination
+              filters: $filters
             ) {
               id
             }
@@ -36,19 +46,14 @@ defmodule ReWeb.GraphQL.Blacklists.QueryTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "userProfile"))
-
-      user_id = to_string(user.id)
-      blacklisted_listing1_id = to_string(blacklisted_listing1.id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "userProfile" => %{
-                 "id" => ^user_id,
-                 "blacklists" => [
-                   %{"id" => ^blacklisted_listing1_id}
-                 ]
-               }
-             } = json_response(conn, 200)["data"]
+               "id" => to_string(user.id),
+               "blacklists" => [
+                 %{"id" => to_string(blacklisted_listing1.id)}
+               ]
+             } == json_response(conn, 200)["data"]["userProfile"]
     end
   end
 end

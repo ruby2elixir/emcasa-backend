@@ -1,0 +1,1403 @@
+defmodule ReWeb.GraphQL.Listings.QueryTest do
+  use ReWeb.ConnCase
+
+  import Re.Factory
+
+  alias ReWeb.AbsintheHelpers
+
+  setup %{conn: conn} do
+    conn = put_req_header(conn, "accept", "application/json")
+    admin_user = insert(:user, email: "admin@email.com", role: "admin")
+    user_user = insert(:user, email: "user@email.com", role: "user")
+
+    {:ok,
+     unauthenticated_conn: conn,
+     admin_user: admin_user,
+     user_user: user_user,
+     admin_conn: login_as(conn, admin_user),
+     user_conn: login_as(conn, user_user)}
+  end
+
+  describe "listings" do
+    test "admin should query listing index", %{admin_conn: conn} do
+      user = insert(:user)
+
+      insert(
+        :listing,
+        address: build(:address, street_number: "12B"),
+        images: [
+          build(:image, filename: "test.jpg", position: 3),
+          build(:image, filename: "test2.jpg", position: 2, is_active: false),
+          build(:image, filename: "test3.jpg", position: 1)
+        ],
+        user: user
+      )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
+
+      variables = %{
+        "activeImagesIsActive" => true,
+        "activeImagesLimit" => 1,
+        "twoImagesLimit" => 2,
+        "inactiveImagesIsActive" => false
+      }
+
+      query = """
+        query Listings (
+          $activeImagesIsActive: Boolean,
+          $activeImagesLimit: Int,
+          $twoImagesLimit: Int,
+          $inactiveImagesIsActive: Int
+          ) {
+          listings {
+            listings {
+              address {
+                street_number
+              }
+              activeImages: images (isActive: $activeImagesIsActive, limit: $activeImagesLimit) {
+                filename
+              }
+              twoImages: images (limit: $twoImagesLimit) {
+                filename
+              }
+              inactiveImages: images (isActive: $inactiveImagesIsActive) {
+                filename
+              }
+              owner {
+                name
+              }
+            }
+            remaining_count
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => "12B"},
+                   "activeImages" => [%{"filename" => "test3.jpg"}],
+                   "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}],
+                   "owner" => %{"name" => user.name}
+                 }
+               ],
+               "remaining_count" => 0
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "owner should query listing index", %{user_conn: conn, user_user: user} do
+      insert(
+        :listing,
+        address: build(:address, street_number: "12B"),
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ],
+        user: user
+      )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
+
+      variables = %{
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false
+      }
+
+      query = """
+        query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
+          listings {
+            listings {
+              address {
+                street_number
+              }
+              activeImages: images (isActive: $activeImagesIsActive) {
+                filename
+              }
+              inactiveImages: images (isActive: $inactiveImagesIsActive) {
+                filename
+              }
+              owner {
+                name
+              }
+            }
+            remaining_count
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => "12B"},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test2.jpg"}],
+                   "owner" => %{"name" => user.name}
+                 }
+               ],
+               "remaining_count" => 0
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "user should query listing index", %{user_conn: conn} do
+      user = insert(:user)
+
+      insert(
+        :listing,
+        address: build(:address, street_number: "12B"),
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ],
+        user: user
+      )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
+
+      variables = %{
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false
+      }
+
+      query = """
+        query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
+          listings {
+            listings {
+              address {
+                street_number
+              }
+              activeImages: images (isActive: $activeImagesIsActive) {
+                filename
+              }
+              inactiveImages: images (isActive: $inactiveImagesIsActive) {
+                filename
+              }
+              owner {
+                name
+              }
+            }
+            remaining_count
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => nil},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test.jpg"}],
+                   "owner" => nil
+                 }
+               ],
+               "remaining_count" => 0
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "anonymous should query listing index", %{unauthenticated_conn: conn} do
+      user = insert(:user)
+
+      insert(
+        :listing,
+        address: build(:address, street_number: "12B"),
+        images: [
+          build(:image, filename: "test.jpg"),
+          build(:image, filename: "test2.jpg", is_active: false)
+        ],
+        user: user
+      )
+
+      insert(:image, filename: "not_in_listing_image.jpg")
+
+      variables = %{
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false
+      }
+
+      query = """
+        query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
+          listings {
+            listings {
+              address {
+                street_number
+              }
+              activeImages: images (isActive: $activeImagesIsActive) {
+                filename
+              }
+              inactiveImages: images (isActive: $inactiveImagesIsActive) {
+                filename
+              }
+              owner {
+                name
+              }
+            }
+            remaining_count
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "address" => %{"street_number" => nil},
+                   "activeImages" => [%{"filename" => "test.jpg"}],
+                   "inactiveImages" => [%{"filename" => "test.jpg"}],
+                   "owner" => nil
+                 }
+               ],
+               "remaining_count" => 0
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "should query listing index with pagination", %{unauthenticated_conn: conn} do
+      listing1 = insert(:listing, score: 4, price: 950_000, rooms: 3, area: 90)
+      [%{id: listing2_id}, %{id: listing3_id}] = insert_list(2, :listing, score: 4)
+      insert_list(3, :listing, score: 3)
+
+      variables = %{
+        "pagination" => %{
+          "pageSize" => 1,
+          "excludedListingIds" => [listing2_id, listing3_id]
+        }
+      }
+
+      query = """
+        query Listings ($pagination: ListingPagination) {
+          listings (pagination: $pagination) {
+            listings {
+              id
+            }
+            remaining_count
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "id" => to_string(listing1.id)
+                 }
+               ],
+               "remaining_count" => 3
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "should query listing index with filtering", %{user_conn: conn, user_user: user} do
+      insert(
+        :listing,
+        price: 1_100_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 790_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 5,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 1,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 110,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 70,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Botafogo",
+            neighborhood_slug: "botafogo",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Casa",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 70.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 30.0,
+            lng: 50.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 70.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 30.0
+          ),
+        garage_spots: 2
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 0
+      )
+
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 4
+      )
+
+      listing1 =
+        insert(
+          :listing,
+          price: 900_000,
+          rooms: 3,
+          area: 90,
+          type: "Apartamento",
+          address:
+            build(
+              :address,
+              neighborhood: "Copacabana",
+              neighborhood_slug: "copacabana",
+              lat: 50.0,
+              lng: 50.0
+            ),
+          garage_spots: 2
+        )
+
+      listing2 =
+        insert(
+          :listing,
+          price: 900_000,
+          rooms: 3,
+          area: 90,
+          type: "Apartamento",
+          address:
+            build(
+              :address,
+              neighborhood: "Copacabana",
+              neighborhood_slug: "copacabana",
+              lat: 50.0,
+              lng: 50.0
+            ),
+          garage_spots: 2
+        )
+
+      insert(:listing_blacklist, listing: listing2, user: user)
+
+      variables = %{
+        "filters" => %{
+          "maxPrice" => 1_000_000,
+          "minPrice" => 800_000,
+          "maxRooms" => 4,
+          "minRooms" => 2,
+          "minArea" => 80,
+          "maxArea" => 100,
+          "neighborhoods" => ["Copacabana", "Leblon"],
+          "types" => ["Apartamento"],
+          "maxLat" => 60.0,
+          "minLat" => 40.0,
+          "maxLng" => 60.0,
+          "minLng" => 40.0,
+          "neighborhoodsSlugs" => ["copacabana", "leblon"],
+          "maxGarageSpots" => 3,
+          "minGarageSpots" => 1
+        }
+      }
+
+      query = """
+        query Listings($filters: ListingFilterInput) {
+          listings (filters: $filters) {
+            listings {
+              id
+            }
+            filters {
+              maxPrice
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "id" => to_string(listing1.id)
+                 }
+               ],
+               "filters" => %{
+                 "maxPrice" => 1_000_000
+               }
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "should query listing index with order by", %{user_conn: conn} do
+      %{id: id1} = insert(:listing, garage_spots: 1, price: 1_000_000, rooms: 2)
+      %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 4)
+      %{id: id3} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 4)
+      %{id: id4} = insert(:listing, garage_spots: 2, price: 1_000_000, rooms: 3)
+      %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 3)
+      %{id: id6} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 5)
+
+      variables = %{
+        "orderBy" => [
+          %{"field" => "PRICE", "type" => "DESC"},
+          %{"field" => "GARAGE_SPOTS", "type" => "DESC"},
+          %{"field" => "ROOMS", "type" => "ASC"}
+        ]
+      }
+
+      query = """
+        query Listings ($orderBy: [OrderBy]) {
+          listings (orderBy: $orderBy) {
+            listings {
+              id
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{"id" => to_string(id3)},
+                 %{"id" => to_string(id6)},
+                 %{"id" => to_string(id4)},
+                 %{"id" => to_string(id1)},
+                 %{"id" => to_string(id2)},
+                 %{"id" => to_string(id5)}
+               ]
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "should query listing index with respective images", %{unauthenticated_conn: conn} do
+      insert(:listing, images: [build(:image), build(:image), build(:image)])
+      insert(:listing, images: [build(:image), build(:image), build(:image)])
+
+      variables = %{
+        "limit" => 2
+      }
+
+      query = """
+        query Listings ($limit: Int) {
+          listings {
+            listings {
+              images (limit: $limit) {
+                filename
+              }
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "images" => [_, _]
+                 },
+                 %{
+                   "images" => [_, _]
+                 }
+               ]
+             } = json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "should query listing index with price reduction attribute", %{
+      unauthenticated_conn: conn
+    } do
+      now = Timex.now()
+      insert(:listing, score: 4, price_history: [])
+
+      insert(
+        :listing,
+        price: 1_000_000,
+        score: 3,
+        price_history: [
+          build(:price_history, price: 1_100_000, inserted_at: Timex.shift(now, weeks: -1))
+        ]
+      )
+
+      insert(
+        :listing,
+        score: 2,
+        price_history: [build(:price_history, inserted_at: Timex.shift(now, weeks: -3))]
+      )
+
+      insert(
+        :listing,
+        price: 1_000_000,
+        score: 1,
+        price_history: [
+          build(:price_history, price: 900_000, inserted_at: Timex.shift(now, weeks: -1))
+        ]
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              priceRecentlyReduced
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert %{
+               "listings" => [
+                 %{"priceRecentlyReduced" => false},
+                 %{"priceRecentlyReduced" => true},
+                 %{"priceRecentlyReduced" => false},
+                 %{"priceRecentlyReduced" => false}
+               ]
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+  end
+
+  describe "listing" do
+    test "admin should query listing show", %{admin_conn: conn} do
+      %{filename: active_image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: active_image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+      %{filename: active_image_filename3} = image3 = insert(:image, is_active: true, position: 3)
+
+      %{filename: inactive_image_filename1} =
+        image4 = insert(:image, is_active: false, position: 4)
+
+      %{filename: inactive_image_filename2} =
+        image5 = insert(:image, is_active: false, position: 5)
+
+      %{street: street, street_number: street_number} = address = insert(:address)
+      user = insert(:user)
+      interests = insert_list(3, :interest)
+      in_person_visits = insert_list(3, :in_person_visit)
+      listings_favorites = insert_list(3, :listings_favorites)
+      tour_visualisations = insert_list(3, :tour_visualisation)
+      listings_visualisations = insert_list(3, :listing_visualisation)
+
+      [%{price: price1}, %{price: price2}, %{price: price3}] =
+        price_history = insert_list(3, :price_history)
+
+      insert(
+        :factors,
+        street: street,
+        intercept: 10.10,
+        rooms: 123.321,
+        area: 321.123,
+        bathrooms: 111.222,
+        garage_spots: 222.111
+      )
+
+      %{id: listing_id} =
+        insert(
+          :listing,
+          address: address,
+          images: [image1, image2, image3, image4, image5],
+          user: user,
+          interests: interests,
+          in_person_visits: in_person_visits,
+          listings_favorites: listings_favorites,
+          tour_visualisations: tour_visualisations,
+          listings_visualisations: listings_visualisations,
+          price_history: price_history,
+          rooms: 2,
+          area: 80,
+          garage_spots: 1,
+          bathrooms: 1
+        )
+
+      %{id: related_id1} = insert(:listing, address: address, score: 4)
+      %{id: related_id2} = insert(:listing, address: address, score: 3)
+
+      variables = %{
+        "id" => listing_id,
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false,
+        "pagination" => %{
+          "pageSize" => 2
+        },
+        "filters" => %{}
+      }
+
+      query = """
+        query Listing (
+          $id: ID!,
+          $activeImagesIsActive: Boolean,
+          $inactiveImagesIsActive: Boolean,
+          $pagination: ListingPagination,
+          $filters: ListingFilterInput
+          ) {
+          listing (id: $id) {
+            address {
+              street
+              street_number
+            }
+            activeImages: images (isActive: $activeImagesIsActive) {
+              filename
+            }
+            inactiveImages: images (isActive: $inactiveImagesIsActive) {
+              filename
+            }
+            owner {
+              name
+            }
+            interestCount
+            inPersonVisitCount
+            listingFavoriteCount
+            tourVisualisationCount
+            listingVisualisationCount
+            previousPrices {
+              price
+            }
+            suggestedPrice
+            related (pagination: $pagination, filters: $filters) {
+              listings {
+                id
+              }
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "address" => %{"street" => street, "street_number" => street_number},
+               "activeImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "inactiveImages" => [
+                 %{"filename" => to_string(inactive_image_filename1)},
+                 %{"filename" => to_string(inactive_image_filename2)}
+               ],
+               "owner" => %{"name" => user.name},
+               "interestCount" => 3,
+               "inPersonVisitCount" => 3,
+               "listingFavoriteCount" => 3,
+               "tourVisualisationCount" => 3,
+               "listingVisualisationCount" => 3,
+               "previousPrices" => [
+                 %{"price" => price1},
+                 %{"price" => price2},
+                 %{"price" => price3}
+               ],
+               "suggestedPrice" => 26_279.915,
+               "related" => %{
+                 "listings" => [
+                   %{"id" => to_string(related_id1)},
+                   %{"id" => to_string(related_id2)}
+                 ]
+               }
+             } == json_response(conn, 200)["data"]["listing"]
+    end
+
+    test "owner should query listing show", %{user_conn: conn, user_user: user} do
+      %{filename: active_image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: active_image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+      %{filename: active_image_filename3} = image3 = insert(:image, is_active: true, position: 3)
+
+      %{filename: inactive_image_filename1} =
+        image4 = insert(:image, is_active: false, position: 4)
+
+      %{filename: inactive_image_filename2} =
+        image5 = insert(:image, is_active: false, position: 5)
+
+      %{street: street, street_number: street_number} = address = insert(:address)
+      interests = insert_list(3, :interest)
+      in_person_visits = insert_list(3, :in_person_visit)
+      listings_favorites = insert_list(3, :listings_favorites)
+      tour_visualisations = insert_list(3, :tour_visualisation)
+      listings_visualisations = insert_list(3, :listing_visualisation)
+
+      [%{price: price1}, %{price: price2}, %{price: price3}] =
+        price_history = insert_list(3, :price_history)
+
+      insert(
+        :factors,
+        street: street,
+        intercept: 10.10,
+        rooms: 123.321,
+        area: 321.123,
+        bathrooms: 111.222,
+        garage_spots: 222.111
+      )
+
+      %{id: listing_id} =
+        insert(
+          :listing,
+          address: address,
+          images: [image1, image2, image3, image4, image5],
+          user: user,
+          interests: interests,
+          in_person_visits: in_person_visits,
+          listings_favorites: listings_favorites,
+          tour_visualisations: tour_visualisations,
+          listings_visualisations: listings_visualisations,
+          price_history: price_history,
+          rooms: 2,
+          area: 80,
+          garage_spots: 1,
+          bathrooms: 1
+        )
+
+      %{id: related_id1} = insert(:listing, address: address, score: 4)
+      %{id: related_id2} = insert(:listing, address: address, score: 3)
+
+      variables = %{
+        "id" => listing_id,
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false,
+        "pagination" => %{
+          "pageSize" => 2
+        },
+        "filters" => %{}
+      }
+
+      query = """
+        query Listing (
+          $id: ID!,
+          $activeImagesIsActive: Boolean,
+          $inactiveImagesIsActive: Boolean,
+          $pagination: ListingPagination,
+          $filters: ListingFilterInput
+          ) {
+          listing (id: $id) {
+            address {
+              street
+              street_number
+            }
+            activeImages: images (isActive: $activeImagesIsActive) {
+              filename
+            }
+            inactiveImages: images (isActive: $inactiveImagesIsActive) {
+              filename
+            }
+            owner {
+              name
+            }
+            interestCount
+            inPersonVisitCount
+            listingFavoriteCount
+            tourVisualisationCount
+            listingVisualisationCount
+            previousPrices {
+              price
+            }
+            suggestedPrice
+            related (pagination: $pagination, filters: $filters) {
+              listings {
+                id
+              }
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "address" => %{"street" => street, "street_number" => street_number},
+               "activeImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "inactiveImages" => [
+                 %{"filename" => to_string(inactive_image_filename1)},
+                 %{"filename" => to_string(inactive_image_filename2)}
+               ],
+               "owner" => %{"name" => user.name},
+               "interestCount" => 3,
+               "inPersonVisitCount" => 3,
+               "listingFavoriteCount" => 3,
+               "tourVisualisationCount" => 3,
+               "listingVisualisationCount" => 3,
+               "previousPrices" => [
+                 %{"price" => price1},
+                 %{"price" => price2},
+                 %{"price" => price3}
+               ],
+               "suggestedPrice" => nil,
+               "related" => %{
+                 "listings" => [
+                   %{"id" => to_string(related_id1)},
+                   %{"id" => to_string(related_id2)}
+                 ]
+               }
+             } == json_response(conn, 200)["data"]["listing"]
+    end
+
+    test "user should query listing show", %{user_conn: conn} do
+      %{filename: active_image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: active_image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+      %{filename: active_image_filename3} = image3 = insert(:image, is_active: true, position: 3)
+      image4 = insert(:image, is_active: false, position: 4)
+      image5 = insert(:image, is_active: false, position: 5)
+      %{street: street} = address = insert(:address)
+      user = insert(:user)
+
+      %{id: listing_id} =
+        insert(:listing,
+          address: address,
+          images: [image1, image2, image3, image4, image5],
+          user: user
+        )
+
+      %{id: related_id1} = insert(:listing, address: address, score: 4)
+      %{id: related_id2} = insert(:listing, address: address, score: 3)
+
+      variables = %{
+        "id" => listing_id,
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false,
+        "pagination" => %{
+          "pageSize" => 2
+        },
+        "filters" => %{}
+      }
+
+      query = """
+        query Listing (
+          $id: ID!,
+          $activeImagesIsActive: Boolean,
+          $inactiveImagesIsActive: Boolean,
+          $pagination: ListingPagination,
+          $filters: ListingFilterInput
+          ) {
+          listing (id: $id) {
+            address {
+              street
+              street_number
+            }
+            activeImages: images (isActive: $activeImagesIsActive) {
+              filename
+            }
+            inactiveImages: images (isActive: $inactiveImagesIsActive) {
+              filename
+            }
+            owner {
+              name
+            }
+            interestCount
+            inPersonVisitCount
+            listingFavoriteCount
+            tourVisualisationCount
+            listingVisualisationCount
+            previousPrices {
+              price
+            }
+            suggestedPrice
+            related (pagination: $pagination, filters: $filters) {
+              listings {
+                id
+              }
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "address" => %{"street" => street, "street_number" => nil},
+               "activeImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "inactiveImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "owner" => nil,
+               "interestCount" => nil,
+               "inPersonVisitCount" => nil,
+               "listingFavoriteCount" => nil,
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil,
+               "previousPrices" => nil,
+               "suggestedPrice" => nil,
+               "related" => %{
+                 "listings" => [
+                   %{"id" => to_string(related_id1)},
+                   %{"id" => to_string(related_id2)}
+                 ]
+               }
+             } == json_response(conn, 200)["data"]["listing"]
+    end
+
+    test "anonymous should query listing show", %{unauthenticated_conn: conn} do
+      %{filename: active_image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: active_image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+      %{filename: active_image_filename3} = image3 = insert(:image, is_active: true, position: 3)
+      image4 = insert(:image, is_active: false, position: 4)
+      image5 = insert(:image, is_active: false, position: 5)
+      %{street: street} = address = insert(:address)
+      user = insert(:user)
+
+      %{id: listing_id} =
+        insert(:listing,
+          address: address,
+          images: [image1, image2, image3, image4, image5],
+          user: user
+        )
+
+      %{id: related_id1} = insert(:listing, address: address, score: 4)
+      %{id: related_id2} = insert(:listing, address: address, score: 3)
+
+      variables = %{
+        "id" => listing_id,
+        "activeImagesIsActive" => true,
+        "inactiveImagesIsActive" => false,
+        "pagination" => %{
+          "pageSize" => 2
+        },
+        "filters" => %{}
+      }
+
+      query = """
+        query Listing (
+          $id: ID!,
+          $activeImagesIsActive: Boolean,
+          $inactiveImagesIsActive: Boolean,
+          $pagination: ListingPagination,
+          $filters: ListingFilterInput
+          ) {
+          listing (id: $id) {
+            address {
+              street
+              street_number
+            }
+            activeImages: images (isActive: $activeImagesIsActive) {
+              filename
+            }
+            inactiveImages: images (isActive: $inactiveImagesIsActive) {
+              filename
+            }
+            owner {
+              name
+            }
+            interestCount
+            inPersonVisitCount
+            listingFavoriteCount
+            tourVisualisationCount
+            listingVisualisationCount
+            previousPrices {
+              price
+            }
+            suggestedPrice
+            related (pagination: $pagination, filters: $filters) {
+              listings {
+                id
+              }
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "address" => %{"street" => street, "street_number" => nil},
+               "activeImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "inactiveImages" => [
+                 %{"filename" => to_string(active_image_filename1)},
+                 %{"filename" => to_string(active_image_filename2)},
+                 %{"filename" => to_string(active_image_filename3)}
+               ],
+               "owner" => nil,
+               "interestCount" => nil,
+               "inPersonVisitCount" => nil,
+               "listingFavoriteCount" => nil,
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil,
+               "previousPrices" => nil,
+               "suggestedPrice" => nil,
+               "related" => %{
+                 "listings" => [
+                   %{"id" => to_string(related_id1)},
+                   %{"id" => to_string(related_id2)}
+                 ]
+               }
+             } == json_response(conn, 200)["data"]["listing"]
+    end
+
+    test "admin should see inactive listing", %{admin_conn: conn} do
+      %{id: listing_id} = insert(:listing, is_active: false)
+
+      variables = %{"id" => listing_id}
+
+      query = """
+        query Listing ($id: ID!) {
+          listing (id: $id) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{"id" => to_string(listing_id)} == json_response(conn, 200)["data"]["listing"]
+    end
+
+    test "owner should see inactive listing", %{user_conn: conn, user_user: user} do
+      %{id: listing_id} = insert(:listing, is_active: false, user: user)
+
+      variables = %{"id" => listing_id}
+
+      query = """
+        query Listing ($id: ID!) {
+          listing (id: $id) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{"id" => to_string(listing_id)} == json_response(conn, 200)["data"]["listing"]
+    end
+
+    test "user should not see inactive listing", %{user_conn: conn} do
+      %{id: listing_id} = insert(:listing, is_active: false)
+
+      variables = %{"id" => listing_id}
+
+      query = """
+        query Listing ($id: ID!) {
+          listing (id: $id) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
+    end
+
+    test "anonymous should not see inactive listing", %{unauthenticated_conn: conn} do
+      %{id: listing_id} = insert(:listing, is_active: false)
+
+      variables = %{"id" => listing_id}
+
+      query = """
+        query Listing ($id: ID!) {
+          listing (id: $id) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "showFavoritedUsers" do
+    test "admin should see favorited users", %{admin_conn: conn, admin_user: user} do
+      listing = insert(:listing)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
+
+      variables = %{"id" => listing.id}
+
+      query = """
+        query ShowFavoritedUsers ($id: ID!) {
+          showFavoritedUsers(id: $id) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert [%{"id" => to_string(user.id)}] ==
+               json_response(conn, 200)["data"]["showFavoritedUsers"]
+    end
+
+    test "admin should not see favorited users", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
+
+      variables = %{"id" => listing.id}
+
+      query = """
+        query ShowFavoritedUsers ($id: ID!) {
+          showFavoritedUsers(id: $id) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
+    end
+
+    test "anonymous should not see favorited users", %{unauthenticated_conn: conn} do
+      listing = insert(:listing)
+      user = insert(:user)
+      insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
+
+      variables = %{"id" => listing.id}
+
+      query = """
+        query ShowFavoritedUsers ($id: ID!) {
+          showFavoritedUsers(id: $id) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "userListings" do
+    test "admin should see its own listings users", %{admin_conn: conn, admin_user: user} do
+      listing = insert(:listing, user: user)
+
+      query = """
+        query UserListings {
+          userListings {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert [%{"id" => to_string(listing.id)}] ==
+               json_response(conn, 200)["data"]["userListings"]
+    end
+
+    test "user should see its own listings users", %{user_conn: conn, user_user: user} do
+      listing = insert(:listing, user: user)
+
+      query = """
+        query UserListings {
+          userListings {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert [%{"id" => to_string(listing.id)}] ==
+               json_response(conn, 200)["data"]["userListings"]
+    end
+
+    test "anonymous should not see own listings", %{unauthenticated_conn: conn} do
+      query = """
+        query UserListings {
+          userListings {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+    end
+  end
+end

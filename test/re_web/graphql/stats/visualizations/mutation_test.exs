@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.VisualizationsTest do
+defmodule ReWeb.GraphQL.Stats.Visualizations.MutationTest do
   use ReWeb.ConnCase
 
   import Re.Factory
@@ -22,15 +22,19 @@ defmodule ReWeb.GraphQL.VisualizationsTest do
     test "should register visualization for admin", %{admin_conn: conn} do
       %{id: listing_id} = insert(:listing)
 
+      variables = %{
+        "id" => listing_id
+      }
+
       mutation = """
-        mutation {
-          tourVisualized(id: #{listing_id}) {
+        mutation TourVisualized($id: ID!) {
+          tourVisualized(id: $id) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       listing_id_str = to_string(listing_id)
       assert %{"tourVisualized" => %{"id" => ^listing_id_str}} = json_response(conn, 200)["data"]
@@ -39,15 +43,19 @@ defmodule ReWeb.GraphQL.VisualizationsTest do
     test "should register visualization for user", %{user_conn: conn} do
       %{id: listing_id} = insert(:listing)
 
+      variables = %{
+        "id" => listing_id
+      }
+
       mutation = """
-        mutation {
-          tourVisualized(id: #{listing_id}) {
+        mutation TourVisualized($id: ID!) {
+          tourVisualized(id: $id) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       listing_id_str = to_string(listing_id)
       assert %{"tourVisualized" => %{"id" => ^listing_id_str}} = json_response(conn, 200)["data"]
@@ -56,15 +64,19 @@ defmodule ReWeb.GraphQL.VisualizationsTest do
     test "should register visualization for anonymous", %{unauthenticated_conn: conn} do
       %{id: listing_id} = insert(:listing)
 
+      variables = %{
+        "id" => listing_id
+      }
+
       mutation = """
-        mutation {
-          tourVisualized(id: #{listing_id}) {
+        mutation TourVisualized($id: ID!) {
+          tourVisualized(id: $id) {
             id
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       listing_id_str = to_string(listing_id)
       assert %{"tourVisualized" => %{"id" => ^listing_id_str}} = json_response(conn, 200)["data"]

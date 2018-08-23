@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.ChannelsTest do
+defmodule ReWeb.GraphQL.Channels.QueryTest do
   use ReWeb.ConnCase
 
   import Re.Factory
@@ -34,12 +34,14 @@ defmodule ReWeb.GraphQL.ChannelsTest do
 
       insert_channel_and_messages(listing2.id, user.id, admin_user.id)
 
+      variables = %{
+        "listingId" => listing1.id,
+        "otherParticipantId" => admin_user.id
+      }
+
       query = """
-        {
-          userChannels (
-            listingId: #{listing1.id},
-            otherParticipantId: #{admin_user.id}
-          ) {
+        query UserChannels($listingId: ID, $otherParticipantId: ID) {
+          userChannels (listingId: $listingId, otherParticipantId: $otherParticipantId) {
             id
             participant1 { id }
             participant2 { id }
@@ -56,8 +58,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert [
                %{
@@ -97,7 +98,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       } = insert_channel_and_messages(listing2.id, user.id, admin_user.id)
 
       query = """
-        {
+        query UserChannels {
           userChannels {
             id
             participant1 { id }
@@ -115,8 +116,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
         }
       """
 
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert [
                %{
@@ -172,7 +172,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
     } = insert_channel_and_messages(listing2.id, user.id, admin_user.id)
 
     query = """
-      {
+      query UserChannels {
         userChannels {
           id
           participant1 { id }
@@ -190,8 +190,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       }
     """
 
-    conn =
-      post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert [
              %{
@@ -229,7 +228,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
 
   test "anonymous should not list channels", %{unauthenticated_conn: conn} do
     query = """
-      {
+      query UserChannels {
         userChannels {
           id
           participant1 { id }
@@ -247,8 +246,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       }
     """
 
-    conn =
-      post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert %{"errors" => [%{"message" => "Unauthorized", "code" => 401}]} =
              json_response(conn, 200)
@@ -266,7 +264,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
     %{channel: %{id: c2_id}} = insert_channel_and_messages(listing2.id, user.id, admin_user.id)
 
     query = """
-      {
+      query UserChannels {
         userChannels {
           id
           unreadCount
@@ -274,8 +272,7 @@ defmodule ReWeb.GraphQL.ChannelsTest do
       }
     """
 
-    conn =
-      post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert [
              %{
@@ -354,15 +351,14 @@ defmodule ReWeb.GraphQL.ChannelsTest do
     insert_channel_and_messages(listing2.id, user.id, admin_user.id)
 
     query = """
-      {
+      query UserChannels {
         userChannels {
           listing { id }
         }
       }
     """
 
-    conn =
-      post(conn, "/graphql_api", AbsintheHelpers.query_skeleton(query, "listingUserMessages"))
+    conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
     assert [
              %{"listing" => %{"id" => to_string(listing2.id)}},
