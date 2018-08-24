@@ -9,32 +9,45 @@ defmodule Re.Stats.ListingReports do
     Repo,
   }
 
-  def listing_report do
+  def listing_report(filename \\ "temp/listing_report.csv") do
     Listing
     |> order_by([l], asc: l.id)
     |> preload(
       [:listings_visualisations,
       :tour_visualisations,
       :in_person_visits,
-      :listings_favorites,
-      :interests]
+      :address]
     )
     |> Repo.all()
     |> Enum.map(&replace_with_count/1)
-    |> to_csv()
+    |> to_csv(filename)
   end
 
-  defp to_csv(listings) do
+  defp to_csv(listings, filename) do
     to_write = listings
       |> Enum.map(&encode/1)
       |> Enum.join("\n")
+      |> add_header()
 
-    File.rm("temp/listing_report.csv")
-    File.write("temp/listing_report.csv", to_write)
+    File.rm(filename)
+    File.write(filename, to_write) |> IO.inspect
   end
 
   defp encode(listing) do
-    "#{listing.id}|#{if listing.is_active, do: "ativo", else: "inativo"}|#{listing.listings_visualisations_count}|#{listing.tour_visualisations_count}|#{listing.in_person_visits_count}|#{Timex.to_date(listing.updated_at)}"
+    "#{listing.id}|" <>
+    "#{if listing.is_active, do: "ativo", else: "inativo"}|" <>
+    "#{listing.listings_visualisations_count}|" <>
+    "#{listing.tour_visualisations_count}|" <>
+    "#{listing.in_person_visits_count}|" <>
+    "#{listing.price}|" <>
+    "#{listing.type}|" <>
+    "#{listing.rooms}|" <>
+    "#{listing.address.neighborhood}|" <>
+    "#{Timex.to_date(listing.updated_at)}"
+  end
+
+  defp add_header(result) do
+    "ID|Ativo/inativo|Visualizações|Tours 3D|Visitas|Preço|Tipo|Quartos|Bairro|Data da última modificação\n" <> result
   end
 
   defp replace_with_count(listing) do
@@ -42,8 +55,6 @@ defmodule Re.Stats.ListingReports do
     |> count_listings_visualisations()
     |> count_tour_visualisations()
     |> count_in_person_visits()
-    |> count_listings_favorites()
-    |> count_interests()
   end
 
   defp count_listings_visualisations(
@@ -64,17 +75,5 @@ defmodule Re.Stats.ListingReports do
     listing
     |> Map.put(:in_person_visits_count, Enum.count(in_person_visits))
     |> Map.delete(:in_person_visits)
-  end
-
-  defp count_listings_favorites(%{listings_favorites: listings_favorites} = listing) do
-    listing
-    |> Map.put(:listings_favorites_count, Enum.count(listings_favorites))
-    |> Map.delete(:listings_favorites)
-  end
-
-  defp count_interests(%{interests: interests} = listing) do
-    listing
-    |> Map.put(:interests_count, Enum.count(interests))
-    |> Map.delete(:interests)
   end
 end
