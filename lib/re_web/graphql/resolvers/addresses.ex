@@ -3,7 +3,10 @@ defmodule ReWeb.Resolvers.Addresses do
   Resolver module for addresses
   """
 
-  alias Re.Addresses
+  alias Re.{
+    Addresses,
+    Addresses.Neighborhoods
+  }
 
   def per_listing(listing, params, %{context: %{current_user: current_user}}) do
     admin? = is_admin(listing, current_user)
@@ -15,6 +18,13 @@ defmodule ReWeb.Resolvers.Addresses do
     with :ok <- Bodyguard.permit(Addresses, :insert, current_user, %{}),
          {:ok, address} <- Addresses.insert_or_update(params) do
       {:ok, address}
+    end
+  end
+
+  def neighborhood_description(address, _, _) do
+    case Neighborhoods.get_description(address) do
+      {:ok, neighborhood_description} -> {:ok, neighborhood_description.description}
+      {:error, :not_found} -> {:ok, nil}
     end
   end
 

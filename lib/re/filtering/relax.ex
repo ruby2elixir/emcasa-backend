@@ -5,7 +5,7 @@ defmodule Re.Filtering.Relax do
 
   alias Re.{
     Filtering,
-    Neighborhoods
+    Addresses.Neighborhoods
   }
 
   defguardp is_not_nil(value) when not is_nil(value)

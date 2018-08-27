@@ -1,4 +1,4 @@
-defmodule Re.Neighborhoods do
+defmodule Re.Addresses.Neighborhoods do
   @moduledoc """
   Context for neighborhoods.
   """

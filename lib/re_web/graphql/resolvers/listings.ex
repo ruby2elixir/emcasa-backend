@@ -6,12 +6,12 @@ defmodule ReWeb.Resolvers.Listings do
 
   alias Re.{
     Addresses,
+    Addresses.Neighborhoods,
     Filtering,
     Listings,
     Listings.Featured,
     Listings.PriceHistories,
     Listings.Related,
-    Neighborhoods,
     PriceSuggestions
   }
 

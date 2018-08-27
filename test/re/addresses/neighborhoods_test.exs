@@ -1,7 +1,7 @@
 defmodule Re.NeighborhoodsTest do
   use Re.ModelCase
 
-  alias Re.Neighborhoods
+  alias Re.Addresses.Neighborhoods
 
   import Re.Factory
 
