@@ -112,7 +112,8 @@ defmodule ReWeb.Types.Listing do
     field :city_slug, :string
     field :state_slug, :string
 
-    field :neighborhood_description, :string, resolve: &Resolvers.Addresses.neighborhood_description/3
+    field :neighborhood_description, :string,
+      resolve: &Resolvers.Addresses.neighborhood_description/3
   end
 
   input_object :address_input do
