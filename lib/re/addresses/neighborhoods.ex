@@ -7,6 +7,7 @@ defmodule Re.Neighborhoods do
 
   alias Re.{
     Address,
+    Addresses.NeighborhoodDescription,
     Listing,
     Repo
   }
@@ -20,6 +21,13 @@ defmodule Re.Neighborhoods do
              )
 
   def all, do: Repo.all(@all_query)
+
+  def get_description(address) do
+    case Repo.get_by(NeighborhoodDescription, state: address.state, city: address.city, neighborhood: address.neighborhood) do
+      nil -> {:error, :not_found}
+      description -> {:ok, description}
+    end
+  end
 
   @doc """
   Temporary mapping to find nearby neighborhood

@@ -30,7 +30,7 @@ defmodule Re.Stats.ListingReports do
       |> add_header()
 
     File.rm(filename)
-    File.write(filename, to_write) |> IO.inspect
+    File.write(filename, to_write)
   end
 
   defp encode(listing) do
