@@ -20,7 +20,7 @@ defmodule Re.Stats.Reports do
 
       users_to_be_notified()
       |> Enum.map(&generate_report(&1, time))
-      |> Enum.each(fn {user, listing} -> Emails.monthly_report(user, listing) end)
+      |> Enum.each(fn {user, listings} -> Emails.monthly_report(user, listings) end)
     end
   end
 

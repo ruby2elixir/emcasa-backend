@@ -33,7 +33,8 @@ defmodule Re.Mixfile do
         :phoenix_swoosh,
         :timber,
         :timex,
-        :nimble_csv
+        :nimble_csv,
+        :pigeon
       ]
     ]
   end
@@ -71,7 +72,9 @@ defmodule Re.Mixfile do
       {:timex, "~> 3.3"},
       {:tzdata, "~> 0.5"},
       {:quantum, "~> 2.2"},
-      {:phoenix_swoosh, "~> 0.2"}
+      {:phoenix_swoosh, "~> 0.2"},
+      {:pigeon, "~> 1.2.2"},
+      {:kadabra, "~> 0.4.2"}
     ]
   end
 
