@@ -19,6 +19,7 @@ defmodule Re.User do
     field :confirmation_token, :string
     field :confirmed, :boolean
     field :reset_token, :string
+    field :device_token, :string
 
     embeds_one(
       :notification_preferences,
@@ -40,7 +41,7 @@ defmodule Re.User do
   @roles ~w(admin user)
 
   @create_required ~w(name email password role confirmation_token confirmed)a
-  @optional ~w(phone)a
+  @optional ~w(phone device_token)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -58,7 +59,7 @@ defmodule Re.User do
   end
 
   @update_required ~w()a
-  @update_optional ~w(name email password role confirmation_token confirmed phone)a
+  @update_optional ~w(name email password role confirmation_token confirmed phone device_token)a
 
   def update_changeset(struct, params \\ %{}) do
     struct

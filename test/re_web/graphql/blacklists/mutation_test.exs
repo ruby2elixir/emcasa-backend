@@ -24,9 +24,11 @@ defmodule ReWeb.GraphQL.Blacklists.MutationTest do
     test "admin should blacklist listing", %{admin_conn: conn, admin_user: user} do
       listing = insert(:listing)
 
+      variables = %{"id" => listing.id}
+
       mutation = """
-        mutation {
-          listingBlacklist(id: #{listing.id}) {
+        mutation ListingBlacklist($id: ID!) {
+          listingBlacklist(id: $id) {
             listing {
               id
             }
@@ -37,26 +39,24 @@ defmodule ReWeb.GraphQL.Blacklists.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      listing_id = to_string(listing.id)
-      user_id = to_string(user.id)
-      assert Repo.get_by(Blacklist, listing_id: listing.id, user_id: user.id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "listingBlacklist" => %{
-                 "listing" => %{"id" => ^listing_id},
-                 "user" => %{"id" => ^user_id}
-               }
-             } = json_response(conn, 200)["data"]
+               "listing" => %{"id" => to_string(listing.id)},
+               "user" => %{"id" => to_string(user.id)}
+             } == json_response(conn, 200)["data"]["listingBlacklist"]
+
+      assert Repo.get_by(Blacklist, listing_id: listing.id, user_id: user.id)
     end
 
     test "user should blacklist listing", %{user_conn: conn, user_user: user} do
       listing = insert(:listing)
 
+      variables = %{"id" => listing.id}
+
       mutation = """
-        mutation {
-          listingBlacklist(id: #{listing.id}) {
+        mutation ListingBlacklist($id: ID!) {
+          listingBlacklist(id: $id) {
             listing {
               id
             }
@@ -67,26 +67,24 @@ defmodule ReWeb.GraphQL.Blacklists.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      listing_id = to_string(listing.id)
-      user_id = to_string(user.id)
-      assert Repo.get_by(Blacklist, listing_id: listing.id, user_id: user.id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "listingBlacklist" => %{
-                 "listing" => %{"id" => ^listing_id},
-                 "user" => %{"id" => ^user_id}
-               }
-             } = json_response(conn, 200)["data"]
+               "listing" => %{"id" => to_string(listing.id)},
+               "user" => %{"id" => to_string(user.id)}
+             } == json_response(conn, 200)["data"]["listingBlacklist"]
+
+      assert Repo.get_by(Blacklist, listing_id: listing.id, user_id: user.id)
     end
 
     test "anonymous should not blacklist listing", %{unauthenticated_conn: conn} do
       listing = insert(:listing)
 
+      variables = %{"id" => listing.id}
+
       mutation = """
-        mutation {
-          listingBlacklist(id: #{listing.id}) {
+        mutation ListingBlacklist($id: ID!) {
+          listingBlacklist(id: $id) {
             listing {
               id
             }
@@ -97,7 +95,7 @@ defmodule ReWeb.GraphQL.Blacklists.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [] == Repo.all(Blacklist)
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
@@ -109,9 +107,11 @@ defmodule ReWeb.GraphQL.Blacklists.MutationTest do
       %{id: listing_id} = insert(:listing)
       insert(:listing_blacklist, listing_id: listing_id, user_id: user_id)
 
+      variables = %{"id" => listing_id}
+
       mutation = """
-        mutation {
-          listingUnblacklist(id: #{listing_id}) {
+        mutation ListingUnblacklist ($id: ID!) {
+          listingUnblacklist(id: $id) {
             listing {
               id
             }
@@ -122,17 +122,12 @@ defmodule ReWeb.GraphQL.Blacklists.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      listing_id_str = to_string(listing_id)
-      user_id_str = to_string(user_id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "listingUnblacklist" => %{
-                 "listing" => %{"id" => ^listing_id_str},
-                 "user" => %{"id" => ^user_id_str}
-               }
-             } = json_response(conn, 200)["data"]
+               "listing" => %{"id" => to_string(listing_id)},
+               "user" => %{"id" => to_string(user_id)}
+             } == json_response(conn, 200)["data"]["listingUnblacklist"]
 
       refute Repo.get_by(Blacklist, listing_id: listing_id, user_id: user_id)
     end
@@ -141,9 +136,11 @@ defmodule ReWeb.GraphQL.Blacklists.MutationTest do
       %{id: listing_id} = insert(:listing)
       insert(:listing_blacklist, listing_id: listing_id, user_id: user_id)
 
+      variables = %{"id" => listing_id}
+
       mutation = """
-        mutation {
-          listingUnblacklist(id: #{listing_id}) {
+        mutation ListingUnblacklist ($id: ID!) {
+          listingUnblacklist(id: $id) {
             listing {
               id
             }
@@ -154,27 +151,24 @@ defmodule ReWeb.GraphQL.Blacklists.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      listing_id_str = to_string(listing_id)
-      user_id_str = to_string(user_id)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "listingUnblacklist" => %{
-                 "listing" => %{"id" => ^listing_id_str},
-                 "user" => %{"id" => ^user_id_str}
-               }
-             } = json_response(conn, 200)["data"]
+               "listing" => %{"id" => to_string(listing_id)},
+               "user" => %{"id" => to_string(user_id)}
+             } == json_response(conn, 200)["data"]["listingUnblacklist"]
 
       refute Repo.get_by(Blacklist, listing_id: listing_id, user_id: user_id)
     end
 
     test "anonymous should not unblacklist listing", %{unauthenticated_conn: conn} do
-      listing = insert(:listing)
+      %{id: listing_id} = insert(:listing)
+
+      variables = %{"id" => listing_id}
 
       mutation = """
-        mutation {
-          listingUnblacklist(id: #{listing.id}) {
+        mutation ListingUnblacklist ($id: ID!) {
+          listingUnblacklist(id: $id) {
             listing {
               id
             }
@@ -185,7 +179,8 @@ defmodule ReWeb.GraphQL.Blacklists.MutationTest do
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_skeleton(mutation))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end

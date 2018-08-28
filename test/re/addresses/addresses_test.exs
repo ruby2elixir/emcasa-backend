@@ -63,7 +63,7 @@ defmodule Re.AddressesTest do
 
   describe "insert_or_update/1" do
     test "create new address" do
-      {:ok, created_address, _changeset} =
+      {:ok, created_address} =
         Addresses.insert_or_update(%{
           "street" => "test st",
           "street_number" => "101",
@@ -102,7 +102,7 @@ defmodule Re.AddressesTest do
         |> Map.delete(:__meta__)
         |> stringify_keys()
 
-      {:ok, created_address, _changeset} = Addresses.insert_or_update(address_params)
+      {:ok, created_address} = Addresses.insert_or_update(address_params)
 
       assert address.id != created_address.id
       assert created_address.street == "new street name"
@@ -122,7 +122,7 @@ defmodule Re.AddressesTest do
         |> Map.delete(:__meta__)
         |> stringify_keys()
 
-      assert {:ok, new_address, _changeset} = Addresses.insert_or_update(address_params)
+      assert {:ok, new_address} = Addresses.insert_or_update(address_params)
       assert address == new_address
       assert address == Repo.get(Address, address.id)
     end
@@ -130,7 +130,7 @@ defmodule Re.AddressesTest do
     test "update address when exists but the not-unique parameters are different" do
       address = insert(:address)
 
-      {:ok, updated_address, _changeset} =
+      {:ok, updated_address} =
         Addresses.insert_or_update(%{
           "street" => address.street,
           "street_number" => address.street_number,
@@ -158,7 +158,7 @@ defmodule Re.AddressesTest do
     end
 
     test "create new address atom keys" do
-      {:ok, created_address, _changeset} =
+      {:ok, created_address} =
         Addresses.insert_or_update(%{
           street: "test st",
           street_number: "101",
@@ -196,7 +196,7 @@ defmodule Re.AddressesTest do
         |> Map.put(:postal_code, "54321-876")
         |> Map.delete(:__meta__)
 
-      {:ok, created_address, _changeset} = Addresses.insert_or_update(address_params)
+      {:ok, created_address} = Addresses.insert_or_update(address_params)
 
       assert address.id != created_address.id
       assert created_address.street == "new street name"
@@ -215,7 +215,7 @@ defmodule Re.AddressesTest do
         |> Map.from_struct()
         |> Map.delete(:__meta__)
 
-      assert {:ok, new_address, _changeset} = Addresses.insert_or_update(address_params)
+      assert {:ok, new_address} = Addresses.insert_or_update(address_params)
       assert address == new_address
       assert address == Repo.get(Address, address.id)
     end
@@ -223,7 +223,7 @@ defmodule Re.AddressesTest do
     test "update address when exists but the not-unique parameters are different atom keys" do
       address = insert(:address)
 
-      {:ok, updated_address, _changeset} =
+      {:ok, updated_address} =
         Addresses.insert_or_update(%{
           street: address.street,
           street_number: address.street_number,
