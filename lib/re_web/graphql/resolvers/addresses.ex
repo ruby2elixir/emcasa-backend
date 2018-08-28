@@ -23,7 +23,7 @@ defmodule ReWeb.Resolvers.Addresses do
 
   def neighborhood_description(address, _, _) do
     case Neighborhoods.get_description(address) do
-      {:ok, neighborhood_description} -> {:ok, neighborhood_description.description}
+      {:ok, district} -> {:ok, district.description}
       {:error, :not_found} -> {:ok, nil}
     end
   end

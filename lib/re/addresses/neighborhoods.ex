@@ -7,7 +7,7 @@ defmodule Re.Addresses.Neighborhoods do
 
   alias Re.{
     Address,
-    Addresses.NeighborhoodDescription,
+    Addresses.District,
     Listing,
     Repo
   }
@@ -23,10 +23,10 @@ defmodule Re.Addresses.Neighborhoods do
   def all, do: Repo.all(@all_query)
 
   def get_description(address) do
-    case Repo.get_by(NeighborhoodDescription,
+    case Repo.get_by(District,
            state: address.state,
            city: address.city,
-           neighborhood: address.neighborhood
+           name: address.neighborhood
          ) do
       nil -> {:error, :not_found}
       description -> {:ok, description}

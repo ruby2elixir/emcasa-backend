@@ -21,27 +21,27 @@ defmodule Re.NeighborhoodsTest do
     test "should return neighborhood description according to address" do
       address = insert(:address, city: "Rio de Janeiro", state: "RJ", neighborhood: "Botafogo")
 
-      insert(:neighborhood_description,
+      insert(:district,
         city: "Rio de Janeiro",
         state: "RJ",
-        neighborhood: "Botafogo",
+        name: "Botafogo",
         description: "descr"
       )
 
-      {:ok, neighborhood_description} = Neighborhoods.get_description(address)
-      assert neighborhood_description.city == "Rio de Janeiro"
-      assert neighborhood_description.state == "RJ"
-      assert neighborhood_description.neighborhood == "Botafogo"
-      assert neighborhood_description.description == "descr"
+      {:ok, district} = Neighborhoods.get_description(address)
+      assert district.city == "Rio de Janeiro"
+      assert district.state == "RJ"
+      assert district.name == "Botafogo"
+      assert district.description == "descr"
     end
 
     test "should not return neighborhood description according to address if does not match" do
       address = insert(:address, city: "Rio de Janeiro", state: "RJ", neighborhood: "Botafogo")
 
-      insert(:neighborhood_description,
+      insert(:district,
         city: "Rio de Janeiro",
         state: "RJ",
-        neighborhood: "Flamengo",
+        name: "Flamengo",
         description: "descr"
       )
 

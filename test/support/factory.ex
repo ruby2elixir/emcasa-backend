@@ -79,15 +79,15 @@ defmodule Re.Factory do
     }
   end
 
-  def neighborhood_description_factory do
-    neighborhood_name = Pokemon.location()
+  def district_factory do
+    name = Pokemon.location()
 
     city_name = Address.city()
 
     state_name = Address.state_abbr()
 
-    %Re.Addresses.NeighborhoodDescription{
-      neighborhood: neighborhood_name,
+    %Re.Addresses.District{
+      name: name,
       city: city_name,
       state: state_name,
       description: Shakespeare.hamlet()

@@ -757,10 +757,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       %{street: street, street_number: street_number} = address = insert(:address)
 
-      insert(:neighborhood_description,
+      insert(:district,
         state: address.state,
         city: address.city,
-        neighborhood: address.neighborhood,
+        name: address.neighborhood,
         description: "descr"
       )
 
@@ -907,10 +907,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       %{street: street, street_number: street_number} = address = insert(:address)
 
-      insert(:neighborhood_description,
+      insert(:district,
         state: address.state,
         city: address.city,
-        neighborhood: address.neighborhood,
+        name: address.neighborhood,
         description: "descr"
       )
 
@@ -1051,10 +1051,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       image5 = insert(:image, is_active: false, position: 5)
       %{street: street} = address = insert(:address)
 
-      insert(:neighborhood_description,
+      insert(:district,
         state: address.state,
         city: address.city,
-        neighborhood: address.neighborhood,
+        name: address.neighborhood,
         description: "descr"
       )
 
@@ -1164,10 +1164,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       image5 = insert(:image, is_active: false, position: 5)
       %{street: street} = address = insert(:address)
 
-      insert(:neighborhood_description,
+      insert(:district,
         state: address.state,
         city: address.city,
-        neighborhood: address.neighborhood,
+        name: address.neighborhood,
         description: "descr"
       )
 
