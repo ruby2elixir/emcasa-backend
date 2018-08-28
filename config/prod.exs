@@ -66,3 +66,9 @@ config :re, Re.Stats.Scheduler,
   jobs: [
     {"@monthly", {Re.Stats.Reports, :monthly_stats, []}}
   ]
+
+config :pigeon, :fcm,
+  fcm_default: %{
+    key:
+      System.get_env("FCM_TOKEN")
+  }
