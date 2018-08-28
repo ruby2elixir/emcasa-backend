@@ -20,8 +20,6 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
 
   describe "districts" do
     test "admin should get districts", %{admin_conn: conn} do
-      insert(:district, state: "RJ", city: "Rio de Janeiro", name: "Botafogo", description: "descr")
-
       query = """
         query Districts {
           districts {
@@ -35,19 +33,10 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-      assert [
-              %{
-               "state" => "RJ",
-               "city" => "Rio de Janeiro",
-               "name" => "Botafogo",
-               "description" => "descr"
-               }
-             ] == json_response(conn, 200)["data"]["districts"]
+      assert 17 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "user should get districts", %{user_conn: conn} do
-      insert(:district, state: "RJ", city: "Rio de Janeiro", name: "Botafogo", description: "descr")
-
       query = """
         query Districts {
           districts {
@@ -61,19 +50,10 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-      assert [
-              %{
-               "state" => "RJ",
-               "city" => "Rio de Janeiro",
-               "name" => "Botafogo",
-               "description" => "descr"
-               }
-             ] == json_response(conn, 200)["data"]["districts"]
+      assert 17 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "anonymous should get districts", %{unauthenticated_conn: conn} do
-      insert(:district, state: "RJ", city: "Rio de Janeiro", name: "Botafogo", description: "descr")
-
       query = """
         query Districts {
           districts {
@@ -87,14 +67,7 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-      assert [
-              %{
-               "state" => "RJ",
-               "city" => "Rio de Janeiro",
-               "name" => "Botafogo",
-               "description" => "descr"
-               }
-             ] == json_response(conn, 200)["data"]["districts"]
+      assert 17 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
   end
 end
