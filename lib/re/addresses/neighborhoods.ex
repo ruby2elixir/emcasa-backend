@@ -33,6 +33,8 @@ defmodule Re.Addresses.Neighborhoods do
     end
   end
 
+  def districts, do: Repo.all(District)
+
   @doc """
   Temporary mapping to find nearby neighborhood
   """

@@ -116,6 +116,13 @@ defmodule ReWeb.Types.Listing do
       resolve: &Resolvers.Addresses.neighborhood_description/3
   end
 
+  object :district do
+    field :state, :string
+    field :city, :string
+    field :name, :string
+    field :description, :string
+  end
+
   input_object :address_input do
     field :street, non_null(:string)
     field :street_number, non_null(:string)
@@ -242,6 +249,9 @@ defmodule ReWeb.Types.Listing do
 
     @desc "Get all neighborhoods"
     field :neighborhoods, list_of(:string), resolve: &Resolvers.Listings.neighborhoods/2
+
+    @desc "Get all districts"
+    field :districts, list_of(:district), resolve: &Resolvers.Addresses.districts/2
 
     @desc "Featured listings"
     field :featured_listings, list_of(:listing), resolve: &Resolvers.Listings.featured/2
