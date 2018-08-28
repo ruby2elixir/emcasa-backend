@@ -79,6 +79,21 @@ defmodule Re.Factory do
     }
   end
 
+  def district_factory do
+    name = Pokemon.location()
+
+    city_name = Address.city()
+
+    state_name = Address.state_abbr()
+
+    %Re.Addresses.District{
+      name: name,
+      city: city_name,
+      state: state_name,
+      description: Shakespeare.hamlet()
+    }
+  end
+
   def image_factory do
     %Re.Image{
       filename: Internet.image_url(),

@@ -756,6 +756,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         image5 = insert(:image, is_active: false, position: 5)
 
       %{street: street, street_number: street_number} = address = insert(:address)
+
+      insert(:district,
+        state: address.state,
+        city: address.city,
+        name: address.neighborhood,
+        description: "descr"
+      )
+
       user = insert(:user)
       interests = insert_list(3, :interest)
       in_person_visits = insert_list(3, :in_person_visit)
@@ -818,7 +826,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           listing (id: $id) {
             address {
               street
-              street_number
+              streetNumber
+              neighborhoodDescription
             }
             activeImages: images (isActive: $activeImagesIsActive) {
               filename
@@ -850,7 +859,11 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "address" => %{"street" => street, "street_number" => street_number},
+               "address" => %{
+                 "street" => street,
+                 "streetNumber" => street_number,
+                 "neighborhoodDescription" => "descr"
+               },
                "activeImages" => [
                  %{"filename" => to_string(active_image_filename1)},
                  %{"filename" => to_string(active_image_filename2)},
@@ -893,6 +906,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         image5 = insert(:image, is_active: false, position: 5)
 
       %{street: street, street_number: street_number} = address = insert(:address)
+
+      insert(:district,
+        state: address.state,
+        city: address.city,
+        name: address.neighborhood,
+        description: "descr"
+      )
+
       interests = insert_list(3, :interest)
       in_person_visits = insert_list(3, :in_person_visit)
       listings_favorites = insert_list(3, :listings_favorites)
@@ -954,7 +975,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           listing (id: $id) {
             address {
               street
-              street_number
+              streetNumber
+              neighborhoodDescription
             }
             activeImages: images (isActive: $activeImagesIsActive) {
               filename
@@ -986,7 +1008,11 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "address" => %{"street" => street, "street_number" => street_number},
+               "address" => %{
+                 "street" => street,
+                 "streetNumber" => street_number,
+                 "neighborhoodDescription" => "descr"
+               },
                "activeImages" => [
                  %{"filename" => to_string(active_image_filename1)},
                  %{"filename" => to_string(active_image_filename2)},
@@ -1024,6 +1050,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       image4 = insert(:image, is_active: false, position: 4)
       image5 = insert(:image, is_active: false, position: 5)
       %{street: street} = address = insert(:address)
+
+      insert(:district,
+        state: address.state,
+        city: address.city,
+        name: address.neighborhood,
+        description: "descr"
+      )
+
       user = insert(:user)
 
       %{id: listing_id} =
@@ -1057,7 +1091,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           listing (id: $id) {
             address {
               street
-              street_number
+              streetNumber
+              neighborhoodDescription
             }
             activeImages: images (isActive: $activeImagesIsActive) {
               filename
@@ -1089,7 +1124,11 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "address" => %{"street" => street, "street_number" => nil},
+               "address" => %{
+                 "street" => street,
+                 "streetNumber" => nil,
+                 "neighborhoodDescription" => "descr"
+               },
                "activeImages" => [
                  %{"filename" => to_string(active_image_filename1)},
                  %{"filename" => to_string(active_image_filename2)},
@@ -1124,6 +1163,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       image4 = insert(:image, is_active: false, position: 4)
       image5 = insert(:image, is_active: false, position: 5)
       %{street: street} = address = insert(:address)
+
+      insert(:district,
+        state: address.state,
+        city: address.city,
+        name: address.neighborhood,
+        description: "descr"
+      )
+
       user = insert(:user)
 
       %{id: listing_id} =
@@ -1157,7 +1204,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           listing (id: $id) {
             address {
               street
-              street_number
+              streetNumber
+              neighborhoodDescription
             }
             activeImages: images (isActive: $activeImagesIsActive) {
               filename
@@ -1189,7 +1237,11 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-               "address" => %{"street" => street, "street_number" => nil},
+               "address" => %{
+                 "street" => street,
+                 "streetNumber" => nil,
+                 "neighborhoodDescription" => "descr"
+               },
                "activeImages" => [
                  %{"filename" => to_string(active_image_filename1)},
                  %{"filename" => to_string(active_image_filename2)},

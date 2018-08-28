@@ -3,7 +3,10 @@ defmodule ReWeb.Resolvers.Addresses do
   Resolver module for addresses
   """
 
-  alias Re.Addresses
+  alias Re.{
+    Addresses,
+    Addresses.Neighborhoods
+  }
 
   def per_listing(listing, params, %{context: %{current_user: current_user}}) do
     admin? = is_admin(listing, current_user)
@@ -17,6 +20,15 @@ defmodule ReWeb.Resolvers.Addresses do
       {:ok, address}
     end
   end
+
+  def neighborhood_description(address, _, _) do
+    case Neighborhoods.get_description(address) do
+      {:ok, district} -> {:ok, district.description}
+      {:error, :not_found} -> {:ok, nil}
+    end
+  end
+
+  def districts(_, _), do: {:ok, Neighborhoods.districts()}
 
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true

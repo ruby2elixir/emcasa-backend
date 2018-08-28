@@ -1,7 +1,7 @@
 defmodule Re.NeighborhoodsTest do
   use Re.ModelCase
 
-  alias Re.Neighborhoods
+  alias Re.Addresses.Neighborhoods
 
   import Re.Factory
 
@@ -14,6 +14,38 @@ defmodule Re.NeighborhoodsTest do
       insert(:listing, address: address2, is_active: false)
 
       assert ["Test 1"] == Neighborhoods.all()
+    end
+  end
+
+  describe "get_description" do
+    test "should return neighborhood description according to address" do
+      address = insert(:address, city: "Rio de Janeiro", state: "RJ", neighborhood: "Lapa")
+
+      insert(:district,
+        city: "Rio de Janeiro",
+        state: "RJ",
+        name: "Lapa",
+        description: "descr"
+      )
+
+      {:ok, district} = Neighborhoods.get_description(address)
+      assert district.city == "Rio de Janeiro"
+      assert district.state == "RJ"
+      assert district.name == "Lapa"
+      assert district.description == "descr"
+    end
+
+    test "should not return neighborhood description according to address if does not match" do
+      address = insert(:address, city: "Rio de Janeiro", state: "RJ", neighborhood: "Lapa")
+
+      insert(:district,
+        city: "Rio de Janeiro",
+        state: "RJ",
+        name: "Centro",
+        description: "descr"
+      )
+
+      assert {:error, :not_found} == Neighborhoods.get_description(address)
     end
   end
 end

@@ -6,48 +6,44 @@ defmodule Re.Stats.ListingReports do
 
   alias Re.{
     Listing,
-    Repo,
+    Repo
   }
 
   def listing_report(filename \\ "temp/listing_report.csv") do
     Listing
     |> order_by([l], asc: l.id)
-    |> preload(
-      [:listings_visualisations,
-      :tour_visualisations,
-      :in_person_visits,
-      :address]
-    )
+    |> preload([:listings_visualisations, :tour_visualisations, :in_person_visits, :address])
     |> Repo.all()
     |> Enum.map(&replace_with_count/1)
     |> to_csv(filename)
   end
 
   defp to_csv(listings, filename) do
-    to_write = listings
+    to_write =
+      listings
       |> Enum.map(&encode/1)
       |> Enum.join("\n")
       |> add_header()
 
     File.rm(filename)
-    File.write(filename, to_write) |> IO.inspect
+    File.write(filename, to_write)
   end
 
   defp encode(listing) do
     "#{listing.id}|" <>
-    "#{if listing.is_active, do: "ativo", else: "inativo"}|" <>
-    "#{listing.listings_visualisations_count}|" <>
-    "#{listing.tour_visualisations_count}|" <>
-    "#{listing.in_person_visits_count}|" <>
-    "#{listing.price}|" <>
-    "#{listing.type}|" <>
-    "#{listing.rooms}|" <>
-    "#{listing.address.neighborhood}|" <>
-    "#{Timex.to_date(listing.updated_at)}"
+      "#{if listing.is_active, do: "ativo", else: "inativo"}|" <>
+      "#{listing.listings_visualisations_count}|" <>
+      "#{listing.tour_visualisations_count}|" <>
+      "#{listing.in_person_visits_count}|" <>
+      "#{listing.price}|" <>
+      "#{listing.type}|" <>
+      "#{listing.rooms}|" <>
+      "#{listing.address.neighborhood}|" <> "#{Timex.to_date(listing.updated_at)}"
   end
 
   defp add_header(result) do
-    "ID|Ativo/inativo|Visualizações|Tours 3D|Visitas|Preço|Tipo|Quartos|Bairro|Data da última modificação\n" <> result
+    "ID|Ativo/inativo|Visualizações|Tours 3D|Visitas|Preço|Tipo|Quartos|Bairro|Data da última modificação\n" <>
+      result
   end
 
   defp replace_with_count(listing) do
