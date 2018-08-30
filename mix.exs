@@ -74,7 +74,8 @@ defmodule Re.Mixfile do
       {:quantum, "~> 2.2"},
       {:phoenix_swoosh, "~> 0.2"},
       {:pigeon, "~> 1.2.2"},
-      {:kadabra, "~> 0.4.2"}
+      {:kadabra, "~> 0.4.2"},
+      {:retry, "~> 0.10"}
     ]
   end
 

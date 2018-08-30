@@ -3,6 +3,7 @@ defmodule ReWeb.Notifications.Emails.Server do
   Module responsible for sending email
   """
   use GenServer
+  use Retry
 
   require Logger
 
@@ -95,10 +96,11 @@ defmodule ReWeb.Notifications.Emails.Server do
   defp notify?(_), do: @env not in ~w(staging test)
 
   defp deliver(email, state) do
-    case Mailer.deliver(email) do
-      {:ok, _} ->
-        {:noreply, state}
-
+    retry with: exp_backoff() |> randomize() |> expiry(30_000), rescue_only: [TimeoutError] do
+      Mailer.deliver(email)
+    after
+      {:ok, _} -> {:noreply, state}
+    else
       error ->
         Logger.error("Email delivery failed. Reason: #{inspect(error)}")
         {:noreply, [{:error, error, email} | state]}
