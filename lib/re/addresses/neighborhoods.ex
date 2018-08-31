@@ -35,6 +35,13 @@ defmodule Re.Addresses.Neighborhoods do
 
   def districts, do: Repo.all(District)
 
+  def get_district(params) do
+    case Repo.get_by(District, params) do
+      nil -> {:error, :not_found}
+      district -> {:ok, district}
+    end
+  end
+
   @doc """
   Temporary mapping to find nearby neighborhood
   """

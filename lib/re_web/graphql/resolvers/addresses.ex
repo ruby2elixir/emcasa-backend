@@ -30,6 +30,8 @@ defmodule ReWeb.Resolvers.Addresses do
 
   def districts(_, _), do: {:ok, Neighborhoods.districts()}
 
+  def district(params, _), do: Neighborhoods.get_district(params)
+
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true
   defp is_admin(_, _), do: false
