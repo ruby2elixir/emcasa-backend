@@ -52,16 +52,16 @@ defmodule Re.Factory do
 
   def address_factory do
     street_name = Address.street_name()
-    street_slug = Re.Address.sluggify(street_name)
+    street_slug = Re.Addresses.Slugs.sluggify(street_name)
 
     neighborhood_name = Pokemon.location()
-    neighborhood_slug = Re.Address.sluggify(neighborhood_name)
+    neighborhood_slug = Re.Addresses.Slugs.sluggify(neighborhood_name)
 
     city_name = Address.city()
-    city_slug = Re.Address.sluggify(city_name)
+    city_slug = Re.Addresses.Slugs.sluggify(city_name)
 
     state_name = Address.state_abbr()
-    state_slug = Re.Address.sluggify(state_name)
+    state_slug = Re.Addresses.Slugs.sluggify(state_name)
 
     %Re.Address{
       street_number: Address.building_number(),
