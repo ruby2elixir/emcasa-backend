@@ -1,4 +1,8 @@
 defmodule Re.Addresses.Slugs do
+  @moduledoc """
+  Module for sluggify logic
+  """
+
   alias Ecto.Changeset
 
   def sluggify(string) do
