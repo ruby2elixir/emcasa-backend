@@ -1,5 +1,4 @@
 defmodule Re.Addresses.Slugs do
-
   alias Ecto.Changeset
 
   def sluggify(string) do
@@ -31,5 +30,4 @@ defmodule Re.Addresses.Slugs do
     |> Kernel.<>("_slug")
     |> String.to_existing_atom()
   end
-
 end
