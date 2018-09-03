@@ -766,4 +766,60 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       assert [%{"message" => "Not found", "code" => 404}] = json_response(conn, 200)["errors"]
     end
   end
+
+  describe "accountKitSignIn" do
+    test "should register with account kit", %{unauthenticated_conn: conn} do
+      variables = %{
+        "accessToken" => "valid_access_token"
+      }
+
+      mutation = """
+        mutation AccountKitSignIn($accessToken: String!) {
+          accountKitSignIn(accessToken: $accessToken) {
+            jwt
+            user {
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{
+               "phone" => "+5511999999999"
+             } == json_response(conn, 200)["data"]["accountKitSignIn"]["user"]
+
+      assert json_response(conn, 200)["data"]["accountKitSignIn"]["jwt"]
+    end
+
+    test "should sign in with account kit", %{unauthenticated_conn: conn} do
+      user = insert(:user, account_kit_id: "321", phone: "+5511999999999")
+
+      variables = %{
+        "accessToken" => "valid_access_token"
+      }
+
+      mutation = """
+        mutation AccountKitSignIn($accessToken: String!) {
+          accountKitSignIn(accessToken: $accessToken) {
+            jwt
+            user {
+              id
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{
+               "id" => to_string(user.id),
+               "phone" => user.phone
+             } == json_response(conn, 200)["data"]["accountKitSignIn"]["user"]
+
+      assert json_response(conn, 200)["data"]["accountKitSignIn"]["jwt"]
+    end
+  end
 end
