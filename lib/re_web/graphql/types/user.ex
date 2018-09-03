@@ -78,9 +78,9 @@ defmodule ReWeb.Types.User do
       resolve &AccountsResolver.sign_in/2
     end
 
-    @desc "Sign in"
+    @desc "Sign in through account kit"
     field :account_kit_sign_in, type: :credentials do
-      arg :auth_code, non_null(:string)
+      arg :access_token, non_null(:string)
 
       resolve &AccountsResolver.account_kit_sign_in/2
     end

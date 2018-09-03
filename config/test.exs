@@ -34,6 +34,9 @@ config :re, Re.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
+config :account_kit,
+  app_id: "123"
+
 config :re, ReWeb.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Test
 
 config :re, :visualizations, Re.TestVisualizations
@@ -41,6 +44,7 @@ config :re, :emails, ReWeb.TestEmails
 config :re, :elasticsearch, ReWeb.TestSearch
 config :re, :http, Re.TestHTTP
 config :re, :pipedrive, ReWeb.TestPipedriveServer
+config :re, :account_kit, Re.TestAccountKit
 
 config :re,
   pipedrive_webhook_user: "testuser",

@@ -21,6 +21,8 @@ defmodule Re.User do
     field :reset_token, :string
     field :device_token, :string
 
+    field :account_kit_id, :string
+
     embeds_one(
       :notification_preferences,
       Re.Accounts.NotificationPreferences,
@@ -101,6 +103,23 @@ defmodule Re.User do
     |> cast(params, @email_required ++ @email_optional)
     |> validate_required(@email_required)
     |> base_changeset()
+  end
+
+  @account_kit_required ~w(account_kit_id phone)a
+  @account_kit_optional ~w(name email)a
+
+  @doc """
+  Builds a changeset based on the `struct` and `params`.
+  """
+  def account_kit_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, @account_kit_required ++ @account_kit_optional)
+    |> cast_embed(
+      :notification_preferences,
+      with: &Re.Accounts.NotificationPreferences.changeset/2
+    )
+    |> validate_required(@account_kit_required)
+    |> unique_constraint(:account_kit_id)
   end
 
   defp base_changeset(changeset) do
