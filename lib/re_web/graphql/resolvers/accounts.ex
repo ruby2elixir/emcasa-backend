@@ -21,6 +21,9 @@ defmodule ReWeb.Resolvers.Accounts do
     with {:ok, user} <- Auth.account_kit_sign_in(access_token),
          {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
       {:ok, %{jwt: jwt, user: user}}
+      else
+        {:error, %{"message" => message, "code" => code}} -> {:error, %{message: message, code: code}}
+        error -> error
     end
   end
 

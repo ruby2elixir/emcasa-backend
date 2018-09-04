@@ -10,7 +10,7 @@ defmodule Re.TestAccountKit do
   end
 
   def me(_) do
-    {:error, %{"message" => "Invalid access token"}}
+    {:error, %{"message" => "Invalid OAuth access token.", "code" => 190}}
   end
 
 end

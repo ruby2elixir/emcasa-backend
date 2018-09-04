@@ -821,5 +821,30 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       assert json_response(conn, 200)["data"]["accountKitSignIn"]["jwt"]
     end
+
+    test "should not sign in with invalid access token", %{unauthenticated_conn: conn} do
+      variables = %{
+        "accessToken" => "invalid_access_token"
+      }
+
+      mutation = """
+        mutation AccountKitSignIn($accessToken: String!) {
+          accountKitSignIn(accessToken: $accessToken) {
+            jwt
+            user {
+              id
+              phone
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      [errors] = json_response(conn, 200)["errors"]
+
+      assert errors["message"] == "Invalid OAuth access token."
+      assert errors["code"] == 190
+    end
   end
 end

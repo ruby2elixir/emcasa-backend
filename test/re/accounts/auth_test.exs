@@ -30,7 +30,7 @@ defmodule Re.Accounts.AuthTest do
     test "should not sign in with invalid access token" do
       {:error, payload} = Auth.account_kit_sign_in("invalid_access_token")
 
-      assert payload == %{"message" => "Invalid access token"}
+      assert payload == %{"message" => "Invalid OAuth access token.", "code" => 190}
     end
   end
 end
