@@ -63,6 +63,10 @@ config :re, ReWeb.Search.Cluster,
 
 config :currency_formatter, :whitelist, ["BRL"]
 
+config :account_kit,
+    api_version: "v1.0",
+    require_appsecret: false
+
 import_config "#{Mix.env()}.exs"
 
 # Import Timber, structured logging

@@ -17,6 +17,13 @@ defmodule ReWeb.Resolvers.Accounts do
     end
   end
 
+  def account_kit_sign_in(%{access_token: access_token}, _) do
+    with {:ok, user} <- Auth.account_kit_sign_in(access_token),
+         {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
+      {:ok, %{jwt: jwt, user: user}}
+    end
+  end
+
   def register(params, _) do
     with {:ok, user} <- Users.create(params),
          {:ok, jwt, _full_claims} <- ReWeb.Guardian.encode_and_sign(user) do
