@@ -6,7 +6,7 @@ defmodule Re.Address do
 
   import Ecto.Changeset
 
-  alias Ecto.Changeset
+  alias Re.Addresses.Slugs
 
   schema "addresses" do
     field :street, :string
@@ -53,36 +53,6 @@ defmodule Re.Address do
   def generate_slugs(%{valid?: false} = changeset), do: changeset
 
   def generate_slugs(changeset) do
-    Enum.reduce(@sluggified_attr, changeset, &generate_slug(&1, &2))
-  end
-
-  def sluggify(string) do
-    string
-    |> String.split(" ")
-    |> Enum.map(&String.normalize(&1, :nfd))
-    |> Enum.map(&String.replace(&1, ~r/\W/u, ""))
-    |> Enum.join("-")
-    |> String.downcase()
-  end
-
-  defp generate_slug(attr, changeset) do
-    slug_content = sluggify_attribute(attr, changeset)
-
-    slug_name = get_slug_name(attr)
-
-    Changeset.change(changeset, [{slug_name, slug_content}])
-  end
-
-  defp sluggify_attribute(attr, changeset) do
-    changeset
-    |> Changeset.get_field(attr)
-    |> sluggify()
-  end
-
-  defp get_slug_name(attr) do
-    attr
-    |> to_string()
-    |> Kernel.<>("_slug")
-    |> String.to_existing_atom()
+    Enum.reduce(@sluggified_attr, changeset, &Slugs.generate_slug(&1, &2))
   end
 end

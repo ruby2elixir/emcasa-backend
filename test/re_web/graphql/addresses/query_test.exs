@@ -19,55 +19,127 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
   end
 
   describe "districts" do
-    test "admin should get districts", %{admin_conn: conn} do
-      query = """
-        query Districts {
-          districts {
-            state
-            city
-            name
-            description
-          }
+    @districts_query """
+      query Districts {
+        districts {
+          state
+          city
+          name
+          description
         }
-      """
+      }
+    """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+    test "admin should get districts", %{admin_conn: conn} do
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
       assert 17 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "user should get districts", %{user_conn: conn} do
-      query = """
-        query Districts {
-          districts {
-            state
-            city
-            name
-            description
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
       assert 17 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "anonymous should get districts", %{unauthenticated_conn: conn} do
-      query = """
-        query Districts {
-          districts {
-            state
-            city
-            name
-            description
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
       assert 17 == Enum.count(json_response(conn, 200)["data"]["districts"])
+    end
+  end
+
+  describe "district" do
+    @district_query """
+      query District($stateSlug: String!, $citySlug: String!, $nameSlug: String!) {
+        district(stateSlug: $stateSlug, citySlug: $citySlug, nameSlug: $nameSlug) {
+          state
+          city
+          name
+          description
+        }
+      }
+    """
+
+    test "admin should show district", %{admin_conn: conn} do
+      insert(:district,
+        name: "District Name",
+        state: "RJ",
+        city: "Rio de Janeiro",
+        name_slug: "district-name",
+        state_slug: "rj",
+        city_slug: "rio-de-janeiro",
+        description: "descr"
+      )
+
+      variables = %{
+        "stateSlug" => "rj",
+        "citySlug" => "rio-de-janeiro",
+        "nameSlug" => "district-name"
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@district_query, variables))
+
+      assert %{
+               "state" => "RJ",
+               "city" => "Rio de Janeiro",
+               "name" => "District Name",
+               "description" => "descr"
+             } == json_response(conn, 200)["data"]["district"]
+    end
+
+    test "user should show district", %{user_conn: conn} do
+      insert(:district,
+        name: "District Name",
+        state: "RJ",
+        city: "Rio de Janeiro",
+        name_slug: "district-name",
+        state_slug: "rj",
+        city_slug: "rio-de-janeiro",
+        description: "descr"
+      )
+
+      variables = %{
+        "stateSlug" => "rj",
+        "citySlug" => "rio-de-janeiro",
+        "nameSlug" => "district-name"
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@district_query, variables))
+
+      assert %{
+               "state" => "RJ",
+               "city" => "Rio de Janeiro",
+               "name" => "District Name",
+               "description" => "descr"
+             } == json_response(conn, 200)["data"]["district"]
+    end
+
+    test "anonymous should show district", %{unauthenticated_conn: conn} do
+      insert(:district,
+        name: "District Name",
+        state: "RJ",
+        city: "Rio de Janeiro",
+        name_slug: "district-name",
+        state_slug: "rj",
+        city_slug: "rio-de-janeiro",
+        description: "descr"
+      )
+
+      variables = %{
+        "stateSlug" => "rj",
+        "citySlug" => "rio-de-janeiro",
+        "nameSlug" => "district-name"
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@district_query, variables))
+
+      assert %{
+               "state" => "RJ",
+               "city" => "Rio de Janeiro",
+               "name" => "District Name",
+               "description" => "descr"
+             } == json_response(conn, 200)["data"]["district"]
     end
   end
 end

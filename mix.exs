@@ -76,6 +76,7 @@ defmodule Re.Mixfile do
       {:phoenix_swoosh, "~> 0.2"},
       {:pigeon, "~> 1.2.2"},
       {:kadabra, "~> 0.4.2"},
+      {:retry, "~> 0.10"},
       {:account_kit, "~> 0.1.0"},
       {:httpoison, "~> 1.1.1", override: true}
     ]

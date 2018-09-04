@@ -253,6 +253,15 @@ defmodule ReWeb.Types.Listing do
     @desc "Get all districts"
     field :districts, list_of(:district), resolve: &Resolvers.Addresses.districts/2
 
+    @desc "Show district"
+    field :district, :district do
+      arg :state_slug, non_null(:string)
+      arg :city_slug, non_null(:string)
+      arg :name_slug, non_null(:string)
+
+      resolve &Resolvers.Addresses.district/2
+    end
+
     @desc "Featured listings"
     field :featured_listings, list_of(:listing), resolve: &Resolvers.Listings.featured/2
 
