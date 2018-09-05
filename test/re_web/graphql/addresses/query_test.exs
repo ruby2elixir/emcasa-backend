@@ -25,6 +25,9 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
           state
           city
           name
+          stateSlug
+          citySlug
+          nameSlug
           description
         }
       }
@@ -56,6 +59,9 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
           state
           city
           name
+          stateSlug
+          citySlug
+          nameSlug
           description
         }
       }
@@ -84,6 +90,9 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "state" => "RJ",
                "city" => "Rio de Janeiro",
                "name" => "District Name",
+               "stateSlug" => "rj",
+               "citySlug" => "rio-de-janeiro",
+               "nameSlug" => "district-name",
                "description" => "descr"
              } == json_response(conn, 200)["data"]["district"]
     end
@@ -111,6 +120,9 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "state" => "RJ",
                "city" => "Rio de Janeiro",
                "name" => "District Name",
+               "stateSlug" => "rj",
+               "citySlug" => "rio-de-janeiro",
+               "nameSlug" => "district-name",
                "description" => "descr"
              } == json_response(conn, 200)["data"]["district"]
     end
@@ -138,6 +150,9 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "state" => "RJ",
                "city" => "Rio de Janeiro",
                "name" => "District Name",
+               "stateSlug" => "rj",
+               "citySlug" => "rio-de-janeiro",
+               "nameSlug" => "district-name",
                "description" => "descr"
              } == json_response(conn, 200)["data"]["district"]
     end
