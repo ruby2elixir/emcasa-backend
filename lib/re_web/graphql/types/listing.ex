@@ -120,6 +120,9 @@ defmodule ReWeb.Types.Listing do
     field :state, :string
     field :city, :string
     field :name, :string
+    field :state_slug, :string
+    field :city_slug, :string
+    field :name_slug, :string
     field :description, :string
   end
 
