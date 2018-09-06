@@ -33,3 +33,11 @@ config :re,
   pipedrive_token: "your_token",
   pipedrive_webhook_user: "pipedrive_user",
   pipedrive_webhook_pass: "pipedrive_pass"
+
+# The configuration below is for logging in with account kit
+# Retrieve your  id and secret from https://developers.facebook.com/apps
+config :account_kit,
+  app_id: "your_dev_app_id",
+  app_secret: "your_dev_app_secret",
+  require_appsecret: false,
+  api_version: "v1.0"
