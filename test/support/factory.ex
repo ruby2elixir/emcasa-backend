@@ -6,17 +6,13 @@ defmodule Re.Factory do
   use ExMachina.Ecto, repo: Re.Repo
 
   alias Faker.{Name, Address, Internet, Pokemon, Lorem.Shakespeare, Phone}
-  alias Comeonin.Bcrypt
 
   def user_factory do
     %Re.User{
       name: Name.name(),
       email: Internet.email(),
       phone: Phone.EnUs.phone(),
-      password_hash: Bcrypt.hashpwsalt("password"),
       role: "user",
-      confirmation_token: "97971cce-eb6e-418a-8529-e717ca1dcf62",
-      confirmed: true,
       notification_preferences: %{
         email: true,
         app: true

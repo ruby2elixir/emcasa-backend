@@ -45,13 +45,6 @@ defmodule Re.Stats.ReportsTest do
       assert [%{id: ^id1}, %{id: ^id2}] = Reports.users_to_be_notified()
     end
 
-    test "get users with confirmed email only" do
-      %{id: id} = insert(:user, listings: [build(:listing)])
-      insert(:user, listings: [build(:listing)], confirmed: false)
-
-      assert [%{id: ^id}] = Reports.users_to_be_notified()
-    end
-
     test "do not get admins" do
       %{id: id} = insert(:user, listings: [build(:listing)])
       insert(:user, listings: [build(:listing)], role: "admin")
