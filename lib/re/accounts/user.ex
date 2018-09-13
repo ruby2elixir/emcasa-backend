@@ -125,7 +125,6 @@ defmodule Re.User do
   defp base_changeset(changeset) do
     changeset
     |> validate_email()
-    |> unique_constraint(:email)
     |> validate_inclusion(:role, @roles, message: "should be one of: [#{Enum.join(@roles, " ")}]")
   end
 

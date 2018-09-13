@@ -298,7 +298,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [%{"message" => "email has already been taken"}] = json_response(conn, 200)["errors"]
+      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["changeEmail"]
     end
   end
 
@@ -586,7 +586,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       assert "user" == user.role
     end
 
-    test "should not register with same email", %{unauthenticated_conn: conn} do
+    test "should register with same email", %{unauthenticated_conn: conn} do
       insert(:user, email: "user@emcasa.com")
 
       variables = %{
@@ -618,8 +618,11 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [%{"message" => "email: has already been taken", "code" => 422}] =
-               json_response(conn, 200)["errors"]
+      assert %{
+              "name" => "name",
+              "phone" => "11223344",
+              "email" => "user@emcasa.com"
+              } == json_response(conn, 200)["data"]["register"]["user"]
     end
   end
 

@@ -41,14 +41,12 @@ defmodule Re.UserTest do
              {"should be one of: [admin user]", [validation: :inclusion]}
   end
 
-  test "duplicated email should be invalid" do
+  test "duplicated email should be valid" do
     insert(:user, @valid_attrs)
 
-    {:error, changeset} =
+    {:ok, user} =
       %User{}
       |> User.create_changeset(@valid_attrs)
       |> Repo.insert()
-
-    assert changeset.errors == [email: {"has already been taken", []}]
   end
 end

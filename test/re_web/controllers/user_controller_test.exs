@@ -292,9 +292,9 @@ defmodule ReWeb.UserControllerTest do
       refute user.confirmed
     end
 
-    test "gives error when e-mail already exists", %{conn: conn} do
+    test "should not give error when e-mail already exists", %{conn: conn} do
       insert(:user, email: "existingemail@emcasa.com")
-      %{email: old_email} = user = insert(:user)
+      user = insert(:user)
       conn = login_as(conn, user)
 
       conn =
@@ -303,10 +303,10 @@ defmodule ReWeb.UserControllerTest do
           user_path(conn, :change_email, %{"user" => %{"email" => "existingemail@emcasa.com"}})
         )
 
-      assert json_response(conn, 422)
+      assert json_response(conn, 200)
       assert user = Repo.get(User, user.id)
-      assert user.email == old_email
-      assert user.confirmed
+      assert user.email == "existingemail@emcasa.com"
+      refute user.confirmed
     end
   end
 end
