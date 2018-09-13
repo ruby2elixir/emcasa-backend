@@ -25,9 +25,7 @@ Repo.delete_all(User)
     name: "Admin 1",
     email: "admin1@emcasa.com",
     phone: "11111111111",
-    password_hash: Bcrypt.hashpwsalt("password"),
-    role: "admin",
-    confirmed: true
+    role: "admin"
   })
 
 {:ok, admin2} =
@@ -35,9 +33,7 @@ Repo.delete_all(User)
     name: "Admin 2",
     email: "admin2@emcasa.com",
     phone: "22222222222",
-    password_hash: Bcrypt.hashpwsalt("password"),
-    role: "admin",
-    confirmed: true
+    role: "admin"
   })
 
 {:ok, user1} =
@@ -45,9 +41,7 @@ Repo.delete_all(User)
     name: "User 1",
     email: "user1@emcasa.com",
     phone: "111111111",
-    password_hash: Bcrypt.hashpwsalt("password"),
-    role: "user",
-    confirmed: true
+    role: "user"
   })
 
 {:ok, user2} =
@@ -55,9 +49,7 @@ Repo.delete_all(User)
     name: "User 2",
     email: "user2@emcasa.com",
     phone: "222222222",
-    password_hash: Bcrypt.hashpwsalt("password"),
-    role: "user",
-    confirmed: true
+    role: "user"
   })
 
 {:ok, user3} =
@@ -65,9 +57,7 @@ Repo.delete_all(User)
     name: "User 3",
     email: "user3@emcasa.com",
     phone: "333333333",
-    password_hash: Bcrypt.hashpwsalt("password"),
-    role: "user",
-    confirmed: true
+    role: "user"
   })
 
 {:ok, user4} =
@@ -75,9 +65,7 @@ Repo.delete_all(User)
     name: "User 4",
     email: "user4@emcasa.com",
     phone: "4444444444",
-    password_hash: Bcrypt.hashpwsalt("password"),
-    role: "user",
-    confirmed: true
+    role: "user"
   })
 
 {:ok, address1} =
