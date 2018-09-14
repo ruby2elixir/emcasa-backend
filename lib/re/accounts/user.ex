@@ -72,8 +72,14 @@ defmodule Re.User do
   end
 
   defp validate_email(changeset) do
-    email = get_field(changeset, :email) || ""
+    changeset
+    |> get_field(:email)
+    |> check_email(changeset)
+  end
 
+  defp check_email(nil, changeset), do: changeset
+
+  defp check_email(email, changeset) do
     case EmailChecker.valid?(email) do
       true -> changeset
       false -> add_error(changeset, :email, "has invalid format", validation: :format)
