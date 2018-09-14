@@ -32,14 +32,10 @@ defmodule ReWeb.Notifications.Emails.Server do
   @spec init(term) :: {:ok, term}
   def init(args) do
     if Mix.env() != :test do
-      subscribe("subscription { emailChanged { id } }")
       subscribe("subscription { listingInserted { id owner { id } } }")
       subscribe("subscription { contactRequested { id } }")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
-      subscribe("subscription { messageSentAdmin { sender { id } receiver { id } message } }")
       subscribe("subscription { userRegistered { user { id } } }")
-      subscribe("subscription { userConfirmed { user { id } } }")
-      subscribe("subscription { passwordResetRequested { id } }")
     end
 
     {:ok, args}
@@ -92,7 +88,6 @@ defmodule ReWeb.Notifications.Emails.Server do
   end
 
   defp notify?(%{notification_preferences: %{email: false}}), do: false
-  defp notify?(%{confirmed: false}), do: false
   defp notify?(_), do: @env not in ~w(staging test)
 
   defp deliver(email, state) do
@@ -113,13 +108,6 @@ defmodule ReWeb.Notifications.Emails.Server do
   end
 
   def handle_info(_, state), do: {:noreply, state}
-
-  defp handle_data(%{"emailChanged" => %{"id" => user_id}}, state) do
-    case Users.get(user_id) do
-      {:ok, user} -> handle_cast({UserEmail, :change_email, [user]}, state)
-      _ -> {:noreply, state}
-    end
-  end
 
   defp handle_data(
          %{
@@ -147,7 +135,6 @@ defmodule ReWeb.Notifications.Emails.Server do
        ) do
     case {Users.get(user_id), Listings.get(listing_id)} do
       {{:ok, user}, {:ok, listing}} ->
-        handle_cast({UserEmail, :listing_added, [user, listing]}, state)
         handle_cast({UserEmail, :listing_added_admin, [user, listing]}, state)
 
       _ ->
@@ -176,51 +163,12 @@ defmodule ReWeb.Notifications.Emails.Server do
     end
   end
 
-  defp handle_data(
-         %{
-           "messageSentAdmin" => %{
-             "message" => message,
-             "receiver" => %{"id" => receiver_id},
-             "sender" => %{"id" => sender_id}
-           }
-         },
-         state
-       ) do
-    with {:ok, sender} <- Users.get(sender_id),
-         {:ok, receiver} <- Users.get(receiver_id),
-         true <- notify?(receiver) do
-      handle_cast({UserEmail, :message_sent, [sender, receiver, message]}, state)
-    else
-      false ->
-        Logger.info("User disabled notification")
-
-        {:noreply, state}
-
-      error ->
-        Logger.warn("Error sending message notification to user: #{inspect(error)}")
-
-        {:noreply, state}
-    end
-  end
-
   defp handle_data(%{"userRegistered" => %{"user" => %{"id" => id}}}, state) do
     with {:ok, user} <- Users.get(id) do
-      {:noreply, state} = handle_cast({UserEmail, :user_registered, [user]}, state)
-      handle_cast({UserEmail, :confirm, [user]}, state)
+      handle_cast({UserEmail, :user_registered, [user]}, state)
     else
       {:error, :not_found} ->
         Logger.warn("Error notifying user registration: user id #{id} not found")
-
-        {:noreply, [{:error, :not_found, "ID: #{id}"} | state]}
-    end
-  end
-
-  defp handle_data(%{"userConfirmed" => %{"user" => %{"id" => id}}}, state) do
-    with {:ok, user} <- Users.get(id) do
-      handle_cast({UserEmail, :welcome, [user]}, state)
-    else
-      {:error, :not_found} ->
-        Logger.warn("Error notifying user confirmation: user id #{id} not found")
 
         {:noreply, [{:error, :not_found, "ID: #{id}"} | state]}
     end

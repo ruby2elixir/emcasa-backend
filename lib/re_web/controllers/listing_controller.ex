@@ -9,7 +9,6 @@ defmodule ReWeb.ListingController do
 
   @visualizations Application.get_env(:re, :visualizations, Re.Stats.Visualizations)
   @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
-  @env Application.get_env(:re, :env)
 
   action_fallback(ReWeb.FallbackController)
 
@@ -83,8 +82,6 @@ defmodule ReWeb.ListingController do
   end
 
   defp send_email_if_not_admin(listing, %{role: "user"} = user) do
-    @emails.listing_added(user, listing)
-
     @emails.listing_added_admin(user, listing)
   end
 
@@ -96,18 +93,6 @@ defmodule ReWeb.ListingController do
          listing_changeset
        ) do
     @emails.listing_updated(user, listing, listing_changeset.changes)
-  end
-
-  defp send_email_if_not_admin(
-         %{is_active: true} = listing,
-         %{role: "admin"},
-         %{changes: %{price: new_price}}
-       ) do
-    case @env do
-      "staging" -> :nothing
-      "test" -> :nothing
-      _ -> @emails.price_updated(new_price, listing)
-    end
   end
 
   defp send_email_if_not_admin(_, %{role: "admin"}, _), do: :nothing

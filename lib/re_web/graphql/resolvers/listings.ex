@@ -203,7 +203,6 @@ defmodule ReWeb.Resolvers.Listings do
   def featured(_, _), do: {:ok, Featured.get_graphql()}
 
   @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
-  @env Application.get_env(:re, :env)
 
   defp send_email_if_not_admin(
          listing,
@@ -211,18 +210,6 @@ defmodule ReWeb.Resolvers.Listings do
          listing_changeset
        ) do
     @emails.listing_updated(user, listing, listing_changeset.changes)
-  end
-
-  defp send_email_if_not_admin(
-         %{is_active: true} = listing,
-         %{role: "admin"},
-         %{changes: %{price: new_price}}
-       ) do
-    case @env do
-      "staging" -> :nothing
-      "test" -> :nothing
-      _ -> @emails.price_updated(new_price, listing)
-    end
   end
 
   defp send_email_if_not_admin(_, %{role: "admin"}, _), do: :nothing

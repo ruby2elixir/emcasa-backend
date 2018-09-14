@@ -6,21 +6,13 @@ defmodule Re.User do
 
   import Ecto.Changeset
 
-  alias Comeonin.Bcrypt
-
   schema "users" do
     field :name, :string
     field :email, :string
     field :phone, :string
-    field :password, :string, virtual: true
-    field :password_hash, :string
-    field :role, :string
+    field :role, :string, default: "user"
 
-    field :confirmation_token, :string
-    field :confirmed, :boolean
-    field :reset_token, :string
     field :device_token, :string
-
     field :account_kit_id, :string
 
     embeds_one(
@@ -42,26 +34,8 @@ defmodule Re.User do
 
   @roles ~w(admin user)
 
-  @create_required ~w(name email password role confirmation_token confirmed)a
-  @optional ~w(phone device_token)a
-
-  @doc """
-  Builds a changeset based on the `struct` and `params`.
-  """
-  def create_changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, @create_required ++ @optional)
-    |> cast_embed(
-      :notification_preferences,
-      with: &Re.Accounts.NotificationPreferences.changeset/2
-    )
-    |> validate_required(@create_required)
-    |> base_changeset()
-    |> hash_password()
-  end
-
   @update_required ~w()a
-  @update_optional ~w(name email password role confirmation_token confirmed phone device_token)a
+  @update_optional ~w(name email role phone device_token)a
 
   def update_changeset(struct, params \\ %{}) do
     struct
@@ -74,38 +48,7 @@ defmodule Re.User do
     |> base_changeset()
   end
 
-  @reset_required ~w(reset_token)a
-  @reset_optional ~w()a
-
-  def reset_changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, @reset_required ++ @reset_optional)
-    |> validate_required(@reset_required)
-    |> base_changeset()
-  end
-
-  @redefine_required ~w(password)a
-  @redefine_optional ~w(reset_token)a
-
-  def redefine_changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, @redefine_required ++ @redefine_optional)
-    |> validate_required(@redefine_required)
-    |> base_changeset()
-    |> hash_password()
-  end
-
-  @email_required ~w(email confirmed confirmation_token)a
-  @email_optional ~w()a
-
-  def email_changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, @email_required ++ @email_optional)
-    |> validate_required(@email_required)
-    |> base_changeset()
-  end
-
-  @account_kit_required ~w(account_kit_id phone)a
+  @account_kit_required ~w(account_kit_id phone role)a
   @account_kit_optional ~w(name email)a
 
   @doc """
@@ -125,28 +68,21 @@ defmodule Re.User do
   defp base_changeset(changeset) do
     changeset
     |> validate_email()
-    |> unique_constraint(:email)
     |> validate_inclusion(:role, @roles, message: "should be one of: [#{Enum.join(@roles, " ")}]")
   end
 
   defp validate_email(changeset) do
     changeset
     |> get_field(:email)
-    |> EmailChecker.valid?()
-    |> case do
+    |> check_email(changeset)
+  end
+
+  defp check_email(nil, changeset), do: changeset
+
+  defp check_email(email, changeset) do
+    case EmailChecker.valid?(email) do
       true -> changeset
       false -> add_error(changeset, :email, "has invalid format", validation: :format)
     end
-  end
-
-  defp hash_password(%{valid?: false} = changeset), do: changeset
-
-  defp hash_password(changeset) do
-    password_hash =
-      changeset
-      |> get_change(:password)
-      |> Bcrypt.hashpwsalt()
-
-    put_change(changeset, :password_hash, password_hash)
   end
 end

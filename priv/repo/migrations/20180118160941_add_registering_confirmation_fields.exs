@@ -8,7 +8,7 @@ defmodule Re.Repo.Migrations.AddRegisteringConfirmationFields do
     end
 
     flush()
-    Re.Repo.update_all(Re.User, set: [confirmed: true])
+    # Re.Repo.update_all(Re.User, set: [confirmed: true])
   end
 
   def down do

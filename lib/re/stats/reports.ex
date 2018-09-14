@@ -27,7 +27,7 @@ defmodule Re.Stats.Reports do
   def users_to_be_notified do
     User
     |> preload(listings: ^where(Listing, [l], l.is_active == true))
-    |> where([u], u.confirmed == true and u.role == "user")
+    |> where([u], u.role == "user")
     |> order_by([u], u.id)
     |> Repo.all()
     |> Enum.filter(fn

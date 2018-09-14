@@ -69,10 +69,9 @@ config :re, Re.Stats.Scheduler,
 
 config :pigeon, :fcm,
   fcm_default: %{
-    key:
-      System.get_env("FCM_TOKEN")
+    key: System.get_env("FCM_TOKEN")
   }
 
 config :account_kit,
-    app_id: System.get_env("FACEBOOK_APP_ID"),
-    app_secret: System.get_env("ACCOUNT_KIT_APP_SECRET")
+  app_id: System.get_env("FACEBOOK_APP_ID"),
+  app_secret: System.get_env("ACCOUNT_KIT_APP_SECRET")
