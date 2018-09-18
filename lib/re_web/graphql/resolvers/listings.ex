@@ -109,9 +109,19 @@ defmodule ReWeb.Resolvers.Listings do
   def owned(user, params, %{context: %{loader: loader, current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :per_user, current_user, user) do
       loader
-      |> Dataloader.load(Listings, {:listings, params}, user)
+      |> Dataloader.load(
+        Listings,
+        {:listings, Map.merge(params, %{has_admin_rights: true})},
+        user
+      )
       |> on_load(fn loader ->
-        {:ok, Dataloader.get(loader, Listings, {:listings, params}, user)}
+        {:ok,
+         Dataloader.get(
+           loader,
+           Listings,
+           {:listings, Map.merge(params, %{has_admin_rights: true})},
+           user
+         )}
       end)
     end
   end
