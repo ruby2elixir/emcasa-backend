@@ -232,5 +232,46 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
 
       assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
+
+    test "user should see its inactive listings", %{user_conn: conn, user_user: user} do
+      listing1 = insert(:listing, user: user, type: "Casa", score: 4)
+      listing2 = insert(:listing, user: user, type: "Casa", score: 3)
+      listing3 = insert(:listing, user: user, type: "Apartamento", score: 2, is_active: false)
+
+      variables = %{
+        "id" => user.id,
+        "listingPagination" => %{},
+        "listingFilters" => %{}
+      }
+
+      query = """
+        query UserProfile(
+          $id: ID,
+          $listingPagination: ListingPagination,
+          $listingFilters: ListingFilterInput
+          ) {
+          userProfile(id: $id) {
+            id
+            listings (
+              pagination: $listingPagination
+              filters: $listingFilters
+            ) {
+              id
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "id" => to_string(user.id),
+               "listings" => [
+                 %{"id" => to_string(listing1.id)},
+                 %{"id" => to_string(listing2.id)},
+                 %{"id" => to_string(listing3.id)}
+               ]
+             } == json_response(conn, 200)["data"]["userProfile"]
+    end
   end
 end
