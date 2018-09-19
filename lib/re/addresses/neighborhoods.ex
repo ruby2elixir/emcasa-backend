@@ -67,7 +67,6 @@ defmodule Re.Addresses.Neighborhoods do
                            %{state: "RJ", neighborhood: "Flamengo", city: "Rio de Janeiro"},
                            %{state: "RJ", neighborhood: "Gávea", city: "Rio de Janeiro"},
                            %{state: "RJ", neighborhood: "Ipanema", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Itanhangá", city: "Rio de Janeiro"},
                            %{
                              state: "RJ",
                              neighborhood: "Jardim Botânico",
