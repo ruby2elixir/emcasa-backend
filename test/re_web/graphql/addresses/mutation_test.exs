@@ -237,4 +237,102 @@ defmodule ReWeb.GraphQL.Addresses.MutationTest do
 
     assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
   end
+
+  test "should insert covered neighborhood", %{user_conn: conn} do
+    address = insert(:address)
+
+    variables = %{
+      "input" => %{
+        "city" => "Rio de Janeiro",
+        "state" => "RJ",
+        "lat" => address.lat,
+        "lng" => address.lng,
+        "neighborhood" => "Copacabana",
+        "street" => address.street,
+        "streetNumber" => address.street_number,
+        "postalCode" => address.postal_code
+      }
+    }
+
+    mutation = """
+      mutation AddressInsert($input: AddressInput!) {
+        addressInsert(input: $input) {
+          id
+          city
+          state
+          lat
+          lng
+          neighborhood
+          street
+          streetNumber
+          postalCode
+          isCovered
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+    assert %{
+             "id" => to_string(address.id),
+             "city" => "Rio de Janeiro",
+             "state" => "RJ",
+             "lat" => address.lat,
+             "lng" => address.lng,
+             "neighborhood" => "Copacabana",
+             "street" => address.street,
+             "streetNumber" => address.street_number,
+             "postalCode" => address.postal_code,
+             "isCovered" => true
+           } == json_response(conn, 200)["data"]["addressInsert"]
+  end
+
+  test "should insert not covered neighborhood", %{user_conn: conn} do
+    address = insert(:address)
+
+    variables = %{
+      "input" => %{
+        "city" => "Rio de Janeiro",
+        "state" => "RJ",
+        "lat" => address.lat,
+        "lng" => address.lng,
+        "neighborhood" => "Pocapabana",
+        "street" => address.street,
+        "streetNumber" => address.street_number,
+        "postalCode" => address.postal_code
+      }
+    }
+
+    mutation = """
+      mutation AddressInsert($input: AddressInput!) {
+        addressInsert(input: $input) {
+          id
+          city
+          state
+          lat
+          lng
+          neighborhood
+          street
+          streetNumber
+          postalCode
+          isCovered
+        }
+      }
+    """
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+    assert %{
+             "id" => to_string(address.id),
+             "city" => "Rio de Janeiro",
+             "state" => "RJ",
+             "lat" => address.lat,
+             "lng" => address.lng,
+             "neighborhood" => "Pocapabana",
+             "street" => address.street,
+             "streetNumber" => address.street_number,
+             "postalCode" => address.postal_code,
+             "isCovered" => false
+           } == json_response(conn, 200)["data"]["addressInsert"]
+  end
 end

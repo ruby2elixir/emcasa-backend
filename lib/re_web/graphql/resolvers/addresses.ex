@@ -32,6 +32,8 @@ defmodule ReWeb.Resolvers.Addresses do
 
   def district(params, _), do: Neighborhoods.get_district(params)
 
+  def is_covered(address, _, _), do: {:ok, Addresses.is_covered(address)}
+
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true
   defp is_admin(_, _), do: false
