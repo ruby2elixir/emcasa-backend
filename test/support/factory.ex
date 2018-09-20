@@ -163,6 +163,10 @@ defmodule Re.Factory do
     }
   end
 
+  def notify_when_covered_factory do
+    %Re.Interests.NotifyWhenCovered{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
