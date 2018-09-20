@@ -7,6 +7,7 @@ defmodule Re.Interests do
     Addresses,
     Interest,
     Interests.ContactRequest,
+    Interests.NotifyWhenCovered,
     InterestType,
     PriceSuggestions,
     Repo,
@@ -47,6 +48,13 @@ defmodule Re.Interests do
          suggested_price <- PriceSuggestions.suggest_price(request) do
       {:ok, request, suggested_price}
     end
+  end
+
+  def notify_when_covered(params, user \\ nil) do
+    %NotifyWhenCovered{}
+    |> NotifyWhenCovered.changeset(params)
+    |> attach_user(user)
+    |> Repo.insert()
   end
 
   defp attach_user(changeset, %User{id: id}),

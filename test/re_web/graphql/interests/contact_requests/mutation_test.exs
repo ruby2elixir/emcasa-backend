@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Interests.MutationTest do
+defmodule ReWeb.GraphQL.Interests.ContactRequest.MutationTest do
   use ReWeb.ConnCase
 
   alias ReWeb.AbsintheHelpers
