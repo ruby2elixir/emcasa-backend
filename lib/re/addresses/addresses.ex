@@ -10,6 +10,8 @@ defmodule Re.Addresses do
     Repo
   }
 
+  alias __MODULE__.Neighborhoods
+
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
@@ -43,6 +45,12 @@ defmodule Re.Addresses do
     |> build_address(params)
     |> Address.changeset(params)
     |> Repo.insert_or_update()
+  end
+
+  def is_covered(address) do
+    address
+    |> Map.take(~w(state city neighborhood)a)
+    |> Neighborhoods.is_covered()
   end
 
   defp build_address({:error, :not_found}, %{

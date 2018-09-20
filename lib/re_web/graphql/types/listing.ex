@@ -114,6 +114,8 @@ defmodule ReWeb.Types.Listing do
 
     field :neighborhood_description, :string,
       resolve: &Resolvers.Addresses.neighborhood_description/3
+
+    field :is_covered, :boolean, resolve: &Resolvers.Addresses.is_covered/3
   end
 
   object :district do
