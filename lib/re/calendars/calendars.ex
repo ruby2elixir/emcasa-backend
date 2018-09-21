@@ -1,4 +1,7 @@
 defmodule Re.Calendars do
+  @moduledoc """
+  Context module for calendars
+  """
   alias Re.{
     Calendars.TourAppointment,
     Repo
