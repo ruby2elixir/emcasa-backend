@@ -118,6 +118,40 @@ defmodule ReWeb.Notifications.UserEmail do
                   Mensagem: #{message}")
   end
 
+  def notify_when_covered(%{
+        name: name,
+        email: email,
+        phone: phone,
+        message: message,
+        user: user,
+        address: address
+      }) do
+    new()
+    |> to(@to)
+    |> from(@admin_email)
+    |> subject("Um usuário pediu pra ser notificado quando cobrirmos uma região")
+    |> html_body("Nome: #{name || user.name}<br>
+                  Email: #{email || user.email}<br>
+                  Telefone: #{phone || user.phone}<br>
+                  Mensagem: #{message}<br>
+                  Endereço:<br>
+                    Rua: #{address.street}<br>
+                    Número: #{address.street_number}<br>
+                    Cidade: #{address.city}<br>
+                    Estado: #{address.state}<br>
+                    Bairro: #{address.neighborhood}<br>")
+    |> text_body("Nome: #{name || user.name}
+                  Email: #{email || user.email}
+                  Telefone: #{phone || user.phone}
+                  Mensagem: #{message}
+                  Endereço:
+                    Rua: #{address.street}
+                    Número: #{address.street_number}
+                    Cidade: #{address.city}
+                    Estado: #{address.state}
+                    Bairro: #{address.neighborhood}")
+  end
+
   def price_suggestion_requested(request, suggested_price) do
     new()
     |> to(@to)

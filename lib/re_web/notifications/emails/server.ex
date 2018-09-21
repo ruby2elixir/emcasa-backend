@@ -36,6 +36,7 @@ defmodule ReWeb.Notifications.Emails.Server do
       subscribe("subscription { contactRequested { id } }")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
       subscribe("subscription { userRegistered { user { id } } }")
+      subscribe("subscription { notifyWhenCovered { id } }")
     end
 
     {:ok, args}
@@ -163,25 +164,16 @@ defmodule ReWeb.Notifications.Emails.Server do
     end
   end
 
-  defp handle_data(%{"userRegistered" => %{"user" => %{"id" => id}}}, state) do
-    with {:ok, user} <- Users.get(id) do
-      handle_cast({UserEmail, :user_registered, [user]}, state)
-    else
-      {:error, :not_found} ->
-        Logger.warn("Error notifying user registration: user id #{id} not found")
+  defp handle_data(%{"notifyWhenCovered" => %{"id" => id}}, state) do
+    Re.Interests.NotifyWhenCovered
+    |> preload([:user, :address])
+    |> Repo.get(id)
+    |> case do
+      nil ->
+        {:noreply, [{:error, "Notify when Covered id #{id} does not exist"} | state]}
 
-        {:noreply, [{:error, :not_found, "ID: #{id}"} | state]}
-    end
-  end
-
-  defp handle_data(%{"passwordResetRequested" => %{"id" => id}}, state) do
-    with {:ok, user} <- Users.get(id) do
-      handle_cast({UserEmail, :reset_password, [user]}, state)
-    else
-      {:error, :not_found} ->
-        Logger.warn("Error notifying user confirmation: user id #{id} not found")
-
-        {:noreply, [{:error, :not_found, "ID: #{id}"} | state]}
+      notify_when_covered ->
+        handle_cast({UserEmail, :notify_when_covered, [notify_when_covered]}, state)
     end
   end
 

@@ -70,6 +70,17 @@ defmodule ReWeb.Types.Interest do
 
       resolve &InterestsResolver.request_price_suggestion/2
     end
+
+    @desc "Request notification when covered"
+    field :notify_when_covered, type: :contact do
+      arg :name, :string
+      arg :phone, :string
+      arg :email, :string
+      arg :message, :string
+      arg :address_id, non_null(:id)
+
+      resolve &InterestsResolver.notify_when_covered/2
+    end
   end
 
   object :interest_subscriptions do
