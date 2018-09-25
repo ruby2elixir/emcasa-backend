@@ -10,15 +10,7 @@ defmodule ReWeb.Resolvers.Calendars do
   }
 
   def tour_options(_, _) do
-    now = Timex.now()
-
-    {:ok,
-     [
-       now |> Timex.shift(days: 3) |> Timex.shift(hours: 2),
-       now |> Timex.shift(days: 4) |> Timex.shift(hours: 2),
-       now |> Timex.shift(days: 3) |> Timex.shift(hours: 4),
-       now |> Timex.shift(days: 4) |> Timex.shift(hours: 4)
-     ]}
+    {:ok, Calendars.generate_tour_options(Timex.now(), 5)}
   end
 
   def schedule_tour(%{input: params}, %{context: %{current_user: current_user}}) do
