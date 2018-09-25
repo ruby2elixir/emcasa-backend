@@ -42,4 +42,21 @@ defmodule ReWeb.Types.Calendar do
       resolve &Resolvers.Calendars.schedule_tour/2
     end
   end
+
+  object :calendar_subscriptions do
+    @desc "Subscribe to tour scheduling"
+    field :tour_scheduled, :tour_appointment do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "tour_scheduled"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :tour_schedule,
+        topic: fn _ ->
+          "tour_scheduled"
+        end
+    end
+  end
 end

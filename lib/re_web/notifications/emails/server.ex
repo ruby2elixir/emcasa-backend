@@ -37,6 +37,7 @@ defmodule ReWeb.Notifications.Emails.Server do
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
       subscribe("subscription { userRegistered { user { id } } }")
       subscribe("subscription { notifyWhenCovered { id } }")
+      subscribe("subscription { tourScheduled { id } }")
     end
 
     {:ok, args}
@@ -174,6 +175,22 @@ defmodule ReWeb.Notifications.Emails.Server do
 
       notify_when_covered ->
         handle_cast({UserEmail, :notify_when_covered, [notify_when_covered]}, state)
+    end
+  end
+
+  defp handle_data(%{"tourScheduled" => %{"id" => id}}, state) do
+    Re.Calendars.TourAppointment
+    |> preload([:user, :listing])
+    |> Repo.get(id)
+    |> case do
+      nil ->
+        {:noreply, [{:error, "Tour Apponintment with id #{id} does not exist"} | state]}
+
+      %{user: %{role: "user"}} = tour_appointment ->
+        handle_cast({UserEmail, :tour_appointment, [tour_appointment]}, state)
+
+      _ ->
+        {:noreply, state}
     end
   end
 
