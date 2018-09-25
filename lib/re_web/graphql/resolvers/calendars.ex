@@ -9,8 +9,9 @@ defmodule ReWeb.Resolvers.Calendars do
     Listings
   }
 
-  def tour_options(_, _) do
-    {:ok, Calendars.generate_tour_options(Timex.now(), 5)}
+  def tour_options(_, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Calendars, :tour_options, current_user, %{}),
+         do: {:ok, Calendars.generate_tour_options(Timex.now(), 5)}
   end
 
   def schedule_tour(%{input: params}, %{context: %{current_user: current_user}}) do

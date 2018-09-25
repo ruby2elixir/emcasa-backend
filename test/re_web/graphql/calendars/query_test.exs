@@ -27,7 +27,7 @@ defmodule ReWeb.GraphQL.Calendars.QueryTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-    assert [_, _, _, _] = json_response(conn, 200)["data"]["tourOptions"]
+    assert [_, _, _, _, _, _, _, _, _, _] = json_response(conn, 200)["data"]["tourOptions"]
   end
 
   test "user should query tour options", %{user_conn: conn} do
@@ -41,10 +41,10 @@ defmodule ReWeb.GraphQL.Calendars.QueryTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-    assert [_, _, _, _] = json_response(conn, 200)["data"]["tourOptions"]
+    assert [_, _, _, _, _, _, _, _, _, _] = json_response(conn, 200)["data"]["tourOptions"]
   end
 
-  test "anonymous should query tour options", %{unauthenticated_conn: conn} do
+  test "anonymous should not query tour options", %{unauthenticated_conn: conn} do
     insert(:interest_type, name: "type2", enabled: false)
 
     query = """
@@ -55,6 +55,6 @@ defmodule ReWeb.GraphQL.Calendars.QueryTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-    assert [_, _, _, _] = json_response(conn, 200)["data"]["tourOptions"]
+    assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
   end
 end

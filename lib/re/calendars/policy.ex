@@ -7,6 +7,7 @@ defmodule Re.Calendars.Policy do
 
   def authorize(_, %User{role: "admin"}, _), do: :ok
   def authorize(:schedule_tour, %User{role: "user"}, _), do: :ok
+  def authorize(:tour_options, %User{role: "user"}, _), do: :ok
 
   def authorize(_, nil, _), do: {:error, :unauthorized}
 
