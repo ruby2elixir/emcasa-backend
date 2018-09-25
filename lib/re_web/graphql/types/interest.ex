@@ -113,5 +113,20 @@ defmodule ReWeb.Types.Interest do
           "price_suggestion_requested"
         end
     end
+
+    @desc "Subscribe to price suggestion requests"
+    field :notification_coverage_asked, :contact do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "notification_coverage_asked"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :notify_when_covered,
+        topic: fn _ ->
+          "notification_coverage_asked"
+        end
+    end
   end
 end

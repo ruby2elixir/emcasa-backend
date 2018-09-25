@@ -247,7 +247,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
-              data: %{"notifyWhenCovered" => %{"id" => id}}
+              data: %{"notificationCoverageAsked" => %{"id" => id}}
             }
           }
         },
@@ -255,7 +255,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.notify_when_covered(%{
+        UserEmail.notification_coverage_asked(%{
           name: request.name,
           email: request.email,
           phone: request.phone,
@@ -286,7 +286,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
-              data: %{"notifyWhenCovered" => %{"id" => id}}
+              data: %{"notificationCoverageAsked" => %{"id" => id}}
             }
           }
         },
@@ -294,7 +294,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.notify_when_covered(%{
+        UserEmail.notification_coverage_asked(%{
           name: user.name,
           email: user.email,
           phone: user.phone,
@@ -325,7 +325,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
-              data: %{"notifyWhenCovered" => %{"id" => id}}
+              data: %{"notificationCoverageAsked" => %{"id" => id}}
             }
           }
         },
@@ -333,7 +333,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.notify_when_covered(%{
+        UserEmail.notification_coverage_asked(%{
           name: nil,
           email: nil,
           phone: nil,

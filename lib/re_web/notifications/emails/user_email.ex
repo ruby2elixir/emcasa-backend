@@ -119,7 +119,7 @@ defmodule ReWeb.Notifications.UserEmail do
                   Mensagem: #{message}")
   end
 
-  def notify_when_covered(%{
+  def notification_coverage_asked(%{
         name: name,
         email: email,
         phone: phone,

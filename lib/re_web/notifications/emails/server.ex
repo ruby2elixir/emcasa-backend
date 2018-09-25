@@ -36,7 +36,7 @@ defmodule ReWeb.Notifications.Emails.Server do
       subscribe("subscription { contactRequested { id } }")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
       subscribe("subscription { userRegistered { user { id } } }")
-      subscribe("subscription { notifyWhenCovered { id } }")
+      subscribe("subscription { notificationCoverageAsked { id } }")
       subscribe("subscription { tourScheduled { id } }")
     end
 
@@ -165,7 +165,7 @@ defmodule ReWeb.Notifications.Emails.Server do
     end
   end
 
-  defp handle_data(%{"notifyWhenCovered" => %{"id" => id}}, state) do
+  defp handle_data(%{"notificationCoverageAsked" => %{"id" => id}}, state) do
     Re.Interests.NotifyWhenCovered
     |> preload([:user, :address])
     |> Repo.get(id)
@@ -174,7 +174,7 @@ defmodule ReWeb.Notifications.Emails.Server do
         {:noreply, [{:error, "Notify when Covered id #{id} does not exist"} | state]}
 
       notify_when_covered ->
-        handle_cast({UserEmail, :notify_when_covered, [notify_when_covered]}, state)
+        handle_cast({UserEmail, :notification_coverage_asked, [notify_when_covered]}, state)
     end
   end
 
