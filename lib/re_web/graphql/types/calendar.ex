@@ -15,7 +15,7 @@ defmodule ReWeb.Types.Calendar do
     field :options, list_of(:datetime_option)
 
     field :user, :user, resolve: dataloader(Re.Accounts)
-    field :listing, :listing, resolve: dataloader(Re.Listings)
+    field :listing, :listing, resolve: &Resolvers.Calendars.listings/3
   end
 
   input_object :tour_schedule_input do
