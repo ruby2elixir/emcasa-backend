@@ -170,13 +170,13 @@ defmodule ReWeb.Notifications.UserEmail do
                   Telefone: #{user.phone}<br>
                   #{wants_pictures(wants_pictures)}<br>
                   #{wants_tour(wants_tour)}<br>
-                  Opções de horário: options(options)
+                  Opções de horário: #{options(options)}
                   <a href=\"#{listing_url}\">Imóvel</a><br>")
     |> text_body("Nome: #{user.name}<br>
                   Telefone: #{user.phone}<br>
                   #{wants_pictures(wants_pictures)}<br>
                   #{wants_tour(wants_tour)}<br>
-                  Opções de horário: options(options)
+                  Opções de horário: #{options(options)}
                   <a href=\"#{listing_url}\">Imóvel</a><br>")
   end
 
@@ -187,7 +187,7 @@ defmodule ReWeb.Notifications.UserEmail do
 
   defp options(options) do
     options
-    |> Enum.map(&Re.Calendars.format_datetime/1)
+    |> Enum.map(fn %{datetime: datetime} -> Calendars.format_datetime(datetime) end)
     |> Enum.join("<br>\n")
   end
 

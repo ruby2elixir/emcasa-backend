@@ -15,13 +15,15 @@ defmodule Re.Calendars do
     |> Repo.insert()
   end
 
+  @format "{D}-{M}-{YYYY} {h12}:{m} {AM}"
+
   def format_datetime(datetime) do
     day_name =
       datetime
       |> Timex.weekday()
       |> day_name()
 
-    formatted_day = Timex.format(datetime, "{D}-{M}-{YY}")
+    {:ok, formatted_day} = Timex.format(datetime, @format)
 
     "#{day_name}, #{formatted_day}"
   end
