@@ -247,7 +247,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
-              data: %{"notifyWhenCovered" => %{"id" => id}}
+              data: %{"notificationCoverageAsked" => %{"id" => id}}
             }
           }
         },
@@ -255,7 +255,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.notify_when_covered(%{
+        UserEmail.notification_coverage_asked(%{
           name: request.name,
           email: request.email,
           phone: request.phone,
@@ -286,7 +286,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
-              data: %{"notifyWhenCovered" => %{"id" => id}}
+              data: %{"notificationCoverageAsked" => %{"id" => id}}
             }
           }
         },
@@ -294,7 +294,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.notify_when_covered(%{
+        UserEmail.notification_coverage_asked(%{
           name: user.name,
           email: user.email,
           phone: user.phone,
@@ -325,7 +325,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
-              data: %{"notifyWhenCovered" => %{"id" => id}}
+              data: %{"notificationCoverageAsked" => %{"id" => id}}
             }
           }
         },
@@ -333,7 +333,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.notify_when_covered(%{
+        UserEmail.notification_coverage_asked(%{
           name: nil,
           email: nil,
           phone: nil,
@@ -350,6 +350,43 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
             phone: user.phone,
             email: user.email
           }
+        })
+      )
+    end
+
+    test "should notify when user schedules a tour appointment" do
+      datetime1 = %Re.Calendars.Option{datetime: ~N[2018-05-29 10:00:00]}
+      datetime2 = %Re.Calendars.Option{datetime: ~N[2018-05-29 11:00:00]}
+      user = insert(:user)
+      listing = insert(:listing, user: user)
+
+      %{id: tour_appointment_id} =
+        insert(:tour_appointment,
+          wants_pictures: true,
+          wants_tour: true,
+          options: [datetime1, datetime2],
+          listing: listing,
+          user: user
+        )
+
+      Server.handle_info(
+        %Phoenix.Socket.Broadcast{
+          payload: %{
+            result: %{
+              data: %{"tourScheduled" => %{"id" => tour_appointment_id}}
+            }
+          }
+        },
+        []
+      )
+
+      assert_email_sent(
+        UserEmail.tour_appointment(%{
+          wants_pictures: true,
+          wants_tour: true,
+          options: [datetime1, datetime2],
+          user: user,
+          listing: listing
         })
       )
     end

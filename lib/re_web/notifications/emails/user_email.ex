@@ -5,6 +5,7 @@ defmodule ReWeb.Notifications.UserEmail do
   import Swoosh.Email
 
   alias Re.{
+    Calendars,
     Interest,
     Listing,
     User
@@ -118,7 +119,7 @@ defmodule ReWeb.Notifications.UserEmail do
                   Mensagem: #{message}")
   end
 
-  def notify_when_covered(%{
+  def notification_coverage_asked(%{
         name: name,
         email: email,
         phone: phone,
@@ -150,6 +151,44 @@ defmodule ReWeb.Notifications.UserEmail do
                     Cidade: #{address.city}
                     Estado: #{address.state}
                     Bairro: #{address.neighborhood}")
+  end
+
+  def tour_appointment(%{
+        wants_pictures: wants_pictures,
+        wants_tour: wants_tour,
+        options: options,
+        user: user,
+        listing: listing
+      }) do
+    listing_url = build_url(@listing_path, to_string(listing.id))
+
+    new()
+    |> to(@to)
+    |> from(@admin_email)
+    |> subject("Um usuário pediu concluir a inserção do imóvel")
+    |> html_body("Nome: #{user.name}<br>
+                  Telefone: #{user.phone}<br>
+                  #{wants_pictures(wants_pictures)}<br>
+                  #{wants_tour(wants_tour)}<br>
+                  Opções de horário: #{options(options)}
+                  <a href=\"#{listing_url}\">Imóvel</a><br>")
+    |> text_body("Nome: #{user.name}<br>
+                  Telefone: #{user.phone}<br>
+                  #{wants_pictures(wants_pictures)}<br>
+                  #{wants_tour(wants_tour)}<br>
+                  Opções de horário: #{options(options)}
+                  <a href=\"#{listing_url}\">Imóvel</a><br>")
+  end
+
+  defp wants_pictures(true), do: "Foto profissional: <b>Sim</b>"
+  defp wants_pictures(false), do: "Foto profissional: <b>Não</b>"
+  defp wants_tour(true), do: "Tour 3D: <b>Sim</b>"
+  defp wants_tour(false), do: "Tour 3D: <b>Não</b>"
+
+  defp options(options) do
+    options
+    |> Enum.map(fn %{datetime: datetime} -> Calendars.format_datetime(datetime) end)
+    |> Enum.join("<br>\n")
   end
 
   def price_suggestion_requested(request, suggested_price) do

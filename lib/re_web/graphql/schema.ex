@@ -4,7 +4,7 @@ defmodule ReWeb.Schema do
   """
   use Absinthe.Schema
 
-  import_types ReWeb.Types.{Listing, User, Message, Interest, Dashboard}
+  import_types ReWeb.Types.{Listing, User, Message, Interest, Dashboard, Calendar}
 
   alias ReWeb.GraphQL.Middlewares
 
@@ -23,6 +23,7 @@ defmodule ReWeb.Schema do
     import_fields(:message_queries)
     import_fields(:dashboard_queries)
     import_fields(:interest_queries)
+    import_fields(:calendar_queries)
   end
 
   mutation do
@@ -31,6 +32,7 @@ defmodule ReWeb.Schema do
     import_fields(:user_mutations)
     import_fields(:interest_mutations)
     import_fields(:dashboard_mutations)
+    import_fields(:calendar_mutations)
   end
 
   subscription do
@@ -38,6 +40,7 @@ defmodule ReWeb.Schema do
     import_fields(:message_subscriptions)
     import_fields(:listing_subscriptions)
     import_fields(:user_subscriptions)
+    import_fields(:calendar_subscriptions)
   end
 
   defp loader(ctx) do

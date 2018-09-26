@@ -167,6 +167,10 @@ defmodule Re.Factory do
     %Re.Interests.NotifyWhenCovered{}
   end
 
+  def tour_appointment_factory do
+    %Re.Calendars.TourAppointment{}
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
