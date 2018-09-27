@@ -19,13 +19,17 @@ defmodule ReWeb.Types.Calendar do
   end
 
   input_object :tour_schedule_input do
-    field :options, non_null(list_of(:datetime_option))
+    field :options, non_null(list_of(:datetime_option_input))
     field :wants_pictures, non_null(:boolean)
     field :wants_tour, non_null(:boolean)
     field :listing_id, non_null(:id)
   end
 
   object :datetime_option do
+    field :datetime, non_null(:datetime)
+  end
+
+  input_object :datetime_option_input do
     field :datetime, non_null(:datetime)
   end
 
