@@ -65,6 +65,7 @@ defmodule ReWeb.Schema do
       Re.Listings.PriceHistories,
       Re.Messages,
       Re.Interests,
+      Re.Interests.Types,
       Re.Favorites,
       Re.Blacklists,
       Re.Stats.ListingVisualizations,
