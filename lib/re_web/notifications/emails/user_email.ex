@@ -63,7 +63,7 @@ defmodule ReWeb.Notifications.UserEmail do
     |> URI.to_string()
   end
 
-  def listing_added_admin(%User{name: name, email: email}, %Listing{} = listing) do
+  def listing_added_admin(%User{name: name, email: email, phone: phone}, %Listing{} = listing) do
     listing_url = build_url(@listing_path, to_string(listing.id))
 
     new()
@@ -72,9 +72,11 @@ defmodule ReWeb.Notifications.UserEmail do
     |> subject("Um usuário cadastrou um imóvel")
     |> html_body("Nome: #{name}<br>
                   Email: #{email}<br>
+                  Telefone: #{phone}<br>
                   <a href=\"#{listing_url}\">Imóvel</a><br>")
     |> text_body("Nome: #{name}
                   Email: #{email}
+                  Telefone: #{phone}
                   <a href=\"#{listing_url}\">Imóvel</a>")
   end
 
