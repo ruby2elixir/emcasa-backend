@@ -4,6 +4,10 @@ defmodule ReWeb.Resolvers.Interests do
   """
   alias Re.Interests
 
+  def create_interest(%{input: params}, _) do
+    Interests.show_interest(params)
+  end
+
   def request_contact(params, %{context: %{current_user: current_user}}) do
     Interests.request_contact(params, current_user)
   end

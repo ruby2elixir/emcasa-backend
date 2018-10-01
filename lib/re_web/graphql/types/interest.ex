@@ -8,6 +8,26 @@ defmodule ReWeb.Types.Interest do
 
   alias ReWeb.Resolvers.Interests, as: InterestsResolver
 
+  object :interest do
+    field :name, :string
+    field :email, :string
+    field :phone, :string
+    field :message, :string
+
+    field :listing, :listing, resolve: dataloader(Re.Listings)
+    field :interest_type, :interest_type, resolve: dataloader(Re.Interests.Types)
+  end
+
+  input_object :interest_input do
+    field :name, :string
+    field :phone, :string
+    field :email, :string
+    field :message, :string
+
+    field :interest_type_id, non_null(:id)
+    field :listing_id, non_null(:id)
+  end
+
   object :contact do
     field :id, :id
     field :name, :string
@@ -46,6 +66,13 @@ defmodule ReWeb.Types.Interest do
   end
 
   object :interest_mutations do
+    @desc "Show interest in listing"
+    field :interest_create, type: :interest do
+      arg :input, non_null(:interest_input)
+
+      resolve &InterestsResolver.create_interest/2
+    end
+
     @desc "Request contact"
     field :request_contact, type: :contact do
       arg :name, :string
@@ -84,6 +111,21 @@ defmodule ReWeb.Types.Interest do
   end
 
   object :interest_subscriptions do
+    @desc "Subscribe to email change"
+    field :interest_created, :interest do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "interest_created"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :interest_create,
+        topic: fn _ ->
+          "interest_created"
+        end
+    end
+
     @desc "Subscribe to email change"
     field :contact_requested, :contact do
       config(fn _args, %{context: %{current_user: current_user}} ->
