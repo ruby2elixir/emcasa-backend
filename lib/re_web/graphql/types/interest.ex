@@ -112,6 +112,21 @@ defmodule ReWeb.Types.Interest do
 
   object :interest_subscriptions do
     @desc "Subscribe to email change"
+    field :interest_created, :interest do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          :system -> {:ok, topic: "interest_created"}
+          _ -> {:error, :unauthorized}
+        end
+      end)
+
+      trigger :interest_create,
+        topic: fn _ ->
+          "interest_created"
+        end
+    end
+
+    @desc "Subscribe to email change"
     field :contact_requested, :contact do
       config(fn _args, %{context: %{current_user: current_user}} ->
         case current_user do

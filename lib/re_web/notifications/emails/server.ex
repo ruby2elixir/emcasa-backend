@@ -38,6 +38,7 @@ defmodule ReWeb.Notifications.Emails.Server do
       subscribe("subscription { userRegistered { user { id } } }")
       subscribe("subscription { notificationCoverageAsked { id } }")
       subscribe("subscription { tourScheduled { id } }")
+      subscribe("subscription { interestCreated { id } }")
     end
 
     {:ok, args}
@@ -191,6 +192,16 @@ defmodule ReWeb.Notifications.Emails.Server do
 
       _ ->
         {:noreply, state}
+    end
+  end
+
+  defp handle_data(%{"interestCreated" => %{"id" => id}}, state) do
+    Re.Interest
+    |> preload([:interest_type])
+    |> Repo.get(id)
+    |> case do
+      nil -> {:noreply, [{:error, "Interest with id #{id} does not exist"} | state]}
+      interest -> handle_cast({UserEmail, :notify_interest, [interest]}, state)
     end
   end
 
