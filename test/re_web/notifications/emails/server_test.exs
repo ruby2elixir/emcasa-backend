@@ -390,5 +390,26 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         })
       )
     end
+
+    test "should notify when user shows interest in a listing" do
+      interest_type = insert(:interest_type)
+      listing = insert(:listing)
+
+      %{id: interest_id} =
+        interest = insert(:interest, listing: listing, interest_type: interest_type)
+
+      Server.handle_info(
+        %Phoenix.Socket.Broadcast{
+          payload: %{
+            result: %{
+              data: %{"interestCreated" => %{"id" => interest_id}}
+            }
+          }
+        },
+        []
+      )
+
+      assert_email_sent(UserEmail.notify_interest(interest))
+    end
   end
 end
