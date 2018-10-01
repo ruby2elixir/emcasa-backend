@@ -9,6 +9,7 @@ defmodule ReWeb.Types.Interest do
   alias ReWeb.Resolvers.Interests, as: InterestsResolver
 
   object :interest do
+    field :id, :id
     field :name, :string
     field :email, :string
     field :phone, :string
