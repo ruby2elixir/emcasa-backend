@@ -37,10 +37,10 @@ config :re, Re.Repo,
 config :account_kit,
   app_id: "123"
 
-config :re, ReWeb.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Test
+config :re, ReIntegrations.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Test
 
 config :re, :visualizations, Re.TestVisualizations
-config :re, :emails, ReWeb.TestEmails
+config :re, :emails, ReIntegrations.Notifications.Emails.UserTest
 config :re, :elasticsearch, ReWeb.TestSearch
 config :re, :http, Re.TestHTTP
 config :re, :pipedrive, ReWeb.TestPipedriveServer

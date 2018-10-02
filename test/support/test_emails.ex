@@ -1,4 +1,4 @@
-defmodule ReWeb.TestEmails do
+defmodule ReIntegrations.Notifications.Emails.UserTest do
   @moduledoc false
 
   def notify_interest(_), do: :ok

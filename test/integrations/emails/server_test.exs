@@ -1,4 +1,4 @@
-defmodule ReWeb.Notifications.Emails.ServerTest do
+defmodule ReIntegrations.Notifications.Emails.ServerTest do
   use Re.ModelCase
 
   import Re.Factory
@@ -9,50 +9,46 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
     Repo
   }
 
-  alias ReWeb.Notifications.{
-    Emails.Server,
-    ReportEmail,
-    UserEmail
-  }
+  alias ReIntegrations.Notifications.Emails
 
   describe "handle_cast/2" do
     test "notify_interest/1" do
       interest = insert(:interest, interest_type: build(:interest_type))
-      Server.handle_cast({UserEmail, :notify_interest, [interest]}, [])
+      Emails.Server.handle_cast({Emails.User, :notify_interest, [interest]}, [])
       interest = Repo.preload(interest, :interest_type)
-      assert_email_sent(UserEmail.notify_interest(interest))
+      assert_email_sent(Emails.User.notify_interest(interest))
     end
 
     test "notify_interest/1 with online scheduling" do
       interest =
         insert(:interest, interest_type: build(:interest_type, name: "Agendamento online"))
 
-      Server.handle_cast({UserEmail, :notify_interest, [interest]}, [])
+      Emails.Server.handle_cast({Emails.User, :notify_interest, [interest]}, [])
       interest = Repo.preload(interest, :interest_type)
-      email = UserEmail.notify_interest(interest)
+      email = Emails.User.notify_interest(interest)
       assert_email_sent(email)
       assert [{"", "contato@emcasa.com"}] == email.to
     end
 
     test "user_registered/1" do
       user = insert(:user)
-      Server.handle_cast({UserEmail, :user_registered, [user]}, [])
-      assert_email_sent(UserEmail.user_registered(user))
+      Emails.Server.handle_cast({Emails.User, :user_registered, [user]}, [])
+      assert_email_sent(Emails.User.user_registered(user))
     end
 
     test "listing_added_admin/2" do
       user = insert(:user)
       listing = insert(:listing)
-      Server.handle_cast({UserEmail, :listing_added_admin, [user, listing]}, [])
-      assert_email_sent(UserEmail.listing_added_admin(user, listing))
+      Emails.Server.handle_cast({Emails.User, :listing_added_admin, [user, listing]}, [])
+      assert_email_sent(Emails.User.listing_added_admin(user, listing))
     end
 
     test "listing_updated/2" do
       user = insert(:user)
       listing = insert(:listing, price: 950_000, rooms: 3)
       %{changes: changes} = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "user")
-      Server.handle_cast({UserEmail, :listing_updated, [user, listing, changes]}, [])
-      assert_email_sent(UserEmail.listing_updated(user, listing, changes))
+      Emails.Server.handle_cast({Emails.User, :listing_updated, [user, listing, changes]}, [])
+      assert_email_sent(Emails.User.listing_updated(user, listing, changes))
     end
 
     test "monthly_report/2" do
@@ -76,8 +72,12 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         |> Map.put(:listings_favorites_count, 3)
         |> Map.put(:interests_count, 0)
 
-      Server.handle_cast({ReportEmail, :monthly_report, [user, [listing1, listing2]]}, [])
-      assert_email_sent(ReportEmail.monthly_report(user, [listing1, listing2]))
+      Emails.Server.handle_cast(
+        {Emails.Report, :monthly_report, [user, [listing1, listing2]]},
+        []
+      )
+
+      assert_email_sent(Emails.Report.monthly_report(user, [listing1, listing2]))
     end
   end
 
@@ -92,7 +92,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
           message: "cool website"
         )
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
         },
@@ -100,7 +100,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.contact_request(%{
+        Emails.User.contact_request(%{
           name: "mahname",
           email: "mahemail@emcasa.com",
           phone: "123321123",
@@ -113,7 +113,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       user = insert(:user)
       %{id: id} = insert(:contact_request, message: "cool website", user: user)
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
         },
@@ -121,7 +121,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.contact_request(%{
+        Emails.User.contact_request(%{
           name: user.name,
           email: user.email,
           phone: user.phone,
@@ -141,7 +141,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
           email: "different@email.com"
         )
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
         },
@@ -149,7 +149,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.contact_request(%{
+        Emails.User.contact_request(%{
           name: user.name,
           email: "different@email.com",
           phone: user.phone,
@@ -162,7 +162,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       address = insert(:address)
       %{id: id} = request = insert(:price_suggestion_request, address: address, is_covered: false)
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
@@ -174,7 +174,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.price_suggestion_requested(
+        Emails.User.price_suggestion_requested(
           %{
             name: request.name,
             email: request.email,
@@ -197,7 +197,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       address = insert(:address)
       %{id: id} = request = insert(:price_suggestion_request, address: address, is_covered: true)
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
@@ -209,7 +209,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.price_suggestion_requested(
+        Emails.User.price_suggestion_requested(
           %{
             name: request.name,
             email: request.email,
@@ -243,7 +243,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
           user: user
         )
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
@@ -255,7 +255,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.notification_coverage_asked(%{
+        Emails.User.notification_coverage_asked(%{
           name: request.name,
           email: request.email,
           phone: request.phone,
@@ -282,7 +282,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
 
       %{id: id} = insert(:notify_when_covered, address: address, user: user)
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
@@ -294,7 +294,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.notification_coverage_asked(%{
+        Emails.User.notification_coverage_asked(%{
           name: user.name,
           email: user.email,
           phone: user.phone,
@@ -321,7 +321,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
 
       %{id: id} = insert(:notify_when_covered, address: address, user: user)
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
@@ -333,7 +333,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.notification_coverage_asked(%{
+        Emails.User.notification_coverage_asked(%{
           name: nil,
           email: nil,
           phone: nil,
@@ -369,7 +369,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
           user: user
         )
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
@@ -381,7 +381,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       )
 
       assert_email_sent(
-        UserEmail.tour_appointment(%{
+        Emails.User.tour_appointment(%{
           wants_pictures: true,
           wants_tour: true,
           options: [datetime1, datetime2],
@@ -398,7 +398,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
       %{id: interest_id} =
         interest = insert(:interest, listing: listing, interest_type: interest_type)
 
-      Server.handle_info(
+      Emails.Server.handle_info(
         %Phoenix.Socket.Broadcast{
           payload: %{
             result: %{
@@ -409,7 +409,7 @@ defmodule ReWeb.Notifications.Emails.ServerTest do
         []
       )
 
-      assert_email_sent(UserEmail.notify_interest(interest))
+      assert_email_sent(Emails.User.notify_interest(interest))
     end
   end
 end

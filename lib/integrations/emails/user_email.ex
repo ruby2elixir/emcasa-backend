@@ -1,4 +1,4 @@
-defmodule ReWeb.Notifications.UserEmail do
+defmodule ReIntegrations.Notifications.Emails.User do
   @moduledoc """
   Module for building e-mails to send to users
   """

@@ -1,4 +1,4 @@
-defmodule ReWeb.Notifications.Emails.Server do
+defmodule ReIntegrations.Notifications.Emails.Server do
   @moduledoc """
   Module responsible for sending email
   """
@@ -14,11 +14,9 @@ defmodule ReWeb.Notifications.Emails.Server do
     Repo
   }
 
-  alias ReWeb.{
-    Schema,
-    Notifications.Emails.Mailer,
-    Notifications.UserEmail
-  }
+  alias ReWeb.Schema
+
+  alias ReIntegrations.Notifications.Emails
 
   alias ReWeb.Endpoint, as: PubSub
 
@@ -95,7 +93,7 @@ defmodule ReWeb.Notifications.Emails.Server do
 
   defp deliver(email, state) do
     retry with: exp_backoff() |> randomize() |> expiry(30_000), rescue_only: [TimeoutError] do
-      Mailer.deliver(email)
+      Emails.Mailer.deliver(email)
     after
       {:ok, _} -> {:noreply, state}
     else
@@ -128,7 +126,7 @@ defmodule ReWeb.Notifications.Emails.Server do
       request ->
         request = Repo.preload(request, [:address, :user])
 
-        handle_cast({UserEmail, :price_suggestion_requested, [request, suggested_price]}, state)
+        handle_cast({Emails.User, :price_suggestion_requested, [request, suggested_price]}, state)
     end
   end
 
@@ -138,7 +136,7 @@ defmodule ReWeb.Notifications.Emails.Server do
        ) do
     case {Users.get(user_id), Listings.get(listing_id)} do
       {{:ok, user}, {:ok, listing}} ->
-        handle_cast({UserEmail, :listing_added_admin, [user, listing]}, state)
+        handle_cast({Emails.User, :listing_added_admin, [user, listing]}, state)
 
       _ ->
         {:noreply, state}
@@ -156,10 +154,10 @@ defmodule ReWeb.Notifications.Emails.Server do
         {:noreply, [{:error, "Request Contact id #{id} does not exist"} | state]}
 
       %{user: nil} = contact_request ->
-        handle_cast({UserEmail, :contact_request, [contact_request]}, state)
+        handle_cast({Emails.User, :contact_request, [contact_request]}, state)
 
       %{user: user} = contact_request ->
-        handle_cast({UserEmail, :contact_request, [merge_params(user, contact_request)]}, state)
+        handle_cast({Emails.User, :contact_request, [merge_params(user, contact_request)]}, state)
 
       error ->
         {:noreply, [{:error, error} | state]}
@@ -175,7 +173,7 @@ defmodule ReWeb.Notifications.Emails.Server do
         {:noreply, [{:error, "Notify when Covered id #{id} does not exist"} | state]}
 
       notify_when_covered ->
-        handle_cast({UserEmail, :notification_coverage_asked, [notify_when_covered]}, state)
+        handle_cast({Emails.User, :notification_coverage_asked, [notify_when_covered]}, state)
     end
   end
 
@@ -188,7 +186,7 @@ defmodule ReWeb.Notifications.Emails.Server do
         {:noreply, [{:error, "Tour Apponintment with id #{id} does not exist"} | state]}
 
       %{user: %{role: "user"}} = tour_appointment ->
-        handle_cast({UserEmail, :tour_appointment, [tour_appointment]}, state)
+        handle_cast({Emails.User, :tour_appointment, [tour_appointment]}, state)
 
       _ ->
         {:noreply, state}
@@ -201,7 +199,7 @@ defmodule ReWeb.Notifications.Emails.Server do
     |> Repo.get(id)
     |> case do
       nil -> {:noreply, [{:error, "Interest with id #{id} does not exist"} | state]}
-      interest -> handle_cast({UserEmail, :notify_interest, [interest]}, state)
+      interest -> handle_cast({Emails.User, :notify_interest, [interest]}, state)
     end
   end
 

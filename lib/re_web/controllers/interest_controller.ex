@@ -6,7 +6,7 @@ defmodule ReWeb.InterestController do
     Listings
   }
 
-  @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
+  @emails Application.get_env(:re, :emails, ReIntegrations.Notifications.Emails)
 
   action_fallback(ReWeb.FallbackController)
 

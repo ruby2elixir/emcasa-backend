@@ -7,11 +7,13 @@ defmodule Re.Application do
 
   alias ReWeb.{
     Endpoint,
-    Notifications.Emails,
     Search
   }
 
-  alias ReIntegrations.Pipedrive
+  alias ReIntegrations.{
+    Notifications.Emails,
+    Pipedrive
+  }
 
   alias Re.Stats.Visualizations
 
