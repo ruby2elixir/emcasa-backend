@@ -1,4 +1,4 @@
-defmodule ReWeb.Search.Server do
+defmodule ReIntegrations.Search.Server do
   @moduledoc """
   GenServer for handling elasticsearch operations
   """
@@ -8,8 +8,9 @@ defmodule ReWeb.Search.Server do
 
   alias Re.Listings
 
-  alias ReWeb.{
-    Schema,
+  alias ReWeb.Schema
+
+  alias ReIntegrations.{
     Search.Cluster,
     Search.Store
   }

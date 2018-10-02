@@ -1,4 +1,4 @@
-defmodule ReWeb.Search.Store do
+defmodule ReIntegrations.Search.Store do
   @moduledoc """
   Module to implement loading logic for the elasticsearch store
   """

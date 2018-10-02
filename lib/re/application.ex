@@ -5,14 +5,12 @@ defmodule Re.Application do
 
   use Application
 
-  alias ReWeb.{
-    Endpoint,
-    Search
-  }
+  alias ReWeb.Endpoint
 
   alias ReIntegrations.{
     Notifications.Emails,
-    Pipedrive
+    Pipedrive,
+    Search
   }
 
   alias Re.Stats.Visualizations

@@ -57,7 +57,7 @@ config :re,
   env: System.get_env("ENV"),
   reply_to: System.get_env("REPORT_REPLY_EMAIL")
 
-config :re, ReWeb.Search.Cluster,
+config :re, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
   username: System.get_env("ELASTICSEARCH_KEY"),
   password: System.get_env("ELASTICSEARCH_SECRET")

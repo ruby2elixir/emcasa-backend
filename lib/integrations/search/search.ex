@@ -1,4 +1,4 @@
-defmodule ReWeb.Search do
+defmodule ReIntegrations.Search do
   @moduledoc """
   Module to perform operations with elasticsearch
   """

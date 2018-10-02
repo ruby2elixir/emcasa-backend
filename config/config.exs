@@ -47,14 +47,14 @@ config :re, ReIntegrations.Notifications.Emails.Mailer,
 
 config :email_checker, validations: [EmailChecker.Check.Format]
 
-config :re, ReWeb.Search.Cluster,
+config :re, ReIntegrations.Search.Cluster,
   url: "http://localhost:9200",
   api: Elasticsearch.API.HTTP,
   json_library: Poison,
   indexes: %{
     listings: %{
       settings: "priv/elasticsearch/listings.json",
-      store: ReWeb.Search.Store,
+      store: ReIntegrations.Search.Store,
       sources: [Re.Listing],
       bulk_page_size: 5000,
       bulk_wait_interval: 15_000
