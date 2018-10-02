@@ -37,10 +37,12 @@ defmodule Re.Calendars do
   defp day_name(7), do: "Domingo"
   defp day_name(_), do: {:error, :invalid_weekday_number}
 
+  def generate_tour_options(now, number_of_options \\ 5)
+
   def generate_tour_options(_now, number_of_options) when number_of_options < 1,
     do: {:error, :invalid_option}
 
-  def generate_tour_options(now, number_of_options \\ 5) do
+  def generate_tour_options(now, number_of_options) do
     beginning_of_week =
       now
       |> Timex.shift(weeks: 1)
