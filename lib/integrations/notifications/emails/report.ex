@@ -3,8 +3,8 @@ defmodule ReIntegrations.Notifications.Emails.Report do
   Module for building report emails
   """
   use Phoenix.Swoosh,
-    view: ReIntegrations.Notifications.ReportView,
-    layout: {ReIntegrations.Notifications.LayoutView, :email}
+    view: ReIntegrations.Emails.ReportView,
+    layout: {ReIntegrations.Emails.LayoutView, :email}
 
   @frontend_url Application.get_env(:re, :frontend_url)
   @contato_email "contato@emcasa.com"
