@@ -20,23 +20,7 @@ defmodule Re.Mixfile do
   def application do
     [
       mod: {Re.Application, []},
-      applications: [
-        :phoenix,
-        :phoenix_pubsub,
-        :cowboy,
-        :logger,
-        :gettext,
-        :phoenix_ecto,
-        :postgrex,
-        :comeonin,
-        :swoosh,
-        :phoenix_swoosh,
-        :timber,
-        :timex,
-        :nimble_csv,
-        :pigeon,
-        :account_kit
-      ]
+      extra_applications: [:logger]
     ]
   end
 
