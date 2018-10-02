@@ -1,4 +1,4 @@
-defmodule Re.Notifications.Push do
+defmodule Re.Notifications.Mobile.Push do
   @moduledoc """
   Module for push notifications
   """
