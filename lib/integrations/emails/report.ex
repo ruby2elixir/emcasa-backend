@@ -4,7 +4,7 @@ defmodule ReIntegrations.Notifications.Emails.Report do
   """
   use Phoenix.Swoosh,
     view: ReIntegrations.Notifications.ReportView,
-    layout: {ReWeb.LayoutView, :email}
+    layout: {ReIntegrations.Notifications.LayoutView, :email}
 
   @frontend_url Application.get_env(:re, :frontend_url)
   @contato_email "contato@emcasa.com"
@@ -19,7 +19,7 @@ defmodule ReIntegrations.Notifications.Emails.Report do
     |> from(@contato_email)
     |> reply_to(@reply_to)
     |> subject("Relatório mensal de acesso dos seus imóveis")
-    |> render_body("monthly_report.html", %{user: user, listings: listings})
+    |> render_body("monthly.html", %{user: user, listings: listings})
   end
 
   def build_url(path, param) do

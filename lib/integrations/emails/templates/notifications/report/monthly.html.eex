@@ -50,7 +50,7 @@
                 <!-- spacer -->
                 <!-- Blog Headlines -->
                 <%= for listing <- @listings do %>
-                    <%= render "listing_report.html", listing: listing %>
+                    <%= render "listing.html", listing: listing %>
                 <% end %>
                 <!-- end blog headlines -->
                 <div style="height:35px;margin:0 auto;"> </div>
