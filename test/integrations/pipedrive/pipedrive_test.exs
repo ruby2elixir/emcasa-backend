@@ -1,9 +1,9 @@
-defmodule ReWeb.Integrations.PipedriveTest do
+defmodule ReIntegrations.PipedriveTest do
   use Re.ModelCase
 
-  doctest ReWeb.Integrations.Pipedrive
+  doctest ReIntegrations.Pipedrive
 
-  alias ReWeb.Integrations.Pipedrive
+  alias ReIntegrations.Pipedrive
 
   describe "handle_webhook/1" do
     test "update.activity: previous not done, current done" do

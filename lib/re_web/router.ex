@@ -56,7 +56,7 @@ defmodule ReWeb.Router do
   scope "/webhooks" do
     pipe_through :webhooks
 
-    forward("/pipedrive", ReWeb.Integrations.Pipedrive.Plug)
+    forward("/pipedrive", ReIntegrations.Pipedrive.Plug)
   end
 
   if Mix.env() == :dev do

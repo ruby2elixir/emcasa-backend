@@ -1,4 +1,4 @@
-defmodule ReWeb.Integrations.Pipedrive.Plug do
+defmodule ReIntegrations.Pipedrive.Plug do
   @moduledoc """
   Plug to handle pipedrive webhooks
   """
@@ -9,7 +9,7 @@ defmodule ReWeb.Integrations.Pipedrive.Plug do
   @user Application.get_env(:re, :pipedrive_webhook_user, "")
   @pass Application.get_env(:re, :pipedrive_webhook_pass, "")
 
-  alias ReWeb.Integrations.Pipedrive
+  alias ReIntegrations.Pipedrive
 
   def init(args), do: args
 
