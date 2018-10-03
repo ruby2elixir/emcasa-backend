@@ -1,4 +1,4 @@
-defmodule Re.Stats.Visualizations do
+defmodule ReStatistics.Visualizations do
   @moduledoc """
   Module responsible for storing visualizations
   """
@@ -8,10 +8,13 @@ defmodule Re.Stats.Visualizations do
 
   alias Re.{
     Listing,
-    Stats.ListingVisualization,
-    Stats.TourVisualization,
     Repo,
     User
+  }
+
+  alias ReStatistics.{
+    ListingVisualization,
+    TourVisualization
   }
 
   @type action :: :listing_visualization | :tour_visualization

@@ -13,7 +13,7 @@ defmodule Re.Application do
     Search
   }
 
-  alias Re.Stats.Visualizations
+  alias ReStatistics.Visualizations
 
   def start(_type, _args) do
     import Supervisor.Spec
@@ -27,7 +27,7 @@ defmodule Re.Application do
       worker(Search.Server, []),
       worker(Pipedrive.Server, []),
       Search.Cluster,
-      worker(Re.Stats.Scheduler, [])
+      worker(ReStatistics.Scheduler, [])
       # worker(Elasticsearch.Executable, [
       #   "Elasticsearch",
       #   "./elasticsearch/bin/elasticsearch",

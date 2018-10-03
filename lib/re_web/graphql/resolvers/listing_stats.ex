@@ -2,10 +2,9 @@ defmodule ReWeb.Resolvers.ListingStats do
   @moduledoc """
   Resolver module for listing queries and mutations
   """
-  alias Re.{
-    Listings,
-    Stats.Visualizations
-  }
+  alias Re.Listings
+
+  alias ReStatistics.Visualizations
 
   @visualizations Application.get_env(:re, :visualizations, Visualizations)
 

@@ -62,9 +62,9 @@ config :re, ReIntegrations.Search.Cluster,
   username: System.get_env("ELASTICSEARCH_KEY"),
   password: System.get_env("ELASTICSEARCH_SECRET")
 
-config :re, Re.Stats.Scheduler,
+config :re, ReStatistics.Scheduler,
   jobs: [
-    {"@monthly", {Re.Stats.Reports, :monthly_stats, []}}
+    {"@monthly", {ReStatistics.Reports, :monthly_stats, []}}
   ]
 
 config :pigeon, :fcm,

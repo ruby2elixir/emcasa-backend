@@ -1,10 +1,10 @@
-defmodule Re.VisualizationsTest do
+defmodule ReStatistics.VisualizationsTest do
   use Re.ModelCase
 
-  alias Re.{
-    Stats.Visualizations,
-    Stats.ListingVisualization,
-    Stats.TourVisualization
+  alias ReStatistics.{
+    Visualizations,
+    ListingVisualization,
+    TourVisualization
   }
 
   import ExUnit.CaptureLog

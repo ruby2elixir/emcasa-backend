@@ -1,9 +1,9 @@
-defmodule Re.Stats.ReportsTest do
+defmodule ReStatistics.ReportsTest do
   use Re.ModelCase
 
   import Re.Factory
 
-  alias Re.Stats.Reports
+  alias ReStatistics.Reports
 
   describe "users_to_be_notified/0" do
     test "get users with active listings only" do

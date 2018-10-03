@@ -4,7 +4,7 @@ defmodule Re.Notifications.Mobile.Push do
   """
   require Logger
 
-  alias Re.Stats.Reports
+  alias ReStatistics.Reports
 
   @env Application.get_env(:re, :env)
 
