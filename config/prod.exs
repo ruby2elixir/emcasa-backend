@@ -42,7 +42,7 @@ config :re, Re.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
-config :re, ReWeb.Notifications.Emails.Mailer,
+config :re, ReIntegrations.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: System.get_env("SEND_GRID_API_KEY")
 
@@ -57,7 +57,7 @@ config :re,
   env: System.get_env("ENV"),
   reply_to: System.get_env("REPORT_REPLY_EMAIL")
 
-config :re, ReWeb.Search.Cluster,
+config :re, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
   username: System.get_env("ELASTICSEARCH_KEY"),
   password: System.get_env("ELASTICSEARCH_SECRET")

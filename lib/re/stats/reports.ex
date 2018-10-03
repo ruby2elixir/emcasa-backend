@@ -10,7 +10,7 @@ defmodule Re.Stats.Reports do
     User
   }
 
-  alias ReWeb.Notifications.Emails
+  alias ReIntegrations.Notifications.Emails
 
   @env Application.get_env(:re, :env)
 

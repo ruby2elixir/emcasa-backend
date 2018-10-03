@@ -41,20 +41,20 @@ config :comeonin, :bcrypt_log_rounds, 4
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 
-config :re, ReWeb.Notifications.Emails.Mailer,
+config :re, ReIntegrations.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: "SG.x.x"
 
 config :email_checker, validations: [EmailChecker.Check.Format]
 
-config :re, ReWeb.Search.Cluster,
+config :re, ReIntegrations.Search.Cluster,
   url: "http://localhost:9200",
   api: Elasticsearch.API.HTTP,
   json_library: Poison,
   indexes: %{
     listings: %{
       settings: "priv/elasticsearch/listings.json",
-      store: ReWeb.Search.Store,
+      store: ReIntegrations.Search.Store,
       sources: [Re.Listing],
       bulk_page_size: 5000,
       bulk_wait_interval: 15_000

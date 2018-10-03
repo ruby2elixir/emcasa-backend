@@ -2,7 +2,7 @@ defmodule ReWeb.SearchController do
   use ReWeb, :controller
   use ReWeb.GuardedController
 
-  alias ReWeb.Search.Cluster
+  alias ReIntegrations.Search.Cluster
 
   action_fallback(ReWeb.FallbackController)
 

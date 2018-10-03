@@ -212,7 +212,7 @@ defmodule ReWeb.Resolvers.Listings do
 
   def featured(_, _), do: {:ok, Featured.get_graphql()}
 
-  @emails Application.get_env(:re, :emails, ReWeb.Notifications.Emails)
+  @emails Application.get_env(:re, :emails, ReIntegrations.Notifications.Emails)
 
   defp send_email_if_not_admin(
          listing,
