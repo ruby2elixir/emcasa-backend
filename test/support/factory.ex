@@ -112,7 +112,7 @@ defmodule Re.Factory do
   end
 
   def listing_visualisation_factory do
-    %Re.Stats.ListingVisualization{}
+    %ReStatistics.ListingVisualization{}
   end
 
   def listings_favorites_factory do
@@ -128,11 +128,11 @@ defmodule Re.Factory do
   end
 
   def tour_visualisation_factory do
-    %Re.Stats.TourVisualization{}
+    %ReStatistics.TourVisualization{}
   end
 
   def in_person_visit_factory do
-    %Re.Stats.InPersonVisit{}
+    %ReStatistics.InPersonVisit{}
   end
 
   def channel_factory do

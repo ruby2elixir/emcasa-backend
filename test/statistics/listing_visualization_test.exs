@@ -1,7 +1,7 @@
-defmodule Re.ListingVisualizationTest do
+defmodule ReStatistics.ListingVisualizationTest do
   use Re.ModelCase
 
-  alias Re.Stats.ListingVisualization
+  alias ReStatistics.ListingVisualization
 
   import Re.Factory
 

@@ -7,9 +7,10 @@ defmodule ReIntegrations.Pipedrive.Server do
   require Logger
 
   alias Re.{
-    Repo,
-    Stats.InPersonVisit
+    Repo
   }
+
+  alias ReStatistics.InPersonVisit
 
   alias ReIntegrations.Pipedrive.Client
 

@@ -1,12 +1,12 @@
-defmodule Re.Stats.TourVisualization do
+defmodule ReStatistics.ListingVisualization do
   @moduledoc """
-  Model to record tour visualizations
+  Model to record listing visualizations
   """
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  schema "tour_visualizations" do
+  schema "listing_visualizations" do
     field :details, :string
 
     belongs_to :listing, Re.Listing
