@@ -1,4 +1,4 @@
-defmodule ReStatistics.ListingReports do
+defmodule Re.Statistics.ListingReports do
   @moduledoc """
   Module for reporting listing stats to users
   """

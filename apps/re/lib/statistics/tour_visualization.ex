@@ -1,4 +1,4 @@
-defmodule ReStatistics.TourVisualization do
+defmodule Re.Statistics.TourVisualization do
   @moduledoc """
   Model to record tour visualizations
   """

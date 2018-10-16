@@ -1,9 +1,9 @@
-defmodule ReStatistics.ListingReportsTest do
+defmodule Re.Statistics.ListingReportsTest do
   use Re.ModelCase
 
   import Re.Factory
 
-  alias ReStatistics.ListingReports
+  alias Re.Statistics.ListingReports
 
   describe "listing_report/0" do
     test "should generate csv report of current listings stats" do

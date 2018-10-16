@@ -1,4 +1,4 @@
-defmodule ReIntegrations.Pipedrive.Client do
+defmodule ReWeb.Pipedrive.Client do
   @moduledoc """
   Module to wrap pipedrive.com API logic
   """

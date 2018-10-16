@@ -5,7 +5,7 @@ defmodule Re.Application do
 
   use Application
 
-  alias ReStatistics.{
+  alias Re.Statistics.{
     Scheduler,
     Visualizations
   }

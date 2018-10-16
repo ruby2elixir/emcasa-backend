@@ -1,4 +1,4 @@
-defmodule ReStatistics.Visualizations do
+defmodule Re.Statistics.Visualizations do
   @moduledoc """
   Module responsible for storing visualizations
   """
@@ -12,7 +12,7 @@ defmodule ReStatistics.Visualizations do
     User
   }
 
-  alias ReStatistics.{
+  alias Re.Statistics.{
     ListingVisualization,
     TourVisualization
   }

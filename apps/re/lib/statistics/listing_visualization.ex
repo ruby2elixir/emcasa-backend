@@ -1,4 +1,4 @@
-defmodule ReStatistics.ListingVisualization do
+defmodule Re.Statistics.ListingVisualization do
   @moduledoc """
   Model to record listing visualizations
   """

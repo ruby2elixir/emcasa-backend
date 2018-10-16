@@ -1,4 +1,4 @@
-defmodule ReStatistics.InPersonVisit do
+defmodule Re.Statistics.InPersonVisit do
   @moduledoc """
   Model to record in person visits
   """

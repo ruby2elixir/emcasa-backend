@@ -1,9 +1,7 @@
-defmodule ReIntegrations.Pipedrive.ClientTest do
+defmodule ReWeb.Pipedrive.ClientTest do
   use Re.ModelCase
 
-  doctest ReIntegrations.Pipedrive.Client
-
-  alias ReIntegrations.Pipedrive.Client
+  alias ReWeb.Pipedrive.Client
 
   describe "build_uri/3" do
     test "build uri with path" do

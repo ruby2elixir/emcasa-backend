@@ -25,11 +25,11 @@ defmodule ReWeb.Resolvers.Dashboard do
   end
 
   def visualization_count(_params, _res) do
-    {:ok, Repo.one(from(lv in ReStatistics.ListingVisualization, select: count(lv.id)))}
+    {:ok, Repo.one(from(lv in Re.Statistics.ListingVisualization, select: count(lv.id)))}
   end
 
   def tour_visualization_count(_params, _res) do
-    {:ok, Repo.one(from(tv in ReStatistics.TourVisualization, select: count(tv.id)))}
+    {:ok, Repo.one(from(tv in Re.Statistics.TourVisualization, select: count(tv.id)))}
   end
 
   def maintenance_fee_count(_params, _res) do

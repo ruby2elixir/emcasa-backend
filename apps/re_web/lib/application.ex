@@ -5,14 +5,18 @@ defmodule ReWeb.Application do
 
   use Application
 
-  alias ReWeb.Endpoint
+  alias ReWeb.{
+    Endpoint,
+    Pipedrive
+  }
 
   def start(_type, _args) do
     import Supervisor.Spec
 
     children = [
-      supervisor(ReWeb.Endpoint, []),
-      supervisor(Absinthe.Subscription, [ReWeb.Endpoint]),
+      supervisor(Endpoint, []),
+      supervisor(Absinthe.Subscription, [Endpoint]),
+      worker(Pipedrive.Server, [])
     ]
 
     opts = [strategy: :one_for_one, name: ReWeb.Supervisor]

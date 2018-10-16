@@ -1,4 +1,4 @@
-defmodule ReStatistics.Reports do
+defmodule Re.Statistics.Reports do
   @moduledoc """
   Module for reporting listing stats to users
   """
@@ -53,10 +53,10 @@ defmodule ReStatistics.Reports do
     listing
     |> Repo.preload(
       listings_visualisations:
-        from(lv in ReStatistics.ListingVisualization, where: lv.inserted_at > ^month),
+        from(lv in Re.Statistics.ListingVisualization, where: lv.inserted_at > ^month),
       tour_visualisations:
-        from(tv in ReStatistics.TourVisualization, where: tv.inserted_at > ^month),
-      in_person_visits: from(ipv in ReStatistics.InPersonVisit, where: ipv.inserted_at > ^month),
+        from(tv in Re.Statistics.TourVisualization, where: tv.inserted_at > ^month),
+      in_person_visits: from(ipv in Re.Statistics.InPersonVisit, where: ipv.inserted_at > ^month),
       listings_favorites: from(f in Re.Favorite, where: f.inserted_at > ^month),
       interests: from(i in Re.Interest, where: i.inserted_at > ^month)
     )

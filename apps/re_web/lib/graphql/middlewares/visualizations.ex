@@ -4,7 +4,7 @@ defmodule ReWeb.GraphQL.Middlewares.Visualizations do
   """
   @behaviour Absinthe.Middleware
 
-  @visualizations Application.get_env(:re, :visualizations, ReStatistics.Visualizations)
+  @visualizations Application.get_env(:re, :visualizations, Re.Statistics.Visualizations)
 
   def call(%{value: nil} = res, _arg), do: res
 

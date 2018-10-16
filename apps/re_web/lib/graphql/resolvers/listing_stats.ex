@@ -4,7 +4,7 @@ defmodule ReWeb.Resolvers.ListingStats do
   """
   alias Re.Listings
 
-  alias ReStatistics.Visualizations
+  alias Re.Statistics.Visualizations
 
   @visualizations Application.get_env(:re, :visualizations, Visualizations)
 

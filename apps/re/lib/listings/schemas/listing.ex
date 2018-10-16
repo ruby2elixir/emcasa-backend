@@ -37,9 +37,9 @@ defmodule Re.Listing do
     belongs_to :user, Re.User
     has_many :images, Re.Image
     has_many :price_history, Re.Listings.PriceHistory
-    has_many :listings_visualisations, ReStatistics.ListingVisualization
-    has_many :tour_visualisations, ReStatistics.TourVisualization
-    has_many :in_person_visits, ReStatistics.InPersonVisit
+    has_many :listings_visualisations, Re.Statistics.ListingVisualization
+    has_many :tour_visualisations, Re.Statistics.TourVisualization
+    has_many :in_person_visits, Re.Statistics.InPersonVisit
 
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :user]

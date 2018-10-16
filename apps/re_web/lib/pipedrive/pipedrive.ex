@@ -1,4 +1,4 @@
-defmodule ReIntegrations.Pipedrive do
+defmodule ReWeb.Pipedrive do
   @moduledoc """
   Module for handling pipedrive webhook structure
   """

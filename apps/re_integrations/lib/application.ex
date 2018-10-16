@@ -7,7 +7,6 @@ defmodule ReIntegrations.Application do
 
   alias ReIntegrations.{
     Notifications.Emails,
-    Pipedrive,
     Search
   }
 
@@ -17,7 +16,6 @@ defmodule ReIntegrations.Application do
     children = [
       worker(Emails.Server, []),
       worker(Search.Server, []),
-      worker(Pipedrive.Server, []),
       Search.Cluster,
     ]
 

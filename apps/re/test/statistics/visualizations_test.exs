@@ -1,7 +1,7 @@
-defmodule ReStatistics.VisualizationsTest do
+defmodule Re.Statistics.VisualizationsTest do
   use Re.ModelCase
 
-  alias ReStatistics.{
+  alias Re.Statistics.{
     Visualizations,
     ListingVisualization,
     TourVisualization
