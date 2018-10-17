@@ -21,6 +21,7 @@ defmodule Re.Exporters.Vivareal do
     |> Repo.all()
     |> Enum.map(&build_xml(&1, attributes))
     |> wrap_tags()
+    |> XmlBuilder.document()
     |> XmlBuilder.generate(format: :none)
   end
 
@@ -85,17 +86,58 @@ defmodule Re.Exporters.Vivareal do
     {"Media", %{}, Enum.map(images, &build_image/1)}
   end
 
+  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms)a
+
   defp convert_attribute(:details, listing) do
-    {"Details", %{}, [
-      {"PropertyType", %{}, "Residential / #{translate_type(listing.type)}"},
-      {"Description", %{}, "<![CDATA[" <> listing.description <> "]]>"},
-      {"ListPrice", %{}, listing.price},
-      {"LivingArea", %{unit: "square metres"}, listing.area},
-      {"PropertyAdministrationFee", %{currency: "BRL"}, trunc(listing.maintenance_fee)},
-      {"YearlyTax", %{currency: "BRL"}, trunc(listing.property_tax)},
-      {"Bedrooms", %{}, listing.rooms},
-      {"Bathrooms", %{}, listing.bathrooms},
-    ]}
+    {"Details", %{},
+      @details_attributes
+      |> Enum.reduce([], &build_details(&1, &2, listing))
+      |> Enum.reverse()
+    }
+  end
+
+  defp build_details(:type, acc, listing) do
+    [{"PropertyType", %{}, "Residential / #{translate_type(listing.type)}"} | acc]
+  end
+
+  defp build_details(:description, acc, listing) do
+    [{"Description", %{}, "<![CDATA[" <> listing.description <> "]]>"} | acc]
+  end
+
+  defp build_details(:price, acc, listing) do
+    [{"ListPrice", %{}, listing.price} | acc]
+  end
+
+  defp build_details(:area, acc, listing) do
+    [{"LivingArea", %{unit: "square metres"}, listing.area} | acc]
+  end
+
+  defp build_details(:maintenance_fee, acc, listing) do
+    case listing.maintenance_fee do
+      nil -> acc
+      maintenance_fee -> [{"PropertyAdministrationFee", %{currency: "BRL"}, trunc(maintenance_fee)} | acc]
+    end
+  end
+
+  defp build_details(:property_tax, acc, listing) do
+    case listing.property_tax do
+      nil -> acc
+      property_tax -> [{"YearlyTax", %{currency: "BRL"}, trunc(property_tax)} | acc]
+    end
+  end
+
+  defp build_details(:rooms, acc, listing) do
+    case listing.rooms do
+      nil -> acc
+      rooms -> [{"Bedrooms", %{}, rooms} | acc]
+    end
+  end
+
+  defp build_details(:bathrooms, acc, listing) do
+    case listing.bathrooms do
+      nil -> acc
+      bathrooms -> [{"Bathrooms", %{}, bathrooms} | acc]
+    end
   end
 
   defp convert_attribute(:location, %{address: address}) do
