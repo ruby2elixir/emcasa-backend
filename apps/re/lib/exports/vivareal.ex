@@ -1,6 +1,8 @@
 defmodule Re.Exporters.Vivareal do
 
-  @exported_attributes ~w(id title transaction_type featured images details location contact_info)a
+  @exported_attributes ~w(id title transaction_type featured inserted_at updated_at detail_url images details location contact_info)a
+
+  @frontend_url Application.get_env(:re, :frontend_url)
 
   def export_xml(%Re.Listing{} = listing) do
     attributes = convert_attributes(listing)
@@ -30,6 +32,18 @@ defmodule Re.Exporters.Vivareal do
     {"Featured", %{}, false}
   end
 
+  defp convert_attribute(:inserted_at, %{inserted_at: inserted_at}) do
+    {"ListDate", %{}, Timex.format!(inserted_at, "%Y-%m-%dT%H:%M:%S", :strftime)}
+  end
+
+  defp convert_attribute(:updated_at, %{updated_at: updated_at}) do
+    {"LastUpdateDate", %{}, Timex.format!(updated_at, "%Y-%m-%dT%H:%M:%S", :strftime)}
+  end
+
+  defp convert_attribute(:detail_url, %{id: id}) do
+    {"DetailViewUrl", %{}, build_url("/imoveis/", to_string(id))}
+  end
+
   defp convert_attribute(:images, %{images: images}) do
     {"Media", %{}, Enum.map(images, &build_image/1)}
   end
@@ -40,6 +54,8 @@ defmodule Re.Exporters.Vivareal do
       {"Description", %{}, "<![CDATA[" <> listing.description <> "]]>"},
       {"ListPrice", %{}, listing.price},
       {"LivingArea", %{unit: "square metres"}, listing.area},
+      {"PropertyAdministrationFee", %{currency: "BRL"}, trunc(listing.maintenance_fee)},
+      {"YearlyTax", %{currency: "BRL"}, trunc(listing.property_tax)},
       {"Bedrooms", %{}, listing.rooms},
       {"Bathrooms", %{}, listing.bathrooms},
     ]}
@@ -50,14 +66,23 @@ defmodule Re.Exporters.Vivareal do
       {"Country", %{abbreviation: "BR"}, "Brasil"},
       {"State", %{abbreviation: address.state}, expand_state(address.state)},
       {"City", %{}, address.city},
-      {"Neighborhood", %{}, address.neighborhood}
+      {"Neighborhood", %{}, address.neighborhood},
+      {"Address", %{}, address.street},
+      {"StreetNumber", %{}, address.street_number},
+      {"PostalCode", %{}, address.postal_code},
+      {"Latitude", %{}, address.lat},
+      {"Longitude", %{}, address.lng}
     ]}
   end
 
   defp convert_attribute(:contact_info, _) do
     {"ContactInfo", %{}, [
       {"Name", %{}, "EmCasa"},
-      {"Email", %{}, "contato@emcasa.com"}
+      {"Email", %{}, "contato@emcasa.com"},
+      {"Website", %{}, "https://www.emcasa.com"},
+      {"Logo", %{}, "https://s3.amazonaws.com/emcasa-ui/logo/logo.png"},
+      {"OfficeName", %{}, "EmCasa"},
+      {"Telephone", %{}, "(21) 3195-6541"}
     ]}
   end
 
@@ -72,4 +97,11 @@ defmodule Re.Exporters.Vivareal do
   defp expand_state("RJ"), do: "Rio de Janeiro"
   defp expand_state("SP"), do: "São Paulo"
   defp expand_state(state), do: state
+
+  defp build_url(path, param) do
+    @frontend_url
+    |> URI.merge(path)
+    |> URI.merge(param)
+    |> URI.to_string()
+  end
 end
