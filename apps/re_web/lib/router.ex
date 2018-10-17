@@ -59,6 +59,10 @@ defmodule ReWeb.Router do
     forward("/pipedrive", ReWeb.Pipedrive.Plug)
   end
 
+  scope "/exporters" do
+    forward("/vivareal", ReWeb.Exporters.Vivareal.Plug)
+  end
+
   if Mix.env() == :dev do
     pipeline :browser do
       plug(:accepts, ["html"])

@@ -33,7 +33,8 @@ defmodule Re.Exporters.VivarealTest do
       location_tags() <>
       contact_info_tags() <>
       "</Listing>"
-    assert expected_xml == Vivareal.export_xml(listing)
+    assert expected_xml
+      == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
   end
 
   defp images_tags do

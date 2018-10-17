@@ -1,16 +1,53 @@
 defmodule Re.Exporters.Vivareal do
 
-  @exported_attributes ~w(id title transaction_type featured inserted_at updated_at detail_url images details location contact_info)a
+  @exported_attributes ~w(id title transaction_type featured inserted_at updated_at detail_url
+                          images details location contact_info)a
 
   @frontend_url Application.get_env(:re, :frontend_url)
 
-  def export_xml(%Re.Listing{} = listing) do
-    attributes = convert_attributes(listing)
-    {"Listing", %{}, attributes}
+  alias Re.{
+    Images,
+    Listings,
+    Listings.Queries,
+    Repo
+  }
+
+  import Ecto.Query
+
+  def export_listings_xml(attributes \\ @exported_attributes) do
+    Queries.active()
+    |> Queries.preload_relations([:address, images: Images.Queries.listing_preload()])
+    |> Queries.order_by_id()
+    |> Repo.all()
+    |> Enum.map(&build_xml(&1, attributes))
+    |> wrap_tags()
     |> XmlBuilder.generate(format: :none)
   end
 
-  def convert_attributes(listing), do: Enum.map(@exported_attributes, &convert_attribute(&1, listing))
+  defp wrap_tags(listings) do
+    {"ListingDataFeed", %{
+      :xmlns => "http://www.vivareal.com/schemas/1.0/VRSync",
+      :"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
+      :"xsi:schemaLocation" => "http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd"
+      }, [
+      build_header(),
+      {"Listings", %{}, listings}
+    ]}
+  end
+
+  defp build_header do
+    {"Header", %{}, [
+      {"Provider", %{}, "EmCasa"},
+      {"Email", %{}, "rodrigo.nonose@emcasa.com"},
+      {"ContactName", %{}, "Rodrigo Nonose"}
+    ]}
+  end
+
+  def build_xml(%Re.Listing{} = listing, attributes \\ @exported_attributes) do
+    {"Listing", %{}, convert_attributes(listing, attributes)}
+  end
+
+  def convert_attributes(listing, attributes), do: Enum.map(attributes, &convert_attribute(&1, listing))
 
   defp convert_attribute(:id, %{id: id}) do
     {"ListingId", %{}, id}
