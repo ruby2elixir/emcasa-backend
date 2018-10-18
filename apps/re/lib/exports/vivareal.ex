@@ -1,16 +1,54 @@
 defmodule Re.Exporters.Vivareal do
 
-  @exported_attributes ~w(id title transaction_type featured inserted_at updated_at detail_url images details location contact_info)a
+  @exported_attributes ~w(id title transaction_type featured inserted_at updated_at detail_url
+                          images details location contact_info)a
 
   @frontend_url Application.get_env(:re, :frontend_url)
 
-  def export_xml(%Re.Listing{} = listing) do
-    attributes = convert_attributes(listing)
-    {"Listing", %{}, attributes}
+  alias Re.{
+    Images,
+    Listings,
+    Listings.Queries,
+    Repo
+  }
+
+  import Ecto.Query
+
+  def export_listings_xml(attributes \\ @exported_attributes) do
+    Queries.active()
+    |> Queries.preload_relations([:address, images: Images.Queries.listing_preload()])
+    |> Queries.order_by_id()
+    |> Repo.all()
+    |> Enum.map(&build_xml(&1, attributes))
+    |> wrap_tags()
+    |> XmlBuilder.document()
     |> XmlBuilder.generate(format: :none)
   end
 
-  def convert_attributes(listing), do: Enum.map(@exported_attributes, &convert_attribute(&1, listing))
+  defp wrap_tags(listings) do
+    {"ListingDataFeed", %{
+      :xmlns => "http://www.vivareal.com/schemas/1.0/VRSync",
+      :"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
+      :"xsi:schemaLocation" => "http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd"
+      }, [
+      build_header(),
+      {"Listings", %{}, listings}
+    ]}
+  end
+
+  defp build_header do
+    {"Header", %{}, [
+      {"Provider", %{}, "EmCasa"},
+      {"Email", %{}, "rodrigo.nonose@emcasa.com"},
+      {"ContactName", %{}, "Rodrigo Nonose"}
+    ]}
+  end
+
+  def build_xml(%Re.Listing{} = listing, attributes \\ @exported_attributes) do
+    {"Listing", %{}, convert_attributes(listing, attributes)}
+  end
+
+  def convert_attributes(listing, attributes), do: Enum.map(attributes, &convert_attribute(&1, listing))
 
   defp convert_attribute(:id, %{id: id}) do
     {"ListingId", %{}, id}
@@ -48,17 +86,58 @@ defmodule Re.Exporters.Vivareal do
     {"Media", %{}, Enum.map(images, &build_image/1)}
   end
 
+  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms)a
+
   defp convert_attribute(:details, listing) do
-    {"Details", %{}, [
-      {"PropertyType", %{}, "Residential / #{translate_type(listing.type)}"},
-      {"Description", %{}, "<![CDATA[" <> listing.description <> "]]>"},
-      {"ListPrice", %{}, listing.price},
-      {"LivingArea", %{unit: "square metres"}, listing.area},
-      {"PropertyAdministrationFee", %{currency: "BRL"}, trunc(listing.maintenance_fee)},
-      {"YearlyTax", %{currency: "BRL"}, trunc(listing.property_tax)},
-      {"Bedrooms", %{}, listing.rooms},
-      {"Bathrooms", %{}, listing.bathrooms},
-    ]}
+    {"Details", %{},
+      @details_attributes
+      |> Enum.reduce([], &build_details(&1, &2, listing))
+      |> Enum.reverse()
+    }
+  end
+
+  defp build_details(:type, acc, listing) do
+    [{"PropertyType", %{}, "Residential / #{translate_type(listing.type)}"} | acc]
+  end
+
+  defp build_details(:description, acc, listing) do
+    [{"Description", %{}, "<![CDATA[" <> listing.description <> "]]>"} | acc]
+  end
+
+  defp build_details(:price, acc, listing) do
+    [{"ListPrice", %{}, listing.price} | acc]
+  end
+
+  defp build_details(:area, acc, listing) do
+    [{"LivingArea", %{unit: "square metres"}, listing.area} | acc]
+  end
+
+  defp build_details(:maintenance_fee, acc, listing) do
+    case listing.maintenance_fee do
+      nil -> acc
+      maintenance_fee -> [{"PropertyAdministrationFee", %{currency: "BRL"}, trunc(maintenance_fee)} | acc]
+    end
+  end
+
+  defp build_details(:property_tax, acc, listing) do
+    case listing.property_tax do
+      nil -> acc
+      property_tax -> [{"YearlyTax", %{currency: "BRL"}, trunc(property_tax)} | acc]
+    end
+  end
+
+  defp build_details(:rooms, acc, listing) do
+    case listing.rooms do
+      nil -> acc
+      rooms -> [{"Bedrooms", %{}, rooms} | acc]
+    end
+  end
+
+  defp build_details(:bathrooms, acc, listing) do
+    case listing.bathrooms do
+      nil -> acc
+      bathrooms -> [{"Bathrooms", %{}, bathrooms} | acc]
+    end
   end
 
   defp convert_attribute(:location, %{address: address}) do

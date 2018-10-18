@@ -67,6 +67,10 @@ config :account_kit,
   api_version: "v1.0",
   require_appsecret: false
 
+config :mime, :types, %{
+  "application/xml" => ["xml"]
+}
+
 import_config "#{Mix.env()}.exs"
 
 # Import Timber, structured logging
