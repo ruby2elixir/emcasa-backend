@@ -75,3 +75,6 @@ config :pigeon, :fcm,
 config :account_kit,
   app_id: System.get_env("FACEBOOK_APP_ID"),
   app_secret: System.get_env("ACCOUNT_KIT_APP_SECRET")
+
+config :honeybadger,
+  environment_name: System.get_env("ENV")

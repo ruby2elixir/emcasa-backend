@@ -12,7 +12,8 @@ config :re,
   from: "admin@email.com",
   reply_to: "admin@email.com",
   frontend_url: "http://localhost:3000",
-  env: "dev"
+  env: "dev",
+  use_logger: true
 
 # Configures the endpoint
 config :re, ReWeb.Endpoint,

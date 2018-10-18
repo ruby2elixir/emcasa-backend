@@ -1,5 +1,6 @@
 defmodule ReWeb.Router do
   use ReWeb, :router
+  use Honeybadger.Plug
 
   pipeline :api do
     plug(:accepts, ["json"])

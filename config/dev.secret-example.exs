@@ -41,3 +41,6 @@ config :account_kit,
   app_secret: "your_dev_app_secret",
   require_appsecret: false,
   api_version: "v1.0"
+
+config :honeybadger,
+  api_key: "HONEYBADGER_API_KEY"
