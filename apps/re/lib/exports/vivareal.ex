@@ -7,12 +7,9 @@ defmodule Re.Exporters.Vivareal do
 
   alias Re.{
     Images,
-    Listings,
     Listings.Queries,
     Repo
   }
-
-  import Ecto.Query
 
   def export_listings_xml(attributes \\ @exported_attributes) do
     Queries.active()
@@ -96,12 +93,37 @@ defmodule Re.Exporters.Vivareal do
     }
   end
 
+  defp convert_attribute(:location, %{address: address}) do
+    {"Location", %{displayAddress: "Neighborhood"}, [
+      {"Country", %{abbreviation: "BR"}, "Brasil"},
+      {"State", %{abbreviation: address.state}, expand_state(address.state)},
+      {"City", %{}, address.city},
+      {"Neighborhood", %{}, address.neighborhood},
+      {"Address", %{}, address.street},
+      {"StreetNumber", %{}, address.street_number},
+      {"PostalCode", %{}, address.postal_code},
+      {"Latitude", %{}, address.lat},
+      {"Longitude", %{}, address.lng}
+    ]}
+  end
+
+  defp convert_attribute(:contact_info, _) do
+    {"ContactInfo", %{}, [
+      {"Name", %{}, "EmCasa"},
+      {"Email", %{}, "contato@emcasa.com"},
+      {"Website", %{}, "https://www.emcasa.com"},
+      {"Logo", %{}, "https://s3.amazonaws.com/emcasa-ui/logo/logo.png"},
+      {"OfficeName", %{}, "EmCasa"},
+      {"Telephone", %{}, "(21) 3195-6541"}
+    ]}
+  end
+
   defp build_details(:type, acc, listing) do
     [{"PropertyType", %{}, "Residential / #{translate_type(listing.type)}"} | acc]
   end
 
   defp build_details(:description, acc, listing) do
-    [{"Description", %{}, "<![CDATA[" <> listing.description <> "]]>"} | acc]
+    [{"Description", %{}, "<![CDATA[" <> (listing.description || "") <> "]]>"} | acc]
   end
 
   defp build_details(:price, acc, listing) do
@@ -138,31 +160,6 @@ defmodule Re.Exporters.Vivareal do
       nil -> acc
       bathrooms -> [{"Bathrooms", %{}, bathrooms} | acc]
     end
-  end
-
-  defp convert_attribute(:location, %{address: address}) do
-    {"Location", %{displayAddress: "Neighborhood"}, [
-      {"Country", %{abbreviation: "BR"}, "Brasil"},
-      {"State", %{abbreviation: address.state}, expand_state(address.state)},
-      {"City", %{}, address.city},
-      {"Neighborhood", %{}, address.neighborhood},
-      {"Address", %{}, address.street},
-      {"StreetNumber", %{}, address.street_number},
-      {"PostalCode", %{}, address.postal_code},
-      {"Latitude", %{}, address.lat},
-      {"Longitude", %{}, address.lng}
-    ]}
-  end
-
-  defp convert_attribute(:contact_info, _) do
-    {"ContactInfo", %{}, [
-      {"Name", %{}, "EmCasa"},
-      {"Email", %{}, "contato@emcasa.com"},
-      {"Website", %{}, "https://www.emcasa.com"},
-      {"Logo", %{}, "https://s3.amazonaws.com/emcasa-ui/logo/logo.png"},
-      {"OfficeName", %{}, "EmCasa"},
-      {"Telephone", %{}, "(21) 3195-6541"}
-    ]}
   end
 
   defp build_image(%{filename: filename, description: description}) do

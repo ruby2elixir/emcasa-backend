@@ -50,7 +50,7 @@ defmodule Re.Exporters.VivarealTest do
         address: build(:address, city: "Rio de Janeiro", state: "RJ", neighborhood: "Copacabana",
           street: "Avenida Atlântica", street_number: "55", postal_code: "11111-111",
           lat: -23.5531131, lng: -46.659864),
-        images: images, description: "descr", area: 50, price: 1_000_000, rooms: 2, bathrooms: 2,
+        images: images, description: nil, area: 50, price: 1_000_000, rooms: 2, bathrooms: 2,
         inserted_at: ~N[2018-06-07 15:30:00.000000], updated_at: ~N[2018-06-07 15:30:00.000000],
         maintenance_fee: nil, property_tax: nil)
       expected_xml = "<Listing>" <>
@@ -102,7 +102,7 @@ defmodule Re.Exporters.VivarealTest do
   defp details_tags_nils do
     "<Details>" <>
     "<PropertyType>Residential / Apartment</PropertyType>" <>
-    "<Description>&lt;![CDATA[descr]]&gt;</Description>" <>
+    "<Description>&lt;![CDATA[]]&gt;</Description>" <>
     "<ListPrice>1000000</ListPrice>" <>
     "<LivingArea unit=\"square metres\">50</LivingArea>" <>
     "<Bedrooms>2</Bedrooms>" <>
