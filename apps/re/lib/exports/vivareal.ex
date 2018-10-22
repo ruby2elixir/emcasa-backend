@@ -1,5 +1,4 @@
 defmodule Re.Exporters.Vivareal do
-
   @exported_attributes ~w(id title transaction_type featured inserted_at updated_at detail_url
                           images details location contact_info)a
 
@@ -23,29 +22,34 @@ defmodule Re.Exporters.Vivareal do
   end
 
   defp wrap_tags(listings) do
-    {"ListingDataFeed", %{
-      :xmlns => "http://www.vivareal.com/schemas/1.0/VRSync",
-      :"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
-      :"xsi:schemaLocation" => "http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd"
-      }, [
-      build_header(),
-      {"Listings", %{}, listings}
-    ]}
+    {"ListingDataFeed",
+     %{
+       :xmlns => "http://www.vivareal.com/schemas/1.0/VRSync",
+       :"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
+       :"xsi:schemaLocation" =>
+         "http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd"
+     },
+     [
+       build_header(),
+       {"Listings", %{}, listings}
+     ]}
   end
 
   defp build_header do
-    {"Header", %{}, [
-      {"Provider", %{}, "EmCasa"},
-      {"Email", %{}, "rodrigo.nonose@emcasa.com"},
-      {"ContactName", %{}, "Rodrigo Nonose"}
-    ]}
+    {"Header", %{},
+     [
+       {"Provider", %{}, "EmCasa"},
+       {"Email", %{}, "rodrigo.nonose@emcasa.com"},
+       {"ContactName", %{}, "Rodrigo Nonose"}
+     ]}
   end
 
   def build_xml(%Re.Listing{} = listing, attributes \\ @exported_attributes) do
     {"Listing", %{}, convert_attributes(listing, attributes)}
   end
 
-  def convert_attributes(listing, attributes), do: Enum.map(attributes, &convert_attribute(&1, listing))
+  def convert_attributes(listing, attributes),
+    do: Enum.map(attributes, &convert_attribute(&1, listing))
 
   defp convert_attribute(:id, %{id: id}) do
     {"ListingId", %{}, id}
@@ -87,35 +91,36 @@ defmodule Re.Exporters.Vivareal do
 
   defp convert_attribute(:details, listing) do
     {"Details", %{},
-      @details_attributes
-      |> Enum.reduce([], &build_details(&1, &2, listing))
-      |> Enum.reverse()
-    }
+     @details_attributes
+     |> Enum.reduce([], &build_details(&1, &2, listing))
+     |> Enum.reverse()}
   end
 
   defp convert_attribute(:location, %{address: address}) do
-    {"Location", %{displayAddress: "Neighborhood"}, [
-      {"Country", %{abbreviation: "BR"}, "Brasil"},
-      {"State", %{abbreviation: address.state}, expand_state(address.state)},
-      {"City", %{}, address.city},
-      {"Neighborhood", %{}, address.neighborhood},
-      {"Address", %{}, address.street},
-      {"StreetNumber", %{}, address.street_number},
-      {"PostalCode", %{}, address.postal_code},
-      {"Latitude", %{}, address.lat},
-      {"Longitude", %{}, address.lng}
-    ]}
+    {"Location", %{displayAddress: "Neighborhood"},
+     [
+       {"Country", %{abbreviation: "BR"}, "Brasil"},
+       {"State", %{abbreviation: address.state}, expand_state(address.state)},
+       {"City", %{}, address.city},
+       {"Neighborhood", %{}, address.neighborhood},
+       {"Address", %{}, address.street},
+       {"StreetNumber", %{}, address.street_number},
+       {"PostalCode", %{}, address.postal_code},
+       {"Latitude", %{}, address.lat},
+       {"Longitude", %{}, address.lng}
+     ]}
   end
 
   defp convert_attribute(:contact_info, _) do
-    {"ContactInfo", %{}, [
-      {"Name", %{}, "EmCasa"},
-      {"Email", %{}, "contato@emcasa.com"},
-      {"Website", %{}, "https://www.emcasa.com"},
-      {"Logo", %{}, "https://s3.amazonaws.com/emcasa-ui/logo/logo.png"},
-      {"OfficeName", %{}, "EmCasa"},
-      {"Telephone", %{}, "(21) 3195-6541"}
-    ]}
+    {"ContactInfo", %{},
+     [
+       {"Name", %{}, "EmCasa"},
+       {"Email", %{}, "contato@emcasa.com"},
+       {"Website", %{}, "https://www.emcasa.com"},
+       {"Logo", %{}, "https://s3.amazonaws.com/emcasa-ui/logo/logo.png"},
+       {"OfficeName", %{}, "EmCasa"},
+       {"Telephone", %{}, "(21) 3195-6541"}
+     ]}
   end
 
   defp build_details(:type, acc, listing) do
@@ -136,8 +141,11 @@ defmodule Re.Exporters.Vivareal do
 
   defp build_details(:maintenance_fee, acc, listing) do
     case listing.maintenance_fee do
-      nil -> acc
-      maintenance_fee -> [{"PropertyAdministrationFee", %{currency: "BRL"}, trunc(maintenance_fee)} | acc]
+      nil ->
+        acc
+
+      maintenance_fee ->
+        [{"PropertyAdministrationFee", %{currency: "BRL"}, trunc(maintenance_fee)} | acc]
     end
   end
 
@@ -163,7 +171,8 @@ defmodule Re.Exporters.Vivareal do
   end
 
   defp build_image(%{filename: filename, description: description}) do
-    {"Item", %{caption: description, medium: "image"},"https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename}
+    {"Item", %{caption: description, medium: "image"},
+     "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename}
   end
 
   defp translate_type("Apartamento"), do: "Apartment"
