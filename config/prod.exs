@@ -77,6 +77,4 @@ config :account_kit,
   app_secret: System.get_env("ACCOUNT_KIT_APP_SECRET")
 
 config :honeybadger,
-  app: :re,
-  environment_name: System.get_env("ENV"),
-  hostname: System.get_env("HOST")
+  environment_name: System.get_env("ENV")

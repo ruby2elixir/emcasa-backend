@@ -51,7 +51,8 @@ defmodule ReWeb.Mixfile do
       {:apollo_tracing, "~> 0.4.0"},
       {:timex, "~> 3.3"},
       {:tzdata, "~> 0.5"},
-      {:account_kit, github: "rhnonose/account_kit"}
+      {:account_kit, github: "rhnonose/account_kit"},
+      {:honeybadger, "~> 0.10"}
     ]
   end
 

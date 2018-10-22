@@ -46,7 +46,8 @@ defmodule ReIntegrations.Mixfile do
       {:pigeon, "~> 1.2.2"},
       {:kadabra, "~> 0.4.2"},
       {:retry, "~> 0.10"},
-      {:httpoison, "~> 1.3", override: true}
+      {:httpoison, "~> 1.3", override: true},
+      {:honeybadger, "~> 0.10"}
     ]
   end
 
