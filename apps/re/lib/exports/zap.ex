@@ -1,5 +1,4 @@
 defmodule Re.Exporters.Zap do
-
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
                           postal_code price maintenance_fee util_area area_unit rooms bathrooms garage_spots
                           property_tax description featured images)a
@@ -22,19 +21,22 @@ defmodule Re.Exporters.Zap do
   end
 
   defp wrap_tags(listings) do
-    {"Carga", %{
-      :"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
-      :"xmlns:xsd" => "http://www.w3.org/2001/XMLSchema"
-      }, [
-      {"Imoveis", %{}, listings}
-    ]}
+    {"Carga",
+     %{
+       :"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
+       :"xmlns:xsd" => "http://www.w3.org/2001/XMLSchema"
+     },
+     [
+       {"Imoveis", %{}, listings}
+     ]}
   end
 
   def build_xml(%Re.Listing{} = listing, attributes \\ @exported_attributes) do
     {"Imovel", %{}, convert_attributes(listing, attributes)}
   end
 
-  def convert_attributes(listing, attributes), do: Enum.map(attributes, &convert_attribute(&1, listing))
+  def convert_attributes(listing, attributes),
+    do: Enum.map(attributes, &convert_attribute(&1, listing))
 
   defp convert_attribute(:id, %{id: id}) do
     {"CodigoImovel", %{}, id}
@@ -142,12 +144,14 @@ defmodule Re.Exporters.Zap do
   end
 
   defp build_image(%{filename: filename} = image) do
-    {"Foto", %{}, [
-      {"URLArquivo", %{}, "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename},
-      {"NomeArquivo", %{}, filename},
-      {"Alterada", %{}, 0}
-    ] |> main_picture(image)
-  }
+    {"Foto", %{},
+     [
+       {"URLArquivo", %{},
+        "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename},
+       {"NomeArquivo", %{}, filename},
+       {"Alterada", %{}, 0}
+     ]
+     |> main_picture(image)}
   end
 
   defp main_picture(tags, %{main: true}), do: [{"Principal", %{}, 1} | tags]

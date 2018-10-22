@@ -25,13 +25,13 @@ defmodule ReIntegrations.Search do
 
   def post(query) do
     Elasticsearch.post(Cluster, "/listings/_search", %{
-        "query" => %{
-          "multi_match" => %{
-            "query" => "#{query}",
-            "fields" => @query_fiels,
-            "fuzziness" => "AUTO"
-          }
+      "query" => %{
+        "multi_match" => %{
+          "query" => "#{query}",
+          "fields" => @query_fiels,
+          "fuzziness" => "AUTO"
         }
-      })
+      }
+    })
   end
 end

@@ -16,7 +16,7 @@ defmodule ReIntegrations.Application do
     children = [
       worker(Emails.Server, []),
       worker(Search.Server, []),
-      Search.Cluster,
+      Search.Cluster
     ]
 
     opts = [strategy: :one_for_one, name: ReIntegrations.Supervisor]
