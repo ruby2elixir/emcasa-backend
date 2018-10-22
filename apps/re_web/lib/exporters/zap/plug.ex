@@ -4,8 +4,6 @@ defmodule ReWeb.Exporters.Zap.Plug do
   """
   import Plug.Conn
 
-  require Logger
-
   alias Re.Exporters.Zap
 
   def init(args), do: args

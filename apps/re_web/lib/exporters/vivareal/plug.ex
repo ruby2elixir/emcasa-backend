@@ -4,8 +4,6 @@ defmodule ReWeb.Exporters.Vivareal.Plug do
   """
   import Plug.Conn
 
-  require Logger
-
   alias Re.Exporters.Vivareal
 
   def init(args), do: args
