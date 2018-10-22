@@ -1,7 +1,7 @@
 defmodule Re.Exporters.Zap do
 
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
-                          postal_code price maintenance_fee util_area total_area area_unit rooms bathrooms garage_spots
+                          postal_code price maintenance_fee util_area area_unit rooms bathrooms garage_spots
                           property_tax description featured images)a
 
   alias Re.{
@@ -93,10 +93,6 @@ defmodule Re.Exporters.Zap do
 
   defp convert_attribute(:util_area, listing) do
     {"AreaUtil", %{}, listing.area}
-  end
-
-  defp convert_attribute(:total_area, listing) do
-    {"AreaTotal", %{}, listing.area}
   end
 
   defp convert_attribute(:area_unit, _) do

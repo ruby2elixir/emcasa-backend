@@ -34,7 +34,6 @@ defmodule Re.Exporters.ZapTest do
         "<PrecoVenda>1000000</PrecoVenda>" <>
         "<PrecoCondominio>1000</PrecoCondominio>" <>
         "<AreaUtil>50</AreaUtil>" <>
-        "<AreaTotal>50</AreaTotal>" <>
         "<UnidadeMetrica>M2</UnidadeMetrica>" <>
         "<QtdDormitorios>2</QtdDormitorios>" <>
         "<QtdBanheiros>2</QtdBanheiros>" <>
@@ -76,7 +75,6 @@ defmodule Re.Exporters.ZapTest do
         "<PrecoVenda>1000000</PrecoVenda>" <>
         "<PrecoCondominio>1000</PrecoCondominio>" <>
         "<AreaUtil>50</AreaUtil>" <>
-        "<AreaTotal>50</AreaTotal>" <>
         "<UnidadeMetrica>M2</UnidadeMetrica>" <>
         "<QtdDormitorios>2</QtdDormitorios>" <>
         "<QtdBanheiros>2</QtdBanheiros>" <>
