@@ -122,6 +122,8 @@ defmodule Re.Exporters.Zap do
     {"Observacao", %{}, listing.description}
   end
 
+  defp convert_attribute(:images, %{images: []}), do: {"Fotos", %{}, nil}
+
   defp convert_attribute(:images, %{images: [main_image | rest]}) do
     main_image = Map.put(main_image, :main, true)
     {"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)}

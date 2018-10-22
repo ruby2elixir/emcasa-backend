@@ -87,6 +87,41 @@ defmodule Re.Exporters.ZapTest do
       assert expected_xml
         == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
+
+    test "export XML from listing with no images" do
+      %{id: id} = listing = insert(:listing,
+        type: "Apartamento",
+        address: build(:address, city: "Rio de Janeiro", state: "RJ", neighborhood: "Copacabana",
+          street: "Avenida Atlântica", street_number: "55", postal_code: "11111-111"),
+        complement: "basement", images: [], description: nil, area: 50, price: 1_000_000,
+        rooms: 2, bathrooms: 2, garage_spots: 1, maintenance_fee: 1000.00, property_tax: 1000.00)
+      expected_xml = "<Imovel>" <>
+        "<CodigoImovel>#{id}</CodigoImovel>" <>
+        "<TipoImovel>Apartamento</TipoImovel>" <>
+        "<SubTipoImovel>Apartamento Padrão</SubTipoImovel>" <>
+        "<CategoriaImovel>Padrão</CategoriaImovel>" <>
+        "<Endereco>Avenida Atlântica</Endereco>" <>
+        "<UF>RJ</UF>" <>
+        "<Cidade>Rio de Janeiro</Cidade>" <>
+        "<Bairro>Copacabana</Bairro>" <>
+        "<Numero>55</Numero>" <>
+        "<Complemento>basement</Complemento>" <>
+        "<CEP>11111111</CEP>" <>
+        "<PrecoVenda>1000000</PrecoVenda>" <>
+        "<PrecoCondominio>1000</PrecoCondominio>" <>
+        "<AreaUtil>50</AreaUtil>" <>
+        "<UnidadeMetrica>M2</UnidadeMetrica>" <>
+        "<QtdDormitorios>2</QtdDormitorios>" <>
+        "<QtdBanheiros>2</QtdBanheiros>" <>
+        "<QtdVagas>1</QtdVagas>" <>
+        "<ValorIPTU>1000</ValorIPTU>" <>
+        "<Observacao/>" <>
+        "<TipoOferta>1</TipoOferta>" <>
+        "<Fotos/>" <>
+        "</Imovel>"
+      assert expected_xml
+        == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
+    end
   end
 
   describe "export_listings_xml/1" do
