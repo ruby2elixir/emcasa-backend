@@ -157,17 +157,11 @@ defmodule Re.Exporters.Vivareal do
   end
 
   defp build_details(:rooms, acc, listing) do
-    case listing.rooms do
-      nil -> acc
-      rooms -> [{"Bedrooms", %{}, rooms} | acc]
-    end
+    [{"Bedrooms", %{}, listing.rooms || 0} | acc]
   end
 
   defp build_details(:bathrooms, acc, listing) do
-    case listing.bathrooms do
-      nil -> acc
-      bathrooms -> [{"Bathrooms", %{}, bathrooms} | acc]
-    end
+    [{"Bathrooms", %{}, listing.bathrooms || 0} | acc]
   end
 
   defp build_image(%{filename: filename, description: description}) do

@@ -103,6 +103,55 @@ defmodule Re.Exporters.VivarealTest do
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
+
+    test "export XML with nil bathrooms/rooms" do
+      images = [
+        insert(:image, filename: "test1.jpg", description: "descr"),
+        insert(:image, filename: "test2.jpg", description: "descr"),
+        insert(:image, filename: "test3.jpg", description: "descr")
+      ]
+
+      %{id: id} =
+        listing =
+        insert(:listing,
+          type: "Apartamento",
+          address:
+            build(:address,
+              city: "Rio de Janeiro",
+              state: "RJ",
+              neighborhood: "Copacabana",
+              street: "Avenida Atlântica",
+              street_number: "55",
+              postal_code: "11111-111",
+              lat: -23.5531131,
+              lng: -46.659864
+            ),
+          images: images,
+          description: "descr",
+          area: 50,
+          price: 1_000_000,
+          rooms: nil,
+          bathrooms: nil,
+          inserted_at: ~N[2018-06-07 15:30:00.000000],
+          updated_at: ~N[2018-06-07 15:30:00.000000],
+          maintenance_fee: 1000.00,
+          property_tax: 1000.00
+        )
+
+      expected_xml =
+        "<Listing>" <>
+          "<ListingId>#{id}</ListingId>" <>
+          "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
+          "<TransactionType>For Sale</TransactionType>" <>
+          "<Featured>false</Featured>" <>
+          "<ListDate>2018-06-07T15:30:00</ListDate>" <>
+          "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
+          "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
+          images_tags() <>
+          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <> "</Listing>"
+
+      assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
+    end
   end
 
   describe "export_listings_xml/1" do
@@ -142,6 +191,17 @@ defmodule Re.Exporters.VivarealTest do
       "<ListPrice>1000000</ListPrice>" <>
       "<LivingArea unit=\"square metres\">50</LivingArea>" <>
       "<Bedrooms>2</Bedrooms>" <> "<Bathrooms>2</Bathrooms>" <> "</Details>"
+  end
+
+  defp rooms_nil_details_tags do
+    "<Details>" <>
+      "<PropertyType>Residential / Apartment</PropertyType>" <>
+      "<Description>&lt;![CDATA[descr]]&gt;</Description>" <>
+      "<ListPrice>1000000</ListPrice>" <>
+      "<LivingArea unit=\"square metres\">50</LivingArea>" <>
+      "<PropertyAdministrationFee currency=\"BRL\">1000</PropertyAdministrationFee>" <>
+      "<YearlyTax currency=\"BRL\">1000</YearlyTax>" <>
+      "<Bedrooms>0</Bedrooms>" <> "<Bathrooms>0</Bathrooms>" <> "</Details>"
   end
 
   defp location_tags do
