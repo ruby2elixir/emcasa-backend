@@ -15,11 +15,15 @@ defmodule Re.Exporters.Vivareal do
     |> Queries.preload_relations([:address, images: Images.Queries.listing_preload()])
     |> Queries.order_by_id()
     |> Repo.all()
+    |> Enum.filter(&has_image?/1)
     |> Enum.map(&build_xml(&1, attributes))
     |> wrap_tags()
     |> XmlBuilder.document()
     |> XmlBuilder.generate(format: :none)
   end
+
+  defp has_image?(%{images: []}), do: false
+  defp has_image?(_), do: true
 
   defp wrap_tags(listings) do
     {"ListingDataFeed",

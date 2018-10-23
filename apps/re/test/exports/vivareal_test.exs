@@ -156,12 +156,20 @@ defmodule Re.Exporters.VivarealTest do
 
   describe "export_listings_xml/1" do
     test "should export listings wrapped" do
-      listing = insert(:listing)
+      image = insert(:image, filename: "test1.jpg", description: "descr")
+      listing = insert(:listing, images: [image])
 
       assert "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ListingDataFeed xmlns=\"http://www.vivareal.com/schemas/1.0/VRSync\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd\"><Header><Provider>EmCasa</Provider><Email>rodrigo.nonose@emcasa.com</Email><ContactName>Rodrigo Nonose</ContactName></Header><Listings><Listing><ListingId>#{
                listing.id
              }</ListingId></Listing></Listings></ListingDataFeed>" ==
                Vivareal.export_listings_xml(~w(id)a)
+    end
+
+    test "should not export listings without images" do
+      listing = insert(:listing)
+
+      assert "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ListingDataFeed xmlns=\"http://www.vivareal.com/schemas/1.0/VRSync\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd\"><Header><Provider>EmCasa</Provider><Email>rodrigo.nonose@emcasa.com</Email><ContactName>Rodrigo Nonose</ContactName></Header><Listings/></ListingDataFeed>" ==
+               Vivareal.export_listings_xml(~w(images)a)
     end
   end
 
