@@ -80,11 +80,6 @@ defmodule ReWeb.Types.Message do
     end
   end
 
-  scalar :datetime, name: "DateTime" do
-    serialize(&NaiveDateTime.to_iso8601/1)
-    parse(&ReWeb.Graphql.SchemaHelpers.parse_datetime/1)
-  end
-
   object :message_subscriptions do
     @desc "Subscribe to your messages"
     field :message_sent, :message do
