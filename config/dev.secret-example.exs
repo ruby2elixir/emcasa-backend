@@ -44,3 +44,7 @@ config :account_kit,
 
 config :honeybadger,
   api_key: "HONEYBADGER_API_KEY"
+
+config :credipronto,
+  simulador_url: "CREDIPRONTO_URL",
+  account_id: "CREDIPRONTO_ACCOUNT_ID"

@@ -14,7 +14,7 @@ defmodule Re.Images do
 
   alias Ecto.Changeset
 
-  @http Application.get_env(:re, :http, HTTPoison)
+  @http Application.get_env(:re_integrations, :http, HTTPoison)
 
   defdelegate authorize(action, user, params), to: Re.Images.Policy
 

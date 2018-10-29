@@ -3,11 +3,11 @@ defmodule ReIntegrations.Credipronto.Client do
   Module to wrap credipronto API logic
   """
 
-  @http_client Application.get_env(:re, :http_client, HTTPoison)
+  @http_client Application.get_env(:re_integrations, :http, HTTPoison)
   @url Application.get_env(:re_integrations, :credipronto_simulador_url, "")
   @account_id Application.get_env(:re_integrations, :credipronto_account_id, "")
 
-  def get(params \\ @params) do
+  def get(params) do
     params = Map.merge(params, %{account_id: @account_id})
 
     @url
