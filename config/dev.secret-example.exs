@@ -43,7 +43,8 @@ config :account_kit,
   api_version: "v1.0"
 
 config :honeybadger,
-  api_key: "HONEYBADGER_API_KEY"
+  api_key: "HONEYBADGER_API_KEY",
+  environment_name: :dev
 
 config :credipronto,
   simulador_url: "CREDIPRONTO_URL",
