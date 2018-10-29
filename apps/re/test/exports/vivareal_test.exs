@@ -166,7 +166,7 @@ defmodule Re.Exporters.VivarealTest do
     end
 
     test "should not export listings without images" do
-      listing = insert(:listing)
+      insert(:listing)
 
       assert "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ListingDataFeed xmlns=\"http://www.vivareal.com/schemas/1.0/VRSync\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd\"><Header><Provider>EmCasa</Provider><Email>rodrigo.nonose@emcasa.com</Email><ContactName>Rodrigo Nonose</ContactName></Header><Listings/></ListingDataFeed>" ==
                Vivareal.export_listings_xml(~w(images)a)
