@@ -14,7 +14,7 @@ defmodule ReWeb.Types.Message do
     field :message, :string
     field :read, :boolean
     field :notified, :boolean
-    field :inserted_at, :datetime
+    field :inserted_at, :naive_datetime
 
     field :sender, :user, resolve: dataloader(Re.Accounts)
     field :receiver, :user, resolve: dataloader(Re.Accounts)
