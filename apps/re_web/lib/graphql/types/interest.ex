@@ -59,11 +59,45 @@ defmodule ReWeb.Types.Interest do
     field :name, :string
   end
 
+  object :simulation do
+    field :cem, :string
+    field :cet, :string
+  end
+
+  input_object :simulation_request do
+    field :mutuary, non_null(:string)
+    field :birthday, non_null(:date)
+    field :include_coparticipant, non_null(:boolean)
+    field :net_income, non_null(:decimal)
+    field :net_income_coparticipant, :decimal
+    field :birthday_coparticipant, :date
+    field :fundable_value, non_null(:decimal)
+    field :term, non_null(:integer)
+    field :amortization, :boolean
+    field :annual_interest, :float
+    field :home_equity_annual_interest, :float
+    field :calculate_tr, :boolean
+    field :evaluation_rate, :decimal
+    field :itbi_value, :decimal
+    field :listing_price, :decimal
+    field :listing_type, :string
+    field :product_type, :string
+    field :sum, :boolean
+    field :insurer, :string
+  end
+
   object :interest_queries do
     @desc "Interest types"
     field :interest_types,
       type: list_of(:interest_type),
       resolve: &InterestsResolver.interest_types/2
+
+    @desc "Request funding simulation"
+    field :simulate, type: :simulation do
+      arg :input, non_null(:simulation_request)
+
+      resolve &InterestsResolver.simulate/2
+    end
   end
 
   object :interest_mutations do

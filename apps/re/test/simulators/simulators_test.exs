@@ -6,8 +6,8 @@ defmodule Re.SimulatorsTest do
   describe "simulate/1" do
     test "should make valid request do API" do
       assert {:ok, %{
-        "cem" => "10,8%",
-        "cet" => "11,3%"
+        cem: "10,8%",
+        cet: "11,3%"
       }} == Simulators.simulate(%{
         mutuary: "PF",
         birthday: ~D[1987-05-22],

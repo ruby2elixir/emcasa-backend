@@ -51,5 +51,11 @@ defmodule ReIntegrations.Credipronto.MapperTest do
     end
   end
 
+  describe "payload_in/1" do
+    test "should map payload" do
+        assert %{cem: "10,8%", cet: "11,3%"} == Mapper.payload_in(%{"cem" => "10,8%", "cet" => "11,3%"})
+    end
+  end
+
 
 end

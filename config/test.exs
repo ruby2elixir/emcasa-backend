@@ -53,3 +53,6 @@ config :re,
 config :re_integrations,
   credipronto_simulador_url: "http://www.emcasa.com/simulator",
   credipronto_account_id: "test_account_id"
+
+config :honeybadger,
+  api_key: ""

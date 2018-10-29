@@ -5,6 +5,8 @@ defmodule ReIntegrations.Credipronto.Mapper do
 
   def query_out(params), do: Enum.reduce(params, %{}, &map_attributes/2)
 
+  def payload_in(params), do: Enum.reduce(params, %{}, &map_payload/2)
+
   defp map_attributes({:mutuary, value}, acc), do: Map.put(acc, :mutuario, value)
 
   defp map_attributes({:birthday, value}, acc), do: Map.put(acc, :data_nascimento, encode_date(value))
@@ -80,4 +82,10 @@ defmodule ReIntegrations.Credipronto.Mapper do
   defp encode_float(float), do: :erlang.float_to_binary(float, [decimals: 10])
 
   defp trim_currency("R$" <> rest), do: rest
+
+  defp map_payload({"cem", value}, acc), do: Map.put(acc, :cem, value)
+
+  defp map_payload({"cet", value}, acc), do: Map.put(acc, :cet, value)
+
+  defp map_payload({_key, _value}, acc), do: acc
 end
