@@ -4,7 +4,7 @@ defmodule ReIntegrations.Credipronto.Client do
   """
 
   @http_client Application.get_env(:re_integrations, :http, HTTPoison)
-  @url Application.get_env(:re_integrations, :credipronto_simulador_url, "")
+  @url Application.get_env(:re_integrations, :credipronto_simulator_url, "")
   @account_id Application.get_env(:re_integrations, :credipronto_account_id, "")
 
   def get(params) do

@@ -51,7 +51,7 @@ config :re,
   pipedrive_webhook_pass: "testpass"
 
 config :re_integrations,
-  credipronto_simulador_url: "http://www.emcasa.com/simulator",
+  credipronto_simulator_url: "http://www.emcasa.com/simulator",
   credipronto_account_id: "test_account_id"
 
 config :honeybadger,

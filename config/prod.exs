@@ -79,3 +79,7 @@ config :account_kit,
 config :honeybadger,
   api_key: System.get_env("HONEYBADGER_API_KEY"),
   environment_name: System.get_env("ENV")
+
+config :re_integrations,
+  credipronto_simulator_url: System.get_env("CREDIPRONTO_SIMULATOR_URL"),
+  credipronto_account_id: System.get_env("CREDIPRONTO_ACCOUNT_ID")
