@@ -9,35 +9,48 @@ defmodule ReIntegrations.Credipronto.Mapper do
 
   defp map_attributes({:mutuary, value}, acc), do: Map.put(acc, :mutuario, value)
 
-  defp map_attributes({:birthday, value}, acc), do: Map.put(acc, :data_nascimento, encode_date(value))
+  defp map_attributes({:birthday, value}, acc),
+    do: Map.put(acc, :data_nascimento, encode_date(value))
 
-  defp map_attributes({:include_coparticipant, value}, acc), do: Map.put(acc, :incluir_co, encode_boolean(value))
+  defp map_attributes({:include_coparticipant, value}, acc),
+    do: Map.put(acc, :incluir_co, encode_boolean(value))
 
-  defp map_attributes({:net_income, value}, acc), do: Map.put(acc, :renda_liquida, encode_decimal(value))
+  defp map_attributes({:net_income, value}, acc),
+    do: Map.put(acc, :renda_liquida, encode_decimal(value))
 
-  defp map_attributes({:amortization, value}, acc), do: Map.put(acc, :amortizacao, encode_boolean(value))
+  defp map_attributes({:amortization, value}, acc),
+    do: Map.put(acc, :amortizacao, encode_boolean(value))
 
-  defp map_attributes({:annual_interest, value}, acc), do: Map.put(acc, :juros_anual, encode_float(value))
+  defp map_attributes({:annual_interest, value}, acc),
+    do: Map.put(acc, :juros_anual, encode_float(value))
 
-  defp map_attributes({:birthday_coparticipant, value}, acc), do: Map.put(acc, :data_nascimento_co, encode_date(value))
+  defp map_attributes({:birthday_coparticipant, value}, acc),
+    do: Map.put(acc, :data_nascimento_co, encode_date(value))
 
-  defp map_attributes({:calculate_tr, value}, acc), do: Map.put(acc, :calcular_tr, encode_boolean(value))
+  defp map_attributes({:calculate_tr, value}, acc),
+    do: Map.put(acc, :calcular_tr, encode_boolean(value))
 
-  defp map_attributes({:evaluation_rate, value}, acc), do: Map.put(acc, :tarifa_avaliacao, encode_decimal(value))
+  defp map_attributes({:evaluation_rate, value}, acc),
+    do: Map.put(acc, :tarifa_avaliacao, encode_decimal(value))
 
-  defp map_attributes({:fundable_value, value}, acc), do: Map.put(acc, :valor_financiavel, encode_decimal(value))
+  defp map_attributes({:fundable_value, value}, acc),
+    do: Map.put(acc, :valor_financiavel, encode_decimal(value))
 
-  defp map_attributes({:home_equity_annual_interest, value}, acc), do: Map.put(acc, :juros_anual_home_equity, encode_float(value))
+  defp map_attributes({:home_equity_annual_interest, value}, acc),
+    do: Map.put(acc, :juros_anual_home_equity, encode_float(value))
 
   defp map_attributes({:insurer, value}, acc), do: Map.put(acc, :seguradora, value)
 
-  defp map_attributes({:itbi_value, value}, acc), do: Map.put(acc, :valor_itbi, encode_decimal(value))
+  defp map_attributes({:itbi_value, value}, acc),
+    do: Map.put(acc, :valor_itbi, encode_decimal(value))
 
-  defp map_attributes({:listing_price, value}, acc), do: Map.put(acc, :valor_imovel, encode_decimal(value))
+  defp map_attributes({:listing_price, value}, acc),
+    do: Map.put(acc, :valor_imovel, encode_decimal(value))
 
   defp map_attributes({:listing_type, value}, acc), do: Map.put(acc, :tipo_imovel, value)
 
-  defp map_attributes({:net_income_coparticipant, value}, acc), do: Map.put(acc, :renda_liquida_co, encode_decimal(value))
+  defp map_attributes({:net_income_coparticipant, value}, acc),
+    do: Map.put(acc, :renda_liquida_co, encode_decimal(value))
 
   defp map_attributes({:product_type, value}, acc), do: Map.put(acc, :tipo_produto, value)
 
@@ -50,15 +63,18 @@ defmodule ReIntegrations.Credipronto.Mapper do
   defp encode_date(nil), do: ""
 
   defp encode_date(%Date{} = date) do
-    day = date.day
+    day =
+      date.day
       |> to_string()
       |> String.pad_leading(2, "0")
 
-    month = date.month
+    month =
+      date.month
       |> to_string()
       |> String.pad_leading(2, "0")
 
-    year = date.year
+    year =
+      date.year
       |> to_string()
       |> String.pad_leading(2, "0")
 
@@ -79,7 +95,7 @@ defmodule ReIntegrations.Credipronto.Mapper do
     |> trim_currency()
   end
 
-  defp encode_float(float), do: :erlang.float_to_binary(float, [decimals: 10])
+  defp encode_float(float), do: :erlang.float_to_binary(float, decimals: 10)
 
   defp trim_currency("R$" <> rest), do: rest
 

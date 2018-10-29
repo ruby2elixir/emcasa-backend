@@ -49,11 +49,21 @@ defmodule Re.Simulators.Credipronto.Params do
     struct
     |> cast(params, @optional ++ @required)
     |> validate_required(@required)
-    |> validate_inclusion(:mutuary, @mutuary_options, message: "should be one of: [#{Enum.join(@mutuary_options, " ")}]")
-    |> validate_inclusion(:product_type, @product_types, message: "should be one of: [#{Enum.join(@product_types, " ")}]")
-    |> validate_inclusion(:listing_type, @listing_types, message: "should be one of: [#{Enum.join(@listing_types, " ")}]")
-    |> validate_inclusion(:insurer, @insurer_options, message: "should be one of: [#{Enum.join(@insurer_options, " ")}]")
-    |> validate_inclusion(:amortization, @amortization_options, message: "should be one of: [#{Enum.join(@amortization_options, " ")}]")
+    |> validate_inclusion(:mutuary, @mutuary_options,
+      message: "should be one of: [#{Enum.join(@mutuary_options, " ")}]"
+    )
+    |> validate_inclusion(:product_type, @product_types,
+      message: "should be one of: [#{Enum.join(@product_types, " ")}]"
+    )
+    |> validate_inclusion(:listing_type, @listing_types,
+      message: "should be one of: [#{Enum.join(@listing_types, " ")}]"
+    )
+    |> validate_inclusion(:insurer, @insurer_options,
+      message: "should be one of: [#{Enum.join(@insurer_options, " ")}]"
+    )
+    |> validate_inclusion(:amortization, @amortization_options,
+      message: "should be one of: [#{Enum.join(@amortization_options, " ")}]"
+    )
     |> validate_required_if(:include_coparticipant, :birthday_coparticipant)
     |> validate_required_if(:include_coparticipant, :net_income)
   end

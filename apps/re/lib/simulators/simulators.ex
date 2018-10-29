@@ -1,5 +1,4 @@
 defmodule Re.Simulators do
-
   alias Re.Simulators.Credipronto.Params
 
   alias ReIntegrations.Credipronto.{
@@ -11,9 +10,9 @@ defmodule Re.Simulators do
 
   def simulate(params) do
     with %{valid?: true} <- Params.changeset(%Params{}, params),
-        query <- map_query(params),
-        {:ok, %{body: body}} <- Client.get(query),
-        {:ok, payload} <- Poison.decode(body) do
+         query <- map_query(params),
+         {:ok, %{body: body}} <- Client.get(query),
+         {:ok, payload} <- Poison.decode(body) do
       {:ok, Mapper.payload_in(payload)}
     else
       %{valid?: false} = changeset -> {:error, changeset}

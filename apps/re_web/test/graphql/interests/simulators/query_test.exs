@@ -41,8 +41,6 @@ defmodule ReWeb.GraphQL.Interests.Simulators.QueryTest do
   }
 
   test "admin should request simulation", %{admin_conn: conn} do
-
-
     query = """
       query Simulate($input: SimulationRequest!) {
         simulate(input: $input) {
@@ -54,14 +52,10 @@ defmodule ReWeb.GraphQL.Interests.Simulators.QueryTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, @variables))
 
-    assert %{"cem" => "10,8%",
-             "cet" => "11,3%"}
-             == json_response(conn, 200)["data"]["simulate"]
+    assert %{"cem" => "10,8%", "cet" => "11,3%"} == json_response(conn, 200)["data"]["simulate"]
   end
 
   test "user should request simulation", %{user_conn: conn} do
-
-
     query = """
       query Simulate($input: SimulationRequest!) {
         simulate(input: $input) {
@@ -73,14 +67,10 @@ defmodule ReWeb.GraphQL.Interests.Simulators.QueryTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, @variables))
 
-    assert %{"cem" => "10,8%",
-             "cet" => "11,3%"}
-             == json_response(conn, 200)["data"]["simulate"]
+    assert %{"cem" => "10,8%", "cet" => "11,3%"} == json_response(conn, 200)["data"]["simulate"]
   end
 
   test "anonymous should not request simulation", %{unauthenticated_conn: conn} do
-
-
     query = """
       query Simulate($input: SimulationRequest!) {
         simulate(input: $input) {
