@@ -280,6 +280,15 @@ defmodule ReWeb.Types.Listing do
 
       resolve &Resolvers.Listings.relaxed/2
     end
+
+    @desc "Get address coverage"
+    field :address_is_covered, :boolean do
+      arg :state, non_null(:string)
+      arg :city, non_null(:string)
+      arg :neighborhood, non_null(:string)
+
+      resolve &Resolvers.Addresses.is_covered/2
+    end
   end
 
   object :listing_mutations do

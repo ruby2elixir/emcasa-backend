@@ -157,4 +157,44 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
              } == json_response(conn, 200)["data"]["district"]
     end
   end
+
+  describe "isCovered" do
+    @is_covered_query """
+      query AddressIsCovered (
+        $state: String!,
+        $city: String!,
+        $neighborhood: String!
+      ){
+        addressIsCovered (
+          state: $state,
+          city: $city,
+          neighborhood: $neighborhood
+        )
+      }
+    """
+
+    test "should confirm that address is is covered", %{unauthenticated_conn: conn} do
+      variables = %{
+        "state" => "RJ",
+        "city" => "Rio de Janeiro",
+        "neighborhood" => "Joá"
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@is_covered_query, variables))
+
+      assert json_response(conn, 200)["data"]["addressIsCovered"]
+    end
+
+    test "should deny that address is is covered", %{unauthenticated_conn: conn} do
+      variables = %{
+        "state" => "SP",
+        "city" => "São Paulo",
+        "neighborhood" => "Morumbi"
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@is_covered_query, variables))
+
+      refute json_response(conn, 200)["data"]["addressIsCovered"]
+    end
+  end
 end
