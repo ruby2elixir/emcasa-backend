@@ -33,7 +33,7 @@ defmodule ReWeb.Types.Listing do
     field :is_active, :boolean
     field :is_exclusive, :boolean
     field :is_release, :boolean
-    field :inserted_at, :datetime
+    field :inserted_at, :naive_datetime
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
@@ -227,7 +227,7 @@ defmodule ReWeb.Types.Listing do
 
   object :price_history do
     field :price, :integer
-    field :inserted_at, :datetime
+    field :inserted_at, :naive_datetime
   end
 
   object :listing_queries do
