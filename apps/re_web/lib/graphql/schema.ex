@@ -5,6 +5,7 @@ defmodule ReWeb.Schema do
   use Absinthe.Schema
 
   import_types ReWeb.Types.{Listing, User, Message, Interest, Dashboard, Calendar}
+  import_types Absinthe.Type.Custom
 
   alias ReWeb.GraphQL.Middlewares
 

@@ -42,10 +42,17 @@ config :re, ReIntegrations.Notifications.Emails.Mailer, adapter: Swoosh.Adapters
 config :re, :visualizations, Re.TestVisualizations
 config :re, :emails, ReIntegrations.Notifications.Emails.UserTest
 config :re, :elasticsearch, ReWeb.TestSearch
-config :re, :http, Re.TestHTTP
+config :re_integrations, :http, ReIntegrations.TestHTTP
 config :re, :pipedrive, ReWeb.TestPipedriveServer
 config :re, :account_kit, Re.TestAccountKit
 
 config :re,
   pipedrive_webhook_user: "testuser",
   pipedrive_webhook_pass: "testpass"
+
+config :re_integrations,
+  credipronto_simulator_url: "http://www.emcasa.com/simulator",
+  credipronto_account_id: "test_account_id"
+
+config :honeybadger,
+  api_key: ""

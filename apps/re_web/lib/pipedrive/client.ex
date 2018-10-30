@@ -3,7 +3,7 @@ defmodule ReWeb.Pipedrive.Client do
   Module to wrap pipedrive.com API logic
   """
 
-  @http_client Application.get_env(:re, :http_client, HTTPoison)
+  @http_client Application.get_env(:re_integrations, :http_client, HTTPoison)
   @url Application.get_env(:re, :pipedrive_url, "")
   @token Application.get_env(:re, :pipedrive_token, "")
   @headers [{"Content-Type", "application/json"}]

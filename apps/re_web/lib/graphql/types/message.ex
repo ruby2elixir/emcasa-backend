@@ -14,7 +14,7 @@ defmodule ReWeb.Types.Message do
     field :message, :string
     field :read, :boolean
     field :notified, :boolean
-    field :inserted_at, :datetime
+    field :inserted_at, :naive_datetime
 
     field :sender, :user, resolve: dataloader(Re.Accounts)
     field :receiver, :user, resolve: dataloader(Re.Accounts)
@@ -78,11 +78,6 @@ defmodule ReWeb.Types.Message do
 
       resolve &MessagesResolver.mark_as_read/2
     end
-  end
-
-  scalar :datetime, name: "DateTime" do
-    serialize(&NaiveDateTime.to_iso8601/1)
-    parse(&ReWeb.Graphql.SchemaHelpers.parse_datetime/1)
   end
 
   object :message_subscriptions do
