@@ -26,16 +26,16 @@ defmodule ReWeb.Types.Calendar do
   end
 
   object :datetime_option do
-    field :datetime, non_null(:datetime)
+    field :datetime, non_null(:naive_datetime)
   end
 
   input_object :datetime_option_input do
-    field :datetime, non_null(:datetime)
+    field :datetime, non_null(:naive_datetime)
   end
 
   object :calendar_queries do
     @desc "Get tour scheduling options"
-    field :tour_options, list_of(:datetime), resolve: &Resolvers.Calendars.tour_options/2
+    field :tour_options, list_of(:naive_datetime), resolve: &Resolvers.Calendars.tour_options/2
   end
 
   object :calendar_mutations do
