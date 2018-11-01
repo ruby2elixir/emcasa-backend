@@ -36,7 +36,9 @@ defmodule ReWeb.Types.Interest do
     field :phone, :string
     field :message, :string
 
-    field :user, :user, resolve: dataloader(Re.Accounts)
+    field :state, :string
+    field :city, :string
+    field :neighborhood, :string
   end
 
   object :price_request do
@@ -139,7 +141,10 @@ defmodule ReWeb.Types.Interest do
       arg :phone, :string
       arg :email, :string
       arg :message, :string
-      arg :address_id, non_null(:id)
+
+      arg :state, non_null(:string)
+      arg :city, non_null(:string)
+      arg :neighborhood, non_null(:string)
 
       resolve &InterestsResolver.notify_when_covered/2
     end

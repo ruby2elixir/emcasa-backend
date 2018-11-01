@@ -180,7 +180,8 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
         "neighborhood" => "Joá"
       }
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@is_covered_query, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@is_covered_query, variables))
 
       assert json_response(conn, 200)["data"]["addressIsCovered"]
     end
@@ -192,7 +193,8 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
         "neighborhood" => "Morumbi"
       }
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@is_covered_query, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@is_covered_query, variables))
 
       refute json_response(conn, 200)["data"]["addressIsCovered"]
     end

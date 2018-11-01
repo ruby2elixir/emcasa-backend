@@ -166,7 +166,6 @@ defmodule ReIntegrations.Notifications.Emails.Server do
 
   defp handle_data(%{"notificationCoverageAsked" => %{"id" => id}}, state) do
     Re.Interests.NotifyWhenCovered
-    |> preload([:user, :address])
     |> Repo.get(id)
     |> case do
       nil ->

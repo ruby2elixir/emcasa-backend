@@ -62,7 +62,10 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
 
     assert %{"id" => to_string(user.id)} == response["data"]["tourSchedule"]["user"]
     assert %{"id" => to_string(listing.id)} == response["data"]["tourSchedule"]["listing"]
-    assert [%{"datetime" => "2018-01-01T10:00:00.000000"}] == response["data"]["tourSchedule"]["options"]
+
+    assert [%{"datetime" => "2018-01-01T10:00:00.000000"}] ==
+             response["data"]["tourSchedule"]["options"]
+
     assert response["data"]["tourSchedule"]["wantsTour"]
     assert response["data"]["tourSchedule"]["wantsPictures"]
 
@@ -109,7 +112,10 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
 
     assert %{"id" => to_string(user.id)} == response["data"]["tourSchedule"]["user"]
     assert %{"id" => to_string(listing.id)} == response["data"]["tourSchedule"]["listing"]
-    assert [%{"datetime" => "2018-01-01T10:00:00.000000"}] == response["data"]["tourSchedule"]["options"]
+
+    assert [%{"datetime" => "2018-01-01T10:00:00.000000"}] ==
+             response["data"]["tourSchedule"]["options"]
+
     assert response["data"]["tourSchedule"]["wantsTour"]
     assert response["data"]["tourSchedule"]["wantsPictures"]
 
