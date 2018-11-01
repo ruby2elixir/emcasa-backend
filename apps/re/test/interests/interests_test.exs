@@ -133,17 +133,15 @@ defmodule Re.InterestsTest do
   describe "notify_when_covered/1" do
     test "should request notification for address with user" do
       {:ok, notify_when_covered} =
-        Interests.notify_when_covered(
-          %{
-            name: "naem",
-            phone: "1920381",
-            email: "user@emcasa.com",
-            message: "message",
-            state: "SP",
-            city: "São Paulo",
-            neighborhood: "Morumbi"
-          }
-        )
+        Interests.notify_when_covered(%{
+          name: "naem",
+          phone: "1920381",
+          email: "user@emcasa.com",
+          message: "message",
+          state: "SP",
+          city: "São Paulo",
+          neighborhood: "Morumbi"
+        })
 
       assert "naem" == notify_when_covered.name
       assert "1920381" == notify_when_covered.phone
@@ -158,10 +156,10 @@ defmodule Re.InterestsTest do
       {:error, changeset} = Interests.notify_when_covered(%{})
 
       assert [
-        state: {"can't be blank", [validation: :required]},
-        city: {"can't be blank", [validation: :required]},
-        neighborhood: {"can't be blank", [validation: :required]}
-        ] == changeset.errors
+               state: {"can't be blank", [validation: :required]},
+               city: {"can't be blank", [validation: :required]},
+               neighborhood: {"can't be blank", [validation: :required]}
+             ] == changeset.errors
     end
   end
 end

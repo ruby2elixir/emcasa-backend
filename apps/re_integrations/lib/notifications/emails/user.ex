@@ -128,7 +128,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
         message: message,
         state: state,
         city: city,
-        neighborhood: neighborhood,
+        neighborhood: neighborhood
       }) do
     new()
     |> to(@to)

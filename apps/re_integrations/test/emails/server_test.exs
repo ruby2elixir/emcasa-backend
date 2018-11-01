@@ -260,7 +260,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           message: request.message,
           state: request.state,
           city: request.city,
-          neighborhood: request.neighborhood,
+          neighborhood: request.neighborhood
         })
       )
     end
