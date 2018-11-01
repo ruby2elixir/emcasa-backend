@@ -18,23 +18,26 @@ defmodule ReWeb.GraphQL.Interests.NotifyWhenCovered.MutationTest do
   end
 
   test "anonymous should request notification when covered", %{unauthenticated_conn: conn} do
-    %{id: address_id} = insert(:address)
-
     args = %{
       "name" => "Mah Name",
       "email" => "testemail@emcasa.com",
       "phone" => "123321123",
       "message" => "this website is cool",
-      "addressId" => address_id
+      "state" => "SP",
+      "city" => "São Paulo",
+      "neighborhood" => "Morumbi"
     }
 
     mutation = """
-      mutation NotifyWhenCovered($name: String, $email: String, $phone: String, $message: String, $addressId: ID!) {
-        notifyWhenCovered(name: $name, email: $email, phone: $phone, message: $message, addressId: $addressId) {
+      mutation NotifyWhenCovered($name: String, $email: String, $phone: String, $message: String, $state: String!, $city: String!, $neighborhood: String!) {
+        notifyWhenCovered(name: $name, email: $email, phone: $phone, message: $message, state: $state, city: $city, neighborhood: $neighborhood) {
           name
           email
           phone
           message
+          state
+          city
+          neighborhood
         }
       }
     """
@@ -45,31 +48,42 @@ defmodule ReWeb.GraphQL.Interests.NotifyWhenCovered.MutationTest do
              "name" => "Mah Name",
              "email" => "testemail@emcasa.com",
              "phone" => "123321123",
-             "message" => "this website is cool"
+             "message" => "this website is cool",
+             "state" => "SP",
+             "city" => "São Paulo",
+             "neighborhood" => "Morumbi"
            } == json_response(conn, 200)["data"]["notifyWhenCovered"]
 
     assert notify_when_covered = Repo.get_by(NotifyWhenCovered, name: "Mah Name")
-    assert address_id == notify_when_covered.address_id
+    assert "testemail@emcasa.com" == notify_when_covered.email
+    assert "123321123" == notify_when_covered.phone
+    assert "this website is cool" == notify_when_covered.message
+    assert "SP" == notify_when_covered.state
+    assert "São Paulo" == notify_when_covered.city
+    assert "Morumbi" == notify_when_covered.neighborhood
   end
 
-  test "user should request notification when covered", %{user_conn: conn, user_user: user} do
-    %{id: address_id} = insert(:address)
-
+  test "user should request notification when covered", %{user_conn: conn} do
     args = %{
       "name" => "Mah Name",
       "email" => "testemail@emcasa.com",
       "phone" => "123321123",
       "message" => "this website is cool",
-      "addressId" => address_id
+      "state" => "SP",
+      "city" => "São Paulo",
+      "neighborhood" => "Morumbi"
     }
 
     mutation = """
-      mutation NotifyWhenCovered($name: String, $email: String, $phone: String, $message: String, $addressId: ID!) {
-        notifyWhenCovered(name: $name, email: $email, phone: $phone, message: $message, addressId: $addressId) {
+      mutation NotifyWhenCovered($name: String, $email: String, $phone: String, $message: String, $state: String!, $city: String!, $neighborhood: String!) {
+        notifyWhenCovered(name: $name, email: $email, phone: $phone, message: $message, state: $state, city: $city, neighborhood: $neighborhood) {
           name
           email
           phone
           message
+          state
+          city
+          neighborhood
         }
       }
     """
@@ -80,11 +94,18 @@ defmodule ReWeb.GraphQL.Interests.NotifyWhenCovered.MutationTest do
              "name" => "Mah Name",
              "email" => "testemail@emcasa.com",
              "phone" => "123321123",
-             "message" => "this website is cool"
+             "message" => "this website is cool",
+             "state" => "SP",
+             "city" => "São Paulo",
+             "neighborhood" => "Morumbi"
            } == json_response(conn, 200)["data"]["notifyWhenCovered"]
 
     assert notify_when_covered = Repo.get_by(NotifyWhenCovered, name: "Mah Name")
-    assert user.id == notify_when_covered.user_id
-    assert address_id == notify_when_covered.address_id
+    assert "testemail@emcasa.com" == notify_when_covered.email
+    assert "123321123" == notify_when_covered.phone
+    assert "this website is cool" == notify_when_covered.message
+    assert "SP" == notify_when_covered.state
+    assert "São Paulo" == notify_when_covered.city
+    assert "Morumbi" == notify_when_covered.neighborhood
   end
 end

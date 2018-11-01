@@ -229,9 +229,6 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
     end
 
     test "notify when covered requested" do
-      user = insert(:user)
-      address = insert(:address)
-
       %{id: id} =
         request =
         insert(:notify_when_covered,
@@ -239,8 +236,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           phone: "12321",
           email: "user@emcasa.com",
           message: "msg",
-          address: address,
-          user: user
+          state: "SP",
+          city: "São Pauo",
+          neighborhood: "Morumbi"
         )
 
       Emails.Server.handle_info(
@@ -260,96 +258,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           email: request.email,
           phone: request.phone,
           message: request.message,
-          address: %{
-            street: address.street,
-            street_number: address.street_number,
-            city: address.city,
-            state: address.state,
-            neighborhood: address.neighborhood
-          },
-          user: %{
-            name: user.name,
-            phone: user.phone,
-            email: user.email
-          }
-        })
-      )
-    end
-
-    test "notify when covered requested and fallback to user info" do
-      user = insert(:user)
-      address = insert(:address)
-
-      %{id: id} = insert(:notify_when_covered, address: address, user: user)
-
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"notificationCoverageAsked" => %{"id" => id}}
-            }
-          }
-        },
-        []
-      )
-
-      assert_email_sent(
-        Emails.User.notification_coverage_asked(%{
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          message: nil,
-          address: %{
-            street: address.street,
-            street_number: address.street_number,
-            city: address.city,
-            state: address.state,
-            neighborhood: address.neighborhood
-          },
-          user: %{
-            name: user.name,
-            phone: user.phone,
-            email: user.email
-          }
-        })
-      )
-    end
-
-    test "notify when covered requested and fallback to user info but he doesn't have it" do
-      user = insert(:user, email: nil, phone: nil, name: nil)
-      address = insert(:address)
-
-      %{id: id} = insert(:notify_when_covered, address: address, user: user)
-
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"notificationCoverageAsked" => %{"id" => id}}
-            }
-          }
-        },
-        []
-      )
-
-      assert_email_sent(
-        Emails.User.notification_coverage_asked(%{
-          name: nil,
-          email: nil,
-          phone: nil,
-          message: nil,
-          address: %{
-            street: address.street,
-            street_number: address.street_number,
-            city: address.city,
-            state: address.state,
-            neighborhood: address.neighborhood
-          },
-          user: %{
-            name: user.name,
-            phone: user.phone,
-            email: user.email
-          }
+          state: request.state,
+          city: request.city,
+          neighborhood: request.neighborhood,
         })
       )
     end

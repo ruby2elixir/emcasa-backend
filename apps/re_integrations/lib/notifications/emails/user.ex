@@ -126,33 +126,28 @@ defmodule ReIntegrations.Notifications.Emails.User do
         email: email,
         phone: phone,
         message: message,
-        user: user,
-        address: address
+        state: state,
+        city: city,
+        neighborhood: neighborhood,
       }) do
     new()
     |> to(@to)
     |> from(@admin_email)
     |> subject("Um usuário pediu pra ser notificado quando cobrirmos uma região")
-    |> html_body("Nome: #{name || user.name}<br>
-                  Email: #{email || user.email}<br>
-                  Telefone: #{phone || user.phone}<br>
+    |> html_body("Nome: #{name}<br>
+                  Email: #{email}<br>
+                  Telefone: #{phone}<br>
                   Mensagem: #{message}<br>
-                  Endereço:<br>
-                    Rua: #{address.street}<br>
-                    Número: #{address.street_number}<br>
-                    Cidade: #{address.city}<br>
-                    Estado: #{address.state}<br>
-                    Bairro: #{address.neighborhood}<br>")
-    |> text_body("Nome: #{name || user.name}
-                  Email: #{email || user.email}
-                  Telefone: #{phone || user.phone}
+                  Cidade: #{city}<br>
+                  Estado: #{state}<br>
+                  Bairro: #{neighborhood}<br>")
+    |> text_body("Nome: #{name}
+                  Email: #{email}
+                  Telefone: #{phone}
                   Mensagem: #{message}
-                  Endereço:
-                    Rua: #{address.street}
-                    Número: #{address.street_number}
-                    Cidade: #{address.city}
-                    Estado: #{address.state}
-                    Bairro: #{address.neighborhood}")
+                  Cidade: #{city}
+                  Estado: #{state}
+                  Bairro: #{neighborhood}")
   end
 
   def tour_appointment(%{

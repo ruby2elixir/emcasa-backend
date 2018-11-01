@@ -12,14 +12,15 @@ defmodule Re.Interests.NotifyWhenCovered do
     field :phone, :string
     field :message, :string
 
-    belongs_to :user, Re.User
-    belongs_to :address, Re.Address
+    field :state, :string
+    field :city, :string
+    field :neighborhood, :string
 
     timestamps()
   end
 
-  @required ~w(address_id)a
-  @optional ~w(name email phone message user_id)a
+  @required ~w(state city neighborhood)a
+  @optional ~w(name email phone message)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
