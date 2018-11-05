@@ -55,4 +55,4 @@ config :re_integrations,
   credipronto_account_id: "test_account_id"
 
 config :honeybadger,
-  api_key: ""
+  environment_name: :test

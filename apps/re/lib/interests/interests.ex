@@ -56,10 +56,9 @@ defmodule Re.Interests do
     end
   end
 
-  def notify_when_covered(params, user \\ nil) do
+  def notify_when_covered(params) do
     %NotifyWhenCovered{}
     |> NotifyWhenCovered.changeset(params)
-    |> attach_user(user)
     |> Repo.insert()
   end
 

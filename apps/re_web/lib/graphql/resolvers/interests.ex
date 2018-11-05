@@ -28,9 +28,7 @@ defmodule ReWeb.Resolvers.Interests do
     end
   end
 
-  def notify_when_covered(params, %{context: %{current_user: current_user}}) do
-    Interests.notify_when_covered(params, current_user)
-  end
+  def notify_when_covered(params, _), do: Interests.notify_when_covered(params)
 
   def interest_types(_, _), do: {:ok, Interests.get_types()}
 
