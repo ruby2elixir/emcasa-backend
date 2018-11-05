@@ -4,7 +4,12 @@ defmodule ReWeb.Schema do
   """
   use Absinthe.Schema
 
-  import_types ReWeb.Types.{Listing, User, Message, Interest, Dashboard, Calendar}
+  import_types ReWeb.Types.Listing
+  import_types ReWeb.Types.User
+  import_types ReWeb.Types.Message
+  import_types ReWeb.Types.Interest
+  import_types ReWeb.Types.Dashboard
+  import_types ReWeb.Types.Calendar
   import_types Absinthe.Type.Custom
 
   alias ReWeb.GraphQL.Middlewares
