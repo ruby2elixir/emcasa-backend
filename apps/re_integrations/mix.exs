@@ -41,7 +41,7 @@ defmodule ReIntegrations.Mixfile do
       {:comeonin, "~> 3.2"},
       {:swoosh, "~> 0.13"},
       {:elasticsearch, "~> 0.4"},
-      {:absinthe, "~> 1.4"},
+      {:absinthe, "~> 1.5.0-alpha.1"},
       {:phoenix_swoosh, "~> 0.2"},
       {:pigeon, "~> 1.2.2"},
       {:kadabra, "~> 0.4.2"},

@@ -40,4 +40,6 @@ defmodule ReWeb.Endpoint do
   plug(Timber.Integrations.EventPlug)
 
   plug(ReWeb.Router)
+
+  def node_name, do: node()
 end
