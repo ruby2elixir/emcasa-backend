@@ -6,6 +6,8 @@ defmodule ReWeb.Resolvers.Dashboard do
 
   alias Re.{
     Listing,
+    Listings,
+    Listings.Highlights,
     PriceSuggestions,
     Repo
   }
@@ -83,12 +85,37 @@ defmodule ReWeb.Resolvers.Dashboard do
     end
   end
 
-  def listing_highlight_zap(_, _) do
-    {:ok, %{}}
+  def listing_zap_highlights(_, %{context: %{current_user: current_user}}) do
+    with :ok <- is_admin(current_user),
+      do: {:ok, Highlights.get_zap_highlights()}
   end
 
-  def listing_highlight_vivareal(_, _) do
-    {:ok, %{}}
+  def listing_zap_super_highlights(_, %{context: %{current_user: current_user}}) do
+    with :ok <- is_admin(current_user),
+      do: {:ok, Highlights.get_zap_super_highlights()}
+  end
+
+  def listing_vivareal_highlights(_, %{context: %{current_user: current_user}}) do
+    with :ok <- is_admin(current_user),
+      do: {:ok, Highlights.get_vivareal_highlights()}
+  end
+
+  def listing_highlight_zap(%{listing_id: listing_id}, %{context: %{current_user: current_user}}) do
+    with :ok <- is_admin(current_user),
+         {:ok, listing} <- Listings.get(listing_id),
+      do: Highlights.insert_zap_highlight(listing)
+  end
+
+  def listing_super_highlight_zap(%{listing_id: listing_id}, %{context: %{current_user: current_user}}) do
+    with :ok <- is_admin(current_user),
+         {:ok, listing} <- Listings.get(listing_id),
+      do: Highlights.insert_zap_super_highlight(listing)
+  end
+
+  def listing_highlight_vivareal(%{listing_id: listing_id}, %{context: %{current_user: current_user}}) do
+    with :ok <- is_admin(current_user),
+         {:ok, listing} <- Listings.get(listing_id),
+      do: Highlights.insert_vivareal_highlight(listing)
   end
 
   defp is_admin(nil), do: {:error, :unautenticated}
