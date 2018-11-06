@@ -111,45 +111,25 @@ defmodule Re.Factory do
     }
   end
 
-  def listing_visualisation_factory do
-    %Re.Statistics.ListingVisualization{}
-  end
+  def listing_visualisation_factory, do: %Re.Statistics.ListingVisualization{}
 
-  def listings_favorites_factory do
-    %Re.Favorite{}
-  end
+  def listings_favorites_factory, do: %Re.Favorite{}
 
-  def listing_blacklist_factory do
-    %Re.Blacklist{}
-  end
+  def listing_blacklist_factory, do: %Re.Blacklist{}
 
-  def message_factory do
-    %Re.Message{message: Shakespeare.hamlet()}
-  end
+  def message_factory, do: %Re.Message{message: Shakespeare.hamlet()}
 
-  def tour_visualisation_factory do
-    %Re.Statistics.TourVisualization{}
-  end
+  def tour_visualisation_factory, do: %Re.Statistics.TourVisualization{}
 
-  def in_person_visit_factory do
-    %Re.Statistics.InPersonVisit{}
-  end
+  def in_person_visit_factory, do: %Re.Statistics.InPersonVisit{}
 
-  def channel_factory do
-    %Re.Messages.Channels.Channel{}
-  end
+  def channel_factory, do: %Re.Messages.Channels.Channel{}
 
-  def price_history_factory do
-    %Re.Listings.PriceHistory{}
-  end
+  def price_history_factory, do: %Re.Listings.PriceHistory{}
 
-  def factors_factory do
-    %Re.PriceSuggestions.Factors{}
-  end
+  def factors_factory, do: %Re.PriceSuggestions.Factors{}
 
-  def contact_request_factory do
-    %Re.Interests.ContactRequest{}
-  end
+  def contact_request_factory, do: %Re.Interests.ContactRequest{}
 
   def price_suggestion_request_factory do
     %Re.PriceSuggestions.Request{
@@ -163,13 +143,15 @@ defmodule Re.Factory do
     }
   end
 
-  def notify_when_covered_factory do
-    %Re.Interests.NotifyWhenCovered{}
-  end
+  def notify_when_covered_factory, do: %Re.Interests.NotifyWhenCovered{}
 
-  def tour_appointment_factory do
-    %Re.Calendars.TourAppointment{}
-  end
+  def tour_appointment_factory, do: %Re.Calendars.TourAppointment{}
+
+  def zap_highlight_factory, do: %Re.Listings.Highlights.Zap{}
+
+  def zap_super_highlight_factory, do: %Re.Listings.Highlights.ZapSuper{}
+
+  def vivareal_highlight_factory, do: %Re.Listings.Highlights.Vivareal{}
 
   defp random_postcode do
     first =
