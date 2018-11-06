@@ -49,3 +49,7 @@ config :honeybadger,
 config :credipronto,
   simulador_url: "CREDIPRONTO_URL",
   account_id: "CREDIPRONTO_ACCOUNT_ID"
+
+config :re_integrations,
+  credipronto_simulator_url: "CREDIPRONTO_URL",
+  credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID"
