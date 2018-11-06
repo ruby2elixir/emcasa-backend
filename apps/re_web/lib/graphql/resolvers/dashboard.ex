@@ -83,6 +83,14 @@ defmodule ReWeb.Resolvers.Dashboard do
     end
   end
 
+  def listing_highlight_zap(_, _) do
+    {:ok, %{}}
+  end
+
+  def listing_highlight_vivareal(_, _) do
+    {:ok, %{}}
+  end
+
   defp is_admin(nil), do: {:error, :unautenticated}
   defp is_admin(%{role: "admin"}), do: :ok
   defp is_admin(_), do: {:error, :forbidden}
