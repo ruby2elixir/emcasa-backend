@@ -111,7 +111,7 @@ defmodule ReWeb.Types.Dashboard do
         end
       end)
 
-      trigger :listing_highlight_zap,
+      trigger :listing_highlight_vivareal,
         topic: fn _ -> "listing_highlighted_vivareal" end
     end
   end
