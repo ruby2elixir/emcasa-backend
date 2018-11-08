@@ -3,27 +3,27 @@ defmodule ReWeb.GraphQL.Dashboard.SubscriptionTest do
 
   @subscriptions [
     {"""
-    subscription {
-      listingHighlightedZap {
-        id
-      }
-    }
-    """, "listingHighlightedZap", "listingHighlightZap"},
+     subscription {
+       listingHighlightedZap {
+         id
+       }
+     }
+     """, "listingHighlightedZap", "listingHighlightZap"},
     {"""
-    subscription {
-      listingSuperHighlightedZap {
-        id
-      }
-    }
-    """, "listingSuperHighlightedZap", "listingSuperHighlightZap"},
+     subscription {
+       listingSuperHighlightedZap {
+         id
+       }
+     }
+     """, "listingSuperHighlightedZap", "listingSuperHighlightZap"},
     {"""
-    subscription {
-      listingHighlightedVivareal {
-        id
-      }
-    }
-    """, "listingHighlightedVivareal", "listingHighlightVivareal"}
-    ]
+     subscription {
+       listingHighlightedVivareal {
+         id
+       }
+     }
+     """, "listingHighlightedVivareal", "listingHighlightVivareal"}
+  ]
 
   import Re.Factory
 

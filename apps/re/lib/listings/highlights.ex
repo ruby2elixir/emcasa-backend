@@ -34,5 +34,4 @@ defmodule Re.Listings.Highlights do
     |> schema.changeset(%{listing_id: listing.id})
     |> Repo.insert()
   end
-
 end

@@ -112,33 +112,37 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
   end
 
   describe "highlights" do
-    Enum.map([
-      {:zap_highlight, "listingZapHighlights"},
-      {:zap_super_highlight, "listingZapSuperHighlights"},
-      {:vivareal_highlight, "listingVivarealHighlights"}
-    ], fn {struct, query} ->
-      @struct struct
-      @query query
+    Enum.map(
+      [
+        {:zap_highlight, "listingZapHighlights"},
+        {:zap_super_highlight, "listingZapSuperHighlights"},
+        {:vivareal_highlight, "listingVivarealHighlights"}
+      ],
+      fn {struct, query} ->
+        @struct struct
+        @query query
 
-      test "query #{@query}", %{admin_conn: conn} do
-        listing1 = insert(:listing)
-        listing2 = insert(:listing)
-        insert(:listing)
-        insert(@struct, listing: listing1)
-        insert(@struct, listing: listing2)
+        test "query #{@query}", %{admin_conn: conn} do
+          listing1 = insert(:listing)
+          listing2 = insert(:listing)
+          insert(:listing)
+          insert(@struct, listing: listing1)
+          insert(@struct, listing: listing2)
 
-        query = """
-          query MyQuery {
-            #{@query} {
-              id
+          query = """
+            query MyQuery {
+              #{@query} {
+                id
+              }
             }
-          }
-        """
+          """
 
-        conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+          conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-        assert [%{"id" => to_string(listing1.id)}, %{"id" => to_string(listing2.id)}] == json_response(conn, 200)["data"][@query] |> Enum.sort()
+          assert [%{"id" => to_string(listing1.id)}, %{"id" => to_string(listing2.id)}] ==
+                   json_response(conn, 200)["data"][@query] |> Enum.sort()
+        end
       end
-    end)
+    )
   end
 end
