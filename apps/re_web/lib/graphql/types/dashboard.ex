@@ -22,31 +22,24 @@ defmodule ReWeb.Types.Dashboard do
     field :area_count, :integer, resolve: &DashboardResolvers.area_count/2
   end
 
-  input_object :listing_highlight_zap_input do
-    field :listing_id, non_null(:id)
-    field :highlight, non_null(:boolean)
-    field :super_highlight, non_null(:boolean)
-  end
-
-  input_object :listing_highlight_vivareal_input do
-    field :listing_id, non_null(:id)
-    field :highlight, non_null(:boolean)
-  end
-
-  object :listing_highlight_zap do
-    field :listing, :listing
-    field :highlight, :boolean
-    field :super_highlight, :boolean
-  end
-
-  object :listing_highlight_vivareal do
-    field :listing, :listing
-    field :highlight, :boolean
-  end
-
   object :dashboard_queries do
     @desc "Get dashboard stats"
     field :dashboard, :dashboard, resolve: &DashboardResolvers.index/2
+
+    @desc "Get zap highlights"
+    field :listing_zap_highlights, list_of(:listing) do
+      resolve &DashboardResolvers.listing_zap_highlights/2
+    end
+
+    @desc "Get zap super highlights"
+    field :listing_zap_super_highlights, list_of(:listing) do
+      resolve &DashboardResolvers.listing_zap_super_highlights/2
+    end
+
+    @desc "Get vivareal highlights"
+    field :listing_vivareal_highlights, list_of(:listing) do
+      resolve &DashboardResolvers.listing_vivareal_highlights/2
+    end
   end
 
   object :dashboard_mutations do
@@ -57,16 +50,23 @@ defmodule ReWeb.Types.Dashboard do
       resolve &DashboardResolvers.upload_factors_csv/2
     end
 
-    @desc "Bulk highligh listing on zap"
-    field :listing_highlight_zap, :listing_highlight_zap do
-      arg :input, non_null(:listing_highlight_zap_input)
+    @desc "Highligh listing on zap"
+    field :listing_highlight_zap, :listing do
+      arg :listing_id, non_null(:id)
 
       resolve &DashboardResolvers.listing_highlight_zap/2
     end
 
-    @desc "Bulk highligh listing on vivareal"
-    field :listing_highlight_vivareal, :listing_highlight_vivareal do
-      arg :input, non_null(:listing_highlight_vivareal_input)
+    @desc "Super highligh listing on zap"
+    field :listing_super_highlight_zap, :listing do
+      arg :listing_id, non_null(:id)
+
+      resolve &DashboardResolvers.listing_super_highlight_zap/2
+    end
+
+    @desc "Highligh listing on vivareal"
+    field :listing_highlight_vivareal, :listing do
+      arg :listing_id, non_null(:id)
 
       resolve &DashboardResolvers.listing_highlight_vivareal/2
     end
@@ -74,7 +74,7 @@ defmodule ReWeb.Types.Dashboard do
 
   object :dashboard_subscriptions do
     @desc "Subscribe to zap listing highlits"
-    field :listing_highlighted_zap, :listing_highlight_zap do
+    field :listing_highlighted_zap, :listing do
       config(fn _args, %{context: %{current_user: current_user}} ->
         case current_user do
           %{role: "admin"} -> {:ok, topic: "listing_highlighted_zap"}
@@ -87,8 +87,22 @@ defmodule ReWeb.Types.Dashboard do
         topic: fn _ -> "listing_highlighted_zap" end
     end
 
+    @desc "Subscribe to zap listing super highlits"
+    field :listing_super_highlighted_zap, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          %{role: "admin"} -> {:ok, topic: "listing_super_highlighted_zap"}
+          %{} -> {:error, :unauthorized}
+          _ -> {:error, :unauthenticated}
+        end
+      end)
+
+      trigger :listing_super_highlight_zap,
+        topic: fn _ -> "listing_super_highlighted_zap" end
+    end
+
     @desc "Subscribe to vivareal listing highlits"
-    field :listing_highlighted_vivareal, :listing_highlight_vivareal do
+    field :listing_highlighted_vivareal, :listing do
       config(fn _args, %{context: %{current_user: current_user}} ->
         case current_user do
           %{role: "admin"} -> {:ok, topic: "listing_highlighted_vivareal"}
@@ -97,7 +111,7 @@ defmodule ReWeb.Types.Dashboard do
         end
       end)
 
-      trigger :listing_highlight_zap,
+      trigger :listing_highlight_vivareal,
         topic: fn _ -> "listing_highlighted_vivareal" end
     end
   end
