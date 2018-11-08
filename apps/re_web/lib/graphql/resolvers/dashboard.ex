@@ -103,22 +103,25 @@ defmodule ReWeb.Resolvers.Dashboard do
   def listing_highlight_zap(%{listing_id: listing_id}, %{context: %{current_user: current_user}}) do
     with :ok <- is_admin(current_user),
          {:ok, listing} <- Listings.get(listing_id),
-      do: Highlights.insert_zap_highlight(listing)
+         {:ok, _highlight} <- Highlights.insert_zap_highlight(listing),
+      do: {:ok, listing}
   end
 
   def listing_super_highlight_zap(%{listing_id: listing_id}, %{context: %{current_user: current_user}}) do
     with :ok <- is_admin(current_user),
          {:ok, listing} <- Listings.get(listing_id),
-      do: Highlights.insert_zap_super_highlight(listing)
+         {:ok, _highlight} <- Highlights.insert_zap_super_highlight(listing),
+      do: {:ok, listing}
   end
 
   def listing_highlight_vivareal(%{listing_id: listing_id}, %{context: %{current_user: current_user}}) do
     with :ok <- is_admin(current_user),
          {:ok, listing} <- Listings.get(listing_id),
-      do: Highlights.insert_vivareal_highlight(listing)
+         {:ok, _highlight} <- Highlights.insert_vivareal_highlight(listing),
+      do: {:ok, listing}
   end
 
-  defp is_admin(nil), do: {:error, :unautenticated}
+  defp is_admin(nil), do: {:error, :unauthorized}
   defp is_admin(%{role: "admin"}), do: :ok
   defp is_admin(_), do: {:error, :forbidden}
 end
