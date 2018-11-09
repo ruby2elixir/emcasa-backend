@@ -12,8 +12,6 @@ alias Re.{
   User
 }
 
-alias Comeonin.Bcrypt
-
 Repo.delete_all(Image)
 Repo.delete_all(Interest)
 Repo.delete_all(Listing)
@@ -181,7 +179,8 @@ Repo.delete_all(User)
     score: 3,
     images: [image1],
     user: admin1,
-    address: address1
+    address: address1,
+    is_active: true
   })
 
 {:ok, listing2} =
@@ -197,7 +196,8 @@ Repo.delete_all(User)
     score: 4,
     images: [image2],
     user: admin2,
-    address: address2
+    address: address2,
+    is_active: true
   })
 
 {:ok, listing3} =
@@ -213,7 +213,8 @@ Repo.delete_all(User)
     score: 4,
     images: [image3],
     user: user1,
-    address: address3
+    address: address3,
+    is_active: true
   })
 
 {:ok, listing4} =
@@ -229,7 +230,8 @@ Repo.delete_all(User)
     score: 4,
     images: [image4],
     user: user1,
-    address: address4
+    address: address4,
+    is_active: true
   })
 
 {:ok, listing5} =
@@ -244,7 +246,8 @@ Repo.delete_all(User)
     garage_spots: 2,
     score: 4,
     user: user2,
-    address: address5
+    address: address5,
+    is_active: false
   })
 
 {:ok, listing6} =
