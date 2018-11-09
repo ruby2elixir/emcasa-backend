@@ -50,7 +50,8 @@ defmodule Re.Mixfile do
       {:quantum, "~> 2.2"},
       {:account_kit, github: "rhnonose/account_kit"},
       {:xml_builder, "~> 2.1"},
-      {:honeybadger, "~> 0.10"}
+      {:honeybadger, "~> 0.10"},
+      {:uuid, "~> 1.1"}
     ]
   end
 
