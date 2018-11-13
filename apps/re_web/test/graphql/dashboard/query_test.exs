@@ -139,8 +139,10 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
 
           conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-          assert [%{"id" => to_string(listing1.id)}, %{"id" => to_string(listing2.id)}] ==
-                   json_response(conn, 200)["data"][@query] |> Enum.sort()
+          actual = json_response(conn, 200)["data"][@query]
+
+          assert [%{"id" => to_string(listing1.id)}, %{"id" => to_string(listing2.id)}]
+            == Enum.sort(actual)
         end
       end
     )

@@ -1,4 +1,7 @@
 defmodule Re.Exporters.Vivareal do
+  @moduledoc """
+  Listing XML exporters for vivareal
+  """
   @exported_attributes ~w(id title transaction_type featured inserted_at updated_at detail_url
                           images details location contact_info)a
 
@@ -10,9 +13,15 @@ defmodule Re.Exporters.Vivareal do
     Repo
   }
 
+  @preload [
+    :address,
+    :vivareal_highlight,
+    images: Images.Queries.listing_preload()
+  ]
+
   def export_listings_xml(attributes \\ @exported_attributes) do
     Queries.active()
-    |> Queries.preload_relations([:address, images: Images.Queries.listing_preload()])
+    |> Queries.preload_relations(@preload)
     |> Queries.order_by_id()
     |> Repo.all()
     |> Enum.filter(&has_image?/1)
@@ -67,8 +76,8 @@ defmodule Re.Exporters.Vivareal do
     {"TransactionType", %{}, "For Sale"}
   end
 
-  defp convert_attribute(:featured, %{featured_vivareal: featured_vivareal}) do
-    {"Featured", %{}, featured_vivareal}
+  defp convert_attribute(:featured, %{vivareal_highlight: %Re.Listings.Highlights.Vivareal{}}) do
+    {"Featured", %{}, true}
   end
 
   defp convert_attribute(:featured, _) do

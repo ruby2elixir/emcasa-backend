@@ -1,4 +1,7 @@
 defmodule Re.Exporters.Zap do
+  @moduledoc """
+  Listing XML exporters for zap
+  """
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
                           postal_code price maintenance_fee util_area area_unit rooms bathrooms garage_spots
                           property_tax description featured images)a
@@ -9,9 +12,16 @@ defmodule Re.Exporters.Zap do
     Repo
   }
 
+  @preload [
+    :address,
+    :zap_highlight,
+    :zap_super_highlight,
+    images: Images.Queries.listing_preload()
+  ]
+
   def export_listings_xml(attributes \\ @exported_attributes) do
     Queries.active()
-    |> Queries.preload_relations([:address, images: Images.Queries.listing_preload()])
+    |> Queries.preload_relations(@preload)
     |> Queries.order_by_id()
     |> Repo.all()
     |> Enum.map(&build_xml(&1, attributes))
@@ -131,11 +141,11 @@ defmodule Re.Exporters.Zap do
     {"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)}
   end
 
-  defp convert_attribute(:featured, %{zap_superfeatured: true}) do
+  defp convert_attribute(:featured, %{zap_super_highlight: %Re.Listings.Highlights.ZapSuper{}}) do
     {"TipoOferta", %{}, 3}
   end
 
-  defp convert_attribute(:featured, %{zap_featured: true}) do
+  defp convert_attribute(:featured, %{zap_highlight: %Re.Listings.Highlights.Zap{}}) do
     {"TipoOferta", %{}, 2}
   end
 
@@ -145,13 +155,12 @@ defmodule Re.Exporters.Zap do
 
   defp build_image(%{filename: filename} = image) do
     {"Foto", %{},
-     [
+     main_picture([
        {"URLArquivo", %{},
         "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename},
        {"NomeArquivo", %{}, filename},
        {"Alterada", %{}, 0}
-     ]
-     |> main_picture(image)}
+     ], image)}
   end
 
   defp main_picture(tags, %{main: true}), do: [{"Principal", %{}, 1} | tags]

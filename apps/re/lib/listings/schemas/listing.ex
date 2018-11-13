@@ -49,6 +49,10 @@ defmodule Re.Listing do
 
     has_many :interests, Re.Interest
 
+    has_one :vivareal_highlight, Re.Listings.Highlights.Vivareal
+    has_one :zap_highlight, Re.Listings.Highlights.Zap
+    has_one :zap_super_highlight, Re.Listings.Highlights.ZapSuper
+
     timestamps()
   end
 

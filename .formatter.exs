@@ -15,6 +15,7 @@
     many_to_many: 3,
     config: 2,
     trigger: 2,
-    enum: 2
+    enum: 2,
+    has_one: 2,
   ]
 ]
