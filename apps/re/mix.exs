@@ -42,7 +42,6 @@ defmodule Re.Mixfile do
       {:email_checker, "~> 0.1"},
       {:dataloader, "~> 1.0"},
       {:currency_formatter, "~> 0.4"},
-      {:excoveralls, "~> 0.8", only: :test},
       {:timber, "~> 2.6"},
       {:nimble_csv, "~> 0.3"},
       {:timex, "~> 3.3"},

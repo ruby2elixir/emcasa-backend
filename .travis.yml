@@ -12,7 +12,7 @@ addons:
 
 before_script: mix deps.get --only test
 
-script: mix coveralls.travis
+script: mix coveralls.travis --umbrella
 
 notifications:
   email:

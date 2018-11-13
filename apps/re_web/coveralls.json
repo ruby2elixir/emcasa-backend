@@ -1,0 +1,16 @@
+{
+  "skip_files": [
+    "deps",
+    "test/support",
+    "lib/application.ex",
+    "lib/endpoint.ex",
+    "lib/re_web.ex",
+    "lib/gettext.ex",
+    "lib/auth/guardian_pipeline.ex",
+    "lib/controllers/guarded_controller.ex",
+    "lib/graphql/types",
+    "lib/pipedrive/client.ex",
+    "lib/views/email/report_view.ex",
+    "lib/views/layout_view.ex"
+  ]
+}
