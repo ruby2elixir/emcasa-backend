@@ -47,7 +47,6 @@ defmodule ReWeb.Mixfile do
       {:absinthe_phoenix, "~> 1.4"},
       {:dataloader, "~> 1.0.4"},
       {:currency_formatter, "~> 0.4"},
-      {:excoveralls, "~> 0.8", only: :test},
       {:apollo_tracing, "~> 0.4.0"},
       {:timex, "~> 3.3"},
       {:tzdata, "~> 0.5"},
