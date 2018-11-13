@@ -5,7 +5,7 @@ defmodule ReWeb.Exporters.Zap.PlugTest do
     {:ok, conn: conn}
   end
 
-  @empty_listings "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Carga xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Imoveis/></Carga>"
+  @empty_listings ~s|<?xml version="1.0" encoding="UTF-8"?><Carga xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><Imoveis/></Carga>|
 
   test "should export zap XML", %{conn: conn} do
     conn = get(conn, "/exporters/zap")

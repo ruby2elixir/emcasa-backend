@@ -211,25 +211,35 @@ defmodule Re.Exporters.VivarealTest do
       image = insert(:image, filename: "test1.jpg", description: "descr")
       listing = insert(:listing, images: [image])
 
-      assert "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ListingDataFeed xmlns=\"http://www.vivareal.com/schemas/1.0/VRSync\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd\"><Header><Provider>EmCasa</Provider><Email>rodrigo.nonose@emcasa.com</Email><ContactName>Rodrigo Nonose</ContactName></Header><Listings><Listing><ListingId>#{
+      assert ~s|<?xml version="1.0" encoding="UTF-8"?><ListingDataFeed | <>
+             ~s|xmlns="http://www.vivareal.com/schemas/1.0/VRSync" | <>
+             ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" | <>
+             ~s|xsi:schemaLocation="http://www.vivareal.com/schemas/1.0/VRSync  | <>
+             ~s|http://xml.vivareal.com/vrsync.xsd">| <>
+             ~s|<Header>| <>
+              ~s|<Provider>EmCasa</Provider>| <>
+              ~s|<Email>rodrigo.nonose@emcasa.com</Email>| <>
+              ~s|<ContactName>Rodrigo Nonose</ContactName>| <>
+             ~s|</Header>| <>
+             ~s|<Listings><Listing><ListingId>#{
                listing.id
-             }</ListingId></Listing></Listings></ListingDataFeed>" ==
+             }</ListingId></Listing></Listings></ListingDataFeed>| ==
                Vivareal.export_listings_xml(~w(id)a)
     end
 
     test "should not export listings without images" do
       insert(:listing)
 
-      assert "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ListingDataFeed xmlns=\"http://www.vivareal.com/schemas/1.0/VRSync\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd\"><Header><Provider>EmCasa</Provider><Email>rodrigo.nonose@emcasa.com</Email><ContactName>Rodrigo Nonose</ContactName></Header><Listings/></ListingDataFeed>" ==
+      assert ~s|<?xml version="1.0" encoding="UTF-8"?><ListingDataFeed xmlns="http://www.vivareal.com/schemas/1.0/VRSync" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd"><Header><Provider>EmCasa</Provider><Email>rodrigo.nonose@emcasa.com</Email><ContactName>Rodrigo Nonose</ContactName></Header><Listings/></ListingDataFeed>| ==
                Vivareal.export_listings_xml(~w(images)a)
     end
   end
 
   defp images_tags do
     "<Media>" <>
-      "<Item caption=\"descr\" medium=\"image\">https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/test1.jpg</Item>" <>
-      "<Item caption=\"descr\" medium=\"image\">https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/test2.jpg</Item>" <>
-      "<Item caption=\"descr\" medium=\"image\">https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/test3.jpg</Item>" <>
+      ~s|<Item caption="descr" medium="image">https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/test1.jpg</Item>| <>
+      ~s|<Item caption="descr" medium="image">https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/test2.jpg</Item>| <>
+      ~s|<Item caption="descr" medium="image">https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/test3.jpg</Item>| <>
       "</Media>"
   end
 

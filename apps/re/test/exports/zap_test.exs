@@ -300,9 +300,11 @@ defmodule Re.Exporters.ZapTest do
     test "should export listings wrapped" do
       listing = insert(:listing)
 
-      assert "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Carga xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Imoveis><Imovel><CodigoImovel>#{
+      assert ~s|<?xml version="1.0" encoding="UTF-8"?><Carga xmlns:xsd="http://www.w3.org/2001/XMLSchema" | <>
+             ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">| <>
+             ~s|<Imoveis><Imovel><CodigoImovel>#{
                listing.id
-             }</CodigoImovel></Imovel></Imoveis></Carga>" == Zap.export_listings_xml(~w(id)a)
+             }</CodigoImovel></Imovel></Imoveis></Carga>| == Zap.export_listings_xml(~w(id)a)
     end
   end
 
