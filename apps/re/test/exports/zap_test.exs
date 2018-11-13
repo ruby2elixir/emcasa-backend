@@ -174,6 +174,126 @@ defmodule Re.Exporters.ZapTest do
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
+
+    test "export XML with highlight" do
+      images = [
+        insert(:image, filename: "test1.jpg", description: "descr"),
+        insert(:image, filename: "test2.jpg", description: "descr"),
+        insert(:image, filename: "test3.jpg", description: "descr")
+      ]
+
+      %{id: id} =
+        listing =
+        insert(:listing,
+          type: "Apartamento",
+          address:
+            build(:address,
+              city: "Rio de Janeiro",
+              state: "RJ",
+              neighborhood: "Copacabana",
+              street: "Avenida Atlântica",
+              street_number: "55",
+              postal_code: "11111-111"
+            ),
+          complement: "basement",
+          images: images,
+          zap_highlight: build(:zap_highlight),
+          description: "descr",
+          area: 50,
+          price: 1_000_000,
+          rooms: 2,
+          bathrooms: 2,
+          garage_spots: 1,
+          maintenance_fee: 1000.00,
+          property_tax: 1000.00
+        )
+
+      expected_xml =
+        "<Imovel>" <>
+          "<CodigoImovel>#{id}</CodigoImovel>" <>
+          "<TipoImovel>Apartamento</TipoImovel>" <>
+          "<SubTipoImovel>Apartamento Padrão</SubTipoImovel>" <>
+          "<CategoriaImovel>Padrão</CategoriaImovel>" <>
+          "<Endereco>Avenida Atlântica</Endereco>" <>
+          "<UF>RJ</UF>" <>
+          "<Cidade>Rio de Janeiro</Cidade>" <>
+          "<Bairro>Copacabana</Bairro>" <>
+          "<Numero>55</Numero>" <>
+          "<Complemento>basement</Complemento>" <>
+          "<CEP>11111111</CEP>" <>
+          "<PrecoVenda>1000000</PrecoVenda>" <>
+          "<PrecoCondominio>1000</PrecoCondominio>" <>
+          "<AreaUtil>50</AreaUtil>" <>
+          "<UnidadeMetrica>M2</UnidadeMetrica>" <>
+          "<QtdDormitorios>2</QtdDormitorios>" <>
+          "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdVagas>1</QtdVagas>" <>
+          "<ValorIPTU>1000</ValorIPTU>" <>
+          "<Observacao>descr</Observacao>" <>
+          "<TipoOferta>2</TipoOferta>" <> images_tags() <> "</Imovel>"
+
+      assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
+    end
+
+    test "export XML with super highlight" do
+      images = [
+        insert(:image, filename: "test1.jpg", description: "descr"),
+        insert(:image, filename: "test2.jpg", description: "descr"),
+        insert(:image, filename: "test3.jpg", description: "descr")
+      ]
+
+      %{id: id} =
+        listing =
+        insert(:listing,
+          type: "Apartamento",
+          address:
+            build(:address,
+              city: "Rio de Janeiro",
+              state: "RJ",
+              neighborhood: "Copacabana",
+              street: "Avenida Atlântica",
+              street_number: "55",
+              postal_code: "11111-111"
+            ),
+          complement: "basement",
+          images: images,
+          zap_super_highlight: build(:zap_super_highlight),
+          description: "descr",
+          area: 50,
+          price: 1_000_000,
+          rooms: 2,
+          bathrooms: 2,
+          garage_spots: 1,
+          maintenance_fee: 1000.00,
+          property_tax: 1000.00
+        )
+
+      expected_xml =
+        "<Imovel>" <>
+          "<CodigoImovel>#{id}</CodigoImovel>" <>
+          "<TipoImovel>Apartamento</TipoImovel>" <>
+          "<SubTipoImovel>Apartamento Padrão</SubTipoImovel>" <>
+          "<CategoriaImovel>Padrão</CategoriaImovel>" <>
+          "<Endereco>Avenida Atlântica</Endereco>" <>
+          "<UF>RJ</UF>" <>
+          "<Cidade>Rio de Janeiro</Cidade>" <>
+          "<Bairro>Copacabana</Bairro>" <>
+          "<Numero>55</Numero>" <>
+          "<Complemento>basement</Complemento>" <>
+          "<CEP>11111111</CEP>" <>
+          "<PrecoVenda>1000000</PrecoVenda>" <>
+          "<PrecoCondominio>1000</PrecoCondominio>" <>
+          "<AreaUtil>50</AreaUtil>" <>
+          "<UnidadeMetrica>M2</UnidadeMetrica>" <>
+          "<QtdDormitorios>2</QtdDormitorios>" <>
+          "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdVagas>1</QtdVagas>" <>
+          "<ValorIPTU>1000</ValorIPTU>" <>
+          "<Observacao>descr</Observacao>" <>
+          "<TipoOferta>3</TipoOferta>" <> images_tags() <> "</Imovel>"
+
+      assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
+    end
   end
 
   describe "export_listings_xml/1" do

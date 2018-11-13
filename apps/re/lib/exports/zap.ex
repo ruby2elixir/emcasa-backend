@@ -9,9 +9,16 @@ defmodule Re.Exporters.Zap do
     Repo
   }
 
+  @preload [
+    :address,
+    :zap_highlight,
+    :zap_super_highlight,
+    images: Images.Queries.listing_preload()
+  ]
+
   def export_listings_xml(attributes \\ @exported_attributes) do
     Queries.active()
-    |> Queries.preload_relations([:address, images: Images.Queries.listing_preload()])
+    |> Queries.preload_relations(@preload)
     |> Queries.order_by_id()
     |> Repo.all()
     |> Enum.map(&build_xml(&1, attributes))
@@ -131,11 +138,11 @@ defmodule Re.Exporters.Zap do
     {"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)}
   end
 
-  defp convert_attribute(:featured, %{zap_superfeatured: true}) do
+  defp convert_attribute(:featured, %{zap_super_highlight: %Re.Listings.Highlights.ZapSuper{}}) do
     {"TipoOferta", %{}, 3}
   end
 
-  defp convert_attribute(:featured, %{zap_featured: true}) do
+  defp convert_attribute(:featured, %{zap_highlight: %Re.Listings.Highlights.Zap{}}) do
     {"TipoOferta", %{}, 2}
   end
 
