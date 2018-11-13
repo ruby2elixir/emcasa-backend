@@ -155,13 +155,12 @@ defmodule Re.Exporters.Zap do
 
   defp build_image(%{filename: filename} = image) do
     {"Foto", %{},
-     [
+     main_picture([
        {"URLArquivo", %{},
         "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename},
        {"NomeArquivo", %{}, filename},
        {"Alterada", %{}, 0}
-     ]
-     |> main_picture(image)}
+     ], image)}
   end
 
   defp main_picture(tags, %{main: true}), do: [{"Principal", %{}, 1} | tags]
