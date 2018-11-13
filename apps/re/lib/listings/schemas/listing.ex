@@ -49,6 +49,8 @@ defmodule Re.Listing do
 
     has_many :interests, Re.Interest
 
+    has_one :vivareal_highlight, Re.Listings.Highlights.Vivareal
+
     timestamps()
   end
 

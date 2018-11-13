@@ -152,6 +152,58 @@ defmodule Re.Exporters.VivarealTest do
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
+
+    test "export listing with highlights" do
+      images = [
+        insert(:image, filename: "test1.jpg", description: "descr"),
+        insert(:image, filename: "test2.jpg", description: "descr"),
+        insert(:image, filename: "test3.jpg", description: "descr")
+      ]
+
+      highligh = insert(:vivareal_highlight)
+
+      %{id: id} =
+        listing =
+        insert(:listing,
+          type: "Apartamento",
+          address:
+            build(:address,
+              city: "Rio de Janeiro",
+              state: "RJ",
+              neighborhood: "Copacabana",
+              street: "Avenida Atlântica",
+              street_number: "55",
+              postal_code: "11111-111",
+              lat: -23.5531131,
+              lng: -46.659864
+            ),
+          images: images,
+          vivareal_highlight: highligh,
+          description: "descr",
+          area: 50,
+          price: 1_000_000,
+          rooms: nil,
+          bathrooms: nil,
+          inserted_at: ~N[2018-06-07 15:30:00.000000],
+          updated_at: ~N[2018-06-07 15:30:00.000000],
+          maintenance_fee: 1000.00,
+          property_tax: 1000.00
+        )
+
+      expected_xml =
+        "<Listing>" <>
+          "<ListingId>#{id}</ListingId>" <>
+          "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
+          "<TransactionType>For Sale</TransactionType>" <>
+          "<Featured>true</Featured>" <>
+          "<ListDate>2018-06-07T15:30:00</ListDate>" <>
+          "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
+          "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
+          images_tags() <>
+          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <> "</Listing>"
+
+      assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
+    end
   end
 
   describe "export_listings_xml/1" do
