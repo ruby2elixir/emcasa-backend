@@ -1,4 +1,8 @@
 defmodule Re.Simulators do
+  @moduledoc """
+  Context module for credit simulations
+  """
+
   alias Re.Simulators.Credipronto.Params
 
   alias ReIntegrations.Credipronto.{

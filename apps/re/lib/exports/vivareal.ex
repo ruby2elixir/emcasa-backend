@@ -1,4 +1,7 @@
 defmodule Re.Exporters.Vivareal do
+  @moduledoc """
+  Listing XML exporters for vivareal
+  """
   @exported_attributes ~w(id title transaction_type featured inserted_at updated_at detail_url
                           images details location contact_info)a
 

@@ -1,4 +1,7 @@
 defmodule Re.Exporters.Zap do
+  @moduledoc """
+  Listing XML exporters for zap
+  """
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
                           postal_code price maintenance_fee util_area area_unit rooms bathrooms garage_spots
                           property_tax description featured images)a
