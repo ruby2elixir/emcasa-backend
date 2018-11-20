@@ -755,7 +755,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       %{filename: inactive_image_filename2} =
         image5 = insert(:image, is_active: false, position: 5)
 
-      %{street: street, street_number: street_number} = address = insert(:address)
+      %{state: state, city: city, street: street, street_number: street_number} =
+        address = insert(:address)
 
       insert(:district,
         state: address.state,
@@ -776,6 +777,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       insert(
         :factors,
+        state: state,
+        city: city,
         street: street,
         intercept: 10.10,
         rooms: 123.321,

@@ -40,6 +40,8 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
   test "anonymous should request price suggestion", %{unauthenticated_conn: conn} do
     insert(
       :factors,
+      state: "ST",
+      city: "city",
       street: "street",
       intercept: 10.10,
       rooms: 123.321,
@@ -85,6 +87,8 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
   test "user should request price suggestion", %{user_conn: conn, user_user: user} do
     insert(
       :factors,
+      state: "ST",
+      city: "city",
       street: "street",
       intercept: 10.10,
       rooms: 123.321,
