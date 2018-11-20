@@ -1,6 +1,5 @@
 [
   inputs: ["mix.exs", "apps/**/mix.exs", "apps/**/{lib,test}/**/*.{ex,exs}"],
-
   locals_without_parens: [
     field: 2,
     field: 3,
@@ -17,5 +16,6 @@
     trigger: 2,
     enum: 2,
     has_one: 2,
+    add: 2
   ]
 ]

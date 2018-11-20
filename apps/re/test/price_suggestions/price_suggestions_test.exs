@@ -18,6 +18,8 @@ defmodule Re.PriceSuggestionsTest do
 
       assert [
                %{
+                 state: "NY",
+                 city: "New York City",
                  street: "Manhattan Street" <> _,
                  intercept: -399.23068199,
                  area: 237.0332,
@@ -27,6 +29,8 @@ defmodule Re.PriceSuggestionsTest do
                  r2: 0.09128
                },
                %{
+                 state: "NY",
+                 city: "New York City",
                  street: "Manhattan Street" <> _,
                  intercept: -399.23068199,
                  area: 237.0332,
@@ -36,6 +40,8 @@ defmodule Re.PriceSuggestionsTest do
                  r2: 0.09128
                },
                %{
+                 state: "NY",
+                 city: "New York City",
                  street: "Manhattan Street" <> _,
                  intercept: -399.23068199,
                  area: 237.0332,
@@ -45,6 +51,8 @@ defmodule Re.PriceSuggestionsTest do
                  r2: 0.09128
                },
                %{
+                 state: "NY",
+                 city: "New York City",
                  street: "Manhattan Street" <> _,
                  intercept: -399.23068199,
                  area: 237.0332,
@@ -61,6 +69,8 @@ defmodule Re.PriceSuggestionsTest do
 
       insert(
         :factors,
+        state: "NY",
+        city: "New York City",
         street: "Manhattan Street 1",
         intercept: -39.23068199,
         area: 23.0332,
@@ -72,6 +82,8 @@ defmodule Re.PriceSuggestionsTest do
 
       insert(
         :factors,
+        state: "NY",
+        city: "New York City",
         street: "Manhattan Street 2",
         intercept: -39.23068199,
         area: 23.0332,
@@ -83,6 +95,8 @@ defmodule Re.PriceSuggestionsTest do
 
       insert(
         :factors,
+        state: "NY",
+        city: "New York City",
         street: "Manhattan Street 3",
         intercept: -39.23068199,
         area: 23.0332,
@@ -94,6 +108,8 @@ defmodule Re.PriceSuggestionsTest do
 
       insert(
         :factors,
+        state: "NY",
+        city: "New York City",
         street: "Manhattan Street 4",
         intercept: -39.23068199,
         area: 23.0332,
@@ -147,13 +163,15 @@ defmodule Re.PriceSuggestionsTest do
           :listing,
           rooms: 2,
           area: 80,
-          address: build(:address, street: "Mah Street"),
+          address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
           garage_spots: 1,
           bathrooms: 1
         )
 
       insert(
         :factors,
+        state: "MS",
+        city: "Mah City",
         street: "Mah Street",
         intercept: 10.10,
         rooms: 123.321,
@@ -170,6 +188,8 @@ defmodule Re.PriceSuggestionsTest do
     test "should suggest for nil values" do
       insert(
         :factors,
+        state: "MS",
+        city: "Mah City",
         street: "Mah Street",
         intercept: 10.10,
         rooms: 123.321,
@@ -180,7 +200,7 @@ defmodule Re.PriceSuggestionsTest do
 
       assert {:ok, 10.10} ==
                PriceSuggestions.suggest_price(%{
-                 address: %{street: "Mah Street"},
+                 address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
                  rooms: nil,
                  area: nil,
                  bathrooms: nil,

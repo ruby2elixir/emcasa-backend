@@ -13,6 +13,8 @@ defmodule Re.InterestsTest do
     test "should store price suggestion request" do
       insert(
         :factors,
+        state: "ST",
+        city: "city",
         street: "street",
         intercept: 10.10,
         rooms: 123.321,
@@ -52,6 +54,8 @@ defmodule Re.InterestsTest do
     test "should store price suggestion request with user attached" do
       insert(
         :factors,
+        state: "ST",
+        city: "city",
         street: "street",
         intercept: 10.10,
         rooms: 123.321,
