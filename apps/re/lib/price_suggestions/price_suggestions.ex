@@ -19,12 +19,12 @@ defmodule Re.PriceSuggestions do
   def suggest_price(listing) do
     listing
     |> preload_if_struct()
-    |> get_factor_by_street()
+    |> get_factor_by_address()
     |> do_suggest_price(listing)
   end
 
-  defp get_factor_by_street(%{address: %{street: street}}),
-    do: Repo.get_by(Factors, street: street)
+  defp get_factor_by_address(%{address: %{state: state, city: city, street: street}}),
+    do: Repo.get_by(Factors, state: state, city: city, street: street)
 
   defp do_suggest_price(nil, _), do: {:error, :street_not_covered}
 
@@ -46,8 +46,10 @@ defmodule Re.PriceSuggestions do
     |> Enum.each(&persist/1)
   end
 
-  defp csv_to_map([street, intercept, area, bathrooms, rooms, garage_spots, r2]) do
+  defp csv_to_map([state, city, street, intercept, area, bathrooms, rooms, garage_spots, r2]) do
     %{
+      state: :binary.copy(state),
+      city: :binary.copy(city),
       street: :binary.copy(street),
       intercept: intercept |> Float.parse() |> elem(0),
       area: area |> Float.parse() |> elem(0),
@@ -58,8 +60,8 @@ defmodule Re.PriceSuggestions do
     }
   end
 
-  defp persist(%{street: street} = line) do
-    case Repo.get_by(Factors, street: street) do
+  defp persist(%{state: state, city: city, street: street} = line) do
+    case Repo.get_by(Factors, state: state, city: city, street: street) do
       nil ->
         %Factors{}
         |> Factors.changeset(line)
