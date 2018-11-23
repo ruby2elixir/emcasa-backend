@@ -78,7 +78,8 @@ defmodule Re.Addresses.Neighborhoods do
                            %{state: "RJ", neighborhood: "Leblon", city: "Rio de Janeiro"},
                            %{state: "RJ", neighborhood: "Leme", city: "Rio de Janeiro"},
                            %{state: "RJ", neighborhood: "São Conrado", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Urca", city: "Rio de Janeiro"}
+                           %{state: "RJ", neighborhood: "Urca", city: "Rio de Janeiro"},
+                           %{state: "SP", neighborhood: "Perdizes", city: "São Paulo"}
                          ])
 
   def is_covered(neighborhood), do: MapSet.member?(@covered_neighborhoods, neighborhood)
