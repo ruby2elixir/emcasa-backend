@@ -19,7 +19,7 @@ defmodule ReWeb.Resolvers.Dashboard do
   end
 
   def active_listing_count(_params, _res) do
-    {:ok, Repo.one(from(l in Re.Listing, where: l.is_active == true, select: count(l.id)))}
+    {:ok, Repo.one(from(l in Re.Listing, where: l.status == "active", select: count(l.id)))}
   end
 
   def favorite_count(_params, _res) do
@@ -39,7 +39,7 @@ defmodule ReWeb.Resolvers.Dashboard do
      Repo.one(
        from(
          l in Listing,
-         where: not is_nil(l.maintenance_fee) and l.is_active == true,
+         where: not is_nil(l.maintenance_fee) and l.status == "active",
          select: count(l.id)
        )
      )}
@@ -50,7 +50,7 @@ defmodule ReWeb.Resolvers.Dashboard do
      Repo.one(
        from(
          l in Listing,
-         where: not is_nil(l.property_tax) and l.is_active == true,
+         where: not is_nil(l.property_tax) and l.status == "active",
          select: count(l.id)
        )
      )}
@@ -61,7 +61,7 @@ defmodule ReWeb.Resolvers.Dashboard do
      Repo.one(
        from(
          l in Listing,
-         where: not is_nil(l.matterport_code) and l.is_active == true,
+         where: not is_nil(l.matterport_code) and l.status == "active",
          select: count(l.id)
        )
      )}
@@ -70,7 +70,7 @@ defmodule ReWeb.Resolvers.Dashboard do
   def area_count(_params, _res) do
     {:ok,
      Repo.one(
-       from(l in Listing, where: not is_nil(l.area) and l.is_active == true, select: count(l.id))
+       from(l in Listing, where: not is_nil(l.area) and l.status == "active", select: count(l.id))
      )}
   end
 

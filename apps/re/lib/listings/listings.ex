@@ -145,19 +145,19 @@ defmodule Re.Listings do
   defp save_old_price(multi, _), do: multi
 
   defp deactivate_if_not_admin(changeset, %{role: "user"}),
-    do: Changeset.change(changeset, is_active: false)
+    do: Changeset.change(changeset, status: "inactive")
 
   defp deactivate_if_not_admin(changeset, %{role: "admin"}), do: changeset
 
   def deactivate(listing) do
     listing
-    |> Changeset.change(is_active: false)
+    |> Changeset.change(status: "inactive")
     |> Repo.update()
   end
 
   def activate(listing) do
     listing
-    |> Changeset.change(is_active: true)
+    |> Changeset.change(status: "active")
     |> Repo.update()
   end
 

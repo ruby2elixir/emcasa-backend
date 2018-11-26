@@ -18,7 +18,7 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
 
   describe "dashboard" do
     test "admin should query dashboard", %{admin_conn: conn} do
-      insert(:listing, is_active: false)
+      insert(:listing, status: "inactive")
 
       insert(
         :listing,
@@ -141,8 +141,8 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
 
           actual = json_response(conn, 200)["data"][@query]
 
-          assert [%{"id" => to_string(listing1.id)}, %{"id" => to_string(listing2.id)}]
-            == Enum.sort(actual)
+          assert [%{"id" => to_string(listing1.id)}, %{"id" => to_string(listing2.id)}] ==
+                   Enum.sort(actual)
         end
       end
     )

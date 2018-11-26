@@ -9,7 +9,7 @@ defmodule Re.Statistics.ListingReportsTest do
     test "should generate csv report of current listings stats" do
       %{id: id1} =
         insert(:listing,
-          is_active: true,
+          status: "active",
           rooms: 1,
           price: 1_000_000,
           address: build(:address, neighborhood: "Botafogo"),
@@ -22,7 +22,7 @@ defmodule Re.Statistics.ListingReportsTest do
 
       %{id: id2} =
         insert(:listing,
-          is_active: false,
+          status: "inactive",
           rooms: 2,
           price: 800_000,
           address: build(:address, neighborhood: "Copacabana"),

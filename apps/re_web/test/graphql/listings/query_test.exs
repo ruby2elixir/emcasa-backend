@@ -1285,7 +1285,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "admin should see inactive listing", %{admin_conn: conn} do
-      %{id: listing_id} = insert(:listing, is_active: false)
+      %{id: listing_id} = insert(:listing, status: "inactive")
 
       variables = %{"id" => listing_id}
 
@@ -1303,7 +1303,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "owner should see inactive listing", %{user_conn: conn, user_user: user} do
-      %{id: listing_id} = insert(:listing, is_active: false, user: user)
+      %{id: listing_id} = insert(:listing, status: "inactive", user: user)
 
       variables = %{"id" => listing_id}
 
@@ -1321,7 +1321,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "user should not see inactive listing", %{user_conn: conn} do
-      %{id: listing_id} = insert(:listing, is_active: false)
+      %{id: listing_id} = insert(:listing, status: "inactive")
 
       variables = %{"id" => listing_id}
 
@@ -1339,7 +1339,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "anonymous should not see inactive listing", %{unauthenticated_conn: conn} do
-      %{id: listing_id} = insert(:listing, is_active: false)
+      %{id: listing_id} = insert(:listing, status: "inactive")
 
       variables = %{"id" => listing_id}
 

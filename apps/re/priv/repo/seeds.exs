@@ -142,28 +142,28 @@ Repo.delete_all(User)
   Repo.insert(%Image{
     filename: "axetblju0i3keovz87ab.jpg",
     position: 1,
-    is_active: true
+    status: "active"
   })
 
 {:ok, image2} =
   Repo.insert(%Image{
     filename: "cz9ytkthhdmd0f9mt2wy.jpg",
     position: 2,
-    is_active: true
+    status: "active"
   })
 
 {:ok, image3} =
   Repo.insert(%Image{
     filename: "u6fy4vpnjqff7jjxcg27.jp",
     position: 3,
-    is_active: true
+    status: "active"
   })
 
 {:ok, image4} =
   Repo.insert(%Image{
     filename: "u6fy4vpnjqff7jjxcg27.jp",
     position: 3,
-    is_active: true
+    status: "active"
   })
 
 {:ok, listing1} =
@@ -180,7 +180,7 @@ Repo.delete_all(User)
     images: [image1],
     user: admin1,
     address: address1,
-    is_active: true
+    status: "active"
   })
 
 {:ok, listing2} =
@@ -197,7 +197,7 @@ Repo.delete_all(User)
     images: [image2],
     user: admin2,
     address: address2,
-    is_active: true
+    status: "active"
   })
 
 {:ok, listing3} =
@@ -214,7 +214,7 @@ Repo.delete_all(User)
     images: [image3],
     user: user1,
     address: address3,
-    is_active: true
+    status: "active"
   })
 
 {:ok, listing4} =
@@ -231,7 +231,7 @@ Repo.delete_all(User)
     images: [image4],
     user: user1,
     address: address4,
-    is_active: true
+    status: "active"
   })
 
 {:ok, listing5} =
@@ -247,7 +247,7 @@ Repo.delete_all(User)
     score: 4,
     user: user2,
     address: address5,
-    is_active: false
+    status: "inactive"
   })
 
 {:ok, listing6} =
@@ -263,7 +263,7 @@ Repo.delete_all(User)
     score: 4,
     user: user2,
     address: address6,
-    is_active: false
+    status: "inactive"
   })
 
 {:ok, listing7} =
@@ -279,7 +279,7 @@ Repo.delete_all(User)
     score: 4,
     user: user2,
     address: address1,
-    is_active: true
+    status: "active"
   })
 
 {:ok, listing8} =
@@ -295,32 +295,32 @@ Repo.delete_all(User)
     score: 4,
     user: user2,
     address: address2,
-    is_active: true
+    status: "active"
   })
 
 {:ok, _} =
   Repo.insert(%PriceHistory{
-      price: 1_900_000,
-      listing: listing1
-    })
+    price: 1_900_000,
+    listing: listing1
+  })
 
 {:ok, _} =
   Repo.insert(%PriceHistory{
-      price: 2_100_000,
-      listing: listing1
-    })
+    price: 2_100_000,
+    listing: listing1
+  })
 
 {:ok, _} =
   Repo.insert(%PriceHistory{
-      price: 1_900_000,
-      listing: listing2
-    })
+    price: 1_900_000,
+    listing: listing2
+  })
 
 {:ok, _} =
   Repo.insert(%PriceHistory{
-      price: 1_900_000,
-      listing: listing3
-    })
+    price: 1_900_000,
+    listing: listing3
+  })
 
 {:ok, interest_type1} = Re.Repo.insert(%InterestType{name: "Me ligue dentro de 5 minutos"})
 {:ok, interest_type2} = Re.Repo.insert(%InterestType{name: "Me ligue em um horário específico"})
@@ -505,4 +505,3 @@ Repo.delete_all(User)
     listing: listing2,
     channel: channel2
   })
-

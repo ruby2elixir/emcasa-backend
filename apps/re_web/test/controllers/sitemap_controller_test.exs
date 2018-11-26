@@ -17,10 +17,10 @@ defmodule ReWeb.SitemapControllerTest do
   describe "index" do
     test "should return listings if authenticated", %{authenticated_conn: conn} do
       address = insert(:address)
-      %{id: id1} = insert(:listing, address: address, is_active: true, score: 4)
-      %{id: id2} = insert(:listing, address: address, is_active: true, score: 3)
-      %{id: id3} = insert(:listing, address: address, is_active: true, score: 2)
-      insert_list(2, :listing, address: address, is_active: false)
+      %{id: id1} = insert(:listing, address: address, status: "active", score: 4)
+      %{id: id2} = insert(:listing, address: address, status: "active", score: 3)
+      %{id: id3} = insert(:listing, address: address, status: "active", score: 2)
+      insert_list(2, :listing, address: address, status: "inactive")
 
       conn = get(conn, sitemap_path(conn, :index))
 
@@ -33,10 +33,10 @@ defmodule ReWeb.SitemapControllerTest do
 
     test "should return listings if not authenticated", %{unauthenticated_conn: conn} do
       address = insert(:address)
-      %{id: id1} = insert(:listing, address: address, is_active: true, score: 4)
-      %{id: id2} = insert(:listing, address: address, is_active: true, score: 3)
-      %{id: id3} = insert(:listing, address: address, is_active: true, score: 2)
-      insert_list(2, :listing, address: address, is_active: false)
+      %{id: id1} = insert(:listing, address: address, status: "active", score: 4)
+      %{id: id2} = insert(:listing, address: address, status: "active", score: 3)
+      %{id: id3} = insert(:listing, address: address, status: "active", score: 2)
+      insert_list(2, :listing, address: address, status: "inactive")
 
       conn = get(conn, sitemap_path(conn, :index))
 

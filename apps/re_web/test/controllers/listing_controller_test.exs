@@ -123,7 +123,7 @@ defmodule ReWeb.ListingControllerTest do
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "is_release" => listing.is_release,
-                 "is_active" => listing.is_active,
+                 "is_active" => listing.status == "active",
                  "inserted_at" => NaiveDateTime.to_iso8601(listing.inserted_at),
                  "user_id" => listing.user_id,
                  "images" => [
@@ -192,7 +192,7 @@ defmodule ReWeb.ListingControllerTest do
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "is_release" => listing.is_release,
-                 "is_active" => listing.is_active,
+                 "is_active" => listing.status == "active",
                  "inserted_at" => NaiveDateTime.to_iso8601(listing.inserted_at),
                  "user_id" => listing.user_id,
                  "images" => [
@@ -258,7 +258,7 @@ defmodule ReWeb.ListingControllerTest do
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "is_release" => listing.is_release,
-                 "is_active" => listing.is_active,
+                 "is_active" => listing.status == "active",
                  "inserted_at" => NaiveDateTime.to_iso8601(listing.inserted_at),
                  "user_id" => listing.user_id,
                  "images" => [
@@ -323,7 +323,7 @@ defmodule ReWeb.ListingControllerTest do
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "is_release" => listing.is_release,
-                 "is_active" => listing.is_active,
+                 "is_active" => listing.status == "active",
                  "inserted_at" => NaiveDateTime.to_iso8601(listing.inserted_at),
                  "user_id" => listing.user_id,
                  "images" => [
@@ -353,7 +353,7 @@ defmodule ReWeb.ListingControllerTest do
     test "do not show inactive listing for non admin user", %{user_conn: conn} do
       image = insert(:image)
 
-      listing = insert(:listing, images: [image], address: build(:address), is_active: false)
+      listing = insert(:listing, images: [image], address: build(:address), status: "inactive")
 
       conn = get(conn, listing_path(conn, :show, listing))
       json_response(conn, 404)
@@ -362,7 +362,7 @@ defmodule ReWeb.ListingControllerTest do
     test "do not show inactive listing for unauthenticated user", %{unauthenticated_conn: conn} do
       image = insert(:image)
 
-      listing = insert(:listing, images: [image], address: build(:address), is_active: false)
+      listing = insert(:listing, images: [image], address: build(:address), status: "inactive")
 
       conn = get(conn, listing_path(conn, :show, listing))
       json_response(conn, 404)
@@ -371,7 +371,7 @@ defmodule ReWeb.ListingControllerTest do
     test "show inactive listing for admin user", %{admin_conn: conn} do
       image = insert(:image)
 
-      listing = insert(:listing, images: [image], address: build(:address), is_active: false)
+      listing = insert(:listing, images: [image], address: build(:address), status: "inactive")
 
       conn = get(conn, listing_path(conn, :show, listing))
       json_response(conn, 200)
@@ -385,7 +385,7 @@ defmodule ReWeb.ListingControllerTest do
           :listing,
           images: [image],
           address: build(:address),
-          is_active: false,
+          status: "inactive",
           user_id: user.id
         )
 
@@ -455,7 +455,7 @@ defmodule ReWeb.ListingControllerTest do
                  "has_elevator" => listing.has_elevator,
                  "is_exclusive" => listing.is_exclusive,
                  "is_release" => listing.is_release,
-                 "is_active" => listing.is_active,
+                 "is_active" => listing.status == "active",
                  "inserted_at" => NaiveDateTime.to_iso8601(listing.inserted_at),
                  "images" => [
                    %{
@@ -675,7 +675,7 @@ defmodule ReWeb.ListingControllerTest do
       conn = delete(conn, listing_path(conn, :delete, listing))
       assert response(conn, 204)
       assert listing = Repo.get(Listing, listing.id)
-      refute listing.is_active
+      assert listing.status == "inactive"
     end
 
     test "does not delete resource when user is not authenticated", %{unauthenticated_conn: conn} do
@@ -683,7 +683,7 @@ defmodule ReWeb.ListingControllerTest do
       conn = delete(conn, listing_path(conn, :delete, listing))
       assert response(conn, 401)
       assert listing = Repo.get(Listing, listing.id)
-      assert listing.is_active
+      assert listing.status == "active"
     end
 
     test "delete resource when listing belongs to user", %{user_conn: conn, user_user: user} do
@@ -691,7 +691,7 @@ defmodule ReWeb.ListingControllerTest do
       conn = delete(conn, listing_path(conn, :delete, listing))
       assert response(conn, 204)
       assert listing = Repo.get(Listing, listing.id)
-      refute listing.is_active
+      assert listing.status == "inactive"
     end
 
     test "doest not delete resource when listing doesn't belong to user", %{
@@ -702,7 +702,7 @@ defmodule ReWeb.ListingControllerTest do
       conn = delete(conn, listing_path(conn, :delete, listing))
       assert response(conn, 403)
       assert listing = Repo.get(Listing, listing.id)
-      assert listing.is_active
+      assert listing.status == "active"
     end
   end
 

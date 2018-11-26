@@ -344,7 +344,7 @@ defmodule ReWeb.GraphQL.Channels.QueryTest do
     admin_user: admin_user,
     user_user: user
   } do
-    listing1 = insert(:listing, is_active: false)
+    listing1 = insert(:listing, status: "inactive")
     listing2 = insert(:listing)
 
     insert_channel_and_messages(listing1.id, user.id, admin_user.id)

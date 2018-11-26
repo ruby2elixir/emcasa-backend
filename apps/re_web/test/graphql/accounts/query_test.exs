@@ -236,7 +236,7 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
     test "user should see its inactive listings", %{user_conn: conn, user_user: user} do
       listing1 = insert(:listing, user: user, type: "Casa", score: 4)
       listing2 = insert(:listing, user: user, type: "Casa", score: 3)
-      listing3 = insert(:listing, user: user, type: "Apartamento", score: 2, is_active: false)
+      listing3 = insert(:listing, user: user, type: "Apartamento", score: 2, status: "inactive")
 
       variables = %{
         "id" => user.id,

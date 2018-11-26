@@ -90,7 +90,7 @@ defmodule Re.PriceSuggestions do
   def generate_price_comparison do
     to_write =
       Listing
-      |> where([l], l.is_active == true)
+      |> where([l], l.status == "active")
       |> preload(:address)
       |> Repo.all()
       |> Enum.map(&compare_prices/1)

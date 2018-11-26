@@ -8,8 +8,8 @@ defmodule Re.Statistics.ReportsTest do
   describe "users_to_be_notified/0" do
     test "get users with active listings only" do
       %{id: id1} = insert(:user, listings: [build(:listing)])
-      insert(:user, listings: [build(:listing, is_active: false)])
-      %{id: id3} = insert(:user, listings: [build(:listing, is_active: false), build(:listing)])
+      insert(:user, listings: [build(:listing, status: "inactive")])
+      %{id: id3} = insert(:user, listings: [build(:listing, status: "inactive"), build(:listing)])
       insert(:user)
 
       assert [%{id: ^id1}, %{id: ^id3, listings: [_listing]}] = Reports.users_to_be_notified()

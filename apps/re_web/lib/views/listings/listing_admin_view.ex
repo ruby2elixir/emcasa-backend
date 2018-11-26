@@ -52,7 +52,7 @@ defmodule ReWeb.ListingAdminView do
       has_elevator: listing.has_elevator,
       is_exclusive: listing.is_exclusive,
       is_release: listing.is_release,
-      is_active: listing.is_active,
+      is_active: listing.status == "active",
       inserted_at: listing.inserted_at,
       address: %{
         street: listing.address.street,
@@ -101,7 +101,7 @@ defmodule ReWeb.ListingAdminView do
       has_elevator: listing.has_elevator,
       is_exclusive: listing.is_exclusive,
       is_release: listing.is_release,
-      is_active: listing.is_active,
+      is_active: listing.status == "active",
       inserted_at: listing.inserted_at,
       address: %{
         street: listing.address.street,

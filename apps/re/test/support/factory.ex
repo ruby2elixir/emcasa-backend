@@ -40,7 +40,7 @@ defmodule Re.Factory do
       area: Enum.random(1..500),
       score: Enum.random(1..4),
       matterport_code: Faker.String.base64(),
-      is_active: true,
+      status: "active",
       is_exclusive: Enum.random([true, false]),
       is_release: Enum.random([true, false])
     }
