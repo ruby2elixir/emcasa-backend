@@ -6,11 +6,17 @@ defmodule Re.Listings.Related do
   import Ecto.Query
 
   alias Re.{
+    Images,
     Listing,
     Listings,
     Listings.Queries,
     Repo
   }
+
+  @relations [
+    :address,
+    images: Images.Queries.listing_preload()
+  ]
 
   def get(listing, params \\ %{}) do
     query =
@@ -22,7 +28,7 @@ defmodule Re.Listings.Related do
       |> Queries.active()
       |> Queries.order_by()
       |> Queries.limit(params)
-      |> Queries.preload_relations()
+      |> Queries.preload_relations(@relations)
 
     %{
       listings: Repo.all(query),
