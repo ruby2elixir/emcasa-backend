@@ -22,6 +22,6 @@ defmodule ReWeb.InterestController do
     end
   end
 
-  defp notify_interest(%{is_active: true}, interest), do: @emails.notify_interest(interest)
+  defp notify_interest(%{status: "active"}, interest), do: @emails.notify_interest(interest)
   defp notify_interest(_, _interest), do: :nothing
 end

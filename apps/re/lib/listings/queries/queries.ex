@@ -23,7 +23,7 @@ defmodule Re.Listings.Queries do
 
   @orderable_fields ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies)a
 
-  def active(query \\ Listing), do: where(query, [l], l.is_active == true)
+  def active(query \\ Listing), do: where(query, [l], l.status == "active")
 
   def order_by(query, %{order_by: orders}) do
     orders

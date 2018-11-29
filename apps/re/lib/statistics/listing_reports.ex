@@ -31,7 +31,7 @@ defmodule Re.Statistics.ListingReports do
 
   defp encode(listing) do
     "#{listing.id}|" <>
-      "#{if listing.is_active, do: "ativo", else: "inativo"}|" <>
+      "#{if listing.status == "active", do: "ativo", else: "inativo"}|" <>
       "#{listing.listings_visualisations_count}|" <>
       "#{listing.tour_visualisations_count}|" <>
       "#{listing.in_person_visits_count}|" <>

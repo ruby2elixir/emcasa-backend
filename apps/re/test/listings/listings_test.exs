@@ -236,20 +236,20 @@ defmodule Re.ListingsTest do
   end
 
   describe "deactivate/1" do
-    test "should set is_active to false" do
+    test "should set status to inactive" do
       listing = insert(:listing)
 
       {:ok, listing} = Listings.deactivate(listing)
-      refute listing.is_active
+      assert listing.status == "inactive"
     end
   end
 
   describe "activate/1" do
-    test "should set is_active to true" do
-      listing = insert(:listing, is_active: false)
+    test "should set status to active" do
+      listing = insert(:listing, status: "inactive")
 
       {:ok, listing} = Listings.activate(listing)
-      assert listing.is_active
+      assert listing.status == "active"
     end
   end
 
@@ -283,7 +283,7 @@ defmodule Re.ListingsTest do
 
       assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address, user)
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
-      refute retrieved_listing.is_active
+      assert retrieved_listing.status == "inactive"
     end
 
     test "should insert inactive for normal user" do
@@ -292,7 +292,7 @@ defmodule Re.ListingsTest do
 
       assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address, user)
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
-      refute retrieved_listing.is_active
+      assert retrieved_listing.status == "inactive"
     end
 
     test "should insert if user provides a phone" do
@@ -303,7 +303,7 @@ defmodule Re.ListingsTest do
                Listings.insert(Map.put(@insert_listing_params, "phone", "123321"), address, user)
 
       assert inserted_listing = Repo.get(Listing, inserted_listing.id)
-      refute inserted_listing.is_active
+      assert inserted_listing.status == "inactive"
     end
 
     test "should fail if user doesn't have phone" do
@@ -332,7 +332,7 @@ defmodule Re.ListingsTest do
       Listings.update(listing, %{price: listing.price + 50_000}, address, user)
 
       updated_listing = Repo.get(Listing, listing.id)
-      refute updated_listing.is_active
+      assert updated_listing.status == "inactive"
       assert [%{price: 1_000_000}] = Repo.all(Re.Listings.PriceHistory)
     end
 
@@ -344,7 +344,7 @@ defmodule Re.ListingsTest do
       Listings.update(listing, %{rooms: 4}, address, user)
 
       updated_listing = Repo.get(Listing, listing.id)
-      refute updated_listing.is_active
+      assert updated_listing.status == "inactive"
       assert [] = Repo.all(Re.Listings.PriceHistory)
     end
   end

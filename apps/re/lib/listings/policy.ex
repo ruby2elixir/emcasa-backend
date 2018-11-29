@@ -10,7 +10,7 @@ defmodule Re.Listings.Policy do
 
   def authorize(_, %User{role: "admin"}, _), do: :ok
   def authorize(:create_listing, %User{role: "user"}, _), do: :ok
-  def authorize(:show_listing, _, %{is_active: true}), do: :ok
+  def authorize(:show_listing, _, %{status: "active"}), do: :ok
   def authorize(:show_listing, %User{id: id}, %{user_id: id}), do: :ok
   def authorize(:show_listing, _, _), do: {:error, :not_found}
   def authorize(:edit_listing, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok

@@ -11,7 +11,7 @@ defmodule Re.NeighborhoodsTest do
       insert(:listing, address: address1)
       insert(:listing, address: address1)
       address2 = insert(:address, neighborhood: "Test 2")
-      insert(:listing, address: address2, is_active: false)
+      insert(:listing, address: address2, status: "inactive")
 
       assert ["Test 1"] == Neighborhoods.all()
     end

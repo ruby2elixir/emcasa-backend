@@ -7,51 +7,52 @@ defmodule Re.Listing do
   import Ecto.Changeset
 
   schema "listings" do
-    field(:type, :string)
-    field(:complement, :string)
-    field(:description, :string)
-    field(:price, :integer)
-    field(:property_tax, :float)
-    field(:maintenance_fee, :float)
-    field(:floor, :string)
-    field(:rooms, :integer)
-    field(:bathrooms, :integer)
-    field(:restrooms, :integer)
-    field(:area, :integer)
-    field(:garage_spots, :integer, default: 0)
-    field(:score, :integer)
-    field(:suites, :integer)
-    field(:dependencies, :integer)
-    field(:balconies, :integer)
-    field(:has_elevator, :boolean)
-    field(:matterport_code, :string)
-    field(:is_active, :boolean, default: false)
-    field(:is_exclusive, :boolean, default: false)
-    field(:is_release, :boolean)
-    field(:visualisations, :integer, virtual: true)
-    field(:favorite_count, :integer, virtual: true)
-    field(:interest_count, :integer, virtual: true)
-    field(:in_person_visit_count, :integer, virtual: true)
+    field :type, :string
+    field :complement, :string
+    field :description, :string
+    field :price, :integer
+    field :property_tax, :float
+    field :maintenance_fee, :float
+    field :floor, :string
+    field :rooms, :integer
+    field :bathrooms, :integer
+    field :restrooms, :integer
+    field :area, :integer
+    field :garage_spots, :integer, default: 0
+    field :score, :integer
+    field :suites, :integer
+    field :dependencies, :integer
+    field :balconies, :integer
+    field :has_elevator, :boolean
+    field :matterport_code, :string
+    field :is_active, :boolean, default: false
+    field :status, :string, default: "inactive"
+    field :is_exclusive, :boolean, default: false
+    field :is_release, :boolean
+    field :visualisations, :integer, virtual: true
+    field :favorite_count, :integer, virtual: true
+    field :interest_count, :integer, virtual: true
+    field :in_person_visit_count, :integer, virtual: true
 
-    belongs_to(:address, Re.Address)
-    belongs_to(:user, Re.User)
-    has_many(:images, Re.Image)
-    has_many(:price_history, Re.Listings.PriceHistory)
-    has_many(:listings_visualisations, Re.Statistics.ListingVisualization)
-    has_many(:tour_visualisations, Re.Statistics.TourVisualization)
-    has_many(:in_person_visits, Re.Statistics.InPersonVisit)
+    belongs_to :address, Re.Address
+    belongs_to :user, Re.User
+    has_many :images, Re.Image
+    has_many :price_history, Re.Listings.PriceHistory
+    has_many :listings_visualisations, Re.Statistics.ListingVisualization
+    has_many :tour_visualisations, Re.Statistics.TourVisualization
+    has_many :in_person_visits, Re.Statistics.InPersonVisit
 
-    has_many(:listings_favorites, Re.Favorite)
-    has_many(:favorited, through: [:listings_favorites, :user])
+    has_many :listings_favorites, Re.Favorite
+    has_many :favorited, through: [:listings_favorites, :user]
 
-    has_many(:listings_blacklists, Re.Blacklist)
-    has_many(:blacklisted, through: [:listings_blacklists, :user])
+    has_many :listings_blacklists, Re.Blacklist
+    has_many :blacklisted, through: [:listings_blacklists, :user]
 
-    has_many(:interests, Re.Interest)
+    has_many :interests, Re.Interest
 
-    has_one(:vivareal_highlight, Re.Listings.Highlights.Vivareal)
-    has_one(:zap_highlight, Re.Listings.Highlights.Zap)
-    has_one(:zap_super_highlight, Re.Listings.Highlights.ZapSuper)
+    has_one :vivareal_highlight, Re.Listings.Highlights.Vivareal
+    has_one :zap_highlight, Re.Listings.Highlights.Zap
+    has_one :zap_super_highlight, Re.Listings.Highlights.ZapSuper
 
     timestamps()
   end

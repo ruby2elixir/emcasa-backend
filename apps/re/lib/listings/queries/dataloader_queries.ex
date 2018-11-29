@@ -16,7 +16,7 @@ defmodule Re.Listings.DataloaderQueries do
 
   defp active(query, %{has_admin_rights: true}), do: query
 
-  defp active(query, _args), do: where(query, [l], l.is_active == true)
+  defp active(query, _args), do: where(query, [l], l.status == "active")
 
   defp paginate(query, %{pagination: args}), do: Enum.reduce(args, query, &attr_queries/2)
 

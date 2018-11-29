@@ -15,7 +15,7 @@ defmodule Re.Addresses.Neighborhoods do
   @all_query from(
                a in Address,
                join: l in Listing,
-               where: l.address_id == a.id and l.is_active,
+               where: l.address_id == a.id and l.status == "active",
                select: a.neighborhood,
                distinct: a.neighborhood
              )

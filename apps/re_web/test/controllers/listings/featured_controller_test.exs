@@ -64,7 +64,7 @@ defmodule ReWeb.FeaturedControllerTest do
         address: build(:address),
         score: 4,
         images: [build(:image)],
-        is_active: false
+        status: "inactive"
       )
 
       conn = dispatch(conn, @endpoint, "get", "/featured_listings")

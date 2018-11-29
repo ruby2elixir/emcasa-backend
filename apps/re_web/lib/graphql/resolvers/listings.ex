@@ -69,6 +69,9 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
+  def is_active(%{status: "active"}, _, _), do: {:ok, true}
+  def is_active(_, _, _), do: {:ok, false}
+
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
          {:ok, listing} <- Listings.get_preloaded(id),

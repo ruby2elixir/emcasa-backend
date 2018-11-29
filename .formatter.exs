@@ -16,6 +16,8 @@
     trigger: 2,
     enum: 2,
     has_one: 2,
-    add: 2
+    add: 2,
+    add: 3,
+    remove: 1
   ]
 ]

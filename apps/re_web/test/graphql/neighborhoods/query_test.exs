@@ -17,9 +17,9 @@ defmodule ReWeb.GraphQL.Neighborhoods.QueryTest do
   end
 
   test "admin should query neighborhoods", %{admin_conn: conn} do
-    insert(:listing, address: build(:address, neighborhood: "Copacabana"), is_active: true)
-    insert(:listing, address: build(:address, neighborhood: "Botafogo"), is_active: false)
-    insert(:listing, address: build(:address, neighborhood: "Leblon"), is_active: true)
+    insert(:listing, address: build(:address, neighborhood: "Copacabana"), status: "active")
+    insert(:listing, address: build(:address, neighborhood: "Botafogo"), status: "inactive")
+    insert(:listing, address: build(:address, neighborhood: "Leblon"), status: "active")
 
     query = "query Neighborhoods { neighborhoods } "
 
@@ -29,9 +29,9 @@ defmodule ReWeb.GraphQL.Neighborhoods.QueryTest do
   end
 
   test "user should query neighborhoods", %{admin_conn: conn} do
-    insert(:listing, address: build(:address, neighborhood: "Copacabana"), is_active: true)
-    insert(:listing, address: build(:address, neighborhood: "Botafogo"), is_active: false)
-    insert(:listing, address: build(:address, neighborhood: "Leblon"), is_active: true)
+    insert(:listing, address: build(:address, neighborhood: "Copacabana"), status: "active")
+    insert(:listing, address: build(:address, neighborhood: "Botafogo"), status: "inactive")
+    insert(:listing, address: build(:address, neighborhood: "Leblon"), status: "active")
 
     query = "query Neighborhoods { neighborhoods } "
 
@@ -41,9 +41,9 @@ defmodule ReWeb.GraphQL.Neighborhoods.QueryTest do
   end
 
   test "anonymous should query neighborhoods", %{admin_conn: conn} do
-    insert(:listing, address: build(:address, neighborhood: "Copacabana"), is_active: true)
-    insert(:listing, address: build(:address, neighborhood: "Botafogo"), is_active: false)
-    insert(:listing, address: build(:address, neighborhood: "Leblon"), is_active: true)
+    insert(:listing, address: build(:address, neighborhood: "Copacabana"), status: "active")
+    insert(:listing, address: build(:address, neighborhood: "Botafogo"), status: "inactive")
+    insert(:listing, address: build(:address, neighborhood: "Leblon"), status: "active")
 
     query = "query Neighborhoods { neighborhoods } "
 
