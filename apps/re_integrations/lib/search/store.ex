@@ -13,13 +13,8 @@ defmodule ReIntegrations.Search.Store do
     Repo
   }
 
-  @full_preload [
+  @partial_preload [
     :address,
-    :listings_visualisations,
-    :tour_visualisations,
-    :in_person_visits,
-    :listings_favorites,
-    :interests,
     images: Images.Queries.listing_preload()
   ]
 
@@ -27,7 +22,7 @@ defmodule ReIntegrations.Search.Store do
     Listing
     |> offset(^offset)
     |> limit(^limit)
-    |> Queries.preload_relations(@full_preload)
+    |> Queries.preload_relations(@partial_preload)
     |> Queries.active()
     |> Repo.all()
   end
