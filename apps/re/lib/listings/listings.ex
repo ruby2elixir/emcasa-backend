@@ -164,7 +164,7 @@ defmodule Re.Listings do
   def per_user(user) do
     Listing
     |> Queries.per_user(user.id)
-    |> Queries.preload_relations()
+    |> Queries.preload_relations(@partial_preload)
     |> Repo.all()
   end
 
