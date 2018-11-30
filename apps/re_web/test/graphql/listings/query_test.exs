@@ -600,7 +600,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "minLng" => 40.0,
           "neighborhoodsSlugs" => ["copacabana", "leblon"],
           "maxGarageSpots" => 3,
-          "minGarageSpots" => 1
+          "minGarageSpots" => 1,
+          "garageTypes" => ["contract"]
         }
       }
 

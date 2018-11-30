@@ -60,7 +60,8 @@ defmodule Re.ListingsTest do
           score: 4,
           address_id: sao_conrado.id,
           type: "Apartamento",
-          garage_spots: 3
+          garage_spots: 3,
+          garage_type: "contract"
         )
 
       %{id: id2} =
@@ -72,7 +73,8 @@ defmodule Re.ListingsTest do
           score: 3,
           address_id: leblon.id,
           type: "Apartamento",
-          garage_spots: 2
+          garage_spots: 2,
+          garage_type: "condominium"
         )
 
       %{id: id3} =
@@ -84,7 +86,8 @@ defmodule Re.ListingsTest do
           score: 2,
           address_id: botafogo.id,
           type: "Casa",
-          garage_spots: 1
+          garage_spots: 1,
+          garage_type: "contract"
         )
 
       result = Listings.paginated(%{"max_price" => 105})
@@ -142,6 +145,18 @@ defmodule Re.ListingsTest do
       result = Listings.paginated(%{"min_garage_spots" => 2})
       assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
       assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"garage_types" => ["contract", "condominium"]})
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"garage_types" => ["contract"]})
+      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"garage_types" => ["condominium"]})
+      assert [%{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
     end
 
     test "should not filter for empty array" do
@@ -157,6 +172,9 @@ defmodule Re.ListingsTest do
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"types" => []})
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"garage_types" => []})
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
     end
 
