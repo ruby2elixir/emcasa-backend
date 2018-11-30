@@ -28,6 +28,7 @@ defmodule ReWeb.Listing.MutationHelpers do
         "restrooms" => listing.restrooms,
         "area" => listing.area,
         "garageSpots" => listing.garage_spots,
+        "garageType" => listing.garage_type,
         "suites" => listing.suites,
         "dependencies" => listing.dependencies,
         "balconies" => listing.balconies,
@@ -65,6 +66,7 @@ defmodule ReWeb.Listing.MutationHelpers do
         "restrooms" => listing.restrooms,
         "area" => listing.area,
         "garageSpots" => listing.garage_spots,
+        "garageType" => listing.garage_type,
         "suites" => listing.suites,
         "dependencies" => listing.dependencies,
         "balconies" => listing.balconies,
@@ -106,6 +108,7 @@ defmodule ReWeb.Listing.MutationHelpers do
           restrooms
           area
           garageSpots
+          garageType
           suites
           dependencies
           balconies
@@ -149,6 +152,7 @@ defmodule ReWeb.Listing.MutationHelpers do
           restrooms
           area
           garageSpots
+          garageType
           suites
           dependencies
           balconies

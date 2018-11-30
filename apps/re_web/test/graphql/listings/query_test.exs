@@ -307,7 +307,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "contract"
       )
 
       insert(
@@ -324,7 +325,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "condominium"
       )
 
       insert(
@@ -341,7 +343,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "contract"
       )
 
       insert(
@@ -358,7 +361,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "condominium"
       )
 
       insert(
@@ -375,7 +379,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "contract"
       )
 
       insert(
@@ -392,7 +397,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "condominium"
       )
 
       insert(
@@ -409,7 +415,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "contract"
       )
 
       insert(
@@ -426,7 +433,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "condominium"
       )
 
       insert(
@@ -443,7 +451,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 70.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "contract"
       )
 
       insert(
@@ -460,7 +469,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 30.0,
             lng: 50.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "condominium"
       )
 
       insert(
@@ -477,7 +487,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 70.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "contract"
       )
 
       insert(
@@ -494,7 +505,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 30.0
           ),
-        garage_spots: 2
+        garage_spots: 2,
+        garage_type: "condominium"
       )
 
       insert(
@@ -528,7 +540,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 4
+        garage_spots: 4,
+        garage_type: "condominium"
       )
 
       listing1 =
@@ -546,7 +559,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               lat: 50.0,
               lng: 50.0
             ),
-          garage_spots: 2
+          garage_spots: 2,
+          garage_type: "contract"
         )
 
       listing2 =
@@ -564,7 +578,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               lat: 50.0,
               lng: 50.0
             ),
-          garage_spots: 2
+          garage_spots: 2,
+          garage_type: "condominium"
         )
 
       insert(:listing_blacklist, listing: listing2, user: user)

@@ -33,6 +33,7 @@ defmodule Re.Factory do
       bathrooms: Enum.random(1..10),
       restrooms: Enum.random(1..10),
       garage_spots: Enum.random(0..10),
+      garage_type: Enum.random(~w(contract condominium)),
       suites: Enum.random(0..10),
       dependencies: Enum.random(0..10),
       balconies: Enum.random(0..10),
