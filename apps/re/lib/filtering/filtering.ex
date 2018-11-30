@@ -27,11 +27,12 @@ defmodule Re.Filtering do
     field :neighborhoods_slugs, {:array, :string}
     field :max_garage_spots, :integer
     field :min_garage_spots, :integer
+    field :garage_types, {:array, :string}
   end
 
   @filters ~w(max_price min_price max_rooms min_rooms min_area max_area neighborhoods types
               max_lat min_lat max_lng min_lng neighborhoods_slugs max_garage_spots
-              min_garage_spots)a
+              min_garage_spots garage_types)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -145,6 +146,12 @@ defmodule Re.Filtering do
 
   defp attr_filter({:min_garage_spots, min_garage_spots}, query) do
     from(l in query, where: l.garage_spots >= ^min_garage_spots)
+  end
+
+  defp attr_filter({:garage_types, []}, query), do: query
+
+  defp attr_filter({:garage_types, garage_types}, query) do
+    from(l in query, where: l.garage_type in ^garage_types)
   end
 
   defp attr_filter(_, query), do: query

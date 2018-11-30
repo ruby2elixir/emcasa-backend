@@ -19,6 +19,7 @@ defmodule Re.Listing do
     field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer, default: 0
+    field :garage_type, :string
     field :score, :integer
     field :suites, :integer
     field :dependencies, :integer
@@ -59,11 +60,12 @@ defmodule Re.Listing do
 
   @types ~w(Apartamento Casa Cobertura)
 
+  @garage_types ~w(contract condominium)
+
   @user_required ~w(type)a
-  @user_optional ~w(description price rooms bathrooms area garage_spots
-                    address_id user_id suites dependencies has_elevator
-                    complement floor is_exclusive property_tax maintenance_fee
-                    balconies restrooms is_release)a
+  @user_optional ~w(description price rooms bathrooms area garage_spots garage_type address_id
+                    user_id suites dependencies has_elevator complement floor is_exclusive
+                    property_tax maintenance_fee balconies restrooms is_release)a
   @user_attributes @user_required ++ @user_optional
   @doc """
   Builds a changeset based on the `struct` and `params` and user role.
@@ -76,11 +78,13 @@ defmodule Re.Listing do
     |> validate_required(@user_required)
     |> validate_attributes()
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
+    |> validate_inclusion(:garage_type, @garage_types,
+      message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
+    )
   end
 
-  @admin_required ~w(type description price rooms bathrooms
-                     area garage_spots score address_id user_id
-                     suites dependencies has_elevator)a
+  @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
+                     score address_id user_id suites dependencies has_elevator)a
   @admin_optional ~w(complement floor matterport_code is_exclusive
                      property_tax maintenance_fee balconies restrooms is_release)a
   @admin_attributes @admin_required ++ @admin_optional
@@ -95,6 +99,9 @@ defmodule Re.Listing do
     )
     |> validate_number(:score, greater_than: 0, less_than: 5)
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
+    |> validate_inclusion(:garage_type, @garage_types,
+      message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
+    )
   end
 
   @more_than_zero_attributes ~w(property_tax maintenance_fee

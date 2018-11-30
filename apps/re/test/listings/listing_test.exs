@@ -22,6 +22,7 @@ defmodule Re.ListingTest do
     has_elevator: true,
     area: 150,
     garage_spots: 2,
+    garage_type: "contract",
     score: 4,
     matterport_code: "",
     is_exclusive: false,
@@ -39,6 +40,7 @@ defmodule Re.ListingTest do
     dependencies: -1,
     balconies: -1,
     garage_spots: -1,
+    garage_type: "mine",
     score: 5,
     is_exclusive: "banana",
     is_release: "banana"
@@ -88,6 +90,9 @@ defmodule Re.ListingTest do
 
       assert Keyword.get(changeset.errors, :garage_spots) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+
+      assert Keyword.get(changeset.errors, :garage_type) ==
+               {"should be one of: [contract condominium]", [validation: :inclusion]}
 
       assert Keyword.get(changeset.errors, :is_exclusive) ==
                {"is invalid", [type: :boolean, validation: :cast]}

@@ -25,6 +25,7 @@ defmodule ReWeb.Types.Listing do
     field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer
+    field :garage_type, :string
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
@@ -84,6 +85,7 @@ defmodule ReWeb.Types.Listing do
     field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer
+    field :garage_type, :string
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
@@ -205,6 +207,7 @@ defmodule ReWeb.Types.Listing do
     field :neighborhoods_slugs, list_of(:string)
     field :max_garage_spots, :integer
     field :min_garage_spots, :integer
+    field :garage_types, list_of(:string)
   end
 
   object :listing_filter do
@@ -223,6 +226,7 @@ defmodule ReWeb.Types.Listing do
     field :neighborhoods_slugs, list_of(:string)
     field :max_garage_spots, :integer
     field :min_garage_spots, :integer
+    field :garage_types, list_of(:string)
   end
 
   object :price_history do
