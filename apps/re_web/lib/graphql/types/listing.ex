@@ -25,7 +25,7 @@ defmodule ReWeb.Types.Listing do
     field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer
-    field :garage_type, :string
+    field :garage_type, :garage_type
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
@@ -85,7 +85,7 @@ defmodule ReWeb.Types.Listing do
     field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer
-    field :garage_type, :string
+    field :garage_type, :garage_type
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
@@ -99,6 +99,8 @@ defmodule ReWeb.Types.Listing do
     field :address, :address_input
     field :address_id, :id
   end
+
+  enum :garage_type, values: ~w(contract condominium)
 
   object :address do
     field :id, :id
@@ -207,7 +209,7 @@ defmodule ReWeb.Types.Listing do
     field :neighborhoods_slugs, list_of(:string)
     field :max_garage_spots, :integer
     field :min_garage_spots, :integer
-    field :garage_types, list_of(:string)
+    field :garage_types, list_of(:garage_type)
     field :cities, list_of(:string)
     field :cities_slug, list_of(:string)
   end
@@ -228,7 +230,7 @@ defmodule ReWeb.Types.Listing do
     field :neighborhoods_slugs, list_of(:string)
     field :max_garage_spots, :integer
     field :min_garage_spots, :integer
-    field :garage_types, list_of(:string)
+    field :garage_types, list_of(:garage_type)
     field :cities, list_of(:string)
     field :cities_slug, list_of(:string)
   end
