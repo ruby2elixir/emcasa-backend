@@ -8,28 +8,37 @@ defmodule Re.RelatedTest do
   describe "get/1" do
     test "should return a neighborhood match listing" do
       listing =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
+          price: 100_000
+        )
 
       %{id: id2} =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_999)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
+          price: 74_999
+        )
 
       assert %{listings: [%{id: ^id2}], remaining_count: 0} = Related.get(listing)
     end
 
     test "should return a neighborhood and price match listing" do
       listing =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
+          price: 100_000
+        )
 
       %{id: id2} =
         insert(:listing,
-          address: build(:address, neighborhood: "Copacabana"),
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
           price: 74_000,
           score: 4
         )
 
       %{id: id3} =
         insert(:listing,
-          address: build(:address, neighborhood: "Ipanema"),
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Ipanema"),
           price: 76_000,
           score: 3
         )
@@ -38,12 +47,16 @@ defmodule Re.RelatedTest do
     end
 
     test "should return a room match listing" do
-      listing = insert(:listing, address: build(:address, neighborhood: "Copacabana"), rooms: 3)
+      listing =
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
+          rooms: 3
+        )
 
       %{id: id1} =
         insert(:listing,
           score: 3,
-          address: build(:address, neighborhood: "Copacabana"),
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
           rooms: 4,
           score: 4
         )
@@ -51,7 +64,7 @@ defmodule Re.RelatedTest do
       %{id: id2} =
         insert(:listing,
           score: 4,
-          address: build(:address, neighborhood: "Copacabana"),
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
           rooms: 2,
           score: 3
         )
@@ -63,21 +76,21 @@ defmodule Re.RelatedTest do
       listing =
         insert(
           :listing,
-          address: build(:address, neighborhood: "Copacabana"),
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
           price: 100_000,
           rooms: nil
         )
 
       %{id: id2} =
         insert(:listing,
-          address: build(:address, neighborhood: "Copacabana"),
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
           price: 74_000,
           score: 4
         )
 
       %{id: id3} =
         insert(:listing,
-          address: build(:address, neighborhood: "Ipanema"),
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Ipanema"),
           price: 76_000,
           score: 3
         )
@@ -89,7 +102,7 @@ defmodule Re.RelatedTest do
       listing =
         insert(
           :listing,
-          address: build(:address, neighborhood: "Copacabana"),
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
           price: nil,
           rooms: 3
         )
@@ -97,12 +110,16 @@ defmodule Re.RelatedTest do
       %{id: id2} =
         insert(
           :listing,
-          address: build(:address, neighborhood: "Copacabana"),
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
           price: 74_000,
           rooms: 1
         )
 
-      insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 76_000, rooms: 1)
+      insert(:listing,
+        address: build(:address, city: "São Paulo", neighborhood: "Ipanema"),
+        price: 76_000,
+        rooms: 1
+      )
 
       assert %{listings: [%{id: ^id2}], remaining_count: 0} = Related.get(listing)
     end
@@ -111,18 +128,48 @@ defmodule Re.RelatedTest do
       user = insert(:user)
 
       listing =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 100_000)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
+          price: 100_000
+        )
 
       %{id: id2} =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_999)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
+          price: 74_999
+        )
 
       listing3 =
-        insert(:listing, address: build(:address, neighborhood: "Copacabana"), price: 74_999)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
+          price: 74_999
+        )
 
       insert(:listing_blacklist, listing: listing3, user: user)
 
       assert %{listings: [%{id: ^id2}], remaining_count: 0} =
                Related.get(listing, %{current_user: user})
+    end
+
+    test "should only return listings in the same city" do
+      listing =
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
+          price: 100_000
+        )
+
+      %{id: id2} =
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
+          price: 74_999
+        )
+
+      insert(:listing,
+        address: build(:address, city: "São Paulo", neighborhood: "Copacabana"),
+        price: 74_999
+      )
+
+      assert %{listings: [%{id: ^id2}], remaining_count: 0} = Related.get(listing)
     end
   end
 end

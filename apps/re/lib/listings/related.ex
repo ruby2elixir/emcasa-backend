@@ -19,6 +19,8 @@ defmodule Re.Listings.Related do
   ]
 
   def get(listing, params \\ %{}) do
+    listing = Repo.preload(listing, :address)
+
     query =
       ~w(price address rooms)a
       |> Enum.reduce(Listing, &build_query(&1, listing, &2))
@@ -26,6 +28,7 @@ defmodule Re.Listings.Related do
       |> Queries.excluding(params)
       |> Queries.exclude_blacklisted(params)
       |> Queries.active()
+      |> Queries.by_city(listing)
       |> Queries.order_by()
       |> Queries.limit(params)
       |> Queries.preload_relations(@relations)
@@ -39,8 +42,6 @@ defmodule Re.Listings.Related do
   defp exclude_current(query, listing), do: from(l in query, where: ^listing.id != l.id)
 
   defp build_query(:address, listing, query) do
-    listing = Repo.preload(listing, :address)
-
     from(
       l in query,
       join: a in assoc(l, :address),

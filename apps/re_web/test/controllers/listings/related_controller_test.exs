@@ -19,10 +19,16 @@ defmodule ReWeb.RelatedControllerTest do
   describe "index" do
     test "related listings for admin user", %{admin_conn: conn} do
       listing =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 100_000)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Ipanema"),
+          price: 100_000
+        )
 
       %{id: id2} =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 100_000)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Ipanema"),
+          price: 100_000
+        )
 
       conn = get(conn, listing_related_path(conn, :index, listing))
 
@@ -32,10 +38,16 @@ defmodule ReWeb.RelatedControllerTest do
 
     test "related listings for non user", %{admin_conn: conn} do
       listing =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 100_000)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Ipanema"),
+          price: 100_000
+        )
 
       %{id: id2} =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 100_000)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Ipanema"),
+          price: 100_000
+        )
 
       conn = get(conn, listing_related_path(conn, :index, listing))
 
@@ -45,10 +57,16 @@ defmodule ReWeb.RelatedControllerTest do
 
     test "related listings for unauthenticated request", %{conn: conn} do
       listing =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 100_000)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Ipanema"),
+          price: 100_000
+        )
 
       %{id: id2} =
-        insert(:listing, address: build(:address, neighborhood: "Ipanema"), price: 100_000)
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro", neighborhood: "Ipanema"),
+          price: 100_000
+        )
 
       conn = get(conn, listing_related_path(conn, :index, listing))
 
@@ -57,7 +75,7 @@ defmodule ReWeb.RelatedControllerTest do
     end
 
     test "should return only 4 related listings", %{conn: conn} do
-      address = insert(:address)
+      address = insert(:address, city: "Rio de Janeiro")
       listing = insert(:listing, address: address)
       insert_list(6, :listing, address: address)
 
