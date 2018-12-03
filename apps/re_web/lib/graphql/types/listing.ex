@@ -208,6 +208,8 @@ defmodule ReWeb.Types.Listing do
     field :max_garage_spots, :integer
     field :min_garage_spots, :integer
     field :garage_types, list_of(:string)
+    field :cities, list_of(:string)
+    field :cities_slug, list_of(:string)
   end
 
   object :listing_filter do
@@ -227,6 +229,8 @@ defmodule ReWeb.Types.Listing do
     field :max_garage_spots, :integer
     field :min_garage_spots, :integer
     field :garage_types, list_of(:string)
+    field :cities, list_of(:string)
+    field :cities_slug, list_of(:string)
   end
 
   object :price_history do

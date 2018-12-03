@@ -544,6 +544,28 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_type: "condominium"
       )
 
+      insert(
+        :listing,
+        price: 900_000,
+        rooms: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Perdizes",
+            neighborhood_slug: "perdizes",
+            state: "SP",
+            city: "São Paulo",
+            state_slug: "sp",
+            city_slug: "sao-paulo",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 4,
+        garage_type: "condominium"
+      )
+
       listing1 =
         insert(
           :listing,
@@ -556,6 +578,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               :address,
               neighborhood: "Copacabana",
               neighborhood_slug: "copacabana",
+              state: "RJ",
+              city: "Rio de Janeiro",
+              state_slug: "rj",
+              city_slug: "rio-de-janeiro",
               lat: 50.0,
               lng: 50.0
             ),
@@ -575,6 +601,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               :address,
               neighborhood: "Copacabana",
               neighborhood_slug: "copacabana",
+              state: "RJ",
+              city: "Rio de Janeiro",
+              state_slug: "rj",
+              city_slug: "rio-de-janeiro",
               lat: 50.0,
               lng: 50.0
             ),
@@ -601,7 +631,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "neighborhoodsSlugs" => ["copacabana", "leblon"],
           "maxGarageSpots" => 3,
           "minGarageSpots" => 1,
-          "garageTypes" => ["contract"]
+          "garageTypes" => ["contract"],
+          "cities" => ["Rio de Janeiro"],
+          "citiesSlug" => ["rio-de-janeiro"]
         }
       }
 
