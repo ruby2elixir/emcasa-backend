@@ -198,6 +198,8 @@ defmodule ReWeb.Types.Listing do
     field :min_price, :integer
     field :max_rooms, :integer
     field :min_rooms, :integer
+    field :max_suites, :integer
+    field :min_suites, :integer
     field :min_area, :integer
     field :max_area, :integer
     field :neighborhoods, list_of(:string)
@@ -219,6 +221,8 @@ defmodule ReWeb.Types.Listing do
     field :min_price, :integer
     field :max_rooms, :integer
     field :min_rooms, :integer
+    field :max_suites, :integer
+    field :min_suites, :integer
     field :min_area, :integer
     field :max_area, :integer
     field :neighborhoods, list_of(:string)

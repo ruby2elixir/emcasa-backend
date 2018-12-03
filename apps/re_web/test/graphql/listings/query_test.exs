@@ -297,6 +297,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 1_100_000,
         rooms: 3,
+        suites: 3,
         area: 90,
         type: "Apartamento",
         address:
@@ -315,6 +316,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 790_000,
         rooms: 3,
+        suites: 0,
         area: 90,
         type: "Apartamento",
         address:
@@ -333,6 +335,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 5,
+        suites: 3,
         area: 90,
         type: "Apartamento",
         address:
@@ -351,6 +354,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 1,
+        suites: 0,
         area: 90,
         type: "Apartamento",
         address:
@@ -369,6 +373,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 3,
         area: 110,
         type: "Apartamento",
         address:
@@ -387,6 +392,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 0,
         area: 70,
         type: "Apartamento",
         address:
@@ -405,6 +411,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 3,
         area: 90,
         type: "Apartamento",
         address:
@@ -423,6 +430,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 0,
         area: 90,
         type: "Casa",
         address:
@@ -441,6 +449,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 1,
         area: 90,
         type: "Apartamento",
         address:
@@ -459,6 +468,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 2,
         area: 90,
         type: "Apartamento",
         address:
@@ -477,6 +487,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 0,
         area: 90,
         type: "Apartamento",
         address:
@@ -495,6 +506,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 1,
         area: 90,
         type: "Apartamento",
         address:
@@ -513,6 +525,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 1,
         area: 90,
         type: "Apartamento",
         address:
@@ -530,6 +543,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 1,
         area: 90,
         type: "Apartamento",
         address:
@@ -548,6 +562,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         :listing,
         price: 900_000,
         rooms: 3,
+        suites: 1,
         area: 90,
         type: "Apartamento",
         address:
@@ -571,6 +586,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           :listing,
           price: 900_000,
           rooms: 3,
+          suites: 1,
           area: 90,
           type: "Apartamento",
           address:
@@ -594,6 +610,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           :listing,
           price: 900_000,
           rooms: 3,
+          suites: 2,
           area: 90,
           type: "Apartamento",
           address:
@@ -620,6 +637,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "minPrice" => 800_000,
           "maxRooms" => 4,
           "minRooms" => 2,
+          "maxSuites" => 2,
+          "minSuites" => 1,
           "minArea" => 80,
           "maxArea" => 100,
           "neighborhoods" => ["Copacabana", "Leblon"],
