@@ -631,7 +631,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "neighborhoodsSlugs" => ["copacabana", "leblon"],
           "maxGarageSpots" => 3,
           "minGarageSpots" => 1,
-          "garageTypes" => ["contract"],
+          "garageTypes" => ["CONTRACT"],
           "cities" => ["Rio de Janeiro"],
           "citiesSlug" => ["rio-de-janeiro"]
         }
