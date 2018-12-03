@@ -109,4 +109,12 @@ defmodule Re.Listings.Queries do
   end
 
   def exclude_blacklisted(query, _), do: query
+
+  def by_city(query, listing) do
+    from(
+      l in query,
+      join: a in assoc(l, :address),
+      where: ^listing.address.city == a.city
+    )
+  end
 end
