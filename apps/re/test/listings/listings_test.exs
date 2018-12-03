@@ -47,6 +47,10 @@ defmodule Re.ListingsTest do
           street: "onemorestreet",
           neighborhood: "Botafogo",
           neighborhood_slug: "botafogo",
+          state: "SP",
+          city: "São Paulo",
+          state_slug: "sp",
+          city_slug: "sao-paulo",
           lat: -22.9961014,
           lng: -43.19675540000001
         )
@@ -156,6 +160,14 @@ defmodule Re.ListingsTest do
 
       result = Listings.paginated(%{"garage_types" => ["condominium"]})
       assert [%{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"cities" => ["São Paulo"]})
+      assert [%{id: ^id3}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"cities_slug" => ["sao-paulo"]})
+      assert [%{id: ^id3}] = chunk_and_short(result.listings)
       assert 0 == result.remaining_count
     end
 
