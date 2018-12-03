@@ -61,6 +61,7 @@ defmodule Re.ListingsTest do
           price: 100,
           area: 40,
           rooms: 4,
+          suites: 1,
           score: 4,
           address_id: sao_conrado.id,
           type: "Apartamento",
@@ -74,6 +75,7 @@ defmodule Re.ListingsTest do
           price: 110,
           area: 60,
           rooms: 3,
+          suites: 2,
           score: 3,
           address_id: leblon.id,
           type: "Apartamento",
@@ -87,6 +89,7 @@ defmodule Re.ListingsTest do
           price: 90,
           area: 50,
           rooms: 3,
+          suites: 3,
           score: 2,
           address_id: botafogo.id,
           type: "Casa",
@@ -108,6 +111,14 @@ defmodule Re.ListingsTest do
 
       result = Listings.paginated(%{"min_rooms" => 4})
       assert [%{id: ^id1}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"max_suites" => 2})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"min_suites" => 2})
+      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_area" => 55})
