@@ -34,7 +34,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
       subscribe("subscription { contactRequested { id } }")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
       subscribe("subscription { userRegistered { user { id } } }")
-      subscribe("subscription { notificationCoverageAsked { id } }")
+      Re.PubSub.subscribe("notify_when_covered")
       subscribe("subscription { tourScheduled { id } }")
       subscribe("subscription { interestCreated { id } }")
     end
@@ -108,6 +108,10 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     handle_data(data, state)
   end
 
+  def handle_info(%{topic: "notify_when_covered", type: :new, new: content}, state) do
+    handle_cast({Emails.User, :notification_coverage_asked, [content]}, state)
+  end
+
   def handle_info(_, state), do: {:noreply, state}
 
   defp handle_data(
@@ -161,18 +165,6 @@ defmodule ReIntegrations.Notifications.Emails.Server do
 
       error ->
         {:noreply, [{:error, error} | state]}
-    end
-  end
-
-  defp handle_data(%{"notificationCoverageAsked" => %{"id" => id}}, state) do
-    Re.Interests.NotifyWhenCovered
-    |> Repo.get(id)
-    |> case do
-      nil ->
-        {:noreply, [{:error, "Notify when Covered id #{id} does not exist"} | state]}
-
-      notify_when_covered ->
-        handle_cast({Emails.User, :notification_coverage_asked, [notify_when_covered]}, state)
     end
   end
 

@@ -10,6 +10,7 @@ defmodule Re.Interests do
     Interests.NotifyWhenCovered,
     InterestType,
     PriceSuggestions,
+    PubSub,
     Repo,
     User
   }
@@ -60,6 +61,7 @@ defmodule Re.Interests do
     %NotifyWhenCovered{}
     |> NotifyWhenCovered.changeset(params)
     |> Repo.insert()
+    |> PubSub.publish_new("notify_when_covered")
   end
 
   defp attach_user(changeset, %User{id: id}),

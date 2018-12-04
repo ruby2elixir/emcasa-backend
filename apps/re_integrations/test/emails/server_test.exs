@@ -229,8 +229,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
     end
 
     test "notify when covered requested" do
-      %{id: id} =
-        request =
+      request =
         insert(:notify_when_covered,
           name: "naem",
           phone: "12321",
@@ -241,16 +240,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           neighborhood: "Morumbi"
         )
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"notificationCoverageAsked" => %{"id" => id}}
-            }
-          }
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "notify_when_covered", type: :new, new: request}, [])
 
       assert_email_sent(
         Emails.User.notification_coverage_asked(%{
