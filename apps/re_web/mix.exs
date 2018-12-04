@@ -35,7 +35,7 @@ defmodule ReWeb.Mixfile do
     [
       {:re, in_umbrella: true},
       {:phoenix, "~> 1.3.0"},
-      {:phoenix_pubsub, "~> 1.0"},
+      {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 3.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},

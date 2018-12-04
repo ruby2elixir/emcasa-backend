@@ -15,6 +15,7 @@ defmodule Re.Application do
 
     children = [
       supervisor(Re.Repo, []),
+      supervisor(Phoenix.PubSub.PG2, [Re.PubSub, []]),
       worker(Visualizations, []),
       worker(Scheduler, [])
     ]
