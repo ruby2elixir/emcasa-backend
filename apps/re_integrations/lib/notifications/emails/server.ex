@@ -34,7 +34,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
       Re.PubSub.subscribe("contact_request")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
       Re.PubSub.subscribe("notify_when_covered")
-      subscribe("subscription { tourScheduled { id } }")
+      Re.PubSub.subscribe("tour_appointment")
       Re.PubSub.subscribe("new_interest")
     end
 
@@ -131,6 +131,12 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     handle_cast({Emails.User, :notify_interest, [content]}, state)
   end
 
+  def handle_info(%{topic: "tour_appointment", type: :new, new: content}, state) do
+    content = Repo.preload(content, [:user, :listing])
+
+    handle_cast({Emails.User, :tour_appointment, [content]}, state)
+  end
+
   def handle_info(_, state), do: {:noreply, state}
 
   defp handle_data(
@@ -160,24 +166,6 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     case {Users.get(user_id), Listings.get(listing_id)} do
       {{:ok, user}, {:ok, listing}} ->
         handle_cast({Emails.User, :listing_added_admin, [user, listing]}, state)
-
-      _ ->
-        {:noreply, state}
-    end
-  end
-
-  import Ecto.Query, only: [preload: 2]
-
-  defp handle_data(%{"tourScheduled" => %{"id" => id}}, state) do
-    Re.Calendars.TourAppointment
-    |> preload([:user, :listing])
-    |> Repo.get(id)
-    |> case do
-      nil ->
-        {:noreply, [{:error, "Tour Apponintment with id #{id} does not exist"} | state]}
-
-      %{user: %{role: "user"}} = tour_appointment ->
-        handle_cast({Emails.User, :tour_appointment, [tour_appointment]}, state)
 
       _ ->
         {:noreply, state}

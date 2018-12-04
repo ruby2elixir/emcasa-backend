@@ -246,7 +246,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       user = insert(:user)
       listing = insert(:listing, user: user)
 
-      %{id: tour_appointment_id} =
+      tour_appointment =
         insert(:tour_appointment,
           wants_pictures: true,
           wants_tour: true,
@@ -256,13 +256,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
         )
 
       Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"tourScheduled" => %{"id" => tour_appointment_id}}
-            }
-          }
-        },
+        %{topic: "tour_appointment", type: :new, new: tour_appointment},
         []
       )
 
