@@ -96,21 +96,4 @@ defmodule ReWeb.Types.User do
       resolve &AccountsResolver.change_email/2
     end
   end
-
-  object :user_subscriptions do
-    @desc "Subscribe to user registration"
-    field :user_registered, :credentials do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          :system -> {:ok, topic: "user_registered"}
-          _ -> {:error, :unauthorized}
-        end
-      end)
-
-      trigger :register,
-        topic: fn _ ->
-          "user_registered"
-        end
-    end
-  end
 end

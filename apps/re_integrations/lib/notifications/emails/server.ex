@@ -33,7 +33,6 @@ defmodule ReIntegrations.Notifications.Emails.Server do
       subscribe("subscription { listingInserted { id owner { id } } }")
       Re.PubSub.subscribe("contact_request")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
-      subscribe("subscription { userRegistered { user { id } } }")
       Re.PubSub.subscribe("notify_when_covered")
       subscribe("subscription { tourScheduled { id } }")
       Re.PubSub.subscribe("new_interest")
