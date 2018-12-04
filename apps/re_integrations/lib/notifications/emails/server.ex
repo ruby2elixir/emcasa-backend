@@ -36,7 +36,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
       subscribe("subscription { userRegistered { user { id } } }")
       Re.PubSub.subscribe("notify_when_covered")
       subscribe("subscription { tourScheduled { id } }")
-      subscribe("subscription { interestCreated { id } }")
+      Re.PubSub.subscribe("new_interest")
     end
 
     {:ok, args}
@@ -126,6 +126,12 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     end
   end
 
+  def handle_info(%{topic: "new_interest", type: :new, new: content}, state) do
+    content = Repo.preload(content, :interest_type)
+
+    handle_cast({Emails.User, :notify_interest, [content]}, state)
+  end
+
   def handle_info(_, state), do: {:noreply, state}
 
   defp handle_data(
@@ -176,16 +182,6 @@ defmodule ReIntegrations.Notifications.Emails.Server do
 
       _ ->
         {:noreply, state}
-    end
-  end
-
-  defp handle_data(%{"interestCreated" => %{"id" => id}}, state) do
-    Re.Interest
-    |> preload([:interest_type])
-    |> Repo.get(id)
-    |> case do
-      nil -> {:noreply, [{:error, "Interest with id #{id} does not exist"} | state]}
-      interest -> handle_cast({Emails.User, :notify_interest, [interest]}, state)
     end
   end
 

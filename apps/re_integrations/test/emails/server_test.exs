@@ -281,19 +281,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       interest_type = insert(:interest_type)
       listing = insert(:listing)
 
-      %{id: interest_id} =
-        interest = insert(:interest, listing: listing, interest_type: interest_type)
+      interest = insert(:interest, listing: listing, interest_type: interest_type)
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"interestCreated" => %{"id" => interest_id}}
-            }
-          }
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "new_interest", type: :new, new: interest}, [])
 
       assert_email_sent(Emails.User.notify_interest(interest))
     end

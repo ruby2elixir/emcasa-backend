@@ -25,6 +25,7 @@ defmodule Re.Interests do
     %Interest{}
     |> Interest.changeset(params)
     |> Repo.insert()
+    |> PubSub.publish_new("new_interest")
   end
 
   def show_interest(listing_id, params) do
