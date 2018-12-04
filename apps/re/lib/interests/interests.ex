@@ -46,6 +46,7 @@ defmodule Re.Interests do
     |> ContactRequest.changeset(params)
     |> attach_user(user)
     |> Repo.insert()
+    |> PubSub.publish_new("contact_request")
   end
 
   def request_price_suggestion(params, user) do

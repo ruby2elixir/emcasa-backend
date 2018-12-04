@@ -83,7 +83,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
   describe "handle_info/2" do
     test "contact requested by anonymous" do
-      %{id: id} =
+      request =
         insert(
           :contact_request,
           name: "mahname",
@@ -92,12 +92,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           message: "cool website"
         )
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "contact_request", type: :new, new: request}, [])
 
       assert_email_sent(
         Emails.User.contact_request(%{
@@ -111,14 +106,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "contact requested by user" do
       user = insert(:user)
-      %{id: id} = insert(:contact_request, message: "cool website", user: user)
+      request = insert(:contact_request, message: "cool website", user: user)
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "contact_request", type: :new, new: request}, [])
 
       assert_email_sent(
         Emails.User.contact_request(%{
@@ -133,7 +123,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
     test "contact requested by user with new email" do
       user = insert(:user)
 
-      %{id: id} =
+      request =
         insert(
           :contact_request,
           message: "cool website",
@@ -141,12 +131,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           email: "different@email.com"
         )
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "contact_request", type: :new, new: request}, [])
 
       assert_email_sent(
         Emails.User.contact_request(%{

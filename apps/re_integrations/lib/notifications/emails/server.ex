@@ -31,7 +31,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   def init(args) do
     if Mix.env() != :test do
       subscribe("subscription { listingInserted { id owner { id } } }")
-      subscribe("subscription { contactRequested { id } }")
+      Re.PubSub.subscribe("contact_request")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
       subscribe("subscription { userRegistered { user { id } } }")
       Re.PubSub.subscribe("notify_when_covered")
@@ -112,6 +112,20 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     handle_cast({Emails.User, :notification_coverage_asked, [content]}, state)
   end
 
+  def handle_info(%{topic: "contact_request", type: :new, new: content}, state) do
+    case content do
+      %{user: nil} = contact_request ->
+        handle_cast({Emails.User, :contact_request, [contact_request]}, state)
+
+      %{user: user} = contact_request ->
+        contact_request = Repo.preload(contact_request, :user)
+        handle_cast({Emails.User, :contact_request, [merge_params(user, contact_request)]}, state)
+
+      error ->
+        {:noreply, [{:error, error} | state]}
+    end
+  end
+
   def handle_info(_, state), do: {:noreply, state}
 
   defp handle_data(
@@ -148,25 +162,6 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   end
 
   import Ecto.Query, only: [preload: 2]
-
-  defp handle_data(%{"contactRequested" => %{"id" => id}}, state) do
-    Re.Interests.ContactRequest
-    |> preload(:user)
-    |> Repo.get(id)
-    |> case do
-      nil ->
-        {:noreply, [{:error, "Request Contact id #{id} does not exist"} | state]}
-
-      %{user: nil} = contact_request ->
-        handle_cast({Emails.User, :contact_request, [contact_request]}, state)
-
-      %{user: user} = contact_request ->
-        handle_cast({Emails.User, :contact_request, [merge_params(user, contact_request)]}, state)
-
-      error ->
-        {:noreply, [{:error, error} | state]}
-    end
-  end
 
   defp handle_data(%{"tourScheduled" => %{"id" => id}}, state) do
     Re.Calendars.TourAppointment
