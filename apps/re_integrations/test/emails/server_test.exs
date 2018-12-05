@@ -148,7 +148,11 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       request = insert(:price_suggestion_request, address: address, is_covered: false)
 
       Emails.Server.handle_info(
-        %{topic: "price_suggestion_requested", type: :new, new: %{req: request, price: 10.10}},
+        %{
+          topic: "new_price_suggestion_request",
+          type: :new,
+          new: %{req: request, price: {:ok, 10.10}}
+        },
         []
       )
 
@@ -177,7 +181,11 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       request = insert(:price_suggestion_request, address: address, is_covered: true)
 
       Emails.Server.handle_info(
-        %{topic: "price_suggestion_requested", type: :new, new: %{req: request, price: nil}},
+        %{
+          topic: "new_price_suggestion_request",
+          type: :new,
+          new: %{req: request, price: {:ok, nil}}
+        },
         []
       )
 
