@@ -8,8 +8,6 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   require Logger
 
   alias Re.{
-    Accounts.Users,
-    Listings,
     PriceSuggestions.Request,
     Repo
   }
@@ -30,7 +28,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   @spec init(term) :: {:ok, term}
   def init(args) do
     if Mix.env() != :test do
-      subscribe("subscription { listingInserted { id owner { id } } }")
+      Re.PubSub.subscribe("new_listing")
       Re.PubSub.subscribe("contact_request")
       subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
       Re.PubSub.subscribe("notify_when_covered")
@@ -107,12 +105,12 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     handle_data(data, state)
   end
 
-  def handle_info(%{topic: "notify_when_covered", type: :new, new: content}, state) do
-    handle_cast({Emails.User, :notification_coverage_asked, [content]}, state)
+  def handle_info(%{topic: "notify_when_covered", type: :new, new: notify_when_covered}, state) do
+    handle_cast({Emails.User, :notification_coverage_asked, [notify_when_covered]}, state)
   end
 
-  def handle_info(%{topic: "contact_request", type: :new, new: content}, state) do
-    case content do
+  def handle_info(%{topic: "contact_request", type: :new, new: contact_request}, state) do
+    case contact_request do
       %{user: nil} = contact_request ->
         handle_cast({Emails.User, :contact_request, [contact_request]}, state)
 
@@ -125,16 +123,22 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     end
   end
 
-  def handle_info(%{topic: "new_interest", type: :new, new: content}, state) do
-    content = Repo.preload(content, :interest_type)
+  def handle_info(%{topic: "new_interest", type: :new, new: interest}, state) do
+    interest = Repo.preload(interest, :interest_type)
 
-    handle_cast({Emails.User, :notify_interest, [content]}, state)
+    handle_cast({Emails.User, :notify_interest, [interest]}, state)
   end
 
-  def handle_info(%{topic: "tour_appointment", type: :new, new: content}, state) do
-    content = Repo.preload(content, [:user, :listing])
+  def handle_info(%{topic: "tour_appointment", type: :new, new: tour_appointment}, state) do
+    tour_appointment = Repo.preload(tour_appointment, [:user, :listing])
 
-    handle_cast({Emails.User, :tour_appointment, [content]}, state)
+    handle_cast({Emails.User, :tour_appointment, [tour_appointment]}, state)
+  end
+
+  def handle_info(%{topic: "new_listing", type: :new, new: listing}, state) do
+    listing = Repo.preload(listing, :user)
+
+    handle_cast({Emails.User, :listing_added_admin, [listing.user, listing]}, state)
   end
 
   def handle_info(_, state), do: {:noreply, state}
@@ -156,19 +160,6 @@ defmodule ReIntegrations.Notifications.Emails.Server do
         request = Repo.preload(request, [:address, :user])
 
         handle_cast({Emails.User, :price_suggestion_requested, [request, suggested_price]}, state)
-    end
-  end
-
-  defp handle_data(
-         %{"listingInserted" => %{"id" => listing_id, "owner" => %{"id" => user_id}}},
-         state
-       ) do
-    case {Users.get(user_id), Listings.get(listing_id)} do
-      {{:ok, user}, {:ok, listing}} ->
-        handle_cast({Emails.User, :listing_added_admin, [user, listing]}, state)
-
-      _ ->
-        {:noreply, state}
     end
   end
 

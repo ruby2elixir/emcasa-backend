@@ -281,5 +281,14 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
       assert_email_sent(Emails.User.notify_interest(interest))
     end
+
+    test "should notify when user inserts a listing" do
+      user = insert(:user)
+      listing = insert(:listing, user: user)
+
+      Emails.Server.handle_info(%{topic: "new_listing", type: :new, new: listing}, [])
+
+      assert_email_sent(Emails.User.listing_added_admin(user, listing))
+    end
   end
 end

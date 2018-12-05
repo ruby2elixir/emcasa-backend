@@ -12,6 +12,7 @@ defmodule Re.Listings do
     Listings.Opts,
     Listings.PriceHistory,
     Listings.Queries,
+    PubSub,
     Repo,
     User
   }
@@ -98,7 +99,12 @@ defmodule Re.Listings do
     |> Changeset.change(user_id: user.id)
     |> Listing.changeset(params, user.role)
     |> Repo.insert()
+    |> publish_if_admin(user.role)
   end
+
+  defp publish_if_admin(result, "user"), do: PubSub.publish_new(result, "new_listing")
+
+  defp publish_if_admin(result, _), do: result
 
   defp validate_phone_number(params, user) do
     phone = params["phone"] || params[:phone] || user.phone
