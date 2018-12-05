@@ -8,15 +8,11 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   require Logger
 
   alias Re.{
-    PriceSuggestions.Request,
+    PubSub,
     Repo
   }
 
-  alias ReWeb.Schema
-
   alias ReIntegrations.Notifications.Emails
-
-  alias ReWeb.Endpoint, as: PubSub
 
   @env Application.get_env(:re, :env)
 
@@ -28,30 +24,18 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   @spec init(term) :: {:ok, term}
   def init(args) do
     if Mix.env() != :test do
-      Re.PubSub.subscribe("new_listing")
-      Re.PubSub.subscribe("contact_request")
-      subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
-      Re.PubSub.subscribe("notify_when_covered")
-      Re.PubSub.subscribe("tour_appointment")
-      Re.PubSub.subscribe("new_interest")
+      PubSub.subscribe("new_listing")
+      PubSub.subscribe("contact_request")
+      PubSub.subscribe("new_price_suggestion_request")
+      PubSub.subscribe("notify_when_covered")
+      PubSub.subscribe("tour_appointment")
+      PubSub.subscribe("new_interest")
     end
 
     {:ok, args}
   end
 
   def handle_call(:inspect, _caller, state), do: {:reply, state, state}
-
-  defp subscribe(subscription) do
-    case Absinthe.run(subscription, Schema, context: %{pubsub: PubSub, current_user: :system}) do
-      {:ok, %{"subscribed" => topic}} ->
-        PubSub.subscribe(topic)
-
-      error ->
-        Logger.warn("Subscription error: #{inspect(error)}")
-
-        :nothing
-    end
-  end
 
   @spec handle_cast({atom(), atom(), [any]}, any) :: {:noreply, any}
 
@@ -100,11 +84,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     end
   end
 
-  @spec handle_info(Phoenix.Socket.Broadcast.t(), any) :: {:noreply, any}
-  def handle_info(%Phoenix.Socket.Broadcast{payload: %{result: %{data: data}}}, state) do
-    handle_data(data, state)
-  end
-
+  @spec handle_info(map(), any) :: {:noreply, any}
   def handle_info(%{topic: "notify_when_covered", type: :new, new: notify_when_covered}, state) do
     handle_cast({Emails.User, :notification_coverage_asked, [notify_when_covered]}, state)
   end
@@ -141,27 +121,20 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     handle_cast({Emails.User, :listing_added_admin, [listing.user, listing]}, state)
   end
 
-  def handle_info(_, state), do: {:noreply, state}
+  def handle_info(
+        %{
+          topic: "new_price_suggestion_request",
+          type: :new,
+          new: %{req: request, price: {_, price}}
+        },
+        state
+      ) do
+    request = Repo.preload(request, [:address, :user])
 
-  defp handle_data(
-         %{
-           "priceSuggestionRequested" => %{
-             "id" => request_id,
-             "suggestedPrice" => suggested_price
-           }
-         },
-         state
-       ) do
-    case Repo.get(Request, request_id) do
-      nil ->
-        {:noreply, state}
-
-      request ->
-        request = Repo.preload(request, [:address, :user])
-
-        handle_cast({Emails.User, :price_suggestion_requested, [request, suggested_price]}, state)
-    end
+    handle_cast({Emails.User, :price_suggestion_requested, [request, price]}, state)
   end
+
+  def handle_info(_, state), do: {:noreply, state}
 
   defp merge_params(user, contact_request) do
     user = Map.take(user, ~w(name email phone)a)

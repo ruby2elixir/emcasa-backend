@@ -145,16 +145,10 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "price suggestion requested when price" do
       address = insert(:address)
-      %{id: id} = request = insert(:price_suggestion_request, address: address, is_covered: false)
+      request = insert(:price_suggestion_request, address: address, is_covered: false)
 
       Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"priceSuggestionRequested" => %{"id" => id, "suggestedPrice" => 10.10}}
-            }
-          }
-        },
+        %{topic: "price_suggestion_requested", type: :new, new: %{req: request, price: 10.10}},
         []
       )
 
@@ -180,16 +174,10 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "price suggestion requested for not covered street" do
       address = insert(:address)
-      %{id: id} = request = insert(:price_suggestion_request, address: address, is_covered: true)
+      request = insert(:price_suggestion_request, address: address, is_covered: true)
 
       Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"priceSuggestionRequested" => %{"id" => id, "suggestedPrice" => nil}}
-            }
-          }
-        },
+        %{topic: "price_suggestion_requested", type: :new, new: %{req: request, price: nil}},
         []
       )
 

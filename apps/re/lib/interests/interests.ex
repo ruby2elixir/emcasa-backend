@@ -55,6 +55,11 @@ defmodule Re.Interests do
          {:ok, request} <- PriceSuggestions.create_request(params, address, user),
          request <- Repo.preload(request, :address),
          suggested_price <- PriceSuggestions.suggest_price(request) do
+      PubSub.publish_new(
+        {:ok, %{req: request, price: suggested_price}},
+        "new_price_suggestion_request"
+      )
+
       {:ok, request, suggested_price}
     end
   end
