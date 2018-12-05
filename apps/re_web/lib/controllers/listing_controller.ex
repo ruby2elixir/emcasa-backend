@@ -56,7 +56,7 @@ defmodule ReWeb.ListingController do
          {:ok, address} <- Addresses.insert_or_update(address_params),
          {:ok, listing, listing_changeset} <-
            Listings.update(listing, listing_params, address, user) do
-      send_email_if_not_admin(listing, user, listing_changeset)
+      # send_email_if_not_admin(listing, user, listing_changeset)
 
       render(conn, get_view(user), "edit.json", listing: listing)
     end

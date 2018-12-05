@@ -130,8 +130,16 @@ defmodule Re.Listings do
     |> save_old_price(listing_changeset)
     |> Repo.transaction()
     |> case do
-      {:ok, %{listing: listing}} -> {:ok, listing, listing_changeset}
-      error -> error
+      {:ok, %{listing: listing}} ->
+        PubSub.publish_update(
+          {:ok, %{new: listing, changes: listing_changeset.changes}},
+          "update_listing"
+        )
+
+        {:ok, listing, listing_changeset}
+
+      error ->
+        error
     end
   end
 

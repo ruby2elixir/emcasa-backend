@@ -17,12 +17,16 @@ defmodule Re.PubSub do
     end
   end
 
-  def publish_update(new, old, topic) do
-    case new do
-      {:ok, new} ->
-        Phoenix.PubSub.broadcast(__MODULE__, topic, %{new: new, type: :update, old: old})
+  def publish_update(content, topic) do
+    case content do
+      {:ok, content} ->
+        Phoenix.PubSub.broadcast(__MODULE__, topic, %{
+          topic: topic,
+          type: :update,
+          content: content
+        })
 
-        {:ok, new}
+        {:ok, content}
 
       error ->
         error

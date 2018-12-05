@@ -30,6 +30,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
       PubSub.subscribe("notify_when_covered")
       PubSub.subscribe("tour_appointment")
       PubSub.subscribe("new_interest")
+      PubSub.subscribe("update_listing")
     end
 
     {:ok, args}
@@ -119,6 +120,15 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     listing = Repo.preload(listing, :user)
 
     handle_cast({Emails.User, :listing_added_admin, [listing.user, listing]}, state)
+  end
+
+  def handle_info(
+        %{topic: "update_listing", type: :update, content: %{new: listing, changes: changes}},
+        state
+      ) do
+    listing = Repo.preload(listing, :user)
+
+    handle_cast({Emails.User, :listing_updated, [listing.user, listing, changes]}, state)
   end
 
   def handle_info(
