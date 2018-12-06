@@ -56,8 +56,6 @@ defmodule ReWeb.ListingController do
          {:ok, address} <- Addresses.insert_or_update(address_params),
          {:ok, listing, listing_changeset} <-
            Listings.update(listing, listing_params, address, user) do
-      # send_email_if_not_admin(listing, user, listing_changeset)
-
       render(conn, get_view(user), "edit.json", listing: listing)
     end
   end
@@ -86,16 +84,6 @@ defmodule ReWeb.ListingController do
   end
 
   defp send_email_if_not_admin(_listing, %{role: "admin"}), do: :nothing
-
-  defp send_email_if_not_admin(
-         listing,
-         %{role: "user"} = user,
-         listing_changeset
-       ) do
-    @emails.listing_updated(user, listing, listing_changeset.changes)
-  end
-
-  defp send_email_if_not_admin(_, %{role: "admin"}, _), do: :nothing
 
   defp get_view(%{role: "admin"}), do: ReWeb.ListingAdminView
   defp get_view(_), do: ReWeb.ListingView
