@@ -5,19 +5,19 @@ defmodule ReWeb.Application do
 
   use Application
 
+  import Supervisor.Spec
+
   alias ReWeb.{
     Endpoint,
     Pipedrive
   }
 
   def start(_type, _args) do
-    import Supervisor.Spec
-
-    children = [
-      supervisor(Endpoint, []),
-      supervisor(Absinthe.Subscription, [Endpoint]),
-      worker(Pipedrive.Server, [])
-    ]
+    children =
+      [
+        supervisor(Endpoint, []),
+        supervisor(Absinthe.Subscription, [Endpoint])
+      ] ++ extra_processes(Mix.env())
 
     opts = [strategy: :one_for_one, name: ReWeb.Supervisor]
     Supervisor.start_link(children, opts)
@@ -27,4 +27,11 @@ defmodule ReWeb.Application do
     Endpoint.config_change(changed, removed)
     :ok
   end
+
+  defp extra_processes(:test), do: []
+
+  defp extra_processes(_),
+    do: [
+      worker(Pipedrive.Server, [])
+    ]
 end

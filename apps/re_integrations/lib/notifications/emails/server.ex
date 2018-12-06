@@ -23,15 +23,13 @@ defmodule ReIntegrations.Notifications.Emails.Server do
 
   @spec init(term) :: {:ok, term}
   def init(args) do
-    if Mix.env() != :test do
-      PubSub.subscribe("new_listing")
-      PubSub.subscribe("contact_request")
-      PubSub.subscribe("new_price_suggestion_request")
-      PubSub.subscribe("notify_when_covered")
-      PubSub.subscribe("tour_appointment")
-      PubSub.subscribe("new_interest")
-      PubSub.subscribe("update_listing")
-    end
+    PubSub.subscribe("new_listing")
+    PubSub.subscribe("contact_request")
+    PubSub.subscribe("new_price_suggestion_request")
+    PubSub.subscribe("notify_when_covered")
+    PubSub.subscribe("tour_appointment")
+    PubSub.subscribe("new_interest")
+    PubSub.subscribe("update_listing")
 
     {:ok, args}
   end
