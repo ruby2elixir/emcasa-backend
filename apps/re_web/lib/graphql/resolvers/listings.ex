@@ -61,8 +61,7 @@ defmodule ReWeb.Resolvers.Listings do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, current_user, listing),
          {:ok, address} <- get_address(listing_params),
-         {:ok, listing, listing_changeset} <-
-           Listings.update(listing, listing_params, address, current_user) do
+         {:ok, listing} <- Listings.update(listing, listing_params, address, current_user) do
       {:ok, listing}
     end
   end

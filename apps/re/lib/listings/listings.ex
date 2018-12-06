@@ -136,7 +136,7 @@ defmodule Re.Listings do
           "update_listing"
         )
 
-        {:ok, listing, listing_changeset}
+        {:ok, listing}
 
       error ->
         error
