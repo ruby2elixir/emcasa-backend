@@ -1,4 +1,4 @@
-defmodule Re.History.Server do
+defmodule Re.Listings.History.Server do
   @moduledoc """
   Module responsible for storing attributes history
   """
@@ -7,7 +7,7 @@ defmodule Re.History.Server do
   require Logger
 
   alias Re.{
-    Listings.PriceHistories,
+    Listings.History.Price,
     PubSub
   }
 
@@ -30,7 +30,7 @@ defmodule Re.History.Server do
         },
         state
       ) do
-    case PriceHistories.insert(listing, price) do
+    case Price.insert(listing, price) do
       {:ok, _listing} ->
         {:noreply, state}
 

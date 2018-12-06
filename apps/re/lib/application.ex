@@ -8,7 +8,7 @@ defmodule Re.Application do
   import Supervisor.Spec
 
   alias Re.{
-    History.Server,
+    Listings.History.Server,
     Statistics.Scheduler,
     Statistics.Visualizations
   }

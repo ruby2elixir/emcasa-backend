@@ -1,10 +1,10 @@
-defmodule Re.History.ServerTest do
+defmodule Re.Listings.History.ServerTest do
   use Re.ModelCase
 
   import Re.Factory
 
   alias Re.{
-    History.Server,
+    Listings.History.Server,
     Listing,
     Listings.PriceHistory,
     Repo

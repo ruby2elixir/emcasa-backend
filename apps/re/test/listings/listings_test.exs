@@ -2,7 +2,7 @@ defmodule Re.ListingsTest do
   use Re.ModelCase
 
   alias Re.{
-    History.Server,
+    Listings.History.Server,
     Listing,
     Listings
   }
