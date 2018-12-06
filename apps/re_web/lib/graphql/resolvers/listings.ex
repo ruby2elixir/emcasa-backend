@@ -61,10 +61,7 @@ defmodule ReWeb.Resolvers.Listings do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, current_user, listing),
          {:ok, address} <- get_address(listing_params),
-         {:ok, listing, listing_changeset} <-
-           Listings.update(listing, listing_params, address, current_user) do
-      send_email_if_not_admin(listing, current_user, listing_changeset)
-
+         {:ok, listing} <- Listings.update(listing, listing_params, address, current_user) do
       {:ok, listing}
     end
   end
@@ -214,16 +211,4 @@ defmodule ReWeb.Resolvers.Listings do
   def neighborhoods(_, _), do: {:ok, Neighborhoods.all()}
 
   def featured(_, _), do: {:ok, Featured.get_graphql()}
-
-  @emails Application.get_env(:re, :emails, ReIntegrations.Notifications.Emails)
-
-  defp send_email_if_not_admin(
-         listing,
-         %{role: "user"} = user,
-         listing_changeset
-       ) do
-    @emails.listing_updated(user, listing, listing_changeset.changes)
-  end
-
-  defp send_email_if_not_admin(_, %{role: "admin"}, _), do: :nothing
 end

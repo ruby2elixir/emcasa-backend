@@ -12,6 +12,7 @@ defmodule Re.Listings do
     Listings.Opts,
     Listings.PriceHistory,
     Listings.Queries,
+    PubSub,
     Repo,
     User
   }
@@ -98,7 +99,12 @@ defmodule Re.Listings do
     |> Changeset.change(user_id: user.id)
     |> Listing.changeset(params, user.role)
     |> Repo.insert()
+    |> publish_if_admin(user.role)
   end
+
+  defp publish_if_admin(result, "user"), do: PubSub.publish_new(result, "new_listing")
+
+  defp publish_if_admin(result, _), do: result
 
   defp validate_phone_number(params, user) do
     phone = params["phone"] || params[:phone] || user.phone
@@ -124,8 +130,16 @@ defmodule Re.Listings do
     |> save_old_price(listing_changeset)
     |> Repo.transaction()
     |> case do
-      {:ok, %{listing: listing}} -> {:ok, listing, listing_changeset}
-      error -> error
+      {:ok, %{listing: listing}} ->
+        PubSub.publish_update(
+          {:ok, %{new: listing, changes: listing_changeset.changes}},
+          "update_listing"
+        )
+
+        {:ok, listing}
+
+      error ->
+        error
     end
   end
 

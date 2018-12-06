@@ -83,7 +83,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
   describe "handle_info/2" do
     test "contact requested by anonymous" do
-      %{id: id} =
+      request =
         insert(
           :contact_request,
           name: "mahname",
@@ -92,12 +92,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           message: "cool website"
         )
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "contact_request", type: :new, new: request}, [])
 
       assert_email_sent(
         Emails.User.contact_request(%{
@@ -111,14 +106,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "contact requested by user" do
       user = insert(:user)
-      %{id: id} = insert(:contact_request, message: "cool website", user: user)
+      request = insert(:contact_request, message: "cool website", user: user)
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "contact_request", type: :new, new: request}, [])
 
       assert_email_sent(
         Emails.User.contact_request(%{
@@ -133,7 +123,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
     test "contact requested by user with new email" do
       user = insert(:user)
 
-      %{id: id} =
+      request =
         insert(
           :contact_request,
           message: "cool website",
@@ -141,12 +131,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           email: "different@email.com"
         )
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{result: %{data: %{"contactRequested" => %{"id" => id}}}}
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "contact_request", type: :new, new: request}, [])
 
       assert_email_sent(
         Emails.User.contact_request(%{
@@ -160,15 +145,13 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "price suggestion requested when price" do
       address = insert(:address)
-      %{id: id} = request = insert(:price_suggestion_request, address: address, is_covered: false)
+      request = insert(:price_suggestion_request, address: address, is_covered: false)
 
       Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"priceSuggestionRequested" => %{"id" => id, "suggestedPrice" => 10.10}}
-            }
-          }
+        %{
+          topic: "new_price_suggestion_request",
+          type: :new,
+          new: %{req: request, price: {:ok, 10.10}}
         },
         []
       )
@@ -195,15 +178,13 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "price suggestion requested for not covered street" do
       address = insert(:address)
-      %{id: id} = request = insert(:price_suggestion_request, address: address, is_covered: true)
+      request = insert(:price_suggestion_request, address: address, is_covered: true)
 
       Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"priceSuggestionRequested" => %{"id" => id, "suggestedPrice" => nil}}
-            }
-          }
+        %{
+          topic: "new_price_suggestion_request",
+          type: :new,
+          new: %{req: request, price: {:ok, nil}}
         },
         []
       )
@@ -229,8 +210,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
     end
 
     test "notify when covered requested" do
-      %{id: id} =
-        request =
+      request =
         insert(:notify_when_covered,
           name: "naem",
           phone: "12321",
@@ -241,16 +221,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           neighborhood: "Morumbi"
         )
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"notificationCoverageAsked" => %{"id" => id}}
-            }
-          }
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "notify_when_covered", type: :new, new: request}, [])
 
       assert_email_sent(
         Emails.User.notification_coverage_asked(%{
@@ -271,7 +242,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       user = insert(:user)
       listing = insert(:listing, user: user)
 
-      %{id: tour_appointment_id} =
+      tour_appointment =
         insert(:tour_appointment,
           wants_pictures: true,
           wants_tour: true,
@@ -281,13 +252,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
         )
 
       Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"tourScheduled" => %{"id" => tour_appointment_id}}
-            }
-          }
-        },
+        %{topic: "tour_appointment", type: :new, new: tour_appointment},
         []
       )
 
@@ -306,21 +271,20 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       interest_type = insert(:interest_type)
       listing = insert(:listing)
 
-      %{id: interest_id} =
-        interest = insert(:interest, listing: listing, interest_type: interest_type)
+      interest = insert(:interest, listing: listing, interest_type: interest_type)
 
-      Emails.Server.handle_info(
-        %Phoenix.Socket.Broadcast{
-          payload: %{
-            result: %{
-              data: %{"interestCreated" => %{"id" => interest_id}}
-            }
-          }
-        },
-        []
-      )
+      Emails.Server.handle_info(%{topic: "new_interest", type: :new, new: interest}, [])
 
       assert_email_sent(Emails.User.notify_interest(interest))
+    end
+
+    test "should notify when user inserts a listing" do
+      user = insert(:user)
+      listing = insert(:listing, user: user)
+
+      Emails.Server.handle_info(%{topic: "new_listing", type: :new, new: listing}, [])
+
+      assert_email_sent(Emails.User.listing_added_admin(user, listing))
     end
   end
 end

@@ -4,6 +4,7 @@ defmodule Re.Calendars do
   """
   alias Re.{
     Calendars.TourAppointment,
+    PubSub,
     Repo
   }
 
@@ -13,6 +14,7 @@ defmodule Re.Calendars do
     %TourAppointment{}
     |> TourAppointment.changeset(params)
     |> Repo.insert()
+    |> PubSub.publish_new("tour_appointment")
   end
 
   @format "{D}-{M}-{YYYY} {h12}:{m} {AM}"

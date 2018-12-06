@@ -8,17 +8,11 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   require Logger
 
   alias Re.{
-    Accounts.Users,
-    Listings,
-    PriceSuggestions.Request,
+    PubSub,
     Repo
   }
 
-  alias ReWeb.Schema
-
   alias ReIntegrations.Notifications.Emails
-
-  alias ReWeb.Endpoint, as: PubSub
 
   @env Application.get_env(:re, :env)
 
@@ -30,31 +24,19 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   @spec init(term) :: {:ok, term}
   def init(args) do
     if Mix.env() != :test do
-      subscribe("subscription { listingInserted { id owner { id } } }")
-      subscribe("subscription { contactRequested { id } }")
-      subscribe("subscription { priceSuggestionRequested { id suggestedPrice} }")
-      subscribe("subscription { userRegistered { user { id } } }")
-      subscribe("subscription { notificationCoverageAsked { id } }")
-      subscribe("subscription { tourScheduled { id } }")
-      subscribe("subscription { interestCreated { id } }")
+      PubSub.subscribe("new_listing")
+      PubSub.subscribe("contact_request")
+      PubSub.subscribe("new_price_suggestion_request")
+      PubSub.subscribe("notify_when_covered")
+      PubSub.subscribe("tour_appointment")
+      PubSub.subscribe("new_interest")
+      PubSub.subscribe("update_listing")
     end
 
     {:ok, args}
   end
 
   def handle_call(:inspect, _caller, state), do: {:reply, state, state}
-
-  defp subscribe(subscription) do
-    case Absinthe.run(subscription, Schema, context: %{pubsub: PubSub, current_user: :system}) do
-      {:ok, %{"subscribed" => topic}} ->
-        PubSub.subscribe(topic)
-
-      error ->
-        Logger.warn("Subscription error: #{inspect(error)}")
-
-        :nothing
-    end
-  end
 
   @spec handle_cast({atom(), atom(), [any]}, any) :: {:noreply, any}
 
@@ -103,60 +85,18 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     end
   end
 
-  @spec handle_info(Phoenix.Socket.Broadcast.t(), any) :: {:noreply, any}
-  def handle_info(%Phoenix.Socket.Broadcast{payload: %{result: %{data: data}}}, state) do
-    handle_data(data, state)
+  @spec handle_info(map(), any) :: {:noreply, any}
+  def handle_info(%{topic: "notify_when_covered", type: :new, new: notify_when_covered}, state) do
+    handle_cast({Emails.User, :notification_coverage_asked, [notify_when_covered]}, state)
   end
 
-  def handle_info(_, state), do: {:noreply, state}
-
-  defp handle_data(
-         %{
-           "priceSuggestionRequested" => %{
-             "id" => request_id,
-             "suggestedPrice" => suggested_price
-           }
-         },
-         state
-       ) do
-    case Repo.get(Request, request_id) do
-      nil ->
-        {:noreply, state}
-
-      request ->
-        request = Repo.preload(request, [:address, :user])
-
-        handle_cast({Emails.User, :price_suggestion_requested, [request, suggested_price]}, state)
-    end
-  end
-
-  defp handle_data(
-         %{"listingInserted" => %{"id" => listing_id, "owner" => %{"id" => user_id}}},
-         state
-       ) do
-    case {Users.get(user_id), Listings.get(listing_id)} do
-      {{:ok, user}, {:ok, listing}} ->
-        handle_cast({Emails.User, :listing_added_admin, [user, listing]}, state)
-
-      _ ->
-        {:noreply, state}
-    end
-  end
-
-  import Ecto.Query, only: [preload: 2]
-
-  defp handle_data(%{"contactRequested" => %{"id" => id}}, state) do
-    Re.Interests.ContactRequest
-    |> preload(:user)
-    |> Repo.get(id)
-    |> case do
-      nil ->
-        {:noreply, [{:error, "Request Contact id #{id} does not exist"} | state]}
-
+  def handle_info(%{topic: "contact_request", type: :new, new: contact_request}, state) do
+    case contact_request do
       %{user: nil} = contact_request ->
         handle_cast({Emails.User, :contact_request, [contact_request]}, state)
 
       %{user: user} = contact_request ->
+        contact_request = Repo.preload(contact_request, :user)
         handle_cast({Emails.User, :contact_request, [merge_params(user, contact_request)]}, state)
 
       error ->
@@ -164,43 +104,47 @@ defmodule ReIntegrations.Notifications.Emails.Server do
     end
   end
 
-  defp handle_data(%{"notificationCoverageAsked" => %{"id" => id}}, state) do
-    Re.Interests.NotifyWhenCovered
-    |> Repo.get(id)
-    |> case do
-      nil ->
-        {:noreply, [{:error, "Notify when Covered id #{id} does not exist"} | state]}
+  def handle_info(%{topic: "new_interest", type: :new, new: interest}, state) do
+    interest = Repo.preload(interest, :interest_type)
 
-      notify_when_covered ->
-        handle_cast({Emails.User, :notification_coverage_asked, [notify_when_covered]}, state)
-    end
+    handle_cast({Emails.User, :notify_interest, [interest]}, state)
   end
 
-  defp handle_data(%{"tourScheduled" => %{"id" => id}}, state) do
-    Re.Calendars.TourAppointment
-    |> preload([:user, :listing])
-    |> Repo.get(id)
-    |> case do
-      nil ->
-        {:noreply, [{:error, "Tour Apponintment with id #{id} does not exist"} | state]}
+  def handle_info(%{topic: "tour_appointment", type: :new, new: tour_appointment}, state) do
+    tour_appointment = Repo.preload(tour_appointment, [:user, :listing])
 
-      %{user: %{role: "user"}} = tour_appointment ->
-        handle_cast({Emails.User, :tour_appointment, [tour_appointment]}, state)
-
-      _ ->
-        {:noreply, state}
-    end
+    handle_cast({Emails.User, :tour_appointment, [tour_appointment]}, state)
   end
 
-  defp handle_data(%{"interestCreated" => %{"id" => id}}, state) do
-    Re.Interest
-    |> preload([:interest_type])
-    |> Repo.get(id)
-    |> case do
-      nil -> {:noreply, [{:error, "Interest with id #{id} does not exist"} | state]}
-      interest -> handle_cast({Emails.User, :notify_interest, [interest]}, state)
-    end
+  def handle_info(%{topic: "new_listing", type: :new, new: listing}, state) do
+    listing = Repo.preload(listing, :user)
+
+    handle_cast({Emails.User, :listing_added_admin, [listing.user, listing]}, state)
   end
+
+  def handle_info(
+        %{topic: "update_listing", type: :update, content: %{new: listing, changes: changes}},
+        state
+      ) do
+    listing = Repo.preload(listing, :user)
+
+    handle_cast({Emails.User, :listing_updated, [listing.user, listing, changes]}, state)
+  end
+
+  def handle_info(
+        %{
+          topic: "new_price_suggestion_request",
+          type: :new,
+          new: %{req: request, price: {_, price}}
+        },
+        state
+      ) do
+    request = Repo.preload(request, [:address, :user])
+
+    handle_cast({Emails.User, :price_suggestion_requested, [request, price]}, state)
+  end
+
+  def handle_info(_, state), do: {:noreply, state}
 
   defp merge_params(user, contact_request) do
     user = Map.take(user, ~w(name email phone)a)

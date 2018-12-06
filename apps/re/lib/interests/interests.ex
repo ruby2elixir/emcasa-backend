@@ -10,6 +10,7 @@ defmodule Re.Interests do
     Interests.NotifyWhenCovered,
     InterestType,
     PriceSuggestions,
+    PubSub,
     Repo,
     User
   }
@@ -24,6 +25,7 @@ defmodule Re.Interests do
     %Interest{}
     |> Interest.changeset(params)
     |> Repo.insert()
+    |> PubSub.publish_new("new_interest")
   end
 
   def show_interest(listing_id, params) do
@@ -45,6 +47,7 @@ defmodule Re.Interests do
     |> ContactRequest.changeset(params)
     |> attach_user(user)
     |> Repo.insert()
+    |> PubSub.publish_new("contact_request")
   end
 
   def request_price_suggestion(params, user) do
@@ -52,6 +55,11 @@ defmodule Re.Interests do
          {:ok, request} <- PriceSuggestions.create_request(params, address, user),
          request <- Repo.preload(request, :address),
          suggested_price <- PriceSuggestions.suggest_price(request) do
+      PubSub.publish_new(
+        {:ok, %{req: request, price: suggested_price}},
+        "new_price_suggestion_request"
+      )
+
       {:ok, request, suggested_price}
     end
   end
@@ -60,6 +68,7 @@ defmodule Re.Interests do
     %NotifyWhenCovered{}
     |> NotifyWhenCovered.changeset(params)
     |> Repo.insert()
+    |> PubSub.publish_new("notify_when_covered")
   end
 
   defp attach_user(changeset, %User{id: id}),

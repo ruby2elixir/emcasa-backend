@@ -11,6 +11,12 @@ defmodule ReIntegrations.Search do
   @spec cleanup_index() :: GenServer.cast()
   def cleanup_index(), do: GenServer.cast(__MODULE__.Server, :cleanup_index)
 
+  @spec rebuild_index() :: GenServer.cast()
+  def rebuild_index do
+    GenServer.cast(__MODULE__.Server, :cleanup_index)
+    GenServer.cast(__MODULE__.Server, :build_index)
+  end
+
   @query_fiels [
     "everything",
     "rooms^2",

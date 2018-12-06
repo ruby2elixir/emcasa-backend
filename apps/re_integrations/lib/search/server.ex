@@ -6,16 +6,15 @@ defmodule ReIntegrations.Search.Server do
 
   require Logger
 
-  alias Re.Listings
-
-  alias ReWeb.Schema
+  alias Re.{
+    PubSub,
+    Repo
+  }
 
   alias ReIntegrations.{
     Search.Cluster,
     Search.Store
   }
-
-  alias ReWeb.Endpoint, as: PubSub
 
   @index "listings"
 
@@ -35,23 +34,8 @@ defmodule ReIntegrations.Search.Server do
   @spec init(term) :: {:ok, term}
   def init(args) do
     if Mix.env() != :test do
-      case Absinthe.run(
-             "subscription { listingActivated { id } }",
-             Schema,
-             context: %{pubsub: PubSub, current_user: :system}
-           ) do
-        {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
-        _ -> :nothing
-      end
-
-      case Absinthe.run(
-             "subscription { listingDeactivated { id } }",
-             Schema,
-             context: %{pubsub: PubSub, current_user: :system}
-           ) do
-        {:ok, %{"subscribed" => topic}} -> PubSub.subscribe(topic)
-        _ -> :nothing
-      end
+      PubSub.subscribe("activate_listing")
+      PubSub.subscribe("deactivate_listing")
     end
 
     {:ok, args}
@@ -76,14 +60,8 @@ defmodule ReIntegrations.Search.Server do
     {:noreply, state}
   end
 
-  def handle_info(%Phoenix.Socket.Broadcast{payload: %{result: %{data: data}}}, state) do
-    handle_data(data)
-
-    {:noreply, state}
-  end
-
-  defp handle_data(%{"listingActivated" => %{"id" => listing_id}}) do
-    {:ok, listing} = Listings.get_preloaded(listing_id)
+  def handle_info(%{topic: "activate_listing", type: :update, resource: listing}, state) do
+    listing = Repo.preload(listing, :address)
 
     case Elasticsearch.put_document(Cluster, listing, @index) do
       {:ok, _doc} ->
@@ -94,10 +72,12 @@ defmodule ReIntegrations.Search.Server do
           "Adding listing #{listing.id} to the index failed. Reason: #{inspect(error)}"
         )
     end
+
+    {:noreply, state}
   end
 
-  defp handle_data(%{"listingDeactivated" => %{"id" => listing_id}}) do
-    {:ok, listing} = Listings.get_preloaded(listing_id)
+  def handle_info(%{topic: "deactivate_listing", type: :update, resource: listing}, state) do
+    listing = Repo.preload(listing, :address)
 
     case Elasticsearch.delete_document(Cluster, listing, @index) do
       {:ok, _doc} ->
@@ -108,5 +88,9 @@ defmodule ReIntegrations.Search.Server do
           "Removing listing #{listing.id} from the index failed. Reason: #{inspect(error)}"
         )
     end
+
+    {:noreply, state}
   end
+
+  def handle_info(_, state), do: {:noreply, state}
 end
