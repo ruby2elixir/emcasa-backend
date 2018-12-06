@@ -7,9 +7,8 @@ defmodule Re.History.Server do
   require Logger
 
   alias Re.{
-    Listings.PriceHistory,
-    PubSub,
-    Repo
+    Listings.PriceHistories,
+    PubSub
   }
 
   @spec start_link :: GenServer.start_link()
@@ -24,19 +23,21 @@ defmodule Re.History.Server do
 
   @spec handle_info(map(), any) :: {:noreply, any}
   def handle_info(
-        %{topic: "update_listing", type: :update, content: %{new: new, changeset: changeset}},
+        %{
+          topic: "update_listing",
+          type: :update,
+          content: %{new: listing, changeset: %{changes: %{price: _}, data: %{price: price}}}
+        },
         state
       ) do
-    case changeset do
-      %{data: %{price: old_price}} ->
-        %PriceHistory{}
-        |> PriceHistory.changeset(%{price: old_price, listing_id: new.id})
-        |> Repo.insert()
-
+    case PriceHistories.insert(listing, price) do
+      {:ok, _listing} ->
         {:noreply, state}
 
-      _ ->
-        {:noreply, state}
+      error ->
+        Logger.warn("Error when saving price history. Reason: #{inspect(error)}")
+
+        {:noreply, [error | state]}
     end
   end
 

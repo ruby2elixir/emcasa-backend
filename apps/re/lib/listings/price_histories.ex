@@ -4,7 +4,18 @@ defmodule Re.Listings.PriceHistories do
   """
   import Ecto.Query
 
+  alias Re.{
+    Listings.PriceHistory,
+    Repo
+  }
+
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
+
+  def insert(listing, price) do
+    %PriceHistory{}
+    |> PriceHistory.changeset(%{price: price, listing_id: listing.id})
+    |> Repo.insert()
+  end
 
   def query(query, args) do
     args
