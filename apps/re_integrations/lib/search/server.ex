@@ -33,10 +33,8 @@ defmodule ReIntegrations.Search.Server do
 
   @spec init(term) :: {:ok, term}
   def init(args) do
-    if Mix.env() != :test do
-      PubSub.subscribe("activate_listing")
-      PubSub.subscribe("deactivate_listing")
-    end
+    PubSub.subscribe("activate_listing")
+    PubSub.subscribe("deactivate_listing")
 
     {:ok, args}
   end

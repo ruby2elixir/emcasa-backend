@@ -68,7 +68,7 @@ defmodule ReWeb.Schema do
       Re.Addresses,
       Re.Images,
       Re.Listings,
-      Re.Listings.PriceHistories,
+      Re.Listings.History.Price,
       Re.Messages,
       Re.Interests,
       Re.Interests.Types,

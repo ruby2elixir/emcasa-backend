@@ -2,6 +2,7 @@ defmodule Re.ListingsTest do
   use Re.ModelCase
 
   alias Re.{
+    Listings.History.Server,
     Listing,
     Listings
   }
@@ -366,6 +367,8 @@ defmodule Re.ListingsTest do
 
   describe "update/4" do
     test "should deactivate if non-admin updates" do
+      Server.start_link()
+
       user = insert(:user)
       address = insert(:address)
       listing = insert(:listing, user: user, price: 1_000_000)
@@ -374,6 +377,7 @@ defmodule Re.ListingsTest do
 
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.status == "inactive"
+
       assert [%{price: 1_000_000}] = Repo.all(Re.Listings.PriceHistory)
     end
 
