@@ -145,16 +145,28 @@ defmodule Re.Listings do
   defp deactivate_if_not_admin(changeset, %{role: "admin"}), do: changeset
 
   def deactivate(listing) do
-    listing
-    |> Changeset.change(status: "inactive")
+    changeset = Changeset.change(listing, status: "inactive")
+
+    changeset
     |> Repo.update()
+    |> publish_status(changeset, "deactivate_listing")
   end
 
   def activate(listing) do
-    listing
-    |> Changeset.change(status: "active")
+    changeset = Changeset.change(listing, status: "active")
+
+    changeset
     |> Repo.update()
+    |> publish_status(changeset, "activate_listing")
   end
+
+  defp publish_status({:ok, listing}, changeset, topic) do
+    PubSub.publish_update({:ok, %{new: listing, changeset: changeset}}, topic)
+
+    {:ok, listing}
+  end
+
+  defp publish_status(error, _, _), do: error
 
   def per_user(user) do
     Listing

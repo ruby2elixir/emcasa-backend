@@ -4,9 +4,10 @@ defmodule Re.Listings.History.ServerTest do
   import Re.Factory
 
   alias Re.{
-    Listings.History.Server,
     Listing,
+    Listings.History.Server,
     Listings.PriceHistory,
+    Listings.StatusHistory,
     Repo
   }
 
@@ -47,6 +48,44 @@ defmodule Re.Listings.History.ServerTest do
       )
 
       assert [] == Repo.all(PriceHistory)
+    end
+
+    test "save status history when it's activated" do
+      listing = insert(:listing, status: "inactive")
+      changeset = Listing.changeset(listing, %{status: "active"}, "admin")
+
+      Server.handle_info(
+        %{
+          topic: "activate_listing",
+          type: :update,
+          content: %{
+            new: listing,
+            changeset: changeset
+          }
+        },
+        []
+      )
+
+      assert [_] = Repo.all(StatusHistory)
+    end
+
+    test "save status history when it's deactivated" do
+      listing = insert(:listing, status: "active")
+      changeset = Listing.changeset(listing, %{status: "inactive"}, "admin")
+
+      Server.handle_info(
+        %{
+          topic: "deactivate_listing",
+          type: :update,
+          content: %{
+            new: listing,
+            changeset: changeset
+          }
+        },
+        []
+      )
+
+      assert [_] = Repo.all(StatusHistory)
     end
   end
 end

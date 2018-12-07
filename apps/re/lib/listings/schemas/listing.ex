@@ -85,7 +85,7 @@ defmodule Re.Listing do
 
   @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
-  @admin_optional ~w(complement floor matterport_code is_exclusive
+  @admin_optional ~w(complement floor matterport_code is_exclusive status
                      property_tax maintenance_fee balconies restrooms is_release)a
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
