@@ -147,36 +147,26 @@ defmodule Re.Listings do
   def deactivate(listing) do
     changeset = Changeset.change(listing, status: "inactive")
 
-    case Repo.update(changeset) do
-      {:ok, listing} ->
-        PubSub.publish_update(
-          {:ok, %{new: listing, changeset: changeset}},
-          "deactivate_listing"
-        )
-
-        {:ok, listing}
-
-      error ->
-        error
-    end
+    changeset
+    |> Repo.update()
+    |> publish_status(changeset, "deactivate_listing")
   end
 
   def activate(listing) do
     changeset = Changeset.change(listing, status: "active")
 
-    case Repo.update(changeset) do
-      {:ok, listing} ->
-        PubSub.publish_update(
-          {:ok, %{new: listing, changeset: changeset}},
-          "activate_listing"
-        )
-
-        {:ok, listing}
-
-      error ->
-        error
-    end
+    changeset
+    |> Repo.update()
+    |> publish_status(changeset, "activate_listing")
   end
+
+  defp publish_status({:ok, listing}, changeset, topic) do
+    PubSub.publish_update({:ok, %{new: listing, changeset: changeset}}, topic)
+
+    {:ok, listing}
+  end
+
+  defp publish_status(error, _, _), do: error
 
   def per_user(user) do
     Listing
