@@ -279,19 +279,31 @@ defmodule Re.ListingsTest do
 
   describe "deactivate/1" do
     test "should set status to inactive" do
-      listing = insert(:listing)
+      Server.start_link()
+      listing = insert(:listing, status: "active")
 
       {:ok, listing} = Listings.deactivate(listing)
+
+      GenServer.call(Server, :inspect)
+
       assert listing.status == "inactive"
+      status_history = Repo.one(Re.Listings.StatusHistory)
+      assert "active" == status_history.status
     end
   end
 
   describe "activate/1" do
     test "should set status to active" do
+      Server.start_link()
       listing = insert(:listing, status: "inactive")
 
       {:ok, listing} = Listings.activate(listing)
+
+      GenServer.call(Server, :inspect)
+
       assert listing.status == "active"
+      status_history = Repo.one(Re.Listings.StatusHistory)
+      assert "inactive" == status_history.status
     end
   end
 
