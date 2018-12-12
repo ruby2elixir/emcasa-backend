@@ -20,26 +20,20 @@ defmodule ReWeb.Types.Dashboard do
     field :property_tax_count, :integer, resolve: &DashboardResolvers.property_tax_count/2
     field :tour_count, :integer, resolve: &DashboardResolvers.tour_count/2
     field :area_count, :integer, resolve: &DashboardResolvers.area_count/2
+
+    field :listing_zap_highlights, list_of(:listing),
+      resolve: &DashboardResolvers.listing_zap_highlights/2
+
+    field :listing_zap_super_highlights, list_of(:listing),
+      resolve: &DashboardResolvers.listing_zap_super_highlights/2
+
+    field :listing_vivareal_highlights, list_of(:listing),
+      resolve: &DashboardResolvers.listing_vivareal_highlights/2
   end
 
   object :dashboard_queries do
     @desc "Get dashboard stats"
     field :dashboard, :dashboard, resolve: &DashboardResolvers.index/2
-
-    @desc "Get zap highlights"
-    field :listing_zap_highlights, list_of(:listing) do
-      resolve &DashboardResolvers.listing_zap_highlights/2
-    end
-
-    @desc "Get zap super highlights"
-    field :listing_zap_super_highlights, list_of(:listing) do
-      resolve &DashboardResolvers.listing_zap_super_highlights/2
-    end
-
-    @desc "Get vivareal highlights"
-    field :listing_vivareal_highlights, list_of(:listing) do
-      resolve &DashboardResolvers.listing_vivareal_highlights/2
-    end
   end
 
   object :dashboard_mutations do
