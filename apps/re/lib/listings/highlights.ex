@@ -8,6 +8,7 @@ defmodule Re.Listings.Highlights do
   alias Re.{
     Filtering,
     Listing,
+    Listings.Queries,
     Repo
   }
 
@@ -25,6 +26,7 @@ defmodule Re.Listings.Highlights do
 
     Listing
     |> where_attribute(attribute)
+    |> Queries.order_by(params)
     |> Filtering.apply(filters)
     |> Repo.paginate(pagination)
   end

@@ -119,7 +119,13 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       },
       "filters" => %{
         "maxPrice" => 2_000_000
-      }
+      },
+      "orderBy" => [
+        %{
+          "field" => "BATHROOMS",
+          "type" => "ASC"
+        }
+      ]
     }
 
     Enum.map(
@@ -133,16 +139,20 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
         @query query
 
         test "query #{@query}", %{admin_conn: conn} do
-          listing1 = insert(:listing, [{@struct, true}, {:price, 1_500_000}])
-          listing2 = insert(:listing, [{@struct, true}, {:price, 1_500_000}])
-          insert(:listing, [{@struct, true}, {:price, 1_500_000}])
-          insert(:listing, [{@struct, true}, {:price, 2_500_000}])
+          listing1 = insert(:listing, [{@struct, true}, {:price, 1_500_000}, {:bathrooms, 1}])
+          listing2 = insert(:listing, [{@struct, true}, {:price, 1_500_000}, {:bathrooms, 2}])
+          insert(:listing, [{@struct, true}, {:price, 1_500_000}, {:bathrooms, 3}])
+          insert(:listing, [{@struct, true}, {:price, 2_500_000}, {:bathrooms, 4}])
           insert(:listing)
 
           query = """
-            query MyQuery($pagination: ListingPaginationAdminInput, $filters: ListingFilterInput) {
+            query MyQuery(
+              $pagination: ListingPaginationAdminInput,
+              $filters: ListingFilterInput,
+              $orderBy: OrderBy
+            ) {
               Dashboard {
-                #{@query}(pagination: $pagination, filters: $filters) {
+                #{@query}(pagination: $pagination, filters: $filters, orderBy: $orderBy) {
                   entries {
                     id
                   }
@@ -160,7 +170,7 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
           query_response = json_response(conn, 200)["data"]["Dashboard"][@query]
 
           assert [%{"id" => to_string(listing1.id)}, %{"id" => to_string(listing2.id)}] ==
-                   Enum.sort(query_response["entries"])
+                   query_response["entries"]
 
           assert 1 == query_response["pageNumber"]
           assert 2 == query_response["pageSize"]
