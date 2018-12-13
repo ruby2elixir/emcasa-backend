@@ -23,18 +23,21 @@ defmodule ReWeb.Types.Dashboard do
 
     field :listing_zap_highlights, :listing_pagination_admin do
       arg :pagination, :listing_pagination_admin_input
+      arg :filters, :listing_filter_input
 
       resolve &DashboardResolvers.listing_zap_highlights/2
     end
 
     field :listing_zap_super_highlights, :listing_pagination_admin do
       arg :pagination, :listing_pagination_admin_input
+      arg :filters, :listing_filter_input
 
       resolve &DashboardResolvers.listing_zap_super_highlights/2
     end
 
     field :listing_vivareal_highlights, :listing_pagination_admin do
       arg :pagination, :listing_pagination_admin_input
+      arg :filters, :listing_filter_input
 
       resolve &DashboardResolvers.listing_vivareal_highlights/2
     end

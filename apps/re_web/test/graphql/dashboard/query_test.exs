@@ -116,6 +116,9 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       "pagination" => %{
         "page" => 1,
         "pageSize" => 2
+      },
+      "filters" => %{
+        "maxPrice" => 2_000_000
       }
     }
 
@@ -130,15 +133,16 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
         @query query
 
         test "query #{@query}", %{admin_conn: conn} do
-          listing1 = insert(:listing, [{@struct, true}])
-          listing2 = insert(:listing, [{@struct, true}])
-          insert(:listing, [{@struct, true}])
+          listing1 = insert(:listing, [{@struct, true}, {:price, 1_500_000}])
+          listing2 = insert(:listing, [{@struct, true}, {:price, 1_500_000}])
+          insert(:listing, [{@struct, true}, {:price, 1_500_000}])
+          insert(:listing, [{@struct, true}, {:price, 2_500_000}])
           insert(:listing)
 
           query = """
-            query MyQuery($pagination: ListingPaginationAdminInput) {
+            query MyQuery($pagination: ListingPaginationAdminInput, $filters: ListingFilterInput) {
               Dashboard {
-                #{@query}(pagination: $pagination) {
+                #{@query}(pagination: $pagination, filters: $filters) {
                   entries {
                     id
                   }

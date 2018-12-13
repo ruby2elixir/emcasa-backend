@@ -6,6 +6,7 @@ defmodule Re.Listings.Highlights do
   import Ecto.Query
 
   alias Re.{
+    Filtering,
     Listing,
     Repo
   }
@@ -21,6 +22,7 @@ defmodule Re.Listings.Highlights do
   defp get_highlight_listings(attribute, params) do
     Listing
     |> where_attribute(attribute)
+    |> Filtering.apply(params)
     |> Repo.paginate(params)
   end
 
