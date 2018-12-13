@@ -112,6 +112,13 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
   end
 
   describe "highlights" do
+    @params %{
+      "pagination" => %{
+        "page" => 1,
+        "pageSize" => 2
+      }
+    }
+
     Enum.map(
       [
         {:zap_highlight, "listingZapHighlights"},
@@ -125,24 +132,36 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
         test "query #{@query}", %{admin_conn: conn} do
           listing1 = insert(:listing, [{@struct, true}])
           listing2 = insert(:listing, [{@struct, true}])
+          insert(:listing, [{@struct, true}])
           insert(:listing)
 
           query = """
-            query MyQuery {
+            query MyQuery($pagination: ListingPaginationAdminInput) {
               Dashboard {
-                #{@query} {
-                  id
+                #{@query}(pagination: $pagination) {
+                  entries {
+                    id
+                  }
+                  pageNumber
+                  pageSize
+                  totalPages
+                  totalEntries
                 }
               }
             }
           """
 
-          conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+          conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, @params))
 
-          actual = json_response(conn, 200)["data"]["Dashboard"][@query]
+          query_response = json_response(conn, 200)["data"]["Dashboard"][@query]
 
           assert [%{"id" => to_string(listing1.id)}, %{"id" => to_string(listing2.id)}] ==
-                   Enum.sort(actual)
+                   Enum.sort(query_response["entries"])
+
+          assert 1 == query_response["pageNumber"]
+          assert 2 == query_response["pageSize"]
+          assert 2 == query_response["totalPages"]
+          assert 3 == query_response["totalEntries"]
         end
       end
     )

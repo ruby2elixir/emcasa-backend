@@ -21,14 +21,36 @@ defmodule ReWeb.Types.Dashboard do
     field :tour_count, :integer, resolve: &DashboardResolvers.tour_count/2
     field :area_count, :integer, resolve: &DashboardResolvers.area_count/2
 
-    field :listing_zap_highlights, list_of(:listing),
-      resolve: &DashboardResolvers.listing_zap_highlights/2
+    field :listing_zap_highlights, :listing_pagination_admin do
+      arg :pagination, :listing_pagination_admin_input
 
-    field :listing_zap_super_highlights, list_of(:listing),
-      resolve: &DashboardResolvers.listing_zap_super_highlights/2
+      resolve &DashboardResolvers.listing_zap_highlights/2
+    end
 
-    field :listing_vivareal_highlights, list_of(:listing),
-      resolve: &DashboardResolvers.listing_vivareal_highlights/2
+    field :listing_zap_super_highlights, :listing_pagination_admin do
+      arg :pagination, :listing_pagination_admin_input
+
+      resolve &DashboardResolvers.listing_zap_super_highlights/2
+    end
+
+    field :listing_vivareal_highlights, :listing_pagination_admin do
+      arg :pagination, :listing_pagination_admin_input
+
+      resolve &DashboardResolvers.listing_vivareal_highlights/2
+    end
+  end
+
+  input_object :listing_pagination_admin_input do
+    field :page, :integer
+    field :page_size, :integer
+  end
+
+  object :listing_pagination_admin do
+    field :entries, list_of(:listing)
+    field :page_number, :integer
+    field :page_size, :integer
+    field :total_pages, :integer
+    field :total_entries, :integer
   end
 
   object :dashboard_queries do
