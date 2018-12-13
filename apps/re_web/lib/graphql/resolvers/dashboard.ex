@@ -86,31 +86,18 @@ defmodule ReWeb.Resolvers.Dashboard do
   end
 
   def listing_zap_highlights(params, %{context: %{current_user: current_user}}) do
-    params = format_params(params)
-
     with :ok <- is_admin(current_user),
          do: {:ok, Highlights.get_zap_highlights(params)}
   end
 
   def listing_zap_super_highlights(params, %{context: %{current_user: current_user}}) do
-    params = format_params(params)
-
     with :ok <- is_admin(current_user),
          do: {:ok, Highlights.get_zap_super_highlights(params)}
   end
 
   def listing_vivareal_highlights(params, %{context: %{current_user: current_user}}) do
-    params = format_params(params)
-
     with :ok <- is_admin(current_user),
          do: {:ok, Highlights.get_vivareal_highlights(params)}
-  end
-
-  defp format_params(params) do
-    pagination = Map.get(params, :pagination, %{})
-    filters = Map.get(params, :filters, %{})
-
-    Map.merge(pagination, filters)
   end
 
   def listing_highlight_zap(%{listing_id: listing_id}, %{context: %{current_user: current_user}}) do

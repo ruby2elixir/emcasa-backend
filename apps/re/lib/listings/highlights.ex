@@ -8,6 +8,7 @@ defmodule Re.Listings.Highlights do
   alias Re.{
     Filtering,
     Listing,
+    Listings.Queries,
     Repo
   }
 
@@ -20,10 +21,14 @@ defmodule Re.Listings.Highlights do
     do: get_highlight_listings(:vivareal_highlight, params)
 
   defp get_highlight_listings(attribute, params) do
+    pagination = Map.get(params, :pagination, %{})
+    filters = Map.get(params, :filters, %{})
+
     Listing
     |> where_attribute(attribute)
-    |> Filtering.apply(params)
-    |> Repo.paginate(params)
+    |> Queries.order_by(params)
+    |> Filtering.apply(filters)
+    |> Repo.paginate(pagination)
   end
 
   defp where_attribute(query, :zap_highlight), do: where(query, [l], l.zap_highlight)
