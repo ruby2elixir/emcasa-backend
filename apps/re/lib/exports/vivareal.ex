@@ -15,7 +15,6 @@ defmodule Re.Exporters.Vivareal do
 
   @preload [
     :address,
-    :vivareal_highlight,
     images: Images.Queries.listing_preload()
   ]
 
@@ -76,7 +75,7 @@ defmodule Re.Exporters.Vivareal do
     {"TransactionType", %{}, "For Sale"}
   end
 
-  defp convert_attribute(:featured, %{vivareal_highlight: %Re.Listings.Highlights.Vivareal{}}) do
+  defp convert_attribute(:featured, %{vivareal_highlight: true}) do
     {"Featured", %{}, true}
   end
 

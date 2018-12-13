@@ -9,6 +9,10 @@
     many_to_many: 3,
     config: 2,
     enum: 2,
-    has_one: 2
+    has_one: 2,
+    drop: 1,
+    remove: 1,
+    create: 1,
+    add: 2
   ]
 ]

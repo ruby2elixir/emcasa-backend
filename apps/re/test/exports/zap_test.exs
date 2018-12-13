@@ -197,7 +197,7 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
-          zap_highlight: build(:zap_highlight),
+          zap_highlight: true,
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -257,7 +257,7 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
-          zap_super_highlight: build(:zap_super_highlight),
+          zap_super_highlight: true,
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -301,10 +301,9 @@ defmodule Re.Exporters.ZapTest do
       listing = insert(:listing)
 
       assert ~s|<?xml version="1.0" encoding="UTF-8"?><Carga xmlns:xsd="http://www.w3.org/2001/XMLSchema" | <>
-             ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">| <>
-             ~s|<Imoveis><Imovel><CodigoImovel>#{
-               listing.id
-             }</CodigoImovel></Imovel></Imoveis></Carga>| == Zap.export_listings_xml(~w(id)a)
+               ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">| <>
+               ~s|<Imoveis><Imovel><CodigoImovel>#{listing.id}</CodigoImovel></Imovel></Imoveis></Carga>| ==
+               Zap.export_listings_xml(~w(id)a)
     end
   end
 

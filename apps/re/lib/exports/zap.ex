@@ -14,8 +14,6 @@ defmodule Re.Exporters.Zap do
 
   @preload [
     :address,
-    :zap_highlight,
-    :zap_super_highlight,
     images: Images.Queries.listing_preload()
   ]
 
@@ -141,11 +139,11 @@ defmodule Re.Exporters.Zap do
     {"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)}
   end
 
-  defp convert_attribute(:featured, %{zap_super_highlight: %Re.Listings.Highlights.ZapSuper{}}) do
+  defp convert_attribute(:featured, %{zap_super_highlight: true}) do
     {"TipoOferta", %{}, 3}
   end
 
-  defp convert_attribute(:featured, %{zap_highlight: %Re.Listings.Highlights.Zap{}}) do
+  defp convert_attribute(:featured, %{zap_highlight: true}) do
     {"TipoOferta", %{}, 2}
   end
 
@@ -155,12 +153,15 @@ defmodule Re.Exporters.Zap do
 
   defp build_image(%{filename: filename} = image) do
     {"Foto", %{},
-     main_picture([
-       {"URLArquivo", %{},
-        "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename},
-       {"NomeArquivo", %{}, filename},
-       {"Alterada", %{}, 0}
-     ], image)}
+     main_picture(
+       [
+         {"URLArquivo", %{},
+          "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename},
+         {"NomeArquivo", %{}, filename},
+         {"Alterada", %{}, 0}
+       ],
+       image
+     )}
   end
 
   defp main_picture(tags, %{main: true}), do: [{"Principal", %{}, 1} | tags]
