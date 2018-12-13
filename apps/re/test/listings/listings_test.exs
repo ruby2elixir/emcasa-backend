@@ -387,6 +387,8 @@ defmodule Re.ListingsTest do
 
       Listings.update(listing, %{price: listing.price + 50_000}, address, user)
 
+      GenServer.call(Server, :inspect)
+
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.status == "inactive"
 
