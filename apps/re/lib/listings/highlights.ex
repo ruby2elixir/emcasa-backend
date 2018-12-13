@@ -10,14 +10,18 @@ defmodule Re.Listings.Highlights do
     Repo
   }
 
-  def get_zap_highlights, do: get_highlight_listings(:zap_highlight)
-  def get_zap_super_highlights, do: get_highlight_listings(:zap_super_highlight)
-  def get_vivareal_highlights, do: get_highlight_listings(:vivareal_highlight)
+  def get_zap_highlights(params \\ %{}), do: get_highlight_listings(:zap_highlight, params)
 
-  defp get_highlight_listings(attribute) do
+  def get_zap_super_highlights(params \\ %{}),
+    do: get_highlight_listings(:zap_super_highlight, params)
+
+  def get_vivareal_highlights(params \\ %{}),
+    do: get_highlight_listings(:vivareal_highlight, params)
+
+  defp get_highlight_listings(attribute, params) do
     Listing
     |> where_attribute(attribute)
-    |> Repo.all()
+    |> Repo.paginate(params)
   end
 
   defp where_attribute(query, :zap_highlight), do: where(query, [l], l.zap_highlight)

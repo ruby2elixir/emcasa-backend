@@ -13,21 +13,21 @@ defmodule Re.Listings.HighlightsTest do
     test "should return zap highlighted listings" do
       %{id: listing_id} = insert(:listing, zap_highlight: true)
 
-      [listing] = Highlights.get_zap_highlights()
+      %{entries: [listing]} = Highlights.get_zap_highlights()
       assert listing_id == listing.id
     end
 
     test "should return zap super highlighted listings" do
       %{id: listing_id} = insert(:listing, zap_super_highlight: true)
 
-      [listing] = Highlights.get_zap_super_highlights()
+      %{entries: [listing]} = Highlights.get_zap_super_highlights()
       assert listing_id == listing.id
     end
 
     test "should return vivareal highlighted listings" do
       %{id: listing_id} = insert(:listing, vivareal_highlight: true)
 
-      [listing] = Highlights.get_vivareal_highlights()
+      %{entries: [listing]} = Highlights.get_vivareal_highlights()
       assert listing_id == listing.id
     end
   end
