@@ -43,7 +43,10 @@ defmodule Re.Factory do
       matterport_code: Faker.String.base64(),
       status: "active",
       is_exclusive: Enum.random([true, false]),
-      is_release: Enum.random([true, false])
+      is_release: Enum.random([true, false]),
+      zap_highlight: false,
+      zap_super_highlight: false,
+      vivareal_highlight: false
     }
   end
 
@@ -147,12 +150,6 @@ defmodule Re.Factory do
   def notify_when_covered_factory, do: %Re.Interests.NotifyWhenCovered{}
 
   def tour_appointment_factory, do: %Re.Calendars.TourAppointment{}
-
-  def zap_highlight_factory, do: %Re.Listings.Highlights.Zap{}
-
-  def zap_super_highlight_factory, do: %Re.Listings.Highlights.ZapSuper{}
-
-  def vivareal_highlight_factory, do: %Re.Listings.Highlights.Vivareal{}
 
   defp random_postcode do
     first =

@@ -160,8 +160,6 @@ defmodule Re.Exporters.VivarealTest do
         insert(:image, filename: "test3.jpg", description: "descr")
       ]
 
-      highligh = insert(:vivareal_highlight)
-
       %{id: id} =
         listing =
         insert(:listing,
@@ -178,7 +176,7 @@ defmodule Re.Exporters.VivarealTest do
               lng: -46.659864
             ),
           images: images,
-          vivareal_highlight: highligh,
+          vivareal_highlight: true,
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -212,18 +210,16 @@ defmodule Re.Exporters.VivarealTest do
       listing = insert(:listing, images: [image])
 
       assert ~s|<?xml version="1.0" encoding="UTF-8"?><ListingDataFeed | <>
-             ~s|xmlns="http://www.vivareal.com/schemas/1.0/VRSync" | <>
-             ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" | <>
-             ~s|xsi:schemaLocation="http://www.vivareal.com/schemas/1.0/VRSync  | <>
-             ~s|http://xml.vivareal.com/vrsync.xsd">| <>
-             ~s|<Header>| <>
-              ~s|<Provider>EmCasa</Provider>| <>
-              ~s|<Email>rodrigo.nonose@emcasa.com</Email>| <>
-              ~s|<ContactName>Rodrigo Nonose</ContactName>| <>
-             ~s|</Header>| <>
-             ~s|<Listings><Listing><ListingId>#{
-               listing.id
-             }</ListingId></Listing></Listings></ListingDataFeed>| ==
+               ~s|xmlns="http://www.vivareal.com/schemas/1.0/VRSync" | <>
+               ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" | <>
+               ~s|xsi:schemaLocation="http://www.vivareal.com/schemas/1.0/VRSync  | <>
+               ~s|http://xml.vivareal.com/vrsync.xsd">| <>
+               ~s|<Header>| <>
+               ~s|<Provider>EmCasa</Provider>| <>
+               ~s|<Email>rodrigo.nonose@emcasa.com</Email>| <>
+               ~s|<ContactName>Rodrigo Nonose</ContactName>| <>
+               ~s|</Header>| <>
+               ~s|<Listings><Listing><ListingId>#{listing.id}</ListingId></Listing></Listings></ListingDataFeed>| ==
                Vivareal.export_listings_xml(~w(id)a)
     end
 

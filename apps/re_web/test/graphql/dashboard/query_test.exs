@@ -123,11 +123,9 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
         @query query
 
         test "query #{@query}", %{admin_conn: conn} do
-          listing1 = insert(:listing)
-          listing2 = insert(:listing)
+          listing1 = insert(:listing, [{@struct, true}])
+          listing2 = insert(:listing, [{@struct, true}])
           insert(:listing)
-          insert(@struct, listing: listing1)
-          insert(@struct, listing: listing2)
 
           query = """
             query MyQuery {

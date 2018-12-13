@@ -5,11 +5,7 @@ defmodule ReWeb.GraphQL.Dashboard.MutationTest do
 
   alias ReWeb.AbsintheHelpers
 
-  alias Re.Listings.Highlights.{
-    Zap,
-    ZapSuper,
-    Vivareal
-  }
+  alias Re.Listing
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
@@ -28,13 +24,13 @@ defmodule ReWeb.GraphQL.Dashboard.MutationTest do
 
   Enum.map(
     [
-      {"listingHighlightZap", Zap},
-      {"listingSuperHighlightZap", ZapSuper},
-      {"listingHighlightVivareal", Vivareal}
+      {"listingHighlightZap", :zap_highlight},
+      {"listingSuperHighlightZap", :zap_super_highlight},
+      {"listingHighlightVivareal", :vivareal_highlight}
     ],
-    fn {mutation, schema} ->
+    fn {mutation, attribute} ->
       @mutation mutation
-      @schema schema
+      @attribute attribute
 
       test "admin should run #{@mutation}", %{admin_conn: conn, listing: %{id: listing_id}} do
         variables = %{
@@ -52,7 +48,7 @@ defmodule ReWeb.GraphQL.Dashboard.MutationTest do
         conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
         assert %{"id" => to_string(listing_id)} == json_response(conn, 200)["data"][@mutation]
-        assert Repo.get_by(@schema, listing_id: listing_id)
+        assert Listing |> Repo.get(listing_id) |> Map.get(@attribute)
       end
 
       test "user should not run #{@mutation}", %{user_conn: conn, listing: %{id: listing_id}} do
