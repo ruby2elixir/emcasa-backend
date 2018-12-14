@@ -34,6 +34,7 @@ defmodule ReWeb.Mixfile do
   defp deps do
     [
       {:re, in_umbrella: true},
+      {:re_integrations, in_umbrella: true},
       {:phoenix, "~> 1.3.0"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 3.0"},
