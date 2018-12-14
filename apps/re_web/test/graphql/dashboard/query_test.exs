@@ -180,4 +180,59 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       end
     )
   end
+
+  describe "listings" do
+    test "query all listings", %{admin_conn: conn} do
+      variables = %{
+        "pagination" => %{
+          "page" => 1,
+          "pageSize" => 2
+        },
+        "filters" => %{
+          "maxPrice" => 2_000_000
+        },
+        "orderBy" => [
+          %{
+            "field" => "ID",
+            "type" => "ASC"
+          }
+        ]
+      }
+
+      insert_list(4, :listing, price: 2_500_000)
+      [l1, l2 | _] = insert_list(6, :listing, price: 1_500_000)
+
+      query = """
+        query MyQuery(
+          $pagination: ListingPaginationAdminInput,
+          $filters: ListingFilterInput,
+          $orderBy: OrderBy
+        ) {
+          Dashboard {
+            listings(pagination: $pagination, filters: $filters, orderBy: $orderBy) {
+              entries {
+                id
+              }
+              pageNumber
+              pageSize
+              totalPages
+              totalEntries
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      query_response = json_response(conn, 200)["data"]["Dashboard"]["listings"]
+
+      assert [%{"id" => to_string(l1.id)}, %{"id" => to_string(l2.id)}] ==
+               query_response["entries"]
+
+      assert 1 == query_response["pageNumber"]
+      assert 2 == query_response["pageSize"]
+      assert 3 == query_response["totalPages"]
+      assert 6 == query_response["totalEntries"]
+    end
+  end
 end

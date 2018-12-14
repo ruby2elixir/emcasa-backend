@@ -211,4 +211,25 @@ defmodule ReWeb.Resolvers.Listings do
   def neighborhoods(_, _), do: {:ok, Neighborhoods.all()}
 
   def featured(_, _), do: {:ok, Featured.get_graphql()}
+
+  def vivareal_highlight(listing, _, %{context: %{current_user: current_user}}) do
+    case Bodyguard.permit(Listings, :show_highlights, current_user, %{}) do
+      :ok -> {:ok, listing.vivareal_highlight}
+      error -> error
+    end
+  end
+
+  def zap_highlight(listing, _, %{context: %{current_user: current_user}}) do
+    case Bodyguard.permit(Listings, :show_highlights, current_user, %{}) do
+      :ok -> {:ok, listing.zap_highlight}
+      error -> error
+    end
+  end
+
+  def zap_super_highlight(listing, _, %{context: %{current_user: current_user}}) do
+    case Bodyguard.permit(Listings, :show_highlights, current_user, %{}) do
+      :ok -> {:ok, listing.zap_super_highlight}
+      error -> error
+    end
+  end
 end

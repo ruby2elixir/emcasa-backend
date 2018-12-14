@@ -7,6 +7,7 @@ defmodule ReWeb.Resolvers.Dashboard do
   alias Re.{
     Listing,
     Listings,
+    Listings.Admin,
     Listings.Highlights,
     PriceSuggestions,
     Repo
@@ -16,6 +17,10 @@ defmodule ReWeb.Resolvers.Dashboard do
     with :ok <- is_admin(current_user) do
       {:ok, %{}}
     end
+  end
+
+  def listings(params, _) do
+    {:ok, Admin.listings(params)}
   end
 
   def active_listing_count(_params, _res) do
