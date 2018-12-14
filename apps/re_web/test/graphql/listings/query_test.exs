@@ -30,7 +30,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", position: 2, is_active: false),
           build(:image, filename: "test3.jpg", position: 1)
         ],
-        user: user
+        user: user,
+        zap_highlight: true
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -66,6 +67,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              zapHighlight
             }
             remaining_count
           }
@@ -81,7 +83,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test3.jpg"}],
                    "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
-                   "owner" => %{"name" => user.name}
+                   "owner" => %{"name" => user.name},
+                   "zapHighlight" => true
                  }
                ],
                "remaining_count" => 0
@@ -96,7 +99,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test.jpg"),
           build(:image, filename: "test2.jpg", is_active: false)
         ],
-        user: user
+        user: user,
+        vivareal_highlight: true
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -122,6 +126,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              vivarealHighlight
             }
             remaining_count
           }
@@ -136,7 +141,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "address" => %{"street_number" => "12B"},
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
-                   "owner" => %{"name" => user.name}
+                   "owner" => %{"name" => user.name},
+                   "vivarealHighlight" => nil
                  }
                ],
                "remaining_count" => 0
@@ -153,7 +159,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test.jpg"),
           build(:image, filename: "test2.jpg", is_active: false)
         ],
-        user: user
+        user: user,
+        zap_super_highlight: true
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -179,6 +186,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              zapSuperHighlight
             }
             remaining_count
           }
@@ -193,7 +201,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "address" => %{"street_number" => nil},
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
-                   "owner" => nil
+                   "owner" => nil,
+                   "zapSuperHighlight" => nil
                  }
                ],
                "remaining_count" => 0
@@ -210,7 +219,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test.jpg"),
           build(:image, filename: "test2.jpg", is_active: false)
         ],
-        user: user
+        user: user,
+        zap_highlight: true
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -236,6 +246,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              zapHighlight
             }
             remaining_count
           }
@@ -250,7 +261,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "address" => %{"street_number" => nil},
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
-                   "owner" => nil
+                   "owner" => nil,
+                   "zapHighlight" => nil
                  }
                ],
                "remaining_count" => 0
