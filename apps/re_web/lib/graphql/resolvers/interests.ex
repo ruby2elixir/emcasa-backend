@@ -2,10 +2,8 @@ defmodule ReWeb.Resolvers.Interests do
   @moduledoc """
   Resolver module for interests queries and mutations
   """
-  alias Re.{
-    Interests,
-    Simulators
-  }
+  alias Re.Interests
+  alias ReIntegrations.Simulators
 
   def create_interest(%{input: params}, _) do
     Interests.show_interest(params)

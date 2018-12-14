@@ -1,7 +1,7 @@
-defmodule Re.SimulatorsTest do
+defmodule ReIntegrations.SimulatorsTest do
   use ExUnit.Case
 
-  alias Re.Simulators
+  alias ReIntegrations.Simulators
 
   describe "simulate/1" do
     test "should make valid request do API" do
