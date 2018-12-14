@@ -9,7 +9,7 @@ defmodule ReWeb.Pipedrive.Plug do
   @user Application.get_env(:re, :pipedrive_webhook_user, "")
   @pass Application.get_env(:re, :pipedrive_webhook_pass, "")
 
-  alias ReWeb.Pipedrive
+  alias ReIntegrations.Pipedrive
 
   def init(args), do: args
 

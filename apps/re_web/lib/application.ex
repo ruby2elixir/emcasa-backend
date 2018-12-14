@@ -8,9 +8,10 @@ defmodule ReWeb.Application do
   import Supervisor.Spec
 
   alias ReWeb.{
-    Endpoint,
-    Pipedrive
+    Endpoint
   }
+
+  alias ReIntegrations.Pipedrive
 
   def start(_type, _args) do
     children =

@@ -1,4 +1,4 @@
-defmodule ReWeb.Pipedrive.Server do
+defmodule ReIntegrations.Pipedrive.Server do
   @moduledoc """
   GenServer for handling pipedrive operations
   """
@@ -12,7 +12,7 @@ defmodule ReWeb.Pipedrive.Server do
 
   alias Re.Statistics.InPersonVisit
 
-  alias ReWeb.Pipedrive.Client
+  alias ReIntegrations.Pipedrive.Client
 
   @attribute_key "226c74dbe45d5db69bbda19d6de53371db8a964a"
 

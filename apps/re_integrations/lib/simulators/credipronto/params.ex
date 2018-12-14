@@ -1,4 +1,4 @@
-defmodule Re.Simulators.Credipronto.Params do
+defmodule ReIntegrations.Simulators.Credipronto.Params do
   @moduledoc """
   Module for grouping credipronto simulator query params
   """

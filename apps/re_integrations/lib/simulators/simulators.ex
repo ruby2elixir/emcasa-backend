@@ -1,16 +1,16 @@
-defmodule Re.Simulators do
+defmodule ReIntegrations.Simulators do
   @moduledoc """
   Context module for credit simulations
   """
 
-  alias Re.Simulators.Credipronto.Params
+  alias ReIntegrations.Simulators.Credipronto.Params
 
   alias ReIntegrations.Credipronto.{
     Client,
     Mapper
   }
 
-  defdelegate authorize(action, user, params), to: __MODULE__.Policy
+  defdelegate authorize(action, user, params), to: Re.Simulators.Policy
 
   def simulate(params) do
     with %{valid?: true} <- Params.changeset(%Params{}, params),
