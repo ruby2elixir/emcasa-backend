@@ -21,6 +21,14 @@ defmodule ReWeb.Types.Dashboard do
     field :tour_count, :integer, resolve: &DashboardResolvers.tour_count/2
     field :area_count, :integer, resolve: &DashboardResolvers.area_count/2
 
+    field :listings, :listing_pagination_admin do
+      arg :pagination, :listing_pagination_admin_input
+      arg :filters, :listing_filter_input
+      arg :order_by, list_of(:order_by)
+
+      resolve &DashboardResolvers.listings/2
+    end
+
     field :listing_zap_highlights, :listing_pagination_admin do
       arg :pagination, :listing_pagination_admin_input
       arg :filters, :listing_filter_input
