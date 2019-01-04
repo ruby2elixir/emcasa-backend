@@ -6,6 +6,8 @@ defmodule ReWeb.FeaturedController do
   action_fallback(ReWeb.FallbackController)
 
   def index(conn, _params) do
-    render(conn, ReWeb.ListingView, "featured.json", listings: Featured.get())
+    conn
+    |> put_view(ReWeb.ListingView)
+    |> render("featured.json", listings: Featured.get())
   end
 end
