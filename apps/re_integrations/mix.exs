@@ -35,7 +35,7 @@ defmodule ReIntegrations.Mixfile do
     [
       {:re, in_umbrella: true},
       {:phoenix, "~> 1.4.0"},
-      {:cowboy, "~> 1.0"},
+      {:plug_cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
       {:comeonin, "~> 3.2"},
       {:swoosh, "~> 0.13"},
