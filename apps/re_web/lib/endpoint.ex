@@ -35,9 +35,9 @@ defmodule ReWeb.Endpoint do
   plug(CORSPlug)
 
   # Add Timber plugs for capturing HTTP context and events
-  plug(Timber.Integrations.SessionContextPlug)
-  plug(Timber.Integrations.HTTPContextPlug)
-  plug(Timber.Integrations.EventPlug)
+  plug(Timber.Plug.SessionContext)
+  plug(Timber.Plug.HTTPContext)
+  plug(Timber.Plug.Event)
 
   plug(ReWeb.Router)
 

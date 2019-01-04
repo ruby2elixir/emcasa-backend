@@ -34,7 +34,7 @@ defmodule ReIntegrations.Mixfile do
   defp deps do
     [
       {:re, in_umbrella: true},
-      {:phoenix, "~> 1.3.0"},
+      {:phoenix, "~> 1.4.0"},
       {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
       {:comeonin, "~> 3.2"},

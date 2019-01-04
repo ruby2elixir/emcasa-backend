@@ -35,7 +35,7 @@ defmodule ReWeb.Mixfile do
     [
       {:re, in_umbrella: true},
       {:re_integrations, in_umbrella: true},
-      {:phoenix, "~> 1.3.0"},
+      {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 3.0"},
       {:gettext, "~> 0.11"},
@@ -52,7 +52,9 @@ defmodule ReWeb.Mixfile do
       {:timex, "~> 3.3"},
       {:tzdata, "~> 0.5"},
       {:account_kit, github: "rhnonose/account_kit"},
-      {:honeybadger, "~> 0.10"}
+      {:honeybadger, "~> 0.10"},
+      {:timber_plug, "~> 1.0"},
+      {:timber_phoenix, "~> 1.0"}
     ]
   end
 
