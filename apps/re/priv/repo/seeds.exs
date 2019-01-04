@@ -142,28 +142,28 @@ Repo.delete_all(User)
   Repo.insert(%Image{
     filename: "axetblju0i3keovz87ab.jpg",
     position: 1,
-    status: "active"
+    is_active: true
   })
 
 {:ok, image2} =
   Repo.insert(%Image{
     filename: "cz9ytkthhdmd0f9mt2wy.jpg",
     position: 2,
-    status: "active"
+    is_active: true
   })
 
 {:ok, image3} =
   Repo.insert(%Image{
     filename: "u6fy4vpnjqff7jjxcg27.jp",
     position: 3,
-    status: "active"
+    is_active: true
   })
 
 {:ok, image4} =
   Repo.insert(%Image{
     filename: "u6fy4vpnjqff7jjxcg27.jp",
     position: 3,
-    status: "active"
+    is_active: true
   })
 
 {:ok, listing1} =
