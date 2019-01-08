@@ -72,6 +72,8 @@ config :mime, :types, %{
   "application/xml" => ["xml"]
 }
 
+config :phoenix, :json_library, Jason
+
 import_config "#{Mix.env()}.exs"
 
 # Import Timber, structured logging

@@ -34,8 +34,8 @@ defmodule ReIntegrations.Mixfile do
   defp deps do
     [
       {:re, in_umbrella: true},
-      {:phoenix, "~> 1.3.0"},
-      {:cowboy, "~> 1.0"},
+      {:phoenix, "~> 1.4.0"},
+      {:plug_cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
       {:comeonin, "~> 3.2"},
       {:swoosh, "~> 0.13"},
@@ -46,7 +46,8 @@ defmodule ReIntegrations.Mixfile do
       {:kadabra, "~> 0.4.2"},
       {:retry, "~> 0.10"},
       {:httpoison, "~> 1.3", override: true},
-      {:honeybadger, "~> 0.10"}
+      {:honeybadger, "~> 0.10"},
+      {:jason, "~> 1.0"}
     ]
   end
 

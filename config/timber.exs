@@ -1,10 +1,10 @@
 use Mix.Config
 
 # Update the instrumenters so that we can structure Phoenix logs
-config :re, ReWeb.Endpoint, instrumenters: [Timber.Integrations.PhoenixInstrumenter]
+config :re, ReWeb.Endpoint, instrumenters: [Timber.Phoenix]
 
 # Structure Ecto logs
-config :re, Re.Repo, loggers: [{Timber.Integrations.EctoLogger, :log, []}]
+config :re, Re.Repo, loggers: [{Timber.Ecto, :log, []}]
 
 # Use Timber as the logger backend
 # Feel free to add additional backends if you want to send you logs to multiple devices.
