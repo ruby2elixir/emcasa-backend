@@ -13,9 +13,9 @@ defmodule ReWeb.RelatedController do
     with {:ok, listing} <- Listings.get_preloaded(id),
          params <- Map.put(params, "current_user", user),
          results <- Related.get(listing, params) do
-      conn
-      |> put_view(ReWeb.ListingView)
-      |> render(
+      render(
+        conn,
+        ReWeb.ListingView,
         "index.json",
         listings: results.listings,
         remaining_count: results.remaining_count
