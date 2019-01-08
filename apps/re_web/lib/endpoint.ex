@@ -2,7 +2,10 @@ defmodule ReWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :re
   use Absinthe.Phoenix.Endpoint
 
-  socket("/socket", ReWeb.UserSocket)
+  socket("/socket", ReWeb.UserSocket,
+    longpoll: true,
+    websocket: [timeout: 45_000]
+  )
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -35,9 +38,9 @@ defmodule ReWeb.Endpoint do
   plug(CORSPlug)
 
   # Add Timber plugs for capturing HTTP context and events
-  plug(Timber.Integrations.SessionContextPlug)
-  plug(Timber.Integrations.HTTPContextPlug)
-  plug(Timber.Integrations.EventPlug)
+  plug(Timber.Plug.SessionContext)
+  plug(Timber.Plug.HTTPContext)
+  plug(Timber.Plug.Event)
 
   plug(ReWeb.Router)
 

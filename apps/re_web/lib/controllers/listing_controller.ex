@@ -31,7 +31,8 @@ defmodule ReWeb.ListingController do
 
       conn
       |> put_status(:created)
-      |> render(get_view(user), "create.json", listing: listing)
+      |> put_view(get_view(user))
+      |> render("create.json", listing: listing)
     end
   end
 
@@ -40,14 +41,19 @@ defmodule ReWeb.ListingController do
          :ok <- Bodyguard.permit(Listings, :show_listing, user, listing) do
       @visualizations.listing(listing, user, extract_details(conn))
 
-      render(conn, get_view(user, listing), "show.json", listing: listing)
+      conn
+      |> put_view(get_view(user, listing))
+      |> render("show.json", listing: listing)
     end
   end
 
   def edit(conn, %{"id" => id}, user) do
     with {:ok, listing} <- Listings.get_preloaded(id),
-         :ok <- Bodyguard.permit(Listings, :edit_listing, user, listing),
-         do: render(conn, get_view(user), "edit.json", listing: listing)
+         :ok <- Bodyguard.permit(Listings, :edit_listing, user, listing) do
+      conn
+      |> put_view(get_view(user))
+      |> render("edit.json", listing: listing)
+    end
   end
 
   def update(conn, %{"id" => id, "listing" => listing_params, "address" => address_params}, user) do
@@ -55,7 +61,9 @@ defmodule ReWeb.ListingController do
          :ok <- Bodyguard.permit(Listings, :update_listing, user, listing),
          {:ok, address} <- Addresses.insert_or_update(address_params),
          {:ok, listing} <- Listings.update(listing, listing_params, address, user) do
-      render(conn, get_view(user), "edit.json", listing: listing)
+      conn
+      |> put_view(get_view(user))
+      |> render("edit.json", listing: listing)
     end
   end
 
