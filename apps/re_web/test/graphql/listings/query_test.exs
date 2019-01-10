@@ -31,7 +31,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test3.jpg", position: 1)
         ],
         user: user,
-        zap_highlight: true
+        zap_highlight: true,
+        score: 4
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -68,6 +69,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 name
               }
               zapHighlight
+              score
             }
             remaining_count
           }
@@ -84,7 +86,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "zapHighlight" => true
+                   "zapHighlight" => true,
+                   "score" => 4
                  }
                ],
                "remaining_count" => 0
@@ -100,7 +103,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        vivareal_highlight: true
+        vivareal_highlight: true,
+        score: 4
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -127,6 +131,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 name
               }
               vivarealHighlight
+              score
             }
             remaining_count
           }
@@ -142,7 +147,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "vivarealHighlight" => nil
+                   "vivarealHighlight" => nil,
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
@@ -160,7 +166,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        zap_super_highlight: true
+        zap_super_highlight: true,
+        score: 4
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -187,6 +194,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 name
               }
               zapSuperHighlight
+              score
             }
             remaining_count
           }
@@ -202,7 +210,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
-                   "zapSuperHighlight" => nil
+                   "zapSuperHighlight" => nil,
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
@@ -220,7 +229,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        zap_highlight: true
+        zap_highlight: true,
+        score: 4
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -247,6 +257,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 name
               }
               zapHighlight
+              score
             }
             remaining_count
           }
@@ -262,7 +273,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
-                   "zapHighlight" => nil
+                   "zapHighlight" => nil,
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0

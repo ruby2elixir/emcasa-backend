@@ -2,8 +2,6 @@ defmodule Re.Listings.History.Status do
   @moduledoc """
   Context for handling listing's status history
   """
-  import Ecto.Query
-
   alias Re.{
     Listings.StatusHistory,
     Repo

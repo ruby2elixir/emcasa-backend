@@ -35,6 +35,7 @@ defmodule ReWeb.Types.Listing do
     field :is_exclusive, :boolean
     field :is_release, :boolean
     field :inserted_at, :naive_datetime
+    field :score, :integer, resolve: &Resolvers.Listings.score/3
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
@@ -97,6 +98,7 @@ defmodule ReWeb.Types.Listing do
     field :matterport_code, :string
     field :is_exclusive, :boolean
     field :is_release, :boolean
+    field :score, :integer
 
     field :phone, :string
 
