@@ -117,4 +117,12 @@ defmodule Re.Listings.Queries do
       where: ^listing.address.city == a.city
     )
   end
+
+  def by_state_slug_and_city_slug(query, state_slug, city_slug) do
+    from(
+      l in query,
+      join: a in assoc(l, :address),
+      where: ^city_slug == a.city_slug and ^state_slug == a.state_slug
+    )
+  end
 end

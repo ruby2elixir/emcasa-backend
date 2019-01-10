@@ -11,9 +11,9 @@ defmodule ReWeb.Exporters.Zap.Plug do
 
   def init(args), do: args
 
-  def call(conn, _args) do
+  def call(%Plug.Conn{path_info: [state_slug, city_slug]} = conn, _args) do
     xml_listings =
-      Listings.exportable()
+      Listings.exportable(%{state_slug: state_slug, city_slug: city_slug})
       |> Zap.export_listings_xml()
 
     conn

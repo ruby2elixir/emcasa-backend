@@ -7,9 +7,11 @@ defmodule ReWeb.Exporters.Zap.PlugTest do
 
   @empty_listings ~s|<?xml version="1.0" encoding="UTF-8"?><Carga xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><Imoveis/></Carga>|
 
-  test "should export zap XML", %{conn: conn} do
-    conn = get(conn, "/exporters/zap")
+  describe "with state and slug" do
+    test "should export zap XML", %{conn: conn} do
+      conn = get(conn, "/exporters/zap/rio-de-janeiro/rio-de-janeiro")
 
-    assert response(conn, 200) == @empty_listings
+      assert response(conn, 200) == @empty_listings
+    end
   end
 end

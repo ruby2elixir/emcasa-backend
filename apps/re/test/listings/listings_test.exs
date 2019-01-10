@@ -408,6 +408,43 @@ defmodule Re.ListingsTest do
     end
   end
 
+  describe "exportable/1" do
+    test "return if both state and city slugs exists" do
+      sao_paulo = insert(:address, city_slug: "sao-paulo", state_slug: "sp")
+
+      rio_de_janeiro = insert(:address, city_slug: "rio-de-janeiro", state_slug: "rj")
+
+      listing_1 = insert(:listing, address_id: sao_paulo.id)
+      insert(:listing, address_id: rio_de_janeiro.id)
+
+      assert [listing_1] =
+               Listings.exportable(%{
+                 state_slug: sao_paulo.state_slug,
+                 city_slug: sao_paulo.city_slug
+               })
+    end
+
+    test "should not return if state slug doesn't match" do
+      sao_paulo = insert(:address, city_slug: "sao-paulo", state_slug: "sp")
+
+      insert(:listing, address_id: sao_paulo.id)
+
+      assert [] = Listings.exportable(%{state_slug: "rj", city_slug: sao_paulo.city_slug})
+    end
+
+    test "should not return if city slug doesn't match" do
+      sao_paulo = insert(:address, city_slug: "sao-paulo", state_slug: "sp")
+
+      insert(:listing, address_id: sao_paulo.id)
+
+      assert [] =
+               Listings.exportable(%{
+                 state_slug: sao_paulo.state_slug,
+                 city_slug: "rio-de-janeiro"
+               })
+    end
+  end
+
   defp chunk_and_short(listings) do
     listings
     |> Enum.chunk_by(& &1.score)
