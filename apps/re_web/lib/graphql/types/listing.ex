@@ -98,6 +98,7 @@ defmodule ReWeb.Types.Listing do
     field :matterport_code, :string
     field :is_exclusive, :boolean
     field :is_release, :boolean
+    field :score, :integer
 
     field :phone, :string
 

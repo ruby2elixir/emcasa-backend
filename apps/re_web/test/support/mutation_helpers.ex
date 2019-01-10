@@ -35,7 +35,8 @@ defmodule ReWeb.Listing.MutationHelpers do
         "hasElevator" => listing.has_elevator,
         "matterportCode" => listing.matterport_code,
         "isExclusive" => listing.is_exclusive,
-        "isRelease" => listing.is_release
+        "isRelease" => listing.is_release,
+        "score" => listing.score
       }
     }
   end
@@ -73,7 +74,8 @@ defmodule ReWeb.Listing.MutationHelpers do
         "hasElevator" => listing.has_elevator,
         "matterportCode" => listing.matterport_code,
         "isExclusive" => listing.is_exclusive,
-        "isRelease" => listing.is_release
+        "isRelease" => listing.is_release,
+        "score" => listing.score
       }
     }
   end
@@ -117,6 +119,7 @@ defmodule ReWeb.Listing.MutationHelpers do
           isActive
           isExclusive
           isRelease
+          score
         }
       }
     """
@@ -161,6 +164,7 @@ defmodule ReWeb.Listing.MutationHelpers do
           isActive
           isExclusive
           isRelease
+          score
         }
       }
     """
