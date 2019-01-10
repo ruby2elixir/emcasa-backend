@@ -418,10 +418,13 @@ defmodule Re.ListingsTest do
       insert(:listing, address_id: rio_de_janeiro.id)
 
       assert [listing_1] =
-               Listings.exportable(%{
-                 state_slug: sao_paulo.state_slug,
-                 city_slug: sao_paulo.city_slug
-               })
+               Listings.exportable(
+                 %{
+                   state_slug: sao_paulo.state_slug,
+                   city_slug: sao_paulo.city_slug
+                 },
+                 %{}
+               )
     end
 
     test "should not return if state slug doesn't match" do
@@ -429,7 +432,7 @@ defmodule Re.ListingsTest do
 
       insert(:listing, address_id: sao_paulo.id)
 
-      assert [] = Listings.exportable(%{state_slug: "rj", city_slug: sao_paulo.city_slug})
+      assert [] = Listings.exportable(%{state_slug: "rj", city_slug: sao_paulo.city_slug}, %{})
     end
 
     test "should not return if city slug doesn't match" do
@@ -438,10 +441,43 @@ defmodule Re.ListingsTest do
       insert(:listing, address_id: sao_paulo.id)
 
       assert [] =
-               Listings.exportable(%{
-                 state_slug: sao_paulo.state_slug,
-                 city_slug: "rio-de-janeiro"
-               })
+               Listings.exportable(
+                 %{
+                   state_slug: sao_paulo.state_slug,
+                   city_slug: "rio-de-janeiro"
+                 },
+                 %{}
+               )
+    end
+
+    test "should accept page_size" do
+      sao_paulo = insert(:address, city_slug: "sao-paulo", state_slug: "sp")
+
+      %{id: id_1} = insert(:listing, address_id: sao_paulo.id)
+      insert(:listing, address_id: sao_paulo.id)
+
+      result =
+        Listings.exportable(
+          %{state_slug: sao_paulo.state_slug, city_slug: sao_paulo.city_slug},
+          %{page_size: 1}
+        )
+
+      assert [%{id: ^id_1}] = result
+    end
+
+    test "should accept offset" do
+      sao_paulo = insert(:address, city_slug: "sao-paulo", state_slug: "sp")
+
+      insert(:listing, address_id: sao_paulo.id)
+      %{id: id_2} = insert(:listing, address_id: sao_paulo.id)
+
+      result =
+        Listings.exportable(
+          %{state_slug: sao_paulo.state_slug, city_slug: sao_paulo.city_slug},
+          %{offset: 1}
+        )
+
+      assert [%{id: ^id_2}] = result
     end
   end
 

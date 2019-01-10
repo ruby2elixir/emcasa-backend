@@ -205,11 +205,13 @@ defmodule Re.Listings do
     |> Repo.all()
   end
 
-  def exportable(%{state_slug: state_slug, city_slug: city_slug}) do
+  def exportable(%{state_slug: state_slug, city_slug: city_slug}, params) do
     Queries.active()
     |> Queries.by_state_slug_and_city_slug(state_slug, city_slug)
     |> Queries.preload_relations(@partial_preload)
     |> Queries.order_by_id()
+    |> Queries.offset(params)
+    |> Queries.limit(params)
     |> Repo.all()
   end
 end
