@@ -204,4 +204,11 @@ defmodule Re.Listings do
     |> Queries.preload_relations(@full_preload)
     |> Repo.all()
   end
+
+  def exportable() do
+    Queries.active()
+    |> Queries.preload_relations(@partial_preload)
+    |> Queries.order_by_id()
+    |> Repo.all()
+  end
 end
