@@ -6,7 +6,7 @@ defmodule ReWeb.Exporters.Zap.Plug do
 
   alias Re.{
     Exporters.Zap,
-    Listings
+    Listings.Exporter
   }
 
   def init(args), do: args
@@ -16,7 +16,7 @@ defmodule ReWeb.Exporters.Zap.Plug do
         _args
       ) do
     xml_listings =
-      Listings.exportable(%{state_slug: state_slug, city_slug: city_slug}, query_params)
+      Exporter.exportable(%{state_slug: state_slug, city_slug: city_slug}, query_params)
       |> Zap.export_listings_xml()
 
     conn
