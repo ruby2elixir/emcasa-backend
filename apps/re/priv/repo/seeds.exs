@@ -6,8 +6,6 @@ alias Re.{
   InterestType,
   Listing,
   Listings.PriceHistory,
-  Message,
-  Messages.Channels.Channel,
   Repo,
   User
 }
@@ -424,84 +422,4 @@ Repo.delete_all(User)
   Repo.insert(%Favorite{
     user: user4,
     listing: listing8
-  })
-
-{:ok, channel1} =
-  Repo.insert(%Channel{
-    participant1: user1,
-    participant2: admin1,
-    listing: listing1
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg11",
-    notified: true,
-    read: false,
-    sender: user1,
-    receiver: admin1,
-    listing: listing1,
-    channel: channel1
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg12",
-    notified: false,
-    read: true,
-    sender: user1,
-    receiver: admin1,
-    listing: listing1,
-    channel: channel1
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg12",
-    notified: false,
-    read: true,
-    sender: admin1,
-    receiver: user1,
-    listing: listing1,
-    channel: channel1
-  })
-
-{:ok, channel2} =
-  Repo.insert(%Channel{
-    participant1: user2,
-    participant2: admin2,
-    listing: listing2
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg21",
-    notified: true,
-    read: false,
-    sender: user2,
-    receiver: admin2,
-    listing: listing2,
-    channel: channel1
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg22",
-    notified: false,
-    read: true,
-    sender: user2,
-    receiver: admin2,
-    listing: listing2,
-    channel: channel2
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg22",
-    notified: false,
-    read: true,
-    sender: admin2,
-    receiver: user2,
-    listing: listing2,
-    channel: channel2
   })

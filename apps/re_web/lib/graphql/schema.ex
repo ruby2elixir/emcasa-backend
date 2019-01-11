@@ -6,7 +6,6 @@ defmodule ReWeb.Schema do
 
   import_types ReWeb.Types.Listing
   import_types ReWeb.Types.User
-  import_types ReWeb.Types.Message
   import_types ReWeb.Types.Interest
   import_types ReWeb.Types.Dashboard
   import_types ReWeb.Types.Calendar
@@ -26,7 +25,6 @@ defmodule ReWeb.Schema do
   query do
     import_fields(:listing_queries)
     import_fields(:user_queries)
-    import_fields(:message_queries)
     import_fields(:dashboard_queries)
     import_fields(:interest_queries)
     import_fields(:calendar_queries)
@@ -34,7 +32,6 @@ defmodule ReWeb.Schema do
 
   mutation do
     import_fields(:listing_mutations)
-    import_fields(:message_mutations)
     import_fields(:user_mutations)
     import_fields(:interest_mutations)
     import_fields(:dashboard_mutations)
@@ -43,7 +40,6 @@ defmodule ReWeb.Schema do
 
   subscription do
     import_fields(:interest_subscriptions)
-    import_fields(:message_subscriptions)
     import_fields(:listing_subscriptions)
     import_fields(:calendar_subscriptions)
     import_fields(:dashboard_subscriptions)
@@ -69,7 +65,6 @@ defmodule ReWeb.Schema do
       Re.Images,
       Re.Listings,
       Re.Listings.History.Price,
-      Re.Messages,
       Re.Interests,
       Re.Interests.Types,
       Re.Favorites,

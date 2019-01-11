@@ -121,13 +121,9 @@ defmodule Re.Factory do
 
   def listing_blacklist_factory, do: %Re.Blacklist{}
 
-  def message_factory, do: %Re.Message{message: Shakespeare.hamlet()}
-
   def tour_visualisation_factory, do: %Re.Statistics.TourVisualization{}
 
   def in_person_visit_factory, do: %Re.Statistics.InPersonVisit{}
-
-  def channel_factory, do: %Re.Messages.Channels.Channel{}
 
   def price_history_factory, do: %Re.Listings.PriceHistory{}
 
