@@ -5,6 +5,7 @@ defmodule Re.Listings.Exporter do
 
   alias Re.{
     Images,
+    Filtering,
     Listings.Queries,
     Repo
   }
@@ -14,9 +15,9 @@ defmodule Re.Listings.Exporter do
     images: Images.Queries.listing_preload()
   ]
 
-  def exportable(%{state_slug: state_slug, city_slug: city_slug}, params) do
+  def exportable(filters, params) do
     Queries.active()
-    |> Queries.by_state_slug_and_city_slug(state_slug, city_slug)
+    |> Filtering.apply(filters)
     |> Queries.preload_relations(@partial_preload)
     |> Queries.order_by_id()
     |> Queries.offset(params)

@@ -16,7 +16,7 @@ defmodule ReWeb.Exporters.Zap.Plug do
         _args
       ) do
     xml_listings =
-      Exporter.exportable(%{state_slug: state_slug, city_slug: city_slug}, query_params)
+      Exporter.exportable(%{cities_slug: [city_slug], states_slug: [state_slug]}, query_params)
       |> Zap.export_listings_xml()
 
     conn

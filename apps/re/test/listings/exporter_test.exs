@@ -17,8 +17,8 @@ defmodule Re.Listings.ExporterTest do
       assert [listing_1] =
                Exporter.exportable(
                  %{
-                   state_slug: sao_paulo.state_slug,
-                   city_slug: sao_paulo.city_slug
+                   states_slug: [sao_paulo.state_slug],
+                   cities_slug: [sao_paulo.city_slug]
                  },
                  %{}
                )
@@ -29,7 +29,7 @@ defmodule Re.Listings.ExporterTest do
 
       insert(:listing, address_id: sao_paulo.id)
 
-      assert [] = Exporter.exportable(%{state_slug: "rj", city_slug: sao_paulo.city_slug}, %{})
+      assert [] = Exporter.exportable(%{states_slug: ["rj"], cities_slug: [sao_paulo.city_slug]}, %{})
     end
 
     test "should not return if city slug doesn't match" do
@@ -40,8 +40,8 @@ defmodule Re.Listings.ExporterTest do
       assert [] =
                Exporter.exportable(
                  %{
-                   state_slug: sao_paulo.state_slug,
-                   city_slug: "rio-de-janeiro"
+                   states_slug: [sao_paulo.state_slug],
+                   cities_slug: ["rio-de-janeiro"]
                  },
                  %{}
                )

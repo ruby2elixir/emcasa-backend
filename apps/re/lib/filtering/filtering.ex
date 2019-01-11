@@ -32,11 +32,12 @@ defmodule Re.Filtering do
     field :garage_types, {:array, :string}
     field :cities, {:array, :string}
     field :cities_slug, {:array, :string}
+    field :states_slug, {:array, :string}
   end
 
   @filters ~w(max_price min_price max_rooms min_rooms max_suites min_suites min_area max_area
               neighborhoods types max_lat min_lat max_lng min_lng neighborhoods_slugs
-              max_garage_spots min_garage_spots garage_types cities cities_slug)a
+              max_garage_spots min_garage_spots garage_types cities cities_slug states_slug)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -185,6 +186,17 @@ defmodule Re.Filtering do
       join: ad in assoc(l, :address),
       on: ad.id == l.address_id,
       where: ad.city_slug in ^cities_slug
+    )
+  end
+
+  defp attr_filter({:states_slug, []}, query), do: query
+
+  defp attr_filter({:states_slug, states_slug}, query) do
+    from(
+      l in query,
+      join: ad in assoc(l, :address),
+      on: ad.id == l.address_id,
+      where: ad.state_slug in ^states_slug
     )
   end
 
