@@ -61,7 +61,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["restrooms"] == listing.restrooms
       assert inserted_listing["area"] == listing.area
       assert inserted_listing["garageSpots"] == listing.garage_spots
-      assert inserted_listing["garageType"] == listing.garage_type |> String.upcase()
+      assert inserted_listing["garageType"] == String.upcase(listing.garage_type)
       assert inserted_listing["suites"] == listing.suites
       assert inserted_listing["dependencies"] == listing.dependencies
       assert inserted_listing["balconies"] == listing.balconies
@@ -115,7 +115,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["restrooms"] == listing.restrooms
       assert inserted_listing["area"] == listing.area
       assert inserted_listing["garageSpots"] == listing.garage_spots
-      assert inserted_listing["garageType"] == listing.garage_type |> String.upcase()
+      assert inserted_listing["garageType"] == String.upcase(listing.garage_type)
       assert inserted_listing["suites"] == listing.suites
       assert inserted_listing["dependencies"] == listing.dependencies
       assert inserted_listing["balconies"] == listing.balconies
@@ -340,7 +340,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert updated_listing["restrooms"] == new_listing.restrooms
       assert updated_listing["area"] == new_listing.area
       assert updated_listing["garageSpots"] == new_listing.garage_spots
-      assert updated_listing["garageType"] == new_listing.garage_type |> String.upcase()
+      assert updated_listing["garageType"] == String.upcase(new_listing.garage_type)
       assert updated_listing["suites"] == new_listing.suites
       assert updated_listing["dependencies"] == new_listing.dependencies
       assert updated_listing["balconies"] == new_listing.balconies
@@ -388,7 +388,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert updated_listing["restrooms"] == new_listing.restrooms
       assert updated_listing["area"] == new_listing.area
       assert updated_listing["garageSpots"] == new_listing.garage_spots
-      assert updated_listing["garageType"] == new_listing.garage_type |> String.upcase()
+      assert updated_listing["garageType"] == String.upcase(new_listing.garage_type)
       assert updated_listing["suites"] == new_listing.suites
       assert updated_listing["dependencies"] == new_listing.dependencies
       assert updated_listing["balconies"] == new_listing.balconies
