@@ -76,6 +76,12 @@ defmodule Re.Listings.Queries do
 
   def limit(query, _), do: query
 
+  def offset(query, %{"offset" => offset}), do: from(l in query, offset: ^offset)
+
+  def offset(query, %{offset: offset}), do: from(l in query, offset: ^offset)
+
+  def offset(query, _), do: query
+
   def remaining_count(query) do
     query
     |> exclude(:preload)

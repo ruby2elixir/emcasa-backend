@@ -12,16 +12,8 @@ defmodule Re.Exporters.Zap do
     Repo
   }
 
-  @preload [
-    :address,
-    images: Images.Queries.listing_preload()
-  ]
-
-  def export_listings_xml(attributes \\ @exported_attributes) do
-    Queries.active()
-    |> Queries.preload_relations(@preload)
-    |> Queries.order_by_id()
-    |> Repo.all()
+  def export_listings_xml(listings, attributes \\ @exported_attributes) do
+    listings
     |> Enum.map(&build_xml(&1, attributes))
     |> wrap_tags()
     |> XmlBuilder.document()

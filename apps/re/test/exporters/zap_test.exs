@@ -3,7 +3,11 @@ defmodule Re.Exporters.ZapTest do
 
   import Re.Factory
 
-  alias Re.Exporters.Zap
+  alias Re.{
+    Exporters.Zap,
+    Listing,
+    Repo
+  }
 
   describe "build_xml/0" do
     test "export XML from listing" do
@@ -300,10 +304,12 @@ defmodule Re.Exporters.ZapTest do
     test "should export listings wrapped" do
       listing = insert(:listing)
 
+      listings = Listing |> Repo.all()
+
       assert ~s|<?xml version="1.0" encoding="UTF-8"?><Carga xmlns:xsd="http://www.w3.org/2001/XMLSchema" | <>
                ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">| <>
                ~s|<Imoveis><Imovel><CodigoImovel>#{listing.id}</CodigoImovel></Imovel></Imoveis></Carga>| ==
-               Zap.export_listings_xml(~w(id)a)
+               Zap.export_listings_xml(listings, ~w(id)a)
     end
   end
 
