@@ -316,7 +316,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
              } == json_response(conn, 200)["data"]["listings"]
     end
 
-    test "should query listing index with filtering", %{user_conn: conn, user_user: user} do
+    test "should query listing index with filtering", %{user_conn: conn} do
       insert(
         :listing,
         price: 1_100_000,
@@ -628,32 +628,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           garage_spots: 2,
           garage_type: "contract"
         )
-
-      listing2 =
-        insert(
-          :listing,
-          price: 900_000,
-          rooms: 3,
-          suites: 2,
-          area: 90,
-          type: "Apartamento",
-          address:
-            build(
-              :address,
-              neighborhood: "Copacabana",
-              neighborhood_slug: "copacabana",
-              state: "RJ",
-              city: "Rio de Janeiro",
-              state_slug: "rj",
-              city_slug: "rio-de-janeiro",
-              lat: 50.0,
-              lng: 50.0
-            ),
-          garage_spots: 2,
-          garage_type: "condominium"
-        )
-
-      insert(:listing_blacklist, listing: listing2, user: user)
 
       variables = %{
         "filters" => %{

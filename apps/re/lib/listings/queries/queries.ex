@@ -88,28 +88,6 @@ defmodule Re.Listings.Queries do
 
   def per_user(query \\ Listing, user_id), do: from(l in query, where: l.user_id == ^user_id)
 
-  def exclude_blacklisted(query \\ Listing, params)
-
-  def exclude_blacklisted(query, %{current_user: %{id: user_id}}) do
-    from(
-      l in query,
-      left_join: b in Re.Blacklist,
-      on: b.listing_id == l.id and b.user_id == ^user_id,
-      where: is_nil(b.user_id)
-    )
-  end
-
-  def exclude_blacklisted(query, %{"current_user" => %{id: user_id}}) do
-    from(
-      l in query,
-      left_join: b in Re.Blacklist,
-      on: b.listing_id == l.id and b.user_id == ^user_id,
-      where: is_nil(b.user_id)
-    )
-  end
-
-  def exclude_blacklisted(query, _), do: query
-
   def by_city(query, listing) do
     from(
       l in query,

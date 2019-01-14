@@ -124,33 +124,6 @@ defmodule Re.RelatedTest do
       assert %{listings: [%{id: ^id2}], remaining_count: 0} = Related.get(listing)
     end
 
-    test "should filter out blacklisted listing" do
-      user = insert(:user)
-
-      listing =
-        insert(:listing,
-          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
-          price: 100_000
-        )
-
-      %{id: id2} =
-        insert(:listing,
-          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
-          price: 74_999
-        )
-
-      listing3 =
-        insert(:listing,
-          address: build(:address, city: "Rio de Janeiro", neighborhood: "Copacabana"),
-          price: 74_999
-        )
-
-      insert(:listing_blacklist, listing: listing3, user: user)
-
-      assert %{listings: [%{id: ^id2}], remaining_count: 0} =
-               Related.get(listing, %{current_user: user})
-    end
-
     test "should only return listings in the same city" do
       listing =
         insert(:listing,
