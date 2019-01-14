@@ -9,7 +9,6 @@ defmodule Re.Application do
 
   alias Re.{
     Listings.History.Server,
-    Statistics.Scheduler,
     Statistics.Visualizations
   }
 
@@ -29,7 +28,6 @@ defmodule Re.Application do
   defp extra_processes(_),
     do: [
       worker(Server, []),
-      worker(Visualizations, []),
-      worker(Scheduler, [])
+      worker(Visualizations, [])
     ]
 end
