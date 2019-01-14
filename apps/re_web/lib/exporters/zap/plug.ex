@@ -23,4 +23,14 @@ defmodule ReWeb.Exporters.Zap.Plug do
     |> put_resp_content_type("application/xml")
     |> send_resp(200, xml_listings)
   end
+
+  def call(conn, _args) do
+    error_response = {"error", "Expect state and city on path"}
+      |> XmlBuilder.document()
+      |> XmlBuilder.generate(format: :none)
+
+    conn
+    |> put_resp_content_type("application/xml")
+    |> send_resp(404, error_response)
+  end
 end
