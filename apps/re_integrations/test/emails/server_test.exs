@@ -50,35 +50,6 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       Emails.Server.handle_cast({Emails.User, :listing_updated, [user, listing, changes]}, [])
       assert_email_sent(Emails.User.listing_updated(user, listing, changes))
     end
-
-    test "monthly_report/2" do
-      user = insert(:user)
-
-      listing1 =
-        :listing
-        |> build(user: user)
-        |> Map.put(:listings_visualisations_count, 3)
-        |> Map.put(:tour_visualisations_count, 2)
-        |> Map.put(:in_person_visits_count, 4)
-        |> Map.put(:listings_favorites_count, 5)
-        |> Map.put(:interests_count, 8)
-
-      listing2 =
-        :listing
-        |> build(user: user)
-        |> Map.put(:listings_visualisations_count, 4)
-        |> Map.put(:tour_visualisations_count, 12)
-        |> Map.put(:in_person_visits_count, 4)
-        |> Map.put(:listings_favorites_count, 3)
-        |> Map.put(:interests_count, 0)
-
-      Emails.Server.handle_cast(
-        {Emails.Report, :monthly_report, [user, [listing1, listing2]]},
-        []
-      )
-
-      assert_email_sent(Emails.Report.monthly_report(user, [listing1, listing2]))
-    end
   end
 
   describe "handle_info/2" do
