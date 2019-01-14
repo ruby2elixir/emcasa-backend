@@ -12,6 +12,20 @@ defmodule Re.Listings.Highlights do
     Repo
   }
 
+  def get_highlight_listing_ids(query, params \\ %{}) do
+    get_highlights(query, params)
+    |> Enum.map(& &1.id)
+  end
+
+  defp get_highlights(query, params) do
+    order = %{order_by: [%{field: :updated_at, type: :desc}]}
+
+    query
+    |> Queries.order_by(order)
+    |> Queries.limit(params)
+    |> Repo.all()
+  end
+
   def get_zap_highlights(params \\ %{}), do: get_highlight_listings(:zap_highlight, params)
 
   def get_zap_super_highlights(params \\ %{}),
