@@ -3,7 +3,6 @@ defmodule Re.Repo.Migrations.EmbedHighlightsInListings do
 
   alias Re.{
     Listing,
-    Listings,
     Listings.Highlights.Zap,
     Listings.Highlights.ZapSuper,
     Listings.Highlights.Vivareal,

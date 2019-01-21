@@ -39,18 +39,6 @@ defmodule Re.Filtering.RelaxedTest do
           garage_spots: 2
         )
 
-      listing4 =
-        insert(
-          :listing,
-          price: 1_050_000,
-          area: 80,
-          score: 2,
-          address: build(:address),
-          garage_spots: 2
-        )
-
-      insert(:listing_blacklist, listing: listing4, user: user)
-
       assert %{listings: [%{id: ^id2}, %{id: ^id3}], filters: %{max_price: 1_100_000}} =
                Relaxed.get(%{
                  "max_price" => 1_000_000,

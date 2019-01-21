@@ -26,8 +26,5 @@ defmodule ReIntegrations.Notifications.Emails do
   def listing_updated(%User{} = user, %Listing{} = listing, changes),
     do: GenServer.cast(Emails.Server, {Emails.User, :listing_updated, [user, listing, changes]})
 
-  def monthly_report(user, listings),
-    do: GenServer.cast(Emails.Server, {Emails.Report, :monthly_report, [user, listings]})
-
   def inspect, do: GenServer.call(Emails.Server, :inspect)
 end

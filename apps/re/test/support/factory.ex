@@ -119,8 +119,6 @@ defmodule Re.Factory do
 
   def listings_favorites_factory, do: %Re.Favorite{}
 
-  def listing_blacklist_factory, do: %Re.Blacklist{}
-
   def tour_visualisation_factory, do: %Re.Statistics.TourVisualization{}
 
   def in_person_visit_factory, do: %Re.Statistics.InPersonVisit{}

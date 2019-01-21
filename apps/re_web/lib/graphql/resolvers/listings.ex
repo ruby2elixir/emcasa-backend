@@ -103,16 +103,6 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
-  def blacklists(user, params, %{context: %{loader: loader, current_user: current_user}}) do
-    with :ok <- Bodyguard.permit(Listings, :per_user, current_user, user) do
-      loader
-      |> Dataloader.load(Listings, {:blacklisted, params}, user)
-      |> on_load(fn loader ->
-        {:ok, Dataloader.get(loader, Listings, {:blacklisted, params}, user)}
-      end)
-    end
-  end
-
   def owned(user, params, %{context: %{loader: loader, current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :per_user, current_user, user) do
       loader

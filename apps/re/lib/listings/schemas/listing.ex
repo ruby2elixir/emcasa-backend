@@ -50,9 +50,6 @@ defmodule Re.Listing do
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :user]
 
-    has_many :listings_blacklists, Re.Blacklist
-    has_many :blacklisted, through: [:listings_blacklists, :user]
-
     has_many :interests, Re.Interest
 
     timestamps()
