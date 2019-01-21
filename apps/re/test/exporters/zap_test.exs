@@ -64,7 +64,7 @@ defmodule Re.Exporters.ZapTest do
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>descr</Observacao>" <>
-          "<TipoOferta>1</TipoOferta>" <> images_tags() <> "</Imovel>"
+          images_tags() <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -122,7 +122,7 @@ defmodule Re.Exporters.ZapTest do
           "<QtdBanheiros>2</QtdBanheiros>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao/>" <> "<TipoOferta>1</TipoOferta>" <> images_tags() <> "</Imovel>"
+          "<Observacao/>" <> images_tags() <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -174,7 +174,7 @@ defmodule Re.Exporters.ZapTest do
           "<QtdBanheiros>2</QtdBanheiros>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao/>" <> "<TipoOferta>1</TipoOferta>" <> "<Fotos/>" <> "</Imovel>"
+          "<Observacao/>" <> "<Fotos/>" <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -201,7 +201,6 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
-          zap_highlight: true,
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -211,6 +210,8 @@ defmodule Re.Exporters.ZapTest do
           maintenance_fee: 1000.00,
           property_tax: 1000.00
         )
+
+      options = %{highlights: [id]}
 
       expected_xml =
         "<Imovel>" <>
@@ -234,9 +235,10 @@ defmodule Re.Exporters.ZapTest do
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>descr</Observacao>" <>
-          "<TipoOferta>2</TipoOferta>" <> images_tags() <> "</Imovel>"
+          images_tags() <> "<TipoOferta>2</TipoOferta>" <> "</Imovel>"
 
-      assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
+      assert expected_xml ==
+               listing |> Zap.build_xml(options) |> XmlBuilder.generate(format: :none)
     end
 
     test "export XML with super highlight" do
@@ -261,7 +263,6 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
-          zap_super_highlight: true,
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -271,6 +272,8 @@ defmodule Re.Exporters.ZapTest do
           maintenance_fee: 1000.00,
           property_tax: 1000.00
         )
+
+      options = %{super_highlights: [id]}
 
       expected_xml =
         "<Imovel>" <>
@@ -294,9 +297,10 @@ defmodule Re.Exporters.ZapTest do
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>descr</Observacao>" <>
-          "<TipoOferta>3</TipoOferta>" <> images_tags() <> "</Imovel>"
+          images_tags() <> "<TipoOferta>3</TipoOferta>" <> "</Imovel>"
 
-      assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
+      assert expected_xml ==
+               listing |> Zap.build_xml(options) |> XmlBuilder.generate(format: :none)
     end
   end
 
@@ -308,8 +312,8 @@ defmodule Re.Exporters.ZapTest do
 
       assert ~s|<?xml version="1.0" encoding="UTF-8"?><Carga xmlns:xsd="http://www.w3.org/2001/XMLSchema" | <>
                ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">| <>
-               ~s|<Imoveis><Imovel><CodigoImovel>#{listing.id}</CodigoImovel></Imovel></Imoveis></Carga>| ==
-               Zap.export_listings_xml(listings, ~w(id)a)
+               ~s|<Imoveis><Imovel><CodigoImovel>#{listing.id}</CodigoImovel><TipoOferta>1</TipoOferta></Imovel></Imoveis></Carga>| ==
+               Zap.export_listings_xml(listings, %{attributes: ~w(id)a})
     end
   end
 

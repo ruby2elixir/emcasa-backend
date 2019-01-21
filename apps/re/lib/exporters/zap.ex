@@ -4,7 +4,7 @@ defmodule Re.Exporters.Zap do
   """
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
                           postal_code price maintenance_fee util_area area_unit rooms bathrooms garage_spots
-                          property_tax description featured images)a
+                          property_tax description images)a
 
   alias Re.{
     Images,
@@ -12,9 +12,9 @@ defmodule Re.Exporters.Zap do
     Repo
   }
 
-  def export_listings_xml(listings, attributes \\ @exported_attributes) do
+  def export_listings_xml(listings, options \\ %{}) do
     listings
-    |> Enum.map(&build_xml(&1, attributes))
+    |> Enum.map(&build_xml(&1, options))
     |> wrap_tags()
     |> XmlBuilder.document()
     |> XmlBuilder.generate(format: :none)
@@ -31,8 +31,25 @@ defmodule Re.Exporters.Zap do
      ]}
   end
 
-  def build_xml(%Re.Listing{} = listing, attributes \\ @exported_attributes) do
-    {"Imovel", %{}, convert_attributes(listing, attributes)}
+  def build_xml(%Re.Listing{} = listing, options \\ %{}) do
+    attributes = Map.get(options, :attributes, @exported_attributes)
+    highlights = Map.get(options, :highlights, [])
+    super_highlights = Map.get(options, :super_highlights, [])
+
+    converted_listing = [
+      convert_attributes(listing, attributes),
+      convert_type(listing, highlights, super_highlights)
+    ]
+
+    {"Imovel", %{}, converted_listing}
+  end
+
+  defp convert_type(%Re.Listing{id: id} = listing, highlight_ids, super_highlight_ids) do
+    cond do
+      id in super_highlight_ids -> {"TipoOferta", %{}, 3}
+      id in highlight_ids -> {"TipoOferta", %{}, 2}
+      true -> {"TipoOferta", %{}, 1}
+    end
   end
 
   def convert_attributes(listing, attributes),
@@ -129,18 +146,6 @@ defmodule Re.Exporters.Zap do
   defp convert_attribute(:images, %{images: [main_image | rest]}) do
     main_image = Map.put(main_image, :main, true)
     {"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)}
-  end
-
-  defp convert_attribute(:featured, %{zap_super_highlight: true}) do
-    {"TipoOferta", %{}, 3}
-  end
-
-  defp convert_attribute(:featured, %{zap_highlight: true}) do
-    {"TipoOferta", %{}, 2}
-  end
-
-  defp convert_attribute(:featured, _) do
-    {"TipoOferta", %{}, 1}
   end
 
   defp build_image(%{filename: filename} = image) do

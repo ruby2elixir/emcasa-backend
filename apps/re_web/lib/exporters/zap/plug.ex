@@ -25,7 +25,8 @@ defmodule ReWeb.Exporters.Zap.Plug do
   end
 
   def call(conn, _args) do
-    error_response = {"error", "Expect state and city on path"}
+    error_response =
+      {"error", "Expect state and city on path"}
       |> XmlBuilder.document()
       |> XmlBuilder.generate(format: :none)
 

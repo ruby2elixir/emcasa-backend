@@ -29,7 +29,11 @@ defmodule Re.Listings.ExporterTest do
 
       insert(:listing, address_id: sao_paulo.id)
 
-      assert [] = Exporter.exportable(%{states_slug: ["rj"], cities_slug: [sao_paulo.city_slug]}, %{})
+      assert [] =
+               Exporter.exportable(
+                 %{states_slug: ["rj"], cities_slug: [sao_paulo.city_slug]},
+                 %{}
+               )
     end
 
     test "should not return if city slug doesn't match" do
