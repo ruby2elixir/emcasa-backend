@@ -24,8 +24,6 @@ defmodule ReWeb.GraphQL.Dashboard.MutationTest do
 
   Enum.map(
     [
-      {"listingHighlightZap", :zap_highlight},
-      {"listingSuperHighlightZap", :zap_super_highlight},
       {"listingHighlightVivareal", :vivareal_highlight}
     ],
     fn {mutation, attribute} ->
