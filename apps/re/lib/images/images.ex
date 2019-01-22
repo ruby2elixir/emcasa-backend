@@ -97,7 +97,7 @@ defmodule Re.Images do
     end
   end
 
-  def is_same_listing(images) do
+  def fetch_listing(images) do
     case Enum.uniq_by(images, fn %{listing_id: id} -> id end) do
       [%{listing_id: listing_id}] -> Listings.get(listing_id)
       _ -> {:error, :distinct_listings}
