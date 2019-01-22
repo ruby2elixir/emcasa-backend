@@ -5,6 +5,7 @@ defmodule ReWeb.Schema do
   use Absinthe.Schema
 
   import_types ReWeb.Types.Listing
+  import_types ReWeb.Types.Image
   import_types ReWeb.Types.User
   import_types ReWeb.Types.Interest
   import_types ReWeb.Types.Dashboard
@@ -32,6 +33,7 @@ defmodule ReWeb.Schema do
 
   mutation do
     import_fields(:listing_mutations)
+    import_fields(:image_mutations)
     import_fields(:user_mutations)
     import_fields(:interest_mutations)
     import_fields(:dashboard_mutations)
@@ -41,6 +43,7 @@ defmodule ReWeb.Schema do
   subscription do
     import_fields(:interest_subscriptions)
     import_fields(:listing_subscriptions)
+    import_fields(:image_subscriptions)
     import_fields(:calendar_subscriptions)
     import_fields(:dashboard_subscriptions)
   end
