@@ -29,22 +29,6 @@ defmodule ReWeb.Types.Dashboard do
       resolve &DashboardResolvers.listings/2
     end
 
-    field :listing_zap_highlights, :listing_pagination_admin do
-      arg :pagination, :listing_pagination_admin_input
-      arg :filters, :listing_filter_input
-      arg :order_by, list_of(:order_by)
-
-      resolve &DashboardResolvers.listing_zap_highlights/2
-    end
-
-    field :listing_zap_super_highlights, :listing_pagination_admin do
-      arg :pagination, :listing_pagination_admin_input
-      arg :filters, :listing_filter_input
-      arg :order_by, list_of(:order_by)
-
-      resolve &DashboardResolvers.listing_zap_super_highlights/2
-    end
-
     field :listing_vivareal_highlights, :listing_pagination_admin do
       arg :pagination, :listing_pagination_admin_input
       arg :filters, :listing_filter_input
@@ -80,20 +64,6 @@ defmodule ReWeb.Types.Dashboard do
       resolve &DashboardResolvers.upload_factors_csv/2
     end
 
-    @desc "Highligh listing on zap"
-    field :listing_highlight_zap, :listing do
-      arg :listing_id, non_null(:id)
-
-      resolve &DashboardResolvers.listing_highlight_zap/2
-    end
-
-    @desc "Super highligh listing on zap"
-    field :listing_super_highlight_zap, :listing do
-      arg :listing_id, non_null(:id)
-
-      resolve &DashboardResolvers.listing_super_highlight_zap/2
-    end
-
     @desc "Highligh listing on vivareal"
     field :listing_highlight_vivareal, :listing do
       arg :listing_id, non_null(:id)
@@ -103,34 +73,6 @@ defmodule ReWeb.Types.Dashboard do
   end
 
   object :dashboard_subscriptions do
-    @desc "Subscribe to zap listing highlits"
-    field :listing_highlighted_zap, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          %{role: "admin"} -> {:ok, topic: "listing_highlighted_zap"}
-          %{} -> {:error, :unauthorized}
-          _ -> {:error, :unauthenticated}
-        end
-      end)
-
-      trigger :listing_highlight_zap,
-        topic: fn _ -> "listing_highlighted_zap" end
-    end
-
-    @desc "Subscribe to zap listing super highlits"
-    field :listing_super_highlighted_zap, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          %{role: "admin"} -> {:ok, topic: "listing_super_highlighted_zap"}
-          %{} -> {:error, :unauthorized}
-          _ -> {:error, :unauthenticated}
-        end
-      end)
-
-      trigger :listing_super_highlight_zap,
-        topic: fn _ -> "listing_super_highlighted_zap" end
-    end
-
     @desc "Subscribe to vivareal listing highlits"
     field :listing_highlighted_vivareal, :listing do
       config(fn _args, %{context: %{current_user: current_user}} ->

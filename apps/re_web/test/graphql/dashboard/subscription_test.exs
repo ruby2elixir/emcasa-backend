@@ -4,20 +4,6 @@ defmodule ReWeb.GraphQL.Dashboard.SubscriptionTest do
   @subscriptions [
     {"""
      subscription {
-       listingHighlightedZap {
-         id
-       }
-     }
-     """, "listingHighlightedZap", "listingHighlightZap"},
-    {"""
-     subscription {
-       listingSuperHighlightedZap {
-         id
-       }
-     }
-     """, "listingSuperHighlightedZap", "listingSuperHighlightZap"},
-    {"""
-     subscription {
        listingHighlightedVivareal {
          id
        }

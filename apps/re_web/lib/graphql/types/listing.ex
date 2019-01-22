@@ -73,8 +73,6 @@ defmodule ReWeb.Types.Listing do
     end
 
     field :vivareal_highlight, :boolean, resolve: &Resolvers.Listings.vivareal_highlight/3
-    field :zap_highlight, :boolean, resolve: &Resolvers.Listings.zap_highlight/3
-    field :zap_super_highlight, :boolean, resolve: &Resolvers.Listings.zap_super_highlight/3
   end
 
   input_object :listing_input do
