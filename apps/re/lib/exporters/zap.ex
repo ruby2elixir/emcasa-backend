@@ -2,6 +2,11 @@ defmodule Re.Exporters.Zap do
   @moduledoc """
   Listing XML exporters for zap
   """
+
+  @normal 1
+  @featured 2
+  @super_featured 3
+
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
                           postal_code price maintenance_fee util_area area_unit rooms bathrooms garage_spots
                           property_tax description images)a
@@ -44,11 +49,11 @@ defmodule Re.Exporters.Zap do
     {"Imovel", %{}, converted_listing}
   end
 
-  defp convert_type(%Re.Listing{id: id} = listing, highlight_ids, super_highlight_ids) do
+  defp convert_type(%{id: id} = listing, highlight_ids, super_highlight_ids) do
     cond do
-      id in super_highlight_ids -> {"TipoOferta", %{}, 3}
-      id in highlight_ids -> {"TipoOferta", %{}, 2}
-      true -> {"TipoOferta", %{}, 1}
+      id in super_highlight_ids -> {"TipoOferta", %{}, @super_featured}
+      id in highlight_ids -> {"TipoOferta", %{}, @featured}
+      true -> {"TipoOferta", %{}, @normal}
     end
   end
 

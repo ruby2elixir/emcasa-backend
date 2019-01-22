@@ -23,6 +23,7 @@ defmodule Re.Listings.Highlights do
     query
     |> Queries.order_by(order)
     |> Queries.limit(params)
+    |> Queries.offset(params)
     |> Repo.all()
   end
 

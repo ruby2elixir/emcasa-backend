@@ -83,10 +83,17 @@ defmodule Re.Listings.HighlightsTest do
   end
 
   describe "get_highlight_listing_ids/2" do
-    test "should consider limit value" do
+    test "should consider page_size value" do
       insert_list(2, :listing)
 
       result = Highlights.get_highlight_listing_ids(Listing, %{page_size: 1})
+      assert 1 = length(result)
+    end
+
+    test "should consider offset value" do
+      insert_list(2, :listing)
+
+      result = Highlights.get_highlight_listing_ids(Listing, %{offset: 1})
       assert 1 = length(result)
     end
 
