@@ -128,6 +128,18 @@ defmodule Re.Images do
     end
   end
 
+  def activate_images(images) do
+    ids = Enum.map(images, fn %{id: id} -> id end)
+
+    Image
+    |> Queries.with_ids(ids)
+    |> Repo.update_all(set: [is_active: true])
+    |> case do
+      {_, nil} -> {:ok, images}
+      error -> error
+    end
+  end
+
   def deactivate(image) do
     image
     |> Image.deactivate_changeset(%{is_active: false})

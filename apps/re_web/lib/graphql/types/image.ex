@@ -31,6 +31,10 @@ defmodule ReWeb.Types.Image do
     field :image_ids, non_null(list_of(non_null(:id)))
   end
 
+  input_object :image_activate_input do
+    field :image_ids, non_null(list_of(non_null(:id)))
+  end
+
   object :image_mutations do
     @desc "Inser image"
     field :insert_image, type: :image do
@@ -52,6 +56,13 @@ defmodule ReWeb.Types.Image do
 
       resolve &Resolvers.Images.deactivate_images/2
     end
+
+    @desc "Deactivate images"
+    field :images_activate, type: list_of(:image) do
+      arg :input, non_null(:image_activate_input)
+
+      resolve &Resolvers.Images.activate_images/2
+    end
   end
 
   object :image_subscriptions do
@@ -67,6 +78,34 @@ defmodule ReWeb.Types.Image do
 
       trigger :images_deactivate,
         topic: fn _ -> "images_deactivated" end
+    end
+
+    @desc "Subscribe to image activation"
+    field :images_activated, list_of(:image) do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          %{role: "admin"} -> {:ok, topic: "images_activated"}
+          %{} -> {:error, :unauthorized}
+          _ -> {:error, :unauthenticated}
+        end
+      end)
+
+      trigger :images_activate,
+        topic: fn _ -> "images_activated" end
+    end
+
+    @desc "Subscribe to image update"
+    field :images_updated, list_of(:image) do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          %{role: "admin"} -> {:ok, topic: "images_updated"}
+          %{} -> {:error, :unauthorized}
+          _ -> {:error, :unauthenticated}
+        end
+      end)
+
+      trigger :update_images,
+        topic: fn _ -> "images_updated" end
     end
   end
 end

@@ -54,6 +54,13 @@ defmodule ReWeb.Resolvers.Images do
          do: Images.deactivate_images(images)
   end
 
+  def activate_images(%{input: %{image_ids: image_ids}}, %{context: %{current_user: current_user}}) do
+    with images <- Images.list_by_ids(image_ids),
+         {:ok, listing} <- Images.fetch_listing(images),
+         :ok <- Bodyguard.permit(Images, :activate_images, current_user, listing),
+         do: Images.activate_images(images)
+  end
+
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true
   defp is_admin(_, _), do: false
