@@ -8,7 +8,7 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
          id
        }
      }
-     """, "imagesDeactivated", "deactivateImages"}
+     """, "imagesDeactivated", "imagesDeactivate"}
   ]
 
   import Re.Factory

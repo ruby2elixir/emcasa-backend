@@ -389,8 +389,8 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       }
 
       mutation = """
-        mutation DeactivateImages ($input: ImageDeactivateInput!) {
-          deactivateImages(input: $input) {
+        mutation ImagesDeactivate ($input: ImageDeactivateInput!) {
+          imagesDeactivate(input: $input) {
             id
           }
         }
@@ -402,7 +402,7 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
                %{"id" => to_string(id1)},
                %{"id" => to_string(id2)},
                %{"id" => to_string(id3)}
-             ] == json_response(conn, 200)["data"]["deactivateImages"]
+             ] == json_response(conn, 200)["data"]["imagesDeactivate"]
 
       refute Repo.get(Re.Image, id1).is_active
       refute Repo.get(Re.Image, id2).is_active
@@ -443,8 +443,8 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       }
 
       mutation = """
-        mutation DeactivateImages ($input: ImageDeactivateInput!) {
-          deactivateImages(input: $input) {
+        mutation ImagesDeactivate ($input: ImageDeactivateInput!) {
+          imagesDeactivate(input: $input) {
             id
           }
         }

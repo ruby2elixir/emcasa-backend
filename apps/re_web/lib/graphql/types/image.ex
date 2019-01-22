@@ -47,7 +47,7 @@ defmodule ReWeb.Types.Image do
     end
 
     @desc "Deactivate images"
-    field :deactivate_images, type: list_of(:image) do
+    field :images_deactivate, type: list_of(:image) do
       arg :input, non_null(:image_deactivate_input)
 
       resolve &Resolvers.Images.deactivate_images/2
@@ -65,7 +65,7 @@ defmodule ReWeb.Types.Image do
         end
       end)
 
-      trigger :deactivate_images,
+      trigger :images_deactivate,
         topic: fn _ -> "images_deactivated" end
     end
   end
