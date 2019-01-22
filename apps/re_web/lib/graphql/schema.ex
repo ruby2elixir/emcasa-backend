@@ -43,6 +43,7 @@ defmodule ReWeb.Schema do
   subscription do
     import_fields(:interest_subscriptions)
     import_fields(:listing_subscriptions)
+    import_fields(:image_subscriptions)
     import_fields(:calendar_subscriptions)
     import_fields(:dashboard_subscriptions)
   end

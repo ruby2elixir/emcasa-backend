@@ -53,4 +53,20 @@ defmodule ReWeb.Types.Image do
       resolve &Resolvers.Images.deactivate_images/2
     end
   end
+
+  object :image_subscriptions do
+    @desc "Subscribe to image deactivation"
+    field :images_deactivated, list_of(:image) do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          %{role: "admin"} -> {:ok, topic: "images_deactivated"}
+          %{} -> {:error, :unauthorized}
+          _ -> {:error, :unauthenticated}
+        end
+      end)
+
+      trigger :deactivate_images,
+        topic: fn _ -> "images_deactivated" end
+    end
+  end
 end
