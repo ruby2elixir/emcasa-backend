@@ -26,4 +26,8 @@ defmodule Re.Images.Queries do
     |> listing_preload()
     |> limit(1)
   end
+
+  def with_ids(query \\ Image, ids)
+
+  def with_ids(query, ids), do: (from i in query, where: i.id in ^ids)
 end

@@ -27,6 +27,10 @@ defmodule ReWeb.Types.Image do
     field :description, :string
   end
 
+  input_object :image_deactivate_input do
+    field :image_ids, non_null(list_of(non_null(:id)))
+  end
+
   object :image_mutations do
     @desc "Inser image"
     field :insert_image, type: :image do
@@ -40,6 +44,13 @@ defmodule ReWeb.Types.Image do
       arg :input, non_null(list_of(non_null(:image_update_input)))
 
       resolve &Resolvers.Images.update_images/2
+    end
+
+    @desc "Deactivate images"
+    field :deactivate_images, type: list_of(:image) do
+      arg :input, non_null(:image_deactivate_input)
+
+      resolve &Resolvers.Images.deactivate_images/2
     end
   end
 end
