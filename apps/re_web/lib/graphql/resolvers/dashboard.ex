@@ -90,33 +90,9 @@ defmodule ReWeb.Resolvers.Dashboard do
     end
   end
 
-  def listing_zap_highlights(params, %{context: %{current_user: current_user}}) do
-    with :ok <- is_admin(current_user),
-         do: {:ok, Highlights.get_zap_highlights(params)}
-  end
-
-  def listing_zap_super_highlights(params, %{context: %{current_user: current_user}}) do
-    with :ok <- is_admin(current_user),
-         do: {:ok, Highlights.get_zap_super_highlights(params)}
-  end
-
   def listing_vivareal_highlights(params, %{context: %{current_user: current_user}}) do
     with :ok <- is_admin(current_user),
          do: {:ok, Highlights.get_vivareal_highlights(params)}
-  end
-
-  def listing_highlight_zap(%{listing_id: listing_id}, %{context: %{current_user: current_user}}) do
-    with :ok <- is_admin(current_user),
-         {:ok, listing} <- Listings.get(listing_id),
-         do: Highlights.insert_zap_highlight(listing)
-  end
-
-  def listing_super_highlight_zap(%{listing_id: listing_id}, %{
-        context: %{current_user: current_user}
-      }) do
-    with :ok <- is_admin(current_user),
-         {:ok, listing} <- Listings.get(listing_id),
-         do: Highlights.insert_zap_super_highlight(listing)
   end
 
   def listing_highlight_vivareal(%{listing_id: listing_id}, %{

@@ -130,8 +130,6 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
 
     Enum.map(
       [
-        {:zap_highlight, "listingZapHighlights"},
-        {:zap_super_highlight, "listingZapSuperHighlights"},
         {:vivareal_highlight, "listingVivarealHighlights"}
       ],
       fn {struct, query} ->

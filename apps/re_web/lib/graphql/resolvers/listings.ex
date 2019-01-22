@@ -215,18 +215,4 @@ defmodule ReWeb.Resolvers.Listings do
       error -> error
     end
   end
-
-  def zap_highlight(listing, _, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :show_highlights, current_user, %{}) do
-      :ok -> {:ok, listing.zap_highlight}
-      error -> error
-    end
-  end
-
-  def zap_super_highlight(listing, _, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :show_highlights, current_user, %{}) do
-      :ok -> {:ok, listing.zap_super_highlight}
-      error -> error
-    end
-  end
 end
