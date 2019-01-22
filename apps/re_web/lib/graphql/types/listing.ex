@@ -429,5 +429,18 @@ defmodule ReWeb.Types.Listing do
           "listing_inserted"
         end
     end
+
+    @desc "Subscribe to listing update"
+    field :listing_updated, :listing do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          %{role: "admin"} -> {:ok, topic: "listing_updated"}
+          %{} -> {:error, :unauthorized}
+          _ -> {:error, :unauthenticated}
+        end
+      end)
+
+      trigger :update_listing, topic: fn _ -> "listing_updated" end
+    end
   end
 end
