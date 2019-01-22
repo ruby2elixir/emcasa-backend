@@ -8,7 +8,14 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
          id
        }
      }
-     """, "imagesDeactivated", "imagesDeactivate"}
+     """, "imagesDeactivated", "imagesDeactivate"},
+    {"""
+     subscription {
+       imagesActivated {
+         id
+       }
+     }
+     """, "imagesActivated", "imagesActivate"}
   ]
 
   @update_subscriptions [
