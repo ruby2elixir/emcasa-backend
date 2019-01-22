@@ -68,5 +68,19 @@ defmodule ReWeb.Types.Image do
       trigger :images_deactivate,
         topic: fn _ -> "images_deactivated" end
     end
+
+    @desc "Subscribe to image update"
+    field :images_updated, list_of(:image) do
+      config(fn _args, %{context: %{current_user: current_user}} ->
+        case current_user do
+          %{role: "admin"} -> {:ok, topic: "images_updated"}
+          %{} -> {:error, :unauthorized}
+          _ -> {:error, :unauthenticated}
+        end
+      end)
+
+      trigger :update_images,
+        topic: fn _ -> "images_updated" end
+    end
   end
 end
