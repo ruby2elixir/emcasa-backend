@@ -44,8 +44,6 @@ defmodule Re.Factory do
       status: "active",
       is_exclusive: Enum.random([true, false]),
       is_release: Enum.random([true, false]),
-      zap_highlight: false,
-      zap_super_highlight: false,
       vivareal_highlight: false
     }
   end
