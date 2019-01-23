@@ -2,6 +2,11 @@ defmodule Re.Listings.Highlights do
   @moduledoc """
   Context module for listing highlights
   """
+  @sao_paulo_highlight_size 100
+  @rio_de_janeiro_highlight_size 300
+
+  @sao_paulo_super_highlight_size 3
+  @rio_de_janeiro_super_highlight_size 5
 
   import Ecto.Query
 
@@ -50,4 +55,16 @@ defmodule Re.Listings.Highlights do
     |> Listing.changeset(%{attribute => true}, "admin")
     |> Repo.update()
   end
+
+  def highlights_size("sao-paulo"), do: @sao_paulo_highlight_size
+
+  def highlights_size("rio-de-janeiro"), do: @rio_de_janeiro_highlight_size
+
+  def highlights_size(_city_slug), do: 0
+
+  def super_highlights_size("sao-paulo"), do: @sao_paulo_super_highlight_size
+
+  def super_highlights_size("rio-de-janeiro"), do: @rio_de_janeiro_super_highlight_size
+
+  def super_highlights_size(_city_slug), do: 0
 end

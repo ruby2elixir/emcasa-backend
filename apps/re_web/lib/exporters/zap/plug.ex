@@ -19,7 +19,11 @@ defmodule ReWeb.Exporters.Zap.Plug do
         _args
       ) do
     filters = %{cities_slug: [city_slug], states_slug: [state_slug]}
-    options = mount_options(city_slug, state_slug)
+    highlights_sizes = get_highlight_sizes(city_slug)
+
+    options =
+      mount_query(filters)
+      |> get_highlights(highlights_sizes)
 
     xml_listings =
       Exporter.exportable(filters, query_params)
@@ -41,39 +45,34 @@ defmodule ReWeb.Exporters.Zap.Plug do
     |> send_resp(404, error_response)
   end
 
-  defp mount_options(city_slug, state_slug) do
-    filters = %{cities_slug: [city_slug], states_slug: [state_slug]}
+  defp get_highlight_sizes(city_slug) do
+    super_highlights_size = Highlights.super_highlights_size(city_slug)
+    highlights_size = Highlights.highlights_size(city_slug)
 
-    query =
-      Queries.active()
-      |> Filtering.apply(filters)
-      |> Queries.preload_relations([:address])
-      |> Queries.order_by_id()
+    %{highlights_size: highlights_size, super_highlights_size: super_highlights_size}
+  end
 
-    super_highlights_count = super_highlights_count(city_slug)
-    highlights_count = highlights_count(city_slug)
-
-    super_highlight_ids =
-      Highlights.get_highlight_listing_ids(query, %{page_size: super_highlights_count})
+  defp get_highlights(query, %{
+         highlights_size: highlights_size,
+         super_highlights_size: super_highlights_size
+       }) do
 
     highlight_ids =
       Highlights.get_highlight_listing_ids(query, %{
-        page_size: highlights_count,
-        offset: super_highlights_count
+        page_size: highlights_size,
+        offset: super_highlights_size
       })
+
+    super_highlight_ids =
+      Highlights.get_highlight_listing_ids(query, %{page_size: super_highlights_size})
 
     %{super_highlight_ids: super_highlight_ids, highlight_ids: highlight_ids}
   end
 
-  defp super_highlights_count(city_slug) do
-    counter_map = %{"sao-paulo" => 3, "rio-de-janeiro" => 5}
-
-    Map.get(counter_map, city_slug, 0)
-  end
-
-  defp highlights_count(city_slug) do
-    counter_map = %{"sao-paulo" => 100, "rio-de-janeiro" => 300}
-
-    Map.get(counter_map, city_slug, 0)
+  defp mount_query(filters) do
+    Queries.active()
+    |> Filtering.apply(filters)
+    |> Queries.preload_relations([:address])
+    |> Queries.order_by_id()
   end
 end
