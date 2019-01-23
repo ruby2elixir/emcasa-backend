@@ -29,5 +29,5 @@ defmodule Re.Images.Queries do
 
   def with_ids(query \\ Image, ids)
 
-  def with_ids(query, ids), do: (from i in query, where: i.id in ^ids)
+  def with_ids(query, ids), do: from(i in query, where: i.id in ^ids)
 end

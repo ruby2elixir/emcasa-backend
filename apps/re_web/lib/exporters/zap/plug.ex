@@ -53,16 +53,16 @@ defmodule ReWeb.Exporters.Zap.Plug do
     super_highlights_count = super_highlights_count(city_slug)
     highlights_count = highlights_count(city_slug)
 
-    super_highlights =
+    super_highlight_ids =
       Highlights.get_highlight_listing_ids(query, %{page_size: super_highlights_count})
 
-    highlights =
+    highlight_ids =
       Highlights.get_highlight_listing_ids(query, %{
         page_size: highlights_count,
         offset: super_highlights_count
       })
 
-    %{super_highlights: super_highlights, highlights: highlights}
+    %{super_highlight_ids: super_highlight_ids, highlight_ids: highlight_ids}
   end
 
   defp super_highlights_count(city_slug) do

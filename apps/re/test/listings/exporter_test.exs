@@ -14,14 +14,14 @@ defmodule Re.Listings.ExporterTest do
       %{id: id_1} = insert(:listing, address_id: sao_paulo.id)
       insert(:listing, address_id: rio_de_janeiro.id)
 
-
-      result = Exporter.exportable(
-                 %{
-                   states_slug: [sao_paulo.state_slug],
-                   cities_slug: [sao_paulo.city_slug]
-                 },
-                 %{}
-               )
+      result =
+        Exporter.exportable(
+          %{
+            states_slug: [sao_paulo.state_slug],
+            cities_slug: [sao_paulo.city_slug]
+          },
+          %{}
+        )
 
       assert [%{id: ^id_1}] = result
     end

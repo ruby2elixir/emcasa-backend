@@ -211,7 +211,7 @@ defmodule Re.Exporters.ZapTest do
           property_tax: 1000.00
         )
 
-      options = %{highlights: [id]}
+      options = %{highlight_ids: [id]}
 
       expected_xml =
         "<Imovel>" <>
@@ -273,7 +273,7 @@ defmodule Re.Exporters.ZapTest do
           property_tax: 1000.00
         )
 
-      options = %{super_highlights: [id]}
+      options = %{super_highlight_ids: [id]}
 
       expected_xml =
         "<Imovel>" <>
