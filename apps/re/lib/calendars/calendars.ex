@@ -50,7 +50,7 @@ defmodule Re.Calendars do
       |> Timex.shift(weeks: 1)
       |> beginning_of_week()
 
-    Enum.reduce(0..(number_of_options - 1), [], &generate_time(&1, &2, beginning_of_week))
+    Enum.reduce((number_of_options - 1)..0, [], &generate_time(&1, &2, beginning_of_week))
   end
 
   defp generate_time(offset, acc, beginning_of_week) do
