@@ -19,8 +19,8 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           listing: build(:listing, address: build(:address))
         )
 
-      Emails.Server.handle_cast({Emails.User, :notify_interest, [interest]}, [])
-      interest = Repo.preload(interest, :interest_type)
+      Emails.Server.handle_info(%{topic: "new_interest", type: :new, new: interest}, [])
+      interest = Repo.preload(interest, [:interest_type, listing: :address])
       assert_email_sent(Emails.User.notify_interest(interest))
     end
 
@@ -31,8 +31,8 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           listing: build(:listing, address: build(:address))
         )
 
-      Emails.Server.handle_cast({Emails.User, :notify_interest, [interest]}, [])
-      interest = Repo.preload(interest, :interest_type)
+      Emails.Server.handle_info(%{topic: "new_interest", type: :new, new: interest}, [])
+      interest = Repo.preload(interest, [:interest_type, listing: :address])
       email = Emails.User.notify_interest(interest)
       assert_email_sent(email)
       assert [{"", "contato@emcasa.com"}] == email.to
