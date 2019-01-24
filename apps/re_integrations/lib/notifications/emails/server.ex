@@ -103,7 +103,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   end
 
   def handle_info(%{topic: "new_interest", type: :new, new: interest}, state) do
-    interest = Repo.preload(interest, :interest_type)
+    interest = Repo.preload(interest, [:interest_type, listing: :address])
 
     handle_cast({Emails.User, :notify_interest, [interest]}, state)
   end

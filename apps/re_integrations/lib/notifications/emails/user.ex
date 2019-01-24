@@ -23,7 +23,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
         email: email,
         phone: phone,
         message: message,
-        listing_id: listing_id,
+        listing: listing = %{address: address},
         interest_type: interest_type,
         inserted_at: inserted_at
       }) do
@@ -31,18 +31,26 @@ defmodule ReIntegrations.Notifications.Emails.User do
     |> to(get_to_email(interest_type))
     |> from(@from)
     |> subject("Novo interesse em listagem EmCasa")
-    |> html_body(
-      "Nome: #{name}<br> Email: #{email}<br> Telefone: #{phone}<br> Id da listagem: #{listing_id}<br> Mensagem: #{
-        message
-      } <br> #{interest_type && interest_type.name}
-        <br> Inserido em (UTC): #{inserted_at}"
-    )
-    |> text_body(
-      "Nome: #{name}\n Email: #{email}\n Telefone: #{phone}\n Id da listagem: #{listing_id}<br> Mensagem: #{
-        message
-      } <br> #{interest_type && interest_type.name}
-        <br> Inserido em (UTC): #{inserted_at}"
-    )
+    |> html_body("Nome: #{name}<br>
+        Email: #{email}<br>
+        Telefone: #{phone}<br>
+        Id da listagem: #{listing.id}<br>
+        Valor: #{listing.price}<br>
+        Cidade: #{address.city}<br>
+        Bairro: #{address.neighborhood}<br>
+        Mensagem: #{message} <br>
+        #{interest_type && interest_type.name} <br>
+        Inserido em (UTC): #{inserted_at}")
+    |> text_body("Nome: #{name}\n
+        Email: #{email}\n
+        Telefone: #{phone}\n
+        Id da listagem: #{listing.id}\n
+        Valor: #{listing.price}\n
+        Cidade: #{address.city}\n
+        Bairro: #{address.neighborhood}\n
+        Mensagem: #{message} \n
+        #{interest_type && interest_type.name} \n
+        Inserido em (UTC): #{inserted_at}")
   end
 
   def user_registered(%User{name: name}) do
