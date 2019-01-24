@@ -28,14 +28,6 @@ defmodule Re.Interests do
     |> PubSub.publish_new("new_interest")
   end
 
-  def show_interest(listing_id, params) do
-    params = Map.put(params, "listing_id", listing_id)
-
-    %Interest{}
-    |> Interest.changeset(params)
-    |> Repo.insert()
-  end
-
   def preload(interest), do: Repo.preload(interest, :interest_type)
 
   def get_types do

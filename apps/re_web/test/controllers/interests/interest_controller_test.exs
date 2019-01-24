@@ -22,5 +22,13 @@ defmodule ReWeb.InterestControllerTest do
       interest_id = response["data"]["id"]
       assert Repo.get(Interest, interest_id)
     end
+
+    test "show interest in invalid listing", %{conn: conn} do
+      conn = post(conn, listing_interest_path(conn, :create, -1), interest: @params)
+
+      assert response = json_response(conn, 422)
+
+      assert %{"listing_id" => ["does not exist."]} == response["errors"]
+    end
   end
 end
