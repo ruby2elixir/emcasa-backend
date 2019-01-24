@@ -47,7 +47,9 @@ defmodule ReWeb.Resolvers.Images do
          do: Images.update_images(images_and_inputs)
   end
 
-  def deactivate_images(%{input: %{image_ids: image_ids}}, %{context: %{current_user: current_user}}) do
+  def deactivate_images(%{input: %{image_ids: image_ids}}, %{
+        context: %{current_user: current_user}
+      }) do
     with images <- Images.list_by_ids(image_ids),
          {:ok, listing} <- Images.fetch_listing(images),
          :ok <- Bodyguard.permit(Images, :deactivate_images, current_user, listing),
