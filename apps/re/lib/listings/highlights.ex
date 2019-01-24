@@ -2,8 +2,8 @@ defmodule Re.Listings.Highlights do
   @moduledoc """
   Context module for listing highlights
   """
-  @sao_paulo_highlight_size 100
-  @rio_de_janeiro_highlight_size 300
+  @sao_paulo_highlight_size 20
+  @rio_de_janeiro_highlight_size 200
 
   @sao_paulo_super_highlight_size 3
   @rio_de_janeiro_super_highlight_size 5
