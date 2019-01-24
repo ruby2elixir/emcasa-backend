@@ -13,12 +13,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
   describe "handle_cast/2" do
     test "notify_interest/1" do
-      interest =
-        insert(:interest,
-          interest_type: build(:interest_type),
-          listing: build(:listing, address: build(:address))
-        )
-
+      interest = insert(:interest, interest_type: build(:interest_type))
       Emails.Server.handle_cast({Emails.User, :notify_interest, [interest]}, [])
       interest = Repo.preload(interest, :interest_type)
       assert_email_sent(Emails.User.notify_interest(interest))
@@ -26,10 +21,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "notify_interest/1 with online scheduling" do
       interest =
-        insert(:interest,
-          interest_type: build(:interest_type, name: "Agendamento online"),
-          listing: build(:listing, address: build(:address))
-        )
+        insert(:interest, interest_type: build(:interest_type, name: "Agendamento online"))
 
       Emails.Server.handle_cast({Emails.User, :notify_interest, [interest]}, [])
       interest = Repo.preload(interest, :interest_type)
@@ -248,12 +240,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "should notify when user shows interest in a listing" do
       interest_type = insert(:interest_type)
+      listing = insert(:listing)
 
-      interest =
-        insert(:interest,
-          listing: build(:listing, address: build(:address)),
-          interest_type: interest_type
-        )
+      interest = insert(:interest, listing: listing, interest_type: interest_type)
 
       Emails.Server.handle_info(%{topic: "new_interest", type: :new, new: interest}, [])
 
