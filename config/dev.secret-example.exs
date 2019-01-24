@@ -53,3 +53,10 @@ config :credipronto,
 config :re_integrations,
   credipronto_simulator_url: "CREDIPRONTO_URL",
   credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID"
+
+# The configuration bellow is related to integration portals
+config :zap,
+  highlights_size_rio_de_janeiro: "ZAP_HIGHLIGHT_SIZE",
+  highlights_size_sao_paulo: "ZAP_HIGHLIGHT_SIZE",
+  super_highlights_size_rio_de_janeiro: "ZAP_SUPER_HIGHLIGHT_SIZE"
+  super_highlights_size_sao_paulo: "ZAP_SUPER_HIGHLIGHT_SIZE"
