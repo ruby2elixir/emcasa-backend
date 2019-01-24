@@ -85,7 +85,7 @@ config :re_integrations,
   credipronto_account_id: System.get_env("CREDIPRONTO_ACCOUNT_ID")
 
 config :zap,
-  highlights_size_rio_de_janeiro: System.get_env("ZAP_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO")
+  highlights_size_rio_de_janeiro: System.get_env("ZAP_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
   highlights_size_sao_paulo: System.get_env("ZAP_HIGHLIGHTS_SIZE_SAO_PAULO"),
-  super_highlights_size_rio_de_janeiro: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO")
-  super_highlights_size_sao_paulo: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO"),
+  super_highlights_size_rio_de_janeiro: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
+  super_highlights_size_sao_paulo: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")
