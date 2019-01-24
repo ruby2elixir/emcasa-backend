@@ -2,19 +2,20 @@ defmodule Re.Exporters.Zap do
   @moduledoc """
   Listing XML exporters for zap
   """
+
+  @normal 1
+  @highlight 2
+  @super_highlight 3
+
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
                           postal_code price maintenance_fee util_area area_unit rooms bathrooms garage_spots
-                          property_tax description featured images)a
+                          property_tax description images)a
 
-  alias Re.{
-    Images,
-    Listings.Queries,
-    Repo
-  }
+  @default_options %{attributes: @exported_attributes, highlight_ids: [], super_highlight_ids: []}
 
-  def export_listings_xml(listings, attributes \\ @exported_attributes) do
+  def export_listings_xml(listings, options \\ %{}) do
     listings
-    |> Enum.map(&build_xml(&1, attributes))
+    |> Enum.map(&build_xml(&1, options))
     |> wrap_tags()
     |> XmlBuilder.document()
     |> XmlBuilder.generate(format: :none)
@@ -31,11 +32,18 @@ defmodule Re.Exporters.Zap do
      ]}
   end
 
-  def build_xml(%Re.Listing{} = listing, attributes \\ @exported_attributes) do
-    {"Imovel", %{}, convert_attributes(listing, attributes)}
+  def build_xml(%Re.Listing{} = listing, options \\ %{}) do
+    options = merge_defaults(options)
+
+    converted_listing = [
+      convert_attributes(listing, options),
+      convert_highlight_type(listing, options)
+    ]
+
+    {"Imovel", %{}, converted_listing}
   end
 
-  def convert_attributes(listing, attributes),
+  def convert_attributes(listing, %{attributes: attributes}),
     do: Enum.map(attributes, &convert_attribute(&1, listing))
 
   defp convert_attribute(:id, %{id: id}) do
@@ -131,16 +139,19 @@ defmodule Re.Exporters.Zap do
     {"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)}
   end
 
-  defp convert_attribute(:featured, %{zap_super_highlight: true}) do
-    {"TipoOferta", %{}, 3}
+  defp convert_highlight_type(%{id: id} = _listing, %{
+         highlight_ids: highlight_ids,
+         super_highlight_ids: super_highlight_ids
+       }) do
+    cond do
+      id in super_highlight_ids -> {"TipoOferta", %{}, @super_highlight}
+      id in highlight_ids -> {"TipoOferta", %{}, @highlight}
+      true -> {"TipoOferta", %{}, @normal}
+    end
   end
 
-  defp convert_attribute(:featured, %{zap_highlight: true}) do
-    {"TipoOferta", %{}, 2}
-  end
-
-  defp convert_attribute(:featured, _) do
-    {"TipoOferta", %{}, 1}
+  defp merge_defaults(map) do
+    Map.merge(@default_options, map)
   end
 
   defp build_image(%{filename: filename} = image) do
