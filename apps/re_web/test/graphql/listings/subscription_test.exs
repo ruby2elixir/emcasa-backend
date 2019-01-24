@@ -47,8 +47,7 @@ defmodule ReWeb.GraphQL.Listings.SubscriptionTest do
       assert_reply(
         ref,
         :ok,
-        %{data: %{@mutation => %{"id" => listing_id, "type" => "Casa"}
-        }},
+        %{data: %{@mutation => %{"id" => listing_id, "type" => "Casa"}}},
         3000
       )
 

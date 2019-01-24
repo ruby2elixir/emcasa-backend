@@ -56,7 +56,6 @@ defmodule ReWeb.Exporters.Zap.Plug do
          highlights_size: highlights_size,
          super_highlights_size: super_highlights_size
        }) do
-
     highlight_ids =
       Highlights.get_highlight_listing_ids(query, %{
         page_size: highlights_size,

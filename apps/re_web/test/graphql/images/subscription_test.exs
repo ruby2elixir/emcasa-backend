@@ -71,11 +71,15 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
       assert_reply(
         ref,
         :ok,
-        %{data: %{@mutation => [
-          %{"id" => id1},
-          %{"id" => id2},
-          %{"id" => id3},
-          ]}},
+        %{
+          data: %{
+            @mutation => [
+              %{"id" => id1},
+              %{"id" => id2},
+              %{"id" => id3}
+            ]
+          }
+        },
         3000
       )
 
@@ -156,11 +160,15 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
       assert_reply(
         ref,
         :ok,
-        %{data: %{@mutation => [
-          %{"id" => id1, "position" => 4, "description" => "wah2"},
-          %{"id" => id2, "position" => 4, "description" => "wah2"},
-          %{"id" => id3, "position" => 4, "description" => "wah2"},
-          ]}},
+        %{
+          data: %{
+            @mutation => [
+              %{"id" => id1, "position" => 4, "description" => "wah2"},
+              %{"id" => id2, "position" => 4, "description" => "wah2"},
+              %{"id" => id3, "position" => 4, "description" => "wah2"}
+            ]
+          }
+        },
         3000
       )
 

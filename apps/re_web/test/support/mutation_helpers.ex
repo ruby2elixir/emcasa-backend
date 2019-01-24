@@ -28,7 +28,7 @@ defmodule ReWeb.Listing.MutationHelpers do
         "restrooms" => listing.restrooms,
         "area" => listing.area,
         "garageSpots" => listing.garage_spots,
-        "garageType" =>  String.upcase(listing.garage_type),
+        "garageType" => String.upcase(listing.garage_type),
         "suites" => listing.suites,
         "dependencies" => listing.dependencies,
         "balconies" => listing.balconies,
