@@ -75,7 +75,7 @@ defmodule ReWeb.Types.Image do
     field :images_deactivated, :image_output do
       arg :listing_id, non_null(:id)
 
-      config(&Resolvers.Images.images_deactivated_config/2)
+      config &Resolvers.Images.images_deactivated_config/2
 
       trigger :images_deactivate, topic: &Resolvers.Images.images_deactivate_trigger/1
     end
@@ -84,7 +84,7 @@ defmodule ReWeb.Types.Image do
     field :images_activated, :image_output do
       arg :listing_id, non_null(:id)
 
-      config(&Resolvers.Images.images_activated_config/2)
+      config &Resolvers.Images.images_activated_config/2
 
       trigger :images_activate, topic: &Resolvers.Images.images_activate_trigger/1
     end
@@ -93,7 +93,7 @@ defmodule ReWeb.Types.Image do
     field :images_updated, :image_output do
       arg :listing_id, non_null(:id)
 
-      config(&Resolvers.Images.images_updated_config/2)
+      config &Resolvers.Images.images_updated_config/2
 
       trigger :update_images, topic: &Resolvers.Images.update_images_trigger/1
     end
