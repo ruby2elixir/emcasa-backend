@@ -84,7 +84,9 @@ defmodule ReWeb.Resolvers.Images do
 
   def update_images_trigger(%{parent_listing: %{id: id}}), do: "images_updated:#{id}"
 
-  defp config_subscription(args, %{role: "admin"}, topic), do: {:ok, topic: "#{topic}:#{id_or_wildcard(args)}"}
+  defp config_subscription(args, %{role: "admin"}, topic),
+    do: {:ok, topic: "#{topic}:#{id_or_wildcard(args)}"}
+
   defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
   defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
 

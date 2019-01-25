@@ -6,7 +6,11 @@ defmodule Re.Listings.Highlights do
   @rio_de_janeiro_highlight_size Application.get_env(:zap, :highlights_size_rio_de_janeiro, 0)
 
   @sao_paulo_super_highlight_size Application.get_env(:zap, :super_highlights_size_sao_paulo, 0)
-  @rio_de_janeiro_super_highlight_size Application.get_env(:zap, :super_highlights_size_rio_de_janeiro, 0)
+  @rio_de_janeiro_super_highlight_size Application.get_env(
+                                         :zap,
+                                         :super_highlights_size_rio_de_janeiro,
+                                         0
+                                       )
 
   import Ecto.Query
 

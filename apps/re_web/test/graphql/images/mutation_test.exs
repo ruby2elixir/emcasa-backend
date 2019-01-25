@@ -180,29 +180,29 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
                  "id" => to_string(listing_id)
                },
                "images" => [
-                %{
-                  "id" => to_string(id1),
-                  "description" => "waow1",
-                  "filename" => "test.jpg",
-                  "isActive" => true,
-                  "position" => 1
-                },
-                %{
-                  "id" => to_string(id2),
-                  "description" => "waow2",
-                  "filename" => "test.jpg",
-                  "isActive" => true,
-                  "position" => 2
-                },
-                %{
-                  "id" => to_string(id3),
-                  "description" => "waow3",
-                  "filename" => "test.jpg",
-                  "isActive" => true,
-                  "position" => 3
-                }
-              ]
-            } == json_response(conn, 200)["data"]["updateImages"]
+                 %{
+                   "id" => to_string(id1),
+                   "description" => "waow1",
+                   "filename" => "test.jpg",
+                   "isActive" => true,
+                   "position" => 1
+                 },
+                 %{
+                   "id" => to_string(id2),
+                   "description" => "waow2",
+                   "filename" => "test.jpg",
+                   "isActive" => true,
+                   "position" => 2
+                 },
+                 %{
+                   "id" => to_string(id3),
+                   "description" => "waow3",
+                   "filename" => "test.jpg",
+                   "isActive" => true,
+                   "position" => 3
+                 }
+               ]
+             } == json_response(conn, 200)["data"]["updateImages"]
 
       image1 = Repo.get(Re.Image, id1)
       assert 1 == image1.position
@@ -290,7 +290,7 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
                    "position" => 3
                  }
                ]
-           } == json_response(conn, 200)["data"]["updateImages"]
+             } == json_response(conn, 200)["data"]["updateImages"]
 
       image1 = Repo.get(Re.Image, id1)
       assert 1 == image1.position
@@ -430,11 +430,13 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"images" => [
-               %{"id" => to_string(id1)},
-               %{"id" => to_string(id2)},
-               %{"id" => to_string(id3)}
-             ]} == json_response(conn, 200)["data"]["imagesDeactivate"]
+      assert %{
+               "images" => [
+                 %{"id" => to_string(id1)},
+                 %{"id" => to_string(id2)},
+                 %{"id" => to_string(id3)}
+               ]
+             } == json_response(conn, 200)["data"]["imagesDeactivate"]
 
       refute Repo.get(Re.Image, id1).is_active
       refute Repo.get(Re.Image, id2).is_active
@@ -530,11 +532,13 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"images" => [
-               %{"id" => to_string(id1)},
-               %{"id" => to_string(id2)},
-               %{"id" => to_string(id3)}
-             ]} == json_response(conn, 200)["data"]["imagesActivate"]
+      assert %{
+               "images" => [
+                 %{"id" => to_string(id1)},
+                 %{"id" => to_string(id2)},
+                 %{"id" => to_string(id3)}
+               ]
+             } == json_response(conn, 200)["data"]["imagesActivate"]
 
       assert Repo.get(Re.Image, id1).is_active
       assert Repo.get(Re.Image, id2).is_active

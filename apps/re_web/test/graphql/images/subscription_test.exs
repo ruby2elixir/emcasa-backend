@@ -52,10 +52,11 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
           data: %{
             @mutation => %{
               "images" => [
-              %{"id" => id1},
-              %{"id" => id2},
-              %{"id" => id3}
-            ]}
+                %{"id" => id1},
+                %{"id" => id2},
+                %{"id" => id3}
+              ]
+            }
           }
         },
         3000
@@ -69,7 +70,8 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
                 %{"id" => id1, "position" => 5, "description" => "wah"},
                 %{"id" => id2, "position" => 5, "description" => "wah"},
                 %{"id" => id3, "position" => 5, "description" => "wah"}
-            ]}
+              ]
+            }
           }
         },
         subscriptionId: subscription_id
@@ -139,11 +141,13 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
         :ok,
         %{
           data: %{
-            "updateImages" => %{"images" => [
-              %{"id" => id1, "position" => 4, "description" => "wah2"},
-              %{"id" => id2, "position" => 4, "description" => "wah2"},
-              %{"id" => id3, "position" => 4, "description" => "wah2"}
-            ]}
+            "updateImages" => %{
+              "images" => [
+                %{"id" => id1, "position" => 4, "description" => "wah2"},
+                %{"id" => id2, "position" => 4, "description" => "wah2"},
+                %{"id" => id3, "position" => 4, "description" => "wah2"}
+              ]
+            }
           }
         },
         3000
@@ -152,11 +156,13 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
       expected = %{
         result: %{
           data: %{
-            "imagesUpdated" => %{"images" => [
-              %{"id" => id1, "position" => 4, "description" => "wah2"},
-              %{"id" => id2, "position" => 4, "description" => "wah2"},
-              %{"id" => id3, "position" => 4, "description" => "wah2"}
-            ]}
+            "imagesUpdated" => %{
+              "images" => [
+                %{"id" => id1, "position" => 4, "description" => "wah2"},
+                %{"id" => id2, "position" => 4, "description" => "wah2"},
+                %{"id" => id3, "position" => 4, "description" => "wah2"}
+              ]
+            }
           }
         },
         subscriptionId: subscription_id
