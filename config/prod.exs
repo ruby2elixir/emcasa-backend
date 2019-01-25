@@ -55,7 +55,11 @@ config :re,
   pipedrive_webhook_user: System.get_env("PIPEDRIVE_WEBHOOK_USER"),
   pipedrive_webhook_pass: System.get_env("PIPEDRIVE_WEBHOOK_PASS"),
   env: System.get_env("ENV"),
-  reply_to: System.get_env("REPORT_REPLY_EMAIL")
+  reply_to: System.get_env("REPORT_REPLY_EMAIL"),
+  zap_highlights_size_rio_de_janeiro: System.get_env("ZAP_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
+  zap_highlights_size_sao_paulo: System.get_env("ZAP_HIGHLIGHTS_SIZE_SAO_PAULO"),
+  zap_super_highlights_size_rio_de_janeiro: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
+  zap_super_highlights_size_sao_paulo: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")
 
 config :re, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
@@ -83,9 +87,3 @@ config :honeybadger,
 config :re_integrations,
   credipronto_simulator_url: System.get_env("CREDIPRONTO_SIMULATOR_URL"),
   credipronto_account_id: System.get_env("CREDIPRONTO_ACCOUNT_ID")
-
-config :zap,
-  highlights_size_rio_de_janeiro: System.get_env("ZAP_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
-  highlights_size_sao_paulo: System.get_env("ZAP_HIGHLIGHTS_SIZE_SAO_PAULO"),
-  super_highlights_size_rio_de_janeiro: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
-  super_highlights_size_sao_paulo: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")
