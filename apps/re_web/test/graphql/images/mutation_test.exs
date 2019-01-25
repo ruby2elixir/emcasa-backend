@@ -159,40 +159,50 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation UpdateImages ($input: ImageUpdateInput!) {
           updateImages(input: $input) {
-            id
-            description
-            filename
-            isActive
-            position
+            parentListing {
+              id
+            }
+            images {
+              id
+              description
+              filename
+              isActive
+              position
+            }
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [
-               %{
-                 "id" => to_string(id1),
-                 "description" => "waow1",
-                 "filename" => "test.jpg",
-                 "isActive" => true,
-                 "position" => 1
+      assert %{
+               "parentListing" => %{
+                 "id" => to_string(listing_id)
                },
-               %{
-                 "id" => to_string(id2),
-                 "description" => "waow2",
-                 "filename" => "test.jpg",
-                 "isActive" => true,
-                 "position" => 2
-               },
-               %{
-                 "id" => to_string(id3),
-                 "description" => "waow3",
-                 "filename" => "test.jpg",
-                 "isActive" => true,
-                 "position" => 3
-               }
-             ] == json_response(conn, 200)["data"]["updateImages"]
+               "images" => [
+                %{
+                  "id" => to_string(id1),
+                  "description" => "waow1",
+                  "filename" => "test.jpg",
+                  "isActive" => true,
+                  "position" => 1
+                },
+                %{
+                  "id" => to_string(id2),
+                  "description" => "waow2",
+                  "filename" => "test.jpg",
+                  "isActive" => true,
+                  "position" => 2
+                },
+                %{
+                  "id" => to_string(id3),
+                  "description" => "waow3",
+                  "filename" => "test.jpg",
+                  "isActive" => true,
+                  "position" => 3
+                }
+              ]
+            } == json_response(conn, 200)["data"]["updateImages"]
 
       image1 = Repo.get(Re.Image, id1)
       assert 1 == image1.position
@@ -237,40 +247,50 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation UpdateImages ($input: ImageUpdateInput!) {
           updateImages(input: $input) {
-            id
-            description
-            filename
-            isActive
-            position
+            parentListing {
+              id
+            }
+            images {
+              id
+              description
+              filename
+              isActive
+              position
+            }
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [
-               %{
-                 "id" => to_string(id1),
-                 "description" => "waow1",
-                 "filename" => "test.jpg",
-                 "isActive" => true,
-                 "position" => 1
+      assert %{
+               "parentListing" => %{
+                 "id" => to_string(listing_id)
                },
-               %{
-                 "id" => to_string(id2),
-                 "description" => "waow2",
-                 "filename" => "test.jpg",
-                 "isActive" => true,
-                 "position" => 2
-               },
-               %{
-                 "id" => to_string(id3),
-                 "description" => "waow3",
-                 "filename" => "test.jpg",
-                 "isActive" => true,
-                 "position" => 3
-               }
-             ] == json_response(conn, 200)["data"]["updateImages"]
+               "images" => [
+                 %{
+                   "id" => to_string(id1),
+                   "description" => "waow1",
+                   "filename" => "test.jpg",
+                   "isActive" => true,
+                   "position" => 1
+                 },
+                 %{
+                   "id" => to_string(id2),
+                   "description" => "waow2",
+                   "filename" => "test.jpg",
+                   "isActive" => true,
+                   "position" => 2
+                 },
+                 %{
+                   "id" => to_string(id3),
+                   "description" => "waow3",
+                   "filename" => "test.jpg",
+                   "isActive" => true,
+                   "position" => 3
+                 }
+               ]
+           } == json_response(conn, 200)["data"]["updateImages"]
 
       image1 = Repo.get(Re.Image, id1)
       assert 1 == image1.position
@@ -315,11 +335,16 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation UpdateImages ($input: ImageUpdateInput!) {
           updateImages(input: $input) {
-            id
-            description
-            filename
-            isActive
-            position
+            parentListing {
+              id
+            }
+            images {
+              id
+              description
+              filename
+              isActive
+              position
+            }
           }
         }
       """
@@ -353,11 +378,16 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation UpdateImages ($input: ImageUpdateInput!) {
           updateImages(input: $input) {
-            id
-            description
-            filename
-            isActive
-            position
+            parentListing {
+              id
+            }
+            images {
+              id
+              description
+              filename
+              isActive
+              position
+            }
           }
         }
       """
@@ -391,18 +421,20 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation ImagesDeactivate ($input: ImageDeactivateInput!) {
           imagesDeactivate(input: $input) {
-            id
+            images {
+              id
+            }
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [
+      assert %{"images" => [
                %{"id" => to_string(id1)},
                %{"id" => to_string(id2)},
                %{"id" => to_string(id3)}
-             ] == json_response(conn, 200)["data"]["imagesDeactivate"]
+             ]} == json_response(conn, 200)["data"]["imagesDeactivate"]
 
       refute Repo.get(Re.Image, id1).is_active
       refute Repo.get(Re.Image, id2).is_active
@@ -445,7 +477,9 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation ImagesDeactivate ($input: ImageDeactivateInput!) {
           imagesDeactivate(input: $input) {
-            id
+            images {
+              id
+            }
           }
         }
       """
@@ -487,18 +521,20 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation ImagesActivate ($input: ImageActivateInput!) {
           imagesActivate(input: $input) {
-            id
+            images {
+              id
+            }
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [
+      assert %{"images" => [
                %{"id" => to_string(id1)},
                %{"id" => to_string(id2)},
                %{"id" => to_string(id3)}
-             ] == json_response(conn, 200)["data"]["imagesActivate"]
+             ]} == json_response(conn, 200)["data"]["imagesActivate"]
 
       assert Repo.get(Re.Image, id1).is_active
       assert Repo.get(Re.Image, id2).is_active
@@ -541,7 +577,9 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation ImagesActivate ($input: ImageActivateInput!) {
           imagesActivate(input: $input) {
-            id
+            images {
+              id
+            }
           }
         }
       """

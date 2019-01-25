@@ -44,7 +44,8 @@ defmodule ReWeb.Resolvers.Images do
     with {:ok, images_and_inputs} <- Images.get_list(inputs),
          {:ok, listing} <- Images.check_same_listing(images_and_inputs),
          :ok <- Bodyguard.permit(Images, :update_images, current_user, listing),
-         do: Images.update_images(images_and_inputs)
+         {:ok, images} <- Images.update_images(images_and_inputs),
+         do: {:ok, %{images: images, parent_listing: listing}}
   end
 
   def deactivate_images(%{input: %{image_ids: image_ids}}, %{
@@ -53,15 +54,42 @@ defmodule ReWeb.Resolvers.Images do
     with images <- Images.list_by_ids(image_ids),
          {:ok, listing} <- Images.fetch_listing(images),
          :ok <- Bodyguard.permit(Images, :deactivate_images, current_user, listing),
-         do: Images.deactivate_images(images)
+         {:ok, images} <- Images.deactivate_images(images),
+         do: {:ok, %{images: images, parent_listing: listing}}
   end
 
   def activate_images(%{input: %{image_ids: image_ids}}, %{context: %{current_user: current_user}}) do
     with images <- Images.list_by_ids(image_ids),
          {:ok, listing} <- Images.fetch_listing(images),
          :ok <- Bodyguard.permit(Images, :activate_images, current_user, listing),
-         do: Images.activate_images(images)
+         {:ok, images} <- Images.activate_images(images),
+         do: {:ok, %{images: images, parent_listing: listing}}
   end
+
+  def images_deactivated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "images_deactivated")
+  end
+
+  def images_activated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "images_activated")
+  end
+
+  def images_updated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "images_updated")
+  end
+
+  def images_deactivate_trigger(%{parent_listing: %{id: id}}), do: "images_deactivated:#{id}"
+
+  def images_activate_trigger(%{parent_listing: %{id: id}}), do: "images_activated:#{id}"
+
+  def update_images_trigger(%{parent_listing: %{id: id}}), do: "images_updated:#{id}"
+
+  defp config_subscription(args, %{role: "admin"}, topic), do: {:ok, topic: "#{topic}:#{id_or_wildcard(args)}"}
+  defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
+  defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
+
+  defp id_or_wildcard(%{listing_id: id}), do: "#{id}"
+  defp id_or_wildcard(_args), do: "*"
 
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true
