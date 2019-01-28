@@ -126,7 +126,7 @@ defmodule Re.Listings do
 
     changeset
     |> Repo.update()
-    |> PubSub.publish_update(changeset, "update_listing")
+    |> PubSub.publish_update(changeset, "update_listing", %{user: user})
   end
 
   defp deactivate_if_not_admin(changeset, %{role: "user"}),

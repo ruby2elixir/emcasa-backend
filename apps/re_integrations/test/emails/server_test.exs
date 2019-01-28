@@ -51,18 +51,36 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       assert_email_sent(Emails.User.listing_added_admin(user, listing))
     end
 
-    test "listing_updated/2" do
-      listing = insert(:listing, price: 950_000, rooms: 3, user: build(:user))
+    test "should send e-mail when listing is updated" do
+      user = insert(:user, role: "user")
+      listing = insert(:listing, price: 950_000, rooms: 3, user: user)
 
       %{changes: changes} =
         changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "user")
 
       Emails.Server.handle_info(
-        %{topic: "update_listing", type: :update, content: %{new: listing, changeset: changeset}},
+        %{topic: "update_listing", type: :update, content: %{new: listing, changeset: changeset},
+        metadata: %{user: user}},
         []
       )
 
-      assert_email_sent(Emails.User.listing_updated(listing, changes))
+      assert_email_sent(Emails.User.listing_updated(listing, user, changes))
+    end
+
+    test "should not send e-mail if user is admin" do
+      user = insert(:user, role: "admin")
+      listing = insert(:listing, price: 950_000, rooms: 3, user: user)
+
+      %{changes: changes} =
+        changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "admin")
+
+      Emails.Server.handle_info(
+        %{topic: "update_listing", type: :update, content: %{new: listing, changeset: changeset},
+        metadata: %{user: user}},
+        []
+      )
+
+      assert_email_not_sent(Emails.User.listing_updated(listing, user, changes))
     end
   end
 
