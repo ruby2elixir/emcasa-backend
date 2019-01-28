@@ -1,0 +1,14 @@
+# common
+.git
+
+# mix artifacts
+_build
+deps
+releases
+*.ez
+
+# erlarng artifacts
+erl_crash.dump
+
+# app dirs
+priv
