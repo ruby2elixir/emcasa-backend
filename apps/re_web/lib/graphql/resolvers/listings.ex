@@ -215,4 +215,38 @@ defmodule ReWeb.Resolvers.Listings do
       error -> error
     end
   end
+
+  def listing_deactivated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "listing_deactivated")
+  end
+
+  def listing_activated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "listing_activated")
+  end
+
+  def listing_updated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "listing_updated")
+  end
+
+  def listing_inserted_config(_args, %{context: %{current_user: current_user}}) do
+    case current_user do
+      %{role: "admin"}  -> {:ok, topic: "listing_inserted"}
+      %{} -> {:error, :unauthorized}
+      _ -> {:error, :unauthenticated}
+    end
+  end
+
+  def listing_deactivate_trigger(%{id: id}), do: "listing_deactivated:#{id}"
+
+  def listing_activate_trigger(%{id: id}), do: "listing_activated:#{id}"
+
+  def update_listing_trigger(%{id: id}), do: "listing_updated:#{id}"
+
+  def insert_listing_trigger(_arg), do: "listing_inserted"
+
+  defp config_subscription(%{id: id}, %{role: "admin"}, topic),
+    do: {:ok, topic: "#{topic}:#{id}"}
+
+  defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
+  defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
 end

@@ -35,6 +35,11 @@ defmodule ReWeb.Types.Image do
     field :image_ids, non_null(list_of(non_null(:id)))
   end
 
+  object :image_output do
+    field :images, list_of(:image)
+    field :parent_listing, :listing
+  end
+
   object :image_mutations do
     @desc "Inser image"
     field :insert_image, type: :image do
@@ -44,21 +49,21 @@ defmodule ReWeb.Types.Image do
     end
 
     @desc "Update images"
-    field :update_images, type: list_of(:image) do
+    field :update_images, type: :image_output do
       arg :input, non_null(list_of(non_null(:image_update_input)))
 
       resolve &Resolvers.Images.update_images/2
     end
 
     @desc "Deactivate images"
-    field :images_deactivate, type: list_of(:image) do
+    field :images_deactivate, type: :image_output do
       arg :input, non_null(:image_deactivate_input)
 
       resolve &Resolvers.Images.deactivate_images/2
     end
 
     @desc "Deactivate images"
-    field :images_activate, type: list_of(:image) do
+    field :images_activate, type: :image_output do
       arg :input, non_null(:image_activate_input)
 
       resolve &Resolvers.Images.activate_images/2
@@ -67,45 +72,30 @@ defmodule ReWeb.Types.Image do
 
   object :image_subscriptions do
     @desc "Subscribe to image deactivation"
-    field :images_deactivated, list_of(:image) do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          %{role: "admin"} -> {:ok, topic: "images_deactivated"}
-          %{} -> {:error, :unauthorized}
-          _ -> {:error, :unauthenticated}
-        end
-      end)
+    field :images_deactivated, :image_output do
+      arg :listing_id, non_null(:id)
 
-      trigger :images_deactivate,
-        topic: fn _ -> "images_deactivated" end
+      config &Resolvers.Images.images_deactivated_config/2
+
+      trigger :images_deactivate, topic: &Resolvers.Images.images_deactivate_trigger/1
     end
 
     @desc "Subscribe to image activation"
-    field :images_activated, list_of(:image) do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          %{role: "admin"} -> {:ok, topic: "images_activated"}
-          %{} -> {:error, :unauthorized}
-          _ -> {:error, :unauthenticated}
-        end
-      end)
+    field :images_activated, :image_output do
+      arg :listing_id, non_null(:id)
 
-      trigger :images_activate,
-        topic: fn _ -> "images_activated" end
+      config &Resolvers.Images.images_activated_config/2
+
+      trigger :images_activate, topic: &Resolvers.Images.images_activate_trigger/1
     end
 
     @desc "Subscribe to image update"
-    field :images_updated, list_of(:image) do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          %{role: "admin"} -> {:ok, topic: "images_updated"}
-          %{} -> {:error, :unauthorized}
-          _ -> {:error, :unauthenticated}
-        end
-      end)
+    field :images_updated, :image_output do
+      arg :listing_id, non_null(:id)
 
-      trigger :update_images,
-        topic: fn _ -> "images_updated" end
+      config &Resolvers.Images.images_updated_config/2
+
+      trigger :update_images, topic: &Resolvers.Images.update_images_trigger/1
     end
   end
 end

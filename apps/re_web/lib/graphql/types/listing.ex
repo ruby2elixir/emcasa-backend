@@ -350,60 +350,35 @@ defmodule ReWeb.Types.Listing do
   object :listing_subscriptions do
     @desc "Subscribe to listing activation"
     field :listing_activated, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          :system -> {:ok, topic: "listing_activated"}
-          _ -> {:error, :unauthorized}
-        end
-      end)
+      arg :id, non_null(:id)
 
-      trigger :activate_listing,
-        topic: fn _ ->
-          "listing_activated"
-        end
+      config &Resolvers.Listings.listing_activated_config/2
+
+      trigger :activate_listing, topic: &Resolvers.Listings.listing_activate_trigger/1
     end
 
     @desc "Subscribe to listing deactivation"
     field :listing_deactivated, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          :system -> {:ok, topic: "listing_deactivated"}
-          _ -> {:error, :unauthorized}
-        end
-      end)
+      arg :id, non_null(:id)
+      config &Resolvers.Listings.listing_deactivated_config/2
 
-      trigger :deactivate_listing,
-        topic: fn _ ->
-          "listing_deactivated"
-        end
+      trigger :deactivate_listing, topic: &Resolvers.Listings.listing_deactivate_trigger/1
     end
 
     @desc "Subscribe to listing show"
     field :listing_inserted, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          :system -> {:ok, topic: "listing_inserted"}
-          _ -> {:error, :unauthorized}
-        end
-      end)
+      config &Resolvers.Listings.listing_inserted_config/2
 
-      trigger :insert_listing,
-        topic: fn _ ->
-          "listing_inserted"
-        end
+      trigger :insert_listing, topic: &Resolvers.Listings.insert_listing_trigger/1
     end
 
     @desc "Subscribe to listing update"
     field :listing_updated, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          %{role: "admin"} -> {:ok, topic: "listing_updated"}
-          %{} -> {:error, :unauthorized}
-          _ -> {:error, :unauthenticated}
-        end
-      end)
+      arg :id, non_null(:id)
 
-      trigger :update_listing, topic: fn _ -> "listing_updated" end
+      config &Resolvers.Listings.listing_updated_config/2
+
+      trigger :update_listing, topic: &Resolvers.Listings.update_listing_trigger/1
     end
   end
 end

@@ -173,7 +173,13 @@ defmodule Re.InterestsTest do
       Re.PubSub.subscribe("new_interest")
       listing = insert(:listing)
 
-      {:ok, interest} = Interests.show_interest(%{name: "naem", phone: "123", interest_type: 2, listing_id: listing.id})
+      {:ok, interest} =
+        Interests.show_interest(%{
+          name: "naem",
+          phone: "123",
+          interest_type: 2,
+          listing_id: listing.id
+        })
 
       assert Repo.get(Interest, interest.id)
       assert_receive %{new: _, topic: "new_interest", type: :new}
@@ -182,7 +188,8 @@ defmodule Re.InterestsTest do
     test "should not create interest in invalid listing" do
       Re.PubSub.subscribe("new_interest")
 
-      {:error, _} = Interests.show_interest(%{name: "naem", phone: "123", interest_type: 2, listing_id: -1})
+      {:error, _} =
+        Interests.show_interest(%{name: "naem", phone: "123", interest_type: 2, listing_id: -1})
 
       refute_receive %{new: _, topic: "new_interest", type: :new}
     end
