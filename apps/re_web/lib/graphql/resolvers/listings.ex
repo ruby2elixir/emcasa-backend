@@ -10,7 +10,7 @@ defmodule ReWeb.Resolvers.Listings do
     Filtering,
     Listings,
     Listings.Featured,
-    Listings.History.Price,
+    Listings.History.Prices,
     Listings.Related,
     PriceSuggestions
   }
@@ -127,9 +127,9 @@ defmodule ReWeb.Resolvers.Listings do
     case Bodyguard.permit(Listings, :show_stats, current_user, listing) do
       :ok ->
         loader
-        |> Dataloader.load(Price, :price_history, listing)
+        |> Dataloader.load(Prices, :price_history, listing)
         |> on_load(fn loader ->
-          {:ok, Dataloader.get(loader, Price, :price_history, listing)}
+          {:ok, Dataloader.get(loader, Prices, :price_history, listing)}
         end)
 
       _ ->
@@ -158,12 +158,12 @@ defmodule ReWeb.Resolvers.Listings do
     }
 
     loader
-    |> Dataloader.load(Price, {:price_history, params}, listing)
+    |> Dataloader.load(Prices, {:price_history, params}, listing)
     |> on_load(&price_reduced?(&1, params, listing))
   end
 
   defp price_reduced?(loader, params, listing) do
-    case Dataloader.get(loader, Price, {:price_history, params}, listing) do
+    case Dataloader.get(loader, Prices, {:price_history, params}, listing) do
       [] -> {:ok, false}
       prices when is_list(prices) -> {:ok, true}
       _ -> {:ok, false}
@@ -230,7 +230,7 @@ defmodule ReWeb.Resolvers.Listings do
 
   def listing_inserted_config(_args, %{context: %{current_user: current_user}}) do
     case current_user do
-      %{role: "admin"}  -> {:ok, topic: "listing_inserted"}
+      %{role: "admin"} -> {:ok, topic: "listing_inserted"}
       %{} -> {:error, :unauthorized}
       _ -> {:error, :unauthenticated}
     end

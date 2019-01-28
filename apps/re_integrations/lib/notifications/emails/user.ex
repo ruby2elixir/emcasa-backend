@@ -88,7 +88,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   <a href=\"#{listing_url}\">Imóvel</a>")
   end
 
-  def listing_updated(%User{name: name, email: email}, %Listing{} = listing, changes) do
+  def listing_updated(%Listing{user: %User{name: name, email: email}} = listing, changes) do
     listing_url = build_url(@listing_path, to_string(listing.id))
     {changes_html, changes_txt} = build_changes(changes)
 

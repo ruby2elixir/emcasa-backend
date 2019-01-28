@@ -121,12 +121,12 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   end
 
   def handle_info(
-        %{topic: "update_listing", type: :update, content: %{new: listing, changes: changes}},
+        %{topic: "update_listing", type: :update, content: %{new: listing, changeset: changeset}},
         state
       ) do
     listing = Repo.preload(listing, :user)
 
-    handle_cast({Emails.User, :listing_updated, [listing.user, listing, changes]}, state)
+    handle_cast({Emails.User, :listing_updated, [listing, changeset.changes]}, state)
   end
 
   def handle_info(
