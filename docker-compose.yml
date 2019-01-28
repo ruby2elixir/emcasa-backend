@@ -3,13 +3,16 @@ version: '3'
 services:
   db:
     image: 'postgres:10.6-alpine'
-    hostname: db
+    hostname: &pg_hostname db
     volumes:
       - './priv/postgres/init-emcasa.sql:/docker-entrypoint-initdb.d/init-emcasa.sql'
       - 'db_data:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: &pg_username postgres
+      POSTGRES_PASSWORD: &pg_password postgres
   es:
     image: 'docker.elastic.co/elasticsearch/elasticsearch:6.5.4'
-    hostname: es
+    hostname: &es_hostname es
     ulimits:
       memlock:
         soft: -1
@@ -37,6 +40,11 @@ services:
       - es
     ports:
       - '4000:4000'
+    environment:
+      POSTGRES_USERNAME: *pg_username
+      POSTGRES_PASSWORD: *pg_password
+      POSTGRES_HOSTNAME: *pg_hostname
+      ELASTICSEARCH_HOSTNAME: *es_hostname
     hostname: backend
     entrypoint: sleep
     command: infinity
