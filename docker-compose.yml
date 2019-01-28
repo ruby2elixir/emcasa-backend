@@ -1,0 +1,39 @@
+---
+version: '3'
+services:
+  db:
+    image: 'postgres:10.6-alpine'
+    hostname: db
+    volumes:
+      - './priv/postgres/init-emcasa.sql:/docker-entrypoint-initdb.d/init-emcasa.sql'
+  es:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:6.5.4'
+    hostname: es
+    environment:
+      - 'cluster.name=docker-cluster'
+      - 'bootstrap.memory_lock=true'
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+  kibana:
+    image: 'docker.elastic.co/kibana/kibana:6.5.4'
+    depends_on:
+      - es
+    hostname: kibana
+  backend:
+    image: 'emcasa/backend:dev'
+    build:
+      context: .
+      args:
+        VCS_REF: ${VCS_REF:-by-docker-compose}
+        BUILD_DATE: ${BUILD_DATE:-1978-12-15T03:00:00Z}
+    depends_on:
+      - db
+      - es
+    ports:
+      - '4000:4000'
+    hostname: backend
+    entrypoint: sleep
+    command: infinity
