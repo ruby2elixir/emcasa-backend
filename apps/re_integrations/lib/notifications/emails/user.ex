@@ -88,7 +88,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   <a href=\"#{listing_url}\">Imóvel</a>")
   end
 
-  def listing_updated(%Listing{user: %User{name: name, email: email}} = listing, changes) do
+  def listing_updated(listing, user, changes) do
     listing_url = build_url(@listing_path, to_string(listing.id))
     {changes_html, changes_txt} = build_changes(changes)
 
@@ -96,12 +96,14 @@ defmodule ReIntegrations.Notifications.Emails.User do
     |> to(@to)
     |> from(@admin_email)
     |> subject("Um usuário modificou o imóvel")
-    |> html_body("Nome: #{name}<br>
-                  Email: #{email}<br>
+    |> html_body("Nome: #{user.name}<br>
+                  Email: #{user.email || "sem e-mail"}<br>
+                  Telefone: #{user.phone || "sem telefone"}<br>
                   <a href=\"#{listing_url}\">Imóvel</a><br>
                   #{changes_html}")
-    |> text_body("Nome: #{name}
-                  Email: #{email}
+    |> text_body("Nome: #{user.name}\n
+                  Email: #{user.email || "sem e-mail"}\n
+                  Telefone: #{user.phone || "sem telefone"}\n
                   <a href=\"#{listing_url}\">Imóvel</a>
                   #{changes_txt}")
   end
