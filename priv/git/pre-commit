@@ -1,0 +1,13 @@
+#!/bin/sh
+to_check=$(git diff --name-only --cached | grep '\.ex')
+if [ $(echo ${to_check} | wc -l) == 1 ]; then
+	echo "no files to be formatted"
+	exit 0
+fi
+
+echo "files to be checked ${to_check} ($(echo ${to_check} | wc -l))"
+mix format --check-formatted ${to_check}
+if [ $? == 1 ]; then
+	echo "commit failed due to format issues ..."
+	exit 1
+fi
