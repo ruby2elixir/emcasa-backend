@@ -194,19 +194,21 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
       admin_socket: admin_socket
     } do
       %{id: listing_id} = insert(:listing)
-      ref = push_doc(admin_socket, """
-        subscription {
-          imageInserted(listingId: #{listing_id}) {
-            image {
-              id
-              filename
-            }
-            parentListing {
-              id
+
+      ref =
+        push_doc(admin_socket, """
+          subscription {
+            imageInserted(listingId: #{listing_id}) {
+              image {
+                id
+                filename
+              }
+              parentListing {
+                id
+              }
             }
           }
-        }
-      """)
+        """)
 
       assert_reply(ref, :ok, %{subscriptionId: subscription_id})
 
@@ -261,19 +263,20 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
     test "user should not subscribe to insertImage", %{
       user_socket: user_socket
     } do
-      ref = push_doc(user_socket, """
-        subscription {
-          imageInserted(listingId: 1) {
-            image {
-              id
-              filename
-            }
-            parentListing {
-              id
+      ref =
+        push_doc(user_socket, """
+          subscription {
+            imageInserted(listingId: 1) {
+              image {
+                id
+                filename
+              }
+              parentListing {
+                id
+              }
             }
           }
-        }
-      """)
+        """)
 
       assert_reply(ref, :error, %{errors: [%{message: :unauthorized}]})
     end
@@ -281,19 +284,20 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
     test "anonymous should not subscribe to insertImage", %{
       unauthenticated_socket: unauthenticated_socket
     } do
-      ref = push_doc(unauthenticated_socket, """
-        subscription {
-          imageInserted(listingId: 1) {
-            image {
-              id
-              filename
-            }
-            parentListing {
-              id
+      ref =
+        push_doc(unauthenticated_socket, """
+          subscription {
+            imageInserted(listingId: 1) {
+              image {
+                id
+                filename
+              }
+              parentListing {
+                id
+              }
             }
           }
-        }
-      """)
+        """)
 
       assert_reply(ref, :error, %{errors: [%{message: :unauthenticated}]})
     end

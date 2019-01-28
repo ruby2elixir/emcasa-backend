@@ -121,8 +121,12 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   end
 
   def handle_info(
-        %{topic: "update_listing", type: :update, content: %{new: listing, changeset: changeset},
-        metadata: %{user: %{role: "user"} = user}},
+        %{
+          topic: "update_listing",
+          type: :update,
+          content: %{new: listing, changeset: changeset},
+          metadata: %{user: %{role: "user"} = user}
+        },
         state
       ) do
     handle_cast({Emails.User, :listing_updated, [listing, user, changeset.changes]}, state)

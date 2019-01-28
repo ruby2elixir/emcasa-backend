@@ -59,8 +59,12 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
         changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "user")
 
       Emails.Server.handle_info(
-        %{topic: "update_listing", type: :update, content: %{new: listing, changeset: changeset},
-        metadata: %{user: user}},
+        %{
+          topic: "update_listing",
+          type: :update,
+          content: %{new: listing, changeset: changeset},
+          metadata: %{user: user}
+        },
         []
       )
 
@@ -75,8 +79,12 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
         changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "admin")
 
       Emails.Server.handle_info(
-        %{topic: "update_listing", type: :update, content: %{new: listing, changeset: changeset},
-        metadata: %{user: user}},
+        %{
+          topic: "update_listing",
+          type: :update,
+          content: %{new: listing, changeset: changeset},
+          metadata: %{user: user}
+        },
         []
       )
 

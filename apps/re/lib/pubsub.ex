@@ -8,7 +8,12 @@ defmodule Re.PubSub do
   def publish_new(new, topic, metadata \\ %{}) do
     case new do
       {:ok, new} ->
-        Phoenix.PubSub.broadcast(__MODULE__, topic, %{topic: topic, type: :new, new: new, metadata: metadata})
+        Phoenix.PubSub.broadcast(__MODULE__, topic, %{
+          topic: topic,
+          type: :new,
+          new: new,
+          metadata: metadata
+        })
 
         {:ok, new}
 
