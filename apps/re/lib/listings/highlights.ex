@@ -64,6 +64,15 @@ defmodule Re.Listings.Highlights do
     |> Repo.update()
   end
 
+  def get_vivareal_highlights_size(city),
+    do: birl(:vivareal_highlight, city)
+
+  defp birl(:vivareal_highlight, "sao-paulo"), do: 0
+
+  defp birl(:vivareal_highlight, "rio-de-janeiro"), do: 0
+
+  defp birl(_, _), do: 0
+
   def highlights_size("sao-paulo"), do: @sao_paulo_highlight_size
 
   def highlights_size("rio-de-janeiro"), do: @rio_de_janeiro_highlight_size

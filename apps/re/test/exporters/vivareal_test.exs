@@ -3,7 +3,13 @@ defmodule Re.Exporters.VivarealTest do
 
   import Re.Factory
 
-  alias Re.Exporters.Vivareal
+  alias Re.{
+    Exporters.Vivareal,
+    Images,
+    Listing,
+    Listings.Queries,
+    Repo
+  }
 
   describe "build_xml/0" do
     test "export XML from listing" do
@@ -45,12 +51,13 @@ defmodule Re.Exporters.VivarealTest do
           "<ListingId>#{id}</ListingId>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
-          "<Featured>false</Featured>" <>
           "<ListDate>2018-06-07T15:30:00</ListDate>" <>
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          details_tags() <> location_tags() <> contact_info_tags() <> "</Listing>"
+          details_tags() <> location_tags() <> contact_info_tags() <>
+          "<Featured>false</Featured>" <>
+           "</Listing>"
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -94,12 +101,13 @@ defmodule Re.Exporters.VivarealTest do
           "<ListingId>#{id}</ListingId>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
-          "<Featured>false</Featured>" <>
           "<ListDate>2018-06-07T15:30:00</ListDate>" <>
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          details_tags_nils() <> location_tags() <> contact_info_tags() <> "</Listing>"
+          details_tags_nils() <> location_tags() <> contact_info_tags() <>
+          "<Featured>false</Featured>" <>
+          "</Listing>"
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -143,12 +151,13 @@ defmodule Re.Exporters.VivarealTest do
           "<ListingId>#{id}</ListingId>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
-          "<Featured>false</Featured>" <>
           "<ListDate>2018-06-07T15:30:00</ListDate>" <>
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <> "</Listing>"
+          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <>
+          "<Featured>false</Featured>" <>
+           "</Listing>"
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -188,26 +197,36 @@ defmodule Re.Exporters.VivarealTest do
           property_tax: 1000.00
         )
 
+      highlight_ids = [id]
+
       expected_xml =
         "<Listing>" <>
           "<ListingId>#{id}</ListingId>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
-          "<Featured>true</Featured>" <>
           "<ListDate>2018-06-07T15:30:00</ListDate>" <>
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <> "</Listing>"
+          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <>
+          "<Featured>true</Featured>" <>
+          "</Listing>"
 
-      assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
+      assert expected_xml == listing |> Vivareal.build_xml(%{highlight_ids: highlight_ids}) |> XmlBuilder.generate(format: :none)
     end
   end
 
   describe "export_listings_xml/1" do
+    @preload [:address, images: Images.Queries.listing_preload()]
+
     test "should export listings wrapped" do
       image = insert(:image, filename: "test1.jpg", description: "descr")
       listing = insert(:listing, images: [image])
+
+      listings =
+        Listing
+        |> Queries.preload_relations(@preload)
+        |> Repo.all()
 
       assert ~s|<?xml version="1.0" encoding="UTF-8"?><ListingDataFeed | <>
                ~s|xmlns="http://www.vivareal.com/schemas/1.0/VRSync" | <>
@@ -219,15 +238,20 @@ defmodule Re.Exporters.VivarealTest do
                ~s|<Email>rodrigo.nonose@emcasa.com</Email>| <>
                ~s|<ContactName>Rodrigo Nonose</ContactName>| <>
                ~s|</Header>| <>
-               ~s|<Listings><Listing><ListingId>#{listing.id}</ListingId></Listing></Listings></ListingDataFeed>| ==
-               Vivareal.export_listings_xml(~w(id)a)
+               ~s|<Listings><Listing><ListingId>#{listing.id}</ListingId><Featured>false</Featured></Listing></Listings></ListingDataFeed>| ==
+               Vivareal.export_listings_xml(listings, %{attributes: ~w(id)a})
     end
 
     test "should not export listings without images" do
       insert(:listing)
 
+      listings =
+        Listing
+        |> Queries.preload_relations(@preload)
+        |> Repo.all()
+
       assert ~s|<?xml version="1.0" encoding="UTF-8"?><ListingDataFeed xmlns="http://www.vivareal.com/schemas/1.0/VRSync" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd"><Header><Provider>EmCasa</Provider><Email>rodrigo.nonose@emcasa.com</Email><ContactName>Rodrigo Nonose</ContactName></Header><Listings/></ListingDataFeed>| ==
-               Vivareal.export_listings_xml(~w(images)a)
+               Vivareal.export_listings_xml(listings, ~w(images)a)
     end
   end
 
