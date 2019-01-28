@@ -126,7 +126,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
       ) do
     listing = Repo.preload(listing, :user)
 
-    handle_cast({Emails.User, :listing_updated, [listing.user, listing, changeset.changes]}, state)
+    handle_cast({Emails.User, :listing_updated, [listing, changeset.changes]}, state)
   end
 
   def handle_info(
