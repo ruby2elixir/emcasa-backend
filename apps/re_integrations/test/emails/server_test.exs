@@ -53,8 +53,15 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "listing_updated/2" do
       listing = insert(:listing, price: 950_000, rooms: 3, user: build(:user))
-      %{changes: changes} = changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "user")
-      Emails.Server.handle_info(%{topic: "update_listing", type: :update, content: %{new: listing, changeset: changeset}}, [])
+
+      %{changes: changes} =
+        changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "user")
+
+      Emails.Server.handle_info(
+        %{topic: "update_listing", type: :update, content: %{new: listing, changeset: changeset}},
+        []
+      )
+
       assert_email_sent(Emails.User.listing_updated(listing, changes))
     end
   end

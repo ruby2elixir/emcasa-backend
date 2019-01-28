@@ -230,7 +230,7 @@ defmodule ReWeb.Resolvers.Listings do
 
   def listing_inserted_config(_args, %{context: %{current_user: current_user}}) do
     case current_user do
-      %{role: "admin"}  -> {:ok, topic: "listing_inserted"}
+      %{role: "admin"} -> {:ok, topic: "listing_inserted"}
       %{} -> {:error, :unauthorized}
       _ -> {:error, :unauthenticated}
     end
