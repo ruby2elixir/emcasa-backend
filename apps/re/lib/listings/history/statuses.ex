@@ -1,4 +1,4 @@
-defmodule Re.Listings.History.Status do
+defmodule Re.Listings.History.Statuses do
   @moduledoc """
   Context for handling listing's status history
   """

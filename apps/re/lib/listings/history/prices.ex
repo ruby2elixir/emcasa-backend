@@ -1,4 +1,4 @@
-defmodule Re.Listings.History.Price do
+defmodule Re.Listings.History.Prices do
   @moduledoc """
   Context for handling listing's price history
   """
