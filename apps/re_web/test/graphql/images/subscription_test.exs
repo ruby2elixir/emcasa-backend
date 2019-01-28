@@ -189,6 +189,116 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
     end
   end
 
+  describe "imageInserted" do
+    test "admin should subscribe to insertImage", %{
+      admin_socket: admin_socket
+    } do
+      %{id: listing_id} = insert(:listing)
+      ref = push_doc(admin_socket, """
+        subscription {
+          imageInserted(listingId: #{listing_id}) {
+            image {
+              id
+              filename
+            }
+            parentListing {
+              id
+            }
+          }
+        }
+      """)
+
+      assert_reply(ref, :ok, %{subscriptionId: subscription_id})
+
+      mutation = """
+        mutation {
+          insertImage(
+            input: {listingId: #{listing_id}, filename: "filename.jpeg"}
+          ) {
+            image {
+              id
+              filename
+            }
+            parentListing {
+              id
+            }
+          }
+        }
+      """
+
+      ref = push_doc(admin_socket, mutation)
+
+      assert_reply(
+        ref,
+        :ok,
+        %{
+          data: %{
+            "insertImage" => %{
+              "image" => %{"id" => id1, "filename" => "filename.jpeg"},
+              "parentListing" => %{"id" => listing_id}
+            }
+          }
+        },
+        3000
+      )
+
+      expected = %{
+        result: %{
+          data: %{
+            "imageInserted" => %{
+              "image" => %{"id" => id1, "filename" => "filename.jpeg"},
+              "parentListing" => %{"id" => listing_id}
+            }
+          }
+        },
+        subscriptionId: subscription_id
+      }
+
+      assert_push("subscription:data", push)
+      assert expected == push
+    end
+
+    test "user should not subscribe to insertImage", %{
+      user_socket: user_socket
+    } do
+      ref = push_doc(user_socket, """
+        subscription {
+          imageInserted(listingId: 1) {
+            image {
+              id
+              filename
+            }
+            parentListing {
+              id
+            }
+          }
+        }
+      """)
+
+      assert_reply(ref, :error, %{errors: [%{message: :unauthorized}]})
+    end
+
+    test "anonymous should not subscribe to insertImage", %{
+      unauthenticated_socket: unauthenticated_socket
+    } do
+      ref = push_doc(unauthenticated_socket, """
+        subscription {
+          imageInserted(listingId: 1) {
+            image {
+              id
+              filename
+            }
+            parentListing {
+              id
+            }
+          }
+        }
+      """)
+
+      assert_reply(ref, :error, %{errors: [%{message: :unauthenticated}]})
+    end
+  end
+
   defp build_subscription(name, listing_id) do
     """
      subscription {

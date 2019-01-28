@@ -32,10 +32,12 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation InsertImage ($input: ImageInsertInput!) {
           insertImage(input: $input) {
-            description
-            filename
-            isActive
-            position
+            image {
+              description
+              filename
+              isActive
+              position
+            }
           }
         }
       """
@@ -43,10 +45,12 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "description" => nil,
-               "filename" => "test.jpg",
-               "isActive" => true,
-               "position" => 1
+               "image" => %{
+                 "description" => nil,
+                 "filename" => "test.jpg",
+                 "isActive" => true,
+                 "position" => 1
+               }
              } == json_response(conn, 200)["data"]["insertImage"]
     end
 
@@ -63,10 +67,12 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation InsertImage ($input: ImageInsertInput!) {
           insertImage(input: $input) {
-            description
-            filename
-            isActive
-            position
+            image {
+              description
+              filename
+              isActive
+              position
+            }
           }
         }
       """
@@ -74,10 +80,12 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert %{
-               "description" => nil,
-               "filename" => "test.jpg",
-               "isActive" => true,
-               "position" => 1
+               "image" => %{
+                 "description" => nil,
+                 "filename" => "test.jpg",
+                 "isActive" => true,
+                 "position" => 1
+               }
              } == json_response(conn, 200)["data"]["insertImage"]
     end
 
@@ -94,10 +102,12 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation InsertImage ($input: ImageInsertInput!) {
           insertImage(input: $input) {
-            description
-            filename
-            isActive
-            position
+            image {
+              description
+              filename
+              isActive
+              position
+            }
           }
         }
       """
@@ -120,10 +130,12 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       mutation = """
         mutation InsertImage ($input: ImageInsertInput!) {
           insertImage(input: $input) {
-            description
-            filename
-            isActive
-            position
+            image {
+              description
+              filename
+              isActive
+              position
+            }
           }
         }
       """
