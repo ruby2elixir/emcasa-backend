@@ -16,8 +16,8 @@ defmodule ReWeb.Exporters.Vivareal.PlugTest do
     end
   end
 
-  describe "with inactive state and city slugs on path" do
-    test "should export zap XML", %{conn: conn} do
+  describe "with nonexistent city and state slugs on path" do
+    test "should return an empty XML", %{conn: conn} do
       conn = get(conn, "/exporters/vivareal/rs/porto-alegre")
 
       assert response(conn, 200) == @empty_listings
