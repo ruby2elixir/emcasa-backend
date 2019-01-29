@@ -55,9 +55,8 @@ defmodule Re.Exporters.VivarealTest do
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          details_tags() <> location_tags() <> contact_info_tags() <>
-          "<Featured>false</Featured>" <>
-           "</Listing>"
+          details_tags() <>
+          location_tags() <> contact_info_tags() <> "<Featured>false</Featured>" <> "</Listing>"
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -105,9 +104,8 @@ defmodule Re.Exporters.VivarealTest do
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          details_tags_nils() <> location_tags() <> contact_info_tags() <>
-          "<Featured>false</Featured>" <>
-          "</Listing>"
+          details_tags_nils() <>
+          location_tags() <> contact_info_tags() <> "<Featured>false</Featured>" <> "</Listing>"
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -155,9 +153,8 @@ defmodule Re.Exporters.VivarealTest do
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <>
-          "<Featured>false</Featured>" <>
-           "</Listing>"
+          rooms_nil_details_tags() <>
+          location_tags() <> contact_info_tags() <> "<Featured>false</Featured>" <> "</Listing>"
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -208,11 +205,13 @@ defmodule Re.Exporters.VivarealTest do
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <>
-          "<Featured>true</Featured>" <>
-          "</Listing>"
+          rooms_nil_details_tags() <>
+          location_tags() <> contact_info_tags() <> "<Featured>true</Featured>" <> "</Listing>"
 
-      assert expected_xml == listing |> Vivareal.build_xml(%{highlight_ids: highlight_ids}) |> XmlBuilder.generate(format: :none)
+      assert expected_xml ==
+               listing
+               |> Vivareal.build_xml(%{highlight_ids: highlight_ids})
+               |> XmlBuilder.generate(format: :none)
     end
   end
 

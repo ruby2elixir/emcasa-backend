@@ -29,7 +29,7 @@ defmodule ReWeb.Exporters.Vivareal.Plug do
       Exporter.exportable(filters, query_params)
       |> Vivareal.export_listings_xml(options)
 
-      conn
+    conn
     |> put_resp_content_type("application/xml")
     |> send_resp(200, xml_listings)
   end
