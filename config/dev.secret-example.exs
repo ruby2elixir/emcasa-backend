@@ -32,7 +32,13 @@ config :re,
   pipedrive_url: "https://yourcompany.pipedrive.com/v1/",
   pipedrive_token: "your_token",
   pipedrive_webhook_user: "pipedrive_user",
-  pipedrive_webhook_pass: "pipedrive_pass"
+  pipedrive_webhook_pass: "pipedrive_pass",
+  vivareal_highlights_size_rio_de_janeiro: "VIVAREAL_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO",
+  vivareal_highlights_size_sao_paulo: "VIVAREAL_HIGHLIGHTS_SIZE_SAO_PAULO",
+  zap_highlights_size_rio_de_janeiro: "ZAP_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO",
+  zap_highlights_size_sao_paulo: "ZAP_HIGHLIGHTS_SIZE_SAO_PAULO",
+  zap_super_highlights_size_rio_de_janeiro: "ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO",
+  zap_super_highlights_size_sao_paulo: "ZAP_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO"
 
 # The configuration below is for logging in with account kit
 # Retrieve your  id and secret from https://developers.facebook.com/apps
@@ -53,10 +59,3 @@ config :credipronto,
 config :re_integrations,
   credipronto_simulator_url: "CREDIPRONTO_URL",
   credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID"
-
-# The configuration bellow is related to integration portals
-config :zap,
-  highlights_size_rio_de_janeiro: "ZAP_HIGHLIGHT_SIZE",
-  highlights_size_sao_paulo: "ZAP_HIGHLIGHT_SIZE",
-  super_highlights_size_rio_de_janeiro: "ZAP_SUPER_HIGHLIGHT_SIZE"
-  super_highlights_size_sao_paulo: "ZAP_SUPER_HIGHLIGHT_SIZE"
