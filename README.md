@@ -12,11 +12,12 @@
 ## Install
 
   * Install dependencies with `mix deps.get`
-
   * Create, migrate and seed your database with `cd apps/re && mix ecto.setup`
   * Rename `config/dev.secret-example.exs` to `config/dev.secret.exs` and follow instructions at the top of the file to generate necessary keys.
+  * Install git hooks with `mix git.hook`
 
 ## Setup elasticsearch (optional)
+
   * Download and install (comes with kibana): `mix elasticsearch.install . --version 6.2.4`
   * Run elasticsearch: `./elasticsearch/bin/elasticsearch` and check `http://localhost:9200`
   * Run kibana: `./kibana/bin/kibana` and check `http://localhost:5601`
