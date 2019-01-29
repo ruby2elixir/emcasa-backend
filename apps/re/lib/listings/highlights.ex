@@ -4,15 +4,15 @@ defmodule Re.Listings.Highlights do
   """
 
   @vivareal_highlights_size_sao_paulo Application.get_env(
-                                       :re,
-                                       :vivareal_highlights_size_sao_paulo,
-                                       0
-                                     )
+                                        :re,
+                                        :vivareal_highlights_size_sao_paulo,
+                                        0
+                                      )
   @vivareal_highlights_size_rio_de_janeiro Application.get_env(
-                                            :re,
-                                            :vivareal_highlights_size_rio_de_janeiro,
-                                            0
-                                          )
+                                             :re,
+                                             :vivareal_highlights_size_rio_de_janeiro,
+                                             0
+                                           )
 
   @sao_paulo_highlight_size Application.get_env(:re, :zap_highlights_size_sao_paulo, 0)
   @rio_de_janeiro_highlight_size Application.get_env(:re, :zap_highlights_size_rio_de_janeiro, 0)

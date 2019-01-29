@@ -51,12 +51,12 @@ defmodule Re.Exporters.VivarealTest do
           "<ListingId>#{id}</ListingId>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
+          "<Featured>false</Featured>" <>
           "<ListDate>2018-06-07T15:30:00</ListDate>" <>
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          details_tags() <>
-          location_tags() <> contact_info_tags() <> "<Featured>false</Featured>" <> "</Listing>"
+          details_tags() <> location_tags() <> contact_info_tags() <> "</Listing>"
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -100,12 +100,12 @@ defmodule Re.Exporters.VivarealTest do
           "<ListingId>#{id}</ListingId>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
+          "<Featured>false</Featured>" <>
           "<ListDate>2018-06-07T15:30:00</ListDate>" <>
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          details_tags_nils() <>
-          location_tags() <> contact_info_tags() <> "<Featured>false</Featured>" <> "</Listing>"
+          details_tags_nils() <> location_tags() <> contact_info_tags() <> "</Listing>"
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -149,12 +149,12 @@ defmodule Re.Exporters.VivarealTest do
           "<ListingId>#{id}</ListingId>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
+          "<Featured>false</Featured>" <>
           "<ListDate>2018-06-07T15:30:00</ListDate>" <>
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          rooms_nil_details_tags() <>
-          location_tags() <> contact_info_tags() <> "<Featured>false</Featured>" <> "</Listing>"
+          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <> "</Listing>"
 
       assert expected_xml == listing |> Vivareal.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -201,12 +201,12 @@ defmodule Re.Exporters.VivarealTest do
           "<ListingId>#{id}</ListingId>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
+          "<Featured>true</Featured>" <>
           "<ListDate>2018-06-07T15:30:00</ListDate>" <>
           "<LastUpdateDate>2018-06-07T15:30:00</LastUpdateDate>" <>
           "<DetailViewUrl>http://localhost:3000/imoveis/#{id}</DetailViewUrl>" <>
           images_tags() <>
-          rooms_nil_details_tags() <>
-          location_tags() <> contact_info_tags() <> "<Featured>true</Featured>" <> "</Listing>"
+          rooms_nil_details_tags() <> location_tags() <> contact_info_tags() <> "</Listing>"
 
       assert expected_xml ==
                listing
@@ -237,7 +237,7 @@ defmodule Re.Exporters.VivarealTest do
                ~s|<Email>rodrigo.nonose@emcasa.com</Email>| <>
                ~s|<ContactName>Rodrigo Nonose</ContactName>| <>
                ~s|</Header>| <>
-               ~s|<Listings><Listing><ListingId>#{listing.id}</ListingId><Featured>false</Featured></Listing></Listings></ListingDataFeed>| ==
+               ~s|<Listings><Listing><ListingId>#{listing.id}</ListingId></Listing></Listings></ListingDataFeed>| ==
                Vivareal.export_listings_xml(listings, %{attributes: ~w(id)a})
     end
 
