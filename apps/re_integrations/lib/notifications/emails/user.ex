@@ -11,9 +11,9 @@ defmodule ReIntegrations.Notifications.Emails.User do
     User
   }
 
-  @to String.split(Application.get_env(:re, :to), "|")
-  @from Application.get_env(:re, :from)
-  @frontend_url Application.get_env(:re, :frontend_url)
+  @to String.split(Application.get_env(:re_integrations, :to), "|")
+  @from Application.get_env(:re_integrations, :from)
+  @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @admin_email "admin@emcasa.com"
   @contato_email "contato@emcasa.com"
   @listing_path "/imoveis/"

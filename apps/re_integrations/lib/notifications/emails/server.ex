@@ -14,7 +14,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
 
   alias ReIntegrations.Notifications.Emails
 
-  @env Application.get_env(:re, :env)
+  @env Application.get_env(:re_integrations, :env)
 
   @spec start_link :: GenServer.start_link()
   def start_link do
