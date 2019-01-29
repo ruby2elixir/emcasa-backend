@@ -2,7 +2,7 @@ defmodule ReWeb.Guardian do
   @moduledoc """
   Module to implement guardian behavior
   """
-  use Guardian, otp_app: :re
+  use Guardian, otp_app: :re_web
 
   alias Re.{
     Repo,

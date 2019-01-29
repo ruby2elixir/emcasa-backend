@@ -5,7 +5,7 @@ defmodule Re.Exporters.Vivareal do
   @exported_attributes ~w(id title transaction_type highlight inserted_at updated_at detail_url
                           images details location contact_info)a
 
-  @frontend_url Application.get_env(:re, :frontend_url)
+  @frontend_url Application.get_env(:re_integrations, :frontend_url)
 
   @default_options %{attributes: @exported_attributes, highlight_ids: []}
 

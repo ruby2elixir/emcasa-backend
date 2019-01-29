@@ -10,7 +10,7 @@ use Mix.Config
 # JOSE.JWS.generate_key(%{"alg" => "ES512"}) |> JOSE.JWK.to_map |> elem(1)
 #  and copy the hashes for "d", "x", and "y".
 
-config :re, ReWeb.Guardian,
+config :re_web, ReWeb.Guardian,
   allowed_algos: ["ES512"],
   secret_key: %{
     "alg" => "ES512",
@@ -22,26 +22,24 @@ config :re, ReWeb.Guardian,
     "y" => "xxxxxx"
   }
 
-# The emails below are used when a visitor
-# fills out a form expressing interest in a listing.
-# Both `to:` and `from:` can be individual emails
-# or multiple emails, in which case use `|` as separator.
-config :re,
+config :re_integrations,
   to: "dev1@email.com|dev2@email.com",
   from: "admin@email.com",
   pipedrive_url: "https://yourcompany.pipedrive.com/v1/",
   pipedrive_token: "your_token",
   pipedrive_webhook_user: "pipedrive_user",
   pipedrive_webhook_pass: "pipedrive_pass",
+  credipronto_simulator_url: "CREDIPRONTO_URL",
+  credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID"
+
+config :re,
   vivareal_highlights_size_rio_de_janeiro: "VIVAREAL_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO",
   vivareal_highlights_size_sao_paulo: "VIVAREAL_HIGHLIGHTS_SIZE_SAO_PAULO",
-  zap_highlights_size_rio_de_janeiro: "ZAP_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO",
-  zap_highlights_size_sao_paulo: "ZAP_HIGHLIGHTS_SIZE_SAO_PAULO",
-  zap_super_highlights_size_rio_de_janeiro: "ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO",
-  zap_super_highlights_size_sao_paulo: "ZAP_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO"
+  zap_highlights_size_rio_de_janeiro: "ZAP_HIGHLIGHT_SIZE",
+  zap_highlights_size_sao_paulo: "ZAP_HIGHLIGHT_SIZE",
+  zap_super_highlights_size_rio_de_janeiro: "ZAP_SUPER_HIGHLIGHT_SIZE"
+  zap_super_highlights_size_sao_paulo: "ZAP_SUPER_HIGHLIGHT_SIZE"
 
-# The configuration below is for logging in with account kit
-# Retrieve your  id and secret from https://developers.facebook.com/apps
 config :account_kit,
   app_id: "your_dev_app_id",
   app_secret: "your_dev_app_secret",
@@ -51,11 +49,3 @@ config :account_kit,
 config :honeybadger,
   api_key: "HONEYBADGER_API_KEY",
   environment_name: :dev
-
-config :credipronto,
-  simulador_url: "CREDIPRONTO_URL",
-  account_id: "CREDIPRONTO_ACCOUNT_ID"
-
-config :re_integrations,
-  credipronto_simulator_url: "CREDIPRONTO_URL",
-  credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID"

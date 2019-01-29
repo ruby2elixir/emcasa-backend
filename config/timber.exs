@@ -1,7 +1,7 @@
 use Mix.Config
 
 # Update the instrumenters so that we can structure Phoenix logs
-config :re, ReWeb.Endpoint, instrumenters: [Timber.Phoenix]
+config :re_web, ReWeb.Endpoint, instrumenters: [Timber.Phoenix]
 
 # Structure Ecto logs
 config :re, Re.Repo, loggers: [{Timber.Ecto, :log, []}]

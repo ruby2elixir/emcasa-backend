@@ -8,7 +8,7 @@ defmodule ReWeb.ListingController do
   }
 
   @visualizations Application.get_env(:re, :visualizations, Re.Statistics.Visualizations)
-  @emails Application.get_env(:re, :emails, ReIntegrations.Notifications.Emails)
+  @emails Application.get_env(:re_integrations, :emails, ReIntegrations.Notifications.Emails)
 
   action_fallback(ReWeb.FallbackController)
 
