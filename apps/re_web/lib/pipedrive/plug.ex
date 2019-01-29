@@ -6,8 +6,8 @@ defmodule ReWeb.Pipedrive.Plug do
 
   require Logger
 
-  @user Application.get_env(:re, :pipedrive_webhook_user, "")
-  @pass Application.get_env(:re, :pipedrive_webhook_pass, "")
+  @user Application.get_env(:re_web, :pipedrive_webhook_user, "")
+  @pass Application.get_env(:re_web, :pipedrive_webhook_pass, "")
 
   alias ReIntegrations.Pipedrive
 
