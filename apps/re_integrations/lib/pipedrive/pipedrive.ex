@@ -5,7 +5,6 @@ defmodule ReIntegrations.Pipedrive do
   require Logger
 
   @activity_params ["deal_id", "marked_as_done_time"]
-  # @server Application.get_env(:re_integrations, :pipedrive, __MODULE__.Server)
 
   def validate_payload(%{
         "event" => "updated.activity",
