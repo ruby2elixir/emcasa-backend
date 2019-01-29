@@ -46,8 +46,8 @@ defmodule ReWeb.Exporters.Zap.Plug do
   end
 
   defp get_highlight_sizes(city_slug) do
-    super_highlights_size = Highlights.super_highlights_size(city_slug)
-    highlights_size = Highlights.highlights_size(city_slug)
+    super_highlights_size = Highlights.get_zap_super_highlights_size(city_slug)
+    highlights_size = Highlights.get_zap_highlights_size(city_slug)
 
     %{highlights_size: highlights_size, super_highlights_size: super_highlights_size}
   end
