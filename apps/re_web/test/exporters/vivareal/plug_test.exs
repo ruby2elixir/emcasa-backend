@@ -9,24 +9,29 @@ defmodule ReWeb.Exporters.Vivareal.PlugTest do
   @error_message ~s|<?xml version="1.0" encoding="UTF-8"?><error>Expect state and city on path</error>|
 
   describe "with active city and state slugs on path" do
-    @tag dev: true
-    test "should render listings XML  ", %{conn: conn} do
+    test "should render listings XML", %{conn: conn} do
       conn = get(conn, "/exporters/vivareal/rj/rio-de-janeiro")
 
       assert response(conn, 200) == @empty_listings
     end
   end
 
-  @tag dev: true
+  describe "with inactive state and city slugs on path" do
+    test "should export zap XML", %{conn: conn} do
+      conn = get(conn, "/exporters/vivareal/rs/porto-alegre")
+
+      assert response(conn, 200) == @empty_listings
+    end
+  end
+
   describe "without city and state slugs on path" do
     test "should return not found error", %{conn: conn} do
-      conn = get(conn, "/exporters/vivareal")
+      conn = get(conn, "/exporters/vivareal/invalid")
 
       assert response(conn, 404) == @error_message
     end
   end
 
-  @tag dev: true
   describe "with invalid slug" do
     test "should return not found error", %{conn: conn} do
       conn = get(conn, "/exporters/vivareal/invalid")
