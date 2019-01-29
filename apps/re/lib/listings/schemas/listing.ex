@@ -35,8 +35,6 @@ defmodule Re.Listing do
     field :interest_count, :integer, virtual: true
     field :in_person_visit_count, :integer, virtual: true
 
-    field :vivareal_highlight, :boolean, default: false
-
     belongs_to :address, Re.Address
     belongs_to :user, Re.User
     has_many :images, Re.Image
@@ -81,8 +79,8 @@ defmodule Re.Listing do
   @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
   @admin_optional ~w(complement floor matterport_code is_exclusive status
-                     property_tax maintenance_fee balconies restrooms is_release
-                     vivareal_highlight)a
+                     property_tax maintenance_fee balconies restrooms is_release)a
+
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
     struct
