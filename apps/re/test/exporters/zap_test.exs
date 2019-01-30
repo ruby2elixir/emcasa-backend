@@ -312,7 +312,7 @@ defmodule Re.Exporters.ZapTest do
 
       assert ~s|<?xml version="1.0" encoding="UTF-8"?><Carga xmlns:xsd="http://www.w3.org/2001/XMLSchema" | <>
                ~s|xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">| <>
-               ~s|<Imoveis><Imovel><CodigoImovel>#{listing.id}</CodigoImovel><TipoOferta>1</TipoOferta></Imovel></Imoveis></Carga>| ==
+               ~s|<Imoveis><Imovel><CodigoImovel>#{listing.id}</CodigoImovel></Imovel></Imoveis></Carga>| ==
                Zap.export_listings_xml(listings, %{attributes: ~w(id)a})
     end
   end

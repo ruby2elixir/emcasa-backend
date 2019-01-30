@@ -7,8 +7,7 @@ defmodule ReWeb.Exporters.Vivareal.Plug do
   alias Re.{
     Exporters.Vivareal,
     Listings.Exporter,
-    Listings.Highlights,
-    Listings.Queries
+    Listings.Highlights
   }
 
   def init(args), do: args
@@ -18,11 +17,8 @@ defmodule ReWeb.Exporters.Vivareal.Plug do
         _args
       ) do
     filters = %{cities_slug: [city_slug], states_slug: [state_slug]}
-    highlights_size = Highlights.get_vivareal_highlights_size(city_slug)
 
-    options =
-      Queries.highlights(filters)
-      |> get_highlights(highlights_size)
+    options = get_highlights(filters, query_params)
 
     xml_listings =
       Exporter.exportable(filters, query_params)
@@ -44,11 +40,15 @@ defmodule ReWeb.Exporters.Vivareal.Plug do
     |> send_resp(404, error_response)
   end
 
-  defp get_highlights(query, highlights_size) do
-    highlight_ids =
-      Highlights.get_highlight_listing_ids(query, %{
-        page_size: highlights_size
-      })
+  defp get_highlights(%{cities_slug: [city_slug]} = filters, query_params) do
+    highlights_size = Highlights.get_vivareal_highlights_size(city_slug)
+
+    params =
+      query_params
+      |> Map.put(:filters, filters)
+      |> Map.put(:page_size, highlights_size)
+
+    highlight_ids = Highlights.get_highlight_listing_ids(params)
 
     %{highlight_ids: highlight_ids}
   end
