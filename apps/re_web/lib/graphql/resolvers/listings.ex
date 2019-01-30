@@ -209,13 +209,6 @@ defmodule ReWeb.Resolvers.Listings do
 
   def featured(_, _), do: {:ok, Featured.get_graphql()}
 
-  def vivareal_highlight(listing, _, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :show_highlights, current_user, %{}) do
-      :ok -> {:ok, listing.vivareal_highlight}
-      error -> error
-    end
-  end
-
   def listing_deactivated_config(args, %{context: %{current_user: current_user}}) do
     config_subscription(args, current_user, "listing_deactivated")
   end

@@ -28,14 +28,6 @@ defmodule ReWeb.Types.Dashboard do
 
       resolve &DashboardResolvers.listings/2
     end
-
-    field :listing_vivareal_highlights, :listing_pagination_admin do
-      arg :pagination, :listing_pagination_admin_input
-      arg :filters, :listing_filter_input
-      arg :order_by, list_of(:order_by)
-
-      resolve &DashboardResolvers.listing_vivareal_highlights/2
-    end
   end
 
   input_object :listing_pagination_admin_input do
@@ -62,29 +54,6 @@ defmodule ReWeb.Types.Dashboard do
       arg :factors, non_null(:upload)
 
       resolve &DashboardResolvers.upload_factors_csv/2
-    end
-
-    @desc "Highligh listing on vivareal"
-    field :listing_highlight_vivareal, :listing do
-      arg :listing_id, non_null(:id)
-
-      resolve &DashboardResolvers.listing_highlight_vivareal/2
-    end
-  end
-
-  object :dashboard_subscriptions do
-    @desc "Subscribe to vivareal listing highlits"
-    field :listing_highlighted_vivareal, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          %{role: "admin"} -> {:ok, topic: "listing_highlighted_vivareal"}
-          %{} -> {:error, :unauthorized}
-          _ -> {:error, :unauthenticated}
-        end
-      end)
-
-      trigger :listing_highlight_vivareal,
-        topic: fn _ -> "listing_highlighted_vivareal" end
     end
   end
 end

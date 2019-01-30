@@ -100,7 +100,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        vivareal_highlight: true,
         score: 4
       )
 
@@ -127,7 +126,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              vivarealHighlight
               score
             }
             remaining_count
@@ -144,7 +142,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "vivarealHighlight" => nil,
                    "score" => nil
                  }
                ],
