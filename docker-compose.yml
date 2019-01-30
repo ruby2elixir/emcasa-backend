@@ -48,6 +48,17 @@ services:
     hostname: backend
     entrypoint: sleep
     command: infinity
+  app:
+    image: 'abiosoft/caddy:0.11.2'
+    depends_on:
+      - backend
+    volumes:
+      - './priv/certs/dev:/etc/emcasa'
+      - './priv/caddy/Caddyfile:/etc/Caddyfile'
+    hostname: app
+    ports:
+      - '80:80'
+      - '443:443'
 volumes:
   db_data:
   es_data:

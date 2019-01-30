@@ -1,0 +1,7 @@
+0.0.0.0:80, 0.0.0.0:443, dev.emcasa.com:80, dev.emcasa.com:443 {
+    log stdout
+    errors stdour
+
+    tls /etc/emcasa/dev.emcasa.com.cert.pem /etc/emcasa/dev.emcasa.com.key.pem
+    proxy / backend:4000
+}
