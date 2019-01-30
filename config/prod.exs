@@ -33,12 +33,12 @@ config :re, Re.Repo,
 config :re_tags, ReTags.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("TAGS_DATABASE_URL"),
-  pool_size: String.to_integer(System.get_env("TAGS_POOL_SIZE") || "9"),
+  pool_size: String.to_integer(System.get_env("TAGS_POOL_SIZE") || "5"),
   ssl: true
 
 config :eventstore, EventStore.Storage,
   url: System.get_env("TAGS_DATABASE_URL"),
-  pool_size: String.to_integer(System.get_env("TAGS_POOL_SIZE") || "9"),
+  pool_size: String.to_integer(System.get_env("TAGS_EVENTSTORE_POOL_SIZE") || "5"),
   ssl: true
 
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
