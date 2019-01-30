@@ -46,7 +46,6 @@ defmodule Re.Listings.Highlights do
     Queries.active()
     |> Filtering.apply(filters)
     |> Queries.preload_relations([:address])
-    |> Queries.order_by_id()
     |> Queries.order_by(order)
     |> Queries.limit(params)
     |> Queries.offset(params)
