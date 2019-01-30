@@ -23,4 +23,20 @@ config :re, Re.Repo,
   hostname: "localhost",
   pool_size: 10
 
+config :re_tags, ReTags.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: "postgres",
+  password: "postgres",
+  database: "re_tags_readstore_dev",
+  hostname: "localhost",
+  pool_size: 10
+
+config :eventstore, EventStore.Storage,
+  serializer: Commanded.Serialization.JsonSerializer,
+  username: "postgres",
+  password: "postgres",
+  database: "re_tags_eventstore_dev",
+  hostname: "localhost",
+  pool_size: 10
+
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Local

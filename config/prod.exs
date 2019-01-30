@@ -30,6 +30,12 @@ config :re, Re.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
+config :re, Re.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  url: System.get_env("TAGS_DATABASE_URL"),
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+  ssl: true
+
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: System.get_env("SEND_GRID_API_KEY")

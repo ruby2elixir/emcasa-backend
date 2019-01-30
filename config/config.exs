@@ -12,6 +12,10 @@ config :re_integrations,
   env: "dev",
   use_logger: true
 
+config :re_tags,
+  ecto_repos: [ReTags.Repo],
+  use_logger: true
+
 config :re_web, ReWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "AFa6xCBxoVrAjCy3YRiSjY9e1TfUn75VT2QhSALdwJ+q/oA693/5mJ0OKptYSIID",
