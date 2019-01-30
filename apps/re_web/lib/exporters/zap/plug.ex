@@ -6,7 +6,6 @@ defmodule ReWeb.Exporters.Zap.Plug do
 
   alias Re.{
     Exporters.Zap,
-    Filtering,
     Listings.Exporter,
     Listings.Highlights,
     Listings.Queries
@@ -22,7 +21,7 @@ defmodule ReWeb.Exporters.Zap.Plug do
     highlights_sizes = get_highlight_sizes(city_slug)
 
     options =
-      mount_query(filters)
+      Queries.highlights(filters)
       |> get_highlights(highlights_sizes)
 
     xml_listings =
@@ -46,8 +45,8 @@ defmodule ReWeb.Exporters.Zap.Plug do
   end
 
   defp get_highlight_sizes(city_slug) do
-    super_highlights_size = Highlights.super_highlights_size(city_slug)
-    highlights_size = Highlights.highlights_size(city_slug)
+    super_highlights_size = Highlights.get_zap_super_highlights_size(city_slug)
+    highlights_size = Highlights.get_zap_highlights_size(city_slug)
 
     %{highlights_size: highlights_size, super_highlights_size: super_highlights_size}
   end
@@ -66,12 +65,5 @@ defmodule ReWeb.Exporters.Zap.Plug do
       Highlights.get_highlight_listing_ids(query, %{page_size: super_highlights_size})
 
     %{super_highlight_ids: super_highlight_ids, highlight_ids: highlight_ids}
-  end
-
-  defp mount_query(filters) do
-    Queries.active()
-    |> Filtering.apply(filters)
-    |> Queries.preload_relations([:address])
-    |> Queries.order_by_id()
   end
 end

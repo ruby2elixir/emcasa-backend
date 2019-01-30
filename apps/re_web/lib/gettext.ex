@@ -20,5 +20,5 @@ defmodule ReWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :re
+  use Gettext, otp_app: :re_web
 end

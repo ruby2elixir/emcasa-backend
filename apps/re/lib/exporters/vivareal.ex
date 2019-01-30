@@ -2,29 +2,17 @@ defmodule Re.Exporters.Vivareal do
   @moduledoc """
   Listing XML exporters for vivareal
   """
-  @exported_attributes ~w(id title transaction_type featured inserted_at updated_at detail_url
+  @exported_attributes ~w(id title transaction_type highlight inserted_at updated_at detail_url
                           images details location contact_info)a
 
-  @frontend_url Application.get_env(:re, :frontend_url)
+  @frontend_url Application.get_env(:re_integrations, :frontend_url)
 
-  alias Re.{
-    Images,
-    Listings.Queries,
-    Repo
-  }
+  @default_options %{attributes: @exported_attributes, highlight_ids: []}
 
-  @preload [
-    :address,
-    images: Images.Queries.listing_preload()
-  ]
-
-  def export_listings_xml(attributes \\ @exported_attributes) do
-    Queries.active()
-    |> Queries.preload_relations(@preload)
-    |> Queries.order_by_id()
-    |> Repo.all()
+  def export_listings_xml(listings, options \\ %{}) do
+    listings
     |> Enum.filter(&has_image?/1)
-    |> Enum.map(&build_xml(&1, attributes))
+    |> Enum.map(&build_xml(&1, options))
     |> wrap_tags()
     |> XmlBuilder.document()
     |> XmlBuilder.generate(format: :none)
@@ -56,59 +44,62 @@ defmodule Re.Exporters.Vivareal do
      ]}
   end
 
-  def build_xml(%Re.Listing{} = listing, attributes \\ @exported_attributes) do
-    {"Listing", %{}, convert_attributes(listing, attributes)}
+  def build_xml(%Re.Listing{} = listing, options \\ %{}) do
+    options = merge_defaults(options)
+
+    {"Listing", %{}, convert_attributes(listing, options)}
   end
 
-  def convert_attributes(listing, attributes),
-    do: Enum.map(attributes, &convert_attribute(&1, listing))
+  def convert_attributes(listing, %{attributes: attributes} = options),
+    do: Enum.map(attributes, &convert_attribute(&1, listing, options))
 
-  defp convert_attribute(:id, %{id: id}) do
+  defp convert_attribute(:id, %{id: id}, _) do
     {"ListingId", %{}, id}
   end
 
-  defp convert_attribute(:title, %{type: type, address: %{city: city}}) do
+  defp convert_attribute(:title, %{type: type, address: %{city: city}}, _) do
     {"Title", %{}, "#{type} a venda em #{city}"}
   end
 
-  defp convert_attribute(:transaction_type, _) do
+  defp convert_attribute(:transaction_type, _, _) do
     {"TransactionType", %{}, "For Sale"}
   end
 
-  defp convert_attribute(:featured, %{vivareal_highlight: true}) do
-    {"Featured", %{}, true}
+  defp convert_attribute(:highlight, %{id: id}, %{
+         highlight_ids: highlight_ids
+       }) do
+    cond do
+      id in highlight_ids -> {"Featured", %{}, true}
+      true -> {"Featured", %{}, false}
+    end
   end
 
-  defp convert_attribute(:featured, _) do
-    {"Featured", %{}, false}
-  end
-
-  defp convert_attribute(:inserted_at, %{inserted_at: inserted_at}) do
+  defp convert_attribute(:inserted_at, %{inserted_at: inserted_at}, _) do
     {"ListDate", %{}, Timex.format!(inserted_at, "%Y-%m-%dT%H:%M:%S", :strftime)}
   end
 
-  defp convert_attribute(:updated_at, %{updated_at: updated_at}) do
+  defp convert_attribute(:updated_at, %{updated_at: updated_at}, _) do
     {"LastUpdateDate", %{}, Timex.format!(updated_at, "%Y-%m-%dT%H:%M:%S", :strftime)}
   end
 
-  defp convert_attribute(:detail_url, %{id: id}) do
+  defp convert_attribute(:detail_url, %{id: id}, _) do
     {"DetailViewUrl", %{}, build_url("/imoveis/", to_string(id))}
   end
 
-  defp convert_attribute(:images, %{images: images}) do
+  defp convert_attribute(:images, %{images: images}, _) do
     {"Media", %{}, Enum.map(images, &build_image/1)}
   end
 
   @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms)a
 
-  defp convert_attribute(:details, listing) do
+  defp convert_attribute(:details, listing, _) do
     {"Details", %{},
      @details_attributes
      |> Enum.reduce([], &build_details(&1, &2, listing))
      |> Enum.reverse()}
   end
 
-  defp convert_attribute(:location, %{address: address}) do
+  defp convert_attribute(:location, %{address: address}, _) do
     {"Location", %{displayAddress: "Neighborhood"},
      [
        {"Country", %{abbreviation: "BR"}, "Brasil"},
@@ -123,7 +114,7 @@ defmodule Re.Exporters.Vivareal do
      ]}
   end
 
-  defp convert_attribute(:contact_info, _) do
+  defp convert_attribute(:contact_info, _, _) do
     {"ContactInfo", %{},
      [
        {"Name", %{}, "EmCasa"},
@@ -194,5 +185,9 @@ defmodule Re.Exporters.Vivareal do
     |> URI.merge(path)
     |> URI.merge(param)
     |> URI.to_string()
+  end
+
+  defp merge_defaults(options) do
+    Map.merge(@default_options, options)
   end
 end
