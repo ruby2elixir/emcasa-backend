@@ -29,19 +29,24 @@ defmodule Re.Listings.Highlights do
                                        )
 
   alias Re.{
+    Filtering,
     Listings.Queries,
     Repo
   }
 
-  def get_highlight_listing_ids(query, params \\ %{}) do
-    get_highlights(query, params)
+  def get_highlight_listing_ids(params \\ %{}) do
+    get_highlights(params)
     |> Enum.map(& &1.id)
   end
 
-  defp get_highlights(query, params) do
+  defp get_highlights(params) do
     order = %{order_by: [%{field: :updated_at, type: :desc}]}
+    filters = Map.get(params, :filters, %{})
 
-    query
+    Queries.active()
+    |> Filtering.apply(filters)
+    |> Queries.preload_relations([:address])
+    |> Queries.order_by_id()
     |> Queries.order_by(order)
     |> Queries.limit(params)
     |> Queries.offset(params)

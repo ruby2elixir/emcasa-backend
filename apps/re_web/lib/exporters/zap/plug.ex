@@ -7,8 +7,7 @@ defmodule ReWeb.Exporters.Zap.Plug do
   alias Re.{
     Exporters.Zap,
     Listings.Exporter,
-    Listings.Highlights,
-    Listings.Queries
+    Listings.Highlights
   }
 
   def init(args), do: args
@@ -18,11 +17,8 @@ defmodule ReWeb.Exporters.Zap.Plug do
         _args
       ) do
     filters = %{cities_slug: [city_slug], states_slug: [state_slug]}
-    highlights_sizes = get_highlight_sizes(city_slug)
 
-    options =
-      Queries.highlights(filters)
-      |> get_highlights(highlights_sizes)
+    options = get_highlights(filters, query_params)
 
     xml_listings =
       Exporter.exportable(filters, query_params)
@@ -44,25 +40,24 @@ defmodule ReWeb.Exporters.Zap.Plug do
     |> send_resp(404, error_response)
   end
 
-  defp get_highlight_sizes(city_slug) do
-    super_highlights_size = Highlights.get_zap_super_highlights_size(city_slug)
+  defp get_highlights(%{cities_slug: [city_slug]} = filters, query_params) do
     highlights_size = Highlights.get_zap_highlights_size(city_slug)
+    super_highlights_size = Highlights.get_zap_super_highlights_size(city_slug)
 
-    %{highlights_size: highlights_size, super_highlights_size: super_highlights_size}
-  end
+    highlights_params =
+      query_params
+      |> Map.put(:filters, filters)
+      |> Map.put(:page_size, highlights_size)
+      |> Map.put(:offset, super_highlights_size)
 
-  defp get_highlights(query, %{
-         highlights_size: highlights_size,
-         super_highlights_size: super_highlights_size
-       }) do
-    highlight_ids =
-      Highlights.get_highlight_listing_ids(query, %{
-        page_size: highlights_size,
-        offset: super_highlights_size
-      })
+    super_highlights_params =
+      query_params
+      |> Map.put(:filters, filters)
+      |> Map.put(:page_size, super_highlights_size)
 
-    super_highlight_ids =
-      Highlights.get_highlight_listing_ids(query, %{page_size: super_highlights_size})
+    highlight_ids = Highlights.get_highlight_listing_ids(highlights_params)
+
+    super_highlight_ids = Highlights.get_highlight_listing_ids(super_highlights_params)
 
     %{super_highlight_ids: super_highlight_ids, highlight_ids: highlight_ids}
   end
