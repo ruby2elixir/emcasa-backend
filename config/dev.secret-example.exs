@@ -33,10 +33,12 @@ config :re_integrations,
   credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID"
 
 config :re,
-  zap_highlights_size_rio_de_janeiro: "ZAP_HIGHLIGHT_SIZE",
-  zap_highlights_size_sao_paulo: "ZAP_HIGHLIGHT_SIZE",
-  zap_super_highlights_size_rio_de_janeiro: "ZAP_SUPER_HIGHLIGHT_SIZE"
-  zap_super_highlights_size_sao_paulo: "ZAP_SUPER_HIGHLIGHT_SIZE"
+  vivareal_highlights_size_rio_de_janeiro: 10,
+  vivareal_highlights_size_sao_paulo: 10,
+  zap_highlights_size_rio_de_janeiro: 10,
+  zap_highlights_size_sao_paulo: 10,
+  zap_super_highlights_size_rio_de_janeiro: 5,
+  zap_super_highlights_size_sao_paulo: 5
 
 config :account_kit,
   app_id: "your_dev_app_id",

@@ -4,9 +4,10 @@ defmodule Re.Listings.Queries do
   """
 
   alias Re.{
+    Filtering,
     Images,
-    Listing,
-    Interests
+    Interests,
+    Listing
   }
 
   import Ecto.Query
@@ -100,5 +101,12 @@ defmodule Re.Listings.Queries do
       join: a in assoc(l, :address),
       where: ^listing.address.city == a.city
     )
+  end
+
+  def highlights(query \\ Listing, filters) do
+    active()
+    |> Filtering.apply(filters)
+    |> preload_relations([:address])
+    |> order_by_id()
   end
 end
