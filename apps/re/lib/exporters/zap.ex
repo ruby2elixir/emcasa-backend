@@ -9,7 +9,7 @@ defmodule Re.Exporters.Zap do
 
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
                           postal_code price maintenance_fee util_area area_unit rooms bathrooms garage_spots
-                          property_tax description images)a
+                          property_tax description images highlight)a
 
   @default_options %{attributes: @exported_attributes, highlight_ids: [], super_highlight_ids: []}
 
@@ -35,111 +35,106 @@ defmodule Re.Exporters.Zap do
   def build_xml(%Re.Listing{} = listing, options \\ %{}) do
     options = merge_defaults(options)
 
-    converted_listing = [
-      convert_attributes(listing, options),
-      convert_highlight_type(listing, options)
-    ]
-
-    {"Imovel", %{}, converted_listing}
+    {"Imovel", %{}, convert_attributes(listing, options)}
   end
 
-  def convert_attributes(listing, %{attributes: attributes}),
-    do: Enum.map(attributes, &convert_attribute(&1, listing))
+  def convert_attributes(listing, %{attributes: attributes} = options),
+    do: Enum.map(attributes, &convert_attribute(&1, listing, options))
 
-  defp convert_attribute(:id, %{id: id}) do
+  defp convert_attribute(:id, %{id: id}, _) do
     {"CodigoImovel", %{}, id}
   end
 
-  defp convert_attribute(:type, listing) do
+  defp convert_attribute(:type, listing, _) do
     {"TipoImovel", %{}, listing_type(listing)}
   end
 
-  defp convert_attribute(:subtype, listing) do
+  defp convert_attribute(:subtype, listing, _) do
     {"SubTipoImovel", %{}, listing_subtype(listing)}
   end
 
-  defp convert_attribute(:category, listing) do
+  defp convert_attribute(:category, listing, _) do
     {"CategoriaImovel", %{}, listing_category(listing)}
   end
 
-  defp convert_attribute(:address, listing) do
+  defp convert_attribute(:address, listing, _) do
     {"Endereco", %{}, listing.address.street}
   end
 
-  defp convert_attribute(:state, listing) do
+  defp convert_attribute(:state, listing, _) do
     {"UF", %{}, listing.address.state}
   end
 
-  defp convert_attribute(:city, listing) do
+  defp convert_attribute(:city, listing, _) do
     {"Cidade", %{}, listing.address.city}
   end
 
-  defp convert_attribute(:neighborhood, listing) do
+  defp convert_attribute(:neighborhood, listing, _) do
     {"Bairro", %{}, listing.address.neighborhood}
   end
 
-  defp convert_attribute(:street_number, listing) do
+  defp convert_attribute(:street_number, listing, _) do
     {"Numero", %{}, listing.address.street_number}
   end
 
-  defp convert_attribute(:complement, listing) do
+  defp convert_attribute(:complement, listing, _) do
     {"Complemento", %{}, listing.complement}
   end
 
-  defp convert_attribute(:postal_code, listing) do
+  defp convert_attribute(:postal_code, listing, _) do
     {"CEP", %{}, String.replace(listing.address.postal_code, "-", "")}
   end
 
-  defp convert_attribute(:price, listing) do
+  defp convert_attribute(:price, listing, _) do
     {"PrecoVenda", %{}, listing.price}
   end
 
-  defp convert_attribute(:maintenance_fee, listing) do
+  defp convert_attribute(:maintenance_fee, listing, _) do
     case listing.maintenance_fee do
       nil -> {"PrecoCondominio", %{}, ""}
       maintenance_fee -> {"PrecoCondominio", %{}, trunc(maintenance_fee)}
     end
   end
 
-  defp convert_attribute(:util_area, listing) do
+  defp convert_attribute(:util_area, listing, _) do
     {"AreaUtil", %{}, listing.area}
   end
 
-  defp convert_attribute(:area_unit, _) do
+  defp convert_attribute(:area_unit, _, _) do
     {"UnidadeMetrica", %{}, "M2"}
   end
 
-  defp convert_attribute(:rooms, listing) do
+  defp convert_attribute(:rooms, listing, _) do
     {"QtdDormitorios", %{}, listing.rooms}
   end
 
-  defp convert_attribute(:bathrooms, listing) do
+  defp convert_attribute(:bathrooms, listing, _) do
     {"QtdBanheiros", %{}, listing.bathrooms}
   end
 
-  defp convert_attribute(:garage_spots, listing) do
+  defp convert_attribute(:garage_spots, listing, _) do
     {"QtdVagas", %{}, listing.garage_spots}
   end
 
-  defp convert_attribute(:property_tax, listing) do
+  defp convert_attribute(:property_tax, listing, _) do
     case listing.property_tax do
       nil -> {"ValorIPTU", %{}, ""}
       property_tax -> {"ValorIPTU", %{}, trunc(property_tax)}
     end
   end
 
-  defp convert_attribute(:description, listing) do
+  defp convert_attribute(:description, listing, _) do
     {"Observacao", %{}, listing.description}
   end
 
-  defp convert_attribute(:images, %{images: []}), do: {"Fotos", %{}, nil}
+  defp convert_attribute(:images, %{images: []}, _), do: {"Fotos", %{}, nil}
 
-  defp convert_attribute(:images, %{images: [main_image | rest]}) do
+  defp convert_attribute(:images, %{images: [main_image | rest]}, _) do
     main_image = Map.put(main_image, :main, true)
     {"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)}
   end
 
-  defp convert_highlight_type(%{id: id} = _listing, %{
+  defp convert_attribute(:highlight, %{id: id}, %{
          highlight_ids: highlight_ids,
          super_highlight_ids: super_highlight_ids
        }) do
