@@ -56,7 +56,4 @@ defmodule ReWeb.Types.Dashboard do
       resolve &DashboardResolvers.upload_factors_csv/2
     end
   end
-
-  object :dashboard_subscriptions do
-  end
 end
