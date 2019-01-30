@@ -6,7 +6,6 @@ defmodule ReWeb.Exporters.Vivareal.Plug do
 
   alias Re.{
     Exporters.Vivareal,
-    Filtering,
     Listings.Exporter,
     Listings.Highlights,
     Listings.Queries
@@ -22,7 +21,7 @@ defmodule ReWeb.Exporters.Vivareal.Plug do
     highlights_size = Highlights.get_vivareal_highlights_size(city_slug)
 
     options =
-      mount_query(filters)
+      Queries.highlights(filters)
       |> get_highlights(highlights_size)
 
     xml_listings =
@@ -43,13 +42,6 @@ defmodule ReWeb.Exporters.Vivareal.Plug do
     conn
     |> put_resp_content_type("application/xml")
     |> send_resp(404, error_response)
-  end
-
-  defp mount_query(filters) do
-    Queries.active()
-    |> Filtering.apply(filters)
-    |> Queries.preload_relations([:address])
-    |> Queries.order_by_id()
   end
 
   defp get_highlights(query, highlights_size) do

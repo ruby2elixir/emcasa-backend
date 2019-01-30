@@ -39,7 +39,7 @@ config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
 config :re,
   visualizations: Re.TestVisualizations,
   account_kit: Re.TestAccountKit,
-  vivareal_highlights_size_rio_de_janeiro: 10
+  vivareal_highlights_size_rio_de_janeiro: 10,
   vivareal_highlights_size_sao_paulo: 10,
   zap_highlights_size_rio_de_janeiro: 10,
   zap_highlights_size_sao_paulo: 10,
