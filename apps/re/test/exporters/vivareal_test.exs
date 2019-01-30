@@ -7,8 +7,7 @@ defmodule Re.Exporters.VivarealTest do
     Exporters.Vivareal,
     Images,
     Listing,
-    Listings.Queries,
-    Repo
+    Listings.Queries
   }
 
   describe "build_xml/0" do
@@ -182,7 +181,6 @@ defmodule Re.Exporters.VivarealTest do
               lng: -46.659864
             ),
           images: images,
-          vivareal_highlight: true,
           description: "descr",
           area: 50,
           price: 1_000_000,
