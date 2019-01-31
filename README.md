@@ -31,8 +31,7 @@
 
 ## Run
 
-* Prepare database with `mix ecto.create`
-* Apply all migrations `mix ecto.migrate`
+* Prepare database with `mix ecto.setup`
 * Start Phoenix endpoint with `mix phx.server`
 * Check `http://localhost:4000/graphql_api`
 * WebSocket subscriptions at `ws://localhost:4000/socket`
@@ -47,6 +46,18 @@ To enable `https` locally, it's necessary to add `priv/cert/dev/dev_cert_ca.cert
 * Firefox: [add root to firefox][3]
 
 Now it's time to update our `/etc/hosts` (or `C:\Windows\System32\drivers\etc\hosts`), and add an entry mapping `dev.emcasa.com` to `127.0.0.1`.
+
+### Using docker
+
+If you prefer working with `docker` it's possible to use `docker-compose` to start all services needed with: `docker-compose up -d`
+
+The first time this command is executed, it will build the `emcasa/backend:dev` image and install all dependecies.
+
+To check the `status` of all services use the command: `docker-compose ps`.
+
+If you need to rebuild the backend image (maybe because we added a new dependency), just type: `docker-compose build`.
+
+At last, to start the backend use: `docker-compose exec backend mix phx.server`.
 
 ## Production
 
