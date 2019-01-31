@@ -5,7 +5,7 @@ services:
     image: 'postgres:9.6-alpine'
     hostname: &pg_hostname db
     volumes:
-      - './priv/postgres/init-emcasa.sql:/docker-entrypoint-initdb.d/init-emcasa.sql'
+      - './priv/docker/postgres/init-emcasa.sql:/docker-entrypoint-initdb.d/init-emcasa.sql'
       - 'db_data:/var/lib/postgresql/data'
     environment:
       POSTGRES_USER: &pg_username postgres
@@ -51,8 +51,8 @@ services:
     depends_on:
       - backend
     volumes:
-      - './priv/certs/dev:/etc/emcasa'
-      - './priv/caddy/Caddyfile:/etc/Caddyfile'
+      - './priv/docker/certs/dev:/etc/emcasa'
+      - './priv/docker/caddy/Caddyfile:/etc/Caddyfile'
     hostname: app
     ports:
       - '80:80'

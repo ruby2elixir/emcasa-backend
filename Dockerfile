@@ -35,6 +35,6 @@ RUN mix compile
 EXPOSE 4000
 
 # execution copy scripts
-COPY priv/scripts/wait-for-it.sh /usr/local/bin/
-COPY priv/scripts/docker-entrypoint.sh /usr/local/bin/
+COPY priv/docker/scripts/wait-for-it.sh /usr/local/bin/
+COPY priv/docker/scripts/docker-entrypoint.sh /usr/local/bin/
 CMD ["/usr/local/bin/docker-entrypoint.sh"]
