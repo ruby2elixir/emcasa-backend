@@ -37,6 +37,7 @@ config :re_tags, ReTags.Repo,
   ssl: true
 
 config :eventstore, EventStore.Storage,
+  serializer: Commanded.Serialization.JsonSerializer,
   url: System.get_env("HEROKU_POSTGRESQL_WHITE_URL"),
   pool_size: String.to_integer(System.get_env("TAGS_EVENTSTORE_POOL_SIZE") || "5"),
   ssl: true
