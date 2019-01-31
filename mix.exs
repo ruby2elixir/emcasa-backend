@@ -22,12 +22,31 @@ defmodule Re.Umbrella.Mixfile do
 
   defp aliases do
     [
-      "git.hook": &git_hook/1
+      "git.hook": &git_hook/1,
+      compose: &compose/1
     ]
   end
 
   defp git_hook(_) do
     Mix.shell().cmd("cp priv/git/pre-commit .git/hooks/pre-commit")
     Mix.shell().cmd("chmod +x .git/hooks/pre-commit")
+  end
+
+  @compose_commands ~w(up down ps build)
+
+  defp compose(["server"]) do
+    Mix.shell().cmd("docker-compose exec backend mix phx.server")
+  end
+
+  defp compose([cmd]) when cmd in @compose_commands do
+    Mix.shell().cmd("docker-compose #{cmd}")
+  end
+
+  defp compose([cmd]) do
+    Mix.shell().info("Command #{cmd} not available.")
+  end
+
+  defp compose(_) do
+    Mix.shell().info("Use one of compose subcommands: server, #{Enum.join(@compose_commands, ", ")}")
   end
 end

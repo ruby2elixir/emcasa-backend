@@ -59,6 +59,14 @@ If you need to rebuild the backend image (maybe because we added a new dependenc
 
 At last, to start the backend use: `docker-compose exec backend mix phx.server`.
 
+If you prefer, mix has some aliases for the common commands:
+
+* `mix compose server`: start the phoenix server in `backend` service
+* `mix compose build`: build a new `backend` image.
+* `mix compose up`: start all services.
+* `mix compose down`: stop all services.
+* `mix compose ps`: check `status` for all services.
+
 ## Production
 
 To see backend endpoint in production: `https://api.emcasa.com/`
