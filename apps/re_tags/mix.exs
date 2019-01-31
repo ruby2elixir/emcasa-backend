@@ -27,7 +27,8 @@ defmodule ReTags.MixProject do
     [
       {:ecto, "~> 2.2"},
       {:postgrex, "~> 0.13"},
-      {:eventstore, "~> 0.15"}
+      {:eventstore, "~> 0.15"},
+      {:timber, "~> 3.0.0"},
     ]
   end
 
