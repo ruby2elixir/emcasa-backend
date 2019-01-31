@@ -61,9 +61,17 @@ defmodule ReWeb.Mixfile do
 
   defp aliases do
     [
+      "event_store.reset": ["event_store.drop", "event_store.create", "event_store.init"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      setup: [
+        "event_store.create --quiet",
+        "event_store.init --quiet",
+        "ecto.create --quiet",
+        "ecto.migrate --quiet"
+      ],
+      reset: ["event_store.drop", "ecto.drop", "setup"],
+      test: ["setup", "test"]
     ]
   end
 end

@@ -1,29 +1,28 @@
-defmodule Re.Mixfile do
+defmodule ReTags.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :re,
-      version: "0.0.1",
+      app: :re_tags,
+      version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.6",
+      elixir: "~> 1.7",
+      start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps(),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [coveralls: :test]
+      deps: deps()
     ]
   end
 
   def application do
     [
-      mod: {Re.Application, []},
+      mod: {ReTags.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -33,26 +32,10 @@ defmodule Re.Mixfile do
 
   defp deps do
     [
-      {:ecto, "~> 1.0 or ~> 2.0 or ~> 2.1"},
-      {:postgrex, ">= 0.0.0"},
-      {:comeonin, "~> 3.2"},
-      {:ex_machina, "~> 2.1", only: :test},
-      {:bodyguard, "~> 2.1"},
-      {:faker, "~> 0.9.0", only: :test},
-      {:email_checker, "~> 0.1"},
-      {:dataloader, "~> 1.0"},
-      {:currency_formatter, "~> 0.4"},
+      {:ecto, "~> 2.2"},
+      {:postgrex, "~> 0.13"},
+      {:eventstore, "~> 0.15"},
       {:timber, "~> 3.0.0"},
-      {:timber_ecto, "~> 1.0"},
-      {:nimble_csv, "~> 0.3"},
-      {:timex, "~> 3.3"},
-      {:tzdata, "~> 0.5"},
-      {:account_kit, github: "rhnonose/account_kit"},
-      {:xml_builder, "~> 2.1"},
-      {:honeybadger, "~> 0.10"},
-      {:uuid, "~> 1.1"},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:scrivener_ecto, "~> 1.3"}
     ]
   end
 
