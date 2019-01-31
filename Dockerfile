@@ -30,3 +30,11 @@ RUN mix deps.get \
 # app copy code
 COPY . /opt/emcasa/backend
 RUN mix compile
+
+# app expose server port
+EXPOSE 4000
+
+# execution copy scripts
+COPY priv/scripts/wait-for-it.sh /usr/local/bin/
+COPY priv/scripts/docker-entrypoint.sh /usr/local/bin/
+CMD ["/usr/local/bin/docker-entrypoint.sh"]

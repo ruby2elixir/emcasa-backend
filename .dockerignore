@@ -9,6 +9,3 @@ releases
 
 # erlarng artifacts
 erl_crash.dump
-
-# app dirs
-priv
