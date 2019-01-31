@@ -40,7 +40,7 @@ config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
 config :email_checker, validations: [EmailChecker.Check.Format]
 
 config :re_integrations, ReIntegrations.Search.Cluster,
-  url: "http://localhost:9200",
+  url: "http://#{System.get_env("ELASTICSEARCH_HOSTNAME") || "localhost"}:9200",
   api: Elasticsearch.API.HTTP,
   json_library: Poison,
   indexes: %{

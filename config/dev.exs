@@ -17,10 +17,10 @@ config :phoenix, :stacktrace_depth, 20
 
 config :re, Re.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: System.get_env("POSTGRES_USERNAME") || "postgres",
+  password: System.get_env("POSTGRES_PASSWORD") || "postgres",
   database: "re_dev",
-  hostname: "localhost",
+  hostname: System.get_env("POSTGRES_HOSTNAME") || "localhost",
   pool_size: 10
 
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Local

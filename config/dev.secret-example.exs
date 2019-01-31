@@ -8,7 +8,7 @@ use Mix.Config
 # iex -S mix phx.server
 # then run
 # JOSE.JWS.generate_key(%{"alg" => "ES512"}) |> JOSE.JWK.to_map |> elem(1)
-#  and copy the hashes for "d", "x", and "y".
+# and copy the hashes for "d", "x", and "y".
 
 config :re_web, ReWeb.Guardian,
   allowed_algos: ["ES512"],

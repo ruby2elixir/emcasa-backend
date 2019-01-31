@@ -24,10 +24,10 @@ config :re_web, ReWeb.Guardian,
 
 config :re, Re.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: System.get_env("POSTGRES_USERNAME") || "postgres",
+  password: System.get_env("POSTGRES_PASSWORD") || "postgres",
   database: "re_test",
-  hostname: "localhost",
+  hostname: System.get_env("POSTGRES_HOSTNAME") || "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :account_kit,
