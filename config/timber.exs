@@ -6,8 +6,6 @@ config :re_web, ReWeb.Endpoint, instrumenters: [Timber.Phoenix]
 # Structure Ecto logs
 config :re, Re.Repo, loggers: [{Timber.Ecto, :log, []}]
 
-config :re_tags, ReTags.Repo, loggers: [{Timber.Ecto, :log, []}]
-
 # Use Timber as the logger backend
 # Feel free to add additional backends if you want to send you logs to multiple devices.
 # Use the `:console` backend provided with Logger but customize

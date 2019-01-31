@@ -30,18 +30,6 @@ config :re, Re.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
-config :re_tags, ReTags.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  url: System.get_env("HEROKU_POSTGRESQL_WHITE_URL"),
-  pool_size: String.to_integer(System.get_env("TAGS_POOL_SIZE") || "5"),
-  ssl: true
-
-config :eventstore, EventStore.Storage,
-  serializer: Commanded.Serialization.JsonSerializer,
-  url: System.get_env("HEROKU_POSTGRESQL_WHITE_URL"),
-  pool_size: String.to_integer(System.get_env("TAGS_EVENTSTORE_POOL_SIZE") || "5"),
-  ssl: true
-
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: System.get_env("SEND_GRID_API_KEY")

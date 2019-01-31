@@ -30,23 +30,6 @@ config :re, Re.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
-config :re_tags, ReTags.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "re_tags_readstore_test",
-  hostname: "localhost",
-  pool_size: 10
-
-config :eventstore, EventStore.Storage,
-  serializer: Commanded.Serialization.JsonSerializer,
-  username: "postgres",
-  password: "postgres",
-  database: "re_tags_eventstore_test",
-  hostname: "localhost",
-  pool_size: 10
-
-
 config :account_kit,
   app_id: "123"
 
