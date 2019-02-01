@@ -35,6 +35,13 @@ services:
       args:
         VCS_REF: ${VCS_REF:-by-docker-compose}
         BUILD_DATE: ${BUILD_DATE:-1978-12-15T03:00:00Z}
+    networks:
+      reverse:
+        aliases:
+          - backend
+      default:
+        aliases:
+          - backend
     depends_on:
       - db
       - es
@@ -48,6 +55,16 @@ services:
     hostname: backend
   app:
     image: 'abiosoft/caddy:0.11.2'
+    networks:
+      reverse:
+        aliases:
+          - app
+          - dev.emcasa.com
+          - local.emcasa.com
+          - kibana.local.emcasa.com
+      default:
+        aliases:
+          - app
     depends_on:
       - backend
     volumes:
@@ -60,3 +77,5 @@ services:
 volumes:
   db_data:
   es_data:
+networks:
+  reverse:
