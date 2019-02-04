@@ -45,7 +45,9 @@ To enable `https` locally, it's necessary to add `priv/cert/dev/dev_cert_ca.cert
 * Linux (debian/ubuntu): [how to import ca root certificate][2]
 * Firefox: [add root to firefox][3]
 
-Now it's time to update our `/etc/hosts` (or `C:\Windows\System32\drivers\etc\hosts`), and add an entry mapping `dev.emcasa.com` to `127.0.0.1`.
+Now it's time to update our `/etc/hosts` (or `C:\Windows\System32\drivers\etc\hosts`), and add an entry mapping `dev.emcasa.com`, `api.dev.emcasa.com`, and `kibana.dev.emcasa.com` to `127.0.0.1`.
+
+After enabling `https`, the backend will be available in [https://api.dev.emcasa.com](https://api.dev.emcasa.com).
 
 ### Using docker
 

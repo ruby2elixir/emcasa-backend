@@ -1,7 +1,23 @@
-0.0.0.0:80, 0.0.0.0:443, dev.emcasa.com:80, dev.emcasa.com:443 {
+0.0.0.0:80, 0.0.0.0:443, api.dev.emcasa.com:80, api.dev.emcasa.com:443 {
     log stdout
-    errors stdour
+    errors stdout
 
     tls /etc/emcasa/dev.emcasa.com.cert.pem /etc/emcasa/dev.emcasa.com.key.pem
     proxy / backend:4000
+}
+
+dev.emcasa.com:80, dev.emcasa.com:443 {
+    log stdout
+    errors stdout
+
+    tls /etc/emcasa/dev.emcasa.com.cert.pem /etc/emcasa/dev.emcasa.com.key.pem
+    proxy / frontend:4000
+}
+
+kibana.dev.emcasa.com:80, kibana.dev.emcasa.com:443 {
+    log stdout
+    errors stdout
+
+    tls /etc/emcasa/dev.emcasa.com.cert.pem /etc/emcasa/dev.emcasa.com.key.pem
+    proxy / kibana:5601
 }
