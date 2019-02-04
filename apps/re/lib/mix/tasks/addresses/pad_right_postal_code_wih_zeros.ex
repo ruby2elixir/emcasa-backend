@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Re.FixInvalidPostalCodes do
+defmodule Mix.Tasks.Re.Addresses.PadRightPostalCodeWithZeros do
   use Mix.Task
   import Mix.Ecto
   require Logger

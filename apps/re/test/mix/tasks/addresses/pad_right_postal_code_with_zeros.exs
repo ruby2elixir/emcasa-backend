@@ -1,4 +1,4 @@
-defmodule Re.Tasks.Re.FixInvalidPostalCodesTest do
+defmodule Re.Tasks.Re.Addresses.PadRightPostalCodeWithZeros do
   use Re.ModelCase
 
   alias Re.{
@@ -22,15 +22,14 @@ defmodule Re.Tasks.Re.FixInvalidPostalCodesTest do
 
       listing = Repo.get(Listing, listing_id)
 
-      %{listings: [%{id: returned_listing_id}]} =
-        Repo.get(Address, valid_address_id)
+      %{listings: [%{id: returned_listing_id}]} = Repo.get(Address, valid_address_id)
         |> Repo.preload(:listings)
 
       assert [listing_id] == [returned_listing_id]
-      assert ^valid_address_id = listing.address_id
+      assert valid_address_id == listing.address_id
     end
 
-    test "should delete old listing if is the only one" do
+    test "should remove the listing from invalid address" do
       params = params_for(:address, postal_code: "99999-000")
       invalid_params = Map.merge(params, %{postal_code: "99999"})
 
@@ -41,7 +40,8 @@ defmodule Re.Tasks.Re.FixInvalidPostalCodesTest do
 
       Mix.Tasks.Re.FixInvalidPostalCodes.run(nil)
 
-      invalid_address = Repo.get(Address, invalid_address_id) |> Repo.preload(:listings)
+      invalid_address = Repo.get(Address, invalid_address_id)
+        |> Repo.preload(:listings)
 
       assert [] == invalid_address.listings
     end
