@@ -47,6 +47,8 @@ defmodule Re.Umbrella.Mixfile do
   end
 
   defp compose(_) do
-    Mix.shell().info("Use one of compose subcommands: server, #{Enum.join(@compose_commands, ", ")}")
+    Mix.shell().info(
+      "Use one of compose subcommands: server, #{Enum.join(@compose_commands, ", ")}"
+    )
   end
 end
