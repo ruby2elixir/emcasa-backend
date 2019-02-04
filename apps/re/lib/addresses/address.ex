@@ -57,7 +57,6 @@ defmodule Re.Address do
     Enum.reduce(@sluggified_attr, changeset, &Slugs.generate_slug(&1, &2))
   end
 
-
   def pad_trailing_with_zeros(changeset) do
     postal_code = Ecto.Changeset.get_field(changeset, :postal_code, "")
 
