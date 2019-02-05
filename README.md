@@ -73,8 +73,6 @@ If you prefer, mix has some aliases for the common commands:
 
 To see backend endpoint in production: `https://api.emcasa.com/`
 
-At the moment, we're tracking tasks at https://www.pivotaltracker.com/n/projects/2125081
-
 ## Possible issues
 
 Use `asdf` or check the tools versions in `.tools-version`
