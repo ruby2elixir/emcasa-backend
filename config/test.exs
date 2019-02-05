@@ -49,9 +49,7 @@ config :re,
 config :re_integrations,
   http: ReIntegrations.TestHTTP,
   credipronto_simulator_url: "http://www.emcasa.com/simulator",
-  credipronto_account_id: "test_account_id"
-
-config :re_web,
+  credipronto_account_id: "test_account_id",
   pipedrive_webhook_user: "testuser",
   pipedrive_webhook_pass: "testpass"
 
