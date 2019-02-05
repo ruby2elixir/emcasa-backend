@@ -57,5 +57,29 @@ defmodule Re.Listings.HighlightsTest do
 
       assert [listing_1.id, listing_2.id] == Highlights.get_highlight_listing_ids()
     end
+
+    @valid_attributes %{
+      price: 1_999_999,
+      rooms: 3
+    }
+
+    @tag dev: true
+    test "should consider listings with prices bellow 2 millions" do
+      %{id: listing_id_valid} = insert(:listing, @valid_attributes)
+      invalid_attributes = Map.merge(@valid_attributes, %{price: 2_000_001})
+      insert(:listing, invalid_attributes)
+
+      assert [listing_id_valid] == Highlights.get_highlight_listing_ids()
+    end
+
+    @tag dev: true
+    test "should consider listings with less than 4 rooms" do
+      %{id: listing_id} = insert(:listing, @valid_attributes)
+
+      invalid_attributes = Map.merge(@valid_attributes, %{rooms: 4})
+      insert(:listing, invalid_attributes)
+
+      assert [listing_id] == Highlights.get_highlight_listing_ids()
+    end
   end
 end

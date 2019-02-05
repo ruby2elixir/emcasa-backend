@@ -42,6 +42,8 @@ defmodule Re.Listings.Highlights do
   defp get_highlights(params) do
     order = %{order_by: [%{field: :updated_at, type: :desc}]}
     filters = Map.get(params, :filters, %{})
+      |> Map.merge(%{max_price: 2_000_000})
+      |> Map.merge(%{max_rooms: 3})
 
     Queries.active()
     |> Filtering.apply(filters)
