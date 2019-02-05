@@ -39,11 +39,17 @@ defmodule Re.Listings.Highlights do
     |> Enum.map(& &1.id)
   end
 
+  @neighborhoods_slugs ~w(botafogo copacabana flamengo humaita ipanema lagoa laranjeiras leblon perdizes vila-pompeia)
+
   defp get_highlights(params) do
     order = %{order_by: [%{field: :updated_at, type: :desc}]}
-    filters = Map.get(params, :filters, %{})
+
+    filters =
+      Map.get(params, :filters, %{})
       |> Map.merge(%{max_price: 2_000_000})
       |> Map.merge(%{max_rooms: 3})
+      |> Map.merge(%{min_garage_spots: 1})
+      |> Map.merge(%{neighborhoods_slugs: @neighborhoods_slugs})
 
     Queries.active()
     |> Filtering.apply(filters)
