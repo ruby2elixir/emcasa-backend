@@ -12,6 +12,7 @@ defmodule Re.Listings.HighlightsTest do
     price: 1_999_999,
     rooms: 3,
     garage_spots: 1,
+    area: 100,
     address: %Address{
       neighborhood_slug: "botafogo",
       city_slug: "rio-de-janeiro",
@@ -23,6 +24,7 @@ defmodule Re.Listings.HighlightsTest do
     price: 2_000_000,
     rooms: 3,
     garage_spots: 2,
+    area: 100,
     address: %Address{
       neighborhood_slug: "perdizes",
       city_slug: "sao-paulo",

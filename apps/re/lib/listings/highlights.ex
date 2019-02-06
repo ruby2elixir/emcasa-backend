@@ -46,13 +46,18 @@ defmodule Re.Listings.Highlights do
   defp get_highlights(params) do
     filters = mount_filters(params)
 
-    Queries.active()
+    all_highlights = Queries.active()
     |> Filtering.apply(filters)
     |> Queries.preload_relations([:address])
-    |> Queries.limit(params)
-    |> Queries.offset(params)
     |> Repo.all()
     |> order_by_score()
+    |> Enum.drop(Map.get(params, :offset, 0))
+
+    if Map.has_key?(params, :page_size) do
+       Enum.take(all_highlights, Map.get(params, :page_size, 0))
+    else
+      all_highlights
+    end
   end
 
   defp order_by_score(highlights) do
@@ -74,7 +79,7 @@ defmodule Re.Listings.Highlights do
         neighborhood_slug: a.neighborhood_slug,
         average_price_by_neighborhood: fragment("avg(?/?)::float", l.price, l.area)
       },
-      where: l.is_active,
+      where: l.status == "active",
       group_by: a.neighborhood_slug
     )
     |> Re.Repo.all()
@@ -90,7 +95,6 @@ defmodule Re.Listings.Highlights do
   def calculate_highlight_score(listing, options) do
     max_id = Map.get(options, :max_id)
     average_price_per_area_by_neighborhood = Map.get(options, :average_price_by_neighborhood)
-
     calculate_recency_score(listing, max_id) + calculate_price_per_area_score(listing, average_price_per_area_by_neighborhood)
   end
 
