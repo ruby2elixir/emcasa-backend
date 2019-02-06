@@ -30,6 +30,7 @@ defmodule Re.Listings.Highlights do
 
   alias Re.{
     Filtering,
+    Listing,
     Listings.Queries,
     Repo
   }
@@ -39,25 +40,49 @@ defmodule Re.Listings.Highlights do
     |> Enum.map(& &1.id)
   end
 
-  @neighborhoods_slugs ~w(botafogo copacabana flamengo humaita ipanema lagoa laranjeiras leblon perdizes vila-pompeia)
-
   defp get_highlights(params) do
-    order = %{order_by: [%{field: :updated_at, type: :desc}]}
-
-    filters =
-      Map.get(params, :filters, %{})
-      |> Map.merge(%{max_price: 2_000_000})
-      |> Map.merge(%{max_rooms: 3})
-      |> Map.merge(%{min_garage_spots: 1})
-      |> Map.merge(%{neighborhoods_slugs: @neighborhoods_slugs})
+    filters = mount_filters(params)
 
     Queries.active()
     |> Filtering.apply(filters)
     |> Queries.preload_relations([:address])
-    |> Queries.order_by(order)
     |> Queries.limit(params)
     |> Queries.offset(params)
     |> Repo.all()
+    |> order_by_score()
+  end
+
+  defp order_by_score(highlights) do
+    max_id = get_max_id()
+
+    highlights
+    |> Enum.map(&%{listing: &1, score: calculate_highlight_score(&1, max_id)})
+    |> Enum.sort(&(&1.score >= &2.score))
+    |> Enum.map(& &1.listing)
+  end
+
+  defp get_max_id() do
+    Queries.active()
+    |> Queries.max_id()
+    |> Re.Repo.one()
+  end
+
+  def calculate_highlight_score(_, 0), do: 0
+
+  def calculate_highlight_score(%{id: listing_id}, max_id) when listing_id > max_id, do: 1
+
+  def calculate_highlight_score(%{id: listing_id}, max_id) do
+    listing_id / max_id
+  end
+
+  @neighborhoods_slugs ~w(botafogo copacabana flamengo humaita ipanema lagoa laranjeiras leblon perdizes vila-pompeia)
+
+  defp mount_filters(params) do
+    Map.get(params, :filters, %{})
+    |> Map.merge(%{max_price: 2_000_000})
+    |> Map.merge(%{max_rooms: 3})
+    |> Map.merge(%{min_garage_spots: 1})
+    |> Map.merge(%{neighborhoods_slugs: @neighborhoods_slugs})
   end
 
   def get_vivareal_highlights_size(city),

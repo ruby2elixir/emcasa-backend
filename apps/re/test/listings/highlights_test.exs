@@ -60,15 +60,6 @@ defmodule Re.Listings.HighlightsTest do
       assert 1 = length(result)
     end
 
-    test "should sort by updated_at" do
-      listing_params_1 = Map.merge(@valid_attributes_rj, %{updated_at: ~N[2019-01-01 15:30:00.000000]})
-      listing_1 = insert(:listing, listing_params_1)
-      listing_params_2 = Map.merge(@valid_attributes_rj, %{updated_at: ~N[2019-01-01 15:00:00.000000]})
-      listing_2 = insert(:listing, listing_params_2)
-
-      assert [listing_1.id, listing_2.id] == Highlights.get_highlight_listing_ids()
-    end
-
     test "should consider listings with prices bellow 2 millions" do
       %{id: listing_id_valid} = insert(:listing, @valid_attributes_rj)
 
@@ -131,5 +122,25 @@ defmodule Re.Listings.HighlightsTest do
 
       assert [listing_id_valid] == Highlights.get_highlight_listing_ids()
     end
+
+    test "should sort by recents" do
+      [%{id: listing_id_1}, %{id: listing_id_2}] = insert_list(2, :listing, @valid_attributes_rj)
+
+      assert [listing_id_2, listing_id_1] == Highlights.get_highlight_listing_ids()
+    end
+  end
+
+  describe "calculate_highlight_score/2" do
+    test "return the id normalized by max value" do
+      assert 0.5 == Highlights.calculate_highlight_score(%{id: 100}, 200)
+    end
+
+    test "division by zero always return zero" do
+      assert 0 == Highlights.calculate_highlight_score(%{id: 100}, 0)
+    end
+
+    test "limit division to one" do
+      assert 1 == Highlights.calculate_highlight_score(%{id: 100}, 10)
+     end
   end
 end

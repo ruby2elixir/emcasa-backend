@@ -70,6 +70,8 @@ defmodule Re.Listings.Queries do
 
   def excluding(query, _), do: query
 
+  def max_id(query), do: from(l in query, select: max(l.id))
+
   def limit(query, %{"page_size" => page_size}), do: from(l in query, limit: ^page_size)
 
   def limit(query, %{page_size: page_size}), do: from(l in query, limit: ^page_size)
