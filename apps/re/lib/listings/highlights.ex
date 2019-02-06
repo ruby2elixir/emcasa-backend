@@ -29,11 +29,14 @@ defmodule Re.Listings.Highlights do
                                        )
 
   alias Re.{
+    Address,
     Filtering,
     Listing,
     Listings.Queries,
     Repo
   }
+
+  import Ecto.Query
 
   def get_highlight_listing_ids(params \\ %{}) do
     get_highlights(params)
@@ -53,12 +56,29 @@ defmodule Re.Listings.Highlights do
   end
 
   defp order_by_score(highlights) do
-    max_id = get_max_id()
+    options =
+      Map.put(%{}, :max_id, get_max_id())
+      |> Map.put(:average_price_by_neighborhood, get_average_price_per_area_by_neighborhood())
 
     highlights
-    |> Enum.map(&%{listing: &1, score: calculate_highlight_score(&1, max_id)})
+    |> Enum.map(&%{listing: &1, score: calculate_highlight_score(&1, options)})
     |> Enum.sort(&(&1.score >= &2.score))
     |> Enum.map(& &1.listing)
+  end
+
+  defp get_average_price_per_area_by_neighborhood() do
+    from(
+      l in Listing,
+      inner_join: a in Address, on: a.id == l.address_id,
+      select: %{
+        neighborhood_slug: a.neighborhood_slug,
+        average_price_by_neighborhood: fragment("avg(?/?)::float", l.price, l.area)
+      },
+      where: l.is_active,
+      group_by: a.neighborhood_slug
+    )
+    |> Re.Repo.all()
+    |> Enum.reduce(%{}, fn item, acc -> Map.merge(acc, %{item.neighborhood_slug => item.average_price_by_neighborhood}) end)
   end
 
   defp get_max_id() do
@@ -67,12 +87,29 @@ defmodule Re.Listings.Highlights do
     |> Re.Repo.one()
   end
 
-  def calculate_highlight_score(_, 0), do: 0
+  def calculate_highlight_score(listing, options) do
+    max_id = Map.get(options, :max_id)
+    average_price_per_area_by_neighborhood = Map.get(options, :average_price_by_neighborhood)
 
-  def calculate_highlight_score(%{id: listing_id}, max_id) when listing_id > max_id, do: 1
+    calculate_recency_score(listing, max_id) + calculate_price_per_area_score(listing, average_price_per_area_by_neighborhood)
+  end
 
-  def calculate_highlight_score(%{id: listing_id}, max_id) do
+  def calculate_recency_score(_, 0), do: 0
+
+  def calculate_recency_score(%{id: listing_id}, max_id) when listing_id > max_id, do: 1
+
+  def calculate_recency_score(%{id: listing_id}, max_id) do
     listing_id / max_id
+  end
+
+  def calculate_price_per_area_score(%{price: 0}, _), do: 0
+
+  def calculate_price_per_area_score(%{area: 0}, _), do: 0
+
+  def calculate_price_per_area_score(%{price: price, area: area, address: address}, average_price_by_neighborhood) do
+    price_per_area = price / area
+    price_in_neighborhood = Map.get(average_price_by_neighborhood, address.neighborhood_slug, 0.0)
+    price_in_neighborhood / price_per_area
   end
 
   @neighborhoods_slugs ~w(botafogo copacabana flamengo humaita ipanema lagoa laranjeiras leblon perdizes vila-pompeia)
