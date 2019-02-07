@@ -4,6 +4,7 @@ defmodule Re.Listings.Queries do
   """
 
   alias Re.{
+    Filtering,
     Images,
     Interests,
     Listing
@@ -102,5 +103,18 @@ defmodule Re.Listings.Queries do
       join: a in assoc(l, :address),
       where: ^listing.address.city == a.city
     )
+  end
+
+  def average_price_per_area_by_neighborhood() do
+    active()
+    |> join(:inner, [l], a in assoc(l, :address))
+    |> select(
+      [l, a],
+      %{
+        neighborhood_slug: a.neighborhood_slug,
+        average_price_per_area: fragment("avg(?/?)::float", l.price, l.area)
+      }
+    )
+    |> group_by([l, a], a.neighborhood_slug)
   end
 end
