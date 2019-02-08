@@ -35,11 +35,13 @@ config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
   api_key: System.get_env("SEND_GRID_API_KEY")
 
 config :re,
-  vivareal_highlights_size_rio_de_janeiro: System.get_env("VIVAREAL_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
+  vivareal_highlights_size_rio_de_janeiro:
+    System.get_env("VIVAREAL_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
   vivareal_highlights_size_sao_paulo: System.get_env("VIVAREAL_HIGHLIGHTS_SIZE_SAO_PAULO"),
   zap_highlights_size_rio_de_janeiro: System.get_env("ZAP_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
   zap_highlights_size_sao_paulo: System.get_env("ZAP_HIGHLIGHTS_SIZE_SAO_PAULO"),
-  zap_super_highlights_size_rio_de_janeiro: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
+  zap_super_highlights_size_rio_de_janeiro:
+    System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
   zap_super_highlights_size_sao_paulo: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")
 
 config :re_integrations,
@@ -68,7 +70,3 @@ config :pigeon, :fcm,
 config :account_kit,
   app_id: System.get_env("FACEBOOK_APP_ID"),
   app_secret: System.get_env("ACCOUNT_KIT_APP_SECRET")
-
-config :honeybadger,
-  api_key: System.get_env("HONEYBADGER_API_KEY"),
-  environment_name: System.get_env("ENV")
