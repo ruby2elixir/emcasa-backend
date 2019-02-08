@@ -45,12 +45,13 @@ defmodule Re.Listings.Highlights do
   defp get_highlights(params) do
     filters = mount_filters(params)
 
-    all_highlights = Queries.active()
-    |> Filtering.apply(filters)
-    |> Queries.preload_relations([:address])
-    |> Repo.all()
-    |> order_by_score()
-    |> Enum.drop(Map.get(params, :offset, 0))
+    all_highlights =
+      Queries.active()
+      |> Filtering.apply(filters)
+      |> Queries.preload_relations([:address])
+      |> Repo.all()
+      |> order_by_score()
+      |> Enum.drop(Map.get(params, :offset, 0))
 
     if Map.has_key?(params, :page_size) do
       Enum.take(all_highlights, Map.get(params, :page_size, 0))

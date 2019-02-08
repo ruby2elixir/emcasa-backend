@@ -14,7 +14,7 @@ defmodule Re.Highlights.ScoresTest do
 
     test "limit division to one" do
       assert 1 == Scores.calculate_recency_score(%{id: 100}, 10)
-     end
+    end
   end
 
   describe "calculate_price_per_area_score/2" do
