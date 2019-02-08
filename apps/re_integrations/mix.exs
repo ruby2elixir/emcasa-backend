@@ -24,7 +24,7 @@ defmodule ReIntegrations.Mixfile do
   def application do
     [
       mod: {ReIntegrations.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :sentry]
     ]
   end
 
@@ -43,7 +43,7 @@ defmodule ReIntegrations.Mixfile do
       {:kadabra, "~> 0.4.2"},
       {:retry, "~> 0.10"},
       {:httpoison, "~> 1.3", override: true},
-      {:honeybadger, "~> 0.10"},
+      {:sentry, "~> 6.4"},
       {:jason, "~> 1.0"}
     ]
   end
