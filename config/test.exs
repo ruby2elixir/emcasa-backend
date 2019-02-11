@@ -33,8 +33,7 @@ config :re, Re.Repo,
 config :account_kit,
   app_id: "123"
 
-config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
-  adapter: Swoosh.Adapters.Test
+config :re_integrations, ReIntegrations.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Test
 
 config :re,
   visualizations: Re.TestVisualizations,
@@ -52,6 +51,3 @@ config :re_integrations,
   credipronto_account_id: "test_account_id",
   pipedrive_webhook_user: "testuser",
   pipedrive_webhook_pass: "testpass"
-
-config :honeybadger,
-  environment_name: :test
