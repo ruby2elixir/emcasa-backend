@@ -65,10 +65,13 @@ services:
     ports:
       - '4000:4000'
     environment:
+      ENV: development
+      ERF_AFLASG: '-kernel shell_history enabled'
       POSTGRES_USERNAME: *pg_username
       POSTGRES_PASSWORD: *pg_password
       POSTGRES_HOSTNAME: *pg_hostname
       ELASTICSEARCH_HOSTNAME: *es_hostname
+      SENTRY_DSN: ${SENTRY_DSN:-https://local@sentry/1}
     hostname: backend
   app:
     image: 'abiosoft/caddy:0.11.2'
@@ -92,7 +95,7 @@ services:
       - '80:80'
       - '443:443'
 volumes:
-  db_data:
-  es_data:
+  db_data: {}
+  es_data: {}
 networks:
-  reverse:
+  reverse: {}
