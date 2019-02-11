@@ -3,7 +3,7 @@ defmodule ReWeb.UserSocket do
   use Absinthe.Phoenix.Socket, schema: ReWeb.Schema
 
   def connect(params, socket) do
-    socket = Absinthe.Phoenix.Socket.put_options(socket, context: build_context(params))
+    socket = Absinthe.Phoenix.Socket.put_opts(socket, context: build_context(params))
 
     {:ok, socket}
   end
