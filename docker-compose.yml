@@ -2,7 +2,7 @@
 version: '3'
 services:
   db:
-    image: 'postgres:9.6-alpine'
+    image: 'postgres:10.6-alpine'
     hostname: &pg_hostname db
     volumes:
       - './priv/docker/postgres/init-emcasa.sql:/docker-entrypoint-initdb.d/init-emcasa.sql'
@@ -86,6 +86,7 @@ services:
           - app
     depends_on:
       - backend
+      - es
     volumes:
       - './priv/docker/certs/dev:/etc/emcasa'
       - './priv/docker/caddy/Caddyfile:/etc/Caddyfile'
