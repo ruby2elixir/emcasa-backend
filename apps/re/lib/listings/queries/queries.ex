@@ -4,7 +4,6 @@ defmodule Re.Listings.Queries do
   """
 
   alias Re.{
-    Filtering,
     Images,
     Interests,
     Listing

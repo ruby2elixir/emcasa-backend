@@ -29,9 +29,7 @@ defmodule Re.Listings.Highlights do
                                        )
 
   alias Re.{
-    Address,
     Filtering,
-    Listing,
     Listings.Highlights.Scores,
     Listings.Queries,
     Repo
