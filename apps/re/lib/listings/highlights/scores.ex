@@ -34,7 +34,7 @@ defmodule Re.Listings.Highlights.Scores do
   end
 
   @neighborhoods_slugs ~w(botafogo copacabana flamengo humaita ipanema lagoa laranjeiras leblon perdizes vila-pompeia)
-  @highlight_score_filters %{
+  @profile_score_filters %{
     max_price: 2_000_000,
     max_rooms: 3,
     min_garage_spots: 1,
@@ -43,7 +43,7 @@ defmodule Re.Listings.Highlights.Scores do
 
   defp get_average_price_per_area_by_neighborhood() do
     Queries.average_price_per_area_by_neighborhood()
-    |> Filtering.apply(@highlight_score_filters)
+    |> Filtering.apply(@profile_score_filters)
     |> Repo.all()
     |> Enum.reduce(%{}, fn item, acc ->
       Map.merge(acc, %{item.neighborhood_slug => item.average_price_per_area})
@@ -69,8 +69,15 @@ defmodule Re.Listings.Highlights.Scores do
     price_in_neighborhood / price_per_area
   end
 
-  def mount_filters(filters \\ %{}) do
+  def filter_with_profile_score(query, filters \\ %{}) do
+    updated_filters = mount_filter(filters)
+
+    query
+    |> Filtering.apply(updated_filters)
+  end
+
+  defp mount_filter(filters) do
     filters
-    |> Map.merge(@highlight_score_filters)
+    |> Map.merge(@profile_score_filters)
   end
 end

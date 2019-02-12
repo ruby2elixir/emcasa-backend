@@ -29,7 +29,6 @@ defmodule Re.Listings.Highlights do
                                        )
 
   alias Re.{
-    Filtering,
     Listings.Highlights.Scores,
     Listings.Queries,
     Repo
@@ -52,19 +51,12 @@ defmodule Re.Listings.Highlights do
   end
 
   defp get_all_highlights(params) do
-    filters = mount_filters(params)
-
     Queries.active()
-    |> Filtering.apply(filters)
+    |> Scores.filter_with_profile_score(Map.get(params, :filters, %{}))
     |> Queries.preload_relations([:address])
     |> Repo.all()
     |> Scores.order_highlights_by_scores()
     |> Enum.drop(Map.get(params, :offset, 0))
-  end
-
-  defp mount_filters(params) do
-    Map.get(params, :filters, %{})
-    |> Scores.mount_filters()
   end
 
   def get_vivareal_highlights_size(city),
