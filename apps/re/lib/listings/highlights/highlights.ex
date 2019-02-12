@@ -58,13 +58,8 @@ defmodule Re.Listings.Highlights do
     |> Filtering.apply(filters)
     |> Queries.preload_relations([:address])
     |> Repo.all()
-    |> order_by_score()
+    |> Scores.order_highlights_by_scores()
     |> Enum.drop(Map.get(params, :offset, 0))
-  end
-
-  defp order_by_score(highlights) do
-    highlights
-    |> Scores.calculate_highlights_scores()
   end
 
   defp mount_filters(params) do

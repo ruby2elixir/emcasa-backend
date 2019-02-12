@@ -5,7 +5,7 @@ defmodule Re.Listings.Highlights.Scores do
     Repo
   }
 
-  def calculate_highlights_scores(listings) do
+  def order_highlights_by_scores(listings) do
     options = %{
       max_id: get_max_id(),
       average_price_per_area_by_neighborhood: get_average_price_per_area_by_neighborhood()
