@@ -6,10 +6,23 @@ services:
     hostname: &pg_hostname db
     volumes:
       - './priv/docker/postgres/init-emcasa.sql:/docker-entrypoint-initdb.d/init-emcasa.sql'
+      - './priv/docker/postgres/dump:/opt/dump'
       - 'db_data:/var/lib/postgresql/data'
     environment:
       POSTGRES_USER: &pg_username postgres
       POSTGRES_PASSWORD: &pg_password postgres
+  pgcli:
+    image: 'pygmy/pgcli:stable'
+    depends_on:
+      - db
+    hostname: pgcli
+    environment:
+      PGHOST: *pg_hostname
+      PGDATABASE: re_dev
+      PGUSER: *pg_username
+      PGPASSWORD: *pg_password
+    entrypoint: sleep
+    command: 365d
   es:
     image: 'docker.elastic.co/elasticsearch/elasticsearch:6.5.4'
     hostname: &es_hostname es
@@ -65,8 +78,9 @@ services:
         aliases:
           - app
           - dev.emcasa.com
-          - local.emcasa.com
-          - kibana.local.emcasa.com
+          - api.dev.emcasa.com
+          - kibana.dev.emcasa.com
+          - sentry.dev.emcasa.com
       default:
         aliases:
           - app
@@ -80,7 +94,7 @@ services:
       - '80:80'
       - '443:443'
 volumes:
-  db_data:
-  es_data:
+  db_data: {}
+  es_data: {}
 networks:
-  reverse:
+  reverse: {}
