@@ -40,22 +40,26 @@ defmodule Re.Listings.Highlights do
     |> Enum.map(& &1.id)
   end
 
+  defp get_highlights(%{page_size: page_size} = params) do
+    params
+    |> get_all_highlights()
+    |> Enum.take(page_size)
+  end
+
   defp get_highlights(params) do
+    params
+    |> get_all_highlights()
+  end
+
+  defp get_all_highlights(params) do
     filters = mount_filters(params)
 
-    all_highlights =
-      Queries.active()
-      |> Filtering.apply(filters)
-      |> Queries.preload_relations([:address])
-      |> Repo.all()
-      |> order_by_score()
-      |> Enum.drop(Map.get(params, :offset, 0))
-
-    if Map.has_key?(params, :page_size) do
-      Enum.take(all_highlights, Map.get(params, :page_size, 0))
-    else
-      all_highlights
-    end
+    Queries.active()
+    |> Filtering.apply(filters)
+    |> Queries.preload_relations([:address])
+    |> Repo.all()
+    |> order_by_score()
+    |> Enum.drop(Map.get(params, :offset, 0))
   end
 
   defp order_by_score(highlights) do
