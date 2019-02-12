@@ -69,6 +69,14 @@ If you prefer, mix has some aliases for the common commands:
 * `mix compose down`: stop all services.
 * `mix compose ps`: check `status` for all services.
 
+### Load database backup
+
+To restore a database backup execute the command:
+
+```bash
+pg_restore -d re_dev --clean --no-owner --no-acl <path-to-backup-file>
+```
+
 ## Production
 
 To see backend endpoint in production: `https://api.emcasa.com/`
