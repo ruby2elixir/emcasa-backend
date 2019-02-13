@@ -6,6 +6,10 @@ _build
 deps
 releases
 *.ez
+.elixir_ls
 
-# erlarng artifacts
+# erlang artifacts
 erl_crash.dump
+
+# docker artifacts
+priv/docker/postgres/dump
