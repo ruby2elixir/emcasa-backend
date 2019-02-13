@@ -2,7 +2,8 @@ defmodule Re.Repo.Migrations.AddVilaPompeiaDistrict do
   use Ecto.Migration
 
   def up do
-    Re.Repo.insert(%Re.Addresses.District{
+    %Re.Addresses.District{}
+    |> Re.Addresses.District.changeset(%{
       state: "SP",
       city: "São Paulo",
       name: "Vila Pompéia",
@@ -14,6 +15,7 @@ defmodule Re.Repo.Migrations.AddVilaPompeiaDistrict do
       A Vila Pompéia é um bairro muito arborizado, tranquilo, de fácil acesso, com boas opções de comércio e com destaque para a vida cultural local. Com certeza, é o ambiente ideal tanto para jovens, quanto famílias que estão buscando um novo imóvel para morar.
       """
     })
+    |> Re.Repo.insert()
   end
 
   def down do
