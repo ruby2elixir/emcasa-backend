@@ -35,7 +35,8 @@ defmodule Re.Listings.Highlights do
   }
 
   def get_highlight_listing_ids(params \\ %{}) do
-    get_highlights(params)
+    params
+    |> get_highlights()
     |> Enum.map(& &1.id)
   end
 
@@ -46,8 +47,7 @@ defmodule Re.Listings.Highlights do
   end
 
   defp get_highlights(params) do
-    params
-    |> get_all_highlights()
+    get_all_highlights(params)
   end
 
   defp get_all_highlights(params) do

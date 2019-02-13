@@ -1,4 +1,9 @@
 defmodule Re.Listings.Highlights.Scores do
+  @moduledoc """
+  Define listing profile pattern for highlight eligibility and
+  set score to allow highlight ordering.
+  """
+
   alias Re.{
     Filtering,
     Listings.Queries,
@@ -72,12 +77,10 @@ defmodule Re.Listings.Highlights.Scores do
   def filter_with_profile_score(query, filters \\ %{}) do
     updated_filters = mount_filter(filters)
 
-    query
-    |> Filtering.apply(updated_filters)
+    Filtering.apply(query, updated_filters)
   end
 
   defp mount_filter(filters) do
-    filters
-    |> Map.merge(@profile_score_filters)
+    Map.merge(filters, @profile_score_filters)
   end
 end
