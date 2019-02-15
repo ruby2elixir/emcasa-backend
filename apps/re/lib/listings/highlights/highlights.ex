@@ -29,27 +29,34 @@ defmodule Re.Listings.Highlights do
                                        )
 
   alias Re.{
-    Filtering,
+    Listings.Highlights.Scores,
     Listings.Queries,
     Repo
   }
 
   def get_highlight_listing_ids(params \\ %{}) do
-    get_highlights(params)
+    params
+    |> get_highlights()
     |> Enum.map(& &1.id)
   end
 
-  defp get_highlights(params) do
-    order = %{order_by: [%{field: :updated_at, type: :desc}]}
-    filters = Map.get(params, :filters, %{})
+  defp get_highlights(%{page_size: page_size} = params) do
+    params
+    |> get_all_highlights()
+    |> Enum.take(page_size)
+  end
 
+  defp get_highlights(params) do
+    get_all_highlights(params)
+  end
+
+  defp get_all_highlights(params) do
     Queries.active()
-    |> Filtering.apply(filters)
+    |> Scores.filter_with_profile_score(Map.get(params, :filters, %{}))
     |> Queries.preload_relations([:address])
-    |> Queries.order_by(order)
-    |> Queries.limit(params)
-    |> Queries.offset(params)
     |> Repo.all()
+    |> Scores.order_highlights_by_scores()
+    |> Enum.drop(Map.get(params, :offset, 0))
   end
 
   def get_vivareal_highlights_size(city),
