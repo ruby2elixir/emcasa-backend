@@ -8,7 +8,8 @@ defmodule Re.Tasks.Re.Addresses.PadRightPostalCodeWithZeros do
   }
 
   import Re.Factory
-   describe "when address already exists" do
+
+  describe "when address already exists" do
     test "should point listing replace address no listing" do
       params = params_for(:address, postal_code: "99999-000")
       invalid_params = Map.merge(params, %{postal_code: "99999"})
@@ -22,7 +23,8 @@ defmodule Re.Tasks.Re.Addresses.PadRightPostalCodeWithZeros do
 
       listing = Repo.get(Listing, listing_id)
 
-      %{listings: [%{id: returned_listing_id}]} = Repo.get(Address, valid_address_id)
+      %{listings: [%{id: returned_listing_id}]} =
+        Repo.get(Address, valid_address_id)
         |> Repo.preload(:listings)
 
       assert [listing_id] == [returned_listing_id]
@@ -40,7 +42,8 @@ defmodule Re.Tasks.Re.Addresses.PadRightPostalCodeWithZeros do
 
       Mix.Tasks.Re.FixInvalidPostalCodes.run(nil)
 
-      invalid_address = Repo.get(Address, invalid_address_id)
+      invalid_address =
+        Repo.get(Address, invalid_address_id)
         |> Repo.preload(:listings)
 
       assert [] == invalid_address.listings
