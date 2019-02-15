@@ -22,6 +22,7 @@ defmodule Re.Factory do
 
   def listing_factory do
     %Re.Listing{
+      uuid: UUID.uuid4(),
       type: random(:listing_type),
       complement: Address.secondary_address(),
       description: Shakespeare.hamlet(),

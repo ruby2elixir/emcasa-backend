@@ -7,6 +7,7 @@ defmodule Re.Listing do
   import Ecto.Changeset
 
   schema "listings" do
+    field :uuid, :string
     field :type, :string
     field :complement, :string
     field :description, :string
@@ -74,6 +75,8 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
+    |> generate_uuid()
+    |> unique_constraint(:uuid, name: :uuid)
   end
 
   @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
@@ -96,7 +99,11 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
+    |> generate_uuid()
+    |> unique_constraint(:uuid, name: :uuid)
   end
+
+  def uuid_changeset(struct, params), do: cast(struct, params, ~w(uuid)a)
 
   @more_than_zero_attributes ~w(property_tax maintenance_fee
                                 bathrooms garage_spots suites
@@ -109,4 +116,6 @@ defmodule Re.Listing do
   defp greater_than(attr, changeset) do
     validate_number(changeset, attr, greater_than_or_equal_to: 0)
   end
+
+  defp generate_uuid(changeset), do: Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
 end
