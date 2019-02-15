@@ -329,6 +329,7 @@ defmodule Re.ListingsTest do
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.address_id == address.id
       assert retrieved_listing.user_id == user.id
+      assert retrieved_listing.uuid
     end
 
     test "should insert inactive for admin user" do
