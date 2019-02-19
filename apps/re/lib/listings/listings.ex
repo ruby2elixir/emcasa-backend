@@ -83,6 +83,9 @@ defmodule Re.Listings do
 
   def get_preloaded(id), do: do_get(Queries.preload_relations(), id)
 
+  def get_partial_preloaded(id, preload),
+    do: do_get(Queries.preload_relations(Listing, preload), id)
+
   def insert(params, address, user) do
     with {:ok, user} <- validate_phone_number(params, user),
          do: do_insert(params, address, user)

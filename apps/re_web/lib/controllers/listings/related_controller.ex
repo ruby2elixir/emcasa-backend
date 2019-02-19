@@ -7,10 +7,14 @@ defmodule ReWeb.RelatedController do
     Listings.Related
   }
 
+  @partial_preload [
+    :address
+  ]
+
   action_fallback(ReWeb.FallbackController)
 
   def index(conn, %{"listing_id" => id} = params, user) do
-    with {:ok, listing} <- Listings.get_preloaded(id),
+    with {:ok, listing} <- Listings.get_partial_preloaded(id, @partial_preload),
          params <- Map.put(params, "current_user", user),
          results <- Related.get(listing, params) do
       conn
