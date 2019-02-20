@@ -63,6 +63,7 @@ defmodule ReWeb.Router do
   scope "/exporters" do
     forward("/vivareal", ReWeb.Exporters.Vivareal.Plug)
     forward("/zap", ReWeb.Exporters.Zap.Plug)
+    forward("/trovit", ReWeb.Exporters.Trovit.Plug)
   end
 
   if Mix.env() == :dev do
