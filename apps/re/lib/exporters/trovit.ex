@@ -4,29 +4,37 @@ defmodule Re.Exporters.Trovit do
   """
 
   @exported_attributes ~w(id url title sell_type description price listing_type area rooms
-    bathrooms garage_spots state city neighborhood postal_code latitude longitude owner agency
-    pictures)a
+    bathrooms garage_spots state city neighborhood address postal_code latitude longitude
+    owner agency pictures)a
+  @default_options %{attributes: @exported_attributes}
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
+  @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
 
-  def export_listing_xml(listings, options \\ %{}) do
+  def export_listings_xml(listings, options \\ %{}) do
+    options = merge_default_options(options)
+
     listings
-    |> Enum.map(&build_xml(&1, options))
-    |> root_xml()
+    |> Enum.map(&build_node(&1, options))
+    |> build_root()
     |> XmlBuilder.document()
     |> XmlBuilder.generate(format: :none)
   end
 
-  def build_xml(listing, options) do
+  def merge_default_options(options) do
+    Map.merge(@default_options, options)
+  end
+
+  def build_node(listing, options) do
     {"ad", %{}, convert_attributes(listing, options)}
   end
 
-  defp root_xml(ads) do
-    {"trovit", %{}, ads}
+  defp build_root(nodes) do
+    {"trovit", %{}, nodes}
   end
 
-  def convert_attributes(listing, _) do
-    Enum.map(@exported_attributes, &convert_attribute_with_cdata(&1, listing))
+  def convert_attributes(listing, %{attributes: attributes}) do
+    Enum.map(attributes, &convert_attribute_with_cdata(&1, listing))
   end
 
   defp convert_attribute_with_cdata(:pictures = attr, listing) do
@@ -71,15 +79,15 @@ defmodule Re.Exporters.Trovit do
   end
 
   defp convert_attribute(:rooms, %{rooms: rooms}) do
-    {"rooms", %{}, rooms}
+    {"rooms", %{}, rooms || 0}
   end
 
   defp convert_attribute(:bathrooms, %{bathrooms: bathrooms}) do
-    {"bathrooms", %{}, bathrooms}
+    {"bathrooms", %{}, bathrooms || 0}
   end
 
   defp convert_attribute(:garage_spots, %{garage_spots: garage_spots}) do
-    {"parking", %{}, garage_spots}
+    {"parking", %{}, garage_spots || 0}
   end
 
   defp convert_attribute(:state, %{address: %{state: state}}) do
@@ -124,11 +132,12 @@ defmodule Re.Exporters.Trovit do
   end
 
   defp convert_attribute(:agency, _) do
-    # TODO (jpd): discover what an agency meas
+    # TODO (jpd): discover what an agency means
     {"agency", %{}, "-"}
   end
 
   defp build_url(path, param) do
+    # TODO (jpd): separate this method
     @frontend_url
     |> URI.merge(path)
     |> URI.merge(param)
@@ -144,10 +153,7 @@ defmodule Re.Exporters.Trovit do
       "picture",
       %{},
       [
-        {"picture_url", %{},
-         escape_cdata(
-           "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/#{filename}"
-         )},
+        {"picture_url", %{}, escape_cdata("#{@image_url}/#{filename}")},
         {"picture_title", %{}, escape_cdata(description)}
       ]
     }
