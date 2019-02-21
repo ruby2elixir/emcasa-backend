@@ -168,6 +168,10 @@ defmodule Re.Exporters.Trovit do
     }
   end
 
+  defp escape_cdata(nil) do
+    nil
+  end
+
   defp escape_cdata(value) when is_binary(value) do
     {:cdata, value}
   end
