@@ -5,7 +5,7 @@ defmodule Re.Exporters.Trovit do
 
   @exported_attributes ~w(id url title sell_type description price listing_type area rooms
     bathrooms garage_spots state city neighborhood address postal_code latitude longitude
-    owner agency pictures)a
+    owner agency virtual_tour pictures)a
   @default_options %{attributes: @exported_attributes}
 
   @listing_agency 0
@@ -13,6 +13,7 @@ defmodule Re.Exporters.Trovit do
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
+  @matterport_url "https://my.matterport.com/"
 
   def export_listings_xml(listings, options \\ %{}) do
     options = merge_default_options(options)
@@ -54,7 +55,7 @@ defmodule Re.Exporters.Trovit do
   end
 
   defp convert_attribute(:url, %{id: id}) do
-    {"url", %{}, build_url("/imoveis/", to_string(id))}
+    {"url", %{}, build_url(@frontend_url, "/imoveis/", to_string(id))}
   end
 
   defp convert_attribute(:title, %{type: type, address: %{city: city}}) do
@@ -121,6 +122,14 @@ defmodule Re.Exporters.Trovit do
     {"longitude", %{}, lng}
   end
 
+  defp convert_attribute(:virtual_tour, %{matterport_code: nil}) do
+    {"virtual_tour", %{}, nil}
+  end
+
+  defp convert_attribute(:virtual_tour, %{matterport_code: matterport_code}) do
+    {"virtual_tour", %{}, build_url(@matterport_url, "/show/", "?m=#{matterport_code}")}
+  end
+
   defp convert_attribute(:pictures, %{images: []}) do
     {"pictures", %{}, nil}
   end
@@ -137,9 +146,8 @@ defmodule Re.Exporters.Trovit do
     {"agency", %{}, "EmCasa.com"}
   end
 
-  defp build_url(path, param) do
-    # TODO (jpd): separate this method
-    @frontend_url
+  defp build_url(host, path, param) do
+    host
     |> URI.merge(path)
     |> URI.merge(param)
     |> URI.to_string()
