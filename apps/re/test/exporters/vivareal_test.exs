@@ -47,7 +47,7 @@ defmodule Re.Exporters.VivarealTest do
 
       expected_xml =
         "<Listing>" <>
-          "<ListingId>#{id}</ListingId>" <>
+          "<ListingID>#{id}</ListingID>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
           "<Featured>false</Featured>" <>
@@ -96,7 +96,7 @@ defmodule Re.Exporters.VivarealTest do
 
       expected_xml =
         "<Listing>" <>
-          "<ListingId>#{id}</ListingId>" <>
+          "<ListingID>#{id}</ListingID>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
           "<Featured>false</Featured>" <>
@@ -145,7 +145,7 @@ defmodule Re.Exporters.VivarealTest do
 
       expected_xml =
         "<Listing>" <>
-          "<ListingId>#{id}</ListingId>" <>
+          "<ListingID>#{id}</ListingID>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
           "<Featured>false</Featured>" <>
@@ -196,7 +196,7 @@ defmodule Re.Exporters.VivarealTest do
 
       expected_xml =
         "<Listing>" <>
-          "<ListingId>#{id}</ListingId>" <>
+          "<ListingID>#{id}</ListingID>" <>
           "<Title>Apartamento a venda em Rio de Janeiro</Title>" <>
           "<TransactionType>For Sale</TransactionType>" <>
           "<Featured>true</Featured>" <>
@@ -235,7 +235,7 @@ defmodule Re.Exporters.VivarealTest do
                ~s|<Email>rodrigo.nonose@emcasa.com</Email>| <>
                ~s|<ContactName>Rodrigo Nonose</ContactName>| <>
                ~s|</Header>| <>
-               ~s|<Listings><Listing><ListingId>#{listing.id}</ListingId></Listing></Listings></ListingDataFeed>| ==
+               ~s|<Listings><Listing><ListingID>#{listing.id}</ListingID></Listing></Listings></ListingDataFeed>| ==
                Vivareal.export_listings_xml(listings, %{attributes: ~w(id)a})
     end
 

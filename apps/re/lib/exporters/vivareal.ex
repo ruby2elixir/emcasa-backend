@@ -54,7 +54,7 @@ defmodule Re.Exporters.Vivareal do
     do: Enum.map(attributes, &convert_attribute(&1, listing, options))
 
   defp convert_attribute(:id, %{id: id}, _) do
-    {"ListingId", %{}, id}
+    {"ListingID", %{}, id}
   end
 
   defp convert_attribute(:title, %{type: type, address: %{city: city}}, _) do
