@@ -8,6 +8,9 @@ defmodule Re.Exporters.Trovit do
     owner agency pictures)a
   @default_options %{attributes: @exported_attributes}
 
+  @listing_agency 0
+  @listing_private 1
+
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
 
@@ -127,13 +130,11 @@ defmodule Re.Exporters.Trovit do
   end
 
   defp convert_attribute(:owner, _) do
-    # TODO (jpd): discover what an owner means
-    {"by_owner", %{}, "-"}
+    {"by_owner", %{}, @listing_agency}
   end
 
   defp convert_attribute(:agency, _) do
-    # TODO (jpd): discover what an agency means
-    {"agency", %{}, "-"}
+    {"agency", %{}, "EmCasa.com"}
   end
 
   defp build_url(path, param) do
