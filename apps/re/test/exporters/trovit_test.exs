@@ -35,6 +35,7 @@ defmodule Re.Exporters.TrovitTest do
           lat: 51.496401,
           lng: -0.179
         },
+        matterport_code: "mY123",
         images: [
           %Image{
             filename: "living_room.png",
@@ -67,8 +68,9 @@ defmodule Re.Exporters.TrovitTest do
           "<postcode><![CDATA[04732-192]]></postcode>" <>
           "<latitude><![CDATA[51.496401]]></latitude>" <>
           "<longitude><![CDATA[-0.179]]></longitude>" <>
-          "<by_owner><![CDATA[-]]></by_owner>" <>
-          "<agency><![CDATA[-]]></agency>" <>
+          "<by_owner><![CDATA[0]]></by_owner>" <>
+          "<agency><![CDATA[EmCasa.com]]></agency>" <>
+          "<virtual_tour><![CDATA[https://my.matterport.com/show/?m=mY123]]></virtual_tour>" <>
           "<pictures>" <>
           "<picture>" <>
           "<picture_url><![CDATA[#{@image_url}/living_room.png]]></picture_url>" <>
@@ -76,7 +78,7 @@ defmodule Re.Exporters.TrovitTest do
           "</picture>" <>
           "<picture>" <>
           "<picture_url><![CDATA[#{@image_url}/suite_1.png]]></picture_url>" <>
-          "<picture_title><![CDATA[]]></picture_title>" <>
+          "<picture_title/>" <>
           "</picture>" <>
           "</pictures>" <>
           "</ad>"
@@ -133,8 +135,9 @@ defmodule Re.Exporters.TrovitTest do
           "<postcode><![CDATA[04732-192]]></postcode>" <>
           "<latitude><![CDATA[51.496401]]></latitude>" <>
           "<longitude><![CDATA[-0.179]]></longitude>" <>
-          "<by_owner><![CDATA[-]]></by_owner>" <>
-          "<agency><![CDATA[-]]></agency>" <>
+          "<by_owner><![CDATA[0]]></by_owner>" <>
+          "<agency><![CDATA[EmCasa.com]]></agency>" <>
+          "<virtual_tour/>" <>
           "<pictures/>" <>
           "</ad>"
 
@@ -190,8 +193,9 @@ defmodule Re.Exporters.TrovitTest do
           "<postcode><![CDATA[04732-192]]></postcode>" <>
           "<latitude><![CDATA[51.496401]]></latitude>" <>
           "<longitude><![CDATA[-0.179]]></longitude>" <>
-          "<by_owner><![CDATA[-]]></by_owner>" <>
-          "<agency><![CDATA[-]]></agency>" <>
+          "<by_owner><![CDATA[0]]></by_owner>" <>
+          "<agency><![CDATA[EmCasa.com]]></agency>" <>
+          "<virtual_tour/>" <>
           "<pictures/>" <>
           "</ad>"
 

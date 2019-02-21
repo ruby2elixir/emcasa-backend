@@ -26,7 +26,7 @@ defmodule ReWeb.Exporters.Trovit.PlugTest do
 
   describe "without city and state slugs on path" do
     test "should return not found error", %{conn: conn} do
-      conn = get(conn, "/exporters/trovit/invalid")
+      conn = get(conn, "/exporters/trovit")
 
       assert response(conn, 404) == @error_message
     end
