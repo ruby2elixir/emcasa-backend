@@ -78,10 +78,7 @@ defmodule Re.Exporters.TrovitTest do
           "</picture>" <>
           "<picture>" <>
           "<picture_url><![CDATA[#{@image_url}/suite_1.png]]></picture_url>" <>
-          "<picture_title/>" <>
-          "</picture>" <>
-          "</pictures>" <>
-          "</ad>"
+          "<picture_title/>" <> "</picture>" <> "</pictures>" <> "</ad>"
 
       generated_xml =
         listing
@@ -137,9 +134,7 @@ defmodule Re.Exporters.TrovitTest do
           "<longitude><![CDATA[-0.179]]></longitude>" <>
           "<by_owner><![CDATA[0]]></by_owner>" <>
           "<agency><![CDATA[EmCasa.com]]></agency>" <>
-          "<virtual_tour/>" <>
-          "<pictures/>" <>
-          "</ad>"
+          "<virtual_tour/>" <> "<pictures/>" <> "</ad>"
 
       generated_xml =
         listing
@@ -195,9 +190,7 @@ defmodule Re.Exporters.TrovitTest do
           "<longitude><![CDATA[-0.179]]></longitude>" <>
           "<by_owner><![CDATA[0]]></by_owner>" <>
           "<agency><![CDATA[EmCasa.com]]></agency>" <>
-          "<virtual_tour/>" <>
-          "<pictures/>" <>
-          "</ad>"
+          "<virtual_tour/>" <> "<pictures/>" <> "</ad>"
 
       generated_xml =
         listing
