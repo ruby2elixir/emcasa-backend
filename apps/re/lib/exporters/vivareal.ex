@@ -131,7 +131,7 @@ defmodule Re.Exporters.Vivareal do
   end
 
   defp build_details(:description, acc, listing) do
-    [{"Description", %{}, "<![CDATA[" <> (listing.description || "") <> "]]>"} | acc]
+    [{"Description", %{}, {:cdata, listing.description || ""}} | acc]
   end
 
   defp build_details(:price, acc, listing) do
@@ -168,7 +168,7 @@ defmodule Re.Exporters.Vivareal do
   end
 
   defp build_details(:garage_spots, acc, listing) do
-    [{"Garage", %{}, listing.garage_spots || 0} | acc]
+    [{"Garage", %{type: "Parking Space"}, listing.garage_spots || 0} | acc]
   end
 
   defp build_image(%{filename: filename, description: description}) do
