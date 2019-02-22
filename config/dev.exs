@@ -21,6 +21,8 @@ config :re, Re.Repo,
   password: System.get_env("POSTGRES_PASSWORD") || "postgres",
   database: "re_dev",
   hostname: System.get_env("POSTGRES_HOSTNAME") || "localhost",
-  pool_size: 10
+  pool_size: 10,
+  migration_source: "old_schema_migrations"
 
-config :re_integrations, ReIntegrations.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Local
+config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
+  adapter: Swoosh.Adapters.Local

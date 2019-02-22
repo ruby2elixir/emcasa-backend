@@ -28,13 +28,13 @@ config :re, Re.Repo,
   password: System.get_env("POSTGRES_PASSWORD") || "postgres",
   database: "re_test",
   hostname: System.get_env("POSTGRES_HOSTNAME") || "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  migration_source: "old_schema_migrations"
 
 config :account_kit,
   app_id: "123"
 
-config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
-  adapter: Swoosh.Adapters.Test
+config :re_integrations, ReIntegrations.Notifications.Emails.Mailer, adapter: Swoosh.Adapters.Test
 
 config :re,
   visualizations: Re.TestVisualizations,
