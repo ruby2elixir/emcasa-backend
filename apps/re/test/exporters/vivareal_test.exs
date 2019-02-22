@@ -39,6 +39,7 @@ defmodule Re.Exporters.VivarealTest do
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          garage_spots: 2,
           inserted_at: ~N[2018-06-07 15:30:00.000000],
           updated_at: ~N[2018-06-07 15:30:00.000000],
           maintenance_fee: 1000.00,
@@ -88,6 +89,7 @@ defmodule Re.Exporters.VivarealTest do
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          garage_spots: 2,
           inserted_at: ~N[2018-06-07 15:30:00.000000],
           updated_at: ~N[2018-06-07 15:30:00.000000],
           maintenance_fee: nil,
@@ -137,6 +139,7 @@ defmodule Re.Exporters.VivarealTest do
           price: 1_000_000,
           rooms: nil,
           bathrooms: nil,
+          garage_spots: nil,
           inserted_at: ~N[2018-06-07 15:30:00.000000],
           updated_at: ~N[2018-06-07 15:30:00.000000],
           maintenance_fee: 1000.00,
@@ -186,6 +189,7 @@ defmodule Re.Exporters.VivarealTest do
           price: 1_000_000,
           rooms: nil,
           bathrooms: nil,
+          garage_spots: nil,
           inserted_at: ~N[2018-06-07 15:30:00.000000],
           updated_at: ~N[2018-06-07 15:30:00.000000],
           maintenance_fee: 1000.00,
@@ -263,32 +267,35 @@ defmodule Re.Exporters.VivarealTest do
   defp details_tags do
     "<Details>" <>
       "<PropertyType>Residential / Apartment</PropertyType>" <>
-      "<Description>&lt;![CDATA[descr]]&gt;</Description>" <>
+      "<Description><![CDATA[descr]]></Description>" <>
       "<ListPrice>1000000</ListPrice>" <>
       "<LivingArea unit=\"square metres\">50</LivingArea>" <>
       "<PropertyAdministrationFee currency=\"BRL\">1000</PropertyAdministrationFee>" <>
       "<YearlyTax currency=\"BRL\">1000</YearlyTax>" <>
-      "<Bedrooms>2</Bedrooms>" <> "<Bathrooms>2</Bathrooms>" <> "</Details>"
+      "<Bedrooms>2</Bedrooms>" <>
+      "<Bathrooms>2</Bathrooms>" <> "<Garage type=\"Parking Space\">2</Garage>" <> "</Details>"
   end
 
   defp details_tags_nils do
     "<Details>" <>
       "<PropertyType>Residential / Apartment</PropertyType>" <>
-      "<Description>&lt;![CDATA[]]&gt;</Description>" <>
+      "<Description><![CDATA[]]></Description>" <>
       "<ListPrice>1000000</ListPrice>" <>
       "<LivingArea unit=\"square metres\">50</LivingArea>" <>
-      "<Bedrooms>2</Bedrooms>" <> "<Bathrooms>2</Bathrooms>" <> "</Details>"
+      "<Bedrooms>2</Bedrooms>" <>
+      "<Bathrooms>2</Bathrooms>" <> "<Garage type=\"Parking Space\">2</Garage>" <> "</Details>"
   end
 
   defp rooms_nil_details_tags do
     "<Details>" <>
       "<PropertyType>Residential / Apartment</PropertyType>" <>
-      "<Description>&lt;![CDATA[descr]]&gt;</Description>" <>
+      "<Description><![CDATA[descr]]></Description>" <>
       "<ListPrice>1000000</ListPrice>" <>
       "<LivingArea unit=\"square metres\">50</LivingArea>" <>
       "<PropertyAdministrationFee currency=\"BRL\">1000</PropertyAdministrationFee>" <>
       "<YearlyTax currency=\"BRL\">1000</YearlyTax>" <>
-      "<Bedrooms>0</Bedrooms>" <> "<Bathrooms>0</Bathrooms>" <> "</Details>"
+      "<Bedrooms>0</Bedrooms>" <>
+      "<Bathrooms>0</Bathrooms>" <> "<Garage type=\"Parking Space\">0</Garage>" <> "</Details>"
   end
 
   defp location_tags do
