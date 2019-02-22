@@ -1,8 +1,6 @@
 defmodule Re.Exporters.TrovitTest do
   use Re.ModelCase
 
-  import Re.Factory
-
   alias Re.{
     Exporters.Trovit,
     Image,
