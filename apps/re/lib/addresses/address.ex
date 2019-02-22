@@ -24,6 +24,7 @@ defmodule Re.Address do
     field :state_slug, :string
 
     has_many :listings, Re.Listing
+    has_many :developments, Re.Development
 
     timestamps()
   end
