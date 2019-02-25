@@ -28,7 +28,7 @@ defmodule Re.Image do
     struct
     |> cast(params, @create_required ++ @create_optional)
     |> cast_assoc(:listing)
-    |> cast_assoc(:listing)
+    |> cast_assoc(:development)
     |> validate_required(@create_required)
   end
 
