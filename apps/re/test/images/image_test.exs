@@ -25,7 +25,7 @@ defmodule Re.ImageTest do
     end
 
     test "should be valid with development assoc" do
-      development_params = params_for(:development)
+      development_params = params_for(:development, %{address_id: 1})
       attrs = Map.put(@valid_attrs, :development, development_params)
       changeset = Image.create_changeset(%Image{}, attrs)
 
