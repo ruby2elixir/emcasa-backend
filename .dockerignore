@@ -13,3 +13,4 @@ erl_crash.dump
 
 # docker artifacts
 priv/docker/postgres/dump
+priv/personal
