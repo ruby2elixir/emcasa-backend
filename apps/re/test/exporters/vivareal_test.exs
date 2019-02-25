@@ -201,6 +201,64 @@ defmodule Re.Exporters.VivarealTest do
                |> Vivareal.build_xml(%{highlight_ids: highlight_ids})
                |> XmlBuilder.generate(format: :none)
     end
+
+    test "export listing of type casa" do
+      listing = %Listing{
+        type: "Casa",
+        images: [
+          %Image{filename: "test_1.jpg", description: nil}
+        ]
+      }
+
+      expected_xml =
+        "<Listing>" <>
+          "<Details>" <>
+          "<PropertyType>Residential / Home</PropertyType>" <>
+          "<Description><![CDATA[]]></Description>" <>
+          "<ListPrice/>" <>
+          "<LivingArea unit=\"square metres\"/>" <>
+          "<Bedrooms>0</Bedrooms>" <>
+          "<Bathrooms>0</Bathrooms>" <>
+          "<Garage type=\"Parking Space\">0</Garage>" <>
+          "</Details>" <>
+          "</Listing>"
+
+      created_xml =
+        listing
+        |> Vivareal.build_xml(%{attributes: ~w(details)a})
+        |> XmlBuilder.generate(format: :none)
+
+      assert expected_xml == created_xml
+    end
+
+    test "export listing of type cobertura" do
+      listing = %Listing{
+        type: "Cobertura",
+        images: [
+          %Image{filename: "test_1.jpg", description: nil}
+        ]
+      }
+
+      expected_xml =
+        "<Listing>" <>
+          "<Details>" <>
+          "<PropertyType>Residential / Penthouse</PropertyType>" <>
+          "<Description><![CDATA[]]></Description>" <>
+          "<ListPrice/>" <>
+          "<LivingArea unit=\"square metres\"/>" <>
+          "<Bedrooms>0</Bedrooms>" <>
+          "<Bathrooms>0</Bathrooms>" <>
+          "<Garage type=\"Parking Space\">0</Garage>" <>
+          "</Details>" <>
+          "</Listing>"
+
+      created_xml =
+        listing
+        |> Vivareal.build_xml(%{attributes: ~w(details)a})
+        |> XmlBuilder.generate(format: :none)
+
+      assert expected_xml == created_xml
+    end
   end
 
   describe "export_listings_xml/1" do
