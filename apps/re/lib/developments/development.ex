@@ -13,8 +13,10 @@ defmodule Re.Development do
     field :status, :string
     field :builder, :string
     field :description, :string
+
     belongs_to :address, Re.Address
 
+    has_many :images, Re.Image
     timestamps()
   end
 

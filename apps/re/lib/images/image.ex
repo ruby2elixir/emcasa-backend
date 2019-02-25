@@ -13,6 +13,7 @@ defmodule Re.Image do
     field :description, :string
 
     belongs_to :listing, Re.Listing
+    belongs_to :development, Re.Development
 
     timestamps()
   end
