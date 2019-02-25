@@ -15,8 +15,8 @@ defmodule Re.Development do
     field :description, :string
 
     belongs_to :address, Re.Address
-
     has_many :images, Re.Image
+
     timestamps()
   end
 
