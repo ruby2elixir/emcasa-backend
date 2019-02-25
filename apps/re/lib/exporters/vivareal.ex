@@ -178,6 +178,10 @@ defmodule Re.Exporters.Vivareal do
 
   defp translate_type("Apartamento"), do: "Apartment"
 
+  defp translate_type("Casa"), do: "Home"
+
+  defp translate_type("Cobertura"), do: "Penthouse"
+
   defp translate_type(_), do: "Other"
 
   defp expand_state("RJ"), do: "Rio de Janeiro"
