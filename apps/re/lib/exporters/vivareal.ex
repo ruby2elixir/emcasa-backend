@@ -5,6 +5,8 @@ defmodule Re.Exporters.Vivareal do
   @exported_attributes ~w(id title transaction_type highlight inserted_at updated_at detail_url
                           images details location contact_info)a
 
+  @listing_types ~w(Apartment Home Penthouse)
+
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
 
   @default_options %{attributes: @exported_attributes, highlight_ids: []}
@@ -176,9 +178,7 @@ defmodule Re.Exporters.Vivareal do
      "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename}
   end
 
-  defp translate_type("Apartamento"), do: "Apartment"
-
-  defp translate_type(_), do: "Other"
+  defp translate_type(type), do: Map.get(listing_type_map(), type, "Other")
 
   defp expand_state("RJ"), do: "Rio de Janeiro"
   defp expand_state("SP"), do: "São Paulo"
@@ -190,6 +190,9 @@ defmodule Re.Exporters.Vivareal do
     |> URI.merge(param)
     |> URI.to_string()
   end
+
+  def listing_type_map(),
+    do: Re.Listing.listing_types() |> Enum.zip(@listing_types) |> Enum.into(%{})
 
   defp merge_defaults(options) do
     Map.merge(@default_options, options)

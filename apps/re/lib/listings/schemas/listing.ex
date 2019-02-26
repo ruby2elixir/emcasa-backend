@@ -118,4 +118,6 @@ defmodule Re.Listing do
   end
 
   defp generate_uuid(changeset), do: Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
+
+  def listing_types(), do: @types
 end
