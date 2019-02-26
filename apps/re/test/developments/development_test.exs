@@ -8,7 +8,7 @@ defmodule Re.DevelopmentTest do
   @invalid_attrs %{
     name: "",
     title: "",
-    status: "unexpected",
+    phase: "unexpected",
     builder: "",
     description: ""
   }
@@ -16,7 +16,7 @@ defmodule Re.DevelopmentTest do
   @valid_attrs %{
     name: "Em casa development",
     title: "Em casa - living in your dream",
-    status: "pre-launch",
+    phase: "pre-launch",
     builder: "EmCasa",
     description: "description"
   }
@@ -36,7 +36,7 @@ defmodule Re.DevelopmentTest do
     changeset = Development.changeset(%Development{}, @invalid_attrs)
     refute changeset.valid?
 
-    assert Keyword.get(changeset.errors, :status) ==
+    assert Keyword.get(changeset.errors, :phase) ==
              {"should be one of: [pre-launch planning building delivered]",
               [validation: :inclusion]}
 

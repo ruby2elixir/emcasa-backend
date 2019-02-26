@@ -147,7 +147,7 @@ defmodule Re.Factory do
     %{
       name: Name.name(),
       title: Name.name(),
-      status: Enum.random(~w(pre-launch planning building delivered)),
+      phase: Enum.random(~w(pre-launch planning building delivered)),
       builder: Name.name(),
       description: Shakespeare.hamlet()
     }

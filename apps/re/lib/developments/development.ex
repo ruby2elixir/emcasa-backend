@@ -10,7 +10,7 @@ defmodule Re.Development do
   schema "developments" do
     field :name, :string
     field :title, :string
-    field :status, :string
+    field :phase, :string
     field :builder, :string
     field :description, :string
 
@@ -20,16 +20,16 @@ defmodule Re.Development do
     timestamps()
   end
 
-  @statuses ~w(pre-launch planning building delivered)
+  @phases ~w(pre-launch planning building delivered)
 
-  @required ~w(name title status builder description address_id)a
+  @required ~w(name title phase builder description address_id)a
 
   def changeset(struct, params) do
     struct
     |> cast(params, @required)
     |> validate_required(@required)
-    |> validate_inclusion(:status, @statuses,
-      message: "should be one of: [#{Enum.join(@statuses, " ")}]"
+    |> validate_inclusion(:phase, @phases,
+      message: "should be one of: [#{Enum.join(@phases, " ")}]"
     )
   end
 end

@@ -5,7 +5,7 @@ defmodule Re.Repo.Migrations.CreateDevelopments do
     create table(:developments) do
       add(:name, :string)
       add(:title, :string)
-      add(:status, :string)
+      add(:phase, :string)
       add(:builder, :string)
       add(:description, :text)
       add(:address_id, references(:addresses))
