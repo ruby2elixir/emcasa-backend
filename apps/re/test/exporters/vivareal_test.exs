@@ -1,39 +1,34 @@
 defmodule Re.Exporters.VivarealTest do
   use Re.ModelCase
 
-  import Re.Factory
-
   alias Re.{
+    Address,
     Exporters.Vivareal,
-    Images,
-    Listing,
-    Listings.Queries
+    Image,
+    Listing
   }
 
-  describe "build_xml/0" do
+  describe "build_xml/1" do
     test "export XML from listing" do
-      images = [
-        insert(:image, filename: "test1.jpg", description: "descr"),
-        insert(:image, filename: "test2.jpg", description: "descr"),
-        insert(:image, filename: "test3.jpg", description: "descr")
-      ]
-
       %{id: id} =
-        listing =
-        insert(:listing,
+        listing = %Listing{
+          id: 1,
           type: "Apartamento",
-          address:
-            build(:address,
-              city: "Rio de Janeiro",
-              state: "RJ",
-              neighborhood: "Copacabana",
-              street: "Avenida Atlântica",
-              street_number: "55",
-              postal_code: "11111-111",
-              lat: -23.5531131,
-              lng: -46.659864
-            ),
-          images: images,
+          address: %Address{
+            city: "Rio de Janeiro",
+            state: "RJ",
+            neighborhood: "Copacabana",
+            street: "Avenida Atlântica",
+            street_number: "55",
+            postal_code: "11111-111",
+            lat: -23.5531131,
+            lng: -46.659864
+          },
+          images: [
+            %Image{filename: "test1.jpg", description: "descr"},
+            %Image{filename: "test2.jpg", description: "descr"},
+            %Image{filename: "test3.jpg", description: "descr"}
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -44,7 +39,7 @@ defmodule Re.Exporters.VivarealTest do
           updated_at: ~N[2018-06-07 15:30:00.000000],
           maintenance_fee: 1000.00,
           property_tax: 1000.00
-        )
+        }
 
       expected_xml =
         "<Listing>" <>
@@ -62,28 +57,25 @@ defmodule Re.Exporters.VivarealTest do
     end
 
     test "export XML from listing with nil values" do
-      images = [
-        insert(:image, filename: "test1.jpg", description: "descr"),
-        insert(:image, filename: "test2.jpg", description: "descr"),
-        insert(:image, filename: "test3.jpg", description: "descr")
-      ]
-
       %{id: id} =
-        listing =
-        insert(:listing,
+        listing = %Listing{
+          id: 1,
           type: "Apartamento",
-          address:
-            build(:address,
-              city: "Rio de Janeiro",
-              state: "RJ",
-              neighborhood: "Copacabana",
-              street: "Avenida Atlântica",
-              street_number: "55",
-              postal_code: "11111-111",
-              lat: -23.5531131,
-              lng: -46.659864
-            ),
-          images: images,
+          address: %Address{
+            city: "Rio de Janeiro",
+            state: "RJ",
+            neighborhood: "Copacabana",
+            street: "Avenida Atlântica",
+            street_number: "55",
+            postal_code: "11111-111",
+            lat: -23.5531131,
+            lng: -46.659864
+          },
+          images: [
+            %Image{filename: "test1.jpg", description: "descr"},
+            %Image{filename: "test2.jpg", description: "descr"},
+            %Image{filename: "test3.jpg", description: "descr"}
+          ],
           description: nil,
           area: 50,
           price: 1_000_000,
@@ -94,7 +86,7 @@ defmodule Re.Exporters.VivarealTest do
           updated_at: ~N[2018-06-07 15:30:00.000000],
           maintenance_fee: nil,
           property_tax: nil
-        )
+        }
 
       expected_xml =
         "<Listing>" <>
@@ -112,28 +104,25 @@ defmodule Re.Exporters.VivarealTest do
     end
 
     test "export XML with nil bathrooms/rooms" do
-      images = [
-        insert(:image, filename: "test1.jpg", description: "descr"),
-        insert(:image, filename: "test2.jpg", description: "descr"),
-        insert(:image, filename: "test3.jpg", description: "descr")
-      ]
-
       %{id: id} =
-        listing =
-        insert(:listing,
+        listing = %Listing{
+          id: 1,
           type: "Apartamento",
-          address:
-            build(:address,
-              city: "Rio de Janeiro",
-              state: "RJ",
-              neighborhood: "Copacabana",
-              street: "Avenida Atlântica",
-              street_number: "55",
-              postal_code: "11111-111",
-              lat: -23.5531131,
-              lng: -46.659864
-            ),
-          images: images,
+          address: %Address{
+            city: "Rio de Janeiro",
+            state: "RJ",
+            neighborhood: "Copacabana",
+            street: "Avenida Atlântica",
+            street_number: "55",
+            postal_code: "11111-111",
+            lat: -23.5531131,
+            lng: -46.659864
+          },
+          images: [
+            %Image{filename: "test1.jpg", description: "descr"},
+            %Image{filename: "test2.jpg", description: "descr"},
+            %Image{filename: "test3.jpg", description: "descr"}
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -144,7 +133,7 @@ defmodule Re.Exporters.VivarealTest do
           updated_at: ~N[2018-06-07 15:30:00.000000],
           maintenance_fee: 1000.00,
           property_tax: 1000.00
-        )
+        }
 
       expected_xml =
         "<Listing>" <>
@@ -162,28 +151,25 @@ defmodule Re.Exporters.VivarealTest do
     end
 
     test "export listing with highlights" do
-      images = [
-        insert(:image, filename: "test1.jpg", description: "descr"),
-        insert(:image, filename: "test2.jpg", description: "descr"),
-        insert(:image, filename: "test3.jpg", description: "descr")
-      ]
-
       %{id: id} =
-        listing =
-        insert(:listing,
+        listing = %Listing{
+          id: 1,
           type: "Apartamento",
-          address:
-            build(:address,
-              city: "Rio de Janeiro",
-              state: "RJ",
-              neighborhood: "Copacabana",
-              street: "Avenida Atlântica",
-              street_number: "55",
-              postal_code: "11111-111",
-              lat: -23.5531131,
-              lng: -46.659864
-            ),
-          images: images,
+          address: %Address{
+            city: "Rio de Janeiro",
+            state: "RJ",
+            neighborhood: "Copacabana",
+            street: "Avenida Atlântica",
+            street_number: "55",
+            postal_code: "11111-111",
+            lat: -23.5531131,
+            lng: -46.659864
+          },
+          images: [
+            %Image{filename: "test1.jpg", description: "descr"},
+            %Image{filename: "test2.jpg", description: "descr"},
+            %Image{filename: "test3.jpg", description: "descr"}
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -194,7 +180,7 @@ defmodule Re.Exporters.VivarealTest do
           updated_at: ~N[2018-06-07 15:30:00.000000],
           maintenance_fee: 1000.00,
           property_tax: 1000.00
-        )
+        }
 
       highlight_ids = [id]
 
@@ -215,19 +201,46 @@ defmodule Re.Exporters.VivarealTest do
                |> Vivareal.build_xml(%{highlight_ids: highlight_ids})
                |> XmlBuilder.generate(format: :none)
     end
+
+    test "listing type is converted correctly" do
+      for listing_type <- Listing.listing_types() do
+        listing = %Listing{
+          type: listing_type,
+          images: [
+            %Image{filename: "test_1.jpg", description: nil}
+          ]
+        }
+
+        translated_type = Map.get(Vivareal.listing_type_map(), listing_type)
+
+        assert translated_type != nil
+
+        expected_xml =
+          "<Listing>" <>
+            "<Details>" <>
+            "<PropertyType>Residential / #{Map.get(Vivareal.listing_type_map(), listing_type)}</PropertyType>" <>
+            "<Description><![CDATA[]]></Description>" <>
+            "<ListPrice/>" <>
+            "<LivingArea unit=\"square metres\"/>" <>
+            "<Bedrooms>0</Bedrooms>" <>
+            "<Bathrooms>0</Bathrooms>" <>
+            "<Garage type=\"Parking Space\">0</Garage>" <>
+            "</Details>" <>
+            "</Listing>"
+
+        created_xml =
+          listing
+          |> Vivareal.build_xml(%{attributes: ~w(details)a})
+          |> XmlBuilder.generate(format: :none)
+
+        assert expected_xml == created_xml
+      end
+    end
   end
 
   describe "export_listings_xml/1" do
-    @preload [:address, images: Images.Queries.listing_preload()]
-
     test "should export listings wrapped" do
-      image = insert(:image, filename: "test1.jpg", description: "descr")
-      listing = insert(:listing, images: [image])
-
-      listings =
-        Listing
-        |> Queries.preload_relations(@preload)
-        |> Repo.all()
+      listing = %Listing{id: 1}
 
       assert ~s|<?xml version="1.0" encoding="UTF-8"?><ListingDataFeed | <>
                ~s|xmlns="http://www.vivareal.com/schemas/1.0/VRSync" | <>
@@ -240,16 +253,13 @@ defmodule Re.Exporters.VivarealTest do
                ~s|<ContactName>Rodrigo Nonose</ContactName>| <>
                ~s|</Header>| <>
                ~s|<Listings><Listing><ListingID>#{listing.id}</ListingID></Listing></Listings></ListingDataFeed>| ==
-               Vivareal.export_listings_xml(listings, %{attributes: ~w(id)a})
+               Vivareal.export_listings_xml([listing], %{attributes: ~w(id)a})
     end
 
     test "should not export listings without images" do
-      insert(:listing)
+      listing = %Listing{images: []}
 
-      listings =
-        Listing
-        |> Queries.preload_relations(@preload)
-        |> Repo.all()
+      listings = [listing]
 
       assert ~s|<?xml version="1.0" encoding="UTF-8"?><ListingDataFeed xmlns="http://www.vivareal.com/schemas/1.0/VRSync" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd"><Header><Provider>EmCasa</Provider><Email>rodrigo.nonose@emcasa.com</Email><ContactName>Rodrigo Nonose</ContactName></Header><Listings/></ListingDataFeed>| ==
                Vivareal.export_listings_xml(listings, ~w(images)a)
