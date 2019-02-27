@@ -1,133 +1,146 @@
-defmodule Re.Exporters.Imoveweb do
+defmodule Re.Exporters.Imovelweb do
+  @moduledoc """
+  Listing XML exporters for imovelweb
   """
-  <?xml version="1.0" encoding="iso-8859-1"?>
-  <Carga xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <Imoveis>
-      <Imovel>
-        <CodigoCentralVendas>XXXXXXX</CodigoCentralVendas><!-- Código identificador do cadastro da imobiliária no Imovelweb -->
-        <CodigoImovel>CA0002</CodigoImovel> <!-- Cada oferta deve ter um identificador único utilizado na carteira de imóveis da imobiliária -->
-        <TipoImovel>Casa</TipoImovel><!-- Verificar a tabela de Tipos e subtipos -->
-        <SubTipoImovel>Casa de Condomínio</SubTipoImovel><!-- Verificar a tabela de Tipos e subtipos -->
-        <TituloImovel><![CDATA[Casa Residencial à venda no São José dos Pinhais.]]></TituloImovel><!-- Nesta tag aceitamos até 50 caracteres -->
-        <Observacao>
-          <![CDATA[Casa em Condomínio fechado super ventilada, linda, e bem localizada; Casa contendo no 1° piso:  Sala ampla para 03 ambientes; Lareira; Cozinha toda mobiliada com tampo em granitto e fogão Cooktop; Despensa; Área de serviço toda com armários; Espaço Externo com churrasqueira; Escada toda em granitto; 2º Piso: 03 quartos, sendo 01 suíte com hidromassagem, closet e sacada; 02 quartos com sacada interligada; Banheiro social; 3° Piso: Amplo ático com banheiro e lareira; O Condomínio oferece: Salão de festas com churrasqueira, geladeira, microondas e banheiros; Quadra Poliesportiva; Salão de jogos com vestiários; Piscina Adulto e infantil; Trilha Ecológica de 1 km; 02 Nascentes; Fale com um de nossos consultores]]>
-        </Observacao>
-        <Modelo>Destaque</Modelo><!-- Nesta tag são aceitos 3 valores: SIMPLES, DESTAQUE e HOME(Modelo de anúncios disponíveis no Portal) -->
-        <UF>PR</UF><!--Obrigátorio -->
-        <Cidade><![CDATA[Curitiba]]></Cidade><!--Obrigátorio -->
-        <Bairro><![CDATA[Pilarzinho]]></Bairro><!-- Sem essa informação, a oferta será disponibilizada no BAIRRO centro -->
-        <Endereco><![CDATA[Rua Domingos Antônio Moro]]></Endereco>
-        <Numero>782</Numero>
-        <CEP>82115010</CEP>
-        <DivulgarEndereco>SIM</DivulgarEndereco> <!-- Nesta tag são aceitos 3 valores: SIM, NÃO e APROX(Exibe o nome da rua porém não mostra o número do imóvel) -->
-        <VisualizarMapa>1</VisualizarMapa><!-- Nesta tag são aceitos 2 valores: 1 e 0 -->
-        <Latitude>-25.3821201324462900000000000</Latitude><!-- Na ausência dessa tag, são necessários todas as informações de localidade (UF, Cidade, Bairro, CEP e endereço) para a geração automática do mapa no Portal-->
-        <Longitude>-49.2887039184570300000000000</Longitude><!-- Na ausência dessa tag, são necessários todas as informações de localidade (UF, Cidade, Bairro, CEP e endereço) para a geração automática do mapa no Portal-->
-        <PrecoVenda>1400000</PrecoVenda>
-        <PrecoCondominio>460</PrecoCondominio>
-        <AreaUtil>300</AreaUtil>
-        <AreaTotal>300</AreaTotal>
-        <IdadeImovel>29</IdadeImovel>
-        <!-- Em casos onde o sistema (integrador) envia a antiga tag (<AnoConstrucao>), nosso conversor aplicará o cálculo de forma automática.
-        Exemplo: DE <AnoConstrucao>1988</AnoConstrucao>
-        PARA <IdadeImovel>29</IdadeImovel>-->
-        <UnidadeMetrica>M2</UnidadeMetrica><!--Essa tag deve receber apenas duas informações (M2 ou ha). -->
-        <QtdDormitorios>3</QtdDormitorios>
-        <QtdSuites>1</QtdSuites>
-        <QtdBanheiros>2</QtdBanheiros>
-        <QtdVagas>2</QtdVagas>
-        <Fotos>
-          <Foto>
-            <NomeArquivo><![CDATA[590053053E3B]]></NomeArquivo>
-            <URLArquivo><![CDATA[http://cdn1.valuegaia.com.br/_Fotos/3053/3270/590053053E3BB1C1FE2319C4754FDBC602135BA72D2BE97ED.jpg]]></URLArquivo>
-            <Principal>1</Principal>
-            <Ordem>0</Ordem>
-          </Foto>
-          <Foto>
-            <NomeArquivo><![CDATA[5900530530D04AC75EC870DDE6BEE1]]></NomeArquivo>
-            <URLArquivo><![CDATA[http://cdn1.valuegaia.com.br/_Fotos/3053/3270/5900530530D04AC75EC870DD090EED9BFA1605E8351E6BEE1.jpg]]></URLArquivo>
-            <Principal>0</Principal>
-            <Ordem>1</Ordem>
-          </Foto>
-          <Foto>
-            <NomeArquivo><![CDATA[5900872722210B]]></NomeArquivo>
-            <URLArquivo><![CDATA[http://cdn1.valuegaia.com.br/_Fotos/3053/3270/590053053BA513D4509FF8781807E3CF4C5446F872722210B.jpg]]></URLArquivo>
-            <Principal>0</Principal>
-            <Ordem>2</Ordem>
-          </Foto>
-        </Fotos>
-        <Videos>
-          <Video>
-            <Descricao><![CDATA[Casa6969]]></Descricao>
-            <URLArquivo><![CDATA[http://www.youtube.com/embed/ZTJR4ckp6C4]]></URLArquivo><!-- É possível cadastrar apenas 1 vídeo (link do Youtube) por imóvel) -->
-            <Principal>1</Principal>
-          </Video>
-        </Videos>
-        <!--  Exemplos de "características" do imóvel -->
-        <!--  Consultar lista completa de características na planilha que acompanha este XML modelo -->
-        <Armariodecozinha>1</Armariodecozinha>
-        <Churrasqueira>1</Churrasqueira>
-        <Closet>1</Closet>
-        <Copa>1</Copa>
-        <Dependenciadeempregados>1</Dependenciadeempregados>
-        <Despensa>1</Despensa>
-        <Edicula>1</Edicula>
-        <Playground>1</Playground>
-        <Quintal>1</Quintal>
-        <Salaodefestas>1</Salaodefestas>
-        <SalaodeJogos>1</SalaodeJogos>
-        <Piscina>1</Piscina>
-      </Imovel>
-      <!-- ... outros imóveis ... -->
-    </Imoveis>
-  </Carga>
-  """
+
+  alias Re.Listing
 
   @exported_attributes ~w(internal_id id type subtype title description highlight state city neighborhood
     street street_number zipcode show_address lat lng show_map area_unity area price maintenance_fee rooms
     bathrooms garage_spots images tour)a
   @default_options %{attributes: @exported_attributes, highlight_id: []}
 
-  @frontend_url Application.get_env(:re_integration, :frontend_url)
-  @tour_url Application.get_env(:re_integration, :matterport_url)
-  @image_url Application.get_env(:re_integration, :image_url)
+  # NOTE (jpd): qual o nosso id
+  @imovelweb_id ""
+
+  @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/"
+  @tour_url "https://my.matterport.com"
 
   def export_listings_xml(listings, options \\ %{}) do
+    options = merge_default_options(options)
+
+    listings
+    |> Enum.map(&build_node(&1, options))
+    |> build_root()
+    |> XmlBuilder.document()
+    |> XmlBuilder.generate(format: :none)
   end
 
+  def merge_default_options(options), do: Map.merge(@default_options, options)
+
   def build_node(listing, options) do
+    {"Imovel", %{}, convert_attributes(listing, options)}
   end
 
   defp build_root(nodes) do
+    {"Carga",
+     %{
+       :"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
+       :"xmlns:xsd" => "http://www.w3.org/2001/XMLSchema"
+     }, [{"Imoveis", %{}, nodes}]}
   end
 
-  def convert_attributes(listing, %{attributes: attributes}) do
+  def convert_attributes(listing, %{attributes: attributes} = options) do
+    Enum.map(attributes, &convert_attribute(&1, listing, options))
   end
 
-  defp convert_attribute(:internal_id, listing, options), do: nil
-  defp convert_attribute(:id, listing, options), do: nil
-  defp convert_attribute(:type, listing, options), do: nil
-  defp convert_attribute(:subtype, listing, options), do: nil
-  defp convert_attribute(:title, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:description, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:highlight, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:state, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:city, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:neighborhood, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:street, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:street_number, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:zipcode, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:show_address, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:lat, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:lng, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:show_map, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:area_unity, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:area, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:price, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:maintenance_fee, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:rooms, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:bathrooms, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:garage_spots, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:images, listing, options), do: {"", %{}, nil}
-  defp convert_attribute(:tour, listing, options), do: {"", %{}, nil}
+  defp convert_attribute(:internal_id, _, _), do: {"CodigoCentralVendas", %{}, @imovelweb_id}
+  defp convert_attribute(:id, listing, _), do: {"CodigoImovel", %{}, listing.id}
+
+  defp convert_attribute(:type, listing, _),
+    do: {"TipoImovel", %{}, Map.get(listing_type_map(), listing.type, "Outro")}
+
+  defp convert_attribute(:subtype, listing, _),
+    do: {"SubTipoImovel", %{}, Map.get(listing_subtype_map(), listing.type, "Outro")}
+
+  defp convert_attribute(:title, listing, _),
+    do: {"TituloImovel", %{}, "#{listing.type} a venda em #{listing.address.city}"}
+
+  defp convert_attribute(:description, listing, _),
+    do: {"Observacao", %{}, {:cdata, listing.description}}
+
+  defp convert_attribute(:highlight, listing, options) do
+    {
+      "Modelo",
+      %{},
+      cond do
+        listing.id in Map.get(options, :highlights_ids, []) -> "DESTAQUE"
+        true -> "SIMPLES"
+      end
+    }
+  end
+
+  defp convert_attribute(:state, listing, _), do: {"UF", %{}, listing.address.state}
+  defp convert_attribute(:city, listing, _), do: {"Cidade", %{}, {:cdata, listing.address.city}}
+
+  defp convert_attribute(:neighborhood, listing, _),
+    do: {"Bairro", %{}, {:cdata, listing.address.neighborhood}}
+
+  defp convert_attribute(:street, listing, _),
+    do: {"Endereco", %{}, {:cdata, listing.address.street}}
+
+  defp convert_attribute(:street_number, listing, _),
+    do: {"Numero", %{}, listing.address.street_number}
+
+  defp convert_attribute(:zipcode, listing, _), do: {"CEP", %{}, listing.address.postal_code}
+  # NOTE (jpd): faz sentido ser aproximado
+  defp convert_attribute(:show_address, _, _), do: {"DivulgarEndereco", %{}, "APROX"}
+  defp convert_attribute(:lat, listing, _), do: {"Latitude", %{}, listing.address.lat}
+  defp convert_attribute(:lng, listing, _), do: {"Longitude", %{}, listing.address.lng}
+  # NOTE (jpd): faz sentido mostrar o mapa
+  defp convert_attribute(:show_map, _, _), do: {"VisualizarMapa", %{}, 1}
+  defp convert_attribute(:area_unity, _, _), do: {"UnidadeMetrica", %{}, "M2"}
+  defp convert_attribute(:area, listing, _), do: {"AreaUtil", %{}, listing.area}
+  defp convert_attribute(:price, listing, _), do: {"PrecoVenda", %{}, listing.price}
+
+  defp convert_attribute(:maintenance_fee, listing, _),
+    do: {"PrecoCondominio", %{}, listing.maintenance_fee}
+
+  defp convert_attribute(:rooms, listing, _), do: {"QtdDormitorios", %{}, listing.rooms || 0}
+
+  defp convert_attribute(:bathrooms, listing, _),
+    do: {"QtdBanheiros", %{}, listing.bathrooms || 0}
+
+  defp convert_attribute(:garage_spots, listing, _),
+    do: {"QtdVagas", %{}, listing.garage_spots || 0}
+
+  defp convert_attribute(:images, listing, _),
+    do: {"Fotos", %{}, listing.images |> Enum.map(&build_image_node/1)}
+
+  defp convert_attribute(:tour, listing, _),
+    do: {"ToursVirtual360", %{}, build_tour_node(listing.matterport_code)}
+
+  def listing_type_map(),
+    do: Listing.listing_types() |> Enum.zip(~w(Apartamento Casa Apartamento)) |> Enum.into(%{})
+
+  def listing_subtype_map(),
+    do: Listing.listing_types() |> Enum.zip(~w(Padrão Padrão Cobertura)) |> Enum.into(%{})
+
+  defp build_image_node(image) do
+    {"Foto", %{},
+     [
+       {"NomeArquivo", %{}, {:cdata, image.filename}},
+       {"URLArquivo", %{}, {:cdata, build_url(@image_url, [image.filename])}},
+       # NOTE (jpd): qual o impacto de não ter uma imagem principal
+       {"Principal", %{}, 0},
+       {"Ordem", %{}, image.position}
+     ]}
+  end
+
+  defp build_tour_node(nil), do: nil
+
+  defp build_tour_node(matterport_code) do
+    [
+      {"TourVirtual360", %{},
+       [
+         {"URLArquivo", %{}, {:cdata, build_url(@tour_url, ["/?m=#{matterport_code}"])}}
+       ]}
+    ]
+  end
+
+  def build_url(host, params) do
+    params
+    |> Enum.reduce(host, fn item, acc -> URI.merge(acc, item) end)
+    |> URI.to_string()
+  end
 end
