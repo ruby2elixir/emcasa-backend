@@ -8,7 +8,7 @@ defmodule Re.Exporters.Imovelweb do
   @exported_attributes ~w(internal_id id type subtype title description highlight state city neighborhood
     street street_number zipcode show_address lat lng show_map area_unity area price maintenance_fee rooms
     bathrooms garage_spots images tour)a
-  @default_options %{attributes: @exported_attributes, highlight_id: []}
+  @default_options %{attributes: @exported_attributes, highlight_ids: []}
 
   @imovelweb_id ""
 
@@ -63,7 +63,7 @@ defmodule Re.Exporters.Imovelweb do
       "Modelo",
       %{},
       cond do
-        listing.id in Map.get(options, :highlights_ids, []) -> "DESTAQUE"
+        listing.id in Map.get(options, :highlight_ids, []) -> "DESTAQUE"
         true -> "SIMPLES"
       end
     }
