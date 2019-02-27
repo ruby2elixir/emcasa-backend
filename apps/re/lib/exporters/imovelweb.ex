@@ -10,7 +10,6 @@ defmodule Re.Exporters.Imovelweb do
     bathrooms garage_spots images tour)a
   @default_options %{attributes: @exported_attributes, highlight_id: []}
 
-  # NOTE (jpd): qual o nosso id
   @imovelweb_id ""
 
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/"
@@ -83,11 +82,9 @@ defmodule Re.Exporters.Imovelweb do
     do: {"Numero", %{}, listing.address.street_number}
 
   defp convert_attribute(:zipcode, listing, _), do: {"CEP", %{}, listing.address.postal_code}
-  # NOTE (jpd): faz sentido ser aproximado
   defp convert_attribute(:show_address, _, _), do: {"DivulgarEndereco", %{}, "APROX"}
   defp convert_attribute(:lat, listing, _), do: {"Latitude", %{}, listing.address.lat}
   defp convert_attribute(:lng, listing, _), do: {"Longitude", %{}, listing.address.lng}
-  # NOTE (jpd): faz sentido mostrar o mapa
   defp convert_attribute(:show_map, _, _), do: {"VisualizarMapa", %{}, 1}
   defp convert_attribute(:area_unity, _, _), do: {"UnidadeMetrica", %{}, "M2"}
   defp convert_attribute(:area, listing, _), do: {"AreaUtil", %{}, listing.area}
@@ -121,7 +118,6 @@ defmodule Re.Exporters.Imovelweb do
      [
        {"NomeArquivo", %{}, {:cdata, image.filename}},
        {"URLArquivo", %{}, {:cdata, build_url(@image_url, [image.filename])}},
-       # NOTE (jpd): qual o impacto de não ter uma imagem principal
        {"Principal", %{}, 0},
        {"Ordem", %{}, image.position}
      ]}
