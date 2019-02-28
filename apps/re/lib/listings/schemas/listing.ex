@@ -31,6 +31,7 @@ defmodule Re.Listing do
     field :status, :string, default: "inactive"
     field :is_exclusive, :boolean, default: false
     field :is_release, :boolean
+    field :is_exportable, :boolean, default: true
     field :visualisations, :integer, virtual: true
     field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
