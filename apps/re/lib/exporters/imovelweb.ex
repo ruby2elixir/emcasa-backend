@@ -6,9 +6,9 @@ defmodule Re.Exporters.Imovelweb do
   alias Re.Listing
 
   @exported_attributes ~w(internal_id id type subtype title description highlight state city neighborhood
-    street street_number zipcode show_address lat lng show_map area_unity area price maintenance_fee rooms
-    bathrooms garage_spots images tour)a
-  @default_options %{attributes: @exported_attributes, highlight_ids: []}
+    street street_number zipcode show_address lat lng show_map area_unity area price maintenance_fee property_tax
+    rooms bathrooms garage_spots images tour)a
+  @default_options %{attributes: @exported_attributes, highlight_ids: [], super_highlight_ids: []}
 
   @imovelweb_id ""
 
@@ -63,6 +63,7 @@ defmodule Re.Exporters.Imovelweb do
       "Modelo",
       %{},
       cond do
+        listing.id in Map.get(options, :super_highlight_ids, []) -> "HOME"
         listing.id in Map.get(options, :highlight_ids, []) -> "DESTAQUE"
         true -> "SIMPLES"
       end
@@ -92,6 +93,9 @@ defmodule Re.Exporters.Imovelweb do
 
   defp convert_attribute(:maintenance_fee, listing, _),
     do: {"PrecoCondominio", %{}, listing.maintenance_fee}
+
+  defp convert_attribute(:property_tax, listing, _),
+    do: {"PrecoIptuImovel", %{}, listing.property_tax}
 
   defp convert_attribute(:rooms, listing, _), do: {"QtdDormitorios", %{}, listing.rooms || 0}
 
