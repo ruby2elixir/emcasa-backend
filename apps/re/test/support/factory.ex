@@ -44,7 +44,8 @@ defmodule Re.Factory do
       matterport_code: Faker.String.base64(),
       status: "active",
       is_exclusive: Enum.random([true, false]),
-      is_release: Enum.random([true, false])
+      is_release: Enum.random([true, false]),
+      is_exportable: true
     }
   end
 
