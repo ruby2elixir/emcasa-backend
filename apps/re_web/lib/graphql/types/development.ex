@@ -19,8 +19,12 @@ defmodule ReWeb.Types.Development do
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_development/3)
 
-    field :images, list_of(:image),
-      resolve: dataloader(Re.Images, &Resolvers.Images.per_development/3)
+    field :images, list_of(:image) do
+      arg :is_active, :boolean
+      arg :limit, :integer
+
+      resolve &Resolvers.Images.per_development/3
+    end
   end
 
   object :development_queries do
