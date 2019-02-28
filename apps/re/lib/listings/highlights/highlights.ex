@@ -14,19 +14,43 @@ defmodule Re.Listings.Highlights do
                                              0
                                            )
 
-  @sao_paulo_highlight_size Application.get_env(:re, :zap_highlights_size_sao_paulo, 0)
-  @rio_de_janeiro_highlight_size Application.get_env(:re, :zap_highlights_size_rio_de_janeiro, 0)
-
-  @sao_paulo_super_highlight_size Application.get_env(
-                                    :re,
-                                    :zap_super_highlights_size_sao_paulo,
-                                    0
-                                  )
-  @rio_de_janeiro_super_highlight_size Application.get_env(
+  @zap_highlights_size_sao_paulo Application.get_env(:re, :zap_highlights_size_sao_paulo, 0)
+  @zap_super_highlights_size_sao_paulo Application.get_env(
                                          :re,
-                                         :zap_super_highlights_size_rio_de_janeiro,
+                                         :zap_super_highlights_size_sao_paulo,
                                          0
                                        )
+  @zap_highlights_size_rio_de_janeiro Application.get_env(
+                                        :re,
+                                        :zap_highlights_size_rio_de_janeiro,
+                                        0
+                                      )
+  @zap_super_highlights_size_rio_de_janeiro Application.get_env(
+                                              :re,
+                                              :zap_super_highlights_size_rio_de_janeiro,
+                                              0
+                                            )
+
+  @imovelweb_super_highlights_size_sao_paulo Application.get_env(
+                                               :re,
+                                               :imovelweb_super_highlights_size_sao_paulo,
+                                               0
+                                             )
+  @imovelweb_highlights_size_sao_paulo Application.get_env(
+                                         :re,
+                                         :imovelweb_highlights_size_sao_paulo,
+                                         0
+                                       )
+  @imovelweb_super_highlights_size_rio_de_janeiro Application.get_env(
+                                                    :re,
+                                                    :imovelweb_super_highlights_size_rio_de_janeiro,
+                                                    0
+                                                  )
+  @imovelweb_highlights_size_rio_de_janeiro Application.get_env(
+                                              :re,
+                                              :imovelweb_highlights_size_rio_de_janeiro,
+                                              0
+                                            )
 
   alias Re.{
     Listings.Highlights.Scores,
@@ -68,21 +92,39 @@ defmodule Re.Listings.Highlights do
   def get_zap_super_highlights_size(city),
     do: get_highlights_size(:zap_super_highlight, city)
 
+  def get_imovelweb_highlights_size(city), do: get_highlights_size(:imovelweb_highlight, city)
+
+  def get_imovelweb_super_highlights_size(city),
+    do: get_highlights_size(:imovelweb_super_highlight, city)
+
   defp get_highlights_size(:vivareal_highlight, "sao-paulo"),
     do: @vivareal_highlights_size_sao_paulo
 
   defp get_highlights_size(:vivareal_highlight, "rio-de-janeiro"),
     do: @vivareal_highlights_size_rio_de_janeiro
 
-  defp get_highlights_size(:zap_highlight, "sao-paulo"), do: @sao_paulo_highlight_size
+  defp get_highlights_size(:zap_highlight, "sao-paulo"), do: @zap_highlights_size_sao_paulo
 
-  defp get_highlights_size(:zap_highlight, "rio-de-janeiro"), do: @rio_de_janeiro_highlight_size
+  defp get_highlights_size(:zap_highlight, "rio-de-janeiro"),
+    do: @zap_highlights_size_rio_de_janeiro
 
   defp get_highlights_size(:zap_super_highlight, "sao-paulo"),
-    do: @sao_paulo_super_highlight_size
+    do: @zap_super_highlights_size_sao_paulo
 
   defp get_highlights_size(:zap_super_highlight, "rio-de-janeiro"),
-    do: @rio_de_janeiro_super_highlight_size
+    do: @zap_super_highlights_size_rio_de_janeiro
+
+  defp get_highlights_size(:imovelweb_highlight, "sao-paulo"),
+    do: @imovelweb_highlights_size_sao_paulo
+
+  defp get_highlights_size(:imovelweb_highlight, "rio-de-janeiro"),
+    do: @imovelweb_highlights_size_rio_de_janeiro
+
+  defp get_highlights_size(:imovelweb_super_highlight, "sao-paulo"),
+    do: @imovelweb_super_highlights_size_sao_paulo
+
+  defp get_highlights_size(:imovelweb_super_highlight, "rio-de-janeiro"),
+    do: @imovelweb_super_highlights_size_rio_de_janeiro
 
   defp get_highlights_size(_, _), do: 0
 end

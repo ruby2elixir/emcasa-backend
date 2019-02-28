@@ -38,7 +38,11 @@ config :re,
   zap_highlights_size_rio_de_janeiro: 10,
   zap_highlights_size_sao_paulo: 10,
   zap_super_highlights_size_rio_de_janeiro: 5,
-  zap_super_highlights_size_sao_paulo: 5
+  zap_super_highlights_size_sao_paulo: 5,
+  imovelweb_highlights_size_rio_de_janeiro: 10,
+  imovelweb_highlights_size_sao_paulo: 10,
+  imovelweb_super_highlights_size_rio_de_janeiro: 10,
+  imovelweb_super_highlights_size_sao_paulo: 10
 
 config :account_kit,
   app_id: "your_dev_app_id",
