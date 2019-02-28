@@ -49,4 +49,183 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
       assert json_response(conn, 200)["data"] == %{"developments" => []}
     end
   end
+
+  describe "development" do
+    test "admin should query development", %{admin_conn: conn} do
+      %{filename: image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+
+      %{id: address_id, street: street, street_number: street_number} = insert(:address)
+
+      %{
+        id: development_id,
+        name: name,
+        title: title,
+        phase: phase,
+        builder: builder,
+        description: description
+      } = insert(:development, address_id: address_id, images: [image1, image2])
+
+      variables = %{
+        "id" => development_id
+      }
+
+      query = """
+        query Development (
+          $id: ID!,
+          ) {
+          development (id: $id) {
+            name
+            title
+            phase
+            builder
+            description
+            address {
+              street_number
+              street
+            }
+            images {
+              filename
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "name" => name,
+               "title" => title,
+               "phase" => phase,
+               "builder" => builder,
+               "description" => description,
+               "address" => %{
+                 "street_number" => street_number,
+                 "street" => street
+               },
+               "images" => [
+                 %{"filename" => image_filename1},
+                 %{"filename" => image_filename2}
+               ]
+             } == json_response(conn, 200)["data"]["development"]
+    end
+
+    test "user should query development", %{user_conn: conn} do
+      %{filename: image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+
+      %{id: address_id, street: street} = insert(:address)
+
+      %{
+        id: development_id,
+        name: name,
+        title: title,
+        phase: phase,
+        builder: builder,
+        description: description
+      } = insert(:development, address_id: address_id, images: [image1, image2])
+
+      variables = %{
+        "id" => development_id
+      }
+
+      query = """
+        query Development (
+          $id: ID!,
+          ) {
+          development (id: $id) {
+            name
+            title
+            phase
+            builder
+            description
+            address {
+              street_number
+              street
+            }
+            images {
+              filename
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "name" => name,
+               "title" => title,
+               "phase" => phase,
+               "builder" => builder,
+               "description" => description,
+               "address" => %{
+                 "street_number" => nil,
+                 "street" => street
+               },
+               "images" => [
+                 %{"filename" => image_filename1},
+                 %{"filename" => image_filename2}
+               ]
+             } == json_response(conn, 200)["data"]["development"]
+    end
+
+    test "unauthenticated user should query development", %{unauthenticated_conn: conn} do
+      %{filename: image_filename1} = image1 = insert(:image, is_active: true, position: 1)
+      %{filename: image_filename2} = image2 = insert(:image, is_active: true, position: 2)
+
+      %{id: address_id, street: street} = insert(:address)
+
+      %{
+        id: development_id,
+        name: name,
+        title: title,
+        phase: phase,
+        builder: builder,
+        description: description
+      } = insert(:development, address_id: address_id, images: [image1, image2])
+
+      variables = %{
+        "id" => development_id
+      }
+
+      query = """
+        query Development (
+          $id: ID!,
+          ) {
+          development (id: $id) {
+            name
+            title
+            phase
+            builder
+            description
+            address {
+              street_number
+              street
+            }
+            images {
+              filename
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "name" => name,
+               "title" => title,
+               "phase" => phase,
+               "builder" => builder,
+               "description" => description,
+               "address" => %{
+                 "street_number" => nil,
+                 "street" => street
+               },
+               "images" => [
+                 %{"filename" => image_filename1},
+                 %{"filename" => image_filename2}
+               ]
+             } == json_response(conn, 200)["data"]["development"]
+    end
+  end
 end

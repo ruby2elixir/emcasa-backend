@@ -32,5 +32,12 @@ defmodule ReWeb.Types.Development do
     field :developments, list_of(:development) do
       resolve &Resolvers.Developments.index/2
     end
+
+    @desc "Show development"
+    field :development, :development do
+      arg :id, non_null(:id)
+
+      resolve &Resolvers.Developments.show/2
+    end
   end
 end
