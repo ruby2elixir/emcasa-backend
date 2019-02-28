@@ -82,5 +82,14 @@ defmodule Re.Listings.ExporterTest do
 
       assert [%{id: ^id_2}] = result
     end
+
+    test "should only return exportable listings" do
+      %{id: id} = insert(:listing, is_exportable: true)
+      insert(:listing, is_exportable: false)
+
+      result = Exporter.exportable(%{}, %{})
+
+      assert [%{id: ^id}] = result
+    end
   end
 end
