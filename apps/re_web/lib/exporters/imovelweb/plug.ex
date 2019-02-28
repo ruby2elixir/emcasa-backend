@@ -45,20 +45,13 @@ defmodule ReWeb.Exporters.Imovelweb.Plug do
     super_highlights_size = Highlights.get_imovelweb_super_highlights_size(city_slug)
 
     %{
-      super_highlight_ids:
-        get_highlights_ids(city_slug, filters, query_params, super_highlights_size),
+      super_highlight_ids: get_highlights_ids(filters, query_params, super_highlights_size),
       highlight_ids:
-        get_highlights_ids(
-          city_slug,
-          filters,
-          query_params,
-          highlights_size,
-          super_highlights_size
-        )
+        get_highlights_ids(filters, query_params, highlights_size, super_highlights_size)
     }
   end
 
-  def get_highlights_ids(city_slug, filters, query_params, page_size, offset \\ 0) do
+  def get_highlights_ids(filters, query_params, page_size, offset \\ 0) do
     params =
       query_params
       |> Map.put(:filters, filters)
