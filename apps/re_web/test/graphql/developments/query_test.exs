@@ -1,4 +1,3 @@
-
 defmodule ReWeb.GraphQL.Developments.QueryTest do
   use ReWeb.ConnCase
 
@@ -20,8 +19,34 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
   end
 
   describe "developments" do
-    test "admin should query development index", %{admin_conn: conn} do
-      assert 1 == 1
+    @developments_query """
+    query Developments {
+      developments {
+        name
+        title
+        phase
+        builder
+        description
+      }
+    }
+    """
+
+    test "admin should query developments", %{admin_conn: conn} do
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@developments_query))
+
+      assert json_response(conn, 200)["data"] == %{"developments" => []}
+    end
+
+    test "user should query developments", %{user_conn: conn} do
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@developments_query))
+
+      assert json_response(conn, 200)["data"] == %{"developments" => []}
+    end
+
+    test "anonymous should query developments", %{unauthenticated_conn: conn} do
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@developments_query))
+
+      assert json_response(conn, 200)["data"] == %{"developments" => []}
     end
   end
 end

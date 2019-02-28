@@ -14,6 +14,12 @@ defmodule ReWeb.Resolvers.Addresses do
     {:address, Map.put(params, :has_admin_rights, admin?)}
   end
 
+  def per_development(_development, params, %{context: %{current_user: current_user}}) do
+    admin? = is_admin(nil, current_user)
+
+    {:address, Map.put(params, :has_admin_rights, admin?)}
+  end
+
   def insert(%{input: params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Addresses, :insert, current_user, %{}),
          {:ok, address} <- Addresses.insert_or_update(params) do
@@ -38,6 +44,7 @@ defmodule ReWeb.Resolvers.Addresses do
 
   def is_covered(address, _, _), do: {:ok, Addresses.is_covered(address)}
 
+  # rename to can access or has_access
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true
   defp is_admin(_, _), do: false

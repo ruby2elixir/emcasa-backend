@@ -10,6 +10,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.Interest
   import_types ReWeb.Types.Dashboard
   import_types ReWeb.Types.Calendar
+  import_types ReWeb.Types.Development
   import_types Absinthe.Type.Custom
 
   alias ReWeb.GraphQL.Middlewares
@@ -29,6 +30,7 @@ defmodule ReWeb.Schema do
     import_fields(:dashboard_queries)
     import_fields(:interest_queries)
     import_fields(:calendar_queries)
+    import_fields(:development_queries)
   end
 
   mutation do

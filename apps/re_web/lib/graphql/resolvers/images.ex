@@ -32,6 +32,28 @@ defmodule ReWeb.Resolvers.Images do
     end)
   end
 
+  def per_development(development, params, %{context: %{loader: loader}}) do
+    is_admin? = true
+
+    loader
+    |> Dataloader.load(
+      Re.Images,
+      {:images, Map.put(params, :has_admin_rights, is_admin?)},
+      development
+    )
+    |> on_load(fn loader ->
+      images =
+        loader
+        |> Dataloader.get(
+          Re.Images,
+          {:images, Map.put(params, :has_admin_rights, is_admin?)},
+          development
+        )
+
+      {:ok, images}
+    end)
+  end
+
   def insert_image(%{input: %{listing_id: listing_id} = params}, %{
         context: %{current_user: current_user}
       }) do
