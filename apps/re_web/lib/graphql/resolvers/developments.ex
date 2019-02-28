@@ -10,11 +10,7 @@ defmodule ReWeb.Resolvers.Developments do
     {:ok, developments}
   end
 
-  def show(%{id: id}, %{context: %{current_user: current_user}}) do
-    with {:ok, development} <- Developments.get(id),
-         #  :ok <- Bodyguard.permit(Listings, :show_listing, current_user, listing) do
-         :ok <- :ok do
-      {:ok, development}
-    end
+  def show(%{id: id}, _context) do
+    Developments.get(id)
   end
 end
