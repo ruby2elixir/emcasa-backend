@@ -13,6 +13,7 @@ defmodule Re.Image do
     field :description, :string
 
     belongs_to :listing, Re.Listing
+    belongs_to :development, Re.Development
 
     timestamps()
   end
@@ -27,6 +28,7 @@ defmodule Re.Image do
     struct
     |> cast(params, @create_required ++ @create_optional)
     |> cast_assoc(:listing)
+    |> cast_assoc(:development)
     |> validate_required(@create_required)
   end
 

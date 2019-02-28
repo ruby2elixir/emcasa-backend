@@ -143,6 +143,16 @@ defmodule Re.Factory do
 
   def tour_appointment_factory, do: %Re.Calendars.TourAppointment{}
 
+  def development_factory do
+    %{
+      name: Name.name(),
+      title: Name.name(),
+      phase: Enum.random(~w(pre-launch planning building delivered)),
+      builder: Name.name(),
+      description: Shakespeare.hamlet()
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
