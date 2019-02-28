@@ -10,7 +10,7 @@ defmodule Re.Exporters.Imovelweb do
     rooms bathrooms garage_spots images tour)a
   @default_options %{attributes: @exported_attributes, highlight_ids: [], super_highlight_ids: []}
 
-  @imovelweb_id ""
+  @imovelweb_id Application.get_env(:re, :imovelweb_identity)
 
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/"
   @tour_url "https://my.matterport.com"

@@ -55,7 +55,8 @@ config :re,
   imovelweb_super_highlights_size_rio_de_janeiro:
     String.to_integer(System.get_env("IMOVELWEB_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO")),
   imovelweb_super_highlights_size_sao_paulo:
-    String.to_integer(System.get_env("IMOVELWEB_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO"))
+    String.to_integer(System.get_env("IMOVELWEB_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")),
+  imovelweb_identity: System.get_env("IMOVELWEB_IDENTITY")
 
 config :re_integrations,
   to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),

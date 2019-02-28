@@ -52,7 +52,7 @@ defmodule Re.Exporters.ImovelwebTest do
 
       expected_xml =
         "<Imovel>" <>
-          "<CodigoCentralVendas></CodigoCentralVendas>" <>
+          "<CodigoCentralVendas>1</CodigoCentralVendas>" <>
           "<CodigoImovel>7004578</CodigoImovel>" <>
           "<TipoImovel>Apartamento</TipoImovel>" <>
           "<SubTipoImovel>Padrão</SubTipoImovel>" <>
@@ -132,7 +132,7 @@ defmodule Re.Exporters.ImovelwebTest do
 
       expected_xml =
         "<Imovel>" <>
-          "<CodigoCentralVendas></CodigoCentralVendas>" <>
+          "<CodigoCentralVendas>1</CodigoCentralVendas>" <>
           "<CodigoImovel>7004578</CodigoImovel>" <>
           "<TipoImovel>Apartamento</TipoImovel>" <>
           "<SubTipoImovel>Padrão</SubTipoImovel>" <>
@@ -195,7 +195,7 @@ defmodule Re.Exporters.ImovelwebTest do
 
       expected_xml =
         "<Imovel>" <>
-          "<CodigoCentralVendas></CodigoCentralVendas>" <>
+          "<CodigoCentralVendas>1</CodigoCentralVendas>" <>
           "<CodigoImovel>7004578</CodigoImovel>" <>
           "<TipoImovel>Apartamento</TipoImovel>" <>
           "<SubTipoImovel>Padrão</SubTipoImovel>" <>
@@ -270,7 +270,7 @@ defmodule Re.Exporters.ImovelwebTest do
 
       expected_xml =
         "<Imovel>" <>
-          "<CodigoCentralVendas></CodigoCentralVendas>" <>
+          "<CodigoCentralVendas>1</CodigoCentralVendas>" <>
           "<CodigoImovel>7004578</CodigoImovel>" <>
           "<TipoImovel>Apartamento</TipoImovel>" <>
           "<SubTipoImovel>Padrão</SubTipoImovel>" <>
@@ -362,7 +362,7 @@ defmodule Re.Exporters.ImovelwebTest do
 
       expected_xml =
         "<Imovel>" <>
-          "<CodigoCentralVendas></CodigoCentralVendas>" <>
+          "<CodigoCentralVendas>1</CodigoCentralVendas>" <>
           "<CodigoImovel>7004578</CodigoImovel>" <>
           "<TipoImovel>Apartamento</TipoImovel>" <>
           "<SubTipoImovel>Padrão</SubTipoImovel>" <>
