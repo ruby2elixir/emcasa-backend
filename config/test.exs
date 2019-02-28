@@ -46,7 +46,9 @@ config :re,
   zap_super_highlights_size_rio_de_janeiro: 5,
   zap_super_highlights_size_sao_paulo: 5,
   imovelweb_highlights_size_rio_de_janeiro: 5,
-  imovelweb_highlights_size_sao_paulo: 5
+  imovelweb_highlights_size_sao_paulo: 5,
+  imovelweb_super_highlights_size_rio_de_janeiro: 5,
+  imovelweb_super_highlights_size_sao_paulo: 5
 
 config :re_integrations,
   http: ReIntegrations.TestHTTP,
