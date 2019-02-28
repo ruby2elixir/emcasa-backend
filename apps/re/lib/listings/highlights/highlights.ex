@@ -31,11 +31,21 @@ defmodule Re.Listings.Highlights do
                                               0
                                             )
 
+  @imovelweb_super_highlights_size_sao_paulo Application.get_env(
+                                               :re,
+                                               :imovelweb_super_highlights_size_sao_paulo,
+                                               0
+                                             )
   @imovelweb_highlights_size_sao_paulo Application.get_env(
                                          :re,
                                          :imovelweb_highlights_size_sao_paulo,
                                          0
                                        )
+  @imovelweb_super_highlights_size_rio_de_janeiro Application.get_env(
+                                                    :re,
+                                                    :imovelweb_super_highlights_size_rio_de_janeiro,
+                                                    0
+                                                  )
   @imovelweb_highlights_size_rio_de_janeiro Application.get_env(
                                               :re,
                                               :imovelweb_highlights_size_rio_de_janeiro,
@@ -84,6 +94,9 @@ defmodule Re.Listings.Highlights do
 
   def get_imovelweb_highlights_size(city), do: get_highlights_size(:imovelweb_highlight, city)
 
+  def get_imovelweb_super_highlights_size(city),
+    do: get_highlights_size(:imovelweb_super_highlight, city)
+
   defp get_highlights_size(:vivareal_highlight, "sao-paulo"),
     do: @vivareal_highlights_size_sao_paulo
 
@@ -106,6 +119,12 @@ defmodule Re.Listings.Highlights do
 
   defp get_highlights_size(:imovelweb_highlight, "rio-de-janeiro"),
     do: @imovelweb_highlights_size_rio_de_janeiro
+
+  defp get_highlights_size(:imovelweb_super_highlight, "sao-paulo"),
+    do: @imovelweb_super_highlights_size_sao_paulo
+
+  defp get_highlights_size(:imovelweb_super_highlight, "rio-de-janeiro"),
+    do: @imovelweb_super_highlights_size_rio_de_janeiro
 
   defp get_highlights_size(_, _), do: 0
 end
