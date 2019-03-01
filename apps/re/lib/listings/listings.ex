@@ -24,8 +24,6 @@ defmodule Re.Listings do
 
   def query(query, params), do: DataloaderQueries.build(query, params)
 
-  def index, do: Repo.all(Listing)
-
   def all do
     Queries.active()
     |> Queries.preload_relations([:address])
