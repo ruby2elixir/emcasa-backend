@@ -24,7 +24,7 @@ defmodule Re.Development do
 
   @required ~w(name title phase builder description address_id)a
 
-  def changeset(struct, params) do
+  def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @required)
     |> validate_required(@required)
