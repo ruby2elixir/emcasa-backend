@@ -45,7 +45,7 @@ defmodule Re.Factory do
       status: "active",
       is_exclusive: Enum.random([true, false]),
       is_release: Enum.random([true, false]),
-      is_exportable: true
+      is_exportable: Enum.random([true, false])
     }
   end
 
