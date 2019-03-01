@@ -169,4 +169,51 @@ defmodule ReWeb.Listing.MutationHelpers do
       }
     """
   end
+
+  def insert_development_variables(development, address) do
+    %{
+      "input" => %{
+        "name" => development.name,
+        "title" => development.title,
+        "phase" => development.phase,
+        "builder" => development.builder,
+        "description" => development.description,
+        "address" => %{
+          "city" => address.city,
+          "state" => address.state,
+          "lat" => address.lat,
+          "lng" => address.lng,
+          "neighborhood" => address.neighborhood,
+          "street" => address.street,
+          "streetNumber" => address.street_number,
+          "postalCode" => address.postal_code
+        }
+      }
+    }
+  end
+
+  def insert_development_mutation do
+    """
+      mutation InsertDevelopment ($input: DevelopmentInput!) {
+        insertDevelopment(input: $input) {
+          id
+          address {
+            city
+            state
+            lat
+            lng
+            neighborhood
+            street
+            streetNumber
+            postalCode
+          }
+          name
+          title
+          phase
+          builder
+          description
+        }
+      }
+    """
+  end
 end
