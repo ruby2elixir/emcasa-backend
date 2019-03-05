@@ -224,9 +224,7 @@ defmodule Re.Exporters.VivarealTest do
             "<LivingArea unit=\"square metres\"/>" <>
             "<Bedrooms>0</Bedrooms>" <>
             "<Bathrooms>0</Bathrooms>" <>
-            "<Garage type=\"Parking Space\">0</Garage>" <>
-            "</Details>" <>
-            "</Listing>"
+            "<Garage type=\"Parking Space\">0</Garage>" <> "</Details>" <> "</Listing>"
 
         created_xml =
           listing

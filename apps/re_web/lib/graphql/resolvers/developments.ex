@@ -1,5 +1,4 @@
 defmodule ReWeb.Resolvers.Developments do
-
   alias Re.{
     Developments
   }
