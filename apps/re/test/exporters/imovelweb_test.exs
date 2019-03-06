@@ -94,9 +94,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<ToursVirtual360>" <>
           "<TourVirtual360>" <>
           "<URLArquivo><![CDATA[#{@tour_url}/?m=mY123]]></URLArquivo>" <>
-          "</TourVirtual360>" <>
-          "</ToursVirtual360>" <>
-          "</Imovel>"
+          "</TourVirtual360>" <> "</ToursVirtual360>" <> "</Imovel>"
 
       generated_xml =
         listing
@@ -156,10 +154,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<PrecoIptuImovel/>" <>
           "<QtdDormitorios>4</QtdDormitorios>" <>
           "<QtdBanheiros>4</QtdBanheiros>" <>
-          "<QtdVagas>4</QtdVagas>" <>
-          "<Fotos/>" <>
-          "<ToursVirtual360/>" <>
-          "</Imovel>"
+          "<QtdVagas>4</QtdVagas>" <> "<Fotos/>" <> "<ToursVirtual360/>" <> "</Imovel>"
 
       generated_xml =
         listing
@@ -219,10 +214,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<PrecoIptuImovel/>" <>
           "<QtdDormitorios>0</QtdDormitorios>" <>
           "<QtdBanheiros>0</QtdBanheiros>" <>
-          "<QtdVagas>0</QtdVagas>" <>
-          "<Fotos/>" <>
-          "<ToursVirtual360/>" <>
-          "</Imovel>"
+          "<QtdVagas>0</QtdVagas>" <> "<Fotos/>" <> "<ToursVirtual360/>" <> "</Imovel>"
 
       generated_xml =
         listing
@@ -312,9 +304,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<ToursVirtual360>" <>
           "<TourVirtual360>" <>
           "<URLArquivo><![CDATA[#{@tour_url}/?m=mY123]]></URLArquivo>" <>
-          "</TourVirtual360>" <>
-          "</ToursVirtual360>" <>
-          "</Imovel>"
+          "</TourVirtual360>" <> "</ToursVirtual360>" <> "</Imovel>"
 
       generated_xml =
         listing
@@ -404,9 +394,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<ToursVirtual360>" <>
           "<TourVirtual360>" <>
           "<URLArquivo><![CDATA[#{@tour_url}/?m=mY123]]></URLArquivo>" <>
-          "</TourVirtual360>" <>
-          "</ToursVirtual360>" <>
-          "</Imovel>"
+          "</TourVirtual360>" <> "</ToursVirtual360>" <> "</Imovel>"
 
       generated_xml =
         listing
