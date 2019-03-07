@@ -4,7 +4,6 @@ defmodule Mix.Tasks.Re.Addresses.PadRightPostalCodeWithZeros do
   require Logger
 
   alias Re.{
-    Address,
     Addresses,
     Listing,
     Listings.Queries,
@@ -29,7 +28,7 @@ defmodule Mix.Tasks.Re.Addresses.PadRightPostalCodeWithZeros do
   @partial_postal_code_regex ~r/^[0-9]{5}$/
 
   defp partial_postal_code?(postal_code) do
-    Regex.match?(@partial_postal_code_regex, postal_code)
+    not is_nil(postal_code) && Regex.match?(@partial_postal_code_regex, postal_code)
   end
 
   defp update_postal_code(%{address: address} = listing) do
@@ -58,11 +57,22 @@ defmodule Mix.Tasks.Re.Addresses.PadRightPostalCodeWithZeros do
   defp update_pad_postal_code(address) do
     changeset =
       Ecto.Changeset.change(address)
-      |> Address.pad_trailing_with_zeros()
+      |> pad_trailing_with_zeros()
 
     case Repo.update(changeset) do
       {:ok, listing} -> Logger.info("Sucessfully updated listing: #{listing.id}")
       {:error, changeset} -> Logger.info("Failed on update: #{changeset.errors}")
+    end
+  end
+
+  defp pad_trailing_with_zeros(changeset) do
+    postal_code = Ecto.Changeset.get_field(changeset, :postal_code, "")
+
+    if partial_postal_code?(postal_code) do
+      changeset
+      |> Ecto.Changeset.put_change(:postal_code, "#{postal_code}-000")
+    else
+      changeset
     end
   end
 end
