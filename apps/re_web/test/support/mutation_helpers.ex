@@ -3,6 +3,8 @@ defmodule ReWeb.Listing.MutationHelpers do
   Helper module for absinthe tests
   """
 
+  import Re.Factory
+
   def insert_listing_variables(listing, address) do
     %{
       "input" => %{
@@ -192,10 +194,58 @@ defmodule ReWeb.Listing.MutationHelpers do
     }
   end
 
+  def update_development_variables(id, development, address) do
+    %{
+      "id" => id,
+      "input" => %{
+        "name" => development.name,
+        "title" => development.title,
+        "phase" => development.phase,
+        "builder" => development.builder,
+        "description" => development.description,
+        "address" => %{
+          "city" => address.city,
+          "state" => address.state,
+          "lat" => address.lat,
+          "lng" => address.lng,
+          "neighborhood" => address.neighborhood,
+          "street" => address.street,
+          "streetNumber" => address.street_number,
+          "postalCode" => address.postal_code
+        }
+      }
+    }
+  end
+
   def insert_development_mutation do
     """
       mutation InsertDevelopment ($input: DevelopmentInput!) {
         insertDevelopment(input: $input) {
+          id
+          address {
+            city
+            state
+            lat
+            lng
+            neighborhood
+            street
+            streetNumber
+            postalCode
+          }
+          name
+          title
+          phase
+          builder
+          description
+        }
+      }
+    """
+  end
+
+  def update_development_mutation do
+    """
+      mutation UpdateDevelopment ($id: ID!, $input: DevelopmentInput!) {
+        updateDevelopment(id: $id, input: $input) {
           id
           address {
             city

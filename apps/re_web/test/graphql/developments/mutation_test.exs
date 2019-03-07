@@ -20,6 +20,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
      unauthenticated_conn: conn,
      admin_conn: login_as(conn, admin_user),
      user_conn: login_as(conn, user_user),
+     old_development: insert(:development),
      development: development,
      address: address}
   end
@@ -79,7 +80,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     end
 
     test "unauthenticated user should not insert a development", %{
-      user_conn: conn,
+      unauthenticated_conn: conn,
       development: development,
       address: address
     } do
@@ -95,8 +96,89 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
         json_response(conn, 200)["errors"]
         |> List.first()
 
-      assert 403 = error["code"]
+      assert 401 == error["code"]
+      assert "Unauthorized" == error["message"]
+    end
+  end
+
+  describe "updateDevelopment/2" do
+    @tag dev: true
+    test "admin should update development", %{
+      admin_conn: conn,
+      old_development: old_development,
+      development: new_development,
+      address: new_address
+    } do
+
+      variables = MutationHelpers.update_development_variables(old_development.id, new_development, new_address)
+
+      mutation = MutationHelpers.update_development_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"updateDevelopment" => %{"address" => inserted_address} = updated_development} =
+               json_response(conn, 200)["data"]
+
+      assert updated_development["name"] == new_development.name
+      assert updated_development["title"] == new_development.title
+      assert updated_development["builder"] == new_development.builder
+      assert updated_development["phase"] == new_development.phase
+      assert updated_development["description"] == new_development.description
+
+      assert inserted_address["city"] == new_address.city
+      assert inserted_address["state"] == new_address.state
+      assert inserted_address["lat"] == new_address.lat
+      assert inserted_address["lng"] == new_address.lng
+      assert inserted_address["neighborhood"] == new_address.neighborhood
+      assert inserted_address["street"] == new_address.street
+      assert inserted_address["streetNumber"] == new_address.street_number
+      assert inserted_address["postalCode"] == new_address.postal_code
+    end
+
+    test "commom user should update development", %{
+      user_conn: conn,
+      old_development: old_development,
+      development: new_development,
+      address: new_address
+    } do
+
+      variables = MutationHelpers.update_development_variables(old_development.id, new_development, new_address)
+
+      mutation = MutationHelpers.update_development_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"updateDevelopment" => nil} = json_response(conn, 200)["data"]
+
+      error =
+        json_response(conn, 200)["errors"]
+        |> List.first()
+
+      assert 403 == error["code"]
       assert "Forbidden" = error["message"]
+    end
+
+    test "unauthenticated user should update development", %{
+      unauthenticated_conn: conn,
+      old_development: old_development,
+      development: new_development,
+      address: new_address
+    } do
+
+      variables = MutationHelpers.update_development_variables(old_development.id, new_development, new_address)
+
+      mutation = MutationHelpers.update_development_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"updateDevelopment" => nil} = json_response(conn, 200)["data"]
+
+      error =
+        json_response(conn, 200)["errors"]
+        |> List.first()
+
+      assert 401 == error["code"]
+      assert "Unauthorized" == error["message"]
     end
   end
 end

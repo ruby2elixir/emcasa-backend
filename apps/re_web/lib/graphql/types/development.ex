@@ -59,5 +59,13 @@ defmodule ReWeb.Types.Development do
 
       resolve &Resolvers.Developments.insert/2
     end
+
+    @desc "Update development"
+    field :update_development, type: :development do
+      arg :id, non_null(:id)
+      arg :input, non_null(:development_input)
+
+      resolve &Resolvers.Developments.update/2
+    end
   end
 end
