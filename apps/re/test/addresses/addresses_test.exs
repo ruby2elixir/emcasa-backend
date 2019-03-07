@@ -250,8 +250,7 @@ defmodule Re.AddressesTest do
       assert updated_address.lng == -40.123
     end
 
-    @tag dev: true
-    test "should create address filling zip code when address does not exists" do
+    test "should create address filling postal code with zeroes when address does not exists" do
       {:ok, created_address} =
         Addresses.insert_or_update(%{
           "street" => "test st",
@@ -279,8 +278,7 @@ defmodule Re.AddressesTest do
       assert created_address.lng == 1.0
     end
 
-    @tag dev: true
-    test "should use already created address when address does exists with zip code filled with zero" do
+    test "should use already created address when address does exists with postal code filled with zero" do
       address = insert(:address, postal_code: "99999-000")
 
       {:ok, updated_address} =
@@ -293,6 +291,36 @@ defmodule Re.AddressesTest do
           "postal_code" => "99999",
           "lat" => address.lat,
           "lng" => address.lng
+        })
+
+      assert updated_address.id == address.id
+      assert updated_address.street == address.street
+      assert updated_address.street_slug == address.street_slug
+      assert updated_address.street_number == address.street_number
+      assert updated_address.neighborhood == address.neighborhood
+      assert updated_address.neighborhood_slug == address.neighborhood_slug
+      assert updated_address.city == address.city
+      assert updated_address.city_slug == address.city_slug
+      assert updated_address.state == address.state
+      assert updated_address.state_slug == address.state_slug
+      assert updated_address.postal_code == address.postal_code
+      assert updated_address.lat == address.lat
+      assert updated_address.lng == address.lng
+    end
+
+    test "should use already created address when address does exists with postal code filled with zero and has atoms as keys" do
+      address = insert(:address, postal_code: "99999-000")
+
+      {:ok, updated_address} =
+        Addresses.insert_or_update(%{
+          street: address.street,
+          street_number: address.street_number,
+          neighborhood: address.neighborhood,
+          city: address.city,
+          state: address.state,
+          postal_code: "99999",
+          lat: address.lat,
+          lng: address.lng
         })
 
       assert updated_address.id == address.id
