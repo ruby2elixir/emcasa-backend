@@ -1,6 +1,8 @@
 defmodule Re.Repo.Migrations.GenerateListingUuids do
   use Ecto.Migration
 
+  require Ecto.Query
+
   def up do
     alter table(:listings) do
       add :uuid, :string
@@ -8,14 +10,16 @@ defmodule Re.Repo.Migrations.GenerateListingUuids do
 
     flush()
 
-    Re.Listing
+    Ecto.Query.from(l in "listings", select: l.id)
     |> Re.Repo.all()
-    |> Enum.map(&Re.Listing.uuid_changeset(&1, %{uuid: UUID.uuid4()}))
-    |> Enum.each(&Re.Repo.update/1)
+    |> Enum.map(
+      &Ecto.Query.from(l in "listings", where: l.id == ^&1, update: [set: [uuid: ^UUID.uuid4()]])
+    )
+    |> Enum.map(&Re.Repo.update_all(&1, []))
 
     flush()
 
-    create unique_index(:listings, [:uuid])
+    create(unique_index(:listings, [:uuid]))
   end
 
   def down do

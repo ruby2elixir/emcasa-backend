@@ -16,6 +16,8 @@ defmodule Re.Listings.Exporter do
   ]
 
   def exportable(filters, params) do
+    filters = Map.put(filters, :exportable, true)
+
     Queries.active()
     |> Filtering.apply(filters)
     |> Queries.preload_relations(@partial_preload)

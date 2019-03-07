@@ -34,6 +34,7 @@ defmodule ReWeb.Types.Listing do
     field :is_active, :boolean, resolve: &Resolvers.Listings.is_active/3
     field :is_exclusive, :boolean
     field :is_release, :boolean
+    field :is_exportable, :boolean
     field :inserted_at, :naive_datetime
     field :score, :integer, resolve: &Resolvers.Listings.score/3
 
@@ -94,6 +95,7 @@ defmodule ReWeb.Types.Listing do
     field :matterport_code, :string
     field :is_exclusive, :boolean
     field :is_release, :boolean
+    field :is_exportable, :boolean
     field :score, :integer
 
     field :phone, :string

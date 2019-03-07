@@ -36,6 +36,7 @@ defmodule ReWeb.Listing.MutationHelpers do
         "matterportCode" => listing.matterport_code,
         "isExclusive" => listing.is_exclusive,
         "isRelease" => listing.is_release,
+        "isExportable" => listing.is_exportable,
         "score" => listing.score
       }
     }
@@ -75,6 +76,7 @@ defmodule ReWeb.Listing.MutationHelpers do
         "matterportCode" => listing.matterport_code,
         "isExclusive" => listing.is_exclusive,
         "isRelease" => listing.is_release,
+        "isExportable" => listing.is_exportable,
         "score" => listing.score
       }
     }
@@ -119,6 +121,7 @@ defmodule ReWeb.Listing.MutationHelpers do
           isActive
           isExclusive
           isRelease
+          isExportable
           score
         }
       }
@@ -164,6 +167,7 @@ defmodule ReWeb.Listing.MutationHelpers do
           isActive
           isExclusive
           isRelease
+          isExportable
           score
         }
       }

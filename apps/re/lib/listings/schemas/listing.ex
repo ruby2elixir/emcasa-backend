@@ -31,6 +31,7 @@ defmodule Re.Listing do
     field :status, :string, default: "inactive"
     field :is_exclusive, :boolean, default: false
     field :is_release, :boolean
+    field :is_exportable, :boolean, default: true
     field :visualisations, :integer, virtual: true
     field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
@@ -82,7 +83,7 @@ defmodule Re.Listing do
   @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
   @admin_optional ~w(complement floor matterport_code is_exclusive status
-                     property_tax maintenance_fee balconies restrooms is_release)a
+                     property_tax maintenance_fee balconies restrooms is_release is_exportable)a
 
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
