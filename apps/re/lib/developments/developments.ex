@@ -37,4 +37,11 @@ defmodule Re.Developments do
     |> Development.changeset(params)
     |> Repo.insert()
   end
+
+  def update(development, params, address) do
+    development
+    |> Changeset.change(address_id: address.id)
+    |> Development.changeset(params)
+    |> Repo.update()
+  end
 end
