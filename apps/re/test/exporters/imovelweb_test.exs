@@ -9,7 +9,7 @@ defmodule Re.Exporters.ImovelwebTest do
   }
 
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
-  @tour_url "https://my.matterport.com"
+  @tour_url "https://my.matterport.com/show"
 
   describe "build_node/2" do
     test "export XML with images from listing" do

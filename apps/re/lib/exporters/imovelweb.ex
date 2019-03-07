@@ -133,7 +133,7 @@ defmodule Re.Exporters.Imovelweb do
     [
       {"TourVirtual360", %{},
        [
-         {"URLArquivo", %{}, {:cdata, build_url(@tour_url, ["/?m=#{matterport_code}"])}}
+         {"URLArquivo", %{}, {:cdata, build_url(@tour_url, ["show/", "?m=#{matterport_code}"])}}
        ]}
     ]
   end
