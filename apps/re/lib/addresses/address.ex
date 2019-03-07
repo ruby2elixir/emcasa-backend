@@ -71,7 +71,7 @@ defmodule Re.Address do
 
   @partial_postal_code_regex ~r/^[0-9]{5}$/
 
-  defp partial_postal_code?(postal_code) do
+  def partial_postal_code?(postal_code) do
     not is_nil(postal_code) && Regex.match?(@partial_postal_code_regex, postal_code)
   end
 end
