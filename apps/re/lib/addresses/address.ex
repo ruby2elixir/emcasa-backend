@@ -48,7 +48,6 @@ defmodule Re.Address do
     |> unique_constraint(:postal_code, name: :unique_address)
     |> validate_number(:lat, greater_than: -90, less_than: 90)
     |> validate_number(:lng, greater_than: -180, less_than: 180)
-    |> pad_trailing_with_zeros()
     |> generate_slugs()
   end
 
@@ -56,22 +55,5 @@ defmodule Re.Address do
 
   def generate_slugs(changeset) do
     Enum.reduce(@sluggified_attr, changeset, &Slugs.generate_slug(&1, &2))
-  end
-
-  def pad_trailing_with_zeros(changeset) do
-    postal_code = Ecto.Changeset.get_field(changeset, :postal_code, "")
-
-    if partial_postal_code?(postal_code) do
-      changeset
-      |> Ecto.Changeset.put_change(:postal_code, "#{postal_code}-000")
-    else
-      changeset
-    end
-  end
-
-  @partial_postal_code_regex ~r/^[0-9]{5}$/
-
-  defp partial_postal_code?(postal_code) do
-    not is_nil(postal_code) && Regex.match?(@partial_postal_code_regex, postal_code)
   end
 end
