@@ -28,7 +28,8 @@ config :re, Re.Repo,
   password: System.get_env("POSTGRES_PASSWORD") || "postgres",
   database: "re_test",
   hostname: System.get_env("POSTGRES_HOSTNAME") || "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  migration_source: "old_schema_migrations"
 
 config :account_kit,
   app_id: "123"
@@ -43,7 +44,12 @@ config :re,
   zap_highlights_size_rio_de_janeiro: 10,
   zap_highlights_size_sao_paulo: 10,
   zap_super_highlights_size_rio_de_janeiro: 5,
-  zap_super_highlights_size_sao_paulo: 5
+  zap_super_highlights_size_sao_paulo: 5,
+  imovelweb_highlights_size_rio_de_janeiro: 5,
+  imovelweb_highlights_size_sao_paulo: 5,
+  imovelweb_super_highlights_size_rio_de_janeiro: 5,
+  imovelweb_super_highlights_size_sao_paulo: 5,
+  imovelweb_identity: "1"
 
 config :re_integrations,
   http: ReIntegrations.TestHTTP,

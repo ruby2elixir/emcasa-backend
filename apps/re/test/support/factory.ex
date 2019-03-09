@@ -22,6 +22,7 @@ defmodule Re.Factory do
 
   def listing_factory do
     %Re.Listing{
+      uuid: UUID.uuid4(),
       type: random(:listing_type),
       complement: Address.secondary_address(),
       description: Shakespeare.hamlet(),
@@ -43,7 +44,8 @@ defmodule Re.Factory do
       matterport_code: Faker.String.base64(),
       status: "active",
       is_exclusive: Enum.random([true, false]),
-      is_release: Enum.random([true, false])
+      is_release: Enum.random([true, false]),
+      is_exportable: Enum.random([true, false])
     }
   end
 
@@ -141,6 +143,16 @@ defmodule Re.Factory do
   def notify_when_covered_factory, do: %Re.Interests.NotifyWhenCovered{}
 
   def tour_appointment_factory, do: %Re.Calendars.TourAppointment{}
+
+  def development_factory do
+    %Re.Development{
+      name: Name.name(),
+      title: Name.name(),
+      phase: Enum.random(~w(pre-launch planning building delivered)),
+      builder: Name.name(),
+      description: Shakespeare.hamlet()
+    }
+  end
 
   defp random_postcode do
     first =

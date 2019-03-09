@@ -24,8 +24,6 @@ defmodule Re.Listings do
 
   def query(query, params), do: DataloaderQueries.build(query, params)
 
-  def index, do: Repo.all(Listing)
-
   def all do
     Queries.active()
     |> Queries.preload_relations([:address])
@@ -82,6 +80,9 @@ defmodule Re.Listings do
   def get(id), do: do_get(Listing, id)
 
   def get_preloaded(id), do: do_get(Queries.preload_relations(), id)
+
+  def get_partial_preloaded(id, preload),
+    do: do_get(Queries.preload_relations(Listing, preload), id)
 
   def insert(params, address, user) do
     with {:ok, user} <- validate_phone_number(params, user),

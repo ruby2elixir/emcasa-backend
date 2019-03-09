@@ -7,6 +7,7 @@ defmodule Re.Listing do
   import Ecto.Changeset
 
   schema "listings" do
+    field :uuid, :string
     field :type, :string
     field :complement, :string
     field :description, :string
@@ -30,6 +31,7 @@ defmodule Re.Listing do
     field :status, :string, default: "inactive"
     field :is_exclusive, :boolean, default: false
     field :is_release, :boolean
+    field :is_exportable, :boolean, default: true
     field :visualisations, :integer, virtual: true
     field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
@@ -74,12 +76,14 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
+    |> generate_uuid()
+    |> unique_constraint(:uuid, name: :uuid)
   end
 
   @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
   @admin_optional ~w(complement floor matterport_code is_exclusive status
-                     property_tax maintenance_fee balconies restrooms is_release)a
+                     property_tax maintenance_fee balconies restrooms is_release is_exportable)a
 
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
@@ -96,7 +100,11 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
+    |> generate_uuid()
+    |> unique_constraint(:uuid, name: :uuid)
   end
+
+  def uuid_changeset(struct, params), do: cast(struct, params, ~w(uuid)a)
 
   @more_than_zero_attributes ~w(property_tax maintenance_fee
                                 bathrooms garage_spots suites
@@ -109,4 +117,8 @@ defmodule Re.Listing do
   defp greater_than(attr, changeset) do
     validate_number(changeset, attr, greater_than_or_equal_to: 0)
   end
+
+  defp generate_uuid(changeset), do: Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
+
+  def listing_types(), do: @types
 end

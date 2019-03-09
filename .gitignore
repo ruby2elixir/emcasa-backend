@@ -3,6 +3,9 @@
 /db
 /deps
 /*.ez
+/.elixir_ls
+/priv/docker/postgres/dump
+/priv/personal
 
 # Generated on crash by the VM
 erl_crash.dump

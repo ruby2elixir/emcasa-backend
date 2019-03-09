@@ -28,7 +28,8 @@ config :re, Re.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-  ssl: true
+  ssl: true,
+  migration_source: "old_schema_migrations"
 
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
@@ -36,13 +37,26 @@ config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
 
 config :re,
   vivareal_highlights_size_rio_de_janeiro:
-    System.get_env("VIVAREAL_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
-  vivareal_highlights_size_sao_paulo: System.get_env("VIVAREAL_HIGHLIGHTS_SIZE_SAO_PAULO"),
-  zap_highlights_size_rio_de_janeiro: System.get_env("ZAP_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
-  zap_highlights_size_sao_paulo: System.get_env("ZAP_HIGHLIGHTS_SIZE_SAO_PAULO"),
+    String.to_integer(System.get_env("VIVAREAL_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO")),
+  vivareal_highlights_size_sao_paulo:
+    String.to_integer(System.get_env("VIVAREAL_HIGHLIGHTS_SIZE_SAO_PAULO")),
+  zap_highlights_size_rio_de_janeiro:
+    String.to_integer(System.get_env("ZAP_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO")),
+  zap_highlights_size_sao_paulo:
+    String.to_integer(System.get_env("ZAP_HIGHLIGHTS_SIZE_SAO_PAULO")),
   zap_super_highlights_size_rio_de_janeiro:
-    System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO"),
-  zap_super_highlights_size_sao_paulo: System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")
+    String.to_integer(System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO")),
+  zap_super_highlights_size_sao_paulo:
+    String.to_integer(System.get_env("ZAP_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")),
+  imovelweb_highlights_size_rio_de_janeiro:
+    String.to_integer(System.get_env("IMOVELWEB_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO")),
+  imovelweb_highlights_size_sao_paulo:
+    String.to_integer(System.get_env("IMOVELWEB_HIGHLIGHTS_SIZE_SAO_PAULO")),
+  imovelweb_super_highlights_size_rio_de_janeiro:
+    String.to_integer(System.get_env("IMOVELWEB_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO")),
+  imovelweb_super_highlights_size_sao_paulo:
+    String.to_integer(System.get_env("IMOVELWEB_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")),
+  imovelweb_identity: System.get_env("IMOVELWEB_IDENTITY")
 
 config :re_integrations,
   to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),

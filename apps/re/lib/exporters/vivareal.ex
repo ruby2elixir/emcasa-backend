@@ -5,6 +5,8 @@ defmodule Re.Exporters.Vivareal do
   @exported_attributes ~w(id title transaction_type highlight inserted_at updated_at detail_url
                           images details location contact_info)a
 
+  @listing_types ~w(Apartment Home Penthouse)
+
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
 
   @default_options %{attributes: @exported_attributes, highlight_ids: []}
@@ -54,7 +56,7 @@ defmodule Re.Exporters.Vivareal do
     do: Enum.map(attributes, &convert_attribute(&1, listing, options))
 
   defp convert_attribute(:id, %{id: id}, _) do
-    {"ListingId", %{}, id}
+    {"ListingID", %{}, id}
   end
 
   defp convert_attribute(:title, %{type: type, address: %{city: city}}, _) do
@@ -90,7 +92,7 @@ defmodule Re.Exporters.Vivareal do
     {"Media", %{}, Enum.map(images, &build_image/1)}
   end
 
-  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms)a
+  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms garage_spots)a
 
   defp convert_attribute(:details, listing, _) do
     {"Details", %{},
@@ -131,7 +133,7 @@ defmodule Re.Exporters.Vivareal do
   end
 
   defp build_details(:description, acc, listing) do
-    [{"Description", %{}, "<![CDATA[" <> (listing.description || "") <> "]]>"} | acc]
+    [{"Description", %{}, {:cdata, listing.description || ""}} | acc]
   end
 
   defp build_details(:price, acc, listing) do
@@ -167,14 +169,16 @@ defmodule Re.Exporters.Vivareal do
     [{"Bathrooms", %{}, listing.bathrooms || 0} | acc]
   end
 
+  defp build_details(:garage_spots, acc, listing) do
+    [{"Garage", %{type: "Parking Space"}, listing.garage_spots || 0} | acc]
+  end
+
   defp build_image(%{filename: filename, description: description}) do
     {"Item", %{caption: description, medium: "image"},
      "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename}
   end
 
-  defp translate_type("Apartamento"), do: "Apartment"
-
-  defp translate_type(_), do: "Other"
+  defp translate_type(type), do: Map.get(listing_type_map(), type, "Other")
 
   defp expand_state("RJ"), do: "Rio de Janeiro"
   defp expand_state("SP"), do: "São Paulo"
@@ -186,6 +190,9 @@ defmodule Re.Exporters.Vivareal do
     |> URI.merge(param)
     |> URI.to_string()
   end
+
+  def listing_type_map(),
+    do: Re.Listing.listing_types() |> Enum.zip(@listing_types) |> Enum.into(%{})
 
   defp merge_defaults(options) do
     Map.merge(@default_options, options)

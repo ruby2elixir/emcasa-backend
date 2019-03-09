@@ -2,10 +2,11 @@
 version: '3'
 services:
   db:
-    image: 'postgres:9.6-alpine'
+    image: 'postgres:10.6-alpine'
     hostname: &pg_hostname db
     volumes:
       - './priv/docker/postgres/init-emcasa.sql:/docker-entrypoint-initdb.d/init-emcasa.sql'
+      - './priv/docker/postgres/dump:/opt/dump'
       - 'db_data:/var/lib/postgresql/data'
     environment:
       POSTGRES_USER: &pg_username postgres
@@ -80,13 +81,15 @@ services:
         aliases:
           - app
           - dev.emcasa.com
-          - local.emcasa.com
-          - kibana.local.emcasa.com
+          - api.dev.emcasa.com
+          - kibana.dev.emcasa.com
+          - sentry.dev.emcasa.com
       default:
         aliases:
           - app
     depends_on:
       - backend
+      - es
     volumes:
       - './priv/docker/certs/dev:/etc/emcasa'
       - './priv/docker/caddy/Caddyfile:/etc/Caddyfile'

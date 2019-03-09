@@ -8,6 +8,7 @@ defmodule Re.Addresses.Neighborhoods do
   alias Re.{
     Address,
     Addresses.District,
+    Addresses.Slugs,
     Listing,
     Repo
   }
@@ -58,29 +59,47 @@ defmodule Re.Addresses.Neighborhoods do
   def nearby("Leblon"), do: "Gávea"
   def nearby("São Conrado"), do: "Itanhangá"
 
-  @covered_neighborhoods MapSet.new([
-                           %{state: "RJ", neighborhood: "Humaitá", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Copacabana", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Botafogo", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Catete", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Cosme Velho", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Flamengo", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Gávea", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Ipanema", city: "Rio de Janeiro"},
-                           %{
-                             state: "RJ",
-                             neighborhood: "Jardim Botânico",
-                             city: "Rio de Janeiro"
-                           },
-                           %{state: "RJ", neighborhood: "Joá", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Lagoa", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Laranjeiras", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Leblon", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Leme", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "São Conrado", city: "Rio de Janeiro"},
-                           %{state: "RJ", neighborhood: "Urca", city: "Rio de Janeiro"},
-                           %{state: "SP", neighborhood: "Perdizes", city: "São Paulo"}
-                         ])
+  @covered_neighborhoods [
+    %{state: "RJ", neighborhood: "Humaitá", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Copacabana", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Botafogo", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Catete", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Cosme Velho", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Flamengo", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Gávea", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Ipanema", city: "Rio de Janeiro"},
+    %{
+      state: "RJ",
+      neighborhood: "Jardim Botânico",
+      city: "Rio de Janeiro"
+    },
+    %{state: "RJ", neighborhood: "Joá", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Lagoa", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Laranjeiras", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Leblon", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Leme", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "São Conrado", city: "Rio de Janeiro"},
+    %{state: "RJ", neighborhood: "Urca", city: "Rio de Janeiro"},
+    %{state: "SP", neighborhood: "Perdizes", city: "São Paulo"},
+    %{state: "SP", neighborhood: "Vila Pompéia", city: "São Paulo"}
+  ]
 
-  def is_covered(neighborhood), do: MapSet.member?(@covered_neighborhoods, neighborhood)
+  def is_covered(neighborhood) do
+    @covered_neighborhoods
+    |> sluggify_covered_neighborhoods()
+    |> MapSet.member?(sluggify_attributes(neighborhood))
+  end
+
+  defp sluggify_covered_neighborhoods(covered_neighborhoods) do
+    covered_neighborhoods
+    |> Enum.map(&sluggify_attributes(&1))
+    |> MapSet.new()
+  end
+
+  defp sluggify_attributes(neighborhoods) do
+    neighborhoods
+    |> Map.update!(:city, &Slugs.sluggify(&1))
+    |> Map.update!(:neighborhood, &Slugs.sluggify(&1))
+    |> Map.update!(:state, &Slugs.sluggify(&1))
+  end
 end
