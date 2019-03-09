@@ -1,5 +1,6 @@
 defmodule ReWeb.GraphQL.Developments.MutationTest do
-  use ReWeb.ConnCase
+  use ReWeb.{AbsintheAssertions, ConnCase}
+
 
   import Re.Factory
 
@@ -58,6 +59,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert inserted_address["postalCode"] == address.postal_code
     end
 
+    @tag dev: true
     test "regular user should not insert development", %{
       user_conn: conn,
       development: development,
@@ -71,12 +73,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       assert %{"insertDevelopment" => nil} = json_response(conn, 200)["data"]
 
-      error =
-        json_response(conn, 200)["errors"]
-        |> List.first()
-
-      assert 403 = error["code"]
-      assert "Forbidden" = error["message"]
+      assert_forbidden_response(json_response(conn, 200))
     end
 
     test "unauthenticated user should not insert a development", %{
@@ -92,17 +89,11 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       assert %{"insertDevelopment" => nil} = json_response(conn, 200)["data"]
 
-      error =
-        json_response(conn, 200)["errors"]
-        |> List.first()
-
-      assert 401 == error["code"]
-      assert "Unauthorized" == error["message"]
+      assert_unauthorized_response(json_response(conn, 200))
     end
   end
 
   describe "updateDevelopment/2" do
-    @tag dev: true
     test "admin should update development", %{
       admin_conn: conn,
       old_development: old_development,
@@ -150,12 +141,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       assert %{"updateDevelopment" => nil} = json_response(conn, 200)["data"]
 
-      error =
-        json_response(conn, 200)["errors"]
-        |> List.first()
-
-      assert 403 == error["code"]
-      assert "Forbidden" = error["message"]
+      assert_forbidden_response(json_response(conn, 200))
     end
 
     test "unauthenticated user should update development", %{
@@ -173,12 +159,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       assert %{"updateDevelopment" => nil} = json_response(conn, 200)["data"]
 
-      error =
-        json_response(conn, 200)["errors"]
-        |> List.first()
-
-      assert 401 == error["code"]
-      assert "Unauthorized" == error["message"]
-    end
+      assert_unauthorized_response(json_response(conn, 200))
+   end
   end
 end
