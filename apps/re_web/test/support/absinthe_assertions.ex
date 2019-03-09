@@ -1,8 +1,7 @@
 defmodule ReWeb.AbsintheAssertions do
   @moduledoc """
   This module define common assertions for GraphQL response.
-  It's used to not duplicate the implementation of default cases
-  (like errors).
+  It's used to not duplicate the implementation of default cases (like errors).
 
   """
 

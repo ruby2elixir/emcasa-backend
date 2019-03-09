@@ -59,7 +59,6 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert inserted_address["postalCode"] == address.postal_code
     end
 
-    @tag dev: true
     test "regular user should not insert development", %{
       user_conn: conn,
       development: development,
@@ -71,7 +70,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"insertDevelopment" => nil} = json_response(conn, 200)["data"]
+      assert %{"insertDevelopment" => nil} == json_response(conn, 200)["data"]
 
       assert_forbidden_response(json_response(conn, 200))
     end
@@ -87,7 +86,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"insertDevelopment" => nil} = json_response(conn, 200)["data"]
+      assert %{"insertDevelopment" => nil} == json_response(conn, 200)["data"]
 
       assert_unauthorized_response(json_response(conn, 200))
     end
@@ -139,7 +138,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"updateDevelopment" => nil} = json_response(conn, 200)["data"]
+      assert %{"updateDevelopment" => nil} == json_response(conn, 200)["data"]
 
       assert_forbidden_response(json_response(conn, 200))
     end
@@ -157,7 +156,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"updateDevelopment" => nil} = json_response(conn, 200)["data"]
+      assert %{"updateDevelopment" => nil} == json_response(conn, 200)["data"]
 
       assert_unauthorized_response(json_response(conn, 200))
    end
