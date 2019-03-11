@@ -3,8 +3,6 @@ defmodule ReWeb.Listing.MutationHelpers do
   Helper module for absinthe tests
   """
 
-  import Re.Factory
-
   def insert_listing_variables(listing, address) do
     %{
       "input" => %{
