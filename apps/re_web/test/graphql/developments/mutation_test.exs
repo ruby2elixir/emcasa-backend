@@ -11,9 +11,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     conn = put_req_header(conn, "accept", "application/json")
     admin_user = insert(:user, email: "admin@email.com", role: "admin")
     user_user = insert(:user, email: "user@email.com", role: "user")
+    address = insert(:address)
 
     development = build(:development)
-    address = build(:address)
 
     {:ok,
      unauthenticated_conn: conn,
@@ -29,16 +29,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       mutation InsertDevelopment ($input: DevelopmentInput!) {
         insertDevelopment(input: $input) {
           id
-          address {
-            city
-            state
-            lat
-            lng
-            neighborhood
-            street
-            streetNumber
-            postalCode
-          }
+          address_id
           name
           title
           phase
@@ -48,6 +39,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       }
     """
 
+    @tag dev: true
     test "admin should insert development", %{
       admin_conn: conn,
       development: development,
@@ -58,7 +50,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{
-               "insertDevelopment" => %{"address" => inserted_address} = insert_development
+               "insertDevelopment" => insert_development
              } = json_response(conn, 200)["data"]
 
       assert insert_development["id"]
@@ -68,14 +60,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert insert_development["builder"] == development.builder
       assert insert_development["description"] == development.description
 
-      assert inserted_address["city"] == address.city
-      assert inserted_address["state"] == address.state
-      assert inserted_address["lat"] == address.lat
-      assert inserted_address["lng"] == address.lng
-      assert inserted_address["neighborhood"] == address.neighborhood
-      assert inserted_address["street"] == address.street
-      assert inserted_address["streetNumber"] == address.street_number
-      assert inserted_address["postalCode"] == address.postal_code
+      assert insert_development["address_id"] == Integer.to_string(address.id)
     end
 
     test "regular user should not insert development", %{
@@ -112,16 +97,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       mutation UpdateDevelopment ($id: ID!, $input: DevelopmentInput!) {
         updateDevelopment(id: $id, input: $input) {
           id
-          address {
-            city
-            state
-            lat
-            lng
-            neighborhood
-            street
-            streetNumber
-            postalCode
-          }
+          address_id
           name
           title
           phase
@@ -130,6 +106,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
         }
       }
     """
+
     test "admin should update development", %{
       admin_conn: conn,
       old_development: old_development,
@@ -141,8 +118,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
 
-      assert %{"updateDevelopment" => %{"address" => inserted_address} = updated_development} =
-               json_response(conn, 200)["data"]
+      assert %{"updateDevelopment" => updated_development} = json_response(conn, 200)["data"]
 
       assert updated_development["name"] == new_development.name
       assert updated_development["title"] == new_development.title
@@ -150,14 +126,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert updated_development["phase"] == new_development.phase
       assert updated_development["description"] == new_development.description
 
-      assert inserted_address["city"] == new_address.city
-      assert inserted_address["state"] == new_address.state
-      assert inserted_address["lat"] == new_address.lat
-      assert inserted_address["lng"] == new_address.lng
-      assert inserted_address["neighborhood"] == new_address.neighborhood
-      assert inserted_address["street"] == new_address.street
-      assert inserted_address["streetNumber"] == new_address.street_number
-      assert inserted_address["postalCode"] == new_address.postal_code
+      assert updated_development["address_id"] == Integer.to_string(new_address.id)
     end
 
     test "regular user should not update a development", %{
@@ -201,16 +170,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
         "phase" => development.phase,
         "builder" => development.builder,
         "description" => development.description,
-        "address" => %{
-          "city" => address.city,
-          "state" => address.state,
-          "lat" => address.lat,
-          "lng" => address.lng,
-          "neighborhood" => address.neighborhood,
-          "street" => address.street,
-          "streetNumber" => address.street_number,
-          "postalCode" => address.postal_code
-        }
+        "address_id" => address.id
       }
     }
   end
@@ -224,16 +184,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
         "phase" => development.phase,
         "builder" => development.builder,
         "description" => development.description,
-        "address" => %{
-          "city" => address.city,
-          "state" => address.state,
-          "lat" => address.lat,
-          "lng" => address.lng,
-          "neighborhood" => address.neighborhood,
-          "street" => address.street,
-          "streetNumber" => address.street_number,
-          "postalCode" => address.postal_code
-        }
+        "address_id" => address.id
       }
     }
   end

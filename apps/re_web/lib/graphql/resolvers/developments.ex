@@ -37,7 +37,6 @@ defmodule ReWeb.Resolvers.Developments do
     end
   end
 
-  defp get_address(%{address: address_params}), do: Addresses.insert_or_update(address_params)
   defp get_address(%{address_id: id}), do: Addresses.get_by_id(id)
   defp get_address(_), do: {:error, :bad_request}
 end
