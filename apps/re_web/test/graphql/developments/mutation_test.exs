@@ -1,12 +1,10 @@
 defmodule ReWeb.GraphQL.Developments.MutationTest do
   use ReWeb.{AbsintheAssertions, ConnCase}
 
-
   import Re.Factory
 
   alias ReWeb.{
-    AbsintheHelpers,
-    Listing.MutationHelpers
+    AbsintheHelpers
   }
 
   setup %{conn: conn} do
@@ -27,16 +25,37 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
   end
 
   describe "insertDevelopment/2" do
+    @insert_mutation """
+      mutation InsertDevelopment ($input: DevelopmentInput!) {
+        insertDevelopment(input: $input) {
+          id
+          address {
+            city
+            state
+            lat
+            lng
+            neighborhood
+            street
+            streetNumber
+            postalCode
+          }
+          name
+          title
+          phase
+          builder
+          description
+        }
+      }
+    """
+
     test "admin should insert development", %{
       admin_conn: conn,
       development: development,
       address: address
     } do
-      variables = MutationHelpers.insert_development_variables(development, address)
+      variables = insert_development_variables(development, address)
 
-      mutation = MutationHelpers.insert_development_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{
                "insertDevelopment" => %{"address" => inserted_address} = insert_development
@@ -64,11 +83,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       development: development,
       address: address
     } do
-      variables = MutationHelpers.insert_development_variables(development, address)
+      variables = insert_development_variables(development, address)
 
-      mutation = MutationHelpers.insert_development_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{"insertDevelopment" => nil} == json_response(conn, 200)["data"]
 
@@ -80,11 +97,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       development: development,
       address: address
     } do
-      variables = MutationHelpers.insert_development_variables(development, address)
+      variables = insert_development_variables(development, address)
 
-      mutation = MutationHelpers.insert_development_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{"insertDevelopment" => nil} == json_response(conn, 200)["data"]
 
@@ -93,6 +108,28 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
   end
 
   describe "updateDevelopment/2" do
+    @update_mutation """
+      mutation UpdateDevelopment ($id: ID!, $input: DevelopmentInput!) {
+        updateDevelopment(id: $id, input: $input) {
+          id
+          address {
+            city
+            state
+            lat
+            lng
+            neighborhood
+            street
+            streetNumber
+            postalCode
+          }
+          name
+          title
+          phase
+          builder
+          description
+        }
+      }
+    """
     test "admin should update development", %{
       admin_conn: conn,
       old_development: old_development,
@@ -100,11 +137,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       address: new_address
     } do
 
-      variables = MutationHelpers.update_development_variables(old_development.id, new_development, new_address)
+      variables = update_development_variables(old_development.id, new_development, new_address)
 
-      mutation = MutationHelpers.update_development_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
 
       assert %{"updateDevelopment" => %{"address" => inserted_address} = updated_development} =
                json_response(conn, 200)["data"]
@@ -132,11 +167,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       address: new_address
     } do
 
-      variables = MutationHelpers.update_development_variables(old_development.id, new_development, new_address)
+      variables = update_development_variables(old_development.id, new_development, new_address)
 
-      mutation = MutationHelpers.update_development_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
 
       assert %{"updateDevelopment" => nil} == json_response(conn, 200)["data"]
 
@@ -150,15 +183,58 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       address: new_address
     } do
 
-      variables = MutationHelpers.update_development_variables(old_development.id, new_development, new_address)
+      variables = update_development_variables(old_development.id, new_development, new_address)
 
-      mutation = MutationHelpers.update_development_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
 
       assert %{"updateDevelopment" => nil} == json_response(conn, 200)["data"]
 
       assert_unauthorized_response(json_response(conn, 200))
    end
+  end
+
+  def insert_development_variables(development, address) do
+    %{
+      "input" => %{
+        "name" => development.name,
+        "title" => development.title,
+        "phase" => development.phase,
+        "builder" => development.builder,
+        "description" => development.description,
+        "address" => %{
+          "city" => address.city,
+          "state" => address.state,
+          "lat" => address.lat,
+          "lng" => address.lng,
+          "neighborhood" => address.neighborhood,
+          "street" => address.street,
+          "streetNumber" => address.street_number,
+          "postalCode" => address.postal_code
+        }
+      }
+    }
+  end
+
+  def update_development_variables(id, development, address) do
+    %{
+      "id" => id,
+      "input" => %{
+        "name" => development.name,
+        "title" => development.title,
+        "phase" => development.phase,
+        "builder" => development.builder,
+        "description" => development.description,
+        "address" => %{
+          "city" => address.city,
+          "state" => address.state,
+          "lat" => address.lat,
+          "lng" => address.lng,
+          "neighborhood" => address.neighborhood,
+          "street" => address.street,
+          "streetNumber" => address.street_number,
+          "postalCode" => address.postal_code
+        }
+      }
+    }
   end
 end
