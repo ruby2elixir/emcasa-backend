@@ -125,7 +125,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert inserted_address["postalCode"] == new_address.postal_code
     end
 
-    test "commom user should update development", %{
+    test "regular user should not update a development", %{
       user_conn: conn,
       old_development: old_development,
       development: new_development,
@@ -143,7 +143,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert_forbidden_response(json_response(conn, 200))
     end
 
-    test "unauthenticated user should update development", %{
+    test "unauthenticated user should not update a development", %{
       unauthenticated_conn: conn,
       old_development: old_development,
       development: new_development,
