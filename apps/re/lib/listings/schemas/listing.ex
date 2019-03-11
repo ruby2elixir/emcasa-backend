@@ -38,6 +38,7 @@ defmodule Re.Listing do
     field :in_person_visit_count, :integer, virtual: true
 
     belongs_to :address, Re.Address
+    belongs_to :development, Re.Development
     belongs_to :user, Re.User
     has_many :images, Re.Image
     has_many :price_history, Re.Listings.PriceHistory

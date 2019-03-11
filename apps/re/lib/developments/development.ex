@@ -16,6 +16,7 @@ defmodule Re.Development do
 
     belongs_to :address, Re.Address
     has_many :images, Re.Image
+    has_many :listings, Re.Listing
 
     timestamps()
   end
