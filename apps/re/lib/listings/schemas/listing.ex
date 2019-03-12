@@ -38,6 +38,7 @@ defmodule Re.Listing do
     field :in_person_visit_count, :integer, virtual: true
 
     belongs_to :address, Re.Address
+    belongs_to :development, Re.Development
     belongs_to :user, Re.User
     has_many :images, Re.Image
     has_many :price_history, Re.Listings.PriceHistory
@@ -49,6 +50,8 @@ defmodule Re.Listing do
     has_many :favorited, through: [:listings_favorites, :user]
 
     has_many :interests, Re.Interest
+
+    has_many :units, Re.Unit
 
     timestamps()
   end
@@ -118,7 +121,11 @@ defmodule Re.Listing do
     validate_number(changeset, attr, greater_than_or_equal_to: 0)
   end
 
-  defp generate_uuid(changeset), do: Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
+  defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
+   Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
+  end
+
+  defp generate_uuid(changeset), do: changeset
 
   def listing_types(), do: @types
 end
