@@ -1,7 +1,7 @@
-defmodule Re.RealtyTest do
+defmodule Re.UnitTest do
   use Re.ModelCase
 
-  alias Re.Realty
+  alias Re.Unit
 
   import Re.Factory
 
@@ -43,12 +43,12 @@ defmodule Re.RealtyTest do
         @valid_attrs
         |> Map.put(:listing_id, listing_id)
 
-      changeset = Realty.changeset(%Realty{}, attrs, "development")
+      changeset = Unit.changeset(%Unit{}, attrs, "development")
       assert changeset.valid?
     end
 
     test "without required attributes for development" do
-      changeset = Realty.changeset(%Realty{}, %{}, "development")
+      changeset = Unit.changeset(%Unit{}, %{}, "development")
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :price) ==
@@ -74,7 +74,7 @@ defmodule Re.RealtyTest do
     end
 
     test "with invalid attributes for development" do
-      changeset = Realty.changeset(%Realty{}, @invalid_attrs, "development")
+      changeset = Unit.changeset(%Unit{}, @invalid_attrs, "development")
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :price) ==

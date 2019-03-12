@@ -1,12 +1,13 @@
-defmodule Re.Realty do
+defmodule Re.Unit do
   @moduledoc """
-  Model for real estate properties, each real estate from listing.
+  Model for real estate commom properties, each real estate can have one
+  or more units.
   """
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  schema "realties" do
+  schema "units" do
     field :uuid, Ecto.UUID
     field :complement, :string
     field :price, :integer

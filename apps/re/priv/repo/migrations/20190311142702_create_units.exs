@@ -1,8 +1,8 @@
-defmodule Re.Repo.Migrations.CreateRealties do
+defmodule Re.Repo.Migrations.CreateUnits do
   use Ecto.Migration
 
   def change do
-    create table(:realties) do
+    create table(:units) do
       add :uuid, :uuid
       add :complement, :string
       add :price, :integer
@@ -22,6 +22,6 @@ defmodule Re.Repo.Migrations.CreateRealties do
       add :listing_id, references(:listings)
     end
 
-    create(unique_index(:realties, [:uuid]))
+    create(unique_index(:units, [:uuid]))
   end
 end
