@@ -1,13 +1,7 @@
-defmodule Re.Repo.Migrations.SwitchUuid do
+defmodule Re.Repo.Migrations.AddListingUuidTourAppointments do
   use Ecto.Migration
 
-  require Ecto.Query
-
   def up do
-    execute("ALTER TABLE listings ALTER COLUMN uuid TYPE uuid USING uuid::uuid;")
-
-    flush()
-
     alter table(:tour_appointments) do
       add :listing_uuid, references(:listings, column: :uuid, type: :uuid)
     end
@@ -33,9 +27,5 @@ defmodule Re.Repo.Migrations.SwitchUuid do
     alter table(:tour_appointments) do
       remove :listing_uuid
     end
-
-    flush()
-
-    execute("ALTER TABLE listings ALTER COLUMN uuid TYPE text;")
   end
 end
