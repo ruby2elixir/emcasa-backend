@@ -10,9 +10,10 @@ defmodule Re.Calendars do
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
-  def schedule_tour(params) do
+  def schedule_tour(params, listing) do
     %TourAppointment{}
     |> TourAppointment.changeset(params)
+    |> TourAppointment.changeset(%{listing_uuid: listing.uuid, listing_id: listing.id})
     |> Repo.insert()
     |> PubSub.publish_new("tour_appointment")
   end

@@ -9,7 +9,6 @@ defmodule Re.Exporters.Trovit do
   @default_options %{attributes: @exported_attributes}
 
   @listing_agency 0
-  @listing_private 1
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
