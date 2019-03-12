@@ -1,6 +1,8 @@
 defmodule Re.Repo.Migrations.AddListingUuidTourAppointments do
   use Ecto.Migration
 
+  require Ecto.Query
+
   def up do
     alter table(:tour_appointments) do
       add :listing_uuid, references(:listings, column: :uuid, type: :uuid)
@@ -8,22 +10,32 @@ defmodule Re.Repo.Migrations.AddListingUuidTourAppointments do
 
     flush()
 
-    Re.Calendars.TourAppointment
-    |> Ecto.Query.preload(:listing)
-    |> Re.Repo.all()
-    |> Enum.each(&set_uuid/1)
-  end
+    execute("""
+      UPDATE tour_appointments AS ta
+      SET listing_uuid = l.uuid
+      FROM listings AS l
+      WHERE ta.listing_id = l.id
+    """)
 
-  defp set_uuid(tour_appointment) do
-    listing = Re.Repo.get(Re.Listing, tour_appointment.listing_id)
+    flush()
 
-    {:ok, _} =
-      tour_appointment
-      |> Re.Calendars.TourAppointment.changeset(%{listing_uuid: listing.uuid})
-      |> Re.Repo.update()
+    alter table(:tour_appointments) do
+      remove :listing_id
+    end
   end
 
   def down do
+    alter table(:tour_appointments) do
+      add :listing_id, references(:listings)
+    end
+
+    execute("""
+      UPDATE tour_appointments AS ta
+      SET listing_id = l.id
+      FROM listings AS l
+      WHERE ta.listing_uuid = l.uuid
+    """)
+
     alter table(:tour_appointments) do
       remove :listing_uuid
     end

@@ -13,9 +13,8 @@ defmodule Re.Calendars.TourAppointment do
     embeds_many :options, Re.Calendars.Option
 
     belongs_to :user, Re.User
-    belongs_to :listing, Re.Listing
 
-    belongs_to :listing2, Re.Listing,
+    belongs_to :listing, Re.Listing,
       references: :uuid,
       foreign_key: :listing_uuid,
       type: Ecto.UUID
@@ -24,7 +23,7 @@ defmodule Re.Calendars.TourAppointment do
   end
 
   @required ~w(wants_pictures wants_tour)a
-  @optional ~w(user_id listing_id listing_uuid)a
+  @optional ~w(user_id listing_uuid)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
