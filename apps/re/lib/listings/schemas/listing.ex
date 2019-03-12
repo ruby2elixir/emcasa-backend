@@ -121,7 +121,11 @@ defmodule Re.Listing do
     validate_number(changeset, attr, greater_than_or_equal_to: 0)
   end
 
-  defp generate_uuid(changeset), do: Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
+  defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
+   Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
+  end
+
+  defp generate_uuid(changeset), do: changeset
 
   def listing_types(), do: @types
 end
