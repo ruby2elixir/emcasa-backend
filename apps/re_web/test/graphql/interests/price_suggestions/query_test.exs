@@ -207,4 +207,58 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
     assert request = Repo.get_by(Request, name: "Mah Name")
     assert request.user_id == user.id
   end
+
+  test "nameless anonymous user should request price suggestions", %{unauthenticated_conn: conn} do
+    insert(
+      :factors,
+      state: "ST",
+      city: "city",
+      street: "street",
+      intercept: 10.10,
+      rooms: 123.321,
+      area: 321.123,
+      bathrooms: 111.222,
+      garage_spots: 222.111
+    )
+
+    mutation = """
+      mutation RequestPriceSuggestion (
+        $email: String!,
+        $area: Int!,
+        $rooms: Int!,
+        $bathrooms: Int!,
+        $garageSpots: Int!,
+        $isCovered: Boolean!,
+        $addressInput: AddressInput!
+        ) {
+        requestPriceSuggestion(
+          email: $email
+          area: $area
+          rooms: $rooms
+          bathrooms: $bathrooms
+          garageSpots: $garageSpots
+          isCovered: $isCovered
+          address: $addressInput
+        ) {
+          id
+          name
+          suggestedPrice
+        }
+      }
+    """
+
+    nameless_variables = Map.delete(@variables, "name")
+
+    conn =
+      post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, nameless_variables))
+
+    %{"suggestedPrice" => suggested_price, "id" => id, "name" => name} =
+      json_response(conn, 200)["data"]["requestPriceSuggestion"]
+
+    assert 26_613.248 == suggested_price
+
+    refute name
+
+    assert Repo.get_by(Request, id: id)
+  end
 end
