@@ -29,17 +29,18 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       mutation InsertDevelopment ($input: DevelopmentInput!) {
         insertDevelopment(input: $input) {
           id
-          address_id
           name
           title
           phase
           builder
           description
+          address {
+            id
+          }
         }
       }
     """
 
-    @tag dev: true
     test "admin should insert development", %{
       admin_conn: conn,
       development: development,
@@ -50,7 +51,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{
-               "insertDevelopment" => insert_development
+               "insertDevelopment" => %{"address" => inserted_address}= insert_development
              } = json_response(conn, 200)["data"]
 
       assert insert_development["id"]
@@ -60,7 +61,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert insert_development["builder"] == development.builder
       assert insert_development["description"] == development.description
 
-      assert insert_development["address_id"] == Integer.to_string(address.id)
+      assert inserted_address["id"] == Integer.to_string(address.id)
     end
 
     test "regular user should not insert development", %{
@@ -97,12 +98,14 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       mutation UpdateDevelopment ($id: ID!, $input: DevelopmentInput!) {
         updateDevelopment(id: $id, input: $input) {
           id
-          address_id
           name
           title
           phase
           builder
           description
+          address {
+            id
+          }
         }
       }
     """
@@ -118,7 +121,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
 
-      assert %{"updateDevelopment" => updated_development} = json_response(conn, 200)["data"]
+      assert %{
+              "updateDevelopment" => %{"address" => updated_address} = updated_development
+              } = json_response(conn, 200)["data"]
 
       assert updated_development["name"] == new_development.name
       assert updated_development["title"] == new_development.title
@@ -126,7 +131,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert updated_development["phase"] == new_development.phase
       assert updated_development["description"] == new_development.description
 
-      assert updated_development["address_id"] == Integer.to_string(new_address.id)
+      assert updated_address["id"] == Integer.to_string(new_address.id)
     end
 
     test "regular user should not update a development", %{

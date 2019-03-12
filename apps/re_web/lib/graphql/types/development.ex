@@ -15,7 +15,6 @@ defmodule ReWeb.Types.Development do
     field :phase, :string
     field :builder, :string
     field :description, :string
-    field :address_id, :id
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_development/3)
