@@ -51,7 +51,7 @@ defmodule Re.Listing do
 
     has_many :interests, Re.Interest
 
-    has_many :real_estate, Re.RealEstate
+    has_many :realties, Re.Realty
 
     timestamps()
   end

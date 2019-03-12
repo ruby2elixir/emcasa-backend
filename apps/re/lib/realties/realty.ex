@@ -1,4 +1,4 @@
-defmodule Re.RealEstate do
+defmodule Re.Realty do
   @moduledoc """
   Model for real estate properties, each real estate from listing.
   """
@@ -6,8 +6,8 @@ defmodule Re.RealEstate do
 
   import Ecto.Changeset
 
-  schema "real_estate" do
-    field :uuid, :string
+  schema "realties" do
+    field :uuid, Ecto.UUID
     field :complement, :string
     field :price, :integer
     field :property_tax, :float

@@ -1,9 +1,9 @@
-defmodule Re.Repo.Migrations.CreateRealEstate do
+defmodule Re.Repo.Migrations.CreateRealties do
   use Ecto.Migration
 
   def change do
-    create table(:real_estate) do
-      add :uuid, :string
+    create table(:realties) do
+      add :uuid, :uuid
       add :complement, :string
       add :price, :integer
       add :property_tax, :float
@@ -22,6 +22,6 @@ defmodule Re.Repo.Migrations.CreateRealEstate do
       add :listing_id, references(:listings)
     end
 
-    create(unique_index(:real_estate, [:uuid]))
+    create(unique_index(:realties, [:uuid]))
   end
 end
