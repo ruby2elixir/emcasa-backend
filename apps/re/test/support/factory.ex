@@ -154,6 +154,26 @@ defmodule Re.Factory do
     }
   end
 
+  def unit_factory do
+    %Re.Unit{
+      uuid: UUID.uuid4(),
+      complement: Address.secondary_address(),
+      price: random(:price),
+      property_tax: random(:price_float),
+      maintenance_fee: random(:price_float),
+      floor: random(:floor),
+      rooms: Enum.random(1..10),
+      bathrooms: Enum.random(1..10),
+      restrooms: Enum.random(1..10),
+      area: Enum.random(1..500),
+      garage_spots: Enum.random(0..10),
+      garage_type: Enum.random(~w(contract condominium)),
+      suites: Enum.random(0..10),
+      dependencies: Enum.random(0..10),
+      balconies: Enum.random(0..10)
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999

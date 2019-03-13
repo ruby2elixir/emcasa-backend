@@ -72,6 +72,8 @@ defmodule ReWeb.Types.Listing do
 
       resolve &Resolvers.Listings.related/3
     end
+
+    field :units, list_of(:unit), resolve: &Resolvers.Units.per_listing/3
   end
 
   input_object :listing_input do

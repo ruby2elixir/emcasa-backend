@@ -67,7 +67,7 @@ defmodule Re.Unit do
   end
 
   defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
-   Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
+    Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
   end
 
   defp generate_uuid(changeset), do: changeset
