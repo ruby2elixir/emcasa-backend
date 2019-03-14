@@ -8,7 +8,8 @@ defmodule Re.ImageTest do
   @valid_attrs %{
     filename: "my_picture.jpg",
     position: 1,
-    description: "Home sweet home"
+    description: "Home sweet home",
+    category: "kitchen"
   }
 
   @invalid_attrs %{
