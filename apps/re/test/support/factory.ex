@@ -5,7 +5,7 @@ defmodule Re.Factory do
 
   use ExMachina.Ecto, repo: Re.Repo
 
-  alias Faker.{Name, Address, Internet, Pokemon, Lorem.Shakespeare, Phone}
+  alias Faker.{Name, Address, Internet, Pokemon, Lorem.Shakespeare, Phone, Lorem}
 
   def user_factory do
     %Re.User{
@@ -98,7 +98,8 @@ defmodule Re.Factory do
       filename: Internet.image_url(),
       position: Enum.random(-50..50),
       is_active: true,
-      description: Shakespeare.hamlet()
+      description: Shakespeare.hamlet(),
+      category: Lorem.word()
     }
   end
 

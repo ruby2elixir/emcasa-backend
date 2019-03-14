@@ -12,6 +12,7 @@ defmodule ReWeb.Types.Image do
     field :position, :integer
     field :is_active, :boolean
     field :description, :string
+    field :category, :string
   end
 
   input_object :image_insert_input do
@@ -19,12 +20,14 @@ defmodule ReWeb.Types.Image do
     field :filename, non_null(:string)
     field :is_active, :boolean
     field :description, :string
+    field :category, :string
   end
 
   input_object :image_update_input do
     field :id, non_null(:id)
     field :position, :integer
     field :description, :string
+    field :category, :string
   end
 
   input_object :image_deactivate_input do

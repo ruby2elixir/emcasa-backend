@@ -7,7 +7,7 @@ defmodule Re.Listing do
   import Ecto.Changeset
 
   schema "listings" do
-    field :uuid, :string
+    field :uuid, Ecto.UUID
     field :type, :string
     field :complement, :string
     field :description, :string
