@@ -65,6 +65,7 @@ defmodule ReWeb.Router do
     forward("/zap", ReWeb.Exporters.Zap.Plug)
     forward("/trovit", ReWeb.Exporters.Trovit.Plug)
     forward("/imovelweb", ReWeb.Exporters.Imovelweb.Plug)
+    forward("/facebook-ads", ReWeb.Exporters.FacebookAds.Plug)
   end
 
   if Mix.env() == :dev do
