@@ -4,7 +4,7 @@ defmodule Re.Exporters.FacebookAds do
   """
 
   @exported_attributes ~w(id url title sell_type description price listing_type
-    rooms bathrooms units address latitude longitude image)a
+    rooms bathrooms units area_unit area address latitude longitude image)a
   @default_options %{attributes: @exported_attributes}
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
@@ -58,7 +58,7 @@ defmodule Re.Exporters.FacebookAds do
   end
 
   defp convert_attribute(:title, %{type: type, address: %{city: city}}) do
-    {"title", %{}, "#{type} a venda em #{city}"}
+    {"name", %{}, "#{type} a venda em #{city}"}
   end
 
   defp convert_attribute(:sell_type, _) do
@@ -125,6 +125,14 @@ defmodule Re.Exporters.FacebookAds do
         {"url", %{}, escape_cdata("#{@image_url}/#{first_image.filename}")}
       ]
     }
+  end
+
+  defp convert_attribute(:area, %{area: area}) do
+    {"area_size", %{}, area}
+  end
+
+  defp convert_attribute(:area_unit, _) do
+    {"area_unit", %{}, "sq_m"}
   end
 
   defp expand_type("Apartamento"), do: "apartment"

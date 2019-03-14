@@ -49,7 +49,7 @@ defmodule Re.Exporters.FacebookAdsTest do
         "<listing>" <>
           "<home_listing_id><![CDATA[7004578]]></home_listing_id>" <>
           "<url><![CDATA[#{@frontend_url}/imoveis/7004578]]></url>" <>
-          "<title><![CDATA[Apartamento a venda em São Paulo]]></title>" <>
+          "<name><![CDATA[Apartamento a venda em São Paulo]]></name>" <>
           "<availability><![CDATA[for_sale]]></availability>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
@@ -57,6 +57,8 @@ defmodule Re.Exporters.FacebookAdsTest do
           "<num_beds><![CDATA[4]]></num_beds>" <>
           "<num_baths><![CDATA[4]]></num_baths>" <>
           "<num_units><![CDATA[1]]></num_units>" <>
+          "<area_unit><![CDATA[sq_m]]></area_unit>" <>
+          "<area_size><![CDATA[300]]></area_size>" <>
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
@@ -104,7 +106,7 @@ defmodule Re.Exporters.FacebookAdsTest do
         "<listing>" <>
           "<home_listing_id><![CDATA[7004578]]></home_listing_id>" <>
           "<url><![CDATA[#{@frontend_url}/imoveis/7004578]]></url>" <>
-          "<title><![CDATA[Apartamento a venda em São Paulo]]></title>" <>
+          "<name><![CDATA[Apartamento a venda em São Paulo]]></name>" <>
           "<availability><![CDATA[for_sale]]></availability>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
@@ -112,6 +114,8 @@ defmodule Re.Exporters.FacebookAdsTest do
           "<num_beds><![CDATA[4]]></num_beds>" <>
           "<num_baths><![CDATA[4]]></num_baths>" <>
           "<num_units><![CDATA[1]]></num_units>" <>
+          "<area_unit><![CDATA[sq_m]]></area_unit>" <>
+          "<area_size><![CDATA[300]]></area_size>" <>
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
@@ -157,7 +161,7 @@ defmodule Re.Exporters.FacebookAdsTest do
         "<listing>" <>
           "<home_listing_id><![CDATA[7004578]]></home_listing_id>" <>
           "<url><![CDATA[#{@frontend_url}/imoveis/7004578]]></url>" <>
-          "<title><![CDATA[Apartamento a venda em São Paulo]]></title>" <>
+          "<name><![CDATA[Apartamento a venda em São Paulo]]></name>" <>
           "<availability><![CDATA[for_sale]]></availability>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
@@ -165,6 +169,8 @@ defmodule Re.Exporters.FacebookAdsTest do
           "<num_beds><![CDATA[0]]></num_beds>" <>
           "<num_baths><![CDATA[0]]></num_baths>" <>
           "<num_units><![CDATA[1]]></num_units>" <>
+          "<area_unit><![CDATA[sq_m]]></area_unit>" <>
+          "<area_size><![CDATA[300]]></area_size>" <>
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
