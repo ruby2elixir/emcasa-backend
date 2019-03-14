@@ -10,19 +10,17 @@ defmodule ReWeb.AbsintheAssertions do
   using do
     quote do
       def assert_forbidden_response(response) do
-        error = response["errors"]
-          |> List.first()
+        [%{"message" => message, "code" => code}] = response["errors"]
 
-        assert 403 == error["code"]
-        assert "Forbidden" == error["message"]
+        assert 403 == code
+        assert "Forbidden" == message
       end
 
       def assert_unauthorized_response(response) do
-        error = response["errors"]
-          |> List.first()
+        [%{"message" => message, "code" => code}] = response["errors"]
 
-        assert 401 == error["code"]
-        assert "Unauthorized" == error["message"]
+        assert 401 == code
+        assert "Unauthorized" == message
       end
     end
   end
