@@ -1,4 +1,4 @@
-defmodule ReWeb.Types.Custom.UUID4 do
+defmodule ReWeb.Types.Custom.UUID do
   @moduledoc """
   The UUID4 scalar type allows UUID4 compliant strings to be passed in and out.
   Requires `{ :ecto, ">= 0.0.0" }` package: https://github.com/elixir-ecto/ecto
@@ -7,10 +7,10 @@ defmodule ReWeb.Types.Custom.UUID4 do
 
   alias Ecto.UUID
 
-  scalar :uuid4, name: "UUID4" do
+  scalar :uuid, name: "UUID" do
     description("""
-    The `UUID4` scalar type represents UUID4 compliant string data, represented as UTF-8
-    character sequences. The UUID4 type is most often used to represent unique
+    The `UUID` scalar type represents UUID4 compliant string data, represented as UTF-8
+    character sequences. The UUID type is most often used to represent unique
     human-readable ID strings.
     """)
 

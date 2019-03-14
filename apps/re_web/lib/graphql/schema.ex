@@ -12,7 +12,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.Calendar
   import_types ReWeb.Types.Development
   import_types ReWeb.Types.Unit
-  import_types ReWeb.Types.Custom.UUID4
+  import_types ReWeb.Types.Custom.UUID
   import_types Absinthe.Type.Custom
 
   alias ReWeb.GraphQL.Middlewares

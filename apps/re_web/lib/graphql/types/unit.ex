@@ -5,7 +5,7 @@ defmodule ReWeb.Types.Unit do
   use Absinthe.Schema.Notation
 
   object :unit do
-    field :uuid, :uuid4
+    field :uuid, :uuid
     field :complement, :string
     field :price, :integer
     field :property_tax, :float
