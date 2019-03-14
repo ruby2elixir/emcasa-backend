@@ -9,7 +9,6 @@ defmodule Re.Exporters.ImovelwebTest do
   }
 
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
-  @tour_url "https://my.matterport.com/show"
 
   describe "build_node/2" do
     test "export XML with images from listing" do
@@ -91,10 +90,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<Ordem>2</Ordem>" <>
           "</Foto>" <>
           "</Fotos>" <>
-          "<ToursVirtual360>" <>
-          "<TourVirtual360>" <>
-          "<URLArquivo><![CDATA[#{@tour_url}/?m=mY123]]></URLArquivo>" <>
-          "</TourVirtual360>" <> "</ToursVirtual360>" <> "</Imovel>"
+          "</Imovel>"
 
       generated_xml =
         listing
@@ -154,7 +150,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<PrecoIptuImovel/>" <>
           "<QtdDormitorios>4</QtdDormitorios>" <>
           "<QtdBanheiros>4</QtdBanheiros>" <>
-          "<QtdVagas>4</QtdVagas>" <> "<Fotos/>" <> "<ToursVirtual360/>" <> "</Imovel>"
+          "<QtdVagas>4</QtdVagas>" <> "<Fotos/>" <> "</Imovel>"
 
       generated_xml =
         listing
@@ -214,7 +210,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<PrecoIptuImovel/>" <>
           "<QtdDormitorios>0</QtdDormitorios>" <>
           "<QtdBanheiros>0</QtdBanheiros>" <>
-          "<QtdVagas>0</QtdVagas>" <> "<Fotos/>" <> "<ToursVirtual360/>" <> "</Imovel>"
+          "<QtdVagas>0</QtdVagas>" <> "<Fotos/>" <> "</Imovel>"
 
       generated_xml =
         listing
@@ -301,10 +297,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<Ordem>2</Ordem>" <>
           "</Foto>" <>
           "</Fotos>" <>
-          "<ToursVirtual360>" <>
-          "<TourVirtual360>" <>
-          "<URLArquivo><![CDATA[#{@tour_url}/?m=mY123]]></URLArquivo>" <>
-          "</TourVirtual360>" <> "</ToursVirtual360>" <> "</Imovel>"
+          "</Imovel>"
 
       generated_xml =
         listing
@@ -391,10 +384,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<Ordem>2</Ordem>" <>
           "</Foto>" <>
           "</Fotos>" <>
-          "<ToursVirtual360>" <>
-          "<TourVirtual360>" <>
-          "<URLArquivo><![CDATA[#{@tour_url}/?m=mY123]]></URLArquivo>" <>
-          "</TourVirtual360>" <> "</ToursVirtual360>" <> "</Imovel>"
+          "</Imovel>"
 
       generated_xml =
         listing

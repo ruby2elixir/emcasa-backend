@@ -7,7 +7,7 @@ defmodule Re.Exporters.Imovelweb do
 
   @exported_attributes ~w(internal_id id type subtype title description highlight state city neighborhood
     street street_number zipcode show_address lat lng show_map area_unity area price maintenance_fee property_tax
-    rooms bathrooms garage_spots images tour)a
+    rooms bathrooms garage_spots images)a
   @default_options %{attributes: @exported_attributes, highlight_ids: [], super_highlight_ids: []}
 
   @imovelweb_id Application.get_env(:re, :imovelweb_identity)
