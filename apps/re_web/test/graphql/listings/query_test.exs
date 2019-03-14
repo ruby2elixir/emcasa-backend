@@ -912,7 +912,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               }
             }
             units {
-              id
+              uuid
             }
             insertedAt
           }
@@ -955,8 +955,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  ]
                },
                "units" => [
-                 %{"id" => to_string(unit1.id)},
-                 %{"id" => to_string(unit2.id)}
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
                ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
@@ -1073,7 +1073,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               }
             }
             units {
-              id
+              uuid
             }
             insertedAt
           }
@@ -1116,8 +1116,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  ]
                },
                "units" => [
-                 %{"id" => to_string(unit1.id)},
-                 %{"id" => to_string(unit2.id)}
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
                ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
@@ -1201,7 +1201,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               }
             }
             units {
-              id
+              uuid
             }
             insertedAt
           }
@@ -1241,8 +1241,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  ]
                },
                "units" => [
-                 %{"id" => to_string(unit1.id)},
-                 %{"id" => to_string(unit2.id)}
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
                ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
@@ -1326,7 +1326,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               }
             }
             units {
-              id
+              uuid
             }
             insertedAt
           }
@@ -1366,8 +1366,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  ]
                },
                "units" => [
-                 %{"id" => to_string(unit1.id)},
-                 %{"id" => to_string(unit2.id)}
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
                ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
