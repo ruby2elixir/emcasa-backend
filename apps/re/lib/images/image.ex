@@ -11,6 +11,7 @@ defmodule Re.Image do
     field :position, :integer
     field :is_active, :boolean, default: true
     field :description, :string
+    field :category, :string
 
     belongs_to :listing, Re.Listing
     belongs_to :development, Re.Development
@@ -19,7 +20,7 @@ defmodule Re.Image do
   end
 
   @create_required ~w(filename)a
-  @create_optional ~w(position description)a
+  @create_optional ~w(position description category)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -33,7 +34,7 @@ defmodule Re.Image do
   end
 
   @update_required ~w()a
-  @update_optional ~w(position description)a
+  @update_optional ~w(position description category)a
 
   def update_changeset(struct, params \\ %{}) do
     struct
