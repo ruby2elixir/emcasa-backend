@@ -43,7 +43,6 @@ defmodule ReIntegrations.Mixfile do
       {:kadabra, "~> 0.4.2"},
       {:retry, "~> 0.10"},
       {:httpoison, "~> 1.3", override: true},
-      {:sentry, "~> 6.4"},
       {:jason, "~> 1.0"}
     ]
   end

@@ -52,7 +52,6 @@ defmodule ReWeb.Mixfile do
       {:timex, "~> 3.3"},
       {:tzdata, "~> 0.5"},
       {:account_kit, github: "rhnonose/account_kit"},
-      {:sentry, "~> 6.4"},
       {:timber_plug, "~> 1.0"},
       {:timber_phoenix, "~> 1.0"},
       {:jason, "~> 1.0"}

@@ -49,7 +49,6 @@ defmodule Re.Mixfile do
       {:tzdata, "~> 0.5"},
       {:account_kit, github: "rhnonose/account_kit"},
       {:xml_builder, "~> 2.1"},
-      {:sentry, "~> 6.4"},
       {:uuid, "~> 1.1"},
       {:phoenix_pubsub, "~> 1.1"},
       {:scrivener_ecto, "~> 1.3"}
