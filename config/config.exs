@@ -66,7 +66,6 @@ config :mime, :types, %{
 config :phoenix, :json_library, Jason
 
 config :sentry,
-  dsn: System.get_env("SENTRY_DSN"),
   included_environments: ~w(production staging),
   environment_name: System.get_env("ENV") || "development"
 

@@ -84,3 +84,6 @@ config :pigeon, :fcm,
 config :account_kit,
   app_id: System.get_env("FACEBOOK_APP_ID"),
   app_secret: System.get_env("ACCOUNT_KIT_APP_SECRET")
+
+config :sentry,
+  dsn: System.get_env("SENTRY_DSN")
