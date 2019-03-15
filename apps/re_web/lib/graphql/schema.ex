@@ -11,6 +11,8 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.Dashboard
   import_types ReWeb.Types.Calendar
   import_types ReWeb.Types.Development
+  import_types ReWeb.Types.Unit
+  import_types ReWeb.Types.Custom.UUID
   import_types Absinthe.Type.Custom
 
   alias ReWeb.GraphQL.Middlewares
@@ -75,7 +77,8 @@ defmodule ReWeb.Schema do
       Re.Favorites,
       Re.Statistics.ListingVisualizations,
       Re.Statistics.TourVisualizations,
-      Re.Statistics.InPersonVisits
+      Re.Statistics.InPersonVisits,
+      Re.Units
     ]
   end
 end

@@ -824,6 +824,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       listings_favorites = insert_list(3, :listings_favorites)
       tour_visualisations = insert_list(3, :tour_visualisation)
       listings_visualisations = insert_list(3, :listing_visualisation)
+      [unit1, unit2] = insert_list(2, :unit)
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
@@ -852,6 +853,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           tour_visualisations: tour_visualisations,
           listings_visualisations: listings_visualisations,
           price_history: price_history,
+          units: [unit1, unit2],
           rooms: 2,
           area: 80,
           garage_spots: 1,
@@ -908,6 +910,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               listings {
                 id
               }
+            }
+            units {
+              uuid
             }
             insertedAt
           }
@@ -949,6 +954,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    %{"id" => to_string(related_id2)}
                  ]
                },
+               "units" => [
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
+               ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
     end
@@ -978,6 +987,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       listings_favorites = insert_list(3, :listings_favorites)
       tour_visualisations = insert_list(3, :tour_visualisation)
       listings_visualisations = insert_list(3, :listing_visualisation)
+      [unit1, unit2] = insert_list(2, :unit)
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
@@ -1004,6 +1014,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           tour_visualisations: tour_visualisations,
           listings_visualisations: listings_visualisations,
           price_history: price_history,
+          units: [unit1, unit2],
           rooms: 2,
           area: 80,
           garage_spots: 1,
@@ -1061,6 +1072,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 id
               }
             }
+            units {
+              uuid
+            }
             insertedAt
           }
         }
@@ -1101,6 +1115,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    %{"id" => to_string(related_id2)}
                  ]
                },
+               "units" => [
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
+               ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
     end
@@ -1121,11 +1139,13 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       )
 
       user = insert(:user)
+      [unit1, unit2] = insert_list(2, :unit)
 
       %{id: listing_id} =
         insert(:listing,
           address: address,
           images: [image1, image2, image3, image4, image5],
+          units: [unit1, unit2],
           user: user,
           inserted_at: ~N[2018-01-01 10:00:00]
         )
@@ -1180,6 +1200,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 id
               }
             }
+            units {
+              uuid
+            }
             insertedAt
           }
         }
@@ -1217,6 +1240,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    %{"id" => to_string(related_id2)}
                  ]
                },
+               "units" => [
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
+               ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
     end
@@ -1237,11 +1264,13 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       )
 
       user = insert(:user)
+      [unit1, unit2] = insert_list(2, :unit)
 
       %{id: listing_id} =
         insert(:listing,
           address: address,
           images: [image1, image2, image3, image4, image5],
+          units: [unit1, unit2],
           user: user,
           inserted_at: ~N[2018-01-01 10:00:00]
         )
@@ -1296,6 +1325,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 id
               }
             }
+            units {
+              uuid
+            }
             insertedAt
           }
         }
@@ -1333,6 +1365,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    %{"id" => to_string(related_id2)}
                  ]
                },
+               "units" => [
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
+               ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
     end
