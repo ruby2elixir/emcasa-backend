@@ -1,5 +1,6 @@
 alias Re.{
   Address,
+  Development,
   Favorite,
   Image,
   Interest,
@@ -7,6 +8,7 @@ alias Re.{
   Listing,
   Listings.PriceHistory,
   Repo,
+  Unit,
   User
 }
 
@@ -15,6 +17,8 @@ Repo.delete_all(Interest)
 Repo.delete_all(Listing)
 Repo.delete_all(Address)
 Repo.delete_all(User)
+Repo.delete_all(Unit)
+Repo.delete_all(Development)
 
 {:ok, admin1} =
   Repo.insert(%User{
@@ -296,6 +300,32 @@ Repo.delete_all(User)
     status: "active"
   })
 
+{:ok, development1} =
+  Repo.insert(%Development{
+    name: "EmCasa condominium",
+    title: "Live in your dreams",
+    phase: "building",
+    builder: "EmCasa",
+    description: "I awesome place to live in."
+  })
+
+{:ok, listing9} =
+  Repo.insert(%Listing{
+    type: "Apartamento",
+    description: "A description about the listing.",
+    floor: "2",
+    price: 2_000_000,
+    area: 200,
+    rooms: 3,
+    bathrooms: 3,
+    garage_spots: 2,
+    score: 4,
+    user: user2,
+    address: address2,
+    development: development1,
+    status: "active"
+  })
+
 {:ok, _} =
   Repo.insert(%PriceHistory{
     price: 1_900_000,
@@ -422,4 +452,42 @@ Repo.delete_all(User)
   Repo.insert(%Favorite{
     user: user4,
     listing: listing8
+  })
+
+{:ok, _} =
+  Repo.insert(%Unit{
+    listing: listing9,
+    uuid: UUID.uuid4(),
+    price: 500_000,
+    property_tax: 1_500.00,
+    maintenance_fee: 1_000.00,
+    floor: "1",
+    rooms: 1,
+    bathrooms: 1,
+    restrooms: 1,
+    area: 100,
+    garage_spots: 1,
+    garage_type: "contract",
+    suites: 0,
+    dependencies: 0,
+    balconies: 0
+  })
+
+{:ok, _} =
+  Repo.insert(%Unit{
+    listing: listing9,
+    uuid: UUID.uuid4(),
+    price: 500_000,
+    property_tax: 1_500.00,
+    maintenance_fee: 1_000.00,
+    floor: "1",
+    rooms: 1,
+    bathrooms: 1,
+    restrooms: 1,
+    area: 100,
+    garage_spots: 1,
+    garage_type: "contract",
+    suites: 0,
+    dependencies: 0,
+    balconies: 0
   })
