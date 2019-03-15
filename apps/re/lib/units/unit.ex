@@ -7,8 +7,9 @@ defmodule Re.Unit do
 
   import Ecto.Changeset
 
+  @primary_key {:uuid, :binary_id, autogenerate: false}
+
   schema "units" do
-    field :uuid, Ecto.UUID
     field :complement, :string
     field :price, :integer
     field :property_tax, :float
