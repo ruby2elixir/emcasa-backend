@@ -51,7 +51,8 @@ defmodule Re.Mixfile do
       {:xml_builder, "~> 2.1"},
       {:uuid, "~> 1.1"},
       {:phoenix_pubsub, "~> 1.1"},
-      {:scrivener_ecto, "~> 1.3"}
+      {:scrivener_ecto, "~> 1.3"},
+      {:sentry, "~> 6.4"}
     ]
   end
 

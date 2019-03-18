@@ -54,7 +54,8 @@ defmodule ReWeb.Mixfile do
       {:account_kit, github: "rhnonose/account_kit"},
       {:timber_plug, "~> 1.0"},
       {:timber_phoenix, "~> 1.0"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:sentry, "~> 6.4"}
     ]
   end
 
