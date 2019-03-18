@@ -65,6 +65,10 @@ config :mime, :types, %{
 
 config :phoenix, :json_library, Jason
 
+config :sentry,
+  included_environments: ~w(production staging),
+  environment_name: System.get_env("ENV") || "development"
+
 import_config "#{Mix.env()}.exs"
 
 import_config "timber.exs"

@@ -15,6 +15,6 @@ defmodule Re.Repo.Migrations.CreateDevelopments do
   end
 
   def down do
-    drop table(:developments)
+    drop(table(:developments))
   end
 end
