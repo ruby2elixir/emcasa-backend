@@ -20,10 +20,10 @@ defmodule Re.Developments do
     |> Re.Repo.all()
   end
 
-  def get(id), do: do_get(Development, id)
+  def get(uuid), do: do_get(Development, uuid)
 
-  defp do_get(query, id) do
-    case Repo.get(query, id) do
+  defp do_get(query, uuid) do
+    case Repo.get(query, uuid) do
       nil -> {:error, :not_found}
       development -> {:ok, development}
     end

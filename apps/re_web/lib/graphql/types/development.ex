@@ -9,7 +9,7 @@ defmodule ReWeb.Types.Development do
   alias ReWeb.Resolvers
 
   object :development do
-    field :id, :id
+    field :uuid, :uuid
     field :name, :string
     field :title, :string
     field :phase, :string
@@ -45,7 +45,7 @@ defmodule ReWeb.Types.Development do
 
     @desc "Show development"
     field :development, :development do
-      arg :id, non_null(:id)
+      arg :uuid, non_null(:uuid)
 
       resolve &Resolvers.Developments.show/2
     end
@@ -61,7 +61,7 @@ defmodule ReWeb.Types.Development do
 
     @desc "Update development"
     field :update_development, type: :development do
-      arg :id, non_null(:id)
+      arg :uuid, non_null(:uuid)
       arg :input, non_null(:development_input)
 
       resolve &Resolvers.Developments.update/2
