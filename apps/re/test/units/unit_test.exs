@@ -19,7 +19,7 @@ defmodule Re.UnitTest do
     balconies: 1,
     area: 150,
     garage_spots: 2,
-    garage_type: "contract",
+    garage_type: "contract"
   }
 
   @invalid_attrs %{
@@ -51,23 +51,19 @@ defmodule Re.UnitTest do
       changeset = Unit.changeset(%Unit{}, %{}, "development")
       refute changeset.valid?
 
-      assert Keyword.get(changeset.errors, :price) ==
-               {"can't be blank", [validation: :required]}
+      assert Keyword.get(changeset.errors, :price) == {"can't be blank", [validation: :required]}
 
-      assert Keyword.get(changeset.errors, :rooms) ==
-               {"can't be blank", [validation: :required]}
+      assert Keyword.get(changeset.errors, :rooms) == {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :bathrooms) ==
                {"can't be blank", [validation: :required]}
 
-      assert Keyword.get(changeset.errors, :area) ==
-               {"can't be blank", [validation: :required]}
+      assert Keyword.get(changeset.errors, :area) == {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :garage_type) ==
                {"can't be blank", [validation: :required]}
 
-      assert Keyword.get(changeset.errors, :suites) ==
-               {"can't be blank", [validation: :required]}
+      assert Keyword.get(changeset.errors, :suites) == {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :dependencies) ==
                {"can't be blank", [validation: :required]}
@@ -78,7 +74,8 @@ defmodule Re.UnitTest do
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :price) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 250_000]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, number: 250_000]}
 
       assert Keyword.get(changeset.errors, :property_tax) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
@@ -87,16 +84,16 @@ defmodule Re.UnitTest do
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :bathrooms) ==
-                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :garage_spots) ==
-                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :suites) ==
-                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :dependencies) ==
-                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :balconies) ==
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
@@ -105,7 +102,7 @@ defmodule Re.UnitTest do
                {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
 
       assert Keyword.get(changeset.errors, :garage_type) ==
-                {"should be one of: [contract condominium]", [validation: :inclusion]}
+               {"should be one of: [contract condominium]", [validation: :inclusion]}
     end
   end
 end

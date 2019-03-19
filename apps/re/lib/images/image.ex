@@ -14,7 +14,11 @@ defmodule Re.Image do
     field :category, :string
 
     belongs_to :listing, Re.Listing
-    belongs_to :development, Re.Development
+
+    belongs_to :development, Re.Development,
+      references: :uuid,
+      foreign_key: :development_uuid,
+      type: Ecto.UUID
 
     timestamps()
   end

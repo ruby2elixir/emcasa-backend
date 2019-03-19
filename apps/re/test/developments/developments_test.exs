@@ -23,7 +23,7 @@ defmodule Re.DevelopmentsTest do
       assert {:ok, inserted_development} =
                Developments.insert(@insert_development_params, address)
 
-      assert retrived_development = Repo.get(Development, inserted_development.id)
+      assert retrived_development = Repo.get(Development, inserted_development.uuid)
       assert retrived_development.address_id == address.id
     end
   end
@@ -38,7 +38,7 @@ defmodule Re.DevelopmentsTest do
 
       Developments.update(development, new_development_params, new_address)
 
-      updated_development = Repo.get(Development, development.id)
+      updated_development = Repo.get(Development, development.uuid)
       assert updated_development.address_id == new_address.id
       assert updated_development.name == Map.get(new_development_params, :name)
       assert updated_development.title == Map.get(new_development_params, :title)
