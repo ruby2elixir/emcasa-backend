@@ -26,7 +26,6 @@ defmodule Re.Listings.Related do
       |> Enum.reduce(Listing, &build_query(&1, listing, &2))
       |> exclude_current(listing)
       |> Queries.excluding(params)
-      |> Queries.exclude_blacklisted(params)
       |> Queries.active()
       |> Queries.by_city(listing)
       |> Queries.order_by()

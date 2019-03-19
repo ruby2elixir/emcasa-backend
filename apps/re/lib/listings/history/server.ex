@@ -7,8 +7,8 @@ defmodule Re.Listings.History.Server do
   require Logger
 
   alias Re.{
-    Listings.History.Price,
-    Listings.History.Status,
+    Listings.History.Prices,
+    Listings.History.Statuses,
     PubSub
   }
 
@@ -33,7 +33,7 @@ defmodule Re.Listings.History.Server do
         },
         state
       ) do
-    case Price.insert(listing, price) do
+    case Prices.insert(listing, price) do
       {:ok, _listing} ->
         {:noreply, state}
 
@@ -55,7 +55,7 @@ defmodule Re.Listings.History.Server do
         state
       )
       when topic in @status_changes do
-    case Status.insert(listing, status) do
+    case Statuses.insert(listing, status) do
       {:ok, _listing} ->
         {:noreply, state}
 

@@ -26,7 +26,8 @@ defmodule Re.ListingTest do
     score: 4,
     matterport_code: "",
     is_exclusive: false,
-    is_release: false
+    is_release: false,
+    is_exportable: true
   }
   @invalid_attrs %{
     type: "ApartmentApartmentApartmentApartmentApartment",
@@ -43,7 +44,8 @@ defmodule Re.ListingTest do
     garage_type: "mine",
     score: 5,
     is_exclusive: "banana",
-    is_release: "banana"
+    is_release: "banana",
+    is_exportable: "banana"
   }
 
   describe "user" do
@@ -158,6 +160,9 @@ defmodule Re.ListingTest do
                {"is invalid", [type: :boolean, validation: :cast]}
 
       assert Keyword.get(changeset.errors, :is_release) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :is_exportable) ==
                {"is invalid", [type: :boolean, validation: :cast]}
 
       changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000}, "admin")

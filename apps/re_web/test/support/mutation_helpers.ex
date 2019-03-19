@@ -28,14 +28,16 @@ defmodule ReWeb.Listing.MutationHelpers do
         "restrooms" => listing.restrooms,
         "area" => listing.area,
         "garageSpots" => listing.garage_spots,
-        "garageType" => listing.garage_type |> String.upcase(),
+        "garageType" => String.upcase(listing.garage_type),
         "suites" => listing.suites,
         "dependencies" => listing.dependencies,
         "balconies" => listing.balconies,
         "hasElevator" => listing.has_elevator,
         "matterportCode" => listing.matterport_code,
         "isExclusive" => listing.is_exclusive,
-        "isRelease" => listing.is_release
+        "isRelease" => listing.is_release,
+        "isExportable" => listing.is_exportable,
+        "score" => listing.score
       }
     }
   end
@@ -66,14 +68,16 @@ defmodule ReWeb.Listing.MutationHelpers do
         "restrooms" => listing.restrooms,
         "area" => listing.area,
         "garageSpots" => listing.garage_spots,
-        "garageType" => listing.garage_type |> String.upcase(),
+        "garageType" => String.upcase(listing.garage_type),
         "suites" => listing.suites,
         "dependencies" => listing.dependencies,
         "balconies" => listing.balconies,
         "hasElevator" => listing.has_elevator,
         "matterportCode" => listing.matterport_code,
         "isExclusive" => listing.is_exclusive,
-        "isRelease" => listing.is_release
+        "isRelease" => listing.is_release,
+        "isExportable" => listing.is_exportable,
+        "score" => listing.score
       }
     }
   end
@@ -117,6 +121,8 @@ defmodule ReWeb.Listing.MutationHelpers do
           isActive
           isExclusive
           isRelease
+          isExportable
+          score
         }
       }
     """
@@ -161,6 +167,8 @@ defmodule ReWeb.Listing.MutationHelpers do
           isActive
           isExclusive
           isRelease
+          isExportable
+          score
         }
       }
     """

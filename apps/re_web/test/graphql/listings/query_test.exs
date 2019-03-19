@@ -31,7 +31,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test3.jpg", position: 1)
         ],
         user: user,
-        zap_highlight: true
+        score: 4
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -67,7 +67,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              zapHighlight
+              score
             }
             remaining_count
           }
@@ -84,7 +84,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "zapHighlight" => true
+                   "score" => 4
                  }
                ],
                "remaining_count" => 0
@@ -100,7 +100,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        vivareal_highlight: true
+        score: 4
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -126,7 +126,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              vivarealHighlight
+              score
             }
             remaining_count
           }
@@ -142,7 +142,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "vivarealHighlight" => nil
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
@@ -160,7 +160,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        zap_super_highlight: true
+        score: 4
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -186,7 +186,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              zapSuperHighlight
+              score
             }
             remaining_count
           }
@@ -202,7 +202,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
-                   "zapSuperHighlight" => nil
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
@@ -220,7 +220,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        zap_highlight: true
+        score: 4
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -246,7 +246,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              zapHighlight
+              score
             }
             remaining_count
           }
@@ -262,7 +262,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
-                   "zapHighlight" => nil
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
@@ -304,7 +304,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
              } == json_response(conn, 200)["data"]["listings"]
     end
 
-    test "should query listing index with filtering", %{user_conn: conn, user_user: user} do
+    test "should query listing index with filtering", %{user_conn: conn} do
       insert(
         :listing,
         price: 1_100_000,
@@ -617,32 +617,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           garage_type: "contract"
         )
 
-      listing2 =
-        insert(
-          :listing,
-          price: 900_000,
-          rooms: 3,
-          suites: 2,
-          area: 90,
-          type: "Apartamento",
-          address:
-            build(
-              :address,
-              neighborhood: "Copacabana",
-              neighborhood_slug: "copacabana",
-              state: "RJ",
-              city: "Rio de Janeiro",
-              state_slug: "rj",
-              city_slug: "rio-de-janeiro",
-              lat: 50.0,
-              lng: 50.0
-            ),
-          garage_spots: 2,
-          garage_type: "condominium"
-        )
-
-      insert(:listing_blacklist, listing: listing2, user: user)
-
       variables = %{
         "filters" => %{
           "maxPrice" => 1_000_000,
@@ -850,6 +824,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       listings_favorites = insert_list(3, :listings_favorites)
       tour_visualisations = insert_list(3, :tour_visualisation)
       listings_visualisations = insert_list(3, :listing_visualisation)
+      [unit1, unit2] = insert_list(2, :unit)
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
@@ -878,6 +853,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           tour_visualisations: tour_visualisations,
           listings_visualisations: listings_visualisations,
           price_history: price_history,
+          units: [unit1, unit2],
           rooms: 2,
           area: 80,
           garage_spots: 1,
@@ -934,6 +910,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               listings {
                 id
               }
+            }
+            units {
+              uuid
             }
             insertedAt
           }
@@ -975,6 +954,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    %{"id" => to_string(related_id2)}
                  ]
                },
+               "units" => [
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
+               ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
     end
@@ -1004,6 +987,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       listings_favorites = insert_list(3, :listings_favorites)
       tour_visualisations = insert_list(3, :tour_visualisation)
       listings_visualisations = insert_list(3, :listing_visualisation)
+      [unit1, unit2] = insert_list(2, :unit)
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
@@ -1030,6 +1014,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           tour_visualisations: tour_visualisations,
           listings_visualisations: listings_visualisations,
           price_history: price_history,
+          units: [unit1, unit2],
           rooms: 2,
           area: 80,
           garage_spots: 1,
@@ -1087,6 +1072,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 id
               }
             }
+            units {
+              uuid
+            }
             insertedAt
           }
         }
@@ -1127,6 +1115,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    %{"id" => to_string(related_id2)}
                  ]
                },
+               "units" => [
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
+               ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
     end
@@ -1147,11 +1139,13 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       )
 
       user = insert(:user)
+      [unit1, unit2] = insert_list(2, :unit)
 
       %{id: listing_id} =
         insert(:listing,
           address: address,
           images: [image1, image2, image3, image4, image5],
+          units: [unit1, unit2],
           user: user,
           inserted_at: ~N[2018-01-01 10:00:00]
         )
@@ -1206,6 +1200,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 id
               }
             }
+            units {
+              uuid
+            }
             insertedAt
           }
         }
@@ -1243,6 +1240,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    %{"id" => to_string(related_id2)}
                  ]
                },
+               "units" => [
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
+               ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
     end
@@ -1263,11 +1264,13 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       )
 
       user = insert(:user)
+      [unit1, unit2] = insert_list(2, :unit)
 
       %{id: listing_id} =
         insert(:listing,
           address: address,
           images: [image1, image2, image3, image4, image5],
+          units: [unit1, unit2],
           user: user,
           inserted_at: ~N[2018-01-01 10:00:00]
         )
@@ -1322,6 +1325,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 id
               }
             }
+            units {
+              uuid
+            }
             insertedAt
           }
         }
@@ -1359,6 +1365,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    %{"id" => to_string(related_id2)}
                  ]
                },
+               "units" => [
+                 %{"uuid" => to_string(unit1.uuid)},
+                 %{"uuid" => to_string(unit2.uuid)}
+               ],
                "insertedAt" => "2018-01-01T10:00:00.000000"
              } == json_response(conn, 200)["data"]["listing"]
     end

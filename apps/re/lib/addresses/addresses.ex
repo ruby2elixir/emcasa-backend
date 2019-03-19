@@ -40,6 +40,8 @@ defmodule Re.Addresses do
   end
 
   def insert_or_update(params) do
+    params = normalize_params(params)
+
     params
     |> get()
     |> build_address(params)
@@ -70,4 +72,32 @@ defmodule Re.Addresses do
   end
 
   defp build_address({:ok, address}, _), do: address
+
+  defp normalize_params(params) do
+    params
+    |> pad_trailing_postal_code_with_zero()
+  end
+
+  defp pad_trailing_postal_code_with_zero(%{"postal_code" => postal_code} = params) do
+    new_postal_code = fill_postal_code(postal_code)
+
+    params
+    |> Map.merge(%{"postal_code" => new_postal_code})
+  end
+
+  defp pad_trailing_postal_code_with_zero(%{postal_code: postal_code} = params) do
+    new_postal_code = fill_postal_code(postal_code)
+
+    params
+    |> Map.merge(%{postal_code: new_postal_code})
+  end
+
+  defp pad_trailing_postal_code_with_zero(params), do: params
+
+  defp fill_postal_code(postal_code)
+       when not is_nil(postal_code) and is_bitstring(postal_code) and byte_size(postal_code) == 5 do
+    postal_code <> "-000"
+  end
+
+  defp fill_postal_code(postal_code), do: postal_code
 end

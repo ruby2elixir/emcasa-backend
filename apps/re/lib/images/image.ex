@@ -11,14 +11,16 @@ defmodule Re.Image do
     field :position, :integer
     field :is_active, :boolean, default: true
     field :description, :string
+    field :category, :string
 
     belongs_to :listing, Re.Listing
+    belongs_to :development, Re.Development
 
     timestamps()
   end
 
   @create_required ~w(filename)a
-  @create_optional ~w(position description)a
+  @create_optional ~w(position description category)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -27,11 +29,12 @@ defmodule Re.Image do
     struct
     |> cast(params, @create_required ++ @create_optional)
     |> cast_assoc(:listing)
+    |> cast_assoc(:development)
     |> validate_required(@create_required)
   end
 
   @update_required ~w()a
-  @update_optional ~w(position description)a
+  @update_optional ~w(position description category)a
 
   def update_changeset(struct, params \\ %{}) do
     struct

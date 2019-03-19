@@ -38,7 +38,7 @@ defmodule Re.CalendarsTest do
                ~N[2018-09-26 17:00:00],
                ~N[2018-09-27 09:00:00],
                ~N[2018-09-27 17:00:00]
-             ] == now |> Calendars.generate_tour_options(4) |> Enum.sort()
+             ] == Calendars.generate_tour_options(now, 4)
     end
   end
 end

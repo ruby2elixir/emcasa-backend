@@ -24,8 +24,6 @@ defmodule Re.Listings do
 
   def query(query, params), do: DataloaderQueries.build(query, params)
 
-  def index, do: Repo.all(Listing)
-
   def all do
     Queries.active()
     |> Queries.preload_relations([:address])
@@ -73,7 +71,6 @@ defmodule Re.Listings do
   defp build_query(params) do
     Queries.active()
     |> Queries.excluding(params)
-    |> Queries.exclude_blacklisted(params)
     |> Queries.order_by(params)
     |> Queries.limit(params)
     |> Queries.preload_relations(@partial_preload)
@@ -83,6 +80,9 @@ defmodule Re.Listings do
   def get(id), do: do_get(Listing, id)
 
   def get_preloaded(id), do: do_get(Queries.preload_relations(), id)
+
+  def get_partial_preloaded(id, preload),
+    do: do_get(Queries.preload_relations(Listing, preload), id)
 
   def insert(params, address, user) do
     with {:ok, user} <- validate_phone_number(params, user),
@@ -125,18 +125,9 @@ defmodule Re.Listings do
       |> Listing.changeset(params, user.role)
       |> deactivate_if_not_admin(user)
 
-    case Repo.update(changeset) do
-      {:ok, listing} ->
-        PubSub.publish_update(
-          {:ok, %{new: listing, changeset: changeset}},
-          "update_listing"
-        )
-
-        {:ok, listing}
-
-      error ->
-        error
-    end
+    changeset
+    |> Repo.update()
+    |> PubSub.publish_update(changeset, "update_listing", %{user: user})
   end
 
   defp deactivate_if_not_admin(changeset, %{role: "user"}),
@@ -149,7 +140,7 @@ defmodule Re.Listings do
 
     changeset
     |> Repo.update()
-    |> publish_status(changeset, "deactivate_listing")
+    |> PubSub.publish_update(changeset, "deactivate_listing")
   end
 
   def activate(listing) do
@@ -157,16 +148,8 @@ defmodule Re.Listings do
 
     changeset
     |> Repo.update()
-    |> publish_status(changeset, "activate_listing")
+    |> PubSub.publish_update(changeset, "activate_listing")
   end
-
-  defp publish_status({:ok, listing}, changeset, topic) do
-    PubSub.publish_update({:ok, %{new: listing, changeset: changeset}}, topic)
-
-    {:ok, listing}
-  end
-
-  defp publish_status(error, _, _), do: error
 
   def per_user(user) do
     Listing

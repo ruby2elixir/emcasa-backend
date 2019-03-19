@@ -1,14 +1,14 @@
 alias Re.{
   Address,
+  Development,
   Favorite,
   Image,
   Interest,
   InterestType,
   Listing,
   Listings.PriceHistory,
-  Message,
-  Messages.Channels.Channel,
   Repo,
+  Unit,
   User
 }
 
@@ -17,6 +17,8 @@ Repo.delete_all(Interest)
 Repo.delete_all(Listing)
 Repo.delete_all(Address)
 Repo.delete_all(User)
+Repo.delete_all(Unit)
+Repo.delete_all(Development)
 
 {:ok, admin1} =
   Repo.insert(%User{
@@ -298,6 +300,32 @@ Repo.delete_all(User)
     status: "active"
   })
 
+{:ok, development1} =
+  Repo.insert(%Development{
+    name: "EmCasa condominium",
+    title: "Live in your dreams",
+    phase: "building",
+    builder: "EmCasa",
+    description: "I awesome place to live in."
+  })
+
+{:ok, listing9} =
+  Repo.insert(%Listing{
+    type: "Apartamento",
+    description: "A description about the listing.",
+    floor: "2",
+    price: 2_000_000,
+    area: 200,
+    rooms: 3,
+    bathrooms: 3,
+    garage_spots: 2,
+    score: 4,
+    user: user2,
+    address: address2,
+    development: development1,
+    status: "active"
+  })
+
 {:ok, _} =
   Repo.insert(%PriceHistory{
     price: 1_900_000,
@@ -426,82 +454,40 @@ Repo.delete_all(User)
     listing: listing8
   })
 
-{:ok, channel1} =
-  Repo.insert(%Channel{
-    participant1: user1,
-    participant2: admin1,
-    listing: listing1
+{:ok, _} =
+  Repo.insert(%Unit{
+    listing: listing9,
+    uuid: UUID.uuid4(),
+    price: 500_000,
+    property_tax: 1_500.00,
+    maintenance_fee: 1_000.00,
+    floor: "1",
+    rooms: 1,
+    bathrooms: 1,
+    restrooms: 1,
+    area: 100,
+    garage_spots: 1,
+    garage_type: "contract",
+    suites: 0,
+    dependencies: 0,
+    balconies: 0
   })
 
 {:ok, _} =
-  Repo.insert(%Message{
-    message: "msg11",
-    notified: true,
-    read: false,
-    sender: user1,
-    receiver: admin1,
-    listing: listing1,
-    channel: channel1
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg12",
-    notified: false,
-    read: true,
-    sender: user1,
-    receiver: admin1,
-    listing: listing1,
-    channel: channel1
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg12",
-    notified: false,
-    read: true,
-    sender: admin1,
-    receiver: user1,
-    listing: listing1,
-    channel: channel1
-  })
-
-{:ok, channel2} =
-  Repo.insert(%Channel{
-    participant1: user2,
-    participant2: admin2,
-    listing: listing2
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg21",
-    notified: true,
-    read: false,
-    sender: user2,
-    receiver: admin2,
-    listing: listing2,
-    channel: channel1
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg22",
-    notified: false,
-    read: true,
-    sender: user2,
-    receiver: admin2,
-    listing: listing2,
-    channel: channel2
-  })
-
-{:ok, _} =
-  Repo.insert(%Message{
-    message: "msg22",
-    notified: false,
-    read: true,
-    sender: admin2,
-    receiver: user2,
-    listing: listing2,
-    channel: channel2
+  Repo.insert(%Unit{
+    listing: listing9,
+    uuid: UUID.uuid4(),
+    price: 500_000,
+    property_tax: 1_500.00,
+    maintenance_fee: 1_000.00,
+    floor: "1",
+    rooms: 1,
+    bathrooms: 1,
+    restrooms: 1,
+    area: 100,
+    garage_spots: 1,
+    garage_type: "contract",
+    suites: 0,
+    dependencies: 0,
+    balconies: 0
   })

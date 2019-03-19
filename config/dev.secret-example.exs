@@ -8,9 +8,9 @@ use Mix.Config
 # iex -S mix phx.server
 # then run
 # JOSE.JWS.generate_key(%{"alg" => "ES512"}) |> JOSE.JWK.to_map |> elem(1)
-#  and copy the hashes for "d", "x", and "y".
+# and copy the hashes for "d", "x", and "y".
 
-config :re, ReWeb.Guardian,
+config :re_web, ReWeb.Guardian,
   allowed_algos: ["ES512"],
   secret_key: %{
     "alg" => "ES512",
@@ -22,34 +22,31 @@ config :re, ReWeb.Guardian,
     "y" => "xxxxxx"
   }
 
-# The emails below are used when a visitor
-# fills out a form expressing interest in a listing.
-# Both `to:` and `from:` can be individual emails
-# or multiple emails, in which case use `|` as separator.
-config :re,
+config :re_integrations,
   to: "dev1@email.com|dev2@email.com",
   from: "admin@email.com",
   pipedrive_url: "https://yourcompany.pipedrive.com/v1/",
   pipedrive_token: "your_token",
   pipedrive_webhook_user: "pipedrive_user",
-  pipedrive_webhook_pass: "pipedrive_pass"
+  pipedrive_webhook_pass: "pipedrive_pass",
+  credipronto_simulator_url: "CREDIPRONTO_URL",
+  credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID"
 
-# The configuration below is for logging in with account kit
-# Retrieve your  id and secret from https://developers.facebook.com/apps
+config :re,
+  vivareal_highlights_size_rio_de_janeiro: 10,
+  vivareal_highlights_size_sao_paulo: 10,
+  zap_highlights_size_rio_de_janeiro: 10,
+  zap_highlights_size_sao_paulo: 10,
+  zap_super_highlights_size_rio_de_janeiro: 5,
+  zap_super_highlights_size_sao_paulo: 5,
+  imovelweb_highlights_size_rio_de_janeiro: 10,
+  imovelweb_highlights_size_sao_paulo: 10,
+  imovelweb_super_highlights_size_rio_de_janeiro: 10,
+  imovelweb_super_highlights_size_sao_paulo: 10,
+  imovelweb_identity: "1"
+
 config :account_kit,
   app_id: "your_dev_app_id",
   app_secret: "your_dev_app_secret",
   require_appsecret: false,
   api_version: "v1.0"
-
-config :honeybadger,
-  api_key: "HONEYBADGER_API_KEY",
-  environment_name: :dev
-
-config :credipronto,
-  simulador_url: "CREDIPRONTO_URL",
-  account_id: "CREDIPRONTO_ACCOUNT_ID"
-
-config :re_integrations,
-  credipronto_simulator_url: "CREDIPRONTO_URL",
-  credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID"

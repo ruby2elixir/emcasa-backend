@@ -5,11 +5,14 @@ defmodule ReWeb.Schema do
   use Absinthe.Schema
 
   import_types ReWeb.Types.Listing
+  import_types ReWeb.Types.Image
   import_types ReWeb.Types.User
-  import_types ReWeb.Types.Message
   import_types ReWeb.Types.Interest
   import_types ReWeb.Types.Dashboard
   import_types ReWeb.Types.Calendar
+  import_types ReWeb.Types.Development
+  import_types ReWeb.Types.Unit
+  import_types ReWeb.Types.Custom.UUID
   import_types Absinthe.Type.Custom
 
   alias ReWeb.GraphQL.Middlewares
@@ -26,27 +29,27 @@ defmodule ReWeb.Schema do
   query do
     import_fields(:listing_queries)
     import_fields(:user_queries)
-    import_fields(:message_queries)
     import_fields(:dashboard_queries)
     import_fields(:interest_queries)
     import_fields(:calendar_queries)
+    import_fields(:development_queries)
   end
 
   mutation do
     import_fields(:listing_mutations)
-    import_fields(:message_mutations)
+    import_fields(:image_mutations)
     import_fields(:user_mutations)
     import_fields(:interest_mutations)
     import_fields(:dashboard_mutations)
     import_fields(:calendar_mutations)
+    import_fields(:development_mutations)
   end
 
   subscription do
     import_fields(:interest_subscriptions)
-    import_fields(:message_subscriptions)
     import_fields(:listing_subscriptions)
+    import_fields(:image_subscriptions)
     import_fields(:calendar_subscriptions)
-    import_fields(:dashboard_subscriptions)
   end
 
   defp loader(ctx) do
@@ -68,15 +71,14 @@ defmodule ReWeb.Schema do
       Re.Addresses,
       Re.Images,
       Re.Listings,
-      Re.Listings.History.Price,
-      Re.Messages,
+      Re.Listings.History.Prices,
       Re.Interests,
       Re.Interests.Types,
       Re.Favorites,
-      Re.Blacklists,
       Re.Statistics.ListingVisualizations,
       Re.Statistics.TourVisualizations,
-      Re.Statistics.InPersonVisits
+      Re.Statistics.InPersonVisits,
+      Re.Units
     ]
   end
 end

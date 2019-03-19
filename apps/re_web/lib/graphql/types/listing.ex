@@ -34,7 +34,9 @@ defmodule ReWeb.Types.Listing do
     field :is_active, :boolean, resolve: &Resolvers.Listings.is_active/3
     field :is_exclusive, :boolean
     field :is_release, :boolean
+    field :is_exportable, :boolean
     field :inserted_at, :naive_datetime
+    field :score, :integer, resolve: &Resolvers.Listings.score/3
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
@@ -71,9 +73,7 @@ defmodule ReWeb.Types.Listing do
       resolve &Resolvers.Listings.related/3
     end
 
-    field :vivareal_highlight, :boolean, resolve: &Resolvers.Listings.vivareal_highlight/3
-    field :zap_highlight, :boolean, resolve: &Resolvers.Listings.zap_highlight/3
-    field :zap_super_highlight, :boolean, resolve: &Resolvers.Listings.zap_super_highlight/3
+    field :units, list_of(:unit), resolve: &Resolvers.Units.per_listing/3
   end
 
   input_object :listing_input do
@@ -97,6 +97,8 @@ defmodule ReWeb.Types.Listing do
     field :matterport_code, :string
     field :is_exclusive, :boolean
     field :is_release, :boolean
+    field :is_exportable, :boolean
+    field :score, :integer
 
     field :phone, :string
 
@@ -147,27 +149,6 @@ defmodule ReWeb.Types.Listing do
     field :postal_code, non_null(:string)
     field :lat, non_null(:float)
     field :lng, non_null(:float)
-  end
-
-  object :image do
-    field :id, :id
-    field :filename, :string
-    field :position, :integer
-    field :is_active, :boolean
-    field :description, :string
-  end
-
-  input_object :image_insert_input do
-    field :listing_id, non_null(:id)
-    field :filename, non_null(:string)
-    field :is_active, :boolean
-    field :description, :string
-  end
-
-  input_object :image_update_input do
-    field :id, non_null(:id)
-    field :position, :integer
-    field :description, :string
   end
 
   object :listing_user do
@@ -360,86 +341,46 @@ defmodule ReWeb.Types.Listing do
       resolve &Resolvers.Favorites.remove/2
     end
 
-    @desc "Blacklist listing"
-    field :listing_blacklist, type: :listing_user do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Blacklists.add/2
-    end
-
-    @desc "Unblacklist listing"
-    field :listing_unblacklist, type: :listing_user do
-      arg :id, non_null(:id)
-
-      resolve &Resolvers.Blacklists.remove/2
-    end
-
     @desc "Tour visualization"
     field :tour_visualized, type: :listing do
       arg :id, non_null(:id)
 
       resolve &Resolvers.ListingStats.tour_visualized/2
     end
-
-    @desc "Inser image"
-    field :insert_image, type: :image do
-      arg :input, non_null(:image_insert_input)
-
-      resolve &Resolvers.Images.insert_image/2
-    end
-
-    @desc "Update images"
-    field :update_images, type: list_of(:image) do
-      arg :input, non_null(list_of(non_null(:image_update_input)))
-
-      resolve &Resolvers.Images.update_images/2
-    end
   end
 
   object :listing_subscriptions do
     @desc "Subscribe to listing activation"
     field :listing_activated, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          :system -> {:ok, topic: "listing_activated"}
-          _ -> {:error, :unauthorized}
-        end
-      end)
+      arg :id, non_null(:id)
 
-      trigger :activate_listing,
-        topic: fn _ ->
-          "listing_activated"
-        end
+      config &Resolvers.Listings.listing_activated_config/2
+
+      trigger :activate_listing, topic: &Resolvers.Listings.listing_activate_trigger/1
     end
 
     @desc "Subscribe to listing deactivation"
     field :listing_deactivated, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          :system -> {:ok, topic: "listing_deactivated"}
-          _ -> {:error, :unauthorized}
-        end
-      end)
+      arg :id, non_null(:id)
+      config &Resolvers.Listings.listing_deactivated_config/2
 
-      trigger :deactivate_listing,
-        topic: fn _ ->
-          "listing_deactivated"
-        end
+      trigger :deactivate_listing, topic: &Resolvers.Listings.listing_deactivate_trigger/1
     end
 
     @desc "Subscribe to listing show"
     field :listing_inserted, :listing do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          :system -> {:ok, topic: "listing_inserted"}
-          _ -> {:error, :unauthorized}
-        end
-      end)
+      config &Resolvers.Listings.listing_inserted_config/2
 
-      trigger :insert_listing,
-        topic: fn _ ->
-          "listing_inserted"
-        end
+      trigger :insert_listing, topic: &Resolvers.Listings.insert_listing_trigger/1
+    end
+
+    @desc "Subscribe to listing update"
+    field :listing_updated, :listing do
+      arg :id, non_null(:id)
+
+      config &Resolvers.Listings.listing_updated_config/2
+
+      trigger :update_listing, topic: &Resolvers.Listings.update_listing_trigger/1
     end
   end
 end

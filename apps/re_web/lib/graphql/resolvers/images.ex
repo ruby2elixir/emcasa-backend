@@ -10,7 +10,7 @@ defmodule ReWeb.Resolvers.Images do
   }
 
   def per_listing(listing, params, %{context: %{loader: loader, current_user: current_user}}) do
-    is_admin? = is_admin(listing, current_user)
+    is_admin? = admin_rights?(listing, current_user)
 
     loader
     |> Dataloader.load(
@@ -32,24 +32,98 @@ defmodule ReWeb.Resolvers.Images do
     end)
   end
 
+  def per_development(development, params, %{
+        context: %{loader: loader, current_user: current_user}
+      }) do
+    is_admin? = admin_rights?(nil, current_user)
+
+    loader
+    |> Dataloader.load(
+      Re.Images,
+      {:images, Map.put(params, :has_admin_rights, is_admin?)},
+      development
+    )
+    |> on_load(fn loader ->
+      images =
+        loader
+        |> Dataloader.get(
+          Re.Images,
+          {:images, Map.put(params, :has_admin_rights, is_admin?)},
+          development
+        )
+
+      {:ok, images}
+    end)
+  end
+
   def insert_image(%{input: %{listing_id: listing_id} = params}, %{
         context: %{current_user: current_user}
       }) do
     with {:ok, listing} <- Listings.get_preloaded(listing_id),
          :ok <- Bodyguard.permit(Images, :create_images, current_user, listing),
-         do: Images.insert(params, listing)
+         {:ok, image} <- Images.insert(params, listing),
+         do: {:ok, %{parent_listing: listing, image: image}}
   end
 
   def update_images(%{input: inputs}, %{context: %{current_user: current_user}}) do
     with {:ok, images_and_inputs} <- Images.get_list(inputs),
          {:ok, listing} <- Images.check_same_listing(images_and_inputs),
          :ok <- Bodyguard.permit(Images, :update_images, current_user, listing),
-         do: Images.update_images(images_and_inputs)
+         {:ok, images} <- Images.update_images(images_and_inputs),
+         do: {:ok, %{images: images, parent_listing: listing}}
   end
 
-  defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
-  defp is_admin(_, %{role: "admin"}), do: true
-  defp is_admin(_, _), do: false
+  def deactivate_images(%{input: %{image_ids: image_ids}}, %{
+        context: %{current_user: current_user}
+      }) do
+    with images <- Images.list_by_ids(image_ids),
+         {:ok, listing} <- Images.fetch_listing(images),
+         :ok <- Bodyguard.permit(Images, :deactivate_images, current_user, listing),
+         {:ok, images} <- Images.deactivate_images(images),
+         do: {:ok, %{images: images, parent_listing: listing}}
+  end
+
+  def activate_images(%{input: %{image_ids: image_ids}}, %{context: %{current_user: current_user}}) do
+    with images <- Images.list_by_ids(image_ids),
+         {:ok, listing} <- Images.fetch_listing(images),
+         :ok <- Bodyguard.permit(Images, :activate_images, current_user, listing),
+         {:ok, images} <- Images.activate_images(images),
+         do: {:ok, %{images: images, parent_listing: listing}}
+  end
+
+  def images_deactivated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "images_deactivated")
+  end
+
+  def images_activated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "images_activated")
+  end
+
+  def images_updated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "images_updated")
+  end
+
+  def image_inserted_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "images_inserted")
+  end
+
+  def images_deactivate_trigger(%{parent_listing: %{id: id}}), do: "images_deactivated:#{id}"
+
+  def images_activate_trigger(%{parent_listing: %{id: id}}), do: "images_activated:#{id}"
+
+  def update_images_trigger(%{parent_listing: %{id: id}}), do: "images_updated:#{id}"
+
+  def insert_image_trigger(%{parent_listing: %{id: id}}), do: "images_inserted:#{id}"
+
+  defp config_subscription(%{listing_id: id}, %{role: "admin"}, topic),
+    do: {:ok, topic: "#{topic}:#{id}"}
+
+  defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
+  defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
+
+  defp admin_rights?(%{user_id: user_id}, %{id: user_id}), do: true
+  defp admin_rights?(_, %{role: "admin"}), do: true
+  defp admin_rights?(_, _), do: false
 
   defp limit(images, %{limit: limit}), do: Enum.take(images, limit)
   defp limit(images, _), do: images

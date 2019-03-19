@@ -7,6 +7,7 @@ defmodule Re.Listing do
   import Ecto.Changeset
 
   schema "listings" do
+    field :uuid, Ecto.UUID
     field :type, :string
     field :complement, :string
     field :description, :string
@@ -30,16 +31,14 @@ defmodule Re.Listing do
     field :status, :string, default: "inactive"
     field :is_exclusive, :boolean, default: false
     field :is_release, :boolean
+    field :is_exportable, :boolean, default: true
     field :visualisations, :integer, virtual: true
     field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
     field :in_person_visit_count, :integer, virtual: true
 
-    field :vivareal_highlight, :boolean, default: false
-    field :zap_highlight, :boolean, default: false
-    field :zap_super_highlight, :boolean, default: false
-
     belongs_to :address, Re.Address
+    belongs_to :development, Re.Development
     belongs_to :user, Re.User
     has_many :images, Re.Image
     has_many :price_history, Re.Listings.PriceHistory
@@ -50,10 +49,9 @@ defmodule Re.Listing do
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :user]
 
-    has_many :listings_blacklists, Re.Blacklist
-    has_many :blacklisted, through: [:listings_blacklists, :user]
-
     has_many :interests, Re.Interest
+
+    has_many :units, Re.Unit
 
     timestamps()
   end
@@ -81,13 +79,15 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
+    |> generate_uuid()
+    |> unique_constraint(:uuid, name: :uuid)
   end
 
   @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
   @admin_optional ~w(complement floor matterport_code is_exclusive status
-                     property_tax maintenance_fee balconies restrooms is_release
-                     vivareal_highlight zap_highlight zap_super_highlight)a
+                     property_tax maintenance_fee balconies restrooms is_release is_exportable)a
+
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
     struct
@@ -103,7 +103,11 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
+    |> generate_uuid()
+    |> unique_constraint(:uuid, name: :uuid)
   end
+
+  def uuid_changeset(struct, params), do: cast(struct, params, ~w(uuid)a)
 
   @more_than_zero_attributes ~w(property_tax maintenance_fee
                                 bathrooms garage_spots suites
@@ -116,4 +120,12 @@ defmodule Re.Listing do
   defp greater_than(attr, changeset) do
     validate_number(changeset, attr, greater_than_or_equal_to: 0)
   end
+
+  defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
+    Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
+  end
+
+  defp generate_uuid(changeset), do: changeset
+
+  def listing_types(), do: @types
 end

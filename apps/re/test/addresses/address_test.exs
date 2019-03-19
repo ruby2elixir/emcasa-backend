@@ -73,10 +73,4 @@ defmodule Re.AddressTest do
 
     assert changeset.errors == [postal_code: {"has already been taken", []}]
   end
-
-  test "five digits posta code should be valid" do
-    attr = Map.put(@valid_attrs, :postal_code, "22041")
-    changeset = Address.changeset(%Address{}, attr)
-    assert changeset.valid?
-  end
 end

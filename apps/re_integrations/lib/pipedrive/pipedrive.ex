@@ -5,7 +5,6 @@ defmodule ReIntegrations.Pipedrive do
   require Logger
 
   @activity_params ["deal_id", "marked_as_done_time"]
-  @server Application.get_env(:re, :pipedrive, __MODULE__.Server)
 
   def validate_payload(%{
         "event" => "updated.activity",
@@ -21,5 +20,5 @@ defmodule ReIntegrations.Pipedrive do
   end
 
   def handle_webhook(%{"current" => current}),
-    do: GenServer.cast(@server, {:handle_webhook, Map.take(current, @activity_params)})
+    do: GenServer.cast(__MODULE__.Server, {:handle_webhook, Map.take(current, @activity_params)})
 end

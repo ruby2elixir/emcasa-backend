@@ -13,18 +13,26 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
   describe "handle_cast/2" do
     test "notify_interest/1" do
-      interest = insert(:interest, interest_type: build(:interest_type))
-      Emails.Server.handle_cast({Emails.User, :notify_interest, [interest]}, [])
-      interest = Repo.preload(interest, :interest_type)
+      interest =
+        insert(:interest,
+          interest_type: build(:interest_type),
+          listing: build(:listing, address: build(:address))
+        )
+
+      Emails.Server.handle_info(%{topic: "new_interest", type: :new, new: interest}, [])
+      interest = Repo.preload(interest, [:interest_type, listing: :address])
       assert_email_sent(Emails.User.notify_interest(interest))
     end
 
     test "notify_interest/1 with online scheduling" do
       interest =
-        insert(:interest, interest_type: build(:interest_type, name: "Agendamento online"))
+        insert(:interest,
+          interest_type: build(:interest_type, name: "Agendamento online"),
+          listing: build(:listing, address: build(:address))
+        )
 
-      Emails.Server.handle_cast({Emails.User, :notify_interest, [interest]}, [])
-      interest = Repo.preload(interest, :interest_type)
+      Emails.Server.handle_info(%{topic: "new_interest", type: :new, new: interest}, [])
+      interest = Repo.preload(interest, [:interest_type, listing: :address])
       email = Emails.User.notify_interest(interest)
       assert_email_sent(email)
       assert [{"", "contato@emcasa.com"}] == email.to
@@ -43,41 +51,44 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       assert_email_sent(Emails.User.listing_added_admin(user, listing))
     end
 
-    test "listing_updated/2" do
-      user = insert(:user)
-      listing = insert(:listing, price: 950_000, rooms: 3)
-      %{changes: changes} = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "user")
-      Emails.Server.handle_cast({Emails.User, :listing_updated, [user, listing, changes]}, [])
-      assert_email_sent(Emails.User.listing_updated(user, listing, changes))
-    end
+    test "should send e-mail when listing is updated" do
+      user = insert(:user, role: "user")
+      listing = insert(:listing, price: 950_000, rooms: 3, user: user)
 
-    test "monthly_report/2" do
-      user = insert(:user)
+      %{changes: changes} =
+        changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "user")
 
-      listing1 =
-        :listing
-        |> build(user: user)
-        |> Map.put(:listings_visualisations_count, 3)
-        |> Map.put(:tour_visualisations_count, 2)
-        |> Map.put(:in_person_visits_count, 4)
-        |> Map.put(:listings_favorites_count, 5)
-        |> Map.put(:interests_count, 8)
-
-      listing2 =
-        :listing
-        |> build(user: user)
-        |> Map.put(:listings_visualisations_count, 4)
-        |> Map.put(:tour_visualisations_count, 12)
-        |> Map.put(:in_person_visits_count, 4)
-        |> Map.put(:listings_favorites_count, 3)
-        |> Map.put(:interests_count, 0)
-
-      Emails.Server.handle_cast(
-        {Emails.Report, :monthly_report, [user, [listing1, listing2]]},
+      Emails.Server.handle_info(
+        %{
+          topic: "update_listing",
+          type: :update,
+          content: %{new: listing, changeset: changeset},
+          metadata: %{user: user}
+        },
         []
       )
 
-      assert_email_sent(Emails.Report.monthly_report(user, [listing1, listing2]))
+      assert_email_sent(Emails.User.listing_updated(listing, user, changes))
+    end
+
+    test "should not send e-mail if user is admin" do
+      user = insert(:user, role: "admin")
+      listing = insert(:listing, price: 950_000, rooms: 3, user: user)
+
+      %{changes: changes} =
+        changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "admin")
+
+      Emails.Server.handle_info(
+        %{
+          topic: "update_listing",
+          type: :update,
+          content: %{new: listing, changeset: changeset},
+          metadata: %{user: user}
+        },
+        []
+      )
+
+      assert_email_not_sent(Emails.User.listing_updated(listing, user, changes))
     end
   end
 
@@ -269,9 +280,12 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "should notify when user shows interest in a listing" do
       interest_type = insert(:interest_type)
-      listing = insert(:listing)
 
-      interest = insert(:interest, listing: listing, interest_type: interest_type)
+      interest =
+        insert(:interest,
+          listing: build(:listing, address: build(:address)),
+          interest_type: interest_type
+        )
 
       Emails.Server.handle_info(%{topic: "new_interest", type: :new, new: interest}, [])
 

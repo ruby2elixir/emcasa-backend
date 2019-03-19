@@ -28,5 +28,9 @@ defmodule Re.Interest do
     struct
     |> cast(params, @required ++ @optional)
     |> validate_required(@required)
+    |> foreign_key_constraint(:listing_id,
+      name: :interests_listing_id_fkey,
+      message: "does not exist."
+    )
   end
 end

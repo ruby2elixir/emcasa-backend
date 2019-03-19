@@ -24,7 +24,7 @@ defmodule ReWeb.Mixfile do
   def application do
     [
       mod: {ReWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :sentry]
     ]
   end
 
@@ -52,10 +52,10 @@ defmodule ReWeb.Mixfile do
       {:timex, "~> 3.3"},
       {:tzdata, "~> 0.5"},
       {:account_kit, github: "rhnonose/account_kit"},
-      {:honeybadger, "~> 0.10"},
       {:timber_plug, "~> 1.0"},
       {:timber_phoenix, "~> 1.0"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:sentry, "~> 6.4"}
     ]
   end
 

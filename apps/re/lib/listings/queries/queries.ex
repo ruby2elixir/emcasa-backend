@@ -5,8 +5,8 @@ defmodule Re.Listings.Queries do
 
   alias Re.{
     Images,
-    Listing,
-    Interests
+    Interests,
+    Listing
   }
 
   import Ecto.Query
@@ -21,7 +21,7 @@ defmodule Re.Listings.Queries do
     images: Images.Queries.listing_preload()
   ]
 
-  @orderable_fields ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies)a
+  @orderable_fields ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies updated_at)a
 
   def active(query \\ Listing), do: where(query, [l], l.status == "active")
 
@@ -70,11 +70,19 @@ defmodule Re.Listings.Queries do
 
   def excluding(query, _), do: query
 
+  def max_id(query), do: from(l in query, select: max(l.id))
+
   def limit(query, %{"page_size" => page_size}), do: from(l in query, limit: ^page_size)
 
   def limit(query, %{page_size: page_size}), do: from(l in query, limit: ^page_size)
 
   def limit(query, _), do: query
+
+  def offset(query, %{"offset" => offset}), do: from(l in query, offset: ^offset)
+
+  def offset(query, %{offset: offset}), do: from(l in query, offset: ^offset)
+
+  def offset(query, _), do: query
 
   def remaining_count(query) do
     query
@@ -88,33 +96,24 @@ defmodule Re.Listings.Queries do
 
   def per_user(query \\ Listing, user_id), do: from(l in query, where: l.user_id == ^user_id)
 
-  def exclude_blacklisted(query \\ Listing, params)
-
-  def exclude_blacklisted(query, %{current_user: %{id: user_id}}) do
-    from(
-      l in query,
-      left_join: b in Re.Blacklist,
-      on: b.listing_id == l.id and b.user_id == ^user_id,
-      where: is_nil(b.user_id)
-    )
-  end
-
-  def exclude_blacklisted(query, %{"current_user" => %{id: user_id}}) do
-    from(
-      l in query,
-      left_join: b in Re.Blacklist,
-      on: b.listing_id == l.id and b.user_id == ^user_id,
-      where: is_nil(b.user_id)
-    )
-  end
-
-  def exclude_blacklisted(query, _), do: query
-
   def by_city(query, listing) do
     from(
       l in query,
       join: a in assoc(l, :address),
       where: ^listing.address.city == a.city
     )
+  end
+
+  def average_price_per_area_by_neighborhood() do
+    active()
+    |> join(:inner, [l], a in assoc(l, :address))
+    |> select(
+      [l, a],
+      %{
+        neighborhood_slug: a.neighborhood_slug,
+        average_price_per_area: fragment("avg(?/?)::float", l.price, l.area)
+      }
+    )
+    |> group_by([l, a], a.neighborhood_slug)
   end
 end

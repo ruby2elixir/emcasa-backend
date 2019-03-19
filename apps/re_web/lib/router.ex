@@ -1,6 +1,7 @@
 defmodule ReWeb.Router do
   use ReWeb, :router
-  use Honeybadger.Plug
+  use Plug.ErrorHandler
+  use Sentry.Plug
 
   pipeline :api do
     plug(:accepts, ["json"])
@@ -63,6 +64,9 @@ defmodule ReWeb.Router do
   scope "/exporters" do
     forward("/vivareal", ReWeb.Exporters.Vivareal.Plug)
     forward("/zap", ReWeb.Exporters.Zap.Plug)
+    forward("/trovit", ReWeb.Exporters.Trovit.Plug)
+    forward("/imovelweb", ReWeb.Exporters.Imovelweb.Plug)
+    forward("/facebook-ads", ReWeb.Exporters.FacebookAds.Plug)
   end
 
   if Mix.env() == :dev do

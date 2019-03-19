@@ -5,7 +5,7 @@ defmodule ReWeb.GuardianPipeline do
   @claims %{typ: "access"}
 
   use Guardian.Plug.Pipeline,
-    otp_app: :re,
+    otp_app: :re_web,
     module: ReWeb.Guardian,
     error_handler: ReWeb.Guardian.AuthErrorHandler
 

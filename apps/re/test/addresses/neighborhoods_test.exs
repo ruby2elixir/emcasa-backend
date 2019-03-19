@@ -48,4 +48,36 @@ defmodule Re.NeighborhoodsTest do
       assert {:error, :not_found} == Neighborhoods.get_description(address)
     end
   end
+
+  describe "is_covered/1" do
+    test "should be true when neighborhood exists" do
+      neighborhood = %{state: "RJ", neighborhood: "Humaitá", city: "Rio de Janeiro"}
+      assert Neighborhoods.is_covered(neighborhood)
+    end
+
+    test "should be true when neighborhood exists without consider accents" do
+      neighborhood = %{state: "RJ", neighborhood: "Humaita", city: "Rio de Janeiro"}
+      assert Neighborhoods.is_covered(neighborhood)
+    end
+
+    test "should be true when neighborhood exists and without consider case" do
+      neighborhood = %{state: "RJ", neighborhood: "humaitá", city: "Rio de Janeiro"}
+      assert Neighborhoods.is_covered(neighborhood)
+    end
+
+    test "should be false when neighborhood does not exists" do
+      neighborhood = %{state: "RJ", neighborhood: "Lapa", city: "Rio de Janeiro"}
+      refute Neighborhoods.is_covered(neighborhood)
+    end
+
+    test "should be false when city does not exists" do
+      neighborhood = %{state: "RS", neighborhood: "Humaitá", city: "Rio de Janeiro"}
+      refute Neighborhoods.is_covered(neighborhood)
+    end
+
+    test "should be false when state does not exists" do
+      neighborhood = %{state: "RJ", neighborhood: "Humaitá", city: "Porto Alegre"}
+      refute Neighborhoods.is_covered(neighborhood)
+    end
+  end
 end

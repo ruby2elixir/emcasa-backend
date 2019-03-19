@@ -10,7 +10,7 @@ defmodule ReWeb.Resolvers.Listings do
     Filtering,
     Listings,
     Listings.Featured,
-    Listings.History.Price,
+    Listings.History.Prices,
     Listings.Related,
     PriceSuggestions
   }
@@ -69,6 +69,13 @@ defmodule ReWeb.Resolvers.Listings do
   def is_active(%{status: "active"}, _, _), do: {:ok, true}
   def is_active(_, _, _), do: {:ok, false}
 
+  def score(%{score: score}, _, %{context: %{current_user: current_user}}) do
+    case Bodyguard.permit(Listings, :show_score, current_user, %{}) do
+      :ok -> {:ok, score}
+      _ -> {:ok, nil}
+    end
+  end
+
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
          {:ok, listing} <- Listings.get_preloaded(id),
@@ -92,16 +99,6 @@ defmodule ReWeb.Resolvers.Listings do
       |> Dataloader.load(Listings, {:favorited, params}, user)
       |> on_load(fn loader ->
         {:ok, Dataloader.get(loader, Listings, {:favorited, params}, user)}
-      end)
-    end
-  end
-
-  def blacklists(user, params, %{context: %{loader: loader, current_user: current_user}}) do
-    with :ok <- Bodyguard.permit(Listings, :per_user, current_user, user) do
-      loader
-      |> Dataloader.load(Listings, {:blacklisted, params}, user)
-      |> on_load(fn loader ->
-        {:ok, Dataloader.get(loader, Listings, {:blacklisted, params}, user)}
       end)
     end
   end
@@ -130,9 +127,9 @@ defmodule ReWeb.Resolvers.Listings do
     case Bodyguard.permit(Listings, :show_stats, current_user, listing) do
       :ok ->
         loader
-        |> Dataloader.load(Price, :price_history, listing)
+        |> Dataloader.load(Prices, :price_history, listing)
         |> on_load(fn loader ->
-          {:ok, Dataloader.get(loader, Price, :price_history, listing)}
+          {:ok, Dataloader.get(loader, Prices, :price_history, listing)}
         end)
 
       _ ->
@@ -161,12 +158,12 @@ defmodule ReWeb.Resolvers.Listings do
     }
 
     loader
-    |> Dataloader.load(Price, {:price_history, params}, listing)
+    |> Dataloader.load(Prices, {:price_history, params}, listing)
     |> on_load(&price_reduced?(&1, params, listing))
   end
 
   defp price_reduced?(loader, params, listing) do
-    case Dataloader.get(loader, Price, {:price_history, params}, listing) do
+    case Dataloader.get(loader, Prices, {:price_history, params}, listing) do
       [] -> {:ok, false}
       prices when is_list(prices) -> {:ok, true}
       _ -> {:ok, false}
@@ -212,24 +209,37 @@ defmodule ReWeb.Resolvers.Listings do
 
   def featured(_, _), do: {:ok, Featured.get_graphql()}
 
-  def vivareal_highlight(listing, _, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :show_highlights, current_user, %{}) do
-      :ok -> {:ok, listing.vivareal_highlight}
-      error -> error
+  def listing_deactivated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "listing_deactivated")
+  end
+
+  def listing_activated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "listing_activated")
+  end
+
+  def listing_updated_config(args, %{context: %{current_user: current_user}}) do
+    config_subscription(args, current_user, "listing_updated")
+  end
+
+  def listing_inserted_config(_args, %{context: %{current_user: current_user}}) do
+    case current_user do
+      %{role: "admin"} -> {:ok, topic: "listing_inserted"}
+      %{} -> {:error, :unauthorized}
+      _ -> {:error, :unauthenticated}
     end
   end
 
-  def zap_highlight(listing, _, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :show_highlights, current_user, %{}) do
-      :ok -> {:ok, listing.zap_highlight}
-      error -> error
-    end
-  end
+  def listing_deactivate_trigger(%{id: id}), do: "listing_deactivated:#{id}"
 
-  def zap_super_highlight(listing, _, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :show_highlights, current_user, %{}) do
-      :ok -> {:ok, listing.zap_super_highlight}
-      error -> error
-    end
-  end
+  def listing_activate_trigger(%{id: id}), do: "listing_activated:#{id}"
+
+  def update_listing_trigger(%{id: id}), do: "listing_updated:#{id}"
+
+  def insert_listing_trigger(_arg), do: "listing_inserted"
+
+  defp config_subscription(%{id: id}, %{role: "admin"}, topic),
+    do: {:ok, topic: "#{topic}:#{id}"}
+
+  defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
+  defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
 end

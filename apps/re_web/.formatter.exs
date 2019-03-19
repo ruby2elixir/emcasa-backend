@@ -8,6 +8,7 @@
     import_types: 1,
     resolve: 1,
     arg: 2,
+    config: 1,
     config: 2,
     trigger: 2,
     enum: 2

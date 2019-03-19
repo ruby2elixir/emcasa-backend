@@ -8,6 +8,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     Listing.MutationHelpers
   }
 
+  alias Re.Listing
+
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
     admin_user = insert(:user, email: "admin@email.com", role: "admin")
@@ -59,7 +61,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["restrooms"] == listing.restrooms
       assert inserted_listing["area"] == listing.area
       assert inserted_listing["garageSpots"] == listing.garage_spots
-      assert inserted_listing["garageType"] == listing.garage_type |> String.upcase()
+      assert inserted_listing["garageType"] == String.upcase(listing.garage_type)
       assert inserted_listing["suites"] == listing.suites
       assert inserted_listing["dependencies"] == listing.dependencies
       assert inserted_listing["balconies"] == listing.balconies
@@ -67,6 +69,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["matterportCode"] == listing.matterport_code
       assert inserted_listing["isExclusive"] == listing.is_exclusive
       assert inserted_listing["isRelease"] == listing.is_release
+      assert inserted_listing["isExportable"] == listing.is_exportable
+      assert inserted_listing["score"] == listing.score
 
       refute inserted_listing["isActive"]
 
@@ -112,7 +116,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["restrooms"] == listing.restrooms
       assert inserted_listing["area"] == listing.area
       assert inserted_listing["garageSpots"] == listing.garage_spots
-      assert inserted_listing["garageType"] == listing.garage_type |> String.upcase()
+      assert inserted_listing["garageType"] == String.upcase(listing.garage_type)
       assert inserted_listing["suites"] == listing.suites
       assert inserted_listing["dependencies"] == listing.dependencies
       assert inserted_listing["balconies"] == listing.balconies
@@ -120,6 +124,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["matterportCode"] == nil
       assert inserted_listing["isExclusive"] == listing.is_exclusive
       assert inserted_listing["isRelease"] == listing.is_release
+      assert inserted_listing["isExportable"] == true
+      assert inserted_listing["score"] == nil
 
       refute inserted_listing["isActive"]
 
@@ -336,7 +342,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert updated_listing["restrooms"] == new_listing.restrooms
       assert updated_listing["area"] == new_listing.area
       assert updated_listing["garageSpots"] == new_listing.garage_spots
-      assert updated_listing["garageType"] == new_listing.garage_type |> String.upcase()
+      assert updated_listing["garageType"] == String.upcase(new_listing.garage_type)
       assert updated_listing["suites"] == new_listing.suites
       assert updated_listing["dependencies"] == new_listing.dependencies
       assert updated_listing["balconies"] == new_listing.balconies
@@ -344,6 +350,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert updated_listing["matterportCode"] == new_listing.matterport_code
       assert updated_listing["isExclusive"] == new_listing.is_exclusive
       assert updated_listing["isRelease"] == new_listing.is_release
+      assert updated_listing["isExportable"] == new_listing.is_exportable
+      assert updated_listing["score"] == new_listing.score
 
       assert inserted_address["city"] == new_address.city
       assert inserted_address["state"] == new_address.state
@@ -383,7 +391,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert updated_listing["restrooms"] == new_listing.restrooms
       assert updated_listing["area"] == new_listing.area
       assert updated_listing["garageSpots"] == new_listing.garage_spots
-      assert updated_listing["garageType"] == new_listing.garage_type |> String.upcase()
+      assert updated_listing["garageType"] == String.upcase(new_listing.garage_type)
       assert updated_listing["suites"] == new_listing.suites
       assert updated_listing["dependencies"] == new_listing.dependencies
       assert updated_listing["balconies"] == new_listing.balconies
@@ -391,7 +399,9 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert updated_listing["matterportCode"] == old_listing.matterport_code
       assert updated_listing["isExclusive"] == new_listing.is_exclusive
       assert updated_listing["isRelease"] == new_listing.is_release
+      assert updated_listing["isExportable"] == old_listing.is_exportable
 
+      refute updated_listing["score"]
       refute updated_listing["isActive"]
 
       assert inserted_address["city"] == new_address.city
@@ -402,6 +412,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_address["street"] == new_address.street
       assert inserted_address["streetNumber"] == new_address.street_number
       assert inserted_address["postalCode"] == new_address.postal_code
+
+      assert Repo.get(Listing, old_listing.id).score == old_listing.score
     end
 
     test "user should not update listing", %{user_conn: conn, address: address, listing: listing} do

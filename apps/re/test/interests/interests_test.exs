@@ -3,6 +3,7 @@ defmodule Re.InterestsTest do
 
   alias Re.{
     PriceSuggestions.Request,
+    Interest,
     Interests,
     Repo
   }
@@ -164,6 +165,33 @@ defmodule Re.InterestsTest do
                city: {"can't be blank", [validation: :required]},
                neighborhood: {"can't be blank", [validation: :required]}
              ] == changeset.errors
+    end
+  end
+
+  describe "show_interest/1" do
+    test "should create interest in listing" do
+      Re.PubSub.subscribe("new_interest")
+      listing = insert(:listing)
+
+      {:ok, interest} =
+        Interests.show_interest(%{
+          name: "naem",
+          phone: "123",
+          interest_type: 2,
+          listing_id: listing.id
+        })
+
+      assert Repo.get(Interest, interest.id)
+      assert_receive %{new: _, topic: "new_interest", type: :new}
+    end
+
+    test "should not create interest in invalid listing" do
+      Re.PubSub.subscribe("new_interest")
+
+      {:error, _} =
+        Interests.show_interest(%{name: "naem", phone: "123", interest_type: 2, listing_id: -1})
+
+      refute_receive %{new: _, topic: "new_interest", type: :new}
     end
   end
 end

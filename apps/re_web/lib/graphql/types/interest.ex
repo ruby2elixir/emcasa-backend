@@ -122,7 +122,7 @@ defmodule ReWeb.Types.Interest do
 
     @desc "Request price suggestion"
     field :request_price_suggestion, type: :price_request do
-      arg :name, non_null(:string)
+      arg :name, :string
       arg :email, :string
       arg :area, non_null(:integer)
       arg :rooms, non_null(:integer)

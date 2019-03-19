@@ -1,0 +1,2 @@
+CREATE DATABASE re_dev;
+CREATE DATABASE re_test;

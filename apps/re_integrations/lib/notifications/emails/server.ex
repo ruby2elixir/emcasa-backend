@@ -14,7 +14,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
 
   alias ReIntegrations.Notifications.Emails
 
-  @env Application.get_env(:re, :env)
+  @env Application.get_env(:re_integrations, :env)
 
   @spec start_link :: GenServer.start_link()
   def start_link do
@@ -103,7 +103,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   end
 
   def handle_info(%{topic: "new_interest", type: :new, new: interest}, state) do
-    interest = Repo.preload(interest, :interest_type)
+    interest = Repo.preload(interest, [:interest_type, listing: :address])
 
     handle_cast({Emails.User, :notify_interest, [interest]}, state)
   end
@@ -121,12 +121,15 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   end
 
   def handle_info(
-        %{topic: "update_listing", type: :update, content: %{new: listing, changes: changes}},
+        %{
+          topic: "update_listing",
+          type: :update,
+          content: %{new: listing, changeset: changeset},
+          metadata: %{user: %{role: "user"} = user}
+        },
         state
       ) do
-    listing = Repo.preload(listing, :user)
-
-    handle_cast({Emails.User, :listing_updated, [listing.user, listing, changes]}, state)
+    handle_cast({Emails.User, :listing_updated, [listing, user, changeset.changes]}, state)
   end
 
   def handle_info(

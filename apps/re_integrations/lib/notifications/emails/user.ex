@@ -11,9 +11,9 @@ defmodule ReIntegrations.Notifications.Emails.User do
     User
   }
 
-  @to String.split(Application.get_env(:re, :to), "|")
-  @from Application.get_env(:re, :from)
-  @frontend_url Application.get_env(:re, :frontend_url)
+  @to String.split(Application.get_env(:re_integrations, :to), "|")
+  @from Application.get_env(:re_integrations, :from)
+  @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @admin_email "admin@emcasa.com"
   @contato_email "contato@emcasa.com"
   @listing_path "/imoveis/"
@@ -23,7 +23,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
         email: email,
         phone: phone,
         message: message,
-        listing_id: listing_id,
+        listing: listing = %{address: address},
         interest_type: interest_type,
         inserted_at: inserted_at
       }) do
@@ -31,18 +31,26 @@ defmodule ReIntegrations.Notifications.Emails.User do
     |> to(get_to_email(interest_type))
     |> from(@from)
     |> subject("Novo interesse em listagem EmCasa")
-    |> html_body(
-      "Nome: #{name}<br> Email: #{email}<br> Telefone: #{phone}<br> Id da listagem: #{listing_id}<br> Mensagem: #{
-        message
-      } <br> #{interest_type && interest_type.name}
-        <br> Inserido em (UTC): #{inserted_at}"
-    )
-    |> text_body(
-      "Nome: #{name}\n Email: #{email}\n Telefone: #{phone}\n Id da listagem: #{listing_id}<br> Mensagem: #{
-        message
-      } <br> #{interest_type && interest_type.name}
-        <br> Inserido em (UTC): #{inserted_at}"
-    )
+    |> html_body("Nome: #{name}<br>
+        Email: #{email}<br>
+        Telefone: #{phone}<br>
+        Id da listagem: #{listing.id}<br>
+        Valor: #{listing.price}<br>
+        Cidade: #{address.city}<br>
+        Bairro: #{address.neighborhood}<br>
+        Mensagem: #{message} <br>
+        #{interest_type && interest_type.name} <br>
+        Inserido em (UTC): #{inserted_at}")
+    |> text_body("Nome: #{name}\n
+        Email: #{email}\n
+        Telefone: #{phone}\n
+        Id da listagem: #{listing.id}\n
+        Valor: #{listing.price}\n
+        Cidade: #{address.city}\n
+        Bairro: #{address.neighborhood}\n
+        Mensagem: #{message} \n
+        #{interest_type && interest_type.name} \n
+        Inserido em (UTC): #{inserted_at}")
   end
 
   def user_registered(%User{name: name}) do
@@ -80,7 +88,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   <a href=\"#{listing_url}\">Imóvel</a>")
   end
 
-  def listing_updated(%User{name: name, email: email}, %Listing{} = listing, changes) do
+  def listing_updated(listing, user, changes) do
     listing_url = build_url(@listing_path, to_string(listing.id))
     {changes_html, changes_txt} = build_changes(changes)
 
@@ -88,12 +96,14 @@ defmodule ReIntegrations.Notifications.Emails.User do
     |> to(@to)
     |> from(@admin_email)
     |> subject("Um usuário modificou o imóvel")
-    |> html_body("Nome: #{name}<br>
-                  Email: #{email}<br>
+    |> html_body("Nome: #{user.name}<br>
+                  Email: #{user.email || "sem e-mail"}<br>
+                  Telefone: #{user.phone || "sem telefone"}<br>
                   <a href=\"#{listing_url}\">Imóvel</a><br>
                   #{changes_html}")
-    |> text_body("Nome: #{name}
-                  Email: #{email}
+    |> text_body("Nome: #{user.name}\n
+                  Email: #{user.email || "sem e-mail"}\n
+                  Telefone: #{user.phone || "sem telefone"}\n
                   <a href=\"#{listing_url}\">Imóvel</a>
                   #{changes_txt}")
   end

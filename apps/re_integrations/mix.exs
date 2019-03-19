@@ -11,7 +11,7 @@ defmodule ReIntegrations.Mixfile do
       lockfile: "../../mix.lock",
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -24,7 +24,7 @@ defmodule ReIntegrations.Mixfile do
   def application do
     [
       mod: {ReIntegrations.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :sentry]
     ]
   end
 
@@ -34,20 +34,17 @@ defmodule ReIntegrations.Mixfile do
   defp deps do
     [
       {:re, in_umbrella: true},
-      {:phoenix, "~> 1.4.0"},
       {:plug_cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
       {:comeonin, "~> 3.2"},
       {:swoosh, "~> 0.13"},
       {:elasticsearch, "~> 0.4"},
-      {:absinthe, "~> 1.5.0-alpha.1"},
-      {:phoenix_swoosh, "~> 0.2"},
       {:pigeon, "~> 1.2.2"},
       {:kadabra, "~> 0.4.2"},
       {:retry, "~> 0.10"},
       {:httpoison, "~> 1.3", override: true},
-      {:honeybadger, "~> 0.10"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:sentry, "~> 6.4"}
     ]
   end
 

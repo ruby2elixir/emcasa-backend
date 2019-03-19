@@ -77,6 +77,12 @@ defmodule Re.Images do
     end
   end
 
+  def list_by_ids(ids) do
+    ids
+    |> Queries.with_ids()
+    |> Repo.all()
+  end
+
   defp do_get(input) do
     case Repo.get(Image, input.id) do
       nil -> {:error, :not_found, input}
@@ -91,6 +97,13 @@ defmodule Re.Images do
     end
   end
 
+  def fetch_listing(images) do
+    case Enum.uniq_by(images, fn %{listing_id: id} -> id end) do
+      [%{listing_id: listing_id}] -> Listings.get(listing_id)
+      _ -> {:error, :distinct_listings}
+    end
+  end
+
   def update_images(images_and_inputs), do: {:ok, Enum.map(images_and_inputs, &do_update_image/1)}
 
   defp do_update_image({:ok, image, input}) do
@@ -100,6 +113,30 @@ defmodule Re.Images do
     |> case do
       {:ok, image} -> image
       {:error, error} -> error
+    end
+  end
+
+  def deactivate_images(images) do
+    ids = Enum.map(images, fn %{id: id} -> id end)
+
+    Image
+    |> Queries.with_ids(ids)
+    |> Repo.update_all(set: [is_active: false])
+    |> case do
+      {_, nil} -> {:ok, images}
+      error -> error
+    end
+  end
+
+  def activate_images(images) do
+    ids = Enum.map(images, fn %{id: id} -> id end)
+
+    Image
+    |> Queries.with_ids(ids)
+    |> Repo.update_all(set: [is_active: true])
+    |> case do
+      {_, nil} -> {:ok, images}
+      error -> error
     end
   end
 
