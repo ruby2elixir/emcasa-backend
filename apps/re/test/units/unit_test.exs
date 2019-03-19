@@ -43,12 +43,12 @@ defmodule Re.UnitTest do
         @valid_attrs
         |> Map.put(:listing_id, listing_id)
 
-      changeset = Unit.changeset(%Unit{}, attrs, "development")
+      changeset = Unit.changeset(%Unit{}, attrs)
       assert changeset.valid?
     end
 
     test "without required attributes for development" do
-      changeset = Unit.changeset(%Unit{}, %{}, "development")
+      changeset = Unit.changeset(%Unit{}, %{})
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :price) == {"can't be blank", [validation: :required]}
@@ -70,7 +70,7 @@ defmodule Re.UnitTest do
     end
 
     test "with invalid attributes for development" do
-      changeset = Unit.changeset(%Unit{}, @invalid_attrs, "development")
+      changeset = Unit.changeset(%Unit{}, @invalid_attrs)
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :price) ==

@@ -36,7 +36,7 @@ defmodule Re.Unit do
 
   @attributes @required ++ @optional
 
-  def changeset(struct, params, "development") do
+  def changeset(struct, params) do
     struct
     |> cast(params, @attributes)
     |> validate_required(@required)
