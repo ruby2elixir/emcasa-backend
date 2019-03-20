@@ -18,7 +18,7 @@ defmodule Re.Tag do
     timestamps()
   end
 
-  @required [:name]
+  @required [:name, :category]
 
   @sluggified_attr [:name]
 
