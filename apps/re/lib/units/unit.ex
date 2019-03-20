@@ -25,13 +25,20 @@ defmodule Re.Unit do
     field :dependencies, :integer
     field :balconies, :integer
 
+    belongs_to :development, Re.Development,
+      references: :uuid,
+      foreign_key: :development_uuid,
+      type: Ecto.UUID
+
     belongs_to :listing, Re.Listing
+
     timestamps()
   end
 
   @garage_types ~w(contract condominium)
 
-  @required ~w(price rooms bathrooms area garage_type garage_spots suites dependencies)a
+  @required ~w(price rooms bathrooms area garage_type garage_spots suites dependencies
+               development_uuid)a
   @optional ~w(complement floor property_tax maintenance_fee balconies restrooms)a
 
   @attributes @required ++ @optional

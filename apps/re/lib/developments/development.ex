@@ -17,6 +17,8 @@ defmodule Re.Development do
     field :description, :string
 
     belongs_to :address, Re.Address
+
+    has_many :units, Re.Unit
     has_many :images, Re.Image
     has_many :listings, Re.Listing
 
