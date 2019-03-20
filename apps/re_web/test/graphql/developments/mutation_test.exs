@@ -28,7 +28,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     @insert_mutation """
       mutation InsertDevelopment ($input: DevelopmentInput!) {
         insertDevelopment(input: $input) {
-          id
+          uuid
           name
           title
           phase
@@ -55,7 +55,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
                "insertDevelopment" => %{"address" => inserted_address} = insert_development
              } = json_response(conn, 200)["data"]
 
-      assert insert_development["id"]
+      assert insert_development["uuid"]
       assert insert_development["name"] == development.name
       assert insert_development["title"] == development.title
       assert insert_development["phase"] == development.phase
@@ -98,9 +98,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
   describe "updateDevelopment/2" do
     @update_mutation """
-      mutation UpdateDevelopment ($id: ID!, $input: DevelopmentInput!) {
-        updateDevelopment(id: $id, input: $input) {
-          id
+      mutation UpdateDevelopment ($uuid: UUID!, $input: DevelopmentInput!) {
+        updateDevelopment(uuid: $uuid, input: $input) {
+          uuid
           name
           title
           phase
@@ -119,7 +119,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       development: new_development,
       address: new_address
     } do
-      variables = update_development_variables(old_development.id, new_development, new_address)
+      variables = update_development_variables(old_development.uuid, new_development, new_address)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
@@ -143,7 +143,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       development: new_development,
       address: new_address
     } do
-      variables = update_development_variables(old_development.id, new_development, new_address)
+      variables = update_development_variables(old_development.uuid, new_development, new_address)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
@@ -159,7 +159,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       development: new_development,
       address: new_address
     } do
-      variables = update_development_variables(old_development.id, new_development, new_address)
+      variables = update_development_variables(old_development.uuid, new_development, new_address)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
@@ -183,9 +183,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     }
   end
 
-  def update_development_variables(id, development, address) do
+  def update_development_variables(uuid, development, address) do
     %{
-      "id" => id,
+      "uuid" => uuid,
       "input" => %{
         "name" => development.name,
         "title" => development.title,
