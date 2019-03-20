@@ -6,6 +6,8 @@ defmodule Re.Tag do
 
   import Ecto.Changeset
 
+  alias Re.Slugs
+
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "tags" do
@@ -18,7 +20,7 @@ defmodule Re.Tag do
 
   @required [:name]
 
-  @sluggfied_attr [:name]
+  @sluggified_attr [:name]
 
   @categories ~w(infrastructure location realty)
 
