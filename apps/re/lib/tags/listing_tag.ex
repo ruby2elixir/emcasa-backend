@@ -1,6 +1,6 @@
-defmodule Re.Listings.ListingsTags do
+defmodule Re.ListingTag do
   @moduledoc """
-  Model for joining a listing and a tag.
+  Model that resolve relation between listing and tag.
   """
   use Ecto.Schema
 
@@ -11,7 +11,7 @@ defmodule Re.Listings.ListingsTags do
     belongs_to :tag, Re.Listings.Tag, foreign_key: :tag_uuid, references: :uuid, primary_key: true
   end
 
-  @required ~w(listing_id tag_id)a
+  @required ~w(listing_id tag_uuid)a
 
   def changeset(struct, params \\ %{}) do
     struct

@@ -1,4 +1,4 @@
-defmodule Re.Listings.Tag do
+defmodule Re.Tag do
   @moduledoc """
   Model for tag value
   """
