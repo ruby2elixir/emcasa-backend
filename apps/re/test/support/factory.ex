@@ -175,6 +175,20 @@ defmodule Re.Factory do
     }
   end
 
+  def tag_factory do
+    name =
+      Enum.random(["Portaria 24h", "Piscina", "Salão de jogos", "Pet friendly", "Salão de festas"])
+
+    name_slug = Re.Slugs.sluggify(name)
+
+    %Re.Tag{
+      uuid: UUID.uuid4(),
+      name: name,
+      name_slug: name_slug,
+      category: Enum.random(~w(infrastructure location realty))
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
