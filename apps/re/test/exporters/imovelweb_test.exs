@@ -87,10 +87,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<NomeArquivo><![CDATA[suite_1.png]]></NomeArquivo>" <>
           "<URLArquivo><![CDATA[#{@image_url}/suite_1.png]]></URLArquivo>" <>
           "<Principal>0</Principal>" <>
-          "<Ordem>2</Ordem>" <>
-          "</Foto>" <>
-          "</Fotos>" <>
-          "</Imovel>"
+          "<Ordem>2</Ordem>" <> "</Foto>" <> "</Fotos>" <> "</Imovel>"
 
       generated_xml =
         listing
@@ -294,10 +291,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<NomeArquivo><![CDATA[suite_1.png]]></NomeArquivo>" <>
           "<URLArquivo><![CDATA[#{@image_url}/suite_1.png]]></URLArquivo>" <>
           "<Principal>0</Principal>" <>
-          "<Ordem>2</Ordem>" <>
-          "</Foto>" <>
-          "</Fotos>" <>
-          "</Imovel>"
+          "<Ordem>2</Ordem>" <> "</Foto>" <> "</Fotos>" <> "</Imovel>"
 
       generated_xml =
         listing
@@ -381,10 +375,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<NomeArquivo><![CDATA[suite_1.png]]></NomeArquivo>" <>
           "<URLArquivo><![CDATA[#{@image_url}/suite_1.png]]></URLArquivo>" <>
           "<Principal>0</Principal>" <>
-          "<Ordem>2</Ordem>" <>
-          "</Foto>" <>
-          "</Fotos>" <>
-          "</Imovel>"
+          "<Ordem>2</Ordem>" <> "</Foto>" <> "</Fotos>" <> "</Imovel>"
 
       generated_xml =
         listing

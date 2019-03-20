@@ -48,10 +48,11 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     } do
       variables = insert_development_variables(development, address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{
-               "insertDevelopment" => %{"address" => inserted_address}= insert_development
+               "insertDevelopment" => %{"address" => inserted_address} = insert_development
              } = json_response(conn, 200)["data"]
 
       assert insert_development["id"]
@@ -71,7 +72,8 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     } do
       variables = insert_development_variables(development, address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{"insertDevelopment" => nil} == json_response(conn, 200)["data"]
 
@@ -85,7 +87,8 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     } do
       variables = insert_development_variables(development, address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{"insertDevelopment" => nil} == json_response(conn, 200)["data"]
 
@@ -116,14 +119,14 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       development: new_development,
       address: new_address
     } do
-
       variables = update_development_variables(old_development.id, new_development, new_address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
 
       assert %{
-              "updateDevelopment" => %{"address" => updated_address} = updated_development
-              } = json_response(conn, 200)["data"]
+               "updateDevelopment" => %{"address" => updated_address} = updated_development
+             } = json_response(conn, 200)["data"]
 
       assert updated_development["name"] == new_development.name
       assert updated_development["title"] == new_development.title
@@ -140,10 +143,10 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       development: new_development,
       address: new_address
     } do
-
       variables = update_development_variables(old_development.id, new_development, new_address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
 
       assert %{"updateDevelopment" => nil} == json_response(conn, 200)["data"]
 
@@ -156,15 +159,15 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       development: new_development,
       address: new_address
     } do
-
       variables = update_development_variables(old_development.id, new_development, new_address)
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
 
       assert %{"updateDevelopment" => nil} == json_response(conn, 200)["data"]
 
       assert_unauthorized_response(json_response(conn, 200))
-   end
+    end
   end
 
   def insert_development_variables(development, address) do

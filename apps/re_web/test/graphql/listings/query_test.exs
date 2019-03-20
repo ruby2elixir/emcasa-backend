@@ -958,7 +958,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  %{"uuid" => to_string(unit1.uuid)},
                  %{"uuid" => to_string(unit2.uuid)}
                ],
-               "insertedAt" => "2018-01-01T10:00:00.000000"
+               "insertedAt" => "2018-01-01T10:00:00"
              } == json_response(conn, 200)["data"]["listing"]
     end
 
@@ -1119,7 +1119,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  %{"uuid" => to_string(unit1.uuid)},
                  %{"uuid" => to_string(unit2.uuid)}
                ],
-               "insertedAt" => "2018-01-01T10:00:00.000000"
+               "insertedAt" => "2018-01-01T10:00:00"
              } == json_response(conn, 200)["data"]["listing"]
     end
 
@@ -1244,7 +1244,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  %{"uuid" => to_string(unit1.uuid)},
                  %{"uuid" => to_string(unit2.uuid)}
                ],
-               "insertedAt" => "2018-01-01T10:00:00.000000"
+               "insertedAt" => "2018-01-01T10:00:00"
              } == json_response(conn, 200)["data"]["listing"]
     end
 
@@ -1369,7 +1369,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  %{"uuid" => to_string(unit1.uuid)},
                  %{"uuid" => to_string(unit2.uuid)}
                ],
-               "insertedAt" => "2018-01-01T10:00:00.000000"
+               "insertedAt" => "2018-01-01T10:00:00"
              } == json_response(conn, 200)["data"]["listing"]
     end
 

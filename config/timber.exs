@@ -4,7 +4,7 @@ use Mix.Config
 config :re_web, ReWeb.Endpoint, instrumenters: [Timber.Phoenix]
 
 # Structure Ecto logs
-config :re, Re.Repo, loggers: [{Timber.Ecto, :log, []}]
+config :re, Re.Repo, log: false
 
 # Use Timber as the logger backend
 # Feel free to add additional backends if you want to send you logs to multiple devices.
