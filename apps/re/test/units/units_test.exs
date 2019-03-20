@@ -17,13 +17,19 @@ defmodule Re.UtitsTest do
       area: 100,
       garage_spots: 1,
       garage_type: "contract",
-      suites: 1,
-      dependencies: 0
+      dependencies: 0,
+      suites: 1
     }
 
     test "insert new unit" do
-      assert {:ok, inserted_unit} = Units.insert(@insert_unit_params, nil)
-      assert inserted_unit == Repo.get(Unit, inserted_unit.uuid)
+      development = insert(:development)
+
+      assert {:ok, inserted_unit} = Units.insert(@insert_unit_params, development)
+
+      retrieved_unit = Repo.get(Unit, inserted_unit.uuid)
+
+      assert retrieved_unit == inserted_unit
+      assert retrieved_unit.development_uuid == development.uuid
     end
   end
 end

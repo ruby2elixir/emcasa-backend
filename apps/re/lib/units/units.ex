@@ -4,6 +4,8 @@ defmodule Re.Units do
   for a listing. A listing can have one or more units.
   """
 
+  alias Ecto.Changeset
+
   alias Re.{
     Repo,
     Unit
@@ -13,8 +15,9 @@ defmodule Re.Units do
 
   def query(_query, _args), do: Re.Unit
 
-  def insert(params, user) do
+  def insert(params, development) do
     %Unit{}
+    |> Changeset.change(development_uuid: development.uuid)
     |> Unit.changeset(params)
     |> Repo.insert()
   end
