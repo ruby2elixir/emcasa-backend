@@ -70,28 +70,36 @@ defmodule Re.ListingTest do
                {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
 
       assert Keyword.get(changeset.errors, :property_tax) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :maintenance_fee) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :bathrooms) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :restrooms) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :suites) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :dependencies) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :balconies) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :garage_spots) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :garage_type) ==
                {"should be one of: [contract condominium]", [validation: :inclusion]}
@@ -126,35 +134,43 @@ defmodule Re.ListingTest do
                {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
 
       assert Keyword.get(changeset.errors, :score) ==
-               {"must be less than %{number}", [validation: :number, number: 5]}
+               {"must be less than %{number}", [validation: :number, kind: :less_than, number: 5]}
 
       assert Keyword.get(changeset.errors, :price) ==
                {"must be greater than or equal to %{number}",
-                [validation: :number, number: 250_000]}
+                [validation: :number, kind: :greater_than_or_equal_to, number: 250_000]}
 
       assert Keyword.get(changeset.errors, :property_tax) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :maintenance_fee) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :bathrooms) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :restrooms) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :suites) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :dependencies) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :balconies) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :garage_spots) ==
-               {"must be greater than or equal to %{number}", [validation: :number, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :is_exclusive) ==
                {"is invalid", [type: :boolean, validation: :cast]}
@@ -169,11 +185,12 @@ defmodule Re.ListingTest do
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :score) ==
-               {"must be greater than %{number}", [validation: :number, number: 0]}
+               {"must be greater than %{number}",
+                [validation: :number, kind: :greater_than, number: 0]}
 
       assert Keyword.get(changeset.errors, :price) ==
                {"must be less than or equal to %{number}",
-                [validation: :number, number: 100_000_000]}
+                [validation: :number, kind: :less_than_or_equal_to, number: 100_000_000]}
     end
   end
 end
