@@ -39,28 +39,30 @@ defmodule Re.AddressTest do
 
     assert Keyword.get(changeset.errors, :street) ==
              {"should be at most %{count} character(s)",
-              [count: 128, validation: :length, max: 128]}
+              [count: 128, validation: :length, kind: :max]}
 
     assert Keyword.get(changeset.errors, :street_number) ==
              {"should be at most %{count} character(s)",
-              [count: 128, validation: :length, max: 128]}
+              [count: 128, validation: :length, kind: :max]}
 
     assert Keyword.get(changeset.errors, :neighborhood) ==
              {"should be at most %{count} character(s)",
-              [count: 128, validation: :length, max: 128]}
+              [count: 128, validation: :length, kind: :max]}
 
     assert Keyword.get(changeset.errors, :city) ==
              {"should be at most %{count} character(s)",
-              [count: 128, validation: :length, max: 128]}
+              [count: 128, validation: :length, kind: :max]}
 
     assert Keyword.get(changeset.errors, :state) ==
-             {"should be %{count} character(s)", [count: 2, validation: :length, is: 2]}
+             {"should be %{count} character(s)", [count: 2, validation: :length, kind: :is]}
 
     assert Keyword.get(changeset.errors, :lat) ==
-             {"must be greater than %{number}", [validation: :number, number: -90]}
+             {"must be greater than %{number}",
+              [validation: :number, kind: :greater_than, number: -90]}
 
     assert Keyword.get(changeset.errors, :lng) ==
-             {"must be greater than %{number}", [validation: :number, number: -180]}
+             {"must be greater than %{number}",
+              [validation: :number, kind: :greater_than, number: -180]}
   end
 
   test "duplicated address should be invalid" do
@@ -71,6 +73,10 @@ defmodule Re.AddressTest do
       |> Address.changeset(@valid_attrs)
       |> Repo.insert()
 
-    assert changeset.errors == [postal_code: {"has already been taken", []}]
+    assert changeset.errors == [
+             postal_code:
+               {"has already been taken",
+                [constraint: :unique, constraint_name: "unique_address"]}
+           ]
   end
 end

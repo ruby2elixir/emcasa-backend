@@ -10,8 +10,8 @@ defmodule ReWeb.Resolvers.Developments do
     {:ok, developments}
   end
 
-  def show(%{id: id}, _context) do
-    Developments.get(id)
+  def show(%{uuid: uuid}, _context) do
+    Developments.get(uuid)
   end
 
   def insert(%{input: development_params}, %{context: %{current_user: current_user}}) do
@@ -26,10 +26,10 @@ defmodule ReWeb.Resolvers.Developments do
     end
   end
 
-  def update(%{id: id, input: development_params}, %{
+  def update(%{uuid: uuid, input: development_params}, %{
         context: %{current_user: current_user}
       }) do
-    with {:ok, development} <- Developments.get(id),
+    with {:ok, development} <- Developments.get(uuid),
          :ok <- Bodyguard.permit(Developments, :update_development, current_user, development),
          {:ok, address} <- get_address(development_params),
          {:ok, development} <- Developments.update(development, development_params, address) do

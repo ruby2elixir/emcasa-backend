@@ -37,7 +37,7 @@ defmodule ReWeb.Mixfile do
       {:re_integrations, in_umbrella: true},
       {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.1"},
-      {:phoenix_ecto, "~> 3.0"},
+      {:phoenix_ecto, "~> 4.0"},
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
@@ -54,7 +54,8 @@ defmodule ReWeb.Mixfile do
       {:account_kit, github: "rhnonose/account_kit"},
       {:timber_plug, "~> 1.0"},
       {:timber_phoenix, "~> 1.0"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:sentry, "~> 6.4"}
     ]
   end
 

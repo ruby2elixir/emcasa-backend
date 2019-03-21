@@ -302,6 +302,7 @@ Repo.delete_all(Development)
 
 {:ok, development1} =
   Repo.insert(%Development{
+    uuid: UUID.uuid4(),
     name: "EmCasa condominium",
     title: "Live in your dreams",
     phase: "building",

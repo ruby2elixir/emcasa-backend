@@ -314,7 +314,7 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
                    "isActive" => true,
                    "position" => 2,
                    "category" => "bathroom2"
-                   },
+                 },
                  %{
                    "id" => to_string(id3),
                    "description" => "waow3",

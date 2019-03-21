@@ -7,6 +7,8 @@ defmodule Re.Development do
 
   import Ecto.Changeset
 
+  @primary_key {:uuid, :binary_id, autogenerate: false}
+
   schema "developments" do
     field :name, :string
     field :title, :string
@@ -32,5 +34,12 @@ defmodule Re.Development do
     |> validate_inclusion(:phase, @phases,
       message: "should be one of: [#{Enum.join(@phases, " ")}]"
     )
+    |> generate_uuid()
   end
+
+  defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
+    Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
+  end
+
+  defp generate_uuid(changeset), do: changeset
 end
