@@ -8,9 +8,41 @@ defmodule Re.TagsTest do
 
   import Re.Factory
 
+  describe "with_ids/1" do
+    test "should fetch tags with uuids" do
+      %{uuid: uuid_1} = insert(:tag, name: "feature 1", name_slug: "feature-1")
+      %{uuid: uuid_2} = insert(:tag, name: "feature 2", name_slug: "feature-2")
+      %{uuid: uuid_3} = insert(:tag, name: "feature 3", name_slug: "feature-3")
+
+      tags_uuids =
+        Tags.list_by_ids([uuid_1, uuid_2])
+        |> Enum.map(fn tag -> tag.uuid end)
+
+      assert Enum.member?(tags_uuids, uuid_1)
+      assert Enum.member?(tags_uuids, uuid_2)
+      refute Enum.member?(tags_uuids, uuid_3)
+    end
+  end
+
+  describe "with_slugs/1" do
+    test "should fetch tags with slugs" do
+      %{name_slug: slug_1} = insert(:tag, name: "feature 1", name_slug: "feature-1")
+      %{name_slug: slug_2} = insert(:tag, name: "feature 2", name_slug: "feature-2")
+      %{name_slug: slug_3} = insert(:tag, name: "feature 3", name_slug: "feature-3")
+
+      tags_slugs =
+        Tags.list_by_slugs([slug_1, slug_2])
+        |> Enum.map(fn tag -> tag.name_slug end)
+
+      assert Enum.member?(tags_slugs, slug_1)
+      assert Enum.member?(tags_slugs, slug_2)
+      refute Enum.member?(tags_slugs, slug_3)
+    end
+  end
+
   describe "insert/1" do
     test "should insert a tag" do
-      attrs = %{name: "Varanda gourmet", category: "realty"}
+      attrs = %{name: "an awesome feature", category: "realty"}
       assert {:ok, inserted_tag} = Tags.insert(attrs)
 
       assert fetched_tag = Repo.get(Tag, inserted_tag.uuid)

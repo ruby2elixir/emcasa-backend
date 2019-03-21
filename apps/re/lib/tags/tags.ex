@@ -7,6 +7,7 @@ defmodule Re.Tags do
 
   alias Re.{
     Tag,
+    Tags.Queries,
     Repo
   }
 
@@ -20,6 +21,18 @@ defmodule Re.Tags do
       nil -> {:error, :not_found}
       tag -> {:ok, tag}
     end
+  end
+
+  def list_by_ids(uuids) do
+    uuids
+    |> Queries.with_ids()
+    |> Repo.all()
+  end
+
+  def list_by_slugs(slugs) do
+    slugs
+    |> Queries.with_slugs()
+    |> Repo.all()
   end
 
   def insert(params) do
