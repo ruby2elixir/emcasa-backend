@@ -43,6 +43,7 @@ defmodule ReWeb.Schema do
     import_fields(:dashboard_mutations)
     import_fields(:calendar_mutations)
     import_fields(:development_mutations)
+    import_fields(:unit_mutations)
   end
 
   subscription do
