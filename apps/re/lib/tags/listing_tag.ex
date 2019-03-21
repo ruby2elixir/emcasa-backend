@@ -6,9 +6,16 @@ defmodule Re.ListingTag do
 
   import Ecto.Changeset
 
+  @primary_key false
+
   schema "listings_tags" do
     belongs_to :listing, Re.Listing, primary_key: true
-    belongs_to :tag, Re.Listings.Tag, foreign_key: :tag_uuid, references: :uuid, primary_key: true
+
+    belongs_to :tag, Re.Tag,
+      type: :binary_id,
+      foreign_key: :tag_uuid,
+      references: :uuid,
+      primary_key: true
   end
 
   @required ~w(listing_id tag_uuid)a
