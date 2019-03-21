@@ -156,7 +156,8 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "price suggestion requested when price" do
       address = insert(:address)
-      request = insert(:price_suggestion_request, address: address, is_covered: false)
+      user = insert(:user)
+      request = insert(:price_suggestion_request, address: address, user: user, is_covered: false)
 
       Emails.Server.handle_info(
         %{
@@ -180,6 +181,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
               street: address.street,
               street_number: address.street_number
             },
+            user: %{
+              phone: user.phone
+            },
             is_covered: false
           },
           10.10
@@ -189,7 +193,8 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
     test "price suggestion requested for not covered street" do
       address = insert(:address)
-      request = insert(:price_suggestion_request, address: address, is_covered: true)
+      user = insert(:user)
+      request = insert(:price_suggestion_request, address: address, user: user, is_covered: true)
 
       Emails.Server.handle_info(
         %{
@@ -212,6 +217,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
             address: %{
               street: address.street,
               street_number: address.street_number
+            },
+            user: %{
+              phone: user.phone
             },
             is_covered: true
           },
