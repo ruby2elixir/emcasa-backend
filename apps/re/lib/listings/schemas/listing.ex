@@ -118,6 +118,12 @@ defmodule Re.Listing do
     |> unique_constraint(:uuid, name: :uuid)
   end
 
+  def changeset_update_tags(struct, tags) do
+    struct
+    |> cast(%{}, @admin_attributes)
+    |> put_assoc(:tags, tags)
+  end
+
   def uuid_changeset(struct, params), do: cast(struct, params, ~w(uuid)a)
 
   @more_than_zero_attributes ~w(property_tax maintenance_fee

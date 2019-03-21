@@ -4,7 +4,8 @@ defmodule Re.ListingsTest do
   alias Re.{
     Listings.History.Server,
     Listing,
-    Listings
+    Listings,
+    Repo
   }
 
   import Re.Factory
@@ -406,6 +407,68 @@ defmodule Re.ListingsTest do
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.status == "inactive"
       assert [] = Repo.all(Re.Listings.PriceHistory)
+    end
+  end
+
+  describe "upsert_tags/3" do
+    test "should insert tags" do
+      tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
+      tag_3 = insert(:tag, name: "tag 3", name_slug: "tag-3")
+
+      user = insert(:user)
+
+      listing =
+        insert(:listing, user: user)
+        |> Repo.preload([:tags])
+
+      assert Enum.count(listing.tags) == 0
+
+      assert {:ok, updated_listing} =
+               Listings.upsert_tags(listing, [tag_1.uuid, tag_2.uuid], user)
+
+      assert Enum.count(updated_listing.tags) == 2
+      assert Enum.member?(updated_listing.tags, tag_1)
+      assert Enum.member?(updated_listing.tags, tag_2)
+      refute Enum.member?(updated_listing.tags, tag_3)
+    end
+
+    test "should update tags" do
+      tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
+      tag_3 = insert(:tag, name: "tag 3", name_slug: "tag-3")
+
+      user = insert(:user)
+
+      {:ok, listing} =
+        insert(:listing, user: user)
+        |> Repo.preload([:tags])
+        |> Listings.upsert_tags([tag_1.uuid, tag_2.uuid], user)
+
+      {:ok, updated_listing} = Listings.upsert_tags(listing, [tag_3.uuid], user)
+
+      assert Enum.count(updated_listing.tags) == 1
+      assert Enum.member?(updated_listing.tags, tag_3)
+      refute Enum.member?(updated_listing.tags, tag_1)
+      refute Enum.member?(updated_listing.tags, tag_2)
+    end
+
+    test "should remove tags" do
+      tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
+
+      user = insert(:user)
+
+      {:ok, listing} =
+        insert(:listing, user: user)
+        |> Repo.preload([:tags])
+        |> Listings.upsert_tags([tag_1.uuid, tag_2.uuid], user)
+
+      {:ok, updated_listing} = Listings.upsert_tags(listing, [], user)
+
+      assert Enum.count(updated_listing.tags) == 0
+      refute Enum.member?(updated_listing.tags, tag_1)
+      refute Enum.member?(updated_listing.tags, tag_2)
     end
   end
 
