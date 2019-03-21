@@ -177,7 +177,7 @@ defmodule Re.Factory do
 
   def tag_factory do
     name =
-      Enum.random(["Portaria 24h", "Piscina", "Salão de jogos", "Pet friendly", "Salão de festas"])
+      Enum.random(["Air conditioning", "Pool", "Open concept", "Natural light", "Fire place"])
 
     name_slug = Re.Slugs.sluggify(name)
 
