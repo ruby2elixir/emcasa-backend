@@ -23,7 +23,10 @@ defmodule Re.TagsTest do
 
       duplicate_attrs = %{name: "Varanda Gourmet", category: "infrastructure"}
       assert {:error, changeset} = Tags.insert(duplicate_attrs)
-      assert Keyword.get(changeset.errors, :name_slug) == {"has already been taken", []}
+
+      assert Keyword.get(changeset.errors, :name_slug) ==
+               {"has already been taken",
+                [constraint: :unique, constraint_name: "tags_name_slug_index"]}
     end
   end
 
