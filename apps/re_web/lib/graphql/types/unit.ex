@@ -22,8 +22,6 @@ defmodule ReWeb.Types.Unit do
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
-
-    # add development_assoc
   end
 
   input_object :unit_input do

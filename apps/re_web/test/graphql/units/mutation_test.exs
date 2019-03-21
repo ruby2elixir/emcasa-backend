@@ -15,16 +15,16 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
 
     unit = build(:unit)
 
-    {:ok,
-     unauthenticated_conn: conn,
-     admin_conn: login_as(conn, admin_user),
-     user_conn: login_as(conn, user_user),
-     old_development: insert(:development),
-     unit: unit,
-     development: development}
+    {
+      :ok,
+      unauthenticated_conn: conn,
+      admin_conn: login_as(conn, admin_user),
+      user_conn: login_as(conn, user_user),
+      unit: unit,
+      development: development
+    }
   end
 
-  # todo add devolpment on this query
   describe "insert/2" do
     @insert_mutation """
       mutation InsertUnit ($input: UnitInput!) {
@@ -47,6 +47,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
           }
         }
     """
+
     test "admin should insert unit", %{
       admin_conn: conn,
       unit: unit,
@@ -57,10 +58,8 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
-      # todo review association name
       assert %{
                "insertUnit" => insert_unit
-               #  "insertUnit" => %{"development" => inserted_development} = insert_unit
              } = json_response(conn, 200)["data"]
 
       assert insert_unit["uuid"]
@@ -78,8 +77,36 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       assert insert_unit["suites"] == unit.suites
       assert insert_unit["dependencies"] == unit.dependencies
       assert insert_unit["balconies"] == unit.balconies
+    end
 
-      # assert inserted_address["id"] == Integer.to_string(address.id)
+    test "regular user should not insert unit", %{
+      user_conn: conn,
+      unit: unit,
+      development: development
+    } do
+      variables = insert_unit_variables(unit, development)
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
+
+      assert %{"insertUnit" => nil} == json_response(conn, 200)["data"]
+
+      assert_forbidden_response(json_response(conn, 200))
+    end
+
+    test "unauthenticated user should not insert unit", %{
+      unauthenticated_conn: conn,
+      unit: unit,
+      development: development
+    } do
+      variables = insert_unit_variables(unit, development)
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
+
+      assert %{"insertUnit" => nil} == json_response(conn, 200)["data"]
+
+      assert_unauthorized_response(json_response(conn, 200))
     end
   end
 
