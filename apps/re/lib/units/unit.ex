@@ -38,7 +38,7 @@ defmodule Re.Unit do
   @garage_types ~w(contract condominium)
 
   @required ~w(price rooms bathrooms area garage_type garage_spots suites dependencies
-               development_uuid)a
+               development_uuid listing_id)a
   @optional ~w(complement floor property_tax maintenance_fee balconies restrooms)a
 
   @attributes @required ++ @optional

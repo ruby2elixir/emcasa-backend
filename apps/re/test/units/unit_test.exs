@@ -72,6 +72,9 @@ defmodule Re.UnitTest do
 
       assert Keyword.get(changeset.errors, :development_uuid) ==
                {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :listing_id) ==
+               {"can't be blank", [validation: :required]}
     end
 
     test "with invalid attributes for development" do

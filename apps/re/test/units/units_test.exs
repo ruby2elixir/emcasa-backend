@@ -23,13 +23,15 @@ defmodule Re.UtitsTest do
 
     test "insert new unit" do
       development = insert(:development)
+      listing = insert(:listing, development_uuid: development.uuid)
 
-      assert {:ok, inserted_unit} = Units.insert(@insert_unit_params, development)
+      assert {:ok, inserted_unit} = Units.insert(@insert_unit_params, development, listing)
 
       retrieved_unit = Repo.get(Unit, inserted_unit.uuid)
 
       assert retrieved_unit == inserted_unit
       assert retrieved_unit.development_uuid == development.uuid
+      assert retrieved_unit.listing_id == listing.id
     end
   end
 end

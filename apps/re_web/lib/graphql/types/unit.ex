@@ -39,7 +39,8 @@ defmodule ReWeb.Types.Unit do
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
-    field :development_uuid, :uuid
+    field :development_uuid, non_null(:uuid)
+    field :listing_id, non_null(:id)
   end
 
   object :unit_mutations do

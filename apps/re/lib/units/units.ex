@@ -18,9 +18,10 @@ defmodule Re.Units do
 
   def query(_query, _args), do: Re.Unit
 
-  def insert(params, development) do
+  def insert(params, development, listing) do
     %Unit{}
     |> Changeset.change(development_uuid: development.uuid)
+    |> Changeset.change(listing_id: listing.id)
     |> Unit.changeset(params)
     |> Repo.insert()
   end

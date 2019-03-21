@@ -12,6 +12,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     admin_user = insert(:user, email: "admin@email.com", role: "admin")
     user_user = insert(:user, email: "user@email.com", role: "user")
     development = insert(:development)
+    listing = insert(:listing, development: development)
 
     unit = build(:unit)
 
@@ -21,7 +22,8 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       admin_conn: login_as(conn, admin_user),
       user_conn: login_as(conn, user_user),
       unit: unit,
-      development: development
+      development: development,
+      listing: listing
     }
   end
 
@@ -51,9 +53,10 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     test "admin should insert unit", %{
       admin_conn: conn,
       unit: unit,
-      development: development
+      development: development,
+      listing: listing
     } do
-      variables = insert_unit_variables(unit, development)
+      variables = insert_unit_variables(unit, development, listing)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
@@ -82,9 +85,10 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     test "regular user should not insert unit", %{
       user_conn: conn,
       unit: unit,
-      development: development
+      development: development,
+      listing: listing
     } do
-      variables = insert_unit_variables(unit, development)
+      variables = insert_unit_variables(unit, development, listing)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
@@ -97,9 +101,10 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     test "unauthenticated user should not insert unit", %{
       unauthenticated_conn: conn,
       unit: unit,
-      development: development
+      development: development,
+      listing: listing
     } do
-      variables = insert_unit_variables(unit, development)
+      variables = insert_unit_variables(unit, development, listing)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
@@ -110,7 +115,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     end
   end
 
-  def insert_unit_variables(unit, development) do
+  def insert_unit_variables(unit, development, listing) do
     %{
       "input" => %{
         "complement" => unit.complement,
@@ -127,7 +132,8 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
         "suites" => unit.suites,
         "dependencies" => unit.dependencies,
         "balconies" => unit.balconies,
-        "development_uuid" => development.uuid
+        "development_uuid" => development.uuid,
+        "listing_id" => listing.id
       }
     }
   end

@@ -49,7 +49,7 @@ defmodule ReWeb.Types.Image do
   end
 
   object :image_mutations do
-    @desc "Inser image"
+    @desc "Insert image"
     field :insert_image, type: :image_output do
       arg :input, non_null(:image_insert_input)
 
