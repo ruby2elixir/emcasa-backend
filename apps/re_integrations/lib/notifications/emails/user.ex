@@ -214,7 +214,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   #{unless request.is_covered, do: "Área fora de cobertura"}<br>
                   Preço sugerido: #{suggested_price || "Rua não coberta"}")
     |> text_body("Nome: #{request.name}
-                  PHone: #{user.phone}
+                  Phone: #{user.phone}
                   Area: #{request.area}
                   Quartos: #{request.rooms}
                   Banheiros: #{request.bathrooms}
