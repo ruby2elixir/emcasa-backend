@@ -15,6 +15,10 @@ defmodule Re.Tag do
     field :name_slug, :string
     field :category, :string
 
+    many_to_many :listings, Re.Listing,
+      join_through: Re.ListingTag,
+      join_keys: [tag_uuid: :uuid, listing_id: :id]
+
     timestamps()
   end
 

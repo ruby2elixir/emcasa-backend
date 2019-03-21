@@ -53,6 +53,10 @@ defmodule Re.Listing do
 
     has_many :units, Re.Unit
 
+    many_to_many :tags, Re.Tag,
+      join_through: Re.ListingTag,
+      join_keys: [listing_id: :id, tag_uuid: :uuid]
+
     timestamps()
   end
 
