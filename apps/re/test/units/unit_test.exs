@@ -19,7 +19,8 @@ defmodule Re.UnitTest do
     balconies: 1,
     area: 150,
     garage_spots: 2,
-    garage_type: "contract"
+    garage_type: "contract",
+    status: "active"
   }
 
   @invalid_attrs %{
@@ -32,7 +33,8 @@ defmodule Re.UnitTest do
     dependencies: -1,
     garage_spots: -1,
     balconies: -1,
-    garage_type: "mine"
+    garage_type: "mine",
+    status: "invalid"
   }
 
   describe "changeset/3" do
@@ -75,6 +77,8 @@ defmodule Re.UnitTest do
 
       assert Keyword.get(changeset.errors, :listing_id) ==
                {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :status) == {"can't be blank", [validation: :required]}
     end
 
     test "with invalid attributes for development" do
@@ -119,6 +123,9 @@ defmodule Re.UnitTest do
 
       assert Keyword.get(changeset.errors, :garage_type) ==
                {"should be one of: [contract condominium]", [validation: :inclusion]}
+
+      assert Keyword.get(changeset.errors, :status) ==
+               {"should be one of: [active inactive]", [validation: :inclusion]}
     end
   end
 end

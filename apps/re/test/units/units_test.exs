@@ -18,7 +18,8 @@ defmodule Re.UtitsTest do
       garage_spots: 1,
       garage_type: "contract",
       dependencies: 0,
-      suites: 1
+      suites: 1,
+      status: "active"
     }
 
     test "insert new unit" do

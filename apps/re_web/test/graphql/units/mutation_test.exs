@@ -46,6 +46,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
           suites
           dependencies
           balconies
+          status
           }
         }
     """
@@ -132,6 +133,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
         "suites" => unit.suites,
         "dependencies" => unit.dependencies,
         "balconies" => unit.balconies,
+        "status" => unit.status,
         "development_uuid" => development.uuid,
         "listing_id" => listing.id
       }

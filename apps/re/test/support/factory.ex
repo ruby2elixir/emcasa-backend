@@ -172,7 +172,8 @@ defmodule Re.Factory do
       garage_type: Enum.random(~w(contract condominium)),
       suites: Enum.random(0..10),
       dependencies: Enum.random(0..10),
-      balconies: Enum.random(0..10)
+      balconies: Enum.random(0..10),
+      status: Enum.random(~w(active inactive))
     }
   end
 

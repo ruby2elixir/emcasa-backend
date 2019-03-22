@@ -24,6 +24,7 @@ defmodule Re.Unit do
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
+    field :status, :string
 
     belongs_to :development, Re.Development,
       references: :uuid,
@@ -36,9 +37,10 @@ defmodule Re.Unit do
   end
 
   @garage_types ~w(contract condominium)
+  @statuses ~w(active inactive)
 
   @required ~w(price rooms bathrooms area garage_type garage_spots suites dependencies
-               development_uuid listing_id)a
+               development_uuid listing_id status)a
   @optional ~w(complement floor property_tax maintenance_fee balconies restrooms)a
 
   @attributes @required ++ @optional
@@ -55,6 +57,9 @@ defmodule Re.Unit do
     )
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
+    )
+    |> validate_inclusion(:status, @statuses,
+      message: "should be one of: [#{Enum.join(@statuses, " ")}]"
     )
     |> generate_uuid()
     |> unique_constraint(:uuid, name: :uuid)

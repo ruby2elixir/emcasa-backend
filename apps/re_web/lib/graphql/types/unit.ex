@@ -22,6 +22,7 @@ defmodule ReWeb.Types.Unit do
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
+    field :status, :string
   end
 
   input_object :unit_input do
@@ -39,6 +40,7 @@ defmodule ReWeb.Types.Unit do
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
+    field :status, :string
     field :development_uuid, non_null(:uuid)
     field :listing_id, non_null(:id)
   end
