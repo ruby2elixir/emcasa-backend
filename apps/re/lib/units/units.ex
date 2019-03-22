@@ -8,6 +8,7 @@ defmodule Re.Units do
   alias Ecto.Changeset
 
   alias Re.{
+    Listings,
     Repo,
     Unit
   }
@@ -32,9 +33,7 @@ defmodule Re.Units do
          %{price: listing_price} = listing
        )
        when is_nil(listing_price) or unit_price < listing_price do
-    Changeset.change(listing, price: unit_price)
-    |> Repo.update()
-
+    Listings.update_price(listing, unit_price)
     new_unit
   end
 
