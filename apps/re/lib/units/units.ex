@@ -24,5 +24,19 @@ defmodule Re.Units do
     |> Changeset.change(listing_id: listing.id)
     |> Unit.changeset(params)
     |> Repo.insert()
+    |> update_listing_price(listing)
   end
+
+  defp update_listing_price(
+         {:ok, %{price: unit_price}} = new_unit,
+         %{price: listing_price} = listing
+       )
+       when is_nil(listing_price) or unit_price < listing_price do
+    Changeset.change(listing, price: unit_price)
+    |> Repo.update()
+
+    new_unit
+  end
+
+  defp update_listing_price(unit, _listing), do: unit
 end
