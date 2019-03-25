@@ -47,7 +47,7 @@ defmodule ReWeb.Types.Unit do
 
   object :unit_mutations do
     @desc "Insert unit"
-    field :insert_unit, type: :unit do
+    field :add_unit, type: :unit do
       arg :input, non_null(:unit_input)
 
       resolve &Resolvers.Units.insert/2

@@ -33,8 +33,8 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
 
   describe "insert/2" do
     @insert_mutation """
-      mutation InsertUnit ($input: UnitInput!) {
-        insertUnit(input: $input) {
+      mutation AddUnit ($input: UnitInput!) {
+        addUnit(input: $input) {
           uuid
           complement
           price
@@ -55,7 +55,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
         }
     """
 
-    test "admin should insert unit", %{
+    test "admin should add unit", %{
       admin_conn: conn,
       unit_params: unit_params
     } do
@@ -65,7 +65,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{
-               "insertUnit" => insert_unit
+               "addUnit" => insert_unit
              } = json_response(conn, 200)["data"]
 
       assert insert_unit["uuid"]
@@ -86,7 +86,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       assert insert_unit["status"] == unit_params["status"]
     end
 
-    test "regular user should not insert unit", %{
+    test "regular user should not add unit", %{
       user_conn: conn,
       unit_params: unit_params
     } do
@@ -95,12 +95,12 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
-      assert %{"insertUnit" => nil} == json_response(conn, 200)["data"]
+      assert %{"addUnit" => nil} == json_response(conn, 200)["data"]
 
       assert_forbidden_response(json_response(conn, 200))
     end
 
-    test "unauthenticated user should not insert unit", %{
+    test "unauthenticated user should not add unit", %{
       unauthenticated_conn: conn,
       unit_params: unit_params
     } do
@@ -109,7 +109,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
-      assert %{"insertUnit" => nil} == json_response(conn, 200)["data"]
+      assert %{"addUnit" => nil} == json_response(conn, 200)["data"]
 
       assert_unauthorized_response(json_response(conn, 200))
     end

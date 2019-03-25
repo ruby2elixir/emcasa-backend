@@ -173,7 +173,7 @@ defmodule Re.Factory do
       suites: Enum.random(0..10),
       dependencies: Enum.random(0..10),
       balconies: Enum.random(0..10),
-      status: Enum.random(~w(active inactive))
+      status: "active"
     }
   end
 
