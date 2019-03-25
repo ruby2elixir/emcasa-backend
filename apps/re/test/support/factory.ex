@@ -9,6 +9,7 @@ defmodule Re.Factory do
 
   def user_factory do
     %Re.User{
+      uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email(),
       phone: Phone.EnUs.phone(),
