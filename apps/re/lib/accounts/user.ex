@@ -7,6 +7,7 @@ defmodule Re.User do
   import Ecto.Changeset
 
   schema "users" do
+    field :uuid, Ecto.UUID
     field :name, :string
     field :email, :string
     field :phone, :string
@@ -60,6 +61,7 @@ defmodule Re.User do
     )
     |> validate_required(@account_kit_required)
     |> unique_constraint(:account_kit_id)
+    |> Re.ChangesetHelper.generate_uuid()
   end
 
   defp base_changeset(changeset) do

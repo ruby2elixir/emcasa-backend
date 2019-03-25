@@ -36,12 +36,6 @@ defmodule Re.Development do
     |> validate_inclusion(:phase, @phases,
       message: "should be one of: [#{Enum.join(@phases, " ")}]"
     )
-    |> generate_uuid()
+    |> Re.ChangesetHelper.generate_uuid()
   end
-
-  defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
-    Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
-  end
-
-  defp generate_uuid(changeset), do: changeset
 end
