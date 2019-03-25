@@ -8,7 +8,6 @@ defmodule Re.Units do
   alias Ecto.Changeset
 
   alias Re.{
-    Listings,
     PubSub,
     Repo,
     Unit
@@ -28,16 +27,6 @@ defmodule Re.Units do
     |> Repo.insert()
     |> publish_new()
   end
-
-  def update_listing_price(
-        %{price: unit_price} = new_unit,
-        %{price: listing_price} = listing
-      )
-      when is_nil(listing_price) or unit_price < listing_price do
-    Listings.update_price(listing, unit_price)
-  end
-
-  def update_listing_price(unit, _listing), do: unit
 
   defp publish_new(result), do: PubSub.publish_new(result, "new_unit")
 end
