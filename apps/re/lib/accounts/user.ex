@@ -61,11 +61,8 @@ defmodule Re.User do
     )
     |> validate_required(@account_kit_required)
     |> unique_constraint(:account_kit_id)
-    |> generate_uuid()
-    |> unique_constraint(:uuid, name: :uuid)
+    |> Re.ChangesetHelper.generate_uuid()
   end
-
-  def uuid_changeset(struct, params), do: cast(struct, params, ~w(uuid)a)
 
   defp base_changeset(changeset) do
     changeset
@@ -87,10 +84,4 @@ defmodule Re.User do
       false -> add_error(changeset, :email, "has invalid format", validation: :format)
     end
   end
-
-  defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
-    Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
-  end
-
-  defp generate_uuid(changeset), do: changeset
 end

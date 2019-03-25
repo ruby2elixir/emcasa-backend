@@ -49,11 +49,8 @@ defmodule Re.Unit do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
-    |> generate_uuid()
-    |> unique_constraint(:uuid, name: :uuid)
+    |> Re.ChangesetHelper.generate_uuid()
   end
-
-  def uuid_changeset(struct, params), do: cast(struct, params, ~w(uuid)a)
 
   @non_negative_attributes ~w(property_tax maintenance_fee
                               bathrooms garage_spots suites
@@ -66,10 +63,4 @@ defmodule Re.Unit do
   defp non_negative(attr, changeset) do
     validate_number(changeset, attr, greater_than_or_equal_to: 0)
   end
-
-  defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
-    Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
-  end
-
-  defp generate_uuid(changeset), do: changeset
 end
