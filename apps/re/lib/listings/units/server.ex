@@ -8,6 +8,7 @@ defmodule Re.Listings.Units.Server do
   require Logger
 
   alias Re.{
+    Listings,
     Listings.Units.Propagator,
     PubSub
   }
@@ -23,18 +24,11 @@ defmodule Re.Listings.Units.Server do
   end
 
   @spec handle_info(map(), any) :: {:noreply, any}
-  def handle_info(
-        %{
-          topic: "new_unit",
-          type: :new,
-          content: %{new: unit}
-        },
-        state
-      ) do
-    case Propagator.update_listing(unit.listing, unit) do
-      {:ok, _listing} ->
-        {:noreply, state}
-
+  def handle_info(%{topic: "new_unit", type: :new, new: unit}, state) do
+    with {:ok, listing} = Listings.get(unit.listing_id),
+         {:ok, _listing} = Propagator.update_listing(listing, unit) do
+      {:noreply, state}
+    else
       error ->
         Logger.warn("Error when copy unit info to listing. Reason: #{inspect(error)}")
 
@@ -43,4 +37,6 @@ defmodule Re.Listings.Units.Server do
   end
 
   def handle_info(_, state), do: {:noreply, state}
+
+  def handle_call(:inspect, _caller, state), do: {:reply, state, state}
 end

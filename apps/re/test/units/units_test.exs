@@ -2,6 +2,8 @@ defmodule Re.UnitsTest do
   use Re.ModelCase
 
   alias Re.{
+    Listing,
+    Listings.Units.Server,
     Unit,
     Units
   }
@@ -33,6 +35,19 @@ defmodule Re.UnitsTest do
       assert retrieved_unit == inserted_unit
       assert retrieved_unit.development_uuid == development.uuid
       assert retrieved_unit.listing_id == listing.id
+    end
+
+    test "update listing price" do
+      Server.start_link()
+      development = insert(:development)
+      listing = insert(:listing, development_uuid: development.uuid, price: 1_000_000)
+
+      assert {:ok, inserted_unit} = Units.insert(@insert_unit_params, development, listing)
+
+      GenServer.call(Server, :inspect)
+
+      listing = Repo.get(Listing, listing.id)
+      assert listing.price == 500_000
     end
   end
 end
