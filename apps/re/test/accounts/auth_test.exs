@@ -16,6 +16,7 @@ defmodule Re.Accounts.AuthTest do
       assert user = Repo.get(User, user.id)
       assert "321" == user.account_kit_id
       assert "+5511999999999" == user.phone
+      assert user.uuid
     end
 
     test "should sign in with access token for existing user" do
@@ -25,6 +26,7 @@ defmodule Re.Accounts.AuthTest do
       assert user = Repo.get(User, user.id)
       assert "321" == user.account_kit_id
       assert "+5511999999999" == user.phone
+      assert user.uuid
     end
 
     test "should not sign in with invalid access token" do

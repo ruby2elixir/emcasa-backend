@@ -17,6 +17,8 @@ defmodule Re.Development do
     field :description, :string
 
     belongs_to :address, Re.Address
+
+    has_many :units, Re.Unit
     has_many :images, Re.Image
     has_many :listings, Re.Listing
 
@@ -34,12 +36,6 @@ defmodule Re.Development do
     |> validate_inclusion(:phase, @phases,
       message: "should be one of: [#{Enum.join(@phases, " ")}]"
     )
-    |> generate_uuid()
+    |> Re.ChangesetHelper.generate_uuid()
   end
-
-  defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
-    Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
-  end
-
-  defp generate_uuid(changeset), do: changeset
 end

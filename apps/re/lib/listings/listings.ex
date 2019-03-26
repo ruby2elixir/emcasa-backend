@@ -132,6 +132,16 @@ defmodule Re.Listings do
     |> PubSub.publish_update(changeset, "update_listing", %{user: user})
   end
 
+  def update_price(listing, new_price) do
+    changeset =
+      listing
+      |> Changeset.change(price: new_price)
+
+    changeset
+    |> Repo.update()
+    |> PubSub.publish_update(changeset, "update_listing")
+  end
+
   defp deactivate_if_not_admin(changeset, %{role: "user"}),
     do: Changeset.change(changeset, status: "inactive")
 

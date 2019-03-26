@@ -198,13 +198,13 @@ defmodule ReIntegrations.Notifications.Emails.User do
     |> Enum.join("<br>\n")
   end
 
-  def price_suggestion_requested(request, suggested_price) do
+  def price_suggestion_requested(%{user: user} = request, suggested_price) do
     new()
     |> to(@to)
     |> from(@admin_email)
     |> subject("Um usuário requisitou sugestão de preço pelo lead magnet")
     |> html_body("Nome: #{request.name}<br>
-                  Email: #{request.email}<br>
+                  Phone: #{user.phone}<br>
                   Area: #{request.area}<br>
                   Quartos: #{request.rooms}<br>
                   Banheiros: #{request.bathrooms}<br>
@@ -214,7 +214,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   #{unless request.is_covered, do: "Área fora de cobertura"}<br>
                   Preço sugerido: #{suggested_price || "Rua não coberta"}")
     |> text_body("Nome: #{request.name}
-                  Email: #{request.email}
+                  Phone: #{user.phone}
                   Area: #{request.area}
                   Quartos: #{request.rooms}
                   Banheiros: #{request.bathrooms}

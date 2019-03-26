@@ -19,7 +19,8 @@ defmodule Re.UnitTest do
     balconies: 1,
     area: 150,
     garage_spots: 2,
-    garage_type: "contract"
+    garage_type: "contract",
+    status: "active"
   }
 
   @invalid_attrs %{
@@ -32,23 +33,26 @@ defmodule Re.UnitTest do
     dependencies: -1,
     garage_spots: -1,
     balconies: -1,
-    garage_type: "mine"
+    garage_type: "mine",
+    status: "invalid"
   }
 
   describe "changeset/3" do
     test "with valid attributes for development" do
       %{id: listing_id} = insert(:listing)
+      %{uuid: development_uuid} = insert(:development)
 
       attrs =
         @valid_attrs
         |> Map.put(:listing_id, listing_id)
+        |> Map.put(:development_uuid, development_uuid)
 
-      changeset = Unit.changeset(%Unit{}, attrs, "development")
+      changeset = Unit.changeset(%Unit{}, attrs)
       assert changeset.valid?
     end
 
     test "without required attributes for development" do
-      changeset = Unit.changeset(%Unit{}, %{}, "development")
+      changeset = Unit.changeset(%Unit{}, %{})
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :price) == {"can't be blank", [validation: :required]}
@@ -67,10 +71,18 @@ defmodule Re.UnitTest do
 
       assert Keyword.get(changeset.errors, :dependencies) ==
                {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :development_uuid) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :listing_id) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :status) == {"can't be blank", [validation: :required]}
     end
 
     test "with invalid attributes for development" do
-      changeset = Unit.changeset(%Unit{}, @invalid_attrs, "development")
+      changeset = Unit.changeset(%Unit{}, @invalid_attrs)
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :price) ==
@@ -111,6 +123,9 @@ defmodule Re.UnitTest do
 
       assert Keyword.get(changeset.errors, :garage_type) ==
                {"should be one of: [contract condominium]", [validation: :inclusion]}
+
+      assert Keyword.get(changeset.errors, :status) ==
+               {"should be one of: [active inactive]", [validation: :inclusion]}
     end
   end
 end

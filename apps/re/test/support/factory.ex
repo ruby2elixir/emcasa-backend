@@ -9,6 +9,7 @@ defmodule Re.Factory do
 
   def user_factory do
     %Re.User{
+      uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email(),
       phone: Phone.EnUs.phone(),
@@ -172,7 +173,8 @@ defmodule Re.Factory do
       garage_type: Enum.random(~w(contract condominium)),
       suites: Enum.random(0..10),
       dependencies: Enum.random(0..10),
-      balconies: Enum.random(0..10)
+      balconies: Enum.random(0..10),
+      status: "active"
     }
   end
 

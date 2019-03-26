@@ -24,19 +24,28 @@ defmodule Re.Unit do
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
+    field :status, :string
+
+    belongs_to :development, Re.Development,
+      references: :uuid,
+      foreign_key: :development_uuid,
+      type: Ecto.UUID
 
     belongs_to :listing, Re.Listing
+
     timestamps()
   end
 
   @garage_types ~w(contract condominium)
+  @statuses ~w(active inactive)
 
-  @required ~w(price rooms bathrooms area garage_type garage_spots suites dependencies)a
+  @required ~w(price rooms bathrooms area garage_type garage_spots suites dependencies
+               development_uuid listing_id status)a
   @optional ~w(complement floor property_tax maintenance_fee balconies restrooms)a
 
   @attributes @required ++ @optional
 
-  def changeset(struct, params, "development") do
+  def changeset(struct, params) do
     struct
     |> cast(params, @attributes)
     |> validate_required(@required)
@@ -49,11 +58,11 @@ defmodule Re.Unit do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
-    |> generate_uuid()
-    |> unique_constraint(:uuid, name: :uuid)
+    |> validate_inclusion(:status, @statuses,
+      message: "should be one of: [#{Enum.join(@statuses, " ")}]"
+    )
+    |> Re.ChangesetHelper.generate_uuid()
   end
-
-  def uuid_changeset(struct, params), do: cast(struct, params, ~w(uuid)a)
 
   @non_negative_attributes ~w(property_tax maintenance_fee
                               bathrooms garage_spots suites
@@ -66,10 +75,4 @@ defmodule Re.Unit do
   defp non_negative(attr, changeset) do
     validate_number(changeset, attr, greater_than_or_equal_to: 0)
   end
-
-  defp generate_uuid(%{data: %{uuid: nil}} = changeset) do
-    Ecto.Changeset.change(changeset, %{uuid: UUID.uuid4()})
-  end
-
-  defp generate_uuid(changeset), do: changeset
 end
