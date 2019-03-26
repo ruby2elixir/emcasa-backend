@@ -84,9 +84,21 @@ defmodule Re.Listings do
   def get_partial_preloaded(id, preload),
     do: do_get(Queries.preload_relations(Listing, preload), id)
 
-  def insert(params, address, user) do
+  def insert(params, address, user, development \\ nil)
+
+  def insert(params, address, user, nil) do
     with {:ok, user} <- validate_phone_number(params, user),
          do: do_insert(params, address, user)
+  end
+
+  def insert(params, address, user, development) do
+    %Listing{}
+    |> Changeset.change(development_uuid: development.uuid)
+    |> Changeset.change(address_id: address.id)
+    |> Changeset.change(user_id: user.id)
+    |> Changeset.change(is_exportable: false)
+    |> Listing.development_changeset(params)
+    |> Repo.insert()
   end
 
   defp do_insert(params, address, user) do
