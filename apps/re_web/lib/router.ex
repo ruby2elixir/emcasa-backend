@@ -58,7 +58,7 @@ defmodule ReWeb.Router do
   scope "/webhooks" do
     pipe_through :webhooks
 
-    forward("/pipedrive", ReWeb.Pipedrive.Plug)
+    forward("/pipedrive", ReWeb.Webhooks.PipedrivePlug)
   end
 
   scope "/exporters" do

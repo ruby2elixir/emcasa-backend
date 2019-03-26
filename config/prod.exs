@@ -7,11 +7,6 @@ config :re_web, ReWeb.Endpoint,
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
   check_origin: false
 
-config :logger,
-  level: :info,
-  backends: [Timber.LoggerBackends.HTTP],
-  utc_log: true
-
 config :re_web, ReWeb.Guardian,
   allowed_algos: ["ES512"],
   secret_key: %{
@@ -87,3 +82,6 @@ config :account_kit,
 
 config :sentry,
   dsn: System.get_env("SENTRY_DSN")
+
+config :timber,
+  api_key: System.get_env("TIMBER_API_KEY")
