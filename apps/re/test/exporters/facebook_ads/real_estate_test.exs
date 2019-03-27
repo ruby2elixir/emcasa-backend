@@ -201,5 +201,16 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
 
       assert expected_xml == generated_xml
     end
+
+    test "should not export listings without images" do
+      expected_xml = ~s|<?xml version="1.0" encoding="UTF-8"?>| <> "<listings/>"
+
+      generated_xml =
+        FacebookAds.RealEstate.export_listings_xml([%Listing{id: 1, images: []}], %{
+          attributes: [:id, :images]
+        })
+
+      assert expected_xml == generated_xml
+    end
   end
 end

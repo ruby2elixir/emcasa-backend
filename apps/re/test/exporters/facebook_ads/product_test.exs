@@ -177,5 +177,18 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
 
       assert expected_xml == generated_xml
     end
+
+    test "should not export listings without images" do
+      expected_xml =
+        ~s|<?xml version="1.0" encoding="UTF-8"?>| <>
+          "<feed xmlns=\"http://www.w3.org/2005/Atom\"/>"
+
+      generated_xml =
+        FacebookAds.Product.export_listings_xml([%Listing{id: 1, images: []}], %{
+          attributes: [:id, :images]
+        })
+
+      assert expected_xml == generated_xml
+    end
   end
 end

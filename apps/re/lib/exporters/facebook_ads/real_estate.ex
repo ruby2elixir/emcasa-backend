@@ -15,11 +15,15 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
     options = merge_default_options(options)
 
     listings
+    |> Enum.filter(&has_image?/1)
     |> Enum.map(&build_node(&1, options))
     |> build_root()
     |> XmlBuilder.document()
     |> XmlBuilder.generate(format: :none)
   end
+
+  defp has_image?(%{images: []}), do: false
+  defp has_image?(_), do: true
 
   def merge_default_options(options) do
     Map.merge(@default_options, options)
