@@ -10,6 +10,7 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
+  @max_images 20
 
   def export_listings_xml(listings, options \\ %{}) do
     options = merge_default_options(options)
@@ -31,6 +32,12 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
 
   def build_node(listing, options) do
     {"listing", %{}, convert_attributes(listing, options)}
+  end
+
+  def build_images_node(images) do
+    images
+    |> Enum.map(&build_image_node(&1))
+    |> Enum.take(@max_images)
   end
 
   defp build_root(nodes) do
@@ -121,7 +128,7 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
   end
 
   defp convert_attribute(:image, %{images: images}) do
-    images |> Enum.map(&build_image_node(&1)) |> Enum.slice(0..19)
+    build_images_node(images)
   end
 
   defp convert_attribute(:area, %{area: area}) do

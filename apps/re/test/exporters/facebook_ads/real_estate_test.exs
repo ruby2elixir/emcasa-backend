@@ -10,6 +10,7 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
+  @max_images 20
 
   describe "build_node/2" do
     test "export XML with images from listings" do
@@ -190,6 +191,14 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
         |> XmlBuilder.generate(format: :none)
 
       assert expected_xml == generated_xml
+    end
+  end
+
+  describe "build_images_node/1" do
+    test "should not exceed max number of images" do
+      images = Enum.map(1..30, fn x -> %{filename: "#{x}.png"} end)
+      images_node = FacebookAds.RealEstate.build_images_node(images)
+      assert length(images_node) == @max_images
     end
   end
 
