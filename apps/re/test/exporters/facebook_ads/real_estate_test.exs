@@ -1,4 +1,4 @@
-defmodule Re.Exporters.FacebookAdsTest do
+defmodule Re.Exporters.FacebookAds.RealEstateTest do
   use Re.ModelCase
 
   alias Re.{
@@ -73,7 +73,7 @@ defmodule Re.Exporters.FacebookAdsTest do
 
       generated_xml =
         listing
-        |> FacebookAds.build_node(FacebookAds.merge_default_options(%{}))
+        |> FacebookAds.RealEstate.build_node(FacebookAds.RealEstate.merge_default_options(%{}))
         |> XmlBuilder.generate(format: :none)
 
       assert expected_xml == generated_xml
@@ -128,7 +128,7 @@ defmodule Re.Exporters.FacebookAdsTest do
 
       generated_xml =
         listing
-        |> FacebookAds.build_node(FacebookAds.merge_default_options(%{}))
+        |> FacebookAds.RealEstate.build_node(FacebookAds.RealEstate.merge_default_options(%{}))
         |> XmlBuilder.generate(format: :none)
 
       assert expected_xml == generated_xml
@@ -183,7 +183,7 @@ defmodule Re.Exporters.FacebookAdsTest do
 
       generated_xml =
         listing
-        |> FacebookAds.build_node(FacebookAds.merge_default_options(%{}))
+        |> FacebookAds.RealEstate.build_node(FacebookAds.RealEstate.merge_default_options(%{}))
         |> XmlBuilder.generate(format: :none)
 
       assert expected_xml == generated_xml
@@ -196,7 +196,8 @@ defmodule Re.Exporters.FacebookAdsTest do
         ~s|<?xml version="1.0" encoding="UTF-8"?>| <>
           "<listings><listing><home_listing_id><![CDATA[1]]></home_listing_id></listing></listings>"
 
-      generated_xml = FacebookAds.export_listings_xml([%Listing{id: 1}], %{attributes: [:id]})
+      generated_xml =
+        FacebookAds.RealEstate.export_listings_xml([%Listing{id: 1}], %{attributes: [:id]})
 
       assert expected_xml == generated_xml
     end

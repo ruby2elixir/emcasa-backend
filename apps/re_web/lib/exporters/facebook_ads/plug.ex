@@ -20,7 +20,7 @@ defmodule ReWeb.Exporters.FacebookAds.Plug do
     xml_listings =
       filters
       |> Exporter.exportable(query_params)
-      |> FacebookAds.export_listings_xml()
+      |> FacebookAds.RealEstate.export_listings_xml()
 
     conn
     |> put_resp_content_type("application/xml")

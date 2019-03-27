@@ -1,6 +1,7 @@
-defmodule Re.Exporters.FacebookAds do
+defmodule Re.Exporters.FacebookAds.RealEstate do
   @moduledoc """
-  Listing XML exporter for Facebook Ads.
+  Listing XML exporter for Facebook Dynamic Ads for Real Estate
+  https://developers.facebook.com/docs/marketing-api/dynamic-ads-for-real-estate
   """
 
   @exported_attributes ~w(id url title sell_type description price listing_type
