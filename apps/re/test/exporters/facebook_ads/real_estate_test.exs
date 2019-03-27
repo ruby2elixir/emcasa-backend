@@ -12,7 +12,7 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
 
   describe "build_node/2" do
-    test "export XML including listing first image" do
+    test "export XML with images from listings" do
       listing = %Listing{
         id: 7_004_578,
         price: 800,
@@ -69,7 +69,10 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
           "<latitude><![CDATA[51.496401]]></latitude>" <>
           "<longitude><![CDATA[-0.179]]></longitude>" <>
           "<image>" <>
-          "<url><![CDATA[#{@image_url}/living_room.png]]></url>" <> "</image>" <> "</listing>"
+          "<url><![CDATA[#{@image_url}/living_room.png]]></url>" <>
+          "</image>" <>
+          "<image>" <>
+          "<url><![CDATA[#{@image_url}/suite_1.png]]></url>" <> "</image>" <> "</listing>"
 
       generated_xml =
         listing

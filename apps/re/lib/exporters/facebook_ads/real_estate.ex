@@ -121,15 +121,7 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
   end
 
   defp convert_attribute(:image, %{images: images}) do
-    first_image = Enum.at(images, 0)
-
-    {
-      "image",
-      %{},
-      [
-        {"url", %{}, escape_cdata("#{@image_url}/#{first_image.filename}")}
-      ]
-    }
+    images |> Enum.map(&build_image_node(&1)) |> Enum.slice(0..19)
   end
 
   defp convert_attribute(:area, %{area: area}) do
@@ -162,5 +154,15 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
     |> URI.merge(path)
     |> URI.merge(param)
     |> URI.to_string()
+  end
+
+  defp build_image_node(image) do
+    {
+      "image",
+      %{},
+      [
+        {"url", %{}, escape_cdata("#{@image_url}/#{image.filename}")}
+      ]
+    }
   end
 end

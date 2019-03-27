@@ -97,7 +97,7 @@ defmodule Re.Exporters.FacebookAds.Product do
   end
 
   defp convert_attribute(:additional_image, %{images: images}) do
-    additional_images = Enum.slice(images, 1..20)
+    additional_images = Enum.slice(images, 1..19)
 
     {
       "additional_image_link",
