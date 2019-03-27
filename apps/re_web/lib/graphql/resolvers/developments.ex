@@ -4,6 +4,8 @@ defmodule ReWeb.Resolvers.Developments do
     Developments
   }
 
+  import Absinthe.Resolution.Helpers, only: [on_load: 2]
+
   def index(_params, _context) do
     developments = Developments.all()
 
@@ -24,6 +26,14 @@ defmodule ReWeb.Resolvers.Developments do
       {:error, _, error, _} -> {:error, error}
       error -> error
     end
+  end
+
+  def per_listing(listing, _params, %{context: %{loader: loader}}) do
+    loader
+    |> Dataloader.load(Developments, :development, listing)
+    |> on_load(fn loader ->
+      {:ok, Dataloader.get(loader, Developments, :development, listing)}
+    end)
   end
 
   def update(%{uuid: uuid, input: development_params}, %{
