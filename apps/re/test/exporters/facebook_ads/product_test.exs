@@ -10,6 +10,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
+  @max_additional_images 20
 
   describe "build_node/2" do
     test "export XML with images from listing" do
@@ -225,6 +226,21 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
         |> XmlBuilder.generate(format: :none)
 
       assert expected_xml == generated_xml
+    end
+  end
+
+  describe "build_additional_image_node/1" do
+    test "should not exceed max number of images" do
+      images = Enum.map(1..30, fn x -> %{filename: "#{x}.png"} end)
+      {_, _, urls} = FacebookAds.Product.build_additional_image_node(images)
+      assert length(String.split(urls, ",")) == @max_additional_images
+    end
+
+    test "should slice first image" do
+      images = Enum.map(1..5, fn x -> %{filename: "#{x}.png"} end)
+      {_, _, urls} = FacebookAds.Product.build_additional_image_node(images)
+      images_urls = String.split(urls, ",")
+      assert Enum.at(images_urls, 0) == "#{@image_url}/2.png"
     end
   end
 

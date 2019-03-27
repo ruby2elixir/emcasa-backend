@@ -10,6 +10,7 @@ defmodule Re.Exporters.FacebookAds.Product do
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
+  @max_additional_images 20
 
   def export_listings_xml(listings, options \\ %{}) do
     options = merge_default_options(options)
@@ -31,6 +32,16 @@ defmodule Re.Exporters.FacebookAds.Product do
 
   def build_node(listing, options) do
     {"entry", %{}, convert_attributes(listing, options)}
+  end
+
+  def build_additional_image_node(images) do
+    additional_images = Enum.slice(images, 1, @max_additional_images)
+
+    {
+      "additional_image_link",
+      %{},
+      Enum.join(additional_images |> Enum.map(&build_image_url(&1)), ",")
+    }
   end
 
   defp build_root(nodes) do
@@ -97,13 +108,7 @@ defmodule Re.Exporters.FacebookAds.Product do
   end
 
   defp convert_attribute(:additional_image, %{images: images}) do
-    additional_images = Enum.slice(images, 1..19)
-
-    {
-      "additional_image_link",
-      %{},
-      Enum.join(additional_images |> Enum.map(&build_image_url(&1)), ",")
-    }
+    build_additional_image_node(images)
   end
 
   defp convert_attribute(:listing_type, %{type: type}) do
