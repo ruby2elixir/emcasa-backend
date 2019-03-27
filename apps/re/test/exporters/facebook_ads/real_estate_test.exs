@@ -1,4 +1,4 @@
-defmodule Re.Exporters.FacebookAdsTest do
+defmodule Re.Exporters.FacebookAds.RealEstateTest do
   use Re.ModelCase
 
   alias Re.{
@@ -10,9 +10,10 @@ defmodule Re.Exporters.FacebookAdsTest do
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
+  @max_images 20
 
   describe "build_node/2" do
-    test "export XML including listing first image" do
+    test "export XML with images from listings" do
       listing = %Listing{
         id: 7_004_578,
         price: 800,
@@ -59,21 +60,25 @@ defmodule Re.Exporters.FacebookAdsTest do
           "<num_units><![CDATA[1]]></num_units>" <>
           "<area_unit><![CDATA[sq_m]]></area_unit>" <>
           "<area_size><![CDATA[300]]></area_size>" <>
+          "<neighborhood><![CDATA[Ipiranga]]></neighborhood>" <>
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
-          "<component name=\"region\"><![CDATA[Ipiranga]]></component>" <>
+          "<component name=\"region\"><![CDATA[SP]]></component>" <>
           "<component name=\"country\"><![CDATA[Brazil]]></component>" <>
           "<component name=\"postal_code\"><![CDATA[04732-192]]></component>" <>
           "</address>" <>
           "<latitude><![CDATA[51.496401]]></latitude>" <>
           "<longitude><![CDATA[-0.179]]></longitude>" <>
           "<image>" <>
-          "<url><![CDATA[#{@image_url}/living_room.png]]></url>" <> "</image>" <> "</listing>"
+          "<url><![CDATA[#{@image_url}/living_room.png]]></url>" <>
+          "</image>" <>
+          "<image>" <>
+          "<url><![CDATA[#{@image_url}/suite_1.png]]></url>" <> "</image>" <> "</listing>"
 
       generated_xml =
         listing
-        |> FacebookAds.build_node(FacebookAds.merge_default_options(%{}))
+        |> FacebookAds.RealEstate.build_node(FacebookAds.RealEstate.merge_default_options(%{}))
         |> XmlBuilder.generate(format: :none)
 
       assert expected_xml == generated_xml
@@ -116,10 +121,11 @@ defmodule Re.Exporters.FacebookAdsTest do
           "<num_units><![CDATA[1]]></num_units>" <>
           "<area_unit><![CDATA[sq_m]]></area_unit>" <>
           "<area_size><![CDATA[300]]></area_size>" <>
+          "<neighborhood><![CDATA[Ipiranga]]></neighborhood>" <>
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
-          "<component name=\"region\"><![CDATA[Ipiranga]]></component>" <>
+          "<component name=\"region\"><![CDATA[SP]]></component>" <>
           "<component name=\"country\"><![CDATA[Brazil]]></component>" <>
           "<component name=\"postal_code\"><![CDATA[04732-192]]></component>" <>
           "</address>" <>
@@ -128,7 +134,7 @@ defmodule Re.Exporters.FacebookAdsTest do
 
       generated_xml =
         listing
-        |> FacebookAds.build_node(FacebookAds.merge_default_options(%{}))
+        |> FacebookAds.RealEstate.build_node(FacebookAds.RealEstate.merge_default_options(%{}))
         |> XmlBuilder.generate(format: :none)
 
       assert expected_xml == generated_xml
@@ -171,10 +177,11 @@ defmodule Re.Exporters.FacebookAdsTest do
           "<num_units><![CDATA[1]]></num_units>" <>
           "<area_unit><![CDATA[sq_m]]></area_unit>" <>
           "<area_size><![CDATA[300]]></area_size>" <>
+          "<neighborhood><![CDATA[Ipiranga]]></neighborhood>" <>
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
-          "<component name=\"region\"><![CDATA[Ipiranga]]></component>" <>
+          "<component name=\"region\"><![CDATA[SP]]></component>" <>
           "<component name=\"country\"><![CDATA[Brazil]]></component>" <>
           "<component name=\"postal_code\"><![CDATA[04732-192]]></component>" <>
           "</address>" <>
@@ -183,10 +190,18 @@ defmodule Re.Exporters.FacebookAdsTest do
 
       generated_xml =
         listing
-        |> FacebookAds.build_node(FacebookAds.merge_default_options(%{}))
+        |> FacebookAds.RealEstate.build_node(FacebookAds.RealEstate.merge_default_options(%{}))
         |> XmlBuilder.generate(format: :none)
 
       assert expected_xml == generated_xml
+    end
+  end
+
+  describe "build_images_node/1" do
+    test "should not exceed max number of images" do
+      images = Enum.map(1..30, fn x -> %{filename: "#{x}.png"} end)
+      images_node = FacebookAds.RealEstate.build_images_node(images)
+      assert length(images_node) == @max_images
     end
   end
 
@@ -196,7 +211,19 @@ defmodule Re.Exporters.FacebookAdsTest do
         ~s|<?xml version="1.0" encoding="UTF-8"?>| <>
           "<listings><listing><home_listing_id><![CDATA[1]]></home_listing_id></listing></listings>"
 
-      generated_xml = FacebookAds.export_listings_xml([%Listing{id: 1}], %{attributes: [:id]})
+      generated_xml =
+        FacebookAds.RealEstate.export_listings_xml([%Listing{id: 1}], %{attributes: [:id]})
+
+      assert expected_xml == generated_xml
+    end
+
+    test "should not export listings without images" do
+      expected_xml = ~s|<?xml version="1.0" encoding="UTF-8"?>| <> "<listings/>"
+
+      generated_xml =
+        FacebookAds.RealEstate.export_listings_xml([%Listing{id: 1, images: []}], %{
+          attributes: [:id, :images]
+        })
 
       assert expected_xml == generated_xml
     end
