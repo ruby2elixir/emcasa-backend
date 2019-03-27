@@ -10,9 +10,10 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
+  @max_images 20
 
   describe "build_node/2" do
-    test "export XML including listing first image" do
+    test "export XML with images from listings" do
       listing = %Listing{
         id: 7_004_578,
         price: 800,
@@ -69,7 +70,10 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
           "<latitude><![CDATA[51.496401]]></latitude>" <>
           "<longitude><![CDATA[-0.179]]></longitude>" <>
           "<image>" <>
-          "<url><![CDATA[#{@image_url}/living_room.png]]></url>" <> "</image>" <> "</listing>"
+          "<url><![CDATA[#{@image_url}/living_room.png]]></url>" <>
+          "</image>" <>
+          "<image>" <>
+          "<url><![CDATA[#{@image_url}/suite_1.png]]></url>" <> "</image>" <> "</listing>"
 
       generated_xml =
         listing
@@ -190,6 +194,14 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
     end
   end
 
+  describe "build_images_node/1" do
+    test "should not exceed max number of images" do
+      images = Enum.map(1..30, fn x -> %{filename: "#{x}.png"} end)
+      images_node = FacebookAds.RealEstate.build_images_node(images)
+      assert length(images_node) == @max_images
+    end
+  end
+
   describe "export_listing/1" do
     test "export listing with proper root node" do
       expected_xml =
@@ -198,6 +210,17 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
 
       generated_xml =
         FacebookAds.RealEstate.export_listings_xml([%Listing{id: 1}], %{attributes: [:id]})
+
+      assert expected_xml == generated_xml
+    end
+
+    test "should not export listings without images" do
+      expected_xml = ~s|<?xml version="1.0" encoding="UTF-8"?>| <> "<listings/>"
+
+      generated_xml =
+        FacebookAds.RealEstate.export_listings_xml([%Listing{id: 1, images: []}], %{
+          attributes: [:id, :images]
+        })
 
       assert expected_xml == generated_xml
     end

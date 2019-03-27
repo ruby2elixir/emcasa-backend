@@ -10,16 +10,21 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
+  @max_images 20
 
   def export_listings_xml(listings, options \\ %{}) do
     options = merge_default_options(options)
 
     listings
+    |> Enum.filter(&has_image?/1)
     |> Enum.map(&build_node(&1, options))
     |> build_root()
     |> XmlBuilder.document()
     |> XmlBuilder.generate(format: :none)
   end
+
+  defp has_image?(%{images: []}), do: false
+  defp has_image?(_), do: true
 
   def merge_default_options(options) do
     Map.merge(@default_options, options)
@@ -27,6 +32,12 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
 
   def build_node(listing, options) do
     {"listing", %{}, convert_attributes(listing, options)}
+  end
+
+  def build_images_node(images) do
+    images
+    |> Enum.map(&build_image_node(&1))
+    |> Enum.take(@max_images)
   end
 
   defp build_root(nodes) do
@@ -117,15 +128,7 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
   end
 
   defp convert_attribute(:image, %{images: images}) do
-    first_image = Enum.at(images, 0)
-
-    {
-      "image",
-      %{},
-      [
-        {"url", %{}, escape_cdata("#{@image_url}/#{first_image.filename}")}
-      ]
-    }
+    build_images_node(images)
   end
 
   defp convert_attribute(:area, %{area: area}) do
@@ -158,5 +161,15 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
     |> URI.merge(path)
     |> URI.merge(param)
     |> URI.to_string()
+  end
+
+  defp build_image_node(image) do
+    {
+      "image",
+      %{},
+      [
+        {"url", %{}, escape_cdata("#{@image_url}/#{image.filename}")}
+      ]
+    }
   end
 end
