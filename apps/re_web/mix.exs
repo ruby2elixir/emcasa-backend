@@ -41,7 +41,7 @@ defmodule ReWeb.Mixfile do
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
-      {:guardian, "~> 1.0"},
+      {:guardian, "~> 1.2.1"},
       {:bodyguard, "~> 2.1"},
       {:absinthe, "~> 1.5.0-alpha.1", override: true},
       {:absinthe_plug, "~> 1.4.6"},
@@ -49,11 +49,11 @@ defmodule ReWeb.Mixfile do
       {:dataloader, "~> 1.0.4"},
       {:currency_formatter, "~> 0.4"},
       {:apollo_tracing, "~> 0.4.0"},
-      {:timex, "~> 3.3"},
-      {:tzdata, "~> 0.5"},
+      {:timex, "~> 3.5"},
+      {:tzdata, "~> 0.5.20"},
       {:account_kit, github: "rhnonose/account_kit"},
       {:timber_plug, "~> 1.0"},
-      {:timber_phoenix, "~> 1.0"},
+      {:timber_phoenix, "~> 1.1"},
       {:jason, "~> 1.0"},
       {:sentry, "~> 6.4"}
     ]

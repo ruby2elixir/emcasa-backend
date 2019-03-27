@@ -24,3 +24,4 @@ erl_crash.dump
 /temp
 /cover
 /test/temp
+.tool-versions-e
