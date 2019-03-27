@@ -5,7 +5,7 @@ defmodule Re.Exporters.FacebookAds.Product do
   """
 
   @exported_attributes ~w(id url title sell_type condition brand description price
-  listing_type address rooms bathrooms area image additional_image)a
+  listing_type street neighborhood rooms bathrooms area image additional_image)a
   @default_options %{attributes: @exported_attributes}
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
@@ -112,14 +112,22 @@ defmodule Re.Exporters.FacebookAds.Product do
   end
 
   defp convert_attribute(:listing_type, %{type: type}) do
-    {"custom_label_0", %{}, type}
+    {"product_type", %{}, type}
   end
 
-  defp convert_attribute(:address, %{address: address}) do
+  defp convert_attribute(:street, %{address: address}) do
+    {
+      "custom_label_0",
+      %{},
+      address.street
+    }
+  end
+
+  defp convert_attribute(:neighborhood, %{address: address}) do
     {
       "custom_label_1",
       %{},
-      "#{address.street}, #{address.neighborhood}"
+      address.neighborhood
     }
   end
 

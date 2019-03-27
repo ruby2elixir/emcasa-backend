@@ -5,7 +5,7 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
   """
 
   @exported_attributes ~w(id url title sell_type description price listing_type
-    rooms bathrooms units area_unit area address latitude longitude image)a
+    rooms bathrooms units area_unit area neighborhood address latitude longitude image)a
   @default_options %{attributes: @exported_attributes}
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
@@ -108,11 +108,15 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
       [
         {"component", %{name: "addr1"}, escape_cdata("#{address.street}")},
         {"component", %{name: "city"}, escape_cdata("#{address.city}")},
-        {"component", %{name: "region"}, escape_cdata("#{address.neighborhood}")},
+        {"component", %{name: "region"}, escape_cdata("#{address.state}")},
         {"component", %{name: "country"}, escape_cdata("Brazil")},
         {"component", %{name: "postal_code"}, escape_cdata("#{address.postal_code}")}
       ]
     }
+  end
+
+  defp convert_attribute(:neighborhood, %{address: address}) do
+    {"neighborhood", %{}, address.neighborhood}
   end
 
   defp convert_attribute(:latitude, %{address: %{lat: lat}}) do

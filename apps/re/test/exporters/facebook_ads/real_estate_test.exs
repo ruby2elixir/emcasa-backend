@@ -60,10 +60,11 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
           "<num_units><![CDATA[1]]></num_units>" <>
           "<area_unit><![CDATA[sq_m]]></area_unit>" <>
           "<area_size><![CDATA[300]]></area_size>" <>
+          "<neighborhood><![CDATA[Ipiranga]]></neighborhood>" <>
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
-          "<component name=\"region\"><![CDATA[Ipiranga]]></component>" <>
+          "<component name=\"region\"><![CDATA[SP]]></component>" <>
           "<component name=\"country\"><![CDATA[Brazil]]></component>" <>
           "<component name=\"postal_code\"><![CDATA[04732-192]]></component>" <>
           "</address>" <>
@@ -120,10 +121,11 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
           "<num_units><![CDATA[1]]></num_units>" <>
           "<area_unit><![CDATA[sq_m]]></area_unit>" <>
           "<area_size><![CDATA[300]]></area_size>" <>
+          "<neighborhood><![CDATA[Ipiranga]]></neighborhood>" <>
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
-          "<component name=\"region\"><![CDATA[Ipiranga]]></component>" <>
+          "<component name=\"region\"><![CDATA[SP]]></component>" <>
           "<component name=\"country\"><![CDATA[Brazil]]></component>" <>
           "<component name=\"postal_code\"><![CDATA[04732-192]]></component>" <>
           "</address>" <>
@@ -175,10 +177,11 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
           "<num_units><![CDATA[1]]></num_units>" <>
           "<area_unit><![CDATA[sq_m]]></area_unit>" <>
           "<area_size><![CDATA[300]]></area_size>" <>
+          "<neighborhood><![CDATA[Ipiranga]]></neighborhood>" <>
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
-          "<component name=\"region\"><![CDATA[Ipiranga]]></component>" <>
+          "<component name=\"region\"><![CDATA[SP]]></component>" <>
           "<component name=\"country\"><![CDATA[Brazil]]></component>" <>
           "<component name=\"postal_code\"><![CDATA[04732-192]]></component>" <>
           "</address>" <>

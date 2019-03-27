@@ -60,8 +60,9 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<brand><![CDATA[EmCasa]]></brand>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
-          "<custom_label_0><![CDATA[Apartamento]]></custom_label_0>" <>
-          "<custom_label_1><![CDATA[Rua do Ipiranga, Ipiranga]]></custom_label_1>" <>
+          "<product_type><![CDATA[Apartamento]]></product_type>" <>
+          "<custom_label_0><![CDATA[Rua do Ipiranga]]></custom_label_0>" <>
+          "<custom_label_1><![CDATA[Ipiranga]]></custom_label_1>" <>
           "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
@@ -116,8 +117,9 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<brand><![CDATA[EmCasa]]></brand>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
-          "<custom_label_0><![CDATA[Apartamento]]></custom_label_0>" <>
-          "<custom_label_1><![CDATA[Rua do Ipiranga, Ipiranga]]></custom_label_1>" <>
+          "<product_type><![CDATA[Apartamento]]></product_type>" <>
+          "<custom_label_0><![CDATA[Rua do Ipiranga]]></custom_label_0>" <>
+          "<custom_label_1><![CDATA[Ipiranga]]></custom_label_1>" <>
           "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
@@ -165,8 +167,9 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<brand><![CDATA[EmCasa]]></brand>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
-          "<custom_label_0><![CDATA[Apartamento]]></custom_label_0>" <>
-          "<custom_label_1><![CDATA[Rua do Ipiranga, Ipiranga]]></custom_label_1>" <>
+          "<product_type><![CDATA[Apartamento]]></product_type>" <>
+          "<custom_label_0><![CDATA[Rua do Ipiranga]]></custom_label_0>" <>
+          "<custom_label_1><![CDATA[Ipiranga]]></custom_label_1>" <>
           "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
@@ -213,8 +216,9 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<brand><![CDATA[EmCasa]]></brand>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
-          "<custom_label_0><![CDATA[Apartamento]]></custom_label_0>" <>
-          "<custom_label_1><![CDATA[Rua do Ipiranga, Ipiranga]]></custom_label_1>" <>
+          "<product_type><![CDATA[Apartamento]]></product_type>" <>
+          "<custom_label_0><![CDATA[Rua do Ipiranga]]></custom_label_0>" <>
+          "<custom_label_1><![CDATA[Ipiranga]]></custom_label_1>" <>
           "<custom_label_2><![CDATA[0]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[0]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
