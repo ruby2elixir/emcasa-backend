@@ -99,6 +99,7 @@ defmodule Re.Listings do
     |> Changeset.change(is_exportable: false)
     |> Listing.development_changeset(params)
     |> Repo.insert()
+    |> publish_if_admin(user.role)
   end
 
   defp do_insert(params, address, user) do

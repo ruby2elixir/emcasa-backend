@@ -1,5 +1,8 @@
 defmodule ReWeb.GraphQL.Listings.MutationTest do
-  use ReWeb.ConnCase
+  use ReWeb.{
+    AbsintheAssertions,
+    ConnCase
+  }
 
   import Re.Factory
 
@@ -313,6 +316,81 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     end
   end
 
+  describe "insertDevelopmentListing" do
+    test "admin should insert development listing", %{
+      admin_conn: conn,
+      admin_user: user,
+      listing: listing,
+      old_address: address
+    } do
+      %{uuid: development_uuid} = insert(:development, address_id: address.id)
+      variables = insert_development_listing_variables(listing, address.id, development_uuid)
+
+      mutation = insert_development_listing_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{
+               "insertDevelopmentListing" =>
+                 %{"address" => inserted_address, "owner" => owner} = inserted_listing
+             } = json_response(conn, 200)["data"]
+
+      assert inserted_listing["id"]
+      assert inserted_listing["type"] == listing.type
+      assert inserted_listing["description"] == listing.description
+      assert inserted_listing["hasElevator"] == listing.has_elevator
+      assert inserted_listing["matterportCode"] == listing.matterport_code
+
+      refute inserted_listing["isExportable"]
+      refute inserted_listing["isActive"]
+
+      assert inserted_address["city"] == address.city
+      assert inserted_address["state"] == address.state
+      assert inserted_address["lat"] == address.lat
+      assert inserted_address["lng"] == address.lng
+      assert inserted_address["neighborhood"] == address.neighborhood
+      assert inserted_address["street"] == address.street
+      assert inserted_address["streetNumber"] == address.street_number
+      assert inserted_address["postalCode"] == address.postal_code
+
+      assert owner["id"] == to_string(user.id)
+    end
+
+    test "regular user should not insert development listing", %{
+      user_conn: conn,
+      listing: listing,
+      old_address: address
+    } do
+      %{uuid: development_uuid} = insert(:development, address_id: address.id)
+      variables = insert_development_listing_variables(listing, address.id, development_uuid)
+
+      mutation = insert_development_listing_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"insertDevelopmentListing" => nil} == json_response(conn, 200)["data"]
+
+      assert_forbidden_response(json_response(conn, 200))
+    end
+
+    test "unautenticated user should not insert development listing", %{
+      unauthenticated_conn: conn,
+      listing: listing,
+      old_address: address
+    } do
+      %{uuid: development_uuid} = insert(:development, address_id: address.id)
+      variables = insert_development_listing_variables(listing, address.id, development_uuid)
+
+      mutation = insert_development_listing_mutation()
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"insertDevelopmentListing" => nil} == json_response(conn, 200)["data"]
+
+      assert_unauthorized_response(json_response(conn, 200))
+    end
+  end
+
   describe "updateListing" do
     test "admin should update listing", %{
       admin_conn: conn,
@@ -444,5 +522,47 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
+  end
+
+  def insert_development_listing_variables(listing, address_id, development_uuid) do
+    %{
+      "input" => %{
+        "type" => listing.type,
+        "description" => listing.description,
+        "hasElevator" => listing.has_elevator,
+        "matterportCode" => listing.matterport_code,
+        "address_id" => address_id,
+        "development_uuid" => development_uuid
+      }
+    }
+  end
+
+  def insert_development_listing_mutation do
+    """
+      mutation InsertDevelopmentListing ($input: DevelopmentListingInput!) {
+        insertDevelopmentListing(input: $input) {
+          id
+          type
+          address {
+            city
+            state
+            lat
+            lng
+            neighborhood
+            street
+            streetNumber
+            postalCode
+          }
+          owner {
+            id
+          }
+          description
+          hasElevator
+          matterportCode
+          isActive
+          isExportable
+        }
+      }
+    """
   end
 end
