@@ -25,8 +25,8 @@ defmodule Re.Listings.Units.Server do
 
   @spec handle_info(map(), any) :: {:noreply, any}
   def handle_info(%{topic: "new_unit", type: :new, new: unit}, state) do
-    with {:ok, listing} = Listings.get(unit.listing_id),
-         {:ok, _listing} = Propagator.update_listing(listing, unit) do
+    with {:ok, listing} <- Listings.get(unit.listing_id),
+         {:ok, _listing} <- Propagator.update_listing(listing, unit) do
       {:noreply, state}
     else
       error ->
