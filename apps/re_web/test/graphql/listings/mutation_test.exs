@@ -323,8 +323,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       listing: listing,
       old_address: address
     } do
-      %{uuid: development_uuid} = insert(:development, address_id: address.id)
-      variables = insert_development_listing_variables(listing, address.id, development_uuid)
+      development = insert(:development, address_id: address.id)
+      variables = insert_development_listing_variables(listing, address.id, development.uuid)
 
       mutation = insert_development_listing_mutation()
 
@@ -332,7 +332,11 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       assert %{
                "insertDevelopmentListing" =>
-                 %{"address" => inserted_address, "owner" => owner} = inserted_listing
+                 %{
+                   "address" => inserted_address,
+                   "owner" => owner,
+                   "development" => inserted_development
+                 } = inserted_listing
              } = json_response(conn, 200)["data"]
 
       assert inserted_listing["id"]
@@ -352,6 +356,13 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_address["street"] == address.street
       assert inserted_address["streetNumber"] == address.street_number
       assert inserted_address["postalCode"] == address.postal_code
+
+      assert inserted_development["uuid"] == development.uuid
+      assert inserted_development["name"] == development.name
+      assert inserted_development["title"] == development.title
+      assert inserted_development["phase"] == development.phase
+      assert inserted_development["builder"] == development.builder
+      assert inserted_development["description"] == development.description
 
       assert owner["id"] == to_string(user.id)
     end
@@ -555,6 +566,14 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
           }
           owner {
             id
+          }
+          development {
+            uuid
+            name
+            title
+            phase
+            builder
+            description
           }
           description
           hasElevator
