@@ -5,7 +5,7 @@ defmodule Re.Exporters.FacebookAds.Product do
   """
 
   @exported_attributes ~w(id url title sell_type condition brand description price
-  listing_type address rooms bathrooms area image)a
+  listing_type address rooms bathrooms area image additional_image)a
   @default_options %{attributes: @exported_attributes}
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
@@ -92,6 +92,20 @@ defmodule Re.Exporters.FacebookAds.Product do
     }
   end
 
+  defp convert_attribute(:additional_image, %{images: []}) do
+    {"additional_image_link", %{}, nil}
+  end
+
+  defp convert_attribute(:additional_image, %{images: images}) do
+    additional_images = Enum.slice(images, 1..20)
+
+    {
+      "additional_image_link",
+      %{},
+      Enum.join(additional_images |> Enum.map(&build_image_url(&1)), ",")
+    }
+  end
+
   defp convert_attribute(:listing_type, %{type: type}) do
     {"custom_label_0", %{}, type}
   end
@@ -133,5 +147,9 @@ defmodule Re.Exporters.FacebookAds.Product do
     |> URI.merge(path)
     |> URI.merge(param)
     |> URI.to_string()
+  end
+
+  defp build_image_url(image) do
+    "#{@image_url}/#{image.filename}"
   end
 end
