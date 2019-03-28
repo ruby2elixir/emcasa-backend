@@ -819,6 +819,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       )
 
       user = insert(:user)
+      development = insert(:development)
       interests = insert_list(3, :interest)
       in_person_visits = insert_list(3, :in_person_visit)
       listings_favorites = insert_list(3, :listings_favorites)
@@ -847,6 +848,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           address: address,
           images: [image1, image2, image3, image4, image5],
           user: user,
+          development: development,
           interests: interests,
           in_person_visits: in_person_visits,
           listings_favorites: listings_favorites,
@@ -911,6 +913,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 id
               }
             }
+            development {
+              uuid
+            }
             units {
               uuid
             }
@@ -953,6 +958,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    %{"id" => to_string(related_id1)},
                    %{"id" => to_string(related_id2)}
                  ]
+               },
+               "development" => %{
+                 "uuid" => development.uuid
                },
                "units" => [
                  %{"uuid" => to_string(unit1.uuid)},
