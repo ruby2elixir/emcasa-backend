@@ -118,7 +118,7 @@ defmodule Re.Listing do
 
   def changeset_update_tags(struct, tags) do
     struct
-    |> cast(%{}, @admin_attributes)
+    |> change()
     |> put_assoc(:tags, tags)
   end
 
