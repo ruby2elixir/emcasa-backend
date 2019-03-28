@@ -61,7 +61,7 @@ defmodule Re.Listing do
 
     many_to_many :tags, Re.Tag,
       join_through: Re.ListingTag,
-      join_keys: [listing_id: :id, tag_uuid: :uuid],
+      join_keys: [listing_uuid: :uuid, tag_uuid: :uuid],
       on_replace: :delete
 
     timestamps()
