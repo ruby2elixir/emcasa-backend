@@ -17,11 +17,11 @@ defmodule Re.Filtering.TagsUUIDTest do
 
       {:ok, listing_1} =
         insert(:listing)
-        |> Listings.upsert_tags([tag_1.uuid, tag_2.uuid], %{})
+        |> Listings.upsert_tags([tag_1.uuid, tag_2.uuid])
 
       {:ok, _} =
         insert(:listing)
-        |> Listings.upsert_tags([tag_2.uuid], %{})
+        |> Listings.upsert_tags([tag_2.uuid])
 
       result =
         Filtering.apply(Listing, %{tags_uuid: [tag_1.uuid]})
@@ -38,11 +38,11 @@ defmodule Re.Filtering.TagsUUIDTest do
 
       {:ok, listing_1} =
         insert(:listing)
-        |> Listings.upsert_tags([tag_1.uuid, tag_2.uuid, tag_3.uuid], %{})
+        |> Listings.upsert_tags([tag_1.uuid, tag_2.uuid, tag_3.uuid])
 
       {:ok, listing_2} =
         insert(:listing)
-        |> Listings.upsert_tags([tag_2.uuid, tag_3.uuid], %{})
+        |> Listings.upsert_tags([tag_2.uuid, tag_3.uuid])
 
       result =
         Filtering.apply(Listing, %{tags_uuid: [tag_2.uuid, tag_3.uuid]})
@@ -58,11 +58,11 @@ defmodule Re.Filtering.TagsUUIDTest do
 
       {:ok, _} =
         insert(:listing)
-        |> Listings.upsert_tags([tag_1.uuid], %{})
+        |> Listings.upsert_tags([tag_1.uuid])
 
       {:ok, _} =
         insert(:listing)
-        |> Listings.upsert_tags([tag_1.uuid], %{})
+        |> Listings.upsert_tags([tag_1.uuid])
 
       result =
         Filtering.apply(Listing, %{tags_uuid: [UUID.uuid4()]})
