@@ -317,6 +317,41 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
   end
 
   describe "insertDevelopmentListing" do
+    @insert_development_listing_mutation """
+      mutation InsertDevelopmentListing ($input: DevelopmentListingInput!) {
+        insertDevelopmentListing(input: $input) {
+          id
+          type
+          address {
+            city
+            state
+            lat
+            lng
+            neighborhood
+            street
+            streetNumber
+            postalCode
+          }
+          owner {
+            id
+          }
+          development {
+            uuid
+            name
+            title
+            phase
+            builder
+            description
+          }
+          description
+          hasElevator
+          matterportCode
+          isActive
+          isExportable
+        }
+      }
+    """
+
     test "admin should insert development listing", %{
       admin_conn: conn,
       admin_user: user,
@@ -326,16 +361,19 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       development = insert(:development, address_id: address.id)
       variables = insert_development_listing_variables(listing, address.id, development.uuid)
 
-      mutation = insert_development_listing_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@insert_development_listing_mutation, variables)
+        )
 
       assert %{
                "insertDevelopmentListing" =>
                  %{
-                   "address" => inserted_address,
+                   "address" => associated_address,
                    "owner" => owner,
-                   "development" => inserted_development
+                   "development" => associated_development
                  } = inserted_listing
              } = json_response(conn, 200)["data"]
 
@@ -348,21 +386,21 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       refute inserted_listing["isExportable"]
       refute inserted_listing["isActive"]
 
-      assert inserted_address["city"] == address.city
-      assert inserted_address["state"] == address.state
-      assert inserted_address["lat"] == address.lat
-      assert inserted_address["lng"] == address.lng
-      assert inserted_address["neighborhood"] == address.neighborhood
-      assert inserted_address["street"] == address.street
-      assert inserted_address["streetNumber"] == address.street_number
-      assert inserted_address["postalCode"] == address.postal_code
+      assert associated_address["city"] == address.city
+      assert associated_address["state"] == address.state
+      assert associated_address["lat"] == address.lat
+      assert associated_address["lng"] == address.lng
+      assert associated_address["neighborhood"] == address.neighborhood
+      assert associated_address["street"] == address.street
+      assert associated_address["streetNumber"] == address.street_number
+      assert associated_address["postalCode"] == address.postal_code
 
-      assert inserted_development["uuid"] == development.uuid
-      assert inserted_development["name"] == development.name
-      assert inserted_development["title"] == development.title
-      assert inserted_development["phase"] == development.phase
-      assert inserted_development["builder"] == development.builder
-      assert inserted_development["description"] == development.description
+      assert associated_development["uuid"] == development.uuid
+      assert associated_development["name"] == development.name
+      assert associated_development["title"] == development.title
+      assert associated_development["phase"] == development.phase
+      assert associated_development["builder"] == development.builder
+      assert associated_development["description"] == development.description
 
       assert owner["id"] == to_string(user.id)
     end
@@ -375,9 +413,12 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       %{uuid: development_uuid} = insert(:development, address_id: address.id)
       variables = insert_development_listing_variables(listing, address.id, development_uuid)
 
-      mutation = insert_development_listing_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@insert_development_listing_mutation, variables)
+        )
 
       assert %{"insertDevelopmentListing" => nil} == json_response(conn, 200)["data"]
 
@@ -392,9 +433,12 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       %{uuid: development_uuid} = insert(:development, address_id: address.id)
       variables = insert_development_listing_variables(listing, address.id, development_uuid)
 
-      mutation = insert_development_listing_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@insert_development_listing_mutation, variables)
+        )
 
       assert %{"insertDevelopmentListing" => nil} == json_response(conn, 200)["data"]
 
@@ -546,42 +590,5 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
         "development_uuid" => development_uuid
       }
     }
-  end
-
-  def insert_development_listing_mutation do
-    """
-      mutation InsertDevelopmentListing ($input: DevelopmentListingInput!) {
-        insertDevelopmentListing(input: $input) {
-          id
-          type
-          address {
-            city
-            state
-            lat
-            lng
-            neighborhood
-            street
-            streetNumber
-            postalCode
-          }
-          owner {
-            id
-          }
-          development {
-            uuid
-            name
-            title
-            phase
-            builder
-            description
-          }
-          description
-          hasElevator
-          matterportCode
-          isActive
-          isExportable
-        }
-      }
-    """
   end
 end
