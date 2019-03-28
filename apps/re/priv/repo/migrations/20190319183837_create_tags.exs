@@ -3,10 +3,10 @@ defmodule Re.Repo.Migrations.CreateTags do
 
   def change do
     create table(:tags, primary_key: false) do
-      add(:uuid, :uuid, primary_key: true)
-      add(:name, :string, null: false)
-      add(:name_slug, :string, null: false)
-      add(:category, :string, null: false, default: "infrastructure")
+      add :uuid, :uuid, primary_key: true
+      add :name, :string, null: false
+      add :name_slug, :string, null: false
+      add :category, :string, null: false, default: "infrastructure"
 
       timestamps()
     end
