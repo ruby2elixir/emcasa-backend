@@ -106,19 +106,11 @@ defmodule ReWeb.Types.Listing do
 
     field :address, :address_input
     field :address_id, :id
+
+    field :development_uuid, :uuid
   end
 
   enum :garage_type, values: ~w(contract condominium)
-
-  input_object :development_listing_input do
-    field :type, non_null(:string)
-    field :description, :string
-    field :has_elevator, :boolean
-    field :matterport_code, :string
-
-    field :address_id, :id
-    field :development_uuid, :uuid
-  end
 
   object :address do
     field :id, :id
@@ -313,13 +305,6 @@ defmodule ReWeb.Types.Listing do
     @desc "Insert listing"
     field :insert_listing, type: :listing do
       arg :input, non_null(:listing_input)
-
-      resolve &Resolvers.Listings.insert/2
-    end
-
-    @desc "Insert development listing"
-    field :insert_development_listing, type: :listing do
-      arg :input, non_null(:development_listing_input)
 
       resolve &Resolvers.Listings.insert/2
     end

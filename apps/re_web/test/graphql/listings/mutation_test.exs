@@ -314,12 +314,10 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert [%{"message" => "price: must be greater than or equal to 250000", "code" => 422}] =
                json_response(conn, 200)["errors"]
     end
-  end
 
-  describe "insertDevelopmentListing" do
     @insert_development_listing_mutation """
-      mutation InsertDevelopmentListing ($input: DevelopmentListingInput!) {
-        insertDevelopmentListing(input: $input) {
+      mutation InsertListing ($input: ListingInput!) {
+        insertListing(input: $input) {
           id
           type
           address {
@@ -369,7 +367,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
         )
 
       assert %{
-               "insertDevelopmentListing" =>
+               "insertListing" =>
                  %{
                    "address" => associated_address,
                    "owner" => owner,
@@ -420,7 +418,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
           AbsintheHelpers.mutation_wrapper(@insert_development_listing_mutation, variables)
         )
 
-      assert %{"insertDevelopmentListing" => nil} == json_response(conn, 200)["data"]
+      assert %{"insertListing" => nil} == json_response(conn, 200)["data"]
 
       assert_forbidden_response(json_response(conn, 200))
     end
@@ -440,7 +438,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
           AbsintheHelpers.mutation_wrapper(@insert_development_listing_mutation, variables)
         )
 
-      assert %{"insertDevelopmentListing" => nil} == json_response(conn, 200)["data"]
+      assert %{"insertListing" => nil} == json_response(conn, 200)["data"]
 
       assert_unauthorized_response(json_response(conn, 200))
     end
