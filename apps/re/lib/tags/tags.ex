@@ -37,18 +37,13 @@ defmodule Re.Tags do
 
   def insert(params) do
     %Tag{}
-    |> change(params)
+    |> Tag.changeset(params)
     |> Repo.insert()
   end
 
   def update(tag, params) do
     tag
-    |> change(params)
-    |> Repo.update()
-  end
-
-  defp change(instance, params) do
-    instance
     |> Tag.changeset(params)
+    |> Repo.update()
   end
 end
