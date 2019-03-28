@@ -6,7 +6,10 @@ defmodule Re.Tag do
 
   import Ecto.Changeset
 
-  alias Re.Slugs
+  alias Re.{
+    ChangesetHelper,
+    Slugs
+  }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
@@ -38,7 +41,7 @@ defmodule Re.Tag do
       message: "should be one of: [#{Enum.join(@categories, ", ")}]"
     )
     |> generate_slugs()
-    |> generate_uuid()
+    |> ChangesetHelper.generate_uuid()
   end
 
   def generate_slugs(%{valid?: false} = changeset), do: changeset
@@ -46,10 +49,4 @@ defmodule Re.Tag do
   def generate_slugs(changeset) do
     Enum.reduce(@sluggified_attr, changeset, &Slugs.generate_slug(&1, &2))
   end
-
-  def generate_uuid(%{data: %{uuid: nil}} = changeset) do
-    change(changeset, %{uuid: UUID.uuid4()})
-  end
-
-  def generate_uuid(changeset), do: changeset
 end
