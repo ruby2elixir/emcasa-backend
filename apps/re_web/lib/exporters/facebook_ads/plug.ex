@@ -12,7 +12,8 @@ defmodule ReWeb.Exporters.FacebookAds.Plug do
   def init(args), do: args
 
   def call(
-        %Plug.Conn{path_info: [state_slug, city_slug], query_params: query_params} = conn,
+        %Plug.Conn{path_info: ["real-estate", state_slug, city_slug], query_params: query_params} =
+          conn,
         _args
       ) do
     filters = %{cities_slug: [city_slug], states_slug: [state_slug]}
@@ -20,7 +21,24 @@ defmodule ReWeb.Exporters.FacebookAds.Plug do
     xml_listings =
       filters
       |> Exporter.exportable(query_params)
-      |> FacebookAds.export_listings_xml()
+      |> FacebookAds.RealEstate.export_listings_xml()
+
+    conn
+    |> put_resp_content_type("application/xml")
+    |> send_resp(200, xml_listings)
+  end
+
+  def call(
+        %Plug.Conn{path_info: ["product", state_slug, city_slug], query_params: query_params} =
+          conn,
+        _args
+      ) do
+    filters = %{cities_slug: [city_slug], states_slug: [state_slug]}
+
+    xml_listings =
+      filters
+      |> Exporter.exportable(query_params)
+      |> FacebookAds.Product.export_listings_xml()
 
     conn
     |> put_resp_content_type("application/xml")
@@ -29,7 +47,7 @@ defmodule ReWeb.Exporters.FacebookAds.Plug do
 
   def call(conn, _args) do
     error_response =
-      {"error", "Expect state and city on path"}
+      {"error", "Expect FacebookAds type, state and city on path"}
       |> XmlBuilder.document()
       |> XmlBuilder.generate(format: :none)
 

@@ -70,6 +70,7 @@ defmodule ReWeb.Schema do
     [
       Re.Accounts,
       Re.Addresses,
+      Re.Developments,
       Re.Images,
       Re.Listings,
       Re.Listings.History.Prices,
