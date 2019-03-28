@@ -15,7 +15,7 @@ defmodule Re.TagsTest do
       %{uuid: uuid_3} = insert(:tag, name: "feature 3", name_slug: "feature-3")
 
       tags_uuids =
-        Tags.list_by_ids([uuid_1, uuid_2])
+        Tags.list_by_uuids([uuid_1, uuid_2])
         |> Enum.map(fn tag -> tag.uuid end)
 
       assert Enum.member?(tags_uuids, uuid_1)

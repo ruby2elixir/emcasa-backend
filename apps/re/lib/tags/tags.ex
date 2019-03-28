@@ -23,9 +23,9 @@ defmodule Re.Tags do
     end
   end
 
-  def list_by_ids(uuids) do
+  def list_by_uuids(uuids) do
     uuids
-    |> Queries.with_ids()
+    |> Queries.with_uuids()
     |> Repo.all()
   end
 

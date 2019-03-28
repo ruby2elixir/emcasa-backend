@@ -202,7 +202,7 @@ defmodule Re.Listings do
   end
 
   def upsert_tags(listing, tag_uuids, user) do
-    tags = Tags.list_by_ids(tag_uuids)
+    tags = Tags.list_by_uuids(tag_uuids)
 
     listing
     |> Repo.preload([:tags])
