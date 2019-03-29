@@ -4,7 +4,7 @@ defmodule ReWeb.Types.Development do
   """
   use Absinthe.Schema.Notation
 
-  import Absinthe.Resolution.Helpers, only: [dataloader: 2]
+  import Absinthe.Resolution.Helpers, only: [dataloader: 2, dataloader: 1]
 
   alias ReWeb.Resolvers
 
@@ -25,6 +25,8 @@ defmodule ReWeb.Types.Development do
 
       resolve &Resolvers.Images.per_development/3
     end
+
+    field :listings, list_of(:listing), resolve: dataloader(Re.Listings)
   end
 
   input_object :development_input do
