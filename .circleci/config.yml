@@ -6,7 +6,7 @@ jobs:
       - image: circleci/elixir:1.8.1
         environment:
           MIX_ENV: test
-      - image: circleci/postgres:10.1-alpine
+      - image: circleci/postgres:10.6-alpine
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: re_test
@@ -29,7 +29,9 @@ jobs:
           keys:
             - v1-build-cache-{{ .Branch }}
             - v1-build-cache
-      - run: mix do deps.get, compile
+      - run: mix deps.get
+      - run: mix compile --warnings-as-errors --force
+      - run: mix format --check-formatted --dry-run
       - save_cache:
           key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths: "deps"
@@ -50,7 +52,11 @@ jobs:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
-      - run: mix test
+      - run: mix coveralls.circle --umbrella
 
       - store_test_results:
-          path: _build/test/lib/backend
+          path: _build/test/lib/re/
+      - store_test_results:
+          path: _build/test/lib/re_web/
+      - store_test_results:
+          path: _build/test/lib/re_integrations/
