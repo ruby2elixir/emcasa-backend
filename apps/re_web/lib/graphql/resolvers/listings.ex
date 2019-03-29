@@ -256,7 +256,7 @@ defmodule ReWeb.Resolvers.Listings do
 
   def insert_listing_trigger(_arg), do: "listing_inserted"
 
-  def per_development(development, params, %{context: %{loader: loader}}) do
+  def per_development(development, _params, %{context: %{loader: loader}}) do
     loader
     |> Dataloader.load(Listings, :listings, development)
     |> on_load(fn loader ->
