@@ -36,7 +36,7 @@ defmodule ReWeb.Types.Unit do
     field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer
-    field :garage_type, :string
+    field :garage_type, :garage_type
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
