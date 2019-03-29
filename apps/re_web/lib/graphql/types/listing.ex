@@ -106,6 +106,8 @@ defmodule ReWeb.Types.Listing do
 
     field :address, :address_input
     field :address_id, :id
+
+    field :development_uuid, :uuid
   end
 
   enum :garage_type, values: ~w(contract condominium)

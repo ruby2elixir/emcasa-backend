@@ -85,7 +85,7 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
-    |> Re.ChangesetHelper.generate_uuid()
+    |> generate_uuid()
   end
 
   @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
@@ -108,7 +108,22 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
-    |> Re.ChangesetHelper.generate_uuid()
+    |> generate_uuid()
+  end
+
+  @development_required ~w(type description has_elevator address_id user_id development_uuid)a
+
+  @development_optional ~w(matterport_code is_exclusive status is_release)a
+
+  @development_attributes @development_required ++ @development_optional
+
+  def development_changeset(struct, params) do
+    struct
+    |> cast(params, @development_attributes)
+    |> cast_assoc(:development)
+    |> validate_required(@development_required)
+    |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
+    |> generate_uuid()
   end
 
   @more_than_zero_attributes ~w(property_tax maintenance_fee
@@ -124,4 +139,6 @@ defmodule Re.Listing do
   end
 
   def listing_types(), do: @types
+
+  defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
 end

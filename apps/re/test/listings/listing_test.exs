@@ -193,4 +193,67 @@ defmodule Re.ListingTest do
                 [validation: :number, kind: :less_than_or_equal_to, number: 100_000_000]}
     end
   end
+
+  describe "development_changeset/2" do
+    @valid_development_attrs %{
+      type: "Apartamento",
+      description: "some content",
+      has_elevator: true,
+      matterport_code: "",
+      is_exclusive: nil,
+      is_release: nil
+    }
+
+    @invalid_development_attrs %{
+      type: "invalid",
+      description: "",
+      has_elevator: "apple",
+      is_exclusive: "apple",
+      is_release: "apple"
+    }
+
+    test "is valid with required params" do
+      address = insert(:address)
+      user = insert(:user)
+      development = insert(:development)
+
+      attrs =
+        @valid_development_attrs
+        |> Map.put(:address_id, address.id)
+        |> Map.put(:user_id, user.id)
+        |> Map.put(:development_uuid, development.uuid)
+
+      changeset = Listing.development_changeset(%Listing{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "is invalid without required attrs" do
+      changeset = Listing.development_changeset(%Listing{}, @invalid_development_attrs)
+      refute changeset.valid?
+
+      assert Keyword.get(changeset.errors, :type) ==
+               {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
+
+      assert Keyword.get(changeset.errors, :description) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :address_id) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :user_id) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :development_uuid) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :has_elevator) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :is_exclusive) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :is_release) ==
+               {"is invalid", [type: :boolean, validation: :cast]}
+    end
+  end
 end
