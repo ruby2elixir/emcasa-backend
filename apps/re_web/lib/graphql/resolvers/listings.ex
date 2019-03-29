@@ -256,6 +256,14 @@ defmodule ReWeb.Resolvers.Listings do
 
   def insert_listing_trigger(_arg), do: "listing_inserted"
 
+  def per_development(development, params, %{context: %{loader: loader}}) do
+    loader
+    |> Dataloader.load(Listings, :listings, development)
+    |> on_load(fn loader ->
+      {:ok, Dataloader.get(loader, Listings, :listings, development)}
+    end)
+  end
+
   defp config_subscription(%{id: id}, %{role: "admin"}, topic),
     do: {:ok, topic: "#{topic}:#{id}"}
 

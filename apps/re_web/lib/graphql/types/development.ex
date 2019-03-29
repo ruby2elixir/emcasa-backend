@@ -25,6 +25,8 @@ defmodule ReWeb.Types.Development do
 
       resolve &Resolvers.Images.per_development/3
     end
+
+    field :listings, list_of(:listing), resolve: &Resolvers.Listings.per_development/3
   end
 
   input_object :development_input do

@@ -59,6 +59,8 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
 
       %{id: address_id, street: street, street_number: street_number} = insert(:address)
 
+      listing = insert(:listing)
+
       %{
         uuid: development_uuid,
         name: name,
@@ -66,7 +68,13 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
         phase: phase,
         builder: builder,
         description: description
-      } = insert(:development, address_id: address_id, images: [image1, image2])
+      } =
+        insert(
+          :development,
+          address_id: address_id,
+          images: [image1, image2],
+          listings: [listing]
+        )
 
       variables = %{
         "uuid" => development_uuid
@@ -88,6 +96,9 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
             }
             images {
               filename
+            }
+            listings {
+              id
             }
           }
         }
@@ -108,6 +119,9 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
                "images" => [
                  %{"filename" => image_filename1},
                  %{"filename" => image_filename2}
+               ],
+               "listings" => [
+                 %{"id" => to_string(listing.id)}
                ]
              } == json_response(conn, 200)["data"]["development"]
     end
@@ -118,6 +132,8 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
 
       %{id: address_id, street: street} = insert(:address)
 
+      listing = insert(:listing)
+
       %{
         uuid: development_uuid,
         name: name,
@@ -125,7 +141,13 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
         phase: phase,
         builder: builder,
         description: description
-      } = insert(:development, address_id: address_id, images: [image1, image2])
+      } =
+        insert(
+          :development,
+          address_id: address_id,
+          images: [image1, image2],
+          listings: [listing]
+        )
 
       variables = %{
         "uuid" => development_uuid
@@ -148,6 +170,9 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
             images {
               filename
             }
+            listings {
+              id
+            }
           }
         }
       """
@@ -167,6 +192,9 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
                "images" => [
                  %{"filename" => image_filename1},
                  %{"filename" => image_filename2}
+               ],
+               "listings" => [
+                 %{"id" => to_string(listing.id)}
                ]
              } == json_response(conn, 200)["data"]["development"]
     end
@@ -177,6 +205,8 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
 
       %{id: address_id, street: street} = insert(:address)
 
+      listing = insert(:listing)
+
       %{
         uuid: development_uuid,
         name: name,
@@ -184,7 +214,13 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
         phase: phase,
         builder: builder,
         description: description
-      } = insert(:development, address_id: address_id, images: [image1, image2])
+      } =
+        insert(
+          :development,
+          address_id: address_id,
+          images: [image1, image2],
+          listings: [listing]
+        )
 
       variables = %{
         "uuid" => development_uuid
@@ -207,6 +243,9 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
             images {
               filename
             }
+            listings {
+              id
+            }
           }
         }
       """
@@ -226,6 +265,9 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
                "images" => [
                  %{"filename" => image_filename1},
                  %{"filename" => image_filename2}
+               ],
+               "listings" => [
+                 %{"id" => to_string(listing.id)}
                ]
              } == json_response(conn, 200)["data"]["development"]
     end

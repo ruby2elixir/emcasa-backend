@@ -98,7 +98,7 @@ defmodule Re.Listings do
       address_id: address.id,
       user_id: user.id,
       is_exportable: false
-     })
+    })
     |> Listing.development_changeset(params)
     |> Repo.insert()
     |> publish_if_admin(user.role)
