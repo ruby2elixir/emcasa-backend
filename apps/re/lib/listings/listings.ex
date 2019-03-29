@@ -93,10 +93,12 @@ defmodule Re.Listings do
 
   def insert(params, address, user, development) do
     %Listing{}
-    |> Changeset.change(development_uuid: development.uuid)
-    |> Changeset.change(address_id: address.id)
-    |> Changeset.change(user_id: user.id)
-    |> Changeset.change(is_exportable: false)
+    |> Changeset.change(%{
+      development_uuid: development.uuid,
+      address_id: address.id,
+      user_id: user.id,
+      is_exportable: false
+     })
     |> Listing.development_changeset(params)
     |> Repo.insert()
     |> publish_if_admin(user.role)
