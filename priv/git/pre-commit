@@ -1,5 +1,5 @@
 #!/bin/sh
-to_check=$(git diff --name-only --cached --diff-filter=d | grep '\.ex' | grep -v 'test.ex')
+to_check=$(git diff --name-only --cached --diff-filter=d | grep '\.ex')
 to_check_len=$(echo ${to_check} | wc -l)
 
 if [ "${to_check_len}" = 1 ] && [ "${to_check}" = "" ]; then
