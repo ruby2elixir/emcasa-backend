@@ -14,9 +14,10 @@ defmodule Re.Umbrella.Mixfile do
 
   defp deps do
     [
-      {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:timber, "~> 3.1"},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:junit_formatter, "~> 3.0", only: :test, runtime: false}
     ]
   end
 
