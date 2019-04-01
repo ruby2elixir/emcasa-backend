@@ -60,4 +60,9 @@ defmodule Re.Listings.QueriesTest do
       assert expected == result
     end
   end
+
+  describe "remaining_count/2" do
+    test "get remaining count with tags" do
+    end
+  end
 end

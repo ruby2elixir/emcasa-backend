@@ -23,6 +23,10 @@ defmodule Re.ListingsTest do
 
   describe "paginated/1" do
     test "should filter by attributes" do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
+      tag_3 = insert(:tag, name: "Tag 3", name_slug: "tag-3")
+
       sao_conrado =
         insert(
           :address,
@@ -57,7 +61,7 @@ defmodule Re.ListingsTest do
           lng: -43.19675540000001
         )
 
-      %{id: id1} =
+      {:ok, %{id: id1}} =
         insert(
           :listing,
           price: 100,
@@ -70,8 +74,9 @@ defmodule Re.ListingsTest do
           garage_spots: 3,
           garage_type: "contract"
         )
+        |> Re.Listings.upsert_tags([tag_1.uuid, tag_2.uuid])
 
-      %{id: id2} =
+      {:ok, %{id: id2}} =
         insert(
           :listing,
           price: 110,
@@ -84,8 +89,9 @@ defmodule Re.ListingsTest do
           garage_spots: 2,
           garage_type: "condominium"
         )
+        |> Re.Listings.upsert_tags([tag_1.uuid, tag_2.uuid, tag_3.uuid])
 
-      %{id: id3} =
+      {:ok, %{id: id3}} =
         insert(
           :listing,
           price: 90,
@@ -98,6 +104,7 @@ defmodule Re.ListingsTest do
           garage_spots: 1,
           garage_type: "contract"
         )
+        |> Re.Listings.upsert_tags([tag_3.uuid])
 
       result = Listings.paginated(%{"max_price" => 105})
       assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
@@ -182,16 +189,36 @@ defmodule Re.ListingsTest do
       result = Listings.paginated(%{"cities_slug" => ["sao-paulo"]})
       assert [%{id: ^id3}] = chunk_and_short(result.listings)
       assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"tags_slug" => ["tag-2"]})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"tags_slug" => ["tag-1", "tag-2"], "page_size" => 1})
+      assert [%{id: ^id1}] = chunk_and_short(result.listings)
+      assert 1 == result.remaining_count
     end
 
     test "should not filter for empty array" do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
+      tag_3 = insert(:tag, name: "Tag 3", name_slug: "tag-3")
+
       laranjeiras = insert(:address, street: "astreet", neighborhood: "Laranjeiras")
       leblon = insert(:address, street: "anotherstreet", neighborhood: "Leblon")
       botafogo = insert(:address, street: "onemorestreet", neighborhood: "Botafogo")
 
-      %{id: id1} = insert(:listing, score: 4, address_id: laranjeiras.id, type: "Apartamento")
-      %{id: id2} = insert(:listing, score: 3, address_id: leblon.id, type: "Casa")
-      %{id: id3} = insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento")
+      {:ok, %{id: id1}} =
+        insert(:listing, score: 4, address_id: laranjeiras.id, type: "Apartamento")
+        |> Listings.upsert_tags([tag_1.uuid])
+
+      {:ok, %{id: id2}} =
+        insert(:listing, score: 3, address_id: leblon.id, type: "Casa")
+        |> Listings.upsert_tags([tag_2.uuid])
+
+      {:ok, %{id: id3}} =
+        insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento")
+        |> Listings.upsert_tags([tag_3.uuid])
 
       result = Listings.paginated(%{"neighborhoods" => []})
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
@@ -200,6 +227,12 @@ defmodule Re.ListingsTest do
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"garage_types" => []})
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"tags_slug" => []})
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"tags_uuid" => []})
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
     end
 

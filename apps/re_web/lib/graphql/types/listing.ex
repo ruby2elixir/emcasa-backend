@@ -203,6 +203,8 @@ defmodule ReWeb.Types.Listing do
     field :garage_types, list_of(:garage_type)
     field :cities, list_of(:string)
     field :cities_slug, list_of(:string)
+    field :tags_slug, list_of(:string)
+    field :tags_uuid, list_of(:uuid)
   end
 
   object :listing_filter do
@@ -226,6 +228,8 @@ defmodule ReWeb.Types.Listing do
     field :garage_types, list_of(:garage_type)
     field :cities, list_of(:string)
     field :cities_slug, list_of(:string)
+    field :tags_slug, list_of(:string)
+    field :tags_uuid, list_of(:uuid)
   end
 
   object :price_history do
