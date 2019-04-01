@@ -188,7 +188,8 @@ defmodule Re.Factory do
       uuid: UUID.uuid4(),
       name: name,
       name_slug: name_slug,
-      category: Enum.random(~w(infrastructure location realty))
+      category: Enum.random(~w(infrastructure location realty view)),
+      visibility: "all"
     }
   end
 

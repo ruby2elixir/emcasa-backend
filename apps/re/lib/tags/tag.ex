@@ -17,6 +17,7 @@ defmodule Re.Tag do
     field :name, :string
     field :name_slug, :string
     field :category, :string
+    field :visibility, :string
 
     many_to_many :listings, Re.Listing,
       join_through: Re.ListingTag,
@@ -26,11 +27,13 @@ defmodule Re.Tag do
     timestamps()
   end
 
-  @required ~w(name category)a
+  @required ~w(name category visibility)a
 
   @sluggified_attr [:name]
 
-  @categories ~w(infrastructure location realty)
+  @categories ~w(infrastructure location realty view)
+
+  @visibilities ~w(all admin)
 
   def changeset(struct, params \\ %{}) do
     struct
@@ -39,6 +42,9 @@ defmodule Re.Tag do
     |> unique_constraint(:name_slug)
     |> validate_inclusion(:category, @categories,
       message: "should be one of: [#{Enum.join(@categories, ", ")}]"
+    )
+    |> validate_inclusion(:visibility, @visibilities,
+      message: "should be one of: [#{Enum.join(@visibilities, ", ")}]"
     )
     |> generate_slugs()
     |> ChangesetHelper.generate_uuid()

@@ -42,7 +42,7 @@ defmodule Re.TagsTest do
 
   describe "insert/1" do
     test "should insert a tag" do
-      attrs = %{name: "an awesome feature", category: "realty"}
+      attrs = %{name: "an awesome feature", category: "realty", visibility: "all"}
       assert {:ok, inserted_tag} = Tags.insert(attrs)
 
       assert fetched_tag = Repo.get(Tag, inserted_tag.uuid)
@@ -50,10 +50,10 @@ defmodule Re.TagsTest do
     end
 
     test "should fail when inserting tag with same name_slug" do
-      original_attrs = %{name: "Varanda gourmet", category: "realty"}
+      original_attrs = %{name: "Open space", category: "realty", visibility: "all"}
       assert {:ok, _} = Tags.insert(original_attrs)
 
-      duplicate_attrs = %{name: "Varanda Gourmet", category: "infrastructure"}
+      duplicate_attrs = %{name: "Open Space", category: "infrastructure", visibility: "all"}
       assert {:error, changeset} = Tags.insert(duplicate_attrs)
 
       assert Keyword.get(changeset.errors, :name_slug) ==

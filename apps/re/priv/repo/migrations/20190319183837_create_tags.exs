@@ -7,6 +7,7 @@ defmodule Re.Repo.Migrations.CreateTags do
       add :name, :string, null: false
       add :name_slug, :string, null: false
       add :category, :string, null: false, default: "infrastructure"
+      add :visibility, :string, null: false, default: "all"
 
       timestamps()
     end

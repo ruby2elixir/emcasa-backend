@@ -4,24 +4,25 @@ defmodule Re.TagTest do
   alias Re.Tag
 
   test "changeset with valid attributes" do
-    attrs = %{name: "Varanda gourmet", category: "infrastructure"}
+    attrs = %{name: "Open space", category: "infrastructure", visibility: "all"}
 
     changeset = Tag.changeset(%Tag{}, attrs)
 
     assert changeset.valid?
-    assert changeset.changes.name_slug == "varanda-gourmet"
+    assert changeset.changes.name_slug == "open-space"
     assert changeset.changes.uuid != nil
   end
 
   test "changeset with invalid attributes" do
-    attrs = %{name: "Varanda gourmet", category: "invalid-one"}
+    attrs = %{name: "Varanda gourmet", category: "invalid-one", visiblity: "all"}
 
     changeset = Tag.changeset(%Tag{}, attrs)
 
     refute changeset.valid?
 
     assert Keyword.get(changeset.errors, :category) ==
-             {"should be one of: [infrastructure, location, realty]", [validation: :inclusion]}
+             {"should be one of: [infrastructure, location, realty, view]",
+              [validation: :inclusion]}
   end
 
   test "changeset with missing attributes" do
