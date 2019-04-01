@@ -4,7 +4,7 @@ defmodule Re.TagTest do
   alias Re.Tag
 
   test "changeset with valid attributes" do
-    attrs = %{name: "Open space", category: "infrastructure", visibility: "all"}
+    attrs = %{name: "Open space", category: "infrastructure", visibility: "public"}
 
     changeset = Tag.changeset(%Tag{}, attrs)
 
@@ -14,7 +14,7 @@ defmodule Re.TagTest do
   end
 
   test "changeset with invalid attributes" do
-    attrs = %{name: "Varanda gourmet", category: "invalid-one", visiblity: "all"}
+    attrs = %{name: "Varanda gourmet", category: "invalid-one", visiblity: "public"}
 
     changeset = Tag.changeset(%Tag{}, attrs)
 

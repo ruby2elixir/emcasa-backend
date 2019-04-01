@@ -16,8 +16,8 @@ defmodule Re.Tag do
   schema "tags" do
     field :name, :string
     field :name_slug, :string
-    field :category, :string
-    field :visibility, :string
+    field :category, :string, default: "infrastructure"
+    field :visibility, :string, default: "public"
 
     many_to_many :listings, Re.Listing,
       join_through: Re.ListingTag,
@@ -33,7 +33,7 @@ defmodule Re.Tag do
 
   @categories ~w(infrastructure location realty view)
 
-  @visibilities ~w(all admin)
+  @visibilities ~w(public private)
 
   def changeset(struct, params \\ %{}) do
     struct

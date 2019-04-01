@@ -189,7 +189,7 @@ defmodule Re.Factory do
       name: name,
       name_slug: name_slug,
       category: Enum.random(~w(infrastructure location realty view)),
-      visibility: "all"
+      visibility: "public"
     }
   end
 
