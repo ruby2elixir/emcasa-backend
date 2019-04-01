@@ -8,6 +8,42 @@ defmodule Re.TagsTest do
 
   import Re.Factory
 
+  describe "all/0" do
+    test "should fetch all tags" do
+      %{uuid: uuid_1} = insert(:tag, name: "feature 1", name_slug: "feature-1")
+      %{uuid: uuid_2} = insert(:tag, name: "feature 2", name_slug: "feature-2")
+      %{uuid: uuid_3} = insert(:tag, name: "feature 3", name_slug: "feature-3")
+
+      tags_uuids =
+        Tags.all()
+        |> Enum.map(fn tag -> tag.uuid end)
+
+      assert Enum.member?(tags_uuids, uuid_1)
+      assert Enum.member?(tags_uuids, uuid_2)
+      assert Enum.member?(tags_uuids, uuid_3)
+    end
+  end
+
+  describe "get/0" do
+    test "should fetch specific tag" do
+      %{uuid: uuid_1} = insert(:tag, name: "feature 1", name_slug: "feature-1")
+      insert(:tag, name: "feature 2", name_slug: "feature-2")
+      insert(:tag, name: "feature 3", name_slug: "feature-3")
+
+      {:ok, tag} = Tags.get(uuid_1)
+
+      assert uuid_1 == tag.uuid
+    end
+
+    test "should return error when no tag is found" do
+      insert(:tag, name: "feature 1", name_slug: "feature-1")
+      insert(:tag, name: "feature 2", name_slug: "feature-2")
+      insert(:tag, name: "feature 3", name_slug: "feature-3")
+
+      assert {:error, :not_found} = Tags.get(UUID.uuid4())
+    end
+  end
+
   describe "with_ids/1" do
     test "should fetch tags with uuids" do
       %{uuid: uuid_1} = insert(:tag, name: "feature 1", name_slug: "feature-1")

@@ -60,15 +60,26 @@ defmodule Re.FilteringTest do
         insert(:listing)
         |> Listings.upsert_tags([tag_1.uuid])
 
-      {:ok, _} =
-        insert(:listing)
-        |> Listings.upsert_tags([tag_1.uuid])
-
       result =
         Filtering.apply(Listing, %{tags_slug: ["non-existent-tag-1"]})
         |> Repo.all()
 
       assert 0 == Enum.count(result)
+    end
+
+    test "filter by empty tag slug name" do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      {:ok, listing_1} =
+        insert(:listing)
+        |> Listings.upsert_tags([tag_1.uuid])
+
+      result =
+        Filtering.apply(Listing, %{tags_slug: []})
+        |> Repo.all()
+
+      assert 1 == Enum.count(result)
+      assert Enum.member?(Enum.map(result, & &1.id), listing_1.id)
     end
   end
 
@@ -122,15 +133,26 @@ defmodule Re.FilteringTest do
         insert(:listing)
         |> Listings.upsert_tags([tag_1.uuid])
 
-      {:ok, _} =
-        insert(:listing)
-        |> Listings.upsert_tags([tag_1.uuid])
-
       result =
         Filtering.apply(Listing, %{tags_uuid: [UUID.uuid4()]})
         |> Repo.all()
 
       assert 0 == Enum.count(result)
+    end
+
+    test "filter by empty tag id" do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      {:ok, listing_1} =
+        insert(:listing)
+        |> Listings.upsert_tags([tag_1.uuid])
+
+      result =
+        Filtering.apply(Listing, %{tags_id: []})
+        |> Repo.all()
+
+      assert 1 == Enum.count(result)
+      assert Enum.member?(Enum.map(result, & &1.id), listing_1.id)
     end
   end
 end
