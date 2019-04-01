@@ -308,7 +308,7 @@ defmodule Re.ListingsTest do
     end
   end
 
-  describe "insert/2" do
+  describe "insert/3" do
     @insert_listing_params %{
       "type" => "Apartamento",
       "complement" => "100",
@@ -376,6 +376,41 @@ defmodule Re.ListingsTest do
 
       assert {:ok, listing} = Listings.insert(@insert_listing_params, address, user)
       assert Repo.get(Listing, listing.id)
+    end
+  end
+
+  describe "insert/4" do
+    @insert_development_listing_params %{
+      "type" => "Apartamento",
+      "has_elevator" => true,
+      "description" => "Awesome new brand building"
+    }
+
+    test "should insert development listing" do
+      address = insert(:address)
+      development = insert(:development, address_id: address.id)
+      user = insert(:user, role: "admin")
+
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_development_listing_params, address, user, development)
+
+      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
+      assert retrieved_listing.development_uuid == development.uuid
+      assert retrieved_listing.address_id == address.id
+      assert retrieved_listing.user_id == user.id
+      assert retrieved_listing.uuid
+    end
+
+    test "should set is_exportable to false" do
+      address = insert(:address)
+      development = insert(:development, address_id: address.id)
+      user = insert(:user, role: "admin")
+
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_development_listing_params, address, user, development)
+
+      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
+      assert retrieved_listing.is_exportable == false
     end
   end
 

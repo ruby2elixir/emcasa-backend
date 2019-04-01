@@ -58,3 +58,7 @@ config :re_integrations,
   credipronto_account_id: "test_account_id",
   pipedrive_webhook_user: "testuser",
   pipedrive_webhook_pass: "testpass"
+
+config :junit_formatter,
+  report_file: "report_file_test.xml",
+  print_report_file: true

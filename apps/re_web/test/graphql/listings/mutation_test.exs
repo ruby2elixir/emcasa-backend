@@ -1,5 +1,8 @@
 defmodule ReWeb.GraphQL.Listings.MutationTest do
-  use ReWeb.ConnCase
+  use ReWeb.{
+    AbsintheAssertions,
+    ConnCase
+  }
 
   import Re.Factory
 
@@ -311,6 +314,134 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert [%{"message" => "price: must be greater than or equal to 250000", "code" => 422}] =
                json_response(conn, 200)["errors"]
     end
+
+    @insert_development_listing_mutation """
+      mutation InsertListing ($input: ListingInput!) {
+        insertListing(input: $input) {
+          id
+          type
+          address {
+            city
+            state
+            lat
+            lng
+            neighborhood
+            street
+            streetNumber
+            postalCode
+          }
+          owner {
+            id
+          }
+          development {
+            uuid
+            name
+            title
+            phase
+            builder
+            description
+          }
+          description
+          hasElevator
+          matterportCode
+          isActive
+          isExportable
+        }
+      }
+    """
+
+    test "admin should insert development listing", %{
+      admin_conn: conn,
+      admin_user: user,
+      listing: listing,
+      old_address: address
+    } do
+      development = insert(:development, address_id: address.id)
+      variables = insert_development_listing_variables(listing, address.id, development.uuid)
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@insert_development_listing_mutation, variables)
+        )
+
+      assert %{
+               "insertListing" =>
+                 %{
+                   "address" => associated_address,
+                   "owner" => owner,
+                   "development" => associated_development
+                 } = inserted_listing
+             } = json_response(conn, 200)["data"]
+
+      assert inserted_listing["id"]
+      assert inserted_listing["type"] == listing.type
+      assert inserted_listing["description"] == listing.description
+      assert inserted_listing["hasElevator"] == listing.has_elevator
+      assert inserted_listing["matterportCode"] == listing.matterport_code
+
+      refute inserted_listing["isExportable"]
+      refute inserted_listing["isActive"]
+
+      assert associated_address["city"] == address.city
+      assert associated_address["state"] == address.state
+      assert associated_address["lat"] == address.lat
+      assert associated_address["lng"] == address.lng
+      assert associated_address["neighborhood"] == address.neighborhood
+      assert associated_address["street"] == address.street
+      assert associated_address["streetNumber"] == address.street_number
+      assert associated_address["postalCode"] == address.postal_code
+
+      assert associated_development["uuid"] == development.uuid
+      assert associated_development["name"] == development.name
+      assert associated_development["title"] == development.title
+      assert associated_development["phase"] == development.phase
+      assert associated_development["builder"] == development.builder
+      assert associated_development["description"] == development.description
+
+      assert owner["id"] == to_string(user.id)
+    end
+
+    test "regular user should not insert development listing", %{
+      user_conn: conn,
+      listing: listing,
+      old_address: address
+    } do
+      %{uuid: development_uuid} = insert(:development, address_id: address.id)
+      variables = insert_development_listing_variables(listing, address.id, development_uuid)
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@insert_development_listing_mutation, variables)
+        )
+
+      assert %{"insertListing" => nil} == json_response(conn, 200)["data"]
+
+      assert_forbidden_response(json_response(conn, 200))
+    end
+
+    test "unautenticated user should not insert development listing", %{
+      unauthenticated_conn: conn,
+      listing: listing,
+      old_address: address
+    } do
+      %{uuid: development_uuid} = insert(:development, address_id: address.id)
+      variables = insert_development_listing_variables(listing, address.id, development_uuid)
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@insert_development_listing_mutation, variables)
+        )
+
+      assert %{"insertListing" => nil} == json_response(conn, 200)["data"]
+
+      assert_unauthorized_response(json_response(conn, 200))
+    end
   end
 
   describe "updateListing" do
@@ -444,5 +575,18 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
+  end
+
+  def insert_development_listing_variables(listing, address_id, development_uuid) do
+    %{
+      "input" => %{
+        "type" => listing.type,
+        "description" => listing.description,
+        "hasElevator" => listing.has_elevator,
+        "matterportCode" => listing.matterport_code,
+        "address_id" => address_id,
+        "development_uuid" => development_uuid
+      }
+    }
   end
 end

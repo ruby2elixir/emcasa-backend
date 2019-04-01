@@ -64,13 +64,7 @@ defmodule Re.UnitTest do
 
       assert Keyword.get(changeset.errors, :area) == {"can't be blank", [validation: :required]}
 
-      assert Keyword.get(changeset.errors, :garage_type) ==
-               {"can't be blank", [validation: :required]}
-
       assert Keyword.get(changeset.errors, :suites) == {"can't be blank", [validation: :required]}
-
-      assert Keyword.get(changeset.errors, :dependencies) ==
-               {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :development_uuid) ==
                {"can't be blank", [validation: :required]}

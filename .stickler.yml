@@ -1,0 +1,7 @@
+---
+linters:
+    credo:
+      ignore-checks: duplicated
+      all: 'true'
+      all-priorities: 'true'
+      strict: 'true'

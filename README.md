@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/emcasa/backend.svg?branch=master)](https://travis-ci.org/emcasa/backend)
+[![CircleCI](https://circleci.com/gh/emcasa/backend.svg?style=svg)](https://circleci.com/gh/emcasa/backend)
 [![Ebert](https://ebertapp.io/github/emcasa/backend.svg)](https://ebertapp.io/github/emcasa/backend)
-[![Coverage Status](https://coveralls.io/repos/github/emcasa/backend/badge.svg)](https://coveralls.io/github/emcasa/backend)
+[![Coverage Status](https://coveralls.io/repos/github/emcasa/backend/badge.svg?branch=master)](https://coveralls.io/github/emcasa/backend?branch=master)
 [![codebeat badge](https://codebeat.co/badges/eaf3bdc4-572b-4c84-8a93-347850ca530c)](https://codebeat.co/projects/github-com-emcasa-backend-master)
 
 # Re WebService

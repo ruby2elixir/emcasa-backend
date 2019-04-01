@@ -18,7 +18,8 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     unit_params =
       string_params_for(:unit, %{
         development_uuid: development.uuid,
-        listing_id: listing.id
+        listing_id: listing.id,
+        garage_type: "CONDOMINIUM"
       })
       |> Map.delete("uuid")
 
@@ -79,7 +80,7 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       assert insert_unit["restrooms"] == unit_params["restrooms"]
       assert insert_unit["area"] == unit_params["area"]
       assert insert_unit["garage_spots"] == unit_params["garage_spots"]
-      assert insert_unit["garage_type"] == unit_params["garage_type"]
+      assert insert_unit["garage_type"] == String.downcase(unit_params["garage_type"])
       assert insert_unit["suites"] == unit_params["suites"]
       assert insert_unit["dependencies"] == unit_params["dependencies"]
       assert insert_unit["balconies"] == unit_params["balconies"]

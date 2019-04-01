@@ -7,6 +7,7 @@ defmodule ReWeb.Resolvers.Listings do
   alias Re.{
     Addresses,
     Addresses.Neighborhoods,
+    Developments,
     Filtering,
     Listings,
     Listings.Featured,
@@ -40,6 +41,21 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
+  def insert(%{input: %{development_uuid: _} = listing_params}, %{
+        context: %{current_user: current_user}
+      }) do
+    with :ok <-
+           Bodyguard.permit(Listings, :create_development_listing, current_user, listing_params),
+         {:ok, address} <- get_address(listing_params),
+         {:ok, development} <- get_development(listing_params),
+         {:ok, listing} <- Listings.insert(listing_params, address, current_user, development) do
+      {:ok, listing}
+    else
+      {:error, _, error, _} -> {:error, error}
+      error -> error
+    end
+  end
+
   def insert(%{input: listing_params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, current_user, listing_params),
          {:ok, address} <- get_address(listing_params),
@@ -54,6 +70,9 @@ defmodule ReWeb.Resolvers.Listings do
   defp get_address(%{address: address_params}), do: Addresses.insert_or_update(address_params)
   defp get_address(%{address_id: id}), do: Addresses.get_by_id(id)
   defp get_address(_), do: {:error, :bad_request}
+
+  defp get_development(%{development_uuid: uuid}), do: Developments.get(uuid)
+  defp get_development(_), do: {:error, :bad_request}
 
   def update(%{id: id, input: listing_params}, %{
         context: %{current_user: current_user}
