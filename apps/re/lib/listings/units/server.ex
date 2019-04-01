@@ -20,12 +20,31 @@ defmodule Re.Listings.Units.Server do
   @spec init(term) :: {:ok, term}
   def init(args) do
     PubSub.subscribe("new_unit")
+    PubSub.subscribe("update_unit")
 
     {:ok, args}
   end
 
   @spec handle_info(map(), any) :: {:noreply, any}
   def handle_info(%{topic: "new_unit", type: :new, new: unit}, state) do
+    with {:ok, listing} <- Listings.get(unit.listing_id),
+         units <- Units.by_listing(unit.listing_id),
+         unit_price_list <- create_price_list(units),
+         {:ok, _listing} <- Propagator.update_listing(listing, unit_price_list) do
+      {:noreply, state}
+    else
+      error ->
+        Logger.warn("Error when copy unit info to listing. Reason: #{inspect(error)}")
+
+        {:noreply, [error | state]}
+    end
+  end
+
+  @spec handle_info(map(), any) :: {:noreply, any}
+  def handle_info(
+        %{topic: "update_unit", type: :update, content: %{new: unit}},
+        state
+      ) do
     with {:ok, listing} <- Listings.get(unit.listing_id),
          units <- Units.by_listing(unit.listing_id),
          unit_price_list <- create_price_list(units),

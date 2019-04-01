@@ -20,6 +20,12 @@ defmodule Re.Units do
 
   def query(_query, _args), do: Re.Unit
 
+  def by_listing(listing_id) do
+    Unit
+    |> Queries.by_listing(listing_id)
+    |> Repo.all()
+  end
+
   def insert(params, development, listing) do
     %Unit{}
     |> Changeset.change(development_uuid: development.uuid)
@@ -29,11 +35,18 @@ defmodule Re.Units do
     |> publish_new()
   end
 
-  def by_listing(listing_id) do
-    Unit
-    |> Queries.by_listing(listing_id)
-    |> Repo.all()
+  def update(unit, params) do
+    changeset =
+      unit
+      |> Unit.changeset(params)
+
+    changeset
+    |> Repo.update()
+    |> publish_update(changeset)
   end
 
   defp publish_new(result), do: PubSub.publish_new(result, "new_unit")
+
+  defp publish_update(result, changeset),
+    do: PubSub.publish_update(result, changeset, "update_unit")
 end
