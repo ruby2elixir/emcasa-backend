@@ -148,7 +148,7 @@ defmodule Re.FilteringTest do
         |> Listings.upsert_tags([tag_1.uuid])
 
       result =
-        Filtering.apply(Listing, %{tags_id: []})
+        Filtering.apply(Listing, %{tags_uuid: []})
         |> Repo.all()
 
       assert 1 == Enum.count(result)
