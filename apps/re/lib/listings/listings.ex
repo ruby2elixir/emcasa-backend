@@ -13,6 +13,7 @@ defmodule Re.Listings do
     Listings.Queries,
     PubSub,
     Repo,
+    Tags,
     User
   }
 
@@ -65,6 +66,7 @@ defmodule Re.Listings do
   @partial_preload [
     :address,
     :listings_favorites,
+    :tags,
     images: Images.Queries.listing_preload()
   ]
 
@@ -203,6 +205,7 @@ defmodule Re.Listings do
     :in_person_visits,
     :listings_favorites,
     :interests,
+    :tags,
     images: Images.Queries.listing_preload()
   ]
 
@@ -211,5 +214,14 @@ defmodule Re.Listings do
     |> Queries.order_by()
     |> Queries.preload_relations(@full_preload)
     |> Repo.all()
+  end
+
+  def upsert_tags(listing, tag_uuids) do
+    tags = Tags.list_by_uuids(tag_uuids)
+
+    listing
+    |> Repo.preload([:tags])
+    |> Listing.changeset_update_tags(tags)
+    |> Repo.update()
   end
 end

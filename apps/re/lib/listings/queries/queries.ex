@@ -17,6 +17,7 @@ defmodule Re.Listings.Queries do
     :tour_visualisations,
     :listings_favorites,
     :in_person_visits,
+    :tags,
     interests: Interests.Queries.with_type(),
     images: Images.Queries.listing_preload()
   ]

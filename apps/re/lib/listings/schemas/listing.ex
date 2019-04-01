@@ -59,6 +59,11 @@ defmodule Re.Listing do
 
     has_many :units, Re.Unit
 
+    many_to_many :tags, Re.Tag,
+      join_through: Re.ListingTag,
+      join_keys: [listing_uuid: :uuid, tag_uuid: :uuid],
+      on_replace: :delete
+
     timestamps()
   end
 
@@ -124,6 +129,12 @@ defmodule Re.Listing do
     |> validate_required(@development_required)
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
     |> generate_uuid()
+  end
+
+  def changeset_update_tags(struct, tags) do
+    struct
+    |> change()
+    |> put_assoc(:tags, tags)
   end
 
   @more_than_zero_attributes ~w(property_tax maintenance_fee

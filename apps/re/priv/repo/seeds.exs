@@ -1,23 +1,42 @@
 alias Re.{
   Address,
+  Calendars.TourAppointment,
   Development,
   Favorite,
   Image,
   Interest,
   InterestType,
+  Interests.ContactRequest,
   Listing,
   Listings.PriceHistory,
+  Listings.StatusHistory,
+  ListingTag,
+  PriceSuggestions.Request,
   Repo,
+  Statistics.InPersonVisit,
+  Statistics.ListingVisualization,
+  Statistics.TourVisualization,
+  Tags,
   Unit,
   User
 }
 
 Repo.delete_all(Image)
+Repo.delete_all(InPersonVisit)
 Repo.delete_all(Interest)
-Repo.delete_all(Listing)
-Repo.delete_all(Address)
-Repo.delete_all(User)
+Repo.delete_all(Favorite)
+Repo.delete_all(ListingTag)
+Repo.delete_all(ListingVisualization)
+Repo.delete_all(PriceHistory)
+Repo.delete_all(StatusHistory)
+Repo.delete_all(TourAppointment)
+Repo.delete_all(TourVisualization)
 Repo.delete_all(Unit)
+Repo.delete_all(Listing)
+Repo.delete_all(Request)
+Repo.delete_all(Address)
+Repo.delete_all(ContactRequest)
+Repo.delete_all(User)
 Repo.delete_all(Development)
 
 {:ok, admin1} =
@@ -168,6 +187,8 @@ Repo.delete_all(Development)
     is_active: true
   })
 
+all_tags = Re.Tags.all()
+
 {:ok, listing1} =
   Repo.insert(%Listing{
     type: "Apartamento",
@@ -184,6 +205,10 @@ Repo.delete_all(Development)
     address: address1,
     status: "active"
   })
+
+Tags.all()
+|> Enum.map(fn tag -> %ListingTag{listing_id: listing1.id, tag_uuid: tag.uuid} end)
+|> Enum.map(&Repo.insert/1)
 
 {:ok, listing2} =
   Repo.insert(%Listing{

@@ -6,7 +6,7 @@ defmodule Re.Address do
 
   import Ecto.Changeset
 
-  alias Re.Addresses.Slugs
+  alias Re.Slugs
 
   schema "addresses" do
     field :street, :string
