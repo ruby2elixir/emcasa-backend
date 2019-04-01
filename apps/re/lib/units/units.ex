@@ -10,7 +10,8 @@ defmodule Re.Units do
   alias Re.{
     PubSub,
     Repo,
-    Unit
+    Unit,
+    Units.Queries
   }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
@@ -26,6 +27,12 @@ defmodule Re.Units do
     |> Unit.changeset(params)
     |> Repo.insert()
     |> publish_new()
+  end
+
+  def by_listing(listing_id) do
+    Unit
+    |> Queries.by_listing(listing_id)
+    |> Repo.all()
   end
 
   defp publish_new(result), do: PubSub.publish_new(result, "new_unit")
