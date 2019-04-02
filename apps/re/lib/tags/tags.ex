@@ -8,12 +8,19 @@ defmodule Re.Tags do
   alias Re.{
     Tag,
     Tags.Queries,
-    Repo
+    Repo,
+    Slugs
   }
 
   def all do
     Tag
     |> Re.Repo.all()
+  end
+
+  def search(name) do
+    Slugs.sluggify(name)
+    |> Queries.match_slug()
+    |> Repo.all()
   end
 
   def get(id) do

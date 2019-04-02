@@ -3,6 +3,12 @@ defmodule Re.Tags.Queries do
 
   import Ecto.Query
 
+  def match_slug(query \\ Tag, name_slug)
+
+  def match_slug(query, name_slug) do
+    from(i in query, where: like(i.name_slug, ^"%#{name_slug}%"))
+  end
+
   def with_uuids(query \\ Tag, uuids)
 
   def with_uuids(query, uuids), do: from(i in query, where: i.uuid in ^uuids)

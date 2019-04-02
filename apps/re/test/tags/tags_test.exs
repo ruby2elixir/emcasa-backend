@@ -24,6 +24,22 @@ defmodule Re.TagsTest do
     end
   end
 
+  describe "search/1" do
+    test "should fetch matching tags" do
+      %{uuid: uuid_1} = insert(:tag, name: "Open space", name_slug: "open-space")
+      %{uuid: uuid_2} = insert(:tag, name: "Leisure Area", name_slug: "leisure-area")
+      %{uuid: uuid_3} = insert(:tag, name: "Barbecue Area", name_slug: "barbecue-area")
+
+      tags_uuids =
+        Tags.search("area")
+        |> Enum.map(& &1.uuid)
+
+      refute Enum.member?(tags_uuids, uuid_1)
+      assert Enum.member?(tags_uuids, uuid_2)
+      assert Enum.member?(tags_uuids, uuid_3)
+    end
+  end
+
   describe "get/0" do
     test "should fetch specific tag" do
       %{uuid: uuid_1} = insert(:tag, name: "feature 1", name_slug: "feature-1")
