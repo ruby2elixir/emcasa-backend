@@ -26,6 +26,15 @@ defmodule Re.Units do
     |> Repo.all()
   end
 
+  def get(uuid), do: do_get(Unit, uuid)
+
+  defp do_get(query, uuid) do
+    case Repo.get(query, uuid) do
+      nil -> {:error, :not_found}
+      unit -> {:ok, unit}
+    end
+  end
+
   def insert(params, development, listing) do
     %Unit{}
     |> Changeset.change(development_uuid: development.uuid)
@@ -35,9 +44,11 @@ defmodule Re.Units do
     |> publish_new()
   end
 
-  def update(unit, params) do
+  def update(unit, params, development, listing) do
     changeset =
       unit
+      |> Changeset.change(development_uuid: development.uuid)
+      |> Changeset.change(listing_id: listing.id)
       |> Unit.changeset(params)
 
     changeset

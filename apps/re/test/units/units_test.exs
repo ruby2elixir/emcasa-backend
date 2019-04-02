@@ -63,12 +63,7 @@ defmodule Re.UnitsTest do
       listing = insert(:listing, development_uuid: development.uuid, price: 1_000_000)
       unit = insert(:unit, development_uuid: development.uuid, price: 500_000)
 
-      params =
-        @update_unit_attrs
-        |> Map.merge(%{development_uuid: development.uuid})
-        |> Map.merge(%{listing_id: listing.id})
-
-      assert {:ok, _updated_unit} = Units.update(unit, params)
+      assert {:ok, _updated_unit} = Units.update(unit, @update_unit_attrs, development, listing)
 
       GenServer.call(Server, :inspect)
 
