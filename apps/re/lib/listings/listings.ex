@@ -135,12 +135,30 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
-  def update(listing, params, address, user) do
+  def update(listing, params, address, user, development \\ nil)
+
+  def update(listing, params, address, user, nil) do
     changeset =
       listing
       |> Changeset.change(address_id: address.id)
       |> Listing.changeset(params, user.role)
       |> deactivate_if_not_admin(user)
+
+    changeset
+    |> Repo.update()
+    |> PubSub.publish_update(changeset, "update_listing", %{user: user})
+  end
+
+  def update(listing, params, address, user, development) do
+    changeset =
+      listing
+      |> Changeset.change(%{
+        development_uuid: development.uuid,
+        address_id: address.id,
+        user_id: user.id,
+        is_exportable: false
+      })
+      |> Listing.development_changeset(params)
 
     changeset
     |> Repo.update()

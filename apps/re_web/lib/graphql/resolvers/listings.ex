@@ -74,6 +74,19 @@ defmodule ReWeb.Resolvers.Listings do
   defp get_development(%{development_uuid: uuid}), do: Developments.get(uuid)
   defp get_development(_), do: {:error, :bad_request}
 
+  def update(%{id: id, input: %{development_uuid: _} = listing_params}, %{
+        context: %{current_user: current_user}
+      }) do
+    with {:ok, listing} <- Listings.get(id),
+         :ok <- Bodyguard.permit(Listings, :update_development_listing, current_user, listing),
+         {:ok, address} <- get_address(listing_params),
+         {:ok, development} <- get_development(listing_params),
+         {:ok, listing} <-
+           Listings.update(listing, listing_params, address, current_user, development) do
+      {:ok, listing}
+    end
+  end
+
   def update(%{id: id, input: listing_params}, %{
         context: %{current_user: current_user}
       }) do
