@@ -15,20 +15,10 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     development = insert(:development)
     listing = insert(:listing, development: development)
 
-    # todo remove setup in favor of: https://github.com/rstacruz/cheatsheets/blob/master/exunit.md#setup-1
-    unit_params =
-      string_params_for(:unit, %{
-        development_uuid: development.uuid,
-        listing_id: listing.id,
-        garage_type: "CONDOMINIUM"
-      })
-      |> Map.delete("uuid")
-
-    old_unit =
+    unit =
       insert(:unit, %{
         development_uuid: development.uuid,
-        listing_id: listing.id,
-        garage_type: "CONDOMINIUM"
+        listing_id: listing.id
       })
 
     {
@@ -36,8 +26,10 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       unauthenticated_conn: conn,
       admin_conn: login_as(conn, admin_user),
       user_conn: login_as(conn, user_user),
-      old_unit: old_unit,
-      unit_params: unit_params
+      development: development,
+      listing: listing,
+      new_unit: build(:unit),
+      old_unit: unit
     }
   end
 
@@ -67,9 +59,11 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
 
     test "admin should add unit", %{
       admin_conn: conn,
-      unit_params: unit_params
+      new_unit: new_unit,
+      development: development,
+      listing: listing
     } do
-      variables = %{"input" => unit_params}
+      variables = insert_unit_variables(new_unit, development, listing)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
@@ -79,28 +73,30 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
              } = json_response(conn, 200)["data"]
 
       assert insert_unit["uuid"]
-      assert insert_unit["complement"] == unit_params["complement"]
-      assert insert_unit["price"] == unit_params["price"]
-      assert insert_unit["property_tax"] == unit_params["property_tax"]
-      assert insert_unit["maintenance_fee"] == unit_params["maintenance_fee"]
-      assert insert_unit["floor"] == unit_params["floor"]
-      assert insert_unit["rooms"] == unit_params["rooms"]
-      assert insert_unit["bathrooms"] == unit_params["bathrooms"]
-      assert insert_unit["restrooms"] == unit_params["restrooms"]
-      assert insert_unit["area"] == unit_params["area"]
-      assert insert_unit["garage_spots"] == unit_params["garage_spots"]
-      assert insert_unit["garage_type"] == String.downcase(unit_params["garage_type"])
-      assert insert_unit["suites"] == unit_params["suites"]
-      assert insert_unit["dependencies"] == unit_params["dependencies"]
-      assert insert_unit["balconies"] == unit_params["balconies"]
-      assert insert_unit["status"] == unit_params["status"]
+      assert insert_unit["complement"] == new_unit.complement
+      assert insert_unit["price"] == new_unit.price
+      assert insert_unit["property_tax"] == new_unit.property_tax
+      assert insert_unit["maintenance_fee"] == new_unit.maintenance_fee
+      assert insert_unit["floor"] == new_unit.floor
+      assert insert_unit["rooms"] == new_unit.rooms
+      assert insert_unit["bathrooms"] == new_unit.bathrooms
+      assert insert_unit["restrooms"] == new_unit.restrooms
+      assert insert_unit["area"] == new_unit.area
+      assert insert_unit["garage_spots"] == new_unit.garage_spots
+      assert insert_unit["garage_type"] == new_unit.garage_type
+      assert insert_unit["suites"] == new_unit.suites
+      assert insert_unit["dependencies"] == new_unit.dependencies
+      assert insert_unit["balconies"] == new_unit.balconies
+      assert insert_unit["status"] == new_unit.status
     end
 
     test "regular user should not add unit", %{
       user_conn: conn,
-      unit_params: unit_params
+      new_unit: new_unit,
+      development: development,
+      listing: listing
     } do
-      variables = %{"input" => unit_params}
+      variables = insert_unit_variables(new_unit, development, listing)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
@@ -112,9 +108,11 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
 
     test "unauthenticated user should not add unit", %{
       unauthenticated_conn: conn,
-      unit_params: unit_params
+      new_unit: new_unit,
+      development: development,
+      listing: listing
     } do
-      variables = %{"input" => unit_params}
+      variables = insert_unit_variables(new_unit, development, listing)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
@@ -152,9 +150,11 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     test "admin should update a unit", %{
       admin_conn: conn,
       old_unit: old_unit,
-      unit_params: unit_params
+      new_unit: new_unit,
+      development: development,
+      listing: listing
     } do
-      variables = update_unit_variables(old_unit.uuid, unit_params)
+      variables = update_unit_variables(old_unit.uuid, new_unit, development, listing)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
@@ -164,29 +164,31 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
              } = json_response(conn, 200)["data"]
 
       assert updated_unit["uuid"]
-      assert updated_unit["complement"] == unit_params["complement"]
-      assert updated_unit["price"] == unit_params["price"]
-      assert updated_unit["property_tax"] == unit_params["property_tax"]
-      assert updated_unit["maintenance_fee"] == unit_params["maintenance_fee"]
-      assert updated_unit["floor"] == unit_params["floor"]
-      assert updated_unit["rooms"] == unit_params["rooms"]
-      assert updated_unit["bathrooms"] == unit_params["bathrooms"]
-      assert updated_unit["restrooms"] == unit_params["restrooms"]
-      assert updated_unit["area"] == unit_params["area"]
-      assert updated_unit["garage_spots"] == unit_params["garage_spots"]
-      assert updated_unit["garage_type"] == String.downcase(unit_params["garage_type"])
-      assert updated_unit["suites"] == unit_params["suites"]
-      assert updated_unit["dependencies"] == unit_params["dependencies"]
-      assert updated_unit["balconies"] == unit_params["balconies"]
-      assert updated_unit["status"] == unit_params["status"]
+      assert updated_unit["complement"] == new_unit.complement
+      assert updated_unit["price"] == new_unit.price
+      assert updated_unit["property_tax"] == new_unit.property_tax
+      assert updated_unit["maintenance_fee"] == new_unit.maintenance_fee
+      assert updated_unit["floor"] == new_unit.floor
+      assert updated_unit["rooms"] == new_unit.rooms
+      assert updated_unit["bathrooms"] == new_unit.bathrooms
+      assert updated_unit["restrooms"] == new_unit.restrooms
+      assert updated_unit["area"] == new_unit.area
+      assert updated_unit["garage_spots"] == new_unit.garage_spots
+      assert updated_unit["garage_type"] == new_unit.garage_type
+      assert updated_unit["suites"] == new_unit.suites
+      assert updated_unit["dependencies"] == new_unit.dependencies
+      assert updated_unit["balconies"] == new_unit.balconies
+      assert updated_unit["status"] == new_unit.status
     end
 
     test "commom user should not update a unit", %{
       user_conn: conn,
       old_unit: old_unit,
-      unit_params: unit_params
+      new_unit: new_unit,
+      development: development,
+      listing: listing
     } do
-      variables = update_unit_variables(old_unit.uuid, unit_params)
+      variables = update_unit_variables(old_unit.uuid, new_unit, development, listing)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
@@ -199,9 +201,11 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     test "unauthenticated user should not update a unit", %{
       unauthenticated_conn: conn,
       old_unit: old_unit,
-      unit_params: unit_params
+      new_unit: new_unit,
+      development: development,
+      listing: listing
     } do
-      variables = update_unit_variables(old_unit.uuid, unit_params)
+      variables = update_unit_variables(old_unit.uuid, new_unit, development, listing)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
@@ -212,10 +216,38 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     end
   end
 
-  def update_unit_variables(uuid, unit) do
+  def insert_unit_variables(unit, development, listing) do
+    %{
+      "input" => unit_input(unit, development, listing)
+    }
+  end
+
+  def update_unit_variables(uuid, unit, development, listing) do
     %{
       "uuid" => uuid,
-      "input" => unit
+      "input" => unit_input(unit, development, listing)
+    }
+  end
+
+  defp unit_input(unit, development, listing) do
+    %{
+      "complement" => unit.complement,
+      "price" => unit.price,
+      "property_tax" => unit.property_tax,
+      "maintenance_fee" => unit.maintenance_fee,
+      "floor" => unit.floor,
+      "rooms" => unit.rooms,
+      "bathrooms" => unit.bathrooms,
+      "restrooms" => unit.restrooms,
+      "area" => unit.area,
+      "garage_spots" => unit.garage_spots,
+      "garage_type" => String.upcase(unit.garage_type),
+      "suites" => unit.suites,
+      "dependencies" => unit.dependencies,
+      "balconies" => unit.balconies,
+      "status" => unit.status,
+      "listing_id" => listing.id,
+      "development_uuid" => development.uuid
     }
   end
 end
