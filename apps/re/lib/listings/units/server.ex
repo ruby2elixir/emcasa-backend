@@ -63,7 +63,6 @@ defmodule Re.Listings.Units.Server do
   def handle_call(:inspect, _caller, state), do: {:reply, state, state}
 
   defp create_price_list(units) do
-    units
-    |> Enum.map(fn unit -> unit.price end)
+    Enum.map(units, fn unit -> unit.price end)
   end
 end
