@@ -324,9 +324,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_1]
       )
-      |> Re.Listings.upsert_tags([tag_1.uuid])
 
       insert(
         :listing,
@@ -344,9 +344,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_1]
       )
-      |> Re.Listings.upsert_tags([tag_1.uuid])
 
       insert(
         :listing,
@@ -364,9 +364,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_1]
       )
-      |> Re.Listings.upsert_tags([tag_1.uuid])
 
       insert(
         :listing,
@@ -384,9 +384,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_1]
       )
-      |> Re.Listings.upsert_tags([tag_1.uuid])
 
       insert(
         :listing,
@@ -404,9 +404,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_1]
       )
-      |> Re.Listings.upsert_tags([tag_1.uuid])
 
       insert(
         :listing,
@@ -424,9 +424,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_2]
       )
-      |> Re.Listings.upsert_tags([tag_2.uuid])
 
       insert(
         :listing,
@@ -444,9 +444,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_2]
       )
-      |> Re.Listings.upsert_tags([tag_2.uuid])
 
       insert(
         :listing,
@@ -464,9 +464,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_2]
       )
-      |> Re.Listings.upsert_tags([tag_2.uuid])
 
       insert(
         :listing,
@@ -484,9 +484,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_2]
       )
-      |> Re.Listings.upsert_tags([tag_2.uuid])
 
       insert(
         :listing,
@@ -504,9 +504,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_2]
       )
-      |> Re.Listings.upsert_tags([tag_2.uuid])
 
       insert(
         :listing,
@@ -524,9 +524,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 70.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_1, tag_2]
       )
-      |> Re.Listings.upsert_tags([tag_1.uuid, tag_2.uuid])
 
       insert(
         :listing,
@@ -544,9 +544,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 30.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_1, tag_2]
       )
-      |> Re.Listings.upsert_tags([tag_1.uuid, tag_2.uuid])
 
       insert(
         :listing,
@@ -563,9 +563,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 0
+        garage_spots: 0,
+        tags: [tag_1, tag_2]
       )
-      |> Re.Listings.upsert_tags([tag_1.uuid, tag_2.uuid])
 
       insert(
         :listing,
@@ -609,7 +609,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_type: "condominium"
       )
 
-      {:ok, listing1} =
+      listing1 =
         insert(
           :listing,
           price: 900_000,
@@ -630,9 +630,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               lng: 50.0
             ),
           garage_spots: 2,
-          garage_type: "contract"
+          garage_type: "contract",
+          tags: [tag_1, tag_2]
         )
-        |> Re.Listings.upsert_tags([tag_1.uuid, tag_2.uuid])
 
       variables = %{
         "filters" => %{
