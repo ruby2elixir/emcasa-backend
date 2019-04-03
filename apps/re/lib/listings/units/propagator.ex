@@ -6,13 +6,14 @@ defmodule Re.Listings.Units.Propagator do
 
   alias Re.Listings
 
-  def update_listing(
-        %{price: listing_price} = listing,
-        %{price: unit_price}
-      )
-      when is_nil(listing_price) or unit_price < listing_price do
-    Listings.update_price(listing, unit_price)
-  end
+  def update_listing(listing, []), do: {:ok, listing}
 
-  def update_listing(listing, _new_unit), do: {:ok, listing}
+  def update_listing(listing, unit_prices_list) when is_nil(unit_prices_list),
+    do: {:ok, listing}
+
+  def update_listing(listing, unit_price_list) do
+    min_price = Enum.min(unit_price_list)
+
+    Listings.update_price(listing, min_price)
+  end
 end

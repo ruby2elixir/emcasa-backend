@@ -52,5 +52,13 @@ defmodule ReWeb.Types.Unit do
 
       resolve &Resolvers.Units.insert/2
     end
+
+    @desc "Update unit"
+    field :update_unit, type: :unit do
+      arg :uuid, non_null(:uuid)
+      arg :input, non_null(:unit_input)
+
+      resolve &Resolvers.Units.update/2
+    end
   end
 end

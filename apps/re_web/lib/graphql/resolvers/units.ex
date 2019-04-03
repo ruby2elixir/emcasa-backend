@@ -22,6 +22,18 @@ defmodule ReWeb.Resolvers.Units do
     end
   end
 
+  def update(%{uuid: uuid, input: params}, %{
+        context: %{current_user: current_user}
+      }) do
+    with :ok <- Bodyguard.permit(Units, :update_unit, current_user, params),
+         {:ok, unit} <- Units.get(uuid),
+         {:ok, development} <- get_development(params),
+         {:ok, listing} <- get_listing(params),
+         {:ok, new_unit} <- Units.update(unit, params, development, listing) do
+      {:ok, new_unit}
+    end
+  end
+
   def per_listing(listing, _params, %{context: %{loader: loader}}) do
     loader
     |> Dataloader.load(Units, :units, listing)
