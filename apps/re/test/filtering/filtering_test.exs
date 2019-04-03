@@ -155,4 +155,29 @@ defmodule Re.FilteringTest do
       assert Enum.member?(Enum.map(result, & &1.id), listing_1.id)
     end
   end
+
+  describe "apply/2" do
+    test "filter listing with one status" do
+      listing = insert(:listing, status: "active")
+      insert(:listing, status: "inactive")
+
+      result =
+        Filtering.apply(Listing, %{statuses: ["active", "inactive"]})
+        |> Repo.all()
+
+      assert [listing] == result
+    end
+
+    test "filter listing with multiple statuses" do
+      listing_1 = insert(:listing, status: "active")
+      listing_2 = insert(:listing, status: "inactive")
+      insert(:listing, status: "sold")
+
+      result =
+        Filtering.apply(Listing, %{statuses: ["active", "inactive"]})
+        |> Repo.all()
+
+      assert [listing_1, listing_2] == result
+    end
+  end
 end
