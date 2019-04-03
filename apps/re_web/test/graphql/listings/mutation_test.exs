@@ -596,13 +596,14 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       }
     """
 
+    @tag dev: true
     test "admin should update development listing", %{
       admin_conn: conn,
-      old_listing: old_listing,
       listing: new_listing
     } do
       development = insert(:development)
       new_address = insert(:address)
+      old_listing = insert(:listing, development: development, address: new_address)
 
       variables =
         update_development_listing_variables(

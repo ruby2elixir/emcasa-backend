@@ -77,10 +77,10 @@ defmodule ReWeb.Resolvers.Listings do
   def update(%{id: id, input: %{development_uuid: _} = listing_params}, %{
         context: %{current_user: current_user}
       }) do
-    with {:ok, listing} <- Listings.get(id),
+    with {:ok, listing} <- Listings.get_partial_preloaded(id, [:address, :development]),
          :ok <- Bodyguard.permit(Listings, :update_development_listing, current_user, listing),
-         {:ok, address} <- get_address(listing_params),
-         {:ok, development} <- get_development(listing_params),
+         address <- listing.address,
+         development <- listing.development,
          {:ok, listing} <-
            Listings.update(listing, listing_params, address, current_user, development) do
       {:ok, listing}
