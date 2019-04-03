@@ -2,6 +2,8 @@ defmodule Re.Listings.QueriesTest do
   use Re.ModelCase
 
   alias Re.{
+    Filtering,
+    Listing,
     Listings.Queries,
     Repo
   }
@@ -62,7 +64,33 @@ defmodule Re.Listings.QueriesTest do
   end
 
   describe "remaining_count/2" do
-    test "get remaining count with tags" do
+    test "get remaining count with single tag search" do
+      tag_1 = insert(:tag)
+      insert(:listing, tags: [tag_1])
+      insert(:listing, tags: [tag_1])
+
+      result =
+        Listing
+        |> Filtering.apply(%{tags_uuid: [tag_1.uuid]})
+        |> Queries.remaining_count()
+        |> Repo.one()
+
+      assert 2 == result
+    end
+
+    test "get remaining count with multi tag search" do
+      tag_1 = insert(:tag)
+      tag_2 = insert(:tag)
+      insert(:listing, tags: [tag_1, tag_2])
+      insert(:listing, tags: [tag_1, tag_2])
+
+      result =
+        Listing
+        |> Filtering.apply(%{tags_uuid: [tag_1.uuid, tag_2.uuid]})
+        |> Queries.remaining_count()
+        |> Repo.one()
+
+      assert 2 == result
     end
   end
 end
