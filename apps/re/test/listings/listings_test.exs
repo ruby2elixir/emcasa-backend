@@ -61,7 +61,7 @@ defmodule Re.ListingsTest do
           lng: -43.19675540000001
         )
 
-      {:ok, %{id: id1}} =
+      %{id: id1} =
         insert(
           :listing,
           price: 100,
@@ -72,11 +72,11 @@ defmodule Re.ListingsTest do
           address_id: sao_conrado.id,
           type: "Apartamento",
           garage_spots: 3,
-          garage_type: "contract"
+          garage_type: "contract",
+          tags: [tag_1, tag_2]
         )
-        |> Re.Listings.upsert_tags([tag_1.uuid, tag_2.uuid])
 
-      {:ok, %{id: id2}} =
+      %{id: id2} =
         insert(
           :listing,
           price: 110,
@@ -87,11 +87,11 @@ defmodule Re.ListingsTest do
           address_id: leblon.id,
           type: "Apartamento",
           garage_spots: 2,
-          garage_type: "condominium"
+          garage_type: "condominium",
+          tags: [tag_1, tag_2, tag_3]
         )
-        |> Re.Listings.upsert_tags([tag_1.uuid, tag_2.uuid, tag_3.uuid])
 
-      {:ok, %{id: id3}} =
+      %{id: id3} =
         insert(
           :listing,
           price: 90,
@@ -102,9 +102,9 @@ defmodule Re.ListingsTest do
           address_id: botafogo.id,
           type: "Casa",
           garage_spots: 1,
-          garage_type: "contract"
+          garage_type: "contract",
+          tags: [tag_3]
         )
-        |> Re.Listings.upsert_tags([tag_3.uuid])
 
       result = Listings.paginated(%{"max_price" => 105})
       assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
@@ -208,17 +208,13 @@ defmodule Re.ListingsTest do
       leblon = insert(:address, street: "anotherstreet", neighborhood: "Leblon")
       botafogo = insert(:address, street: "onemorestreet", neighborhood: "Botafogo")
 
-      {:ok, %{id: id1}} =
-        insert(:listing, score: 4, address_id: laranjeiras.id, type: "Apartamento")
-        |> Listings.upsert_tags([tag_1.uuid])
+      %{id: id1} =
+        insert(:listing, score: 4, address_id: laranjeiras.id, type: "Apartamento", tags: [tag_1])
 
-      {:ok, %{id: id2}} =
-        insert(:listing, score: 3, address_id: leblon.id, type: "Casa")
-        |> Listings.upsert_tags([tag_2.uuid])
+      %{id: id2} = insert(:listing, score: 3, address_id: leblon.id, type: "Casa", tags: [tag_2])
 
-      {:ok, %{id: id3}} =
-        insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento")
-        |> Listings.upsert_tags([tag_3.uuid])
+      %{id: id3} =
+        insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento", tags: [tag_3])
 
       result = Listings.paginated(%{"neighborhoods" => []})
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
