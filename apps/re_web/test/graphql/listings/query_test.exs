@@ -669,6 +669,43 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
              } == json_response(conn, 200)["data"]["listings"]
     end
 
+    test "should query listing index filtering by status", %{user_conn: conn} do
+      listing_1 = insert(:listing, status: "active")
+      insert(:listing, status: "inactive")
+
+      variables = %{
+        "filters" => %{
+          "statuses" => ["active"]
+        }
+      }
+
+      query = """
+        query Listings($filters: ListingFilterInput) {
+          listings (filters: $filters) {
+            listings {
+              id
+            }
+            filters {
+              statuses
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "id" => to_string(listing_1.id)
+                 }
+               ],
+               "filters" => %{
+                 "statuses" => ["active"]
+               }
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+
     test "should query listing index with order by", %{user_conn: conn} do
       %{id: id1} = insert(:listing, garage_spots: 1, price: 1_000_000, rooms: 2)
       %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 4)

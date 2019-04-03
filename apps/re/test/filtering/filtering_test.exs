@@ -162,7 +162,7 @@ defmodule Re.FilteringTest do
       insert(:listing, status: "inactive")
 
       result =
-        Filtering.apply(Listing, %{statuses: ["active", "inactive"]})
+        Filtering.apply(Listing, %{statuses: ["active"]})
         |> Repo.all()
 
       assert [listing] == result
