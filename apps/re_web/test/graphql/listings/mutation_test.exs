@@ -596,7 +596,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       }
     """
 
-    @tag dev: true
     test "admin should update development listing", %{
       admin_conn: conn,
       listing: new_listing
