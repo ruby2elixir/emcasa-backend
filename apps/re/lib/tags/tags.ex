@@ -2,6 +2,7 @@ defmodule Re.Tags do
   @moduledoc """
   Context for tags.
   """
+  @behaviour Bodyguard.Policy
 
   require Ecto.Query
 
@@ -11,6 +12,12 @@ defmodule Re.Tags do
     Repo,
     Slugs
   }
+
+  defdelegate authorize(action, user, params), to: __MODULE__.Policy
+
+  def data(params), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+
+  def query(_query, _args), do: Tag
 
   def all do
     Tag
