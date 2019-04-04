@@ -204,6 +204,8 @@ defmodule ReWeb.Types.Listing do
     field :cities, list_of(:string)
     field :cities_slug, list_of(:string)
     field :statuses, list_of(:string)
+    field :tags_slug, list_of(non_null(:string))
+    field :tags_uuid, list_of(non_null(:uuid))
   end
 
   object :listing_filter do
@@ -228,6 +230,8 @@ defmodule ReWeb.Types.Listing do
     field :cities, list_of(:string)
     field :cities_slug, list_of(:string)
     field :statuses, list_of(:string)
+    field :tags_slug, list_of(:string)
+    field :tags_uuid, list_of(:uuid)
   end
 
   object :price_history do
