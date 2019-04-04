@@ -3,6 +3,12 @@ defmodule Re.Tags.Queries do
 
   import Ecto.Query
 
+  def public(query \\ Tag)
+
+  def public(query) do
+    from(i in query, where: i.visibility == "public")
+  end
+
   def match_slug(query \\ Tag, name_slug)
 
   def match_slug(query, name_slug) do

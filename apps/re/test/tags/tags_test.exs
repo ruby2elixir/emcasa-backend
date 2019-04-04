@@ -24,6 +24,27 @@ defmodule Re.TagsTest do
     end
   end
 
+  describe "public/0" do
+    test "should fetch only public visible tags" do
+      %{uuid: uuid_1} =
+        insert(:tag, name: "feature 1", name_slug: "feature-1", visibility: "public")
+
+      %{uuid: uuid_2} =
+        insert(:tag, name: "feature 2", name_slug: "feature-2", visibility: "public")
+
+      %{uuid: uuid_3} =
+        insert(:tag, name: "feature 3", name_slug: "feature-3", visibility: "private")
+
+      tags_uuids =
+        Tags.public()
+        |> Enum.map(fn tag -> tag.uuid end)
+
+      assert Enum.member?(tags_uuids, uuid_1)
+      assert Enum.member?(tags_uuids, uuid_2)
+      refute Enum.member?(tags_uuids, uuid_3)
+    end
+  end
+
   describe "search/1" do
     test "should fetch matching tags" do
       %{uuid: uuid_1} = insert(:tag, name: "Open space", name_slug: "open-space")

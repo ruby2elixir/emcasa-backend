@@ -14,7 +14,12 @@ defmodule Re.Tags do
 
   def all do
     Tag
-    |> Re.Repo.all()
+    |> Repo.all()
+  end
+
+  def public do
+    Queries.public()
+    |> Repo.all()
   end
 
   def search(name) do
