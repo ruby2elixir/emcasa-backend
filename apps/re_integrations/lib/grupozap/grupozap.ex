@@ -14,13 +14,14 @@ defmodule ReIntegrations.Grupozap do
         "timestamp" => _,
         "originLeadId" => _,
         "originListingId" => _,
-        "clientListingId" => _,
+        "clientListingId" => client_listing_id,
         "name" => _,
         "email" => _,
         "ddd" => _,
         "phone" => _,
         "message" => _
-      }),
+      })
+      when not is_nil(client_listing_id),
       do: :ok
 
   def validate_payload(payload) do

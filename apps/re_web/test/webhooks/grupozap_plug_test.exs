@@ -19,6 +19,19 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
       "message" => "mah msg"
     }
 
+  @invalid_payload %{
+      "leadOrigin" => "VivaReal",
+      "timestamp" => "2019-01-01T00:00:00.000Z",
+      "originLeadId" => "59ee0fc6e4b043e1b2a6d863",
+      "originListingId" => "87027856",
+      "clientListingId" => nil,
+      "name" => "mah name",
+      "email" => "mah@email",
+      "ddd" => "11",
+      "phone" => "999999999",
+      "message" => "mah msg"
+    }
+
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
 
@@ -61,6 +74,15 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
       conn = post(conn, "/webhooks/grupozap", @payload)
 
       assert text_response(conn, 401) == "Unauthorized"
+
+      refute Repo.one(GrupozapBuyer)
+    end
+
+    @tag capture_log: true
+    test "invalid clientListingId request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/grupozap", @invalid_payload)
+
+      assert text_response(conn, 422) == "Unprocessable Entity"
 
       refute Repo.one(GrupozapBuyer)
     end
