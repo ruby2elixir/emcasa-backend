@@ -157,6 +157,16 @@ defmodule Re.FilteringTest do
   end
 
   describe "apply/2" do
+    test "filter listing by status return all results with empty arrays" do
+      listing = insert(:listing)
+
+      result =
+        Filtering.apply(Listing, %{statuses: []})
+        |> Repo.all()
+
+      assert [listing] == result
+    end
+
     test "filter listing with one status" do
       listing = insert(:listing, status: "active")
       insert(:listing, status: "inactive")
