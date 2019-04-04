@@ -83,6 +83,3 @@ config :account_kit,
 
 config :sentry,
   dsn: System.get_env("SENTRY_DSN")
-
-config :timber,
-  api_key: System.get_env("TIMBER_API_KEY")
