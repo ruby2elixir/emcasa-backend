@@ -35,8 +35,20 @@ defmodule Re.Tags do
     |> Repo.all()
   end
 
-  def get(id) do
-    case Repo.get(Tag, id) do
+  def get(uuid) do
+    case Repo.get(Tag, uuid) do
+      nil -> {:error, :not_found}
+      tag -> {:ok, tag}
+    end
+  end
+
+  def get_public(uuid) do
+    tag =
+      uuid
+      |> Queries.get_public()
+      |> Repo.one()
+
+    case tag do
       nil -> {:error, :not_found}
       tag -> {:ok, tag}
     end

@@ -61,7 +61,7 @@ defmodule Re.TagsTest do
     end
   end
 
-  describe "get/0" do
+  describe "get/1" do
     test "should fetch specific tag" do
       %{uuid: uuid_1} = insert(:tag, name: "feature 1", name_slug: "feature-1")
       insert(:tag, name: "feature 2", name_slug: "feature-2")
@@ -78,6 +78,30 @@ defmodule Re.TagsTest do
       insert(:tag, name: "feature 3", name_slug: "feature-3")
 
       assert {:error, :not_found} = Tags.get(UUID.uuid4())
+    end
+  end
+
+  describe "get_public/1" do
+    test "should fetch public visible tag" do
+      %{uuid: uuid_1} =
+        insert(:tag, name: "feature 1", name_slug: "feature-1", visibility: "public")
+
+      {:ok, tag} = Tags.get_public(uuid_1)
+
+      assert uuid_1 == tag.uuid
+    end
+
+    test "should return error when fetching tag with private visibility" do
+      %{uuid: uuid_1} =
+        insert(:tag, name: "feature 2", name_slug: "feature-2", visibility: "private")
+
+      assert {:error, :not_found} = Tags.get_public(uuid_1)
+    end
+
+    test "should return error when no tag is found" do
+      insert(:tag, name: "feature 1", name_slug: "feature-1")
+
+      assert {:error, :not_found} = Tags.get_public(UUID.uuid4())
     end
   end
 

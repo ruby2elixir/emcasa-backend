@@ -3,6 +3,13 @@ defmodule Re.Tags.Queries do
 
   import Ecto.Query
 
+  def get_public(query \\ Tag, uuid)
+
+  def get_public(query, uuid) do
+    query = public(query)
+    from(i in query, where: i.uuid == ^uuid)
+  end
+
   def public(query \\ Tag)
 
   def public(query) do
