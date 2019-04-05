@@ -35,6 +35,7 @@ defmodule ReIntegrations.Mixfile do
     [
       {:re, in_umbrella: true},
       {:plug_cowboy, "~> 2.0"},
+      {:cowlib, "2.7.0", override: true},
       {:cors_plug, "~> 1.2"},
       {:comeonin, "~> 3.2"},
       {:swoosh, "~> 0.23"},

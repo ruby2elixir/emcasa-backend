@@ -40,6 +40,7 @@ defmodule ReWeb.Mixfile do
       {:phoenix_ecto, "~> 4.0"},
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 2.0"},
+      {:cowlib, "2.7.0", override: true},
       {:cors_plug, "~> 1.2"},
       {:guardian, "~> 1.2.1"},
       {:bodyguard, "~> 2.1"},
