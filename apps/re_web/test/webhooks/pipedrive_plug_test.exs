@@ -1,4 +1,4 @@
-defmodule ReWeb.Pipedrive.PlugTest do
+defmodule ReWeb.Webhooks.PipedrivePlugTest do
   use ReWeb.ConnCase
 
   setup %{conn: conn} do
