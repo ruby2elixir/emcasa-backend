@@ -2,8 +2,6 @@ defmodule ReWeb.Resolvers.Tags do
   @moduledoc """
   Resolvers for tags.
   """
-  import Absinthe.Resolution.Helpers, only: [on_load: 2]
-
   alias Re.Tags
 
   def index(_params, _context) do
