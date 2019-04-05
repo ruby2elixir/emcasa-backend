@@ -4,19 +4,30 @@ defmodule ReWeb.Resolvers.Tags do
   """
   alias Re.Tags
 
-  def index(_params, _context) do
-    tags = Tags.all()
+  def index(_params, %{context: %{current_user: current_user}}) do
+    tags =
+      with :ok <- Bodyguard.permit(Tags, :fetch_all, current_user, nil) do
+        Tags.all()
+      else
+        _ -> Tags.public()
+      end
 
     {:ok, tags}
   end
 
-  def search(%{name: name}, _context) do
-    tags = Tags.search(name)
-
-    {:ok, tags}
+  def search(%{name: name}, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Tags, :search, current_user, %{name: name}) do
+      {:ok, Tags.search(name)}
+    else
+      _ -> {:error, :unauthorized}
+    end
   end
 
-  def show(%{uuid: uuid}, _context) do
-    Tags.get(uuid)
+  def show(%{uuid: uuid}, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Tags, :show, current_user, %{uuid: uuid}) do
+      Tags.get(uuid)
+    else
+      _ -> Tags.get_public(uuid)
+    end
   end
 end
