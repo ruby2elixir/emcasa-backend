@@ -36,12 +36,13 @@ defmodule Re.Filtering do
     field :exportable, :boolean
     field :tags_slug, {:array, :string}
     field :tags_uuid, {:array, :string}
+    field :statuses, {:array, :string}
   end
 
   @filters ~w(max_price min_price max_rooms min_rooms max_suites min_suites min_area max_area
               neighborhoods types max_lat min_lat max_lng min_lng neighborhoods_slugs
               max_garage_spots min_garage_spots garage_types cities cities_slug states_slug
-              exportable tags_slug tags_uuid)a
+              exportable tags_slug tags_uuid statuses)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -98,6 +99,12 @@ defmodule Re.Filtering do
   end
 
   defp attr_filter({:neighborhoods, []}, query), do: query
+
+  defp attr_filter({:statuses, []}, query), do: query
+
+  defp attr_filter({:statuses, statuses}, query) do
+    from(l in query, where: l.status in ^statuses)
+  end
 
   defp attr_filter({:neighborhoods, neighborhoods}, query) do
     from(
