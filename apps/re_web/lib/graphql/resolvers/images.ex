@@ -63,7 +63,7 @@ defmodule ReWeb.Resolvers.Images do
     with {:ok, development} <- Developments.get_preloaded(parent_uuid, [:images]),
          :ok <- Bodyguard.permit(Images, :create_development_images, current_user, development),
          {:ok, image} <- Images.insert(params, development, :development) do
-      {:ok, %{parent_listing: nil, image: image}}
+      {:ok, %{parent: development, image: image}}
     end
   end
 
@@ -125,8 +125,7 @@ defmodule ReWeb.Resolvers.Images do
   def update_images_trigger(%{parent_listing: %{id: id}}), do: "images_updated:#{id}"
 
   def insert_image_trigger(%{parent_listing: %{id: id}}), do: "images_inserted:#{id}"
-
-  def insert_image_trigger(%{parent_type: %{uuid: uuid}}), do: "images_inserted:#{uuid}"
+  def insert_image_trigger(%{parent: %Re.Development{uuid: uuid}}), do: "images_inserted:#{uuid}"
 
   defp config_subscription(%{listing_id: id}, %{role: "admin"}, topic),
     do: {:ok, topic: "#{topic}:#{id}"}

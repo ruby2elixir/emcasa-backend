@@ -45,11 +45,22 @@ defmodule ReWeb.Types.Image do
   object :image_output do
     field :image, :image
     field :parent_listing, :listing
+    field :parent, :image_parent
   end
 
   object :images_output do
     field :images, list_of(:image)
     field :parent_listing, :listing
+    field :parent, :image_parent
+  end
+
+  union :image_parent do
+    types([:development, :listing])
+
+    resolve_type(fn
+      %Re.Development{}, _ -> :development
+      %Re.Listing{}, _ -> :listing
+    end)
   end
 
   object :image_mutations do
