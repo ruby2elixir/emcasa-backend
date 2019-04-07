@@ -38,12 +38,23 @@ defmodule Re.Images do
     end
   end
 
-  def insert(image_params, listing) do
+  def insert(image_params, listing, assoc \\ nil)
+
+  def insert(image_params, listing, nil) do
     %Image{}
     |> Image.create_changeset(image_params)
     |> Changeset.change(listing: listing)
     |> Changeset.change(is_active: true)
     |> Changeset.change(position: calculate_position(listing))
+    |> Repo.insert()
+  end
+
+  def insert(image_params, development, :development) do
+    %Image{}
+    |> Image.create_changeset(image_params)
+    |> Changeset.change(development: development)
+    |> Changeset.change(is_active: true)
+    |> Changeset.change(position: calculate_position(development))
     |> Repo.insert()
   end
 
