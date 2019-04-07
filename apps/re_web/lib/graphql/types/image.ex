@@ -15,8 +15,12 @@ defmodule ReWeb.Types.Image do
     field :category, :string
   end
 
+  enum :image_parent_type, values: ~w(listing development)a
+
   input_object :image_insert_input do
-    field :listing_id, non_null(:id)
+    field :parent_uuid, :uuid
+    field :parent_type, :image_parent_type
+    field :listing_id, :id
     field :filename, non_null(:string)
     field :is_active, :boolean
     field :description, :string

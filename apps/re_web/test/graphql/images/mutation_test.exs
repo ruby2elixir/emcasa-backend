@@ -153,6 +153,109 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
 
       assert_unauthorized_response(json_response(conn, 200))
     end
+
+    @tag dev: true
+    test "admin should insert image of development type", %{admin_conn: conn} do
+      %{uuid: development_uuid} = insert(:development)
+
+      variables = %{
+        "input" => %{
+          "parentUuid" => development_uuid,
+          "parentType" => "DEVELOPMENT",
+          "filename" => "test.jpg"
+        }
+      }
+
+      mutation = """
+        mutation InsertImage ($input: ImageInsertInput!) {
+          insertImage(input: $input) {
+            image {
+              description
+              filename
+              isActive
+              position
+              category
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{
+               "image" => %{
+                 "description" => nil,
+                 "filename" => "test.jpg",
+                 "isActive" => true,
+                 "position" => 1,
+                 "category" => nil
+               }
+             } == json_response(conn, 200)["data"]["insertImage"]
+    end
+
+    @tag dev: true
+    test "commom user should not insert image of development type", %{user_conn: conn} do
+      %{uuid: development_uuid} = insert(:development)
+
+      variables = %{
+        "input" => %{
+          "parentUuid" => development_uuid,
+          "parentType" => "DEVELOPMENT",
+          "filename" => "test.jpg"
+        }
+      }
+
+      mutation = """
+        mutation InsertImage ($input: ImageInsertInput!) {
+          insertImage(input: $input) {
+            image {
+              description
+              filename
+              isActive
+              position
+              category
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert_forbidden_response(json_response(conn, 200))
+    end
+
+    @tag dev: true
+    test "unauthenticated user should not insert image of development type", %{
+      unauthenticated_conn: conn
+    } do
+      %{uuid: development_uuid} = insert(:development)
+
+      variables = %{
+        "input" => %{
+          "parentUuid" => development_uuid,
+          "parentType" => "DEVELOPMENT",
+          "filename" => "test.jpg"
+        }
+      }
+
+      mutation = """
+        mutation InsertImage ($input: ImageInsertInput!) {
+          insertImage(input: $input) {
+            image {
+              description
+              filename
+              isActive
+              position
+              category
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert_unauthorized_response(json_response(conn, 200))
+    end
   end
 
   describe "update" do
