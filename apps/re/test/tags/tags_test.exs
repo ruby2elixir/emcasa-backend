@@ -3,29 +3,28 @@ defmodule Re.TagsTest do
 
   alias Re.{
     Tag,
-    Tags
+    Tags,
+    User
   }
 
   import Re.Factory
 
-  describe "all/0" do
-    test "should fetch all tags" do
+  describe "all/1" do
+    test "should fetch all tags for user with admin role" do
       %{uuid: uuid_1} = insert(:tag, name: "feature 1", name_slug: "feature-1")
       %{uuid: uuid_2} = insert(:tag, name: "feature 2", name_slug: "feature-2")
       %{uuid: uuid_3} = insert(:tag, name: "feature 3", name_slug: "feature-3")
 
       tags_uuids =
-        Tags.all()
+        Tags.all(%User{role: "admin"})
         |> Enum.map(fn tag -> tag.uuid end)
 
       assert Enum.member?(tags_uuids, uuid_1)
       assert Enum.member?(tags_uuids, uuid_2)
       assert Enum.member?(tags_uuids, uuid_3)
     end
-  end
 
-  describe "public/0" do
-    test "should fetch only public visible tags" do
+    test "should fetch only public visible tags for user with user role" do
       %{uuid: uuid_1} =
         insert(:tag, name: "feature 1", name_slug: "feature-1", visibility: "public")
 
@@ -36,7 +35,7 @@ defmodule Re.TagsTest do
         insert(:tag, name: "feature 3", name_slug: "feature-3", visibility: "private")
 
       tags_uuids =
-        Tags.public()
+        Tags.all(%User{role: "user"})
         |> Enum.map(fn tag -> tag.uuid end)
 
       assert Enum.member?(tags_uuids, uuid_1)
@@ -61,47 +60,67 @@ defmodule Re.TagsTest do
     end
   end
 
-  describe "get/1" do
-    test "should fetch specific tag" do
-      %{uuid: uuid_1} = insert(:tag, name: "feature 1", name_slug: "feature-1")
-      insert(:tag, name: "feature 2", name_slug: "feature-2")
-      insert(:tag, name: "feature 3", name_slug: "feature-3")
-
-      {:ok, tag} = Tags.get(uuid_1)
-
-      assert uuid_1 == tag.uuid
-    end
-
-    test "should return error when no tag is found" do
-      insert(:tag, name: "feature 1", name_slug: "feature-1")
-      insert(:tag, name: "feature 2", name_slug: "feature-2")
-      insert(:tag, name: "feature 3", name_slug: "feature-3")
-
-      assert {:error, :not_found} = Tags.get(UUID.uuid4())
-    end
-  end
-
-  describe "get_public/1" do
-    test "should fetch public visible tag" do
+  describe "get/2" do
+    test "should fetch public visible tag for user with admin role" do
       %{uuid: uuid_1} =
         insert(:tag, name: "feature 1", name_slug: "feature-1", visibility: "public")
 
-      {:ok, tag} = Tags.get_public(uuid_1)
+      insert(:tag, name: "feature 2", name_slug: "feature-2")
+      insert(:tag, name: "feature 3", name_slug: "feature-3")
+
+      {:ok, tag} = Tags.get(uuid_1, %User{role: "admin"})
 
       assert uuid_1 == tag.uuid
     end
 
-    test "should return error when fetching tag with private visibility" do
+    test "should fetch private visible tag for user with admin role" do
+      %{uuid: uuid_1} =
+        insert(:tag, name: "feature 1", name_slug: "feature-1", visibility: "private")
+
+      insert(:tag, name: "feature 2", name_slug: "feature-2")
+      insert(:tag, name: "feature 3", name_slug: "feature-3")
+
+      {:ok, tag} = Tags.get(uuid_1, %User{role: "admin"})
+
+      assert uuid_1 == tag.uuid
+    end
+
+    test "should fetch public visible tag for user with user role" do
+      %{uuid: uuid_1} =
+        insert(:tag, name: "feature 1", name_slug: "feature-1", visibility: "public")
+
+      {:ok, tag} = Tags.get(uuid_1, %User{role: "user"})
+
+      assert uuid_1 == tag.uuid
+    end
+
+    test "should return error when fetching tag with private visibility for user with user role" do
       %{uuid: uuid_1} =
         insert(:tag, name: "feature 2", name_slug: "feature-2", visibility: "private")
 
-      assert {:error, :not_found} = Tags.get_public(uuid_1)
+      assert {:error, :not_found} = Tags.get(uuid_1, %User{role: "user"})
+    end
+
+    test "should fetch public visible tag for no user" do
+      %{uuid: uuid_1} =
+        insert(:tag, name: "feature 1", name_slug: "feature-1", visibility: "public")
+
+      {:ok, tag} = Tags.get(uuid_1, nil)
+
+      assert uuid_1 == tag.uuid
+    end
+
+    test "should return error when fetching tag with private visibility for no user" do
+      %{uuid: uuid_1} =
+        insert(:tag, name: "feature 2", name_slug: "feature-2", visibility: "private")
+
+      assert {:error, :not_found} = Tags.get(uuid_1, nil)
     end
 
     test "should return error when no tag is found" do
       insert(:tag, name: "feature 1", name_slug: "feature-1")
 
-      assert {:error, :not_found} = Tags.get_public(UUID.uuid4())
+      assert {:error, :not_found} = Tags.get(UUID.uuid4(), %User{role: "user"})
     end
   end
 

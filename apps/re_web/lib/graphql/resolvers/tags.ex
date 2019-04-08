@@ -5,12 +5,7 @@ defmodule ReWeb.Resolvers.Tags do
   alias Re.Tags
 
   def index(_params, %{context: %{current_user: current_user}}) do
-    tags =
-      with :ok <- Bodyguard.permit(Tags, :fetch_all, current_user, nil) do
-        Tags.all()
-      else
-        _ -> Tags.public()
-      end
+    tags = Tags.all(current_user)
 
     {:ok, tags}
   end
@@ -22,11 +17,7 @@ defmodule ReWeb.Resolvers.Tags do
   end
 
   def show(%{uuid: uuid}, %{context: %{current_user: current_user}}) do
-    with :ok <- Bodyguard.permit(Tags, :show, current_user, %{uuid: uuid}) do
-      Tags.get(uuid)
-    else
-      _ -> Tags.get_public(uuid)
-    end
+    Tags.get(uuid, current_user)
   end
 
   def insert(%{input: params}, %{context: %{current_user: current_user}}) do
@@ -37,7 +28,7 @@ defmodule ReWeb.Resolvers.Tags do
 
   def update(%{uuid: uuid, input: params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Tags, :insert, current_user, params),
-         {:ok, tag} <- Tags.get(uuid) do
+         {:ok, tag} <- Tags.get(uuid, current_user) do
       Tags.update(tag, params)
     end
   end

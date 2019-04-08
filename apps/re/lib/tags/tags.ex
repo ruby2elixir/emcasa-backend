@@ -19,12 +19,12 @@ defmodule Re.Tags do
 
   def query(_query, _args), do: Tag
 
-  def all do
+  def all(%{role: "admin"}) do
     Tag
     |> Repo.all()
   end
 
-  def public do
+  def all(_) do
     Queries.public()
     |> Repo.all()
   end
@@ -36,14 +36,14 @@ defmodule Re.Tags do
     |> Repo.all()
   end
 
-  def get(uuid) do
+  def get(uuid, %{role: "admin"}) do
     case Repo.get(Tag, uuid) do
       nil -> {:error, :not_found}
       tag -> {:ok, tag}
     end
   end
 
-  def get_public(uuid) do
+  def get(uuid, _) do
     tag =
       uuid
       |> Queries.get_public()
