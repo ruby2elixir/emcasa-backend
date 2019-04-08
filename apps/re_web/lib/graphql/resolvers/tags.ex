@@ -30,4 +30,11 @@ defmodule ReWeb.Resolvers.Tags do
       _ -> Tags.get_public(uuid)
     end
   end
+
+  def insert(%{input: params}, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Tags, :insert, current_user, params),
+         {:ok, tag} <- Tags.insert(params) do
+      {:ok, tag}
+    end
+  end
 end

@@ -40,4 +40,13 @@ defmodule ReWeb.Types.Tag do
       resolve &Resolvers.Tags.show/2
     end
   end
+
+  object :tag_mutations do
+    @desc "Insert tag"
+    field :tag_insert, type: :tag do
+      arg :input, non_null(:tag_input)
+
+      resolve &Resolvers.Tags.insert/2
+    end
+  end
 end
