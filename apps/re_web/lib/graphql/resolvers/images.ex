@@ -62,7 +62,7 @@ defmodule ReWeb.Resolvers.Images do
       }) do
     with {:ok, development} <- Developments.get_preloaded(parent_uuid, [:images]),
          :ok <- Bodyguard.permit(Images, :create_development_images, current_user, development),
-         {:ok, image} <- Images.insert(params, development, :development) do
+         {:ok, image} <- Images.insert(params, development) do
       {:ok, %{parent: development, image: image}}
     end
   end
