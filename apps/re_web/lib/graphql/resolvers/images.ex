@@ -60,8 +60,8 @@ defmodule ReWeb.Resolvers.Images do
   def insert_image(%{input: %{parent_type: :development, parent_uuid: parent_uuid} = params}, %{
         context: %{current_user: current_user}
       }) do
-    with {:ok, development} <- Developments.get_preloaded(parent_uuid, [:images]),
-         :ok <- Bodyguard.permit(Images, :create_development_images, current_user, development),
+    with :ok <- Bodyguard.permit(Images, :create_development_images, current_user, nil),
+         {:ok, development} <- Developments.get_preloaded(parent_uuid, [:images]),
          {:ok, image} <- Images.insert(params, development) do
       {:ok, %{parent: development, image: image}}
     end
