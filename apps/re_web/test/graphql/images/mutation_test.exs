@@ -22,6 +22,20 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
   end
 
   describe "insert" do
+    @insert_mutation """
+      mutation InsertImage ($input: ImageInsertInput!) {
+        insertImage(input: $input) {
+          image {
+            description
+            filename
+            isActive
+            position
+            category
+          }
+        }
+      }
+    """
+
     test "admin should insert image", %{admin_conn: conn} do
       %{id: listing_id} = insert(:listing)
 
@@ -32,21 +46,8 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
         }
       }
 
-      mutation = """
-        mutation InsertImage ($input: ImageInsertInput!) {
-          insertImage(input: $input) {
-            image {
-              description
-              filename
-              isActive
-              position
-              category
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{
                "image" => %{
@@ -69,21 +70,8 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
         }
       }
 
-      mutation = """
-        mutation InsertImage ($input: ImageInsertInput!) {
-          insertImage(input: $input) {
-            image {
-              description
-              filename
-              isActive
-              position
-              category
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{
                "image" => %{
@@ -106,21 +94,8 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
         }
       }
 
-      mutation = """
-        mutation InsertImage ($input: ImageInsertInput!) {
-          insertImage(input: $input) {
-            image {
-              description
-              filename
-              isActive
-              position
-              category
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert_forbidden_response(json_response(conn, 200))
     end
@@ -135,26 +110,12 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
         }
       }
 
-      mutation = """
-        mutation InsertImage ($input: ImageInsertInput!) {
-          insertImage(input: $input) {
-            image {
-              description
-              filename
-              isActive
-              position
-              category
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert_unauthorized_response(json_response(conn, 200))
     end
 
-    @tag dev: true
     test "admin should insert image of development type", %{admin_conn: conn} do
       %{uuid: development_uuid} = insert(:development)
 
@@ -166,21 +127,8 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
         }
       }
 
-      mutation = """
-        mutation InsertImage ($input: ImageInsertInput!) {
-          insertImage(input: $input) {
-            image {
-              description
-              filename
-              isActive
-              position
-              category
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert %{
                "image" => %{
@@ -193,7 +141,6 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
              } == json_response(conn, 200)["data"]["insertImage"]
     end
 
-    @tag dev: true
     test "commom user should not insert image of development type", %{user_conn: conn} do
       %{uuid: development_uuid} = insert(:development)
 
@@ -205,26 +152,12 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
         }
       }
 
-      mutation = """
-        mutation InsertImage ($input: ImageInsertInput!) {
-          insertImage(input: $input) {
-            image {
-              description
-              filename
-              isActive
-              position
-              category
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert_forbidden_response(json_response(conn, 200))
     end
 
-    @tag dev: true
     test "unauthenticated user should not insert image of development type", %{
       unauthenticated_conn: conn
     } do
@@ -238,21 +171,8 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
         }
       }
 
-      mutation = """
-        mutation InsertImage ($input: ImageInsertInput!) {
-          insertImage(input: $input) {
-            image {
-              description
-              filename
-              isActive
-              position
-              category
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
 
       assert_unauthorized_response(json_response(conn, 200))
     end
