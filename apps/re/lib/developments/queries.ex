@@ -1,6 +1,6 @@
 defmodule Re.Developments.Queries do
   @moduledoc """
-  Module for grouping develpments queries
+  Module for grouping developments queries
   """
 
   alias Re.Development
