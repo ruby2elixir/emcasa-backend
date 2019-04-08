@@ -58,7 +58,9 @@ config :re_integrations,
   credipronto_account_id: "test_account_id",
   pipedrive_webhook_user: "testuser",
   pipedrive_webhook_pass: "testpass",
-  grupozap_webhook_secret: "testsecret"
+  grupozap_webhook_secret: "testsecret",
+  zapier_webhook_user: "testuser",
+  zapier_webhook_pass: "testpass"
 
 config :junit_formatter,
   report_file: "report_file_test.xml",
