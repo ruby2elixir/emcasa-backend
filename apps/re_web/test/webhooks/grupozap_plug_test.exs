@@ -35,8 +35,8 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
 
-    encoded_secret = Base.encode64("vivareal:testsecret")
-    wrong_secret = Base.encode64("vivareal:wrongsecret")
+    encoded_secret = Base.encode64("vivareal|testsecret")
+    wrong_secret = Base.encode64("vivareal|wrongsecret")
 
     {:ok,
      unauthenticated_conn: conn,
