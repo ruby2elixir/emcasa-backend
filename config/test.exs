@@ -57,7 +57,8 @@ config :re_integrations,
   credipronto_simulator_url: "http://www.emcasa.com/simulator",
   credipronto_account_id: "test_account_id",
   pipedrive_webhook_user: "testuser",
-  pipedrive_webhook_pass: "testpass"
+  pipedrive_webhook_pass: "testpass",
+  grupozap_webhook_secret: "testsecret"
 
 config :junit_formatter,
   report_file: "report_file_test.xml",

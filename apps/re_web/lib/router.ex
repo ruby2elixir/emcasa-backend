@@ -40,6 +40,10 @@ defmodule ReWeb.Router do
     get("/listing_coordinates", ListingController, :coordinates)
   end
 
+  scope "/" do
+    forward("/robots.txt", ReWeb.RobotsPlug)
+  end
+
   scope "/graphql_api" do
     pipe_through :graphql
 
@@ -58,7 +62,8 @@ defmodule ReWeb.Router do
   scope "/webhooks" do
     pipe_through :webhooks
 
-    forward("/pipedrive", ReWeb.Pipedrive.Plug)
+    forward("/pipedrive", ReWeb.Webhooks.PipedrivePlug)
+    forward("/grupozap", ReWeb.Webhooks.GrupozapPlug)
   end
 
   scope "/exporters" do

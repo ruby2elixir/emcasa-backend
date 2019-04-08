@@ -7,11 +7,6 @@ config :re_web, ReWeb.Endpoint,
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
   check_origin: false
 
-config :logger,
-  level: :info,
-  backends: [Timber.LoggerBackends.HTTP],
-  utc_log: true
-
 config :re_web, ReWeb.Guardian,
   allowed_algos: ["ES512"],
   secret_key: %{
@@ -69,7 +64,8 @@ config :re_integrations,
   env: System.get_env("ENV"),
   reply_to: System.get_env("REPORT_REPLY_EMAIL"),
   credipronto_simulator_url: System.get_env("CREDIPRONTO_SIMULATOR_URL"),
-  credipronto_account_id: System.get_env("CREDIPRONTO_ACCOUNT_ID")
+  credipronto_account_id: System.get_env("CREDIPRONTO_ACCOUNT_ID"),
+  grupozap_webhook_secret: System.get_env("GRUPOZAP_WEBHOOK_SECRET")
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),

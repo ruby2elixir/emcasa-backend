@@ -16,7 +16,7 @@ config :logger,
 
 config :logger, :console,
   format: {Timber.Formatter, :format},
-  metadata: [:timber_context, :event, :application, :file, :function, :line, :module, :meta]
+  metadata: :all
 
 # For the following environments, do not log to the Timber service. Instead, log to STDOUT
 # and format the logs properly so they are human readable.
@@ -30,7 +30,7 @@ if Enum.member?(environments_to_exclude, Mix.env()) do
 
   config :logger, :console,
     format: {Timber.Formatter, :format},
-    metadata: [:timber_context, :event, :application, :file, :function, :line, :module, :meta]
+    metadata: :all
 
   config :timber, Timber.Formatter,
     colorize: true,

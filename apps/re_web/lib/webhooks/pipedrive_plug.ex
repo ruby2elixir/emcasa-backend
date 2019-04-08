@@ -1,4 +1,4 @@
-defmodule ReWeb.Pipedrive.Plug do
+defmodule ReWeb.Webhooks.PipedrivePlug do
   @moduledoc """
   Plug to handle pipedrive webhooks
   """

@@ -575,18 +575,144 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
+
+    @update_development_listing_mutation """
+      mutation UpdateListing ($id: ID!, $input: ListingInput!) {
+        updateListing(id: $id, input: $input) {
+          id
+          type
+          address {
+            id
+          }
+          development {
+            uuid
+          }
+          description
+          hasElevator
+          matterportCode
+          isActive
+          isExportable
+        }
+      }
+    """
+
+    test "admin should update development listing", %{
+      admin_conn: conn,
+      listing: new_listing
+    } do
+      development = insert(:development)
+      new_address = insert(:address)
+      old_listing = insert(:listing, development: development, address: new_address)
+
+      variables =
+        update_development_listing_variables(
+          old_listing.id,
+          new_listing,
+          new_address.id,
+          development.uuid
+        )
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@update_development_listing_mutation, variables)
+        )
+
+      assert %{
+               "updateListing" =>
+                 %{"address" => updated_address, "development" => updated_development} =
+                   updated_listing
+             } = json_response(conn, 200)["data"]
+
+      assert updated_listing["type"] == new_listing.type
+      assert updated_listing["description"] == new_listing.description
+      assert updated_listing["hasElevator"] == new_listing.has_elevator
+      assert updated_listing["matterportCode"] == new_listing.matterport_code
+      refute updated_listing["isExportable"]
+
+      assert updated_address["id"] == to_string(new_address.id)
+      assert updated_development["uuid"] == development.uuid
+    end
+
+    test "commom user should not update development listing", %{
+      user_conn: conn,
+      old_listing: old_listing,
+      listing: new_listing
+    } do
+      development = insert(:development)
+      new_address = insert(:address)
+
+      variables =
+        update_development_listing_variables(
+          old_listing.id,
+          new_listing,
+          new_address.id,
+          development.uuid
+        )
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@update_development_listing_mutation, variables)
+        )
+
+      assert %{"updateListing" => nil} = json_response(conn, 200)["data"]
+
+      assert_forbidden_response(json_response(conn, 200))
+    end
+
+    test "unauthenticated user should not update development listing", %{
+      unauthenticated_conn: conn,
+      old_listing: old_listing,
+      listing: new_listing
+    } do
+      development = insert(:development)
+      new_address = insert(:address)
+
+      variables =
+        update_development_listing_variables(
+          old_listing.id,
+          new_listing,
+          new_address.id,
+          development.uuid
+        )
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@update_development_listing_mutation, variables)
+        )
+
+      assert %{"updateListing" => nil} = json_response(conn, 200)["data"]
+
+      assert_unauthorized_response(json_response(conn, 200))
+    end
   end
 
   def insert_development_listing_variables(listing, address_id, development_uuid) do
     %{
-      "input" => %{
-        "type" => listing.type,
-        "description" => listing.description,
-        "hasElevator" => listing.has_elevator,
-        "matterportCode" => listing.matterport_code,
-        "address_id" => address_id,
-        "development_uuid" => development_uuid
-      }
+      "input" => development_listing_input(listing, address_id, development_uuid)
+    }
+  end
+
+  def update_development_listing_variables(id, listing, address_id, development_uuid) do
+    %{
+      "id" => id,
+      "input" => development_listing_input(listing, address_id, development_uuid)
+    }
+  end
+
+  defp development_listing_input(listing, address_id, development_uuid) do
+    %{
+      "type" => listing.type,
+      "description" => listing.description,
+      "hasElevator" => listing.has_elevator,
+      "matterportCode" => listing.matterport_code,
+      "address_id" => address_id,
+      "development_uuid" => development_uuid
     }
   end
 end

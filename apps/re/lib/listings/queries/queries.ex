@@ -90,10 +90,11 @@ defmodule Re.Listings.Queries do
     |> exclude(:preload)
     |> exclude(:order_by)
     |> exclude(:limit)
+    |> exclude(:distinct)
     |> count()
   end
 
-  def count(query \\ Listing), do: from(l in query, select: count(l.id))
+  def count(query \\ Listing), do: from(l in query, select: count(l.id, :distinct))
 
   def per_user(query \\ Listing, user_id), do: from(l in query, where: l.user_id == ^user_id)
 
