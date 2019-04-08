@@ -30,7 +30,8 @@ defmodule Re.Tags do
   end
 
   def search(name) do
-    Slugs.sluggify(name)
+    name
+    |> Slugs.sluggify()
     |> Queries.match_slug()
     |> Repo.all()
   end
