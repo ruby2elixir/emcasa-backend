@@ -15,8 +15,10 @@ defmodule ReIntegrations.Zapier do
         "lead_id" => _,
         "email" => _,
         "phone_number" => _,
-        "neighborhoods" => _
-      }),
+        "neighborhoods" => _,
+        "location" => location
+      })
+      when location in ~w(SP RJ),
       do: :ok
 
   def validate_payload(payload) do

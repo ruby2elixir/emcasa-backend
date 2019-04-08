@@ -16,6 +16,16 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
       "location" => "RJ"
     }
 
+  @invalid_payload %{
+      "full_name" => "mah full naem",
+      "timestamp" => "2019-01-01T00:00:00.000Z",
+      "lead_id" => "193846287346183764187",
+      "email" => "mah@email",
+      "phone_number" => "11999999999",
+      "neighborhoods" => "manhattan brooklyn harlem",
+      "location" => "asdasda"
+    }
+
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
 
@@ -58,6 +68,15 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
       conn = post(conn, "/webhooks/zapier", @payload)
 
       assert text_response(conn, 401) == "Unauthorized"
+
+      refute Repo.one(FacebookBuyer)
+    end
+
+    @tag capture_log: true
+    test "invalid location request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @invalid_payload)
+
+      assert text_response(conn, 422) == "Unprocessable Entity"
 
       refute Repo.one(FacebookBuyer)
     end
