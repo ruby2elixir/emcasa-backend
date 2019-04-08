@@ -6,20 +6,19 @@ defmodule Re.Tags.Queries do
   def get_public(query \\ Tag, uuid)
 
   def get_public(query, uuid) do
-    query = public(query)
-    from(i in query, where: i.uuid == ^uuid)
+    query
+    |> public()
+    |> where([t], t.uuid == ^uuid)
   end
 
-  def public(query \\ Tag)
-
-  def public(query) do
-    from(i in query, where: i.visibility == "public")
+  def public(query \\ Tag) do
+    from(t in query, where: t.visibility == "public")
   end
 
   def match_slug(query \\ Tag, name_slug)
 
   def match_slug(query, name_slug) do
-    from(i in query, where: like(i.name_slug, ^"%#{name_slug}%"))
+    from(t in query, where: like(t.name_slug, ^"%#{name_slug}%"))
   end
 
   def with_uuids(query \\ Tag, uuids)
