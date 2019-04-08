@@ -123,7 +123,8 @@ defmodule ReWeb.Types.Image do
 
     @desc "Subscribe to image insertion"
     field :image_inserted, :image_output do
-      arg :listing_id, non_null(:id)
+      arg :listing_id, :id
+      arg :development_uuid, :uuid
 
       config &Resolvers.Images.image_inserted_config/2
 

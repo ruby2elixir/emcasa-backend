@@ -125,7 +125,9 @@ defmodule ReWeb.Resolvers.Images do
   def update_images_trigger(%{parent_listing: %{id: id}}), do: "images_updated:#{id}"
 
   def insert_image_trigger(%{parent_listing: %{id: id}}), do: "images_inserted:#{id}"
-  def insert_image_trigger(%{parent: %Re.Development{uuid: uuid}}), do: "images_inserted:#{uuid}"
+
+  def insert_image_trigger(%{parent: %Re.Development{uuid: uuid}}),
+    do: "development_updated:#{uuid}"
 
   defp config_subscription(%{listing_id: id}, %{role: "admin"}, topic),
     do: {:ok, topic: "#{topic}:#{id}"}
