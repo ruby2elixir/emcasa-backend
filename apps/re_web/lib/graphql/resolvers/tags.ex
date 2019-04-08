@@ -18,8 +18,6 @@ defmodule ReWeb.Resolvers.Tags do
   def search(%{name: name}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Tags, :search, current_user, %{name: name}) do
       {:ok, Tags.search(name)}
-    else
-      _ -> {:error, :unauthorized}
     end
   end
 
@@ -32,17 +30,15 @@ defmodule ReWeb.Resolvers.Tags do
   end
 
   def insert(%{input: params}, %{context: %{current_user: current_user}}) do
-    with :ok <- Bodyguard.permit(Tags, :insert, current_user, params),
-         {:ok, tag} <- Tags.insert(params) do
-      {:ok, tag}
+    with :ok <- Bodyguard.permit(Tags, :insert, current_user, params) do
+      Tags.insert(params)
     end
   end
 
   def update(%{uuid: uuid, input: params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Tags, :insert, current_user, params),
-         {:ok, tag} <- Tags.get(uuid),
-         {:ok, tag} <- Tags.update(tag, params) do
-      {:ok, tag}
+         {:ok, tag} <- Tags.get(uuid) do
+      Tags.update(tag, params)
     end
   end
 end
