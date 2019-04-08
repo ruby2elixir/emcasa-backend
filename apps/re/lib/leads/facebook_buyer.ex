@@ -15,11 +15,12 @@ defmodule Re.Leads.FacebookBuyer do
     field :neighborhoods, :string
     field :timestamp, :utc_datetime
     field :lead_id, :string
+    field :location, :string
 
     timestamps()
   end
 
-  @params ~w(full_name email phone_number neighborhoods timestamp lead_id)a
+  @params ~w(full_name email phone_number neighborhoods timestamp lead_id location)a
 
   def changeset(struct, params \\ %{}) do
     struct

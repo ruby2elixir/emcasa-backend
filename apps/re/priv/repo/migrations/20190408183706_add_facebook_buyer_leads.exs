@@ -10,6 +10,7 @@ defmodule Re.Repo.Migrations.AddFacebookBuyerLeads do
       add :neighborhoods, :string
       add :timestamp, :utc_datetime
       add :lead_id, :string
+      add :location, :string
 
       timestamps()
     end

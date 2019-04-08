@@ -12,7 +12,8 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
       "lead_id" => "193846287346183764187",
       "email" => "mah@email",
       "phone_number" => "11999999999",
-      "neighborhoods" => "manhattan brooklyn harlem"
+      "neighborhoods" => "manhattan brooklyn harlem",
+      "location" => "RJ"
     }
 
   setup %{conn: conn} do
