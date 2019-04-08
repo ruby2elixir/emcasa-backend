@@ -89,4 +89,85 @@ defmodule ReWeb.GraphQL.Tags.MutationTest do
       assert error["message"] == "Unauthorized"
     end
   end
+
+  describe "update" do
+    @update_mutation """
+    mutation TagUpdate (
+      $uuid: UUID!,
+      $input: TagInput!
+    ) {
+      tagUpdate (uuid: $uuid, input: $input) {
+        uuid
+        name
+        nameSlug
+        category
+        visibility
+      }
+    }
+    """
+
+    test "admin user should update a tag", %{admin_conn: conn} do
+      tag = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      variables = %{
+        uuid: tag.uuid,
+        input: %{
+          name: "Tag 2",
+          category: tag.category,
+          visibility: tag.visibility
+        }
+      }
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
+
+      assert update_tag = json_response(conn, 200)["data"]["tagUpdate"]
+
+      assert update_tag["uuid"] == tag.uuid
+      assert update_tag["name"] == variables.input.name
+      assert update_tag["nameSlug"] == "tag-2"
+      assert update_tag["category"] == tag.category
+      assert update_tag["visibility"] == tag.visibility
+    end
+
+    test "user should not update tag", %{user_conn: conn} do
+      tag = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      variables = %{
+        uuid: tag.uuid,
+        input: %{
+          name: "Tag 2",
+          category: tag.category,
+          visibility: tag.visibility
+        }
+      }
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
+
+      assert [error | _] = json_response(conn, 200)["errors"]
+
+      assert error["message"] == "Forbidden"
+    end
+
+    test "anonymous user should not insert tag", %{unauthenticated_conn: conn} do
+      tag = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      variables = %{
+        uuid: tag.uuid,
+        input: %{
+          name: "Tag 2",
+          category: tag.category,
+          visibility: tag.visibility
+        }
+      }
+
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
+
+      assert [error | _] = json_response(conn, 200)["errors"]
+
+      assert error["message"] == "Unauthorized"
+    end
+  end
 end

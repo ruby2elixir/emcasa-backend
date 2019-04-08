@@ -48,5 +48,13 @@ defmodule ReWeb.Types.Tag do
 
       resolve &Resolvers.Tags.insert/2
     end
+
+    @desc "Update tag"
+    field :tag_update, type: :tag do
+      arg :uuid, non_null(:uuid)
+      arg :input, non_null(:tag_input)
+
+      resolve &Resolvers.Tags.update/2
+    end
   end
 end
