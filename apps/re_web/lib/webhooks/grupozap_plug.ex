@@ -44,7 +44,7 @@ defmodule ReWeb.Webhooks.GrupozapPlug do
   defp validate_credentials(conn) do
     with ["Basic " <> token] <- get_req_header(conn, "authorization"),
          {:ok, secret} <- Base.decode64(token),
-         ["vivareal", @secret] <- String.split(secret, "|", parts: 2) do
+         ["vivareal", @secret] <- String.split(secret, ":", parts: 2) do
       :ok
     else
       _ -> {:error, :unauthorized}
