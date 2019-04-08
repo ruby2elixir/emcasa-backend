@@ -211,7 +211,7 @@ defmodule ReWeb.GraphQL.Tags.QueryTest do
       resp_private =
         post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variable_private))
 
-      assert nil == json_response(resp_private, 200)["data"]["tag"]
+      refute json_response(resp_private, 200)["data"]["tag"]
     end
 
     test "anonymous user should fetch public tag", %{unauthenticated_conn: conn} do
@@ -241,7 +241,7 @@ defmodule ReWeb.GraphQL.Tags.QueryTest do
       resp_private =
         post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variable_private))
 
-      assert nil == json_response(resp_private, 200)["data"]["tag"]
+      refute json_response(resp_private, 200)["data"]["tag"]
     end
   end
 
@@ -288,7 +288,7 @@ defmodule ReWeb.GraphQL.Tags.QueryTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
-      assert nil == json_response(conn, 200)["data"]["tagsSearch"]
+      refute json_response(conn, 200)["data"]["tagsSearch"]
     end
 
     test "anonymous user should not search tags", %{unauthenticated_conn: conn} do
@@ -310,7 +310,7 @@ defmodule ReWeb.GraphQL.Tags.QueryTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
-      assert nil == json_response(conn, 200)["data"]["tagsSearch"]
+      refute json_response(conn, 200)["data"]["tagsSearch"]
     end
   end
 end
