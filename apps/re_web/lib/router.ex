@@ -64,6 +64,7 @@ defmodule ReWeb.Router do
 
     forward("/pipedrive", ReWeb.Webhooks.PipedrivePlug)
     forward("/grupozap", ReWeb.Webhooks.GrupozapPlug)
+    forward("/zapier", ReWeb.Webhooks.ZapierPlug)
   end
 
   scope "/exporters" do

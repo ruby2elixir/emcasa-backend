@@ -31,7 +31,9 @@ config :re_integrations,
   pipedrive_webhook_pass: "pipedrive_pass",
   credipronto_simulator_url: "CREDIPRONTO_URL",
   credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID",
-  grupozap_webhook_secret: "grupozap_secret"
+  grupozap_webhook_secret: "grupozap_secret",
+  zapier_webhook_user: "testuser",
+  zapier_webhook_pass: "testpass"
 
 config :re,
   vivareal_highlights_size_rio_de_janeiro: 10,
