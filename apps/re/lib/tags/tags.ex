@@ -36,6 +36,19 @@ defmodule Re.Tags do
     |> Repo.all()
   end
 
+  def filter(params, %{role: "admin"}) do
+    params
+    |> Queries.filter_by()
+    |> Repo.all()
+  end
+
+  def filter(params, _) do
+    params
+    |> Map.merge(%{visibility: "public"})
+    |> Queries.filter_by()
+    |> Repo.all()
+  end
+
   def get(uuid, %{role: "admin"}) do
     case Repo.get(Tag, uuid) do
       nil -> {:error, :not_found}

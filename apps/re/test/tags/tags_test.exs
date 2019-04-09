@@ -60,6 +60,204 @@ defmodule Re.TagsTest do
     end
   end
 
+  describe "filter/2" do
+    test "should filter tags by visibility for user with admin role" do
+      %{uuid: uuid_1} =
+        insert(:tag,
+          name: "Tag 1",
+          name_slug: "tag-1",
+          category: "infrastructure",
+          visibility: "public"
+        )
+
+      %{uuid: uuid_2} =
+        insert(:tag,
+          name: "Tag 2",
+          name_slug: "tag-2",
+          category: "infrastructure",
+          visibility: "private"
+        )
+
+      %{uuid: uuid_3} =
+        insert(:tag, name: "Tag 3", name_slug: "tag-3", category: "location", visibility: "public")
+
+      %{uuid: uuid_4} =
+        insert(:tag,
+          name: "Tag 4",
+          name_slug: "tag-4",
+          category: "location",
+          visibility: "private"
+        )
+
+      uuids =
+        %{visibility: "public"}
+        |> Tags.filter(%{role: "admin"})
+        |> Enum.map(& &1.uuid)
+
+      assert Enum.member?(uuids, uuid_1)
+      assert Enum.member?(uuids, uuid_3)
+      refute Enum.member?(uuids, uuid_2)
+      refute Enum.member?(uuids, uuid_4)
+
+      uuids =
+        %{visibility: "private"}
+        |> Tags.filter(%{role: "admin"})
+        |> Enum.map(& &1.uuid)
+
+      assert Enum.member?(uuids, uuid_2)
+      assert Enum.member?(uuids, uuid_4)
+      refute Enum.member?(uuids, uuid_1)
+      refute Enum.member?(uuids, uuid_3)
+    end
+
+    test "should filter tags by category for user with admin role" do
+      %{uuid: uuid_1} =
+        insert(:tag,
+          name: "Tag 1",
+          name_slug: "tag-1",
+          category: "infrastructure",
+          visibility: "public"
+        )
+
+      %{uuid: uuid_2} =
+        insert(:tag,
+          name: "Tag 2",
+          name_slug: "tag-2",
+          category: "infrastructure",
+          visibility: "private"
+        )
+
+      %{uuid: uuid_3} =
+        insert(:tag, name: "Tag 3", name_slug: "tag-3", category: "location", visibility: "public")
+
+      %{uuid: uuid_4} =
+        insert(:tag,
+          name: "Tag 4",
+          name_slug: "tag-4",
+          category: "location",
+          visibility: "private"
+        )
+
+      uuids =
+        %{category: "infrastructure"}
+        |> Tags.filter(%{role: "admin"})
+        |> Enum.map(& &1.uuid)
+
+      assert Enum.member?(uuids, uuid_1)
+      assert Enum.member?(uuids, uuid_2)
+      refute Enum.member?(uuids, uuid_3)
+      refute Enum.member?(uuids, uuid_4)
+
+      uuids =
+        %{category: "location"}
+        |> Tags.filter(%{role: "admin"})
+        |> Enum.map(& &1.uuid)
+
+      assert Enum.member?(uuids, uuid_3)
+      assert Enum.member?(uuids, uuid_4)
+      refute Enum.member?(uuids, uuid_1)
+      refute Enum.member?(uuids, uuid_2)
+    end
+
+    test "should filter tags publicly visible for user with user role" do
+      %{uuid: uuid_1} =
+        insert(:tag,
+          name: "Tag 1",
+          name_slug: "tag-1",
+          category: "infrastructure",
+          visibility: "public"
+        )
+
+      %{uuid: uuid_2} =
+        insert(:tag,
+          name: "Tag 2",
+          name_slug: "tag-2",
+          category: "infrastructure",
+          visibility: "private"
+        )
+
+      %{uuid: uuid_3} =
+        insert(:tag, name: "Tag 3", name_slug: "tag-3", category: "location", visibility: "public")
+
+      %{uuid: uuid_4} =
+        insert(:tag,
+          name: "Tag 4",
+          name_slug: "tag-4",
+          category: "location",
+          visibility: "private"
+        )
+
+      uuids =
+        %{visibility: "public"}
+        |> Tags.filter(%{role: "user"})
+        |> Enum.map(& &1.uuid)
+
+      assert Enum.member?(uuids, uuid_1)
+      assert Enum.member?(uuids, uuid_3)
+      refute Enum.member?(uuids, uuid_2)
+      refute Enum.member?(uuids, uuid_4)
+
+      uuids =
+        %{visibility: "private"}
+        |> Tags.filter(%{role: "user"})
+        |> Enum.map(& &1.uuid)
+
+      assert Enum.member?(uuids, uuid_1)
+      assert Enum.member?(uuids, uuid_3)
+      refute Enum.member?(uuids, uuid_2)
+      refute Enum.member?(uuids, uuid_4)
+    end
+
+    test "should filter tags by category for user with user role" do
+      %{uuid: uuid_1} =
+        insert(:tag,
+          name: "Tag 1",
+          name_slug: "tag-1",
+          category: "infrastructure",
+          visibility: "public"
+        )
+
+      %{uuid: uuid_2} =
+        insert(:tag,
+          name: "Tag 2",
+          name_slug: "tag-2",
+          category: "infrastructure",
+          visibility: "private"
+        )
+
+      %{uuid: uuid_3} =
+        insert(:tag, name: "Tag 3", name_slug: "tag-3", category: "location", visibility: "public")
+
+      %{uuid: uuid_4} =
+        insert(:tag,
+          name: "Tag 4",
+          name_slug: "tag-4",
+          category: "location",
+          visibility: "private"
+        )
+
+      uuids =
+        %{category: "infrastructure"}
+        |> Tags.filter(%{role: "user"})
+        |> Enum.map(& &1.uuid)
+
+      assert Enum.member?(uuids, uuid_1)
+      refute Enum.member?(uuids, uuid_2)
+      refute Enum.member?(uuids, uuid_3)
+      refute Enum.member?(uuids, uuid_4)
+
+      uuids =
+        %{category: "location"}
+        |> Tags.filter(%{role: "user"})
+        |> Enum.map(& &1.uuid)
+
+      assert Enum.member?(uuids, uuid_3)
+      refute Enum.member?(uuids, uuid_4)
+      refute Enum.member?(uuids, uuid_1)
+      refute Enum.member?(uuids, uuid_2)
+    end
+  end
+
   describe "get/2" do
     test "should fetch public visible tag for user with admin role" do
       %{uuid: uuid_1} =
