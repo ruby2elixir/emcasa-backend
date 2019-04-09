@@ -8,6 +8,7 @@ defmodule Re.Developments do
 
   alias Re.{
     Development,
+    Developments.Queries,
     Repo
   }
 
@@ -25,6 +26,9 @@ defmodule Re.Developments do
   end
 
   def get(uuid), do: do_get(Development, uuid)
+
+  def get_preloaded(uuid, preload),
+    do: do_get(Queries.preload_relations(Development, preload), uuid)
 
   defp do_get(query, uuid) do
     case Repo.get(query, uuid) do
