@@ -19,13 +19,9 @@ defmodule Re.Tags do
 
   def query(_query, _args), do: Tag
 
-  def all(%{role: "admin"}) do
-    Tag
-    |> Repo.all()
-  end
-
-  def all(_) do
-    %{visibility: "public"}
+  def all(user) do
+    %{}
+    |> query_visibility(user)
     |> Queries.filter_by()
     |> Repo.all()
   end
@@ -36,29 +32,17 @@ defmodule Re.Tags do
     |> Repo.all()
   end
 
-  def filter(params, %{role: "admin"}) do
+  def filter(params, user) do
     params
+    |> query_visibility(user)
     |> Queries.filter_by()
     |> Repo.all()
   end
 
-  def filter(params, _) do
-    params
-    |> Map.merge(%{visibility: "public"})
-    |> Queries.filter_by()
-    |> Repo.all()
-  end
-
-  def get(uuid, %{role: "admin"}) do
-    case Repo.get(Tag, uuid) do
-      nil -> {:error, :not_found}
-      tag -> {:ok, tag}
-    end
-  end
-
-  def get(uuid, _) do
+  def get(uuid, user) do
     tag =
-      %{uuid: uuid, visibility: "public"}
+      %{uuid: uuid}
+      |> query_visibility(user)
       |> Queries.filter_by()
       |> Repo.one()
 
@@ -79,6 +63,9 @@ defmodule Re.Tags do
     |> Queries.filter_by()
     |> Repo.all()
   end
+
+  defp query_visibility(params, %{role: "admin"}), do: params
+  defp query_visibility(params, _), do: Map.merge(params, %{visibility: "public"})
 
   def insert(params) do
     %Tag{}
