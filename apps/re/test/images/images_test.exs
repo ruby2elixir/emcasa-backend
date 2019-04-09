@@ -52,4 +52,28 @@ defmodule Re.ImagesTest do
                ])
     end
   end
+
+  describe "insert/2" do
+    @insert_params %{filename: "test.jpg"}
+
+    test "should insert listing image active" do
+      listing =
+        insert(:listing)
+        |> Re.Repo.preload([:images])
+
+      {:ok, inserted_image} = Images.insert(@insert_params, listing)
+      assert inserted_image.is_active == true
+      assert inserted_image.listing == listing
+    end
+
+    test "should insert development image active" do
+      development =
+        insert(:development)
+        |> Re.Repo.preload([:images])
+
+      {:ok, inserted_image} = Images.insert(@insert_params, development)
+      assert inserted_image.is_active == true
+      assert inserted_image.development == development
+    end
+  end
 end
