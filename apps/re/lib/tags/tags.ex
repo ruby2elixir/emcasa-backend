@@ -2,38 +2,70 @@ defmodule Re.Tags do
   @moduledoc """
   Context for tags.
   """
+  @behaviour Bodyguard.Policy
 
   require Ecto.Query
 
   alias Re.{
     Tag,
     Tags.Queries,
-    Repo
+    Repo,
+    Slugs
   }
 
-  def all do
-    Tag
-    |> Re.Repo.all()
+  defdelegate authorize(action, user, params), to: __MODULE__.Policy
+
+  def data(params), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+
+  def query(_query, _args), do: Tag
+
+  def all(user) do
+    %{}
+    |> query_visibility(user)
+    |> Queries.filter_by()
+    |> Repo.all()
   end
 
-  def get(id) do
-    case Repo.get(Tag, id) do
+  def search(name) do
+    %{name_slug_like: Slugs.sluggify(name)}
+    |> Queries.filter_by()
+    |> Repo.all()
+  end
+
+  def filter(params, user) do
+    params
+    |> query_visibility(user)
+    |> Queries.filter_by()
+    |> Repo.all()
+  end
+
+  def get(uuid, user) do
+    tag =
+      %{uuid: uuid}
+      |> query_visibility(user)
+      |> Queries.filter_by()
+      |> Repo.one()
+
+    case tag do
       nil -> {:error, :not_found}
       tag -> {:ok, tag}
     end
   end
 
   def list_by_uuids(uuids) do
-    uuids
-    |> Queries.with_uuids()
+    %{uuids: uuids}
+    |> Queries.filter_by()
     |> Repo.all()
   end
 
   def list_by_slugs(slugs) do
-    slugs
-    |> Queries.with_slugs()
+    %{name_slugs: slugs}
+    |> Queries.filter_by()
     |> Repo.all()
   end
+
+  defp query_visibility(params, %{role: "admin"}), do: params
+  defp query_visibility(params, _), do: Map.merge(params, %{visibility: "public"})
 
   def insert(params) do
     %Tag{}

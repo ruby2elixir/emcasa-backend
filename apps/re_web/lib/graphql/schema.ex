@@ -12,6 +12,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.Calendar
   import_types ReWeb.Types.Development
   import_types ReWeb.Types.Unit
+  import_types ReWeb.Types.Tag
   import_types ReWeb.Types.Custom.UUID
   import_types Absinthe.Type.Custom
 
@@ -33,6 +34,7 @@ defmodule ReWeb.Schema do
     import_fields(:interest_queries)
     import_fields(:calendar_queries)
     import_fields(:development_queries)
+    import_fields(:tag_queries)
   end
 
   mutation do
@@ -44,6 +46,7 @@ defmodule ReWeb.Schema do
     import_fields(:calendar_mutations)
     import_fields(:development_mutations)
     import_fields(:unit_mutations)
+    import_fields(:tag_mutations)
   end
 
   subscription do
