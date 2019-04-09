@@ -3,29 +3,35 @@ defmodule Re.Tags.Queries do
 
   import Ecto.Query
 
-  def get_public(query \\ Tag, uuid)
+  def filter_by(query \\ Tag, filters)
 
-  def get_public(query, uuid) do
-    query
-    |> public()
-    |> where([t], t.uuid == ^uuid)
+  def filter_by(query, nil), do: query
+
+  def filter_by(query, filters) do
+    Enum.reduce(filters, query, &filter_next/2)
   end
 
-  def public(query \\ Tag) do
-    from(t in query, where: t.visibility == "public")
+  def filter_next({:category, category}, query) do
+    where(query, [t], t.category == ^category)
   end
 
-  def match_slug(query \\ Tag, name_slug)
-
-  def match_slug(query, name_slug) do
-    from(t in query, where: like(t.name_slug, ^"%#{name_slug}%"))
+  def filter_next({:name_slug_like, name_slug}, query) do
+    where(query, [t], like(t.name_slug, ^"%#{name_slug}%"))
   end
 
-  def with_uuids(query \\ Tag, uuids)
+  def filter_next({:name_slugs, name_slugs}, query) do
+    where(query, [t], t.name_slug in ^name_slugs)
+  end
 
-  def with_uuids(query, uuids), do: from(i in query, where: i.uuid in ^uuids)
+  def filter_next({:uuid, uuid}, query) do
+    where(query, [t], t.uuid == ^uuid)
+  end
 
-  def with_slugs(query \\ Tag, slugs)
+  def filter_next({:uuids, uuids}, query) do
+    where(query, [t], t.uuid in ^uuids)
+  end
 
-  def with_slugs(query, slugs), do: from(i in query, where: i.name_slug in ^slugs)
+  def filter_next({:visibility, visibility}, query) do
+    where(query, [t], t.visibility == ^visibility)
+  end
 end

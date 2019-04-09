@@ -25,14 +25,14 @@ defmodule Re.Tags do
   end
 
   def all(_) do
-    Queries.public()
+    %{visibility: "public"}
+    |> Queries.filter_by()
     |> Repo.all()
   end
 
   def search(name) do
-    name
-    |> Slugs.sluggify()
-    |> Queries.match_slug()
+    %{name_slug_like: Slugs.sluggify(name)}
+    |> Queries.filter_by()
     |> Repo.all()
   end
 
@@ -45,8 +45,8 @@ defmodule Re.Tags do
 
   def get(uuid, _) do
     tag =
-      uuid
-      |> Queries.get_public()
+      %{uuid: uuid, visibility: "public"}
+      |> Queries.filter_by()
       |> Repo.one()
 
     case tag do
@@ -56,14 +56,14 @@ defmodule Re.Tags do
   end
 
   def list_by_uuids(uuids) do
-    uuids
-    |> Queries.with_uuids()
+    %{uuids: uuids}
+    |> Queries.filter_by()
     |> Repo.all()
   end
 
   def list_by_slugs(slugs) do
-    slugs
-    |> Queries.with_slugs()
+    %{name_slugs: slugs}
+    |> Queries.filter_by()
     |> Repo.all()
   end
 
