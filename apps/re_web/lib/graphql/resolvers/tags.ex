@@ -4,8 +4,11 @@ defmodule ReWeb.Resolvers.Tags do
   """
   alias Re.Tags
 
-  def index(_params, %{context: %{current_user: current_user}}) do
-    tags = Tags.all(current_user)
+  def index(params, %{context: %{current_user: current_user}}) do
+    tags =
+      params
+      |> Map.get(:filters, %{})
+      |> Tags.filter(current_user)
 
     {:ok, tags}
   end

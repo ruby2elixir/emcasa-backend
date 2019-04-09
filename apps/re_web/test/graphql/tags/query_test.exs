@@ -19,134 +19,175 @@ defmodule ReWeb.GraphQL.Tags.QueryTest do
   end
 
   describe "tags" do
-    @tags_query """
-    query {
-      tags {
-        name_slug
-        visibility
-      }
-    }
-    """
-
-    test "admin should query tags", %{admin_conn: conn} do
+    test "admin should fetch all tags", %{admin_conn: conn} do
       expected_tags = [
-        %{"name_slug" => "academia", "visibility" => "public"},
-        %{"name_slug" => "churrasqueira", "visibility" => "public"},
-        %{"name_slug" => "espaco-gourmet", "visibility" => "public"},
-        %{"name_slug" => "espaco-verde", "visibility" => "public"},
-        %{"name_slug" => "parque", "visibility" => "public"},
-        %{"name_slug" => "piscina", "visibility" => "public"},
-        %{"name_slug" => "playground", "visibility" => "public"},
-        %{"name_slug" => "quadra", "visibility" => "public"},
-        %{"name_slug" => "salao-de-festas", "visibility" => "public"},
-        %{"name_slug" => "salao-de-jogos", "visibility" => "public"},
-        %{"name_slug" => "sauna", "visibility" => "public"},
-        %{"name_slug" => "armarios-embutidos", "visibility" => "public"},
-        %{"name_slug" => "banheiro-empregados", "visibility" => "public"},
-        %{"name_slug" => "bom-para-pets", "visibility" => "public"},
-        %{"name_slug" => "dependencia-empregados", "visibility" => "public"},
-        %{"name_slug" => "espaco-para-churrasco", "visibility" => "public"},
-        %{"name_slug" => "fogao-embutido", "visibility" => "public"},
-        %{"name_slug" => "lavabo", "visibility" => "public"},
-        %{"name_slug" => "reformado", "visibility" => "public"},
-        %{"name_slug" => "sacada", "visibility" => "public"},
-        %{"name_slug" => "terraco", "visibility" => "public"},
-        %{"name_slug" => "vaga-na-escritura", "visibility" => "public"},
-        %{"name_slug" => "varanda", "visibility" => "public"},
-        %{"name_slug" => "varanda-gourmet", "visibility" => "public"},
-        %{"name_slug" => "comunidade", "visibility" => "private"},
-        %{"name_slug" => "cristo", "visibility" => "public"},
-        %{"name_slug" => "lagoa", "visibility" => "public"},
-        %{"name_slug" => "mar", "visibility" => "public"},
-        %{"name_slug" => "montanhas", "visibility" => "public"},
-        %{"name_slug" => "parcial-comunidade", "visibility" => "private"},
-        %{"name_slug" => "parcial-mar", "visibility" => "public"},
-        %{"name_slug" => "pedras", "visibility" => "public"},
-        %{"name_slug" => "verde", "visibility" => "public"},
-        %{"name_slug" => "vizinho", "visibility" => "private"}
+        %{"nameSlug" => "academia", "visibility" => "public"},
+        %{"nameSlug" => "churrasqueira", "visibility" => "public"},
+        %{"nameSlug" => "espaco-gourmet", "visibility" => "public"},
+        %{"nameSlug" => "espaco-verde", "visibility" => "public"},
+        %{"nameSlug" => "parque", "visibility" => "public"},
+        %{"nameSlug" => "piscina", "visibility" => "public"},
+        %{"nameSlug" => "playground", "visibility" => "public"},
+        %{"nameSlug" => "quadra", "visibility" => "public"},
+        %{"nameSlug" => "salao-de-festas", "visibility" => "public"},
+        %{"nameSlug" => "salao-de-jogos", "visibility" => "public"},
+        %{"nameSlug" => "sauna", "visibility" => "public"},
+        %{"nameSlug" => "armarios-embutidos", "visibility" => "public"},
+        %{"nameSlug" => "banheiro-empregados", "visibility" => "public"},
+        %{"nameSlug" => "bom-para-pets", "visibility" => "public"},
+        %{"nameSlug" => "dependencia-empregados", "visibility" => "public"},
+        %{"nameSlug" => "espaco-para-churrasco", "visibility" => "public"},
+        %{"nameSlug" => "fogao-embutido", "visibility" => "public"},
+        %{"nameSlug" => "lavabo", "visibility" => "public"},
+        %{"nameSlug" => "reformado", "visibility" => "public"},
+        %{"nameSlug" => "sacada", "visibility" => "public"},
+        %{"nameSlug" => "terraco", "visibility" => "public"},
+        %{"nameSlug" => "vaga-na-escritura", "visibility" => "public"},
+        %{"nameSlug" => "varanda", "visibility" => "public"},
+        %{"nameSlug" => "varanda-gourmet", "visibility" => "public"},
+        %{"nameSlug" => "comunidade", "visibility" => "private"},
+        %{"nameSlug" => "cristo", "visibility" => "public"},
+        %{"nameSlug" => "lagoa", "visibility" => "public"},
+        %{"nameSlug" => "mar", "visibility" => "public"},
+        %{"nameSlug" => "montanhas", "visibility" => "public"},
+        %{"nameSlug" => "parcial-comunidade", "visibility" => "private"},
+        %{"nameSlug" => "parcial-mar", "visibility" => "public"},
+        %{"nameSlug" => "pedras", "visibility" => "public"},
+        %{"nameSlug" => "verde", "visibility" => "public"},
+        %{"nameSlug" => "vizinho", "visibility" => "private"}
       ]
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@tags_query))
+      query = """
+        query {
+          tags {
+            nameSlug
+            visibility
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert json_response(conn, 200)["data"] == %{"tags" => expected_tags}
+    end
+
+    test "admin should filter private tags", %{admin_conn: conn} do
+      expected_tags = [
+        %{"nameSlug" => "comunidade", "visibility" => "private"},
+        %{"nameSlug" => "parcial-comunidade", "visibility" => "private"},
+        %{"nameSlug" => "vizinho", "visibility" => "private"}
+      ]
+
+      query = """
+        query Tags ($filters: TagFilterInput!) {
+          tags (filters: $filters) {
+            nameSlug
+            visibility
+          }
+        }
+      """
+
+      variables = %{filters: %{visibility: "private"}}
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert json_response(conn, 200)["data"] == %{"tags" => expected_tags}
     end
 
     test "user should query public tags", %{user_conn: conn} do
       expected_tags = [
-        %{"name_slug" => "academia", "visibility" => "public"},
-        %{"name_slug" => "churrasqueira", "visibility" => "public"},
-        %{"name_slug" => "espaco-gourmet", "visibility" => "public"},
-        %{"name_slug" => "espaco-verde", "visibility" => "public"},
-        %{"name_slug" => "parque", "visibility" => "public"},
-        %{"name_slug" => "piscina", "visibility" => "public"},
-        %{"name_slug" => "playground", "visibility" => "public"},
-        %{"name_slug" => "quadra", "visibility" => "public"},
-        %{"name_slug" => "salao-de-festas", "visibility" => "public"},
-        %{"name_slug" => "salao-de-jogos", "visibility" => "public"},
-        %{"name_slug" => "sauna", "visibility" => "public"},
-        %{"name_slug" => "armarios-embutidos", "visibility" => "public"},
-        %{"name_slug" => "banheiro-empregados", "visibility" => "public"},
-        %{"name_slug" => "bom-para-pets", "visibility" => "public"},
-        %{"name_slug" => "dependencia-empregados", "visibility" => "public"},
-        %{"name_slug" => "espaco-para-churrasco", "visibility" => "public"},
-        %{"name_slug" => "fogao-embutido", "visibility" => "public"},
-        %{"name_slug" => "lavabo", "visibility" => "public"},
-        %{"name_slug" => "reformado", "visibility" => "public"},
-        %{"name_slug" => "sacada", "visibility" => "public"},
-        %{"name_slug" => "terraco", "visibility" => "public"},
-        %{"name_slug" => "vaga-na-escritura", "visibility" => "public"},
-        %{"name_slug" => "varanda", "visibility" => "public"},
-        %{"name_slug" => "varanda-gourmet", "visibility" => "public"},
-        %{"name_slug" => "cristo", "visibility" => "public"},
-        %{"name_slug" => "lagoa", "visibility" => "public"},
-        %{"name_slug" => "mar", "visibility" => "public"},
-        %{"name_slug" => "montanhas", "visibility" => "public"},
-        %{"name_slug" => "parcial-mar", "visibility" => "public"},
-        %{"name_slug" => "pedras", "visibility" => "public"},
-        %{"name_slug" => "verde", "visibility" => "public"}
+        %{"nameSlug" => "academia", "visibility" => "public"},
+        %{"nameSlug" => "churrasqueira", "visibility" => "public"},
+        %{"nameSlug" => "espaco-gourmet", "visibility" => "public"},
+        %{"nameSlug" => "espaco-verde", "visibility" => "public"},
+        %{"nameSlug" => "parque", "visibility" => "public"},
+        %{"nameSlug" => "piscina", "visibility" => "public"},
+        %{"nameSlug" => "playground", "visibility" => "public"},
+        %{"nameSlug" => "quadra", "visibility" => "public"},
+        %{"nameSlug" => "salao-de-festas", "visibility" => "public"},
+        %{"nameSlug" => "salao-de-jogos", "visibility" => "public"},
+        %{"nameSlug" => "sauna", "visibility" => "public"},
+        %{"nameSlug" => "armarios-embutidos", "visibility" => "public"},
+        %{"nameSlug" => "banheiro-empregados", "visibility" => "public"},
+        %{"nameSlug" => "bom-para-pets", "visibility" => "public"},
+        %{"nameSlug" => "dependencia-empregados", "visibility" => "public"},
+        %{"nameSlug" => "espaco-para-churrasco", "visibility" => "public"},
+        %{"nameSlug" => "fogao-embutido", "visibility" => "public"},
+        %{"nameSlug" => "lavabo", "visibility" => "public"},
+        %{"nameSlug" => "reformado", "visibility" => "public"},
+        %{"nameSlug" => "sacada", "visibility" => "public"},
+        %{"nameSlug" => "terraco", "visibility" => "public"},
+        %{"nameSlug" => "vaga-na-escritura", "visibility" => "public"},
+        %{"nameSlug" => "varanda", "visibility" => "public"},
+        %{"nameSlug" => "varanda-gourmet", "visibility" => "public"},
+        %{"nameSlug" => "cristo", "visibility" => "public"},
+        %{"nameSlug" => "lagoa", "visibility" => "public"},
+        %{"nameSlug" => "mar", "visibility" => "public"},
+        %{"nameSlug" => "montanhas", "visibility" => "public"},
+        %{"nameSlug" => "parcial-mar", "visibility" => "public"},
+        %{"nameSlug" => "pedras", "visibility" => "public"},
+        %{"nameSlug" => "verde", "visibility" => "public"}
       ]
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@tags_query))
+      query = """
+        query {
+          tags {
+            nameSlug
+            visibility
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert json_response(conn, 200)["data"] == %{"tags" => expected_tags}
     end
 
     test "anonymous user should query public tags", %{unauthenticated_conn: conn} do
       expected_tags = [
-        %{"name_slug" => "academia", "visibility" => "public"},
-        %{"name_slug" => "churrasqueira", "visibility" => "public"},
-        %{"name_slug" => "espaco-gourmet", "visibility" => "public"},
-        %{"name_slug" => "espaco-verde", "visibility" => "public"},
-        %{"name_slug" => "parque", "visibility" => "public"},
-        %{"name_slug" => "piscina", "visibility" => "public"},
-        %{"name_slug" => "playground", "visibility" => "public"},
-        %{"name_slug" => "quadra", "visibility" => "public"},
-        %{"name_slug" => "salao-de-festas", "visibility" => "public"},
-        %{"name_slug" => "salao-de-jogos", "visibility" => "public"},
-        %{"name_slug" => "sauna", "visibility" => "public"},
-        %{"name_slug" => "armarios-embutidos", "visibility" => "public"},
-        %{"name_slug" => "banheiro-empregados", "visibility" => "public"},
-        %{"name_slug" => "bom-para-pets", "visibility" => "public"},
-        %{"name_slug" => "dependencia-empregados", "visibility" => "public"},
-        %{"name_slug" => "espaco-para-churrasco", "visibility" => "public"},
-        %{"name_slug" => "fogao-embutido", "visibility" => "public"},
-        %{"name_slug" => "lavabo", "visibility" => "public"},
-        %{"name_slug" => "reformado", "visibility" => "public"},
-        %{"name_slug" => "sacada", "visibility" => "public"},
-        %{"name_slug" => "terraco", "visibility" => "public"},
-        %{"name_slug" => "vaga-na-escritura", "visibility" => "public"},
-        %{"name_slug" => "varanda", "visibility" => "public"},
-        %{"name_slug" => "varanda-gourmet", "visibility" => "public"},
-        %{"name_slug" => "cristo", "visibility" => "public"},
-        %{"name_slug" => "lagoa", "visibility" => "public"},
-        %{"name_slug" => "mar", "visibility" => "public"},
-        %{"name_slug" => "montanhas", "visibility" => "public"},
-        %{"name_slug" => "parcial-mar", "visibility" => "public"},
-        %{"name_slug" => "pedras", "visibility" => "public"},
-        %{"name_slug" => "verde", "visibility" => "public"}
+        %{"nameSlug" => "academia", "visibility" => "public"},
+        %{"nameSlug" => "churrasqueira", "visibility" => "public"},
+        %{"nameSlug" => "espaco-gourmet", "visibility" => "public"},
+        %{"nameSlug" => "espaco-verde", "visibility" => "public"},
+        %{"nameSlug" => "parque", "visibility" => "public"},
+        %{"nameSlug" => "piscina", "visibility" => "public"},
+        %{"nameSlug" => "playground", "visibility" => "public"},
+        %{"nameSlug" => "quadra", "visibility" => "public"},
+        %{"nameSlug" => "salao-de-festas", "visibility" => "public"},
+        %{"nameSlug" => "salao-de-jogos", "visibility" => "public"},
+        %{"nameSlug" => "sauna", "visibility" => "public"},
+        %{"nameSlug" => "armarios-embutidos", "visibility" => "public"},
+        %{"nameSlug" => "banheiro-empregados", "visibility" => "public"},
+        %{"nameSlug" => "bom-para-pets", "visibility" => "public"},
+        %{"nameSlug" => "dependencia-empregados", "visibility" => "public"},
+        %{"nameSlug" => "espaco-para-churrasco", "visibility" => "public"},
+        %{"nameSlug" => "fogao-embutido", "visibility" => "public"},
+        %{"nameSlug" => "lavabo", "visibility" => "public"},
+        %{"nameSlug" => "reformado", "visibility" => "public"},
+        %{"nameSlug" => "sacada", "visibility" => "public"},
+        %{"nameSlug" => "terraco", "visibility" => "public"},
+        %{"nameSlug" => "vaga-na-escritura", "visibility" => "public"},
+        %{"nameSlug" => "varanda", "visibility" => "public"},
+        %{"nameSlug" => "varanda-gourmet", "visibility" => "public"},
+        %{"nameSlug" => "cristo", "visibility" => "public"},
+        %{"nameSlug" => "lagoa", "visibility" => "public"},
+        %{"nameSlug" => "mar", "visibility" => "public"},
+        %{"nameSlug" => "montanhas", "visibility" => "public"},
+        %{"nameSlug" => "parcial-mar", "visibility" => "public"},
+        %{"nameSlug" => "pedras", "visibility" => "public"},
+        %{"nameSlug" => "verde", "visibility" => "public"}
       ]
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@tags_query))
+      query = """
+        query {
+          tags {
+            nameSlug
+            visibility
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert json_response(conn, 200)["data"] == %{"tags" => expected_tags}
     end

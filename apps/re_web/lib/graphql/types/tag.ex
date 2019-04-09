@@ -20,9 +20,16 @@ defmodule ReWeb.Types.Tag do
     field :visibility, non_null(:string)
   end
 
+  input_object :tag_filter_input do
+    field :category, :string
+    field :visibility, :string
+  end
+
   object :tag_queries do
     @desc "Tags index"
     field :tags, list_of(:tag) do
+      arg :filters, :tag_filter_input
+
       resolve &Resolvers.Tags.index/2
     end
 
