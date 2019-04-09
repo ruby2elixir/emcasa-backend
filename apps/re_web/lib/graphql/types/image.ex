@@ -15,8 +15,12 @@ defmodule ReWeb.Types.Image do
     field :category, :string
   end
 
+  enum :image_parent_type, values: ~w(listing development)a
+
   input_object :image_insert_input do
-    field :listing_id, non_null(:id)
+    field :parent_uuid, :uuid
+    field :parent_type, :image_parent_type
+    field :listing_id, :id
     field :filename, non_null(:string)
     field :is_active, :boolean
     field :description, :string
@@ -41,11 +45,22 @@ defmodule ReWeb.Types.Image do
   object :image_output do
     field :image, :image
     field :parent_listing, :listing
+    field :parent, :image_parent
   end
 
   object :images_output do
     field :images, list_of(:image)
     field :parent_listing, :listing
+    field :parent, :image_parent
+  end
+
+  union :image_parent do
+    types([:development, :listing])
+
+    resolve_type(fn
+      %Re.Development{}, _ -> :development
+      %Re.Listing{}, _ -> :listing
+    end)
   end
 
   object :image_mutations do
@@ -108,7 +123,8 @@ defmodule ReWeb.Types.Image do
 
     @desc "Subscribe to image insertion"
     field :image_inserted, :image_output do
-      arg :listing_id, non_null(:id)
+      arg :listing_id, :id
+      arg :development_uuid, :uuid
 
       config &Resolvers.Images.image_inserted_config/2
 

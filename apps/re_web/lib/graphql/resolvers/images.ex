@@ -5,6 +5,7 @@ defmodule ReWeb.Resolvers.Images do
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
   alias Re.{
+    Developments,
     Images,
     Listings
   }
@@ -54,6 +55,16 @@ defmodule ReWeb.Resolvers.Images do
 
       {:ok, images}
     end)
+  end
+
+  def insert_image(%{input: %{parent_type: :development, parent_uuid: parent_uuid} = params}, %{
+        context: %{current_user: current_user}
+      }) do
+    with :ok <- Bodyguard.permit(Images, :create_development_images, current_user, nil),
+         {:ok, development} <- Developments.get_preloaded(parent_uuid, [:images]),
+         {:ok, image} <- Images.insert(params, development) do
+      {:ok, %{parent: development, image: image}}
+    end
   end
 
   def insert_image(%{input: %{listing_id: listing_id} = params}, %{
@@ -114,6 +125,9 @@ defmodule ReWeb.Resolvers.Images do
   def update_images_trigger(%{parent_listing: %{id: id}}), do: "images_updated:#{id}"
 
   def insert_image_trigger(%{parent_listing: %{id: id}}), do: "images_inserted:#{id}"
+
+  def insert_image_trigger(%{parent: %Re.Development{uuid: uuid}}),
+    do: "development_updated:#{uuid}"
 
   defp config_subscription(%{listing_id: id}, %{role: "admin"}, topic),
     do: {:ok, topic: "#{topic}:#{id}"}

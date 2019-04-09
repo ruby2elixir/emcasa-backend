@@ -38,14 +38,22 @@ defmodule Re.Images do
     end
   end
 
-  def insert(image_params, listing) do
+  def insert(image_params, association) do
     %Image{}
     |> Image.create_changeset(image_params)
-    |> Changeset.change(listing: listing)
-    |> Changeset.change(is_active: true)
-    |> Changeset.change(position: calculate_position(listing))
+    |> change_association(association)
+    |> Changeset.change(%{
+      is_active: true,
+      position: calculate_position(association)
+    })
     |> Repo.insert()
   end
+
+  defp change_association(changeset, %Re.Listing{} = listing),
+    do: Changeset.change(changeset, listing: listing)
+
+  defp change_association(changeset, %Re.Development{} = development),
+    do: Changeset.change(changeset, development: development)
 
   defp calculate_position(%{images: []}), do: 1
   defp calculate_position(%{images: [top_image | _]}), do: top_image.position - 1
