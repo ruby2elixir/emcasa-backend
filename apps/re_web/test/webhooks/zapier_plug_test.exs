@@ -44,7 +44,8 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 200) == "ok"
 
-      assert Repo.one(FacebookBuyer)
+      assert fb = Repo.one(FacebookBuyer)
+      assert fb.uuid
     end
 
     @tag capture_log: true

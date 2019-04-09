@@ -6,7 +6,7 @@ defmodule Re.Leads.FacebookBuyer do
 
   import Ecto.Changeset
 
-  @primary_key {:uuid, :binary_id, autogenerate: false}
+  @primary_key {:uuid, :binary_id, autogenerate: true}
 
   schema "facebook_buyer_leads" do
     field :full_name, :string
@@ -22,11 +22,5 @@ defmodule Re.Leads.FacebookBuyer do
 
   @params ~w(full_name email phone_number neighborhoods timestamp lead_id location)a
 
-  def changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, @params)
-    |> generate_uuid()
-  end
-
-  defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
+  def changeset(struct, params \\ %{}), do: cast(struct, params, @params)
 end
