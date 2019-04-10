@@ -849,6 +849,45 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                ]
              } == json_response(conn, 200)["data"]["listings"]
     end
+
+    test "should query listing with tags", %{unauthenticated_conn: conn} do
+      insert(
+        :listing,
+        tags: [
+          build(:tag, name: "Tag 1", name_slug: "tag-1"),
+          build(:tag, name: "Tag 2", name_slug: "tag-2"),
+          build(:tag, name: "Tag 3", name_slug: "tag-3")
+        ]
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              tags {
+                nameSlug
+              }
+            }
+          }
+        }
+      """
+
+      expected = %{
+        "listings" => [
+          %{
+            "tags" => [
+              %{"nameSlug" => "tag-1"},
+              %{"nameSlug" => "tag-2"},
+              %{"nameSlug" => "tag-3"}
+            ]
+          }
+        ]
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert expected == json_response(conn, 200)["data"]["listings"]
+    end
   end
 
   describe "listing" do
