@@ -488,7 +488,7 @@ defmodule Re.ListingsTest do
     end
   end
 
-  describe "upsert_tags/3" do
+  describe "upsert_tags/2" do
     test "should insert tags" do
       tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
       tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
@@ -517,10 +517,7 @@ defmodule Re.ListingsTest do
 
       user = insert(:user)
 
-      {:ok, listing} =
-        insert(:listing, user: user)
-        |> Repo.preload([:tags])
-        |> Listings.upsert_tags([tag_1.uuid, tag_2.uuid])
+      listing = insert(:listing, user: user, tags: [tag_1, tag_2])
 
       {:ok, updated_listing} = Listings.upsert_tags(listing, [tag_3.uuid])
 
@@ -536,16 +533,28 @@ defmodule Re.ListingsTest do
 
       user = insert(:user)
 
-      {:ok, listing} =
-        insert(:listing, user: user)
-        |> Repo.preload([:tags])
-        |> Listings.upsert_tags([tag_1.uuid, tag_2.uuid])
+      listing = insert(:listing, user: user, tags: [tag_1, tag_2])
 
       {:ok, updated_listing} = Listings.upsert_tags(listing, [])
 
       assert Enum.count(updated_listing.tags) == 0
       refute Enum.member?(updated_listing.tags, tag_1)
       refute Enum.member?(updated_listing.tags, tag_2)
+    end
+
+    test "noop when no tags is nil" do
+      tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
+
+      user = insert(:user)
+
+      listing = insert(:listing, user: user, tags: [tag_1, tag_2])
+
+      {:ok, updated_listing} = Listings.upsert_tags(listing, nil)
+
+      assert Enum.count(updated_listing.tags) == 2
+      assert Enum.member?(updated_listing.tags, tag_1)
+      assert Enum.member?(updated_listing.tags, tag_2)
     end
   end
 
