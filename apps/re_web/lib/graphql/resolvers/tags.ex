@@ -25,10 +25,12 @@ defmodule ReWeb.Resolvers.Tags do
     end
   end
 
-  def per_listing(listing, _params, %{context: %{loader: loader}}) do
+  def per_listing(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
     loader
-    |> Dataloader.load(Tags, :tags, listing)
-    |> on_load(fn loader -> {:ok, Dataloader.get(loader, Tags, :tags, listing)} end)
+    |> Dataloader.load(Tags, {:tags, %{user: current_user}}, listing)
+    |> on_load(fn loader ->
+      {:ok, Dataloader.get(loader, Tags, {:tags, %{user: current_user}}, listing)}
+    end)
   end
 
   def insert(%{input: params}, %{context: %{current_user: current_user}}) do

@@ -850,13 +850,13 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
              } == json_response(conn, 200)["data"]["listings"]
     end
 
-    test "should query listing with tags", %{unauthenticated_conn: conn} do
+    test "admin should query listing with all tags", %{admin_conn: conn} do
       insert(
         :listing,
         tags: [
-          build(:tag, name: "Tag 1", name_slug: "tag-1"),
-          build(:tag, name: "Tag 2", name_slug: "tag-2"),
-          build(:tag, name: "Tag 3", name_slug: "tag-3")
+          build(:tag, name: "Tag 1", name_slug: "tag-1", visibility: "public"),
+          build(:tag, name: "Tag 2", name_slug: "tag-2", visibility: "public"),
+          build(:tag, name: "Tag 3", name_slug: "tag-3", visibility: "private")
         ]
       )
 
@@ -879,6 +879,84 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               %{"nameSlug" => "tag-1"},
               %{"nameSlug" => "tag-2"},
               %{"nameSlug" => "tag-3"}
+            ]
+          }
+        ]
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert expected == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "user should query listing with publicly visible tags", %{user_conn: conn} do
+      insert(
+        :listing,
+        tags: [
+          build(:tag, name: "Tag 1", name_slug: "tag-1", visibility: "public"),
+          build(:tag, name: "Tag 2", name_slug: "tag-2", visibility: "public"),
+          build(:tag, name: "Tag 3", name_slug: "tag-3", visibility: "private")
+        ]
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              tags {
+                nameSlug
+              }
+            }
+          }
+        }
+      """
+
+      expected = %{
+        "listings" => [
+          %{
+            "tags" => [
+              %{"nameSlug" => "tag-1"},
+              %{"nameSlug" => "tag-2"}
+            ]
+          }
+        ]
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert expected == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "anonymous user should query listing with publicly visible tags", %{
+      unauthenticated_conn: conn
+    } do
+      insert(
+        :listing,
+        tags: [
+          build(:tag, name: "Tag 1", name_slug: "tag-1", visibility: "public"),
+          build(:tag, name: "Tag 2", name_slug: "tag-2", visibility: "public"),
+          build(:tag, name: "Tag 3", name_slug: "tag-3", visibility: "private")
+        ]
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              tags {
+                nameSlug
+              }
+            }
+          }
+        }
+      """
+
+      expected = %{
+        "listings" => [
+          %{
+            "tags" => [
+              %{"nameSlug" => "tag-1"},
+              %{"nameSlug" => "tag-2"}
             ]
           }
         ]
