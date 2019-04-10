@@ -78,11 +78,15 @@ defmodule ReWeb.Resolvers.Images do
 
   def update_images(%{input: inputs}, %{context: %{current_user: current_user}}) do
     with {:ok, images_and_inputs} <- Images.get_list(inputs),
-         {:ok, parent} <- Images.Parents.get_image_parent(images_and_inputs),
+         {:ok, parent} <-
+           extract_image_list(images_and_inputs) |> Images.Parents.get_image_parent(),
          :ok <- Bodyguard.permit(Images, :update_images, current_user, parent),
          {:ok, images} <- Images.update_images(images_and_inputs),
          do: {:ok, %{images: images, parent_listing: parent, parent: parent}}
   end
+
+  defp extract_image_list(images_and_inputs),
+    do: Enum.map(images_and_inputs, fn {_, image, _} -> image end)
 
   def deactivate_images(%{input: %{image_ids: image_ids}}, %{
         context: %{current_user: current_user}
