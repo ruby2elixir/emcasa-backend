@@ -456,6 +456,178 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
 
       assert_unauthorized_response(json_response(conn, 200))
     end
+
+    test "admin should update development image", %{admin_conn: conn} do
+      %{uuid: development_uuid} = insert(:development)
+
+      [%{id: id1}, %{id: id2}] =
+        insert_list(
+          2,
+          :image,
+          development_uuid: development_uuid,
+          position: 5,
+          description: "wah",
+          filename: "test.jpg",
+          category: "kitchen"
+        )
+
+      variables = %{
+        "input" => [
+          %{"id" => id1, "position" => 1, "description" => "waow1", "category" => "bathroom1"},
+          %{"id" => id2, "position" => 2, "description" => "waow2", "category" => "bathroom2"}
+        ]
+      }
+
+      mutation = """
+        mutation UpdateImages ($input: ImageUpdateInput!) {
+          updateImages(input: $input) {
+            parent {
+              ... on Development {
+                  uuid
+              }
+            }
+            images {
+              id
+              description
+              filename
+              isActive
+              position
+              category
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{
+               "parent" => %{
+                 "uuid" => development_uuid
+               },
+               "images" => [
+                 %{
+                   "id" => to_string(id1),
+                   "description" => "waow1",
+                   "filename" => "test.jpg",
+                   "isActive" => true,
+                   "position" => 1,
+                   "category" => "bathroom1"
+                 },
+                 %{
+                   "id" => to_string(id2),
+                   "description" => "waow2",
+                   "filename" => "test.jpg",
+                   "isActive" => true,
+                   "position" => 2,
+                   "category" => "bathroom2"
+                 }
+               ]
+             } == json_response(conn, 200)["data"]["updateImages"]
+
+      image1 = Repo.get(Re.Image, id1)
+      assert 1 == image1.position
+      assert "waow1" == image1.description
+      assert "test.jpg" == image1.filename
+      assert image1.is_active
+      assert "bathroom1" == image1.category
+
+      image2 = Repo.get(Re.Image, id2)
+      assert 2 == image2.position
+      assert "waow2" == image2.description
+      assert "test.jpg" == image2.filename
+      assert image2.is_active
+      assert "bathroom2" == image2.category
+    end
+
+    test "common user should not insert development image", %{user_conn: conn} do
+      %{uuid: development_uuid} = insert(:development)
+
+      [%{id: id1}, %{id: id2}, %{id: id3}] =
+        insert_list(
+          3,
+          :image,
+          development_uuid: development_uuid,
+          position: 5,
+          description: "wah",
+          filename: "test.jpg"
+        )
+
+      variables = %{
+        "input" => [
+          %{"id" => id1, "position" => 1, "description" => "waow1"},
+          %{"id" => id2, "position" => 2, "description" => "waow2"},
+          %{"id" => id3, "position" => 3, "description" => "waow3"}
+        ]
+      }
+
+      mutation = """
+        mutation UpdateImages ($input: ImageUpdateInput!) {
+          updateImages(input: $input) {
+            parent {
+              ... on Development {
+                uuid
+              }
+            }
+            images {
+              id
+              description
+              filename
+              isActive
+              position
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert_forbidden_response(json_response(conn, 200))
+    end
+
+    test "anonymous should not insert development image", %{unauthenticated_conn: conn} do
+      %{uuid: development_uuid} = insert(:development)
+
+      [%{id: id1}, %{id: id2}, %{id: id3}] =
+        insert_list(
+          3,
+          :image,
+          development_uuid: development_uuid,
+          position: 5,
+          description: "wah",
+          filename: "test.jpg"
+        )
+
+      variables = %{
+        "input" => [
+          %{"id" => id1, "position" => 1, "description" => "waow1"},
+          %{"id" => id2, "position" => 2, "description" => "waow2"},
+          %{"id" => id3, "position" => 3, "description" => "waow3"}
+        ]
+      }
+
+      mutation = """
+        mutation UpdateImages ($input: ImageUpdateInput!) {
+          updateImages(input: $input) {
+            parent {
+              ... on Development {
+                uuid
+              }
+            }
+            images {
+              id
+              description
+              filename
+              isActive
+              position
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert_unauthorized_response(json_response(conn, 200))
+    end
   end
 
   describe "deactivate" do
