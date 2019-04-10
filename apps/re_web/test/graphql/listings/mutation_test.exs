@@ -262,6 +262,68 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert [%{"message" => "Bad request", "code" => 400}] = json_response(conn, 200)["errors"]
     end
 
+    test "admin should insert listing with tags", %{admin_conn: conn, old_address: address} do
+      tag = insert(:tag)
+
+      variables = %{
+        "input" => %{
+          "type" => "Apartamento",
+          "addressId" => address.id,
+          "tags" => [tag.uuid]
+        }
+      }
+
+      mutation = """
+        mutation InsertListing ($input: ListingInput!) {
+          insertListing(input: $input) {
+            type
+            tags {
+              nameSlug
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      expected = %{
+        "insertListing" => %{"type" => "Apartamento", "tags" => [%{"nameSlug" => tag.name_slug}]}
+      }
+
+      assert expected == json_response(conn, 200)["data"]
+    end
+
+    test "user should insert listing with tags", %{user_conn: conn, old_address: address} do
+      tag = insert(:tag)
+
+      variables = %{
+        "input" => %{
+          "type" => "Apartamento",
+          "addressId" => address.id,
+          "tags" => [tag.uuid]
+        }
+      }
+
+      mutation = """
+        mutation InsertListing ($input: ListingInput!) {
+          insertListing(input: $input) {
+            type
+            tags {
+              nameSlug
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      expected = %{
+        "insertListing" => %{"type" => "Apartamento", "tags" => [%{"nameSlug" => tag.name_slug}]}
+      }
+
+      assert expected == json_response(conn, 200)["data"]
+    end
+
     test "anonymous should not insert listing", %{
       unauthenticated_conn: conn,
       listing: listing,

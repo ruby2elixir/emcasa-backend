@@ -48,7 +48,8 @@ defmodule ReWeb.Resolvers.Listings do
            Bodyguard.permit(Listings, :create_development_listing, current_user, listing_params),
          {:ok, address} <- get_address(listing_params),
          {:ok, development} <- get_development(listing_params),
-         {:ok, listing} <- Listings.insert(listing_params, address, current_user, development) do
+         {:ok, listing} <- Listings.insert(listing_params, address, current_user, development),
+         {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
       {:ok, listing}
     else
       {:error, _, error, _} -> {:error, error}
@@ -59,7 +60,8 @@ defmodule ReWeb.Resolvers.Listings do
   def insert(%{input: listing_params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, current_user, listing_params),
          {:ok, address} <- get_address(listing_params),
-         {:ok, listing} <- Listings.insert(listing_params, address, current_user) do
+         {:ok, listing} <- Listings.insert(listing_params, address, current_user),
+         {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
       {:ok, listing}
     else
       {:error, _, error, _} -> {:error, error}
