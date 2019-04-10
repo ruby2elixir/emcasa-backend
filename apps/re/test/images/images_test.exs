@@ -30,42 +30,6 @@ defmodule Re.ImagesTest do
     end
   end
 
-  describe "check_same_parent/1" do
-    test "should return parent when images are from same listing" do
-      listing = insert(:listing)
-      assert {:ok, listing} ==
-               Images.check_same_parent([
-                 {:ok, %{listing_id: listing.id}, %{}},
-                 {:ok, %{listing_id: listing.id}, %{}}
-               ])
-    end
-
-    test "should return parent when images are from same development" do
-      development = insert(:development)
-      assert {:ok, development} ==
-                Images.check_same_parent([
-                  {:ok, %{development_uuid: development.uuid}, %{}},
-                  {:ok, %{development_uuid: development.uuid}, %{}}
-                ])
-    end
-
-    test "should return error when images are from distinct listing" do
-      assert {:error, :distinct_parents} ==
-                Images.check_same_parent([
-                  {:ok, %{listing_id: 1}, %{}},
-                  {:ok, %{listing_id: 2}, %{}}
-                ])
-    end
-
-    test "should return error when images are from distinct development" do
-      assert {:error, :distinct_parents} ==
-                Images.check_same_parent([
-                  {:ok, %{development_uuid: "aa"}, %{}},
-                  {:ok, %{development_uuid: "bb"}, %{}}
-                ])
-    end
-  end
-
   describe "update_images/1" do
     test "should error when input is invalid" do
       [image1, image2, image3] = insert_list(3, :image)
