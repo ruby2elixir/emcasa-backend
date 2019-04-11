@@ -191,6 +191,27 @@ defmodule ReWeb.GraphQL.Tags.QueryTest do
 
       assert json_response(conn, 200)["data"] == %{"tags" => expected_tags}
     end
+
+    test "filter multiple tags by name slug", %{unauthenticated_conn: conn} do
+      query = """
+        query Tags (
+          $filters: TagFilterInput!
+        ) {
+          tags(filters: $filters) {
+            nameSlug
+          }
+        }
+      """
+
+      variables = %{filters: %{nameSlugs: ["salao-de-festas", "academia"]}}
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert data = json_response(conn, 200)["data"]["tags"]
+      assert 2 == Enum.count(data)
+      assert Enum.member?(data, %{"nameSlug" => "academia"})
+      assert Enum.member?(data, %{"nameSlug" => "salao-de-festas"})
+    end
   end
 
   describe "tag" do
