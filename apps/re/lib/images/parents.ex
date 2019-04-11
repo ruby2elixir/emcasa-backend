@@ -25,20 +25,14 @@ defmodule Re.Images.Parents do
   end
 
   defp unique_listing_parent?(images) do
-    unique_images_by_listing_id =
-      Enum.uniq_by(images, fn image -> Map.get(image, :listing_id) end)
-
-    case unique_images_by_listing_id do
+    case Enum.uniq_by(images, fn image -> Map.get(image, :listing_id) end) do
       [%{listing_id: _}] -> true
       _ -> false
     end
   end
 
   defp unique_development_parent?(images) do
-    unique_images_by_development_uuid =
-      Enum.uniq_by(images, fn image -> Map.get(image, :development_uuid) end)
-
-    case unique_images_by_development_uuid do
+    case Enum.uniq_by(images, fn image -> Map.get(image, :development_uuid) end) do
       [%{development_uuid: _}] -> true
       _ -> false
     end
