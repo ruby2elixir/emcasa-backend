@@ -8,7 +8,7 @@ defmodule Re.Images.Parents do
     Listings
   }
 
-  def get_image_parent(images) do
+  def get_parent_from_image_list(images) do
     cond do
       unique_listing_parent?(images) -> get_listing_parent(images)
       unique_development_parent?(images) -> get_development_parent(images)
@@ -16,25 +16,27 @@ defmodule Re.Images.Parents do
     end
   end
 
-  defp unique_listing_parent?([%{listing_id: first_id} | images]) do
-    parent_is_unique =
-      Enum.all?(images, fn %{listing_id: listing_id} -> listing_id == first_id end)
+  defp unique_listing_parent?(images) do
+    unique_images_by_listing_id =
+      Enum.uniq_by(images, fn image -> Map.get(image, :listing_id) end)
 
-    not is_nil(first_id) && parent_is_unique
+    case unique_images_by_listing_id do
+      [%{listing_id: nil}] -> false
+      [%{listing_id: _}] -> true
+      _ -> false
+    end
   end
 
-  defp unique_listing_parent?(_), do: false
+  defp unique_development_parent?(images) do
+    unique_images_by_development_uuid =
+      Enum.uniq_by(images, fn image -> Map.get(image, :development_uuid) end)
 
-  defp unique_development_parent?([%{development_uuid: first_id} | images]) do
-    parent_is_unique =
-      Enum.all?(images, fn %{development_uuid: development_uuid} ->
-        development_uuid == first_id
-      end)
-
-    not is_nil(first_id) && parent_is_unique
+    case unique_images_by_development_uuid do
+      [%{development_uuid: nil}] -> false
+      [%{development_uuid: _}] -> true
+      _ -> false
+    end
   end
-
-  defp unique_development_parent?(_), do: false
 
   defp get_listing_parent([%{listing_id: listing_id} | _]), do: Listings.get(listing_id)
 
