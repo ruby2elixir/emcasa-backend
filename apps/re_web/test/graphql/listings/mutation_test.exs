@@ -638,6 +638,80 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
 
+    test "admin should update tags from listing", %{
+      admin_conn: conn,
+      old_address: address,
+      old_listing: listing
+    } do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      mutation = """
+        mutation UpdateListing (
+          $id: ID!,
+          $input: ListingInput!
+        ) {
+          updateListing(id: $id, input: $input) {
+            id
+            tags {
+              nameSlug
+            }
+          }
+        }
+      """
+
+      variables = %{
+        "id" => listing.id,
+        "input" => %{
+          "type" => listing.type,
+          "addressId" => address.id,
+          "tags" => [tag_1.uuid]
+        }
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      expected = %{"id" => "#{listing.id}", "tags" => [%{"nameSlug" => "tag-1"}]}
+
+      assert expected == json_response(conn, 200)["data"]["updateListing"]
+    end
+
+    test "owner should update tags from listing", %{
+      user_conn: conn,
+      old_address: address,
+      old_listing: listing
+    } do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      mutation = """
+        mutation UpdateListing (
+          $id: ID!,
+          $input: ListingInput!
+        ) {
+          updateListing(id: $id, input: $input) {
+            id
+            tags {
+              nameSlug
+            }
+          }
+        }
+      """
+
+      variables = %{
+        "id" => listing.id,
+        "input" => %{
+          "type" => listing.type,
+          "addressId" => address.id,
+          "tags" => [tag_1.uuid]
+        }
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      expected = %{"id" => "#{listing.id}", "tags" => [%{"nameSlug" => "tag-1"}]}
+
+      assert expected == json_response(conn, 200)["data"]["updateListing"]
+    end
+
     @update_development_listing_mutation """
       mutation UpdateListing ($id: ID!, $input: ListingInput!) {
         updateListing(id: $id, input: $input) {
