@@ -98,13 +98,6 @@ defmodule Re.Images do
     end
   end
 
-  def fetch_listing(images) do
-    case Enum.uniq_by(images, fn %{listing_id: id} -> id end) do
-      [%{listing_id: listing_id}] -> Listings.get(listing_id)
-      _ -> {:error, :distinct_listings}
-    end
-  end
-
   def update_images(images_and_inputs), do: {:ok, Enum.map(images_and_inputs, &do_update_image/1)}
 
   defp do_update_image({:ok, image, input}) do

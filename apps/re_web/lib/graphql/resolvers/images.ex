@@ -94,15 +94,15 @@ defmodule ReWeb.Resolvers.Images do
         context: %{current_user: current_user}
       }) do
     with images <- Images.list_by_ids(image_ids),
-         {:ok, listing} <- Images.fetch_listing(images),
-         :ok <- Bodyguard.permit(Images, :deactivate_images, current_user, listing),
+         {:ok, parent} <- Images.Parents.get_parent_from_image_list(images),
+         :ok <- Bodyguard.permit(Images, :deactivate_images, current_user, parent),
          {:ok, images} <- Images.deactivate_images(images),
-         do: {:ok, %{images: images, parent_listing: listing}}
+         do: {:ok, %{images: images, parent_listing: parent, parent: parent}}
   end
 
   def activate_images(%{input: %{image_ids: image_ids}}, %{context: %{current_user: current_user}}) do
     with images <- Images.list_by_ids(image_ids),
-         {:ok, listing} <- Images.fetch_listing(images),
+         {:ok, listing} <- Images.Parents.get_parent_from_image_list(images),
          :ok <- Bodyguard.permit(Images, :activate_images, current_user, listing),
          {:ok, images} <- Images.activate_images(images),
          do: {:ok, %{images: images, parent_listing: listing}}
@@ -125,6 +125,9 @@ defmodule ReWeb.Resolvers.Images do
   end
 
   def images_deactivate_trigger(%{parent_listing: %{id: id}}), do: "images_deactivated:#{id}"
+
+  def images_deactivate_trigger(%{parent: %Re.Development{uuid: uuid}}),
+    do: "development_updated:#{uuid}"
 
   def images_activate_trigger(%{parent_listing: %{id: id}}), do: "images_activated:#{id}"
 
