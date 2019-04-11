@@ -8,7 +8,6 @@ defmodule Re.Images do
     Image,
     Images.DataloaderQueries,
     Images.Queries,
-    Listings,
     Repo
   }
 
