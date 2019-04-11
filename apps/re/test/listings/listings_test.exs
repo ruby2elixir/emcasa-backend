@@ -542,7 +542,7 @@ defmodule Re.ListingsTest do
       refute Enum.member?(updated_listing.tags, tag_2)
     end
 
-    test "noop when no tags is nil" do
+    test "should not upsert when tags is nil" do
       tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
       tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
 
