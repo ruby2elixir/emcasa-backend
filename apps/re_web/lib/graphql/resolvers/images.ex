@@ -78,7 +78,7 @@ defmodule ReWeb.Resolvers.Images do
 
   def update_images(%{input: inputs}, %{context: %{current_user: current_user}}) do
     with {:ok, images_and_inputs} <- Images.get_list(inputs),
-         {:ok, parent} <- Images.get_parent_from_image_list(images_and_inputs),
+         {:ok, parent} <- Images.get_parent(images_and_inputs),
          :ok <- Bodyguard.permit(Images, :update_images, current_user, parent),
          {:ok, images} <- Images.update_images(images_and_inputs),
          do: {:ok, %{images: images, parent_listing: parent, parent: parent}}

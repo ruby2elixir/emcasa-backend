@@ -148,7 +148,7 @@ defmodule Re.Images do
     |> Repo.update()
   end
 
-  def get_parent_from_image_list(images) do
+  def get_parent(images) do
     images
     |> extract_image_list()
     |> Parents.get_parent_from_image_list()
