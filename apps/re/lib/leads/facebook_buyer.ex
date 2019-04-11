@@ -20,7 +20,17 @@ defmodule Re.Leads.FacebookBuyer do
     timestamps()
   end
 
-  @params ~w(full_name email phone_number neighborhoods timestamp lead_id location)a
+  @required ~w(full_name email phone_number timestamp lead_id location)a
+  @optional ~w(neighborhoods)a
+  @params @required ++ @optional
+  @locations ~w(RJ SP)
 
-  def changeset(struct, params \\ %{}), do: cast(struct, params, @params)
+  def changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, @params)
+    |> validate_required(@required)
+    |> validate_inclusion(:location, @locations,
+      message: "should be one of: [#{Enum.join(@locations, " ")}]"
+    )
+  end
 end

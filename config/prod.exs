@@ -65,7 +65,9 @@ config :re_integrations,
   reply_to: System.get_env("REPORT_REPLY_EMAIL"),
   credipronto_simulator_url: System.get_env("CREDIPRONTO_SIMULATOR_URL"),
   credipronto_account_id: System.get_env("CREDIPRONTO_ACCOUNT_ID"),
-  grupozap_webhook_secret: System.get_env("GRUPOZAP_WEBHOOK_SECRET")
+  grupozap_webhook_secret: System.get_env("GRUPOZAP_WEBHOOK_SECRET"),
+  zapier_webhook_user: System.get_env("ZAPIER_WEBHOOK_USER"),
+  zapier_webhook_pass: System.get_env("ZAPIER_WEBHOOK_PASS")
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),

@@ -9,30 +9,17 @@ defmodule ReIntegrations.Grupozap do
     Repo
   }
 
-  def validate_payload(%{
-        "leadOrigin" => _,
-        "timestamp" => _,
-        "originLeadId" => _,
-        "originListingId" => _,
-        "clientListingId" => client_listing_id,
-        "name" => _,
-        "email" => _,
-        "ddd" => _,
-        "phone" => _,
-        "message" => _
-      })
-      when not is_nil(client_listing_id),
-      do: :ok
-
-  def validate_payload(payload) do
-    Logger.info("Bad payload: #{Kernel.inspect(payload)}")
-
-    {:error, :unexpected_payload}
-  end
-
   def new_buyer_lead(payload) do
     %GrupozapBuyer{}
     |> GrupozapBuyer.changeset(payload)
-    |> Repo.insert()
+    |> case do
+      %{valid?: true} = changeset ->
+        Repo.insert(changeset)
+
+      %{errors: errors} = changeset ->
+        Logger.warn("Invalid payload from grupozap buyer. Errors: #{Kernel.inspect(changeset)}")
+
+        {:error, :unexpected_payload, errors}
+    end
   end
 end
