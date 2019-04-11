@@ -8,11 +8,19 @@ defmodule Re.Images.Parents do
     Listings
   }
 
-  def get_parent_from_image_list(images) do
-    cond do
-      unique_listing_parent?(images) -> get_listing_parent(images)
-      unique_development_parent?(images) -> get_development_parent(images)
-      true -> {:error, :distinct_parents}
+  def get_parent_from_image_list([%{listing_id: listing_id} | _] = images)
+      when not is_nil(listing_id) do
+    case unique_listing_parent?(images) do
+      true -> get_listing_parent(images)
+      false -> {:error, :distinct_parents}
+    end
+  end
+
+  def get_parent_from_image_list([%{development_uuid: development_uuid} | _] = images)
+      when not is_nil(development_uuid) do
+    case unique_development_parent?(images) do
+      true -> get_development_parent(images)
+      false -> {:error, :distinct_parents}
     end
   end
 
@@ -21,7 +29,6 @@ defmodule Re.Images.Parents do
       Enum.uniq_by(images, fn image -> Map.get(image, :listing_id) end)
 
     case unique_images_by_listing_id do
-      [%{listing_id: nil}] -> false
       [%{listing_id: _}] -> true
       _ -> false
     end
@@ -32,7 +39,6 @@ defmodule Re.Images.Parents do
       Enum.uniq_by(images, fn image -> Map.get(image, :development_uuid) end)
 
     case unique_images_by_development_uuid do
-      [%{development_uuid: nil}] -> false
       [%{development_uuid: _}] -> true
       _ -> false
     end
