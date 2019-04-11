@@ -84,13 +84,6 @@ defmodule ReWeb.Types.Image do
 
       resolve &Resolvers.Images.deactivate_images/2
     end
-
-    @desc "Deactivate images"
-    field :images_activate, type: :images_output do
-      arg :input, non_null(:image_activate_input)
-
-      resolve &Resolvers.Images.activate_images/2
-    end
   end
 
   object :image_subscriptions do
@@ -101,15 +94,6 @@ defmodule ReWeb.Types.Image do
       config &Resolvers.Images.images_deactivated_config/2
 
       trigger :images_deactivate, topic: &Resolvers.Images.images_deactivate_trigger/1
-    end
-
-    @desc "Subscribe to image activation"
-    field :images_activated, :images_output do
-      arg :listing_id, non_null(:id)
-
-      config &Resolvers.Images.images_activated_config/2
-
-      trigger :images_activate, topic: &Resolvers.Images.images_activate_trigger/1
     end
 
     @desc "Subscribe to image update"

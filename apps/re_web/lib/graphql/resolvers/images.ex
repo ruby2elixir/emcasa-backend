@@ -100,14 +100,6 @@ defmodule ReWeb.Resolvers.Images do
          do: {:ok, %{images: images, parent_listing: parent, parent: parent}}
   end
 
-  def activate_images(%{input: %{image_ids: image_ids}}, %{context: %{current_user: current_user}}) do
-    with images <- Images.list_by_ids(image_ids),
-         {:ok, listing} <- Images.Parents.get_parent_from_image_list(images),
-         :ok <- Bodyguard.permit(Images, :activate_images, current_user, listing),
-         {:ok, images} <- Images.activate_images(images),
-         do: {:ok, %{images: images, parent_listing: listing}}
-  end
-
   def images_deactivated_config(args, %{context: %{current_user: current_user}}) do
     config_subscription(args, current_user, "images_deactivated")
   end
@@ -128,8 +120,6 @@ defmodule ReWeb.Resolvers.Images do
 
   def images_deactivate_trigger(%{parent: %Re.Development{uuid: uuid}}),
     do: "development_updated:#{uuid}"
-
-  def images_activate_trigger(%{parent_listing: %{id: id}}), do: "images_activated:#{id}"
 
   def update_images_trigger(%{parent_listing: %{id: id}}), do: "images_updated:#{id}"
 
