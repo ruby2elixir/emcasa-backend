@@ -21,6 +21,7 @@ defmodule ReWeb.Types.Tag do
   end
 
   input_object :tag_filter_input do
+    field :name_slugs, list_of(non_null(:string))
     field :category, :string
     field :visibility, :string
   end

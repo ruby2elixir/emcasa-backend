@@ -7,6 +7,7 @@ defmodule Re.Images do
   alias Re.{
     Image,
     Images.DataloaderQueries,
+    Images.Parents,
     Images.Queries,
     Repo
   }
@@ -126,6 +127,15 @@ defmodule Re.Images do
     |> Image.deactivate_changeset(%{is_active: false})
     |> Repo.update()
   end
+
+  def get_parent(images) do
+    images
+    |> extract_image_list()
+    |> Parents.get_parent_from_image_list()
+  end
+
+  defp extract_image_list(images_and_inputs),
+    do: Enum.map(images_and_inputs, fn {_, image, _} -> image end)
 
   def zip(listing) do
     dir_name = "./temp/listing-#{listing.id}/"
