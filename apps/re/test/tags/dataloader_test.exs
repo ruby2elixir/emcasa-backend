@@ -47,7 +47,7 @@ defmodule Re.Tags.DataloaderTest do
 
     tags = Dataloader.get(loader, :tags, {:many, Tag}, visibility: "private")
 
-    assert 0 == Enum.count(tags)
+    assert [] == tags
   end
 
   test "anonymous user should not fetch tags with private visibility" do
@@ -69,6 +69,6 @@ defmodule Re.Tags.DataloaderTest do
 
     tags = Dataloader.get(loader, :tags, {:many, Tag}, visibility: "private")
 
-    assert 0 == Enum.count(tags)
+    assert [] == tags
   end
 end
