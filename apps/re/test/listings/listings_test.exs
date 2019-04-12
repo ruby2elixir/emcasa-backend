@@ -406,6 +406,34 @@ defmodule Re.ListingsTest do
       assert {:ok, listing} = Listings.insert(@insert_listing_params, address, user)
       assert Repo.get(Listing, listing.id)
     end
+
+    test "should insert extra info for admin user" do
+      address = insert(:address)
+      user = insert(:user, role: "admin")
+
+      params =
+        Map.merge(
+          @insert_listing_params,
+          %{
+            "orientation" => "frente",
+            "sun_period" => "morning",
+            "floor_count" => 10,
+            "unit_per_floor" => 4,
+            "elevators" => 2,
+            "construction_year" => 2005
+          }
+        )
+
+      assert {:ok, listing} = Listings.insert(params, address, user)
+
+      assert listing.orientation == "frente"
+      assert listing.sun_period == "morning"
+      assert listing.floor_count == 10
+      assert listing.unit_per_floor == 4
+      assert listing.elevators == 2
+      assert listing.construction_year == 2005
+      assert listing.price_per_area == params["price"] / params["area"]
+    end
   end
 
   describe "insert/4" do

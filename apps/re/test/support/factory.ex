@@ -22,15 +22,20 @@ defmodule Re.Factory do
   end
 
   def listing_factory do
+    price = random(:price)
+    area = Enum.random(1..500)
+    floor = random(:floor)
+    floor_count = random(:floor_count, floor)
+
     %Re.Listing{
       uuid: UUID.uuid4(),
       type: random(:listing_type),
       complement: Address.secondary_address(),
       description: Shakespeare.hamlet(),
-      price: random(:price),
+      price: price,
       property_tax: random(:price_float),
       maintenance_fee: random(:price_float),
-      floor: random(:floor),
+      floor: floor,
       rooms: Enum.random(1..10),
       bathrooms: Enum.random(1..10),
       restrooms: Enum.random(1..10),
@@ -40,13 +45,20 @@ defmodule Re.Factory do
       dependencies: Enum.random(0..10),
       balconies: Enum.random(0..10),
       has_elevator: Enum.random([true, false]),
-      area: Enum.random(1..500),
+      area: area,
       score: Enum.random(1..4),
       matterport_code: Faker.String.base64(),
       status: "active",
       is_exclusive: Enum.random([true, false]),
       is_release: Enum.random([true, false]),
-      is_exportable: Enum.random([true, false])
+      is_exportable: Enum.random([true, false]),
+      orientation: Enum.random(~w(frente fundos lateral meio)),
+      floor_count: floor_count,
+      unit_per_floor: Enum.random(1..10),
+      sun_period: Enum.random(~w(morning evening)),
+      elevators: Enum.random(0..10),
+      construction_year: Enum.random(1950..Date.utc_today().year),
+      price_per_area: price / area
     }
   end
 
@@ -217,5 +229,11 @@ defmodule Re.Factory do
     1..50
     |> Enum.random()
     |> Integer.to_string()
+  end
+
+  defp random(:floor_count, base_floor) do
+    base = String.to_integer(base_floor)
+    top = base * 2
+    Enum.random(base..top)
   end
 end
