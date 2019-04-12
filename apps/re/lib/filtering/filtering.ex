@@ -37,12 +37,24 @@ defmodule Re.Filtering do
     field :tags_slug, {:array, :string}
     field :tags_uuid, {:array, :string}
     field :statuses, {:array, :string}
+    field :min_floor_count, :integer
+    field :max_floor_count, :integer
+    field :min_unit_per_floor, :integer
+    field :max_unit_per_floor, :integer
+    field :orientation, :string
+    field :sun_period, :string
+    field :min_age, :integer
+    field :max_age, :integer
+    field :min_price_per_area, :float
+    field :max_price_per_area, :float
   end
 
   @filters ~w(max_price min_price max_rooms min_rooms max_suites min_suites min_area max_area
               neighborhoods types max_lat min_lat max_lng min_lng neighborhoods_slugs
               max_garage_spots min_garage_spots garage_types cities cities_slug states_slug
-              exportable tags_slug tags_uuid statuses)a
+              exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
+              min_unit_per_floor max_unit_per_floor orientation sun_period min_age max_age
+              min_price_per_area max_price_per_area)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -237,5 +249,80 @@ defmodule Re.Filtering do
     )
   end
 
+  defp attr_filter({:min_floor_count, floor_count}, query) do
+    from(
+      l in query,
+      where: l.floor_count >= ^floor_count
+    )
+  end
+
+  defp attr_filter({:max_floor_count, floor_count}, query) do
+    from(
+      l in query,
+      where: l.floor_count <= ^floor_count
+    )
+  end
+
+  defp attr_filter({:min_unit_per_floor, unit_per_floor}, query) do
+    from(
+      l in query,
+      where: l.unit_per_floor >= ^unit_per_floor
+    )
+  end
+
+  defp attr_filter({:max_unit_per_floor, unit_per_floor}, query) do
+    from(
+      l in query,
+      where: l.unit_per_floor <= ^unit_per_floor
+    )
+  end
+
+  defp attr_filter({:orientation, orientation}, query) do
+    from(
+      l in query,
+      where: l.orientation == ^orientation
+    )
+  end
+
+  defp attr_filter({:sun_period, sun_period}, query) do
+    from(
+      l in query,
+      where: l.sun_period == ^sun_period
+    )
+  end
+
+  defp attr_filter({:min_age, age}, query) do
+    from(
+      l in query,
+      where: l.construction_year <= ^age_to_year(age)
+    )
+  end
+
+  defp attr_filter({:max_age, age}, query) do
+    from(
+      l in query,
+      where: l.construction_year >= ^age_to_year(age)
+    )
+  end
+
+  defp attr_filter({:min_price_per_area, price_per_area}, query) do
+    from(
+      l in query,
+      where: l.price_per_area >= ^price_per_area
+    )
+  end
+
+  defp attr_filter({:max_price_per_area, price_per_area}, query) do
+    from(
+      l in query,
+      where: l.price_per_area <= ^price_per_area
+    )
+  end
+
   defp attr_filter(_, query), do: query
+
+  defp age_to_year(age) do
+    today = Date.utc_today()
+    today.year - age
+  end
 end
