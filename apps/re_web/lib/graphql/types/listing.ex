@@ -35,6 +35,13 @@ defmodule ReWeb.Types.Listing do
     field :is_exclusive, :boolean
     field :is_release, :boolean
     field :is_exportable, :boolean
+    field :orientation, :string
+    field :floor_count, :integer
+    field :unit_per_floor, :integer
+    field :sun_period, :string
+    field :elevators, :integer
+    field :construction_year, :integer
+    field :price_per_area, :float
     field :inserted_at, :naive_datetime
     field :score, :integer, resolve: &Resolvers.Listings.score/3
 
@@ -101,6 +108,12 @@ defmodule ReWeb.Types.Listing do
     field :is_release, :boolean
     field :is_exportable, :boolean
     field :score, :integer
+    field :orientation, :string
+    field :floor_count, :integer
+    field :unit_per_floor, :integer
+    field :sun_period, :string
+    field :elevators, :integer
+    field :construction_year, :integer
 
     field :phone, :string
 
@@ -206,6 +219,16 @@ defmodule ReWeb.Types.Listing do
     field :statuses, list_of(non_null(:string))
     field :tags_slug, list_of(non_null(:string))
     field :tags_uuid, list_of(non_null(:uuid))
+    field :min_floor_count, :integer
+    field :max_floor_count, :integer
+    field :min_unit_per_floor, :integer
+    field :max_unit_per_floor, :integer
+    field :orientation, :string
+    field :sun_period, :string
+    field :min_age, :integer
+    field :max_age, :integer
+    field :min_price_per_area, :float
+    field :max_price_per_area, :float
   end
 
   object :listing_filter do
