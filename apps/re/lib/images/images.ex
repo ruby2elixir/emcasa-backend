@@ -128,11 +128,13 @@ defmodule Re.Images do
     |> Repo.update()
   end
 
-  def get_parent(images) do
+  def get_parent([{_, _, _} | _] = images) do
     images
     |> extract_image_list()
     |> Parents.get_parent_from_image_list()
   end
+
+  def get_parent(images), do: Parents.get_parent_from_image_list(images)
 
   defp extract_image_list(images_and_inputs),
     do: Enum.map(images_and_inputs, fn {_, image, _} -> image end)

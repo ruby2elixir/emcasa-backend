@@ -88,7 +88,7 @@ defmodule ReWeb.Resolvers.Images do
         context: %{current_user: current_user}
       }) do
     with images <- Images.list_by_ids(image_ids),
-         {:ok, parent} <- Images.Parents.get_parent_from_image_list(images),
+         {:ok, parent} <- Images.get_parent(images),
          :ok <- Bodyguard.permit(Images, :deactivate_images, current_user, parent),
          {:ok, images} <- Images.deactivate_images(images),
          do: {:ok, %{images: images, parent_listing: parent, parent: parent}}
