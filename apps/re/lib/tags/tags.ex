@@ -8,6 +8,7 @@ defmodule Re.Tags do
 
   alias Re.{
     Tag,
+    Tags.DataloaderQueries,
     Tags.Queries,
     Repo,
     Slugs
@@ -17,7 +18,7 @@ defmodule Re.Tags do
 
   def data(params), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
 
-  def query(_query, _args), do: Tag
+  def query(query, args), do: DataloaderQueries.build(query, args)
 
   def all(user) do
     %{}

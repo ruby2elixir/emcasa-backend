@@ -234,6 +234,8 @@ defmodule Re.Listings do
     |> Repo.all()
   end
 
+  def upsert_tags(listing, nil), do: {:ok, listing}
+
   def upsert_tags(listing, tag_uuids) do
     tags = Tags.list_by_uuids(tag_uuids)
 

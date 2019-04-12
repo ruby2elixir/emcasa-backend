@@ -83,6 +83,7 @@ defmodule ReWeb.Schema do
       Re.Statistics.ListingVisualizations,
       Re.Statistics.TourVisualizations,
       Re.Statistics.InPersonVisits,
+      Re.Tags,
       Re.Units
     ]
   end

@@ -262,6 +262,68 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert [%{"message" => "Bad request", "code" => 400}] = json_response(conn, 200)["errors"]
     end
 
+    test "admin should insert listing with tags", %{admin_conn: conn, old_address: address} do
+      tag = insert(:tag)
+
+      variables = %{
+        "input" => %{
+          "type" => "Apartamento",
+          "addressId" => address.id,
+          "tags" => [tag.uuid]
+        }
+      }
+
+      mutation = """
+        mutation InsertListing ($input: ListingInput!) {
+          insertListing(input: $input) {
+            type
+            tags {
+              nameSlug
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      expected = %{
+        "insertListing" => %{"type" => "Apartamento", "tags" => [%{"nameSlug" => tag.name_slug}]}
+      }
+
+      assert expected == json_response(conn, 200)["data"]
+    end
+
+    test "user should insert listing with tags", %{user_conn: conn, old_address: address} do
+      tag = insert(:tag)
+
+      variables = %{
+        "input" => %{
+          "type" => "Apartamento",
+          "addressId" => address.id,
+          "tags" => [tag.uuid]
+        }
+      }
+
+      mutation = """
+        mutation InsertListing ($input: ListingInput!) {
+          insertListing(input: $input) {
+            type
+            tags {
+              nameSlug
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      expected = %{
+        "insertListing" => %{"type" => "Apartamento", "tags" => [%{"nameSlug" => tag.name_slug}]}
+      }
+
+      assert expected == json_response(conn, 200)["data"]
+    end
+
     test "anonymous should not insert listing", %{
       unauthenticated_conn: conn,
       listing: listing,
@@ -574,6 +636,80 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+    end
+
+    test "admin should update tags from listing", %{
+      admin_conn: conn,
+      old_address: address,
+      old_listing: listing
+    } do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      mutation = """
+        mutation UpdateListing (
+          $id: ID!,
+          $input: ListingInput!
+        ) {
+          updateListing(id: $id, input: $input) {
+            id
+            tags {
+              nameSlug
+            }
+          }
+        }
+      """
+
+      variables = %{
+        "id" => listing.id,
+        "input" => %{
+          "type" => listing.type,
+          "addressId" => address.id,
+          "tags" => [tag_1.uuid]
+        }
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      expected = %{"id" => "#{listing.id}", "tags" => [%{"nameSlug" => "tag-1"}]}
+
+      assert expected == json_response(conn, 200)["data"]["updateListing"]
+    end
+
+    test "owner should update tags from listing", %{
+      user_conn: conn,
+      old_address: address,
+      old_listing: listing
+    } do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      mutation = """
+        mutation UpdateListing (
+          $id: ID!,
+          $input: ListingInput!
+        ) {
+          updateListing(id: $id, input: $input) {
+            id
+            tags {
+              nameSlug
+            }
+          }
+        }
+      """
+
+      variables = %{
+        "id" => listing.id,
+        "input" => %{
+          "type" => listing.type,
+          "addressId" => address.id,
+          "tags" => [tag_1.uuid]
+        }
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      expected = %{"id" => "#{listing.id}", "tags" => [%{"nameSlug" => "tag-1"}]}
+
+      assert expected == json_response(conn, 200)["data"]["updateListing"]
     end
 
     @update_development_listing_mutation """
