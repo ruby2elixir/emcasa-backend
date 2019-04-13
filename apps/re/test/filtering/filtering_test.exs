@@ -161,7 +161,8 @@ defmodule Re.FilteringTest do
       listing = insert(:listing)
 
       result =
-        Filtering.apply(Listing, %{statuses: []})
+        Listing
+        |> Filtering.apply(%{statuses: []})
         |> Repo.all()
 
       assert [listing] == result
@@ -172,7 +173,8 @@ defmodule Re.FilteringTest do
       insert(:listing, status: "inactive")
 
       result =
-        Filtering.apply(Listing, %{statuses: ["active"]})
+        Listing
+        |> Filtering.apply(%{statuses: ["active"]})
         |> Repo.all()
 
       assert [listing] == result
@@ -184,7 +186,8 @@ defmodule Re.FilteringTest do
       insert(:listing, status: "sold")
 
       result =
-        Filtering.apply(Listing, %{statuses: ["active", "inactive"]})
+        Listing
+        |> Filtering.apply(%{statuses: ["active", "inactive"]})
         |> Repo.all()
 
       assert [listing_1, listing_2] == result
@@ -196,7 +199,10 @@ defmodule Re.FilteringTest do
       insert(:listing, orientation: "lateral")
       insert(:listing, orientation: "meio")
 
-      result = Filtering.apply(Listing, %{orientation: "frente"}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{orientation: "frente"})
+        |> Repo.all()
 
       assert [listing] == result
     end
@@ -205,7 +211,10 @@ defmodule Re.FilteringTest do
       listing = insert(:listing, sun_period: "morning")
       insert(:listing, sun_period: "evening")
 
-      result = Filtering.apply(Listing, %{sun_period: "morning"}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{sun_period: "morning"})
+        |> Repo.all()
 
       assert [listing] == result
     end
@@ -216,11 +225,17 @@ defmodule Re.FilteringTest do
       listing_3 = insert(:listing, floor_count: 3)
       listing_4 = insert(:listing, floor_count: 4)
 
-      result = Filtering.apply(Listing, %{min_floor_count: 3}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{min_floor_count: 3})
+        |> Repo.all()
 
       assert [listing_3, listing_4] == result
 
-      result = Filtering.apply(Listing, %{max_floor_count: 2}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{max_floor_count: 2})
+        |> Repo.all()
 
       assert [listing_1, listing_2] == result
     end
@@ -231,11 +246,17 @@ defmodule Re.FilteringTest do
       listing_3 = insert(:listing, unit_per_floor: 3)
       listing_4 = insert(:listing, unit_per_floor: 4)
 
-      result = Filtering.apply(Listing, %{min_unit_per_floor: 3}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{min_unit_per_floor: 3})
+        |> Repo.all()
 
       assert [listing_3, listing_4] == result
 
-      result = Filtering.apply(Listing, %{max_unit_per_floor: 2}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{max_unit_per_floor: 2})
+        |> Repo.all()
 
       assert [listing_1, listing_2] == result
     end
@@ -247,11 +268,17 @@ defmodule Re.FilteringTest do
       listing_3 = insert(:listing, construction_year: base_year - 15)
       listing_4 = insert(:listing, construction_year: base_year - 20)
 
-      result = Filtering.apply(Listing, %{max_age: 10}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{max_age: 10})
+        |> Repo.all()
 
       assert [listing_1, listing_2] == result
 
-      result = Filtering.apply(Listing, %{min_age: 15}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{min_age: 15})
+        |> Repo.all()
 
       assert [listing_3, listing_4] == result
     end
@@ -262,11 +289,17 @@ defmodule Re.FilteringTest do
       listing_3 = insert(:listing, price: 20, area: 1, price_per_area: 20)
       listing_4 = insert(:listing, price: 25, area: 1, price_per_area: 25)
 
-      result = Filtering.apply(Listing, %{min_price_per_area: 20}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{min_price_per_area: 20})
+        |> Repo.all()
 
       assert [listing_3, listing_4] == result
 
-      result = Filtering.apply(Listing, %{max_price_per_area: 15}) |> Repo.all()
+      result =
+        Listing
+        |> Filtering.apply(%{max_price_per_area: 15})
+        |> Repo.all()
 
       assert [listing_1, listing_2] == result
     end
