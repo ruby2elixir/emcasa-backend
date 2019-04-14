@@ -56,6 +56,28 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
       assert gb.client_listing_id
     end
 
+    @long_message_payload %{
+      "leadOrigin" => "VivaReal",
+      "timestamp" => "2019-01-01T00:00:00.000Z",
+      "originLeadId" => "59ee0fc6e4b043e1b2a6d863",
+      "originListingId" => "87027856",
+      "clientListingId" => "a40171",
+      "name" => "mah name",
+      "email" => "mah@email",
+      "ddd" => "11",
+      "phone" => "999999999",
+      "message" => String.duplicate("a", 256)
+    }
+
+    test "should save long message", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/grupozap", @long_message_payload)
+
+      assert text_response(conn, 200) == "ok"
+
+      assert gb = Repo.one(GrupozapBuyer)
+      assert gb.message
+    end
+
     @tag capture_log: true
     test "invalid payload", %{authenticated_conn: conn} do
       conn = post(conn, "/webhooks/grupozap", %{"wat" => "ok"})
