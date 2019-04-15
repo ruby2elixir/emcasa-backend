@@ -5,6 +5,7 @@ defmodule Re.FilteringTest do
     Filtering,
     Listing,
     Listings,
+    Listings.Queries,
     Repo
   }
 
@@ -193,6 +194,22 @@ defmodule Re.FilteringTest do
       assert [listing_1, listing_2] == result
     end
 
+    test "filter listing with empty orientation fetch all instances" do
+      %{id: listing_1} = insert(:listing, orientation: "frente")
+      %{id: listing_2} = insert(:listing, orientation: "fundos")
+      %{id: listing_3} = insert(:listing, orientation: "lateral")
+      %{id: listing_4} = insert(:listing, orientation: "meio")
+
+      result =
+        Listing
+        |> Filtering.apply(%{orientations: []})
+        |> Queries.order_by_id()
+        |> Repo.all()
+        |> Enum.map(& &1.id)
+
+      assert [listing_1, listing_2, listing_3, listing_4] == result
+    end
+
     test "filter listing by orientation" do
       listing = insert(:listing, orientation: "frente")
       insert(:listing, orientation: "fundos")
@@ -205,6 +222,20 @@ defmodule Re.FilteringTest do
         |> Repo.all()
 
       assert [listing] == result
+    end
+
+    test "filter listing with empty sun period fetch all instances" do
+      %{id: listing_1} = insert(:listing, sun_period: "morning")
+      %{id: listing_2} = insert(:listing, sun_period: "evening")
+
+      result =
+        Listing
+        |> Filtering.apply(%{sun_periods: []})
+        |> Queries.order_by_id()
+        |> Repo.all()
+        |> Enum.map(& &1.id)
+
+      assert [listing_1, listing_2] == result
     end
 
     test "filter listing by sun period" do
