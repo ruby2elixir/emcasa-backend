@@ -199,7 +199,8 @@ defmodule ReWeb.Types.Listing do
 
   enum :orderable_field,
     values:
-      ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies price_per_area)a
+      ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies
+      price_per_area)a
 
   enum :order_type, values: ~w(desc asc)a
 
