@@ -36,7 +36,7 @@ defmodule ReWeb.Types.Unit do
     field :restrooms, :integer
     field :area, :integer
     field :garage_spots, :integer
-    field :garage_type, :string
+    field :garage_type, :garage_type
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
@@ -51,6 +51,14 @@ defmodule ReWeb.Types.Unit do
       arg :input, non_null(:unit_input)
 
       resolve &Resolvers.Units.insert/2
+    end
+
+    @desc "Update unit"
+    field :update_unit, type: :unit do
+      arg :uuid, non_null(:uuid)
+      arg :input, non_null(:unit_input)
+
+      resolve &Resolvers.Units.update/2
     end
   end
 end

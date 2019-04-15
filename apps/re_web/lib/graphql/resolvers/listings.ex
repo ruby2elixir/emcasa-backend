@@ -7,6 +7,7 @@ defmodule ReWeb.Resolvers.Listings do
   alias Re.{
     Addresses,
     Addresses.Neighborhoods,
+    Developments,
     Filtering,
     Listings,
     Listings.Featured,
@@ -40,10 +41,27 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
+  def insert(%{input: %{development_uuid: _} = listing_params}, %{
+        context: %{current_user: current_user}
+      }) do
+    with :ok <-
+           Bodyguard.permit(Listings, :create_development_listing, current_user, listing_params),
+         {:ok, address} <- get_address(listing_params),
+         {:ok, development} <- get_development(listing_params),
+         {:ok, listing} <- Listings.insert(listing_params, address, current_user, development),
+         {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
+      {:ok, listing}
+    else
+      {:error, _, error, _} -> {:error, error}
+      error -> error
+    end
+  end
+
   def insert(%{input: listing_params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, current_user, listing_params),
          {:ok, address} <- get_address(listing_params),
-         {:ok, listing} <- Listings.insert(listing_params, address, current_user) do
+         {:ok, listing} <- Listings.insert(listing_params, address, current_user),
+         {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
       {:ok, listing}
     else
       {:error, _, error, _} -> {:error, error}
@@ -55,13 +73,31 @@ defmodule ReWeb.Resolvers.Listings do
   defp get_address(%{address_id: id}), do: Addresses.get_by_id(id)
   defp get_address(_), do: {:error, :bad_request}
 
+  defp get_development(%{development_uuid: uuid}), do: Developments.get(uuid)
+  defp get_development(_), do: {:error, :bad_request}
+
+  def update(%{id: id, input: %{development_uuid: _} = listing_params}, %{
+        context: %{current_user: current_user}
+      }) do
+    with {:ok, listing} <- Listings.get_partial_preloaded(id, [:address, :development]),
+         :ok <- Bodyguard.permit(Listings, :update_development_listing, current_user, listing),
+         address <- listing.address,
+         development <- listing.development,
+         {:ok, listing} <-
+           Listings.update(listing, listing_params, address, current_user, development),
+         {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
+      {:ok, listing}
+    end
+  end
+
   def update(%{id: id, input: listing_params}, %{
         context: %{current_user: current_user}
       }) do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, current_user, listing),
          {:ok, address} <- get_address(listing_params),
-         {:ok, listing} <- Listings.update(listing, listing_params, address, current_user) do
+         {:ok, listing} <- Listings.update(listing, listing_params, address, current_user),
+         {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
       {:ok, listing}
     end
   end

@@ -10,7 +10,8 @@ defmodule Re.Listings.Units.Server do
   alias Re.{
     Listings,
     Listings.Units.Propagator,
-    PubSub
+    PubSub,
+    Units
   }
 
   @spec start_link :: GenServer.start_link()
@@ -19,6 +20,7 @@ defmodule Re.Listings.Units.Server do
   @spec init(term) :: {:ok, term}
   def init(args) do
     PubSub.subscribe("new_unit")
+    PubSub.subscribe("update_unit")
 
     {:ok, args}
   end
@@ -26,7 +28,27 @@ defmodule Re.Listings.Units.Server do
   @spec handle_info(map(), any) :: {:noreply, any}
   def handle_info(%{topic: "new_unit", type: :new, new: unit}, state) do
     with {:ok, listing} <- Listings.get(unit.listing_id),
-         {:ok, _listing} <- Propagator.update_listing(listing, unit) do
+         units <- Units.by_listing(unit.listing_id),
+         unit_price_list <- create_price_list(units),
+         {:ok, _listing} <- Propagator.update_listing(listing, unit_price_list) do
+      {:noreply, state}
+    else
+      error ->
+        Logger.warn("Error when copy unit info to listing. Reason: #{inspect(error)}")
+
+        {:noreply, [error | state]}
+    end
+  end
+
+  @spec handle_info(map(), any) :: {:noreply, any}
+  def handle_info(
+        %{topic: "update_unit", type: :update, content: %{new: unit}},
+        state
+      ) do
+    with {:ok, listing} <- Listings.get(unit.listing_id),
+         units <- Units.by_listing(unit.listing_id),
+         unit_price_list <- create_price_list(units),
+         {:ok, _listing} <- Propagator.update_listing(listing, unit_price_list) do
       {:noreply, state}
     else
       error ->
@@ -39,4 +61,8 @@ defmodule Re.Listings.Units.Server do
   def handle_info(_, state), do: {:noreply, state}
 
   def handle_call(:inspect, _caller, state), do: {:reply, state, state}
+
+  defp create_price_list(units) do
+    Enum.map(units, fn unit -> unit.price end)
+  end
 end

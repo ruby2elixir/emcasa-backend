@@ -8,9 +8,9 @@ defmodule Re.Addresses.Neighborhoods do
   alias Re.{
     Address,
     Addresses.District,
-    Addresses.Slugs,
     Listing,
-    Repo
+    Repo,
+    Slugs
   }
 
   @all_query from(

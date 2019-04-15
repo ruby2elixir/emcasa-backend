@@ -7,8 +7,8 @@ defmodule Re.Images do
   alias Re.{
     Image,
     Images.DataloaderQueries,
+    Images.Parents,
     Images.Queries,
-    Listings,
     Repo
   }
 
@@ -38,14 +38,22 @@ defmodule Re.Images do
     end
   end
 
-  def insert(image_params, listing) do
+  def insert(image_params, association) do
     %Image{}
     |> Image.create_changeset(image_params)
-    |> Changeset.change(listing: listing)
-    |> Changeset.change(is_active: true)
-    |> Changeset.change(position: calculate_position(listing))
+    |> change_association(association)
+    |> Changeset.change(%{
+      is_active: true,
+      position: calculate_position(association)
+    })
     |> Repo.insert()
   end
+
+  defp change_association(changeset, %Re.Listing{} = listing),
+    do: Changeset.change(changeset, listing: listing)
+
+  defp change_association(changeset, %Re.Development{} = development),
+    do: Changeset.change(changeset, development: development)
 
   defp calculate_position(%{images: []}), do: 1
   defp calculate_position(%{images: [top_image | _]}), do: top_image.position - 1
@@ -90,20 +98,6 @@ defmodule Re.Images do
     end
   end
 
-  def check_same_listing(images_and_inputs) do
-    case Enum.uniq_by(images_and_inputs, fn {:ok, %{listing_id: listing_id}, _} -> listing_id end) do
-      [{:ok, %{listing_id: listing_id}, _}] -> Listings.get(listing_id)
-      _ -> {:error, :distinct_listings}
-    end
-  end
-
-  def fetch_listing(images) do
-    case Enum.uniq_by(images, fn %{listing_id: id} -> id end) do
-      [%{listing_id: listing_id}] -> Listings.get(listing_id)
-      _ -> {:error, :distinct_listings}
-    end
-  end
-
   def update_images(images_and_inputs), do: {:ok, Enum.map(images_and_inputs, &do_update_image/1)}
 
   defp do_update_image({:ok, image, input}) do
@@ -128,23 +122,22 @@ defmodule Re.Images do
     end
   end
 
-  def activate_images(images) do
-    ids = Enum.map(images, fn %{id: id} -> id end)
-
-    Image
-    |> Queries.with_ids(ids)
-    |> Repo.update_all(set: [is_active: true])
-    |> case do
-      {_, nil} -> {:ok, images}
-      error -> error
-    end
-  end
-
   def deactivate(image) do
     image
     |> Image.deactivate_changeset(%{is_active: false})
     |> Repo.update()
   end
+
+  def get_parent([{_, _, _} | _] = images) do
+    images
+    |> extract_image_list()
+    |> Parents.get_parent_from_image_list()
+  end
+
+  def get_parent(images), do: Parents.get_parent_from_image_list(images)
+
+  defp extract_image_list(images_and_inputs),
+    do: Enum.map(images_and_inputs, fn {_, image, _} -> image end)
 
   def zip(listing) do
     dir_name = "./temp/listing-#{listing.id}/"

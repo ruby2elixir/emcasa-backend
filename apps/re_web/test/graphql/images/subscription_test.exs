@@ -2,8 +2,7 @@ defmodule ReWeb.GraphQL.Images.SubscriptionTest do
   use ReWeb.SubscriptionCase
 
   @activation_subscriptions [
-    {"imagesDeactivated", "imagesDeactivate"},
-    {"imagesActivated", "imagesActivate"}
+    {"imagesDeactivated", "imagesDeactivate"}
   ]
 
   import Re.Factory

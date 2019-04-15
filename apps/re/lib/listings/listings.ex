@@ -13,6 +13,7 @@ defmodule Re.Listings do
     Listings.Queries,
     PubSub,
     Repo,
+    Tags,
     User
   }
 
@@ -65,6 +66,7 @@ defmodule Re.Listings do
   @partial_preload [
     :address,
     :listings_favorites,
+    :tags,
     images: Images.Queries.listing_preload()
   ]
 
@@ -84,9 +86,24 @@ defmodule Re.Listings do
   def get_partial_preloaded(id, preload),
     do: do_get(Queries.preload_relations(Listing, preload), id)
 
-  def insert(params, address, user) do
+  def insert(params, address, user, development \\ nil)
+
+  def insert(params, address, user, nil) do
     with {:ok, user} <- validate_phone_number(params, user),
          do: do_insert(params, address, user)
+  end
+
+  def insert(params, address, user, development) do
+    %Listing{}
+    |> Changeset.change(%{
+      development_uuid: development.uuid,
+      address_id: address.id,
+      user_id: user.id,
+      is_exportable: false
+    })
+    |> Listing.development_changeset(params)
+    |> Repo.insert()
+    |> publish_if_admin(user.role)
   end
 
   defp do_insert(params, address, user) do
@@ -118,12 +135,30 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
-  def update(listing, params, address, user) do
+  def update(listing, params, address, user, development \\ nil)
+
+  def update(listing, params, address, user, nil) do
     changeset =
       listing
       |> Changeset.change(address_id: address.id)
       |> Listing.changeset(params, user.role)
       |> deactivate_if_not_admin(user)
+
+    changeset
+    |> Repo.update()
+    |> PubSub.publish_update(changeset, "update_listing", %{user: user})
+  end
+
+  def update(listing, params, address, user, development) do
+    changeset =
+      listing
+      |> Changeset.change(%{
+        development_uuid: development.uuid,
+        address_id: address.id,
+        user_id: user.id,
+        is_exportable: false
+      })
+      |> Listing.development_changeset(params)
 
     changeset
     |> Repo.update()
@@ -188,6 +223,7 @@ defmodule Re.Listings do
     :in_person_visits,
     :listings_favorites,
     :interests,
+    :tags,
     images: Images.Queries.listing_preload()
   ]
 
@@ -196,5 +232,16 @@ defmodule Re.Listings do
     |> Queries.order_by()
     |> Queries.preload_relations(@full_preload)
     |> Repo.all()
+  end
+
+  def upsert_tags(listing, nil), do: {:ok, listing}
+
+  def upsert_tags(listing, tag_uuids) do
+    tags = Tags.list_by_uuids(tag_uuids)
+
+    listing
+    |> Repo.preload([:tags])
+    |> Listing.changeset_update_tags(tags)
+    |> Repo.update()
   end
 end

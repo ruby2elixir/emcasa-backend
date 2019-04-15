@@ -5,6 +5,7 @@ defmodule ReWeb.Resolvers.Images do
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
   alias Re.{
+    Developments,
     Images,
     Listings
   }
@@ -56,6 +57,16 @@ defmodule ReWeb.Resolvers.Images do
     end)
   end
 
+  def insert_image(%{input: %{parent_type: :development, parent_uuid: parent_uuid} = params}, %{
+        context: %{current_user: current_user}
+      }) do
+    with :ok <- Bodyguard.permit(Images, :create_development_images, current_user, nil),
+         {:ok, development} <- Developments.get_preloaded(parent_uuid, [:images]),
+         {:ok, image} <- Images.insert(params, development) do
+      {:ok, %{parent: development, image: image}}
+    end
+  end
+
   def insert_image(%{input: %{listing_id: listing_id} = params}, %{
         context: %{current_user: current_user}
       }) do
@@ -67,36 +78,24 @@ defmodule ReWeb.Resolvers.Images do
 
   def update_images(%{input: inputs}, %{context: %{current_user: current_user}}) do
     with {:ok, images_and_inputs} <- Images.get_list(inputs),
-         {:ok, listing} <- Images.check_same_listing(images_and_inputs),
-         :ok <- Bodyguard.permit(Images, :update_images, current_user, listing),
+         {:ok, parent} <- Images.get_parent(images_and_inputs),
+         :ok <- Bodyguard.permit(Images, :update_images, current_user, parent),
          {:ok, images} <- Images.update_images(images_and_inputs),
-         do: {:ok, %{images: images, parent_listing: listing}}
+         do: {:ok, %{images: images, parent_listing: parent, parent: parent}}
   end
 
   def deactivate_images(%{input: %{image_ids: image_ids}}, %{
         context: %{current_user: current_user}
       }) do
     with images <- Images.list_by_ids(image_ids),
-         {:ok, listing} <- Images.fetch_listing(images),
-         :ok <- Bodyguard.permit(Images, :deactivate_images, current_user, listing),
+         {:ok, parent} <- Images.get_parent(images),
+         :ok <- Bodyguard.permit(Images, :deactivate_images, current_user, parent),
          {:ok, images} <- Images.deactivate_images(images),
-         do: {:ok, %{images: images, parent_listing: listing}}
-  end
-
-  def activate_images(%{input: %{image_ids: image_ids}}, %{context: %{current_user: current_user}}) do
-    with images <- Images.list_by_ids(image_ids),
-         {:ok, listing} <- Images.fetch_listing(images),
-         :ok <- Bodyguard.permit(Images, :activate_images, current_user, listing),
-         {:ok, images} <- Images.activate_images(images),
-         do: {:ok, %{images: images, parent_listing: listing}}
+         do: {:ok, %{images: images, parent_listing: parent, parent: parent}}
   end
 
   def images_deactivated_config(args, %{context: %{current_user: current_user}}) do
     config_subscription(args, current_user, "images_deactivated")
-  end
-
-  def images_activated_config(args, %{context: %{current_user: current_user}}) do
-    config_subscription(args, current_user, "images_activated")
   end
 
   def images_updated_config(args, %{context: %{current_user: current_user}}) do
@@ -109,11 +108,18 @@ defmodule ReWeb.Resolvers.Images do
 
   def images_deactivate_trigger(%{parent_listing: %{id: id}}), do: "images_deactivated:#{id}"
 
-  def images_activate_trigger(%{parent_listing: %{id: id}}), do: "images_activated:#{id}"
+  def images_deactivate_trigger(%{parent: %Re.Development{uuid: uuid}}),
+    do: "development_updated:#{uuid}"
 
   def update_images_trigger(%{parent_listing: %{id: id}}), do: "images_updated:#{id}"
 
+  def update_images_trigger(%{parent: %Re.Development{uuid: uuid}}),
+    do: "development_updated:#{uuid}"
+
   def insert_image_trigger(%{parent_listing: %{id: id}}), do: "images_inserted:#{id}"
+
+  def insert_image_trigger(%{parent: %Re.Development{uuid: uuid}}),
+    do: "development_updated:#{uuid}"
 
   defp config_subscription(%{listing_id: id}, %{role: "admin"}, topic),
     do: {:ok, topic: "#{topic}:#{id}"}

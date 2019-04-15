@@ -15,8 +15,12 @@ defmodule ReWeb.Types.Image do
     field :category, :string
   end
 
+  enum :image_parent_type, values: ~w(listing development)a
+
   input_object :image_insert_input do
-    field :listing_id, non_null(:id)
+    field :parent_uuid, :uuid
+    field :parent_type, :image_parent_type
+    field :listing_id, :id
     field :filename, non_null(:string)
     field :is_active, :boolean
     field :description, :string
@@ -34,18 +38,25 @@ defmodule ReWeb.Types.Image do
     field :image_ids, non_null(list_of(non_null(:id)))
   end
 
-  input_object :image_activate_input do
-    field :image_ids, non_null(list_of(non_null(:id)))
-  end
-
   object :image_output do
     field :image, :image
     field :parent_listing, :listing
+    field :parent, :image_parent
   end
 
   object :images_output do
     field :images, list_of(:image)
     field :parent_listing, :listing
+    field :parent, :image_parent
+  end
+
+  union :image_parent do
+    types([:development, :listing])
+
+    resolve_type(fn
+      %Re.Development{}, _ -> :development
+      %Re.Listing{}, _ -> :listing
+    end)
   end
 
   object :image_mutations do
@@ -69,13 +80,6 @@ defmodule ReWeb.Types.Image do
 
       resolve &Resolvers.Images.deactivate_images/2
     end
-
-    @desc "Deactivate images"
-    field :images_activate, type: :images_output do
-      arg :input, non_null(:image_activate_input)
-
-      resolve &Resolvers.Images.activate_images/2
-    end
   end
 
   object :image_subscriptions do
@@ -86,15 +90,6 @@ defmodule ReWeb.Types.Image do
       config &Resolvers.Images.images_deactivated_config/2
 
       trigger :images_deactivate, topic: &Resolvers.Images.images_deactivate_trigger/1
-    end
-
-    @desc "Subscribe to image activation"
-    field :images_activated, :images_output do
-      arg :listing_id, non_null(:id)
-
-      config &Resolvers.Images.images_activated_config/2
-
-      trigger :images_activate, topic: &Resolvers.Images.images_activate_trigger/1
     end
 
     @desc "Subscribe to image update"
@@ -108,7 +103,8 @@ defmodule ReWeb.Types.Image do
 
     @desc "Subscribe to image insertion"
     field :image_inserted, :image_output do
-      arg :listing_id, non_null(:id)
+      arg :listing_id, :id
+      arg :development_uuid, :uuid
 
       config &Resolvers.Images.image_inserted_config/2
 

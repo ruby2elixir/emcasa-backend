@@ -4,7 +4,8 @@ defmodule Re.ListingsTest do
   alias Re.{
     Listings.History.Server,
     Listing,
-    Listings
+    Listings,
+    Repo
   }
 
   import Re.Factory
@@ -22,6 +23,10 @@ defmodule Re.ListingsTest do
 
   describe "paginated/1" do
     test "should filter by attributes" do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
+      tag_3 = insert(:tag, name: "Tag 3", name_slug: "tag-3")
+
       sao_conrado =
         insert(
           :address,
@@ -67,7 +72,8 @@ defmodule Re.ListingsTest do
           address_id: sao_conrado.id,
           type: "Apartamento",
           garage_spots: 3,
-          garage_type: "contract"
+          garage_type: "contract",
+          tags: [tag_1, tag_2]
         )
 
       %{id: id2} =
@@ -81,7 +87,8 @@ defmodule Re.ListingsTest do
           address_id: leblon.id,
           type: "Apartamento",
           garage_spots: 2,
-          garage_type: "condominium"
+          garage_type: "condominium",
+          tags: [tag_1, tag_2, tag_3]
         )
 
       %{id: id3} =
@@ -95,7 +102,8 @@ defmodule Re.ListingsTest do
           address_id: botafogo.id,
           type: "Casa",
           garage_spots: 1,
-          garage_type: "contract"
+          garage_type: "contract",
+          tags: [tag_3]
         )
 
       result = Listings.paginated(%{"max_price" => 105})
@@ -181,16 +189,32 @@ defmodule Re.ListingsTest do
       result = Listings.paginated(%{"cities_slug" => ["sao-paulo"]})
       assert [%{id: ^id3}] = chunk_and_short(result.listings)
       assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"tags_slug" => ["tag-2"]})
+      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert 0 == result.remaining_count
+
+      result = Listings.paginated(%{"tags_slug" => ["tag-1", "tag-2"], "page_size" => 1})
+      assert [%{id: ^id1}] = chunk_and_short(result.listings)
+      assert 1 == result.remaining_count
     end
 
     test "should not filter for empty array" do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
+      tag_3 = insert(:tag, name: "Tag 3", name_slug: "tag-3")
+
       laranjeiras = insert(:address, street: "astreet", neighborhood: "Laranjeiras")
       leblon = insert(:address, street: "anotherstreet", neighborhood: "Leblon")
       botafogo = insert(:address, street: "onemorestreet", neighborhood: "Botafogo")
 
-      %{id: id1} = insert(:listing, score: 4, address_id: laranjeiras.id, type: "Apartamento")
-      %{id: id2} = insert(:listing, score: 3, address_id: leblon.id, type: "Casa")
-      %{id: id3} = insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento")
+      %{id: id1} =
+        insert(:listing, score: 4, address_id: laranjeiras.id, type: "Apartamento", tags: [tag_1])
+
+      %{id: id2} = insert(:listing, score: 3, address_id: leblon.id, type: "Casa", tags: [tag_2])
+
+      %{id: id3} =
+        insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento", tags: [tag_3])
 
       result = Listings.paginated(%{"neighborhoods" => []})
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
@@ -199,6 +223,12 @@ defmodule Re.ListingsTest do
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
 
       result = Listings.paginated(%{"garage_types" => []})
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"tags_slug" => []})
+      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+
+      result = Listings.paginated(%{"tags_uuid" => []})
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
     end
 
@@ -307,7 +337,7 @@ defmodule Re.ListingsTest do
     end
   end
 
-  describe "insert/2" do
+  describe "insert/3" do
     @insert_listing_params %{
       "type" => "Apartamento",
       "complement" => "100",
@@ -378,6 +408,41 @@ defmodule Re.ListingsTest do
     end
   end
 
+  describe "insert/4" do
+    @insert_development_listing_params %{
+      "type" => "Apartamento",
+      "has_elevator" => true,
+      "description" => "Awesome new brand building"
+    }
+
+    test "should insert development listing" do
+      address = insert(:address)
+      development = insert(:development, address_id: address.id)
+      user = insert(:user, role: "admin")
+
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_development_listing_params, address, user, development)
+
+      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
+      assert retrieved_listing.development_uuid == development.uuid
+      assert retrieved_listing.address_id == address.id
+      assert retrieved_listing.user_id == user.id
+      assert retrieved_listing.uuid
+    end
+
+    test "should set is_exportable to false" do
+      address = insert(:address)
+      development = insert(:development, address_id: address.id)
+      user = insert(:user, role: "admin")
+
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_development_listing_params, address, user, development)
+
+      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
+      assert retrieved_listing.is_exportable == false
+    end
+  end
+
   describe "update/4" do
     test "should deactivate if non-admin updates" do
       Server.start_link()
@@ -406,6 +471,90 @@ defmodule Re.ListingsTest do
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.status == "inactive"
       assert [] = Repo.all(Re.Listings.PriceHistory)
+    end
+  end
+
+  describe "update/5" do
+    test "should set is exportable as false" do
+      user = insert(:user)
+      address = insert(:address)
+      development = insert(:development, address: address)
+      listing = insert(:listing, user: user)
+
+      Listings.update(listing, %{is_exportable: true}, address, user, development)
+
+      updated_listing = Repo.get(Listing, listing.id)
+      assert updated_listing.is_exportable == false
+    end
+  end
+
+  describe "upsert_tags/2" do
+    test "should insert tags" do
+      tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
+      tag_3 = insert(:tag, name: "tag 3", name_slug: "tag-3")
+
+      user = insert(:user)
+
+      listing =
+        insert(:listing, user: user)
+        |> Repo.preload([:tags])
+
+      assert Enum.count(listing.tags) == 0
+
+      assert {:ok, updated_listing} = Listings.upsert_tags(listing, [tag_1.uuid, tag_2.uuid])
+
+      assert Enum.count(updated_listing.tags) == 2
+      assert Enum.member?(updated_listing.tags, tag_1)
+      assert Enum.member?(updated_listing.tags, tag_2)
+      refute Enum.member?(updated_listing.tags, tag_3)
+    end
+
+    test "should update tags" do
+      tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
+      tag_3 = insert(:tag, name: "tag 3", name_slug: "tag-3")
+
+      user = insert(:user)
+
+      listing = insert(:listing, user: user, tags: [tag_1, tag_2])
+
+      {:ok, updated_listing} = Listings.upsert_tags(listing, [tag_3.uuid])
+
+      assert Enum.count(updated_listing.tags) == 1
+      assert Enum.member?(updated_listing.tags, tag_3)
+      refute Enum.member?(updated_listing.tags, tag_1)
+      refute Enum.member?(updated_listing.tags, tag_2)
+    end
+
+    test "should remove tags" do
+      tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
+
+      user = insert(:user)
+
+      listing = insert(:listing, user: user, tags: [tag_1, tag_2])
+
+      {:ok, updated_listing} = Listings.upsert_tags(listing, [])
+
+      assert Enum.count(updated_listing.tags) == 0
+      refute Enum.member?(updated_listing.tags, tag_1)
+      refute Enum.member?(updated_listing.tags, tag_2)
+    end
+
+    test "should not upsert when tags is nil" do
+      tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "tag 2", name_slug: "tag-2")
+
+      user = insert(:user)
+
+      listing = insert(:listing, user: user, tags: [tag_1, tag_2])
+
+      {:ok, updated_listing} = Listings.upsert_tags(listing, nil)
+
+      assert Enum.count(updated_listing.tags) == 2
+      assert Enum.member?(updated_listing.tags, tag_1)
+      assert Enum.member?(updated_listing.tags, tag_2)
     end
   end
 

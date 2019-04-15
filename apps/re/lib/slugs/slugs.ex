@@ -1,4 +1,4 @@
-defmodule Re.Addresses.Slugs do
+defmodule Re.Slugs do
   @moduledoc """
   Module for sluggify logic
   """

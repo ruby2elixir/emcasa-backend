@@ -50,4 +50,25 @@ defmodule Re.UnitsTest do
       assert listing.price == 500_000
     end
   end
+
+  describe "update/2" do
+    @update_unit_attrs %{
+      price: 2_000_000,
+      rooms: 3
+    }
+
+    test "should update listing price" do
+      Server.start_link()
+      development = insert(:development)
+      listing = insert(:listing, development_uuid: development.uuid, price: 1_000_000)
+      unit = insert(:unit, development_uuid: development.uuid, price: 500_000)
+
+      assert {:ok, _updated_unit} = Units.update(unit, @update_unit_attrs, development, listing)
+
+      GenServer.call(Server, :inspect)
+
+      listing = Repo.get(Listing, listing.id)
+      assert listing.price == 2_000_000
+    end
+  end
 end

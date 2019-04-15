@@ -30,16 +30,6 @@ defmodule Re.ImagesTest do
     end
   end
 
-  describe "check_same_listing/1" do
-    test "should return error when images are from distinct listings" do
-      assert {:error, :distinct_listings} ==
-               Images.check_same_listing([
-                 {:ok, %{listing_id: 1}, %{position: 1}},
-                 {:ok, %{listing_id: 2}, %{position: 2}}
-               ])
-    end
-  end
-
   describe "update_images/1" do
     test "should error when input is invalid" do
       [image1, image2, image3] = insert_list(3, :image)
@@ -50,6 +40,30 @@ defmodule Re.ImagesTest do
                  {:ok, image2, %{position: false, description: "waow2"}},
                  {:ok, image3, %{position: 3, description: "waow3"}}
                ])
+    end
+  end
+
+  describe "insert/2" do
+    @insert_params %{filename: "test.jpg"}
+
+    test "should insert listing image active" do
+      listing =
+        insert(:listing)
+        |> Re.Repo.preload([:images])
+
+      {:ok, inserted_image} = Images.insert(@insert_params, listing)
+      assert inserted_image.is_active == true
+      assert inserted_image.listing == listing
+    end
+
+    test "should insert development image active" do
+      development =
+        insert(:development)
+        |> Re.Repo.preload([:images])
+
+      {:ok, inserted_image} = Images.insert(@insert_params, development)
+      assert inserted_image.is_active == true
+      assert inserted_image.development == development
     end
   end
 end

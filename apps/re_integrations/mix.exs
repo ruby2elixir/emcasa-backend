@@ -34,10 +34,10 @@ defmodule ReIntegrations.Mixfile do
   defp deps do
     [
       {:re, in_umbrella: true},
-      {:plug_cowboy, "~> 1.0"},
+      {:plug_cowboy, "~> 2.0"},
       {:cors_plug, "~> 1.2"},
       {:comeonin, "~> 3.2"},
-      {:swoosh, "~> 0.13"},
+      {:swoosh, "~> 0.23"},
       {:elasticsearch, "~> 0.4"},
       {:pigeon, "~> 1.2.2"},
       {:kadabra, "~> 0.4.2"},

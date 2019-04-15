@@ -305,6 +305,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "should query listing index with filtering", %{user_conn: conn} do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
+
       insert(
         :listing,
         price: 1_100_000,
@@ -321,7 +324,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_1]
       )
 
       insert(
@@ -340,7 +344,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_1]
       )
 
       insert(
@@ -359,7 +364,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_1]
       )
 
       insert(
@@ -378,7 +384,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_1]
       )
 
       insert(
@@ -397,7 +404,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_1]
       )
 
       insert(
@@ -416,7 +424,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_2]
       )
 
       insert(
@@ -435,7 +444,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_2]
       )
 
       insert(
@@ -454,7 +464,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_2]
       )
 
       insert(
@@ -473,7 +484,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_2]
       )
 
       insert(
@@ -492,7 +504,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_2]
       )
 
       insert(
@@ -511,7 +524,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 70.0
           ),
         garage_spots: 2,
-        garage_type: "contract"
+        garage_type: "contract",
+        tags: [tag_1, tag_2]
       )
 
       insert(
@@ -530,7 +544,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 30.0
           ),
         garage_spots: 2,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        tags: [tag_1, tag_2]
       )
 
       insert(
@@ -548,7 +563,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lat: 50.0,
             lng: 50.0
           ),
-        garage_spots: 0
+        garage_spots: 0,
+        tags: [tag_1, tag_2]
       )
 
       insert(
@@ -614,7 +630,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               lng: 50.0
             ),
           garage_spots: 2,
-          garage_type: "contract"
+          garage_type: "contract",
+          tags: [tag_1, tag_2]
         )
 
       variables = %{
@@ -638,7 +655,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "minGarageSpots" => 1,
           "garageTypes" => ["CONTRACT"],
           "cities" => ["Rio de Janeiro"],
-          "citiesSlug" => ["rio-de-janeiro"]
+          "citiesSlug" => ["rio-de-janeiro"],
+          "tagsSlug" => ["tag-1", "tag-2"]
         }
       }
 
@@ -665,6 +683,43 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                ],
                "filters" => %{
                  "maxPrice" => 1_000_000
+               }
+             } == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "should query listing index filtering by status", %{user_conn: conn} do
+      listing_1 = insert(:listing, status: "active")
+      insert(:listing, status: "inactive")
+
+      variables = %{
+        "filters" => %{
+          "statuses" => ["active"]
+        }
+      }
+
+      query = """
+        query Listings($filters: ListingFilterInput) {
+          listings (filters: $filters) {
+            listings {
+              id
+            }
+            filters {
+              statuses
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{
+                   "id" => to_string(listing_1.id)
+                 }
+               ],
+               "filters" => %{
+                 "statuses" => ["active"]
                }
              } == json_response(conn, 200)["data"]["listings"]
     end
@@ -793,6 +848,123 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  %{"priceRecentlyReduced" => false}
                ]
              } == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "admin should query listing with all tags", %{admin_conn: conn} do
+      insert(
+        :listing,
+        tags: [
+          build(:tag, name: "Tag 1", name_slug: "tag-1", visibility: "public"),
+          build(:tag, name: "Tag 2", name_slug: "tag-2", visibility: "public"),
+          build(:tag, name: "Tag 3", name_slug: "tag-3", visibility: "private")
+        ]
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              tags {
+                nameSlug
+              }
+            }
+          }
+        }
+      """
+
+      expected = %{
+        "listings" => [
+          %{
+            "tags" => [
+              %{"nameSlug" => "tag-1"},
+              %{"nameSlug" => "tag-2"},
+              %{"nameSlug" => "tag-3"}
+            ]
+          }
+        ]
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert expected == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "user should query listing with publicly visible tags", %{user_conn: conn} do
+      insert(
+        :listing,
+        tags: [
+          build(:tag, name: "Tag 1", name_slug: "tag-1", visibility: "public"),
+          build(:tag, name: "Tag 2", name_slug: "tag-2", visibility: "public"),
+          build(:tag, name: "Tag 3", name_slug: "tag-3", visibility: "private")
+        ]
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              tags {
+                nameSlug
+              }
+            }
+          }
+        }
+      """
+
+      expected = %{
+        "listings" => [
+          %{
+            "tags" => [
+              %{"nameSlug" => "tag-1"},
+              %{"nameSlug" => "tag-2"}
+            ]
+          }
+        ]
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert expected == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "anonymous user should query listing with publicly visible tags", %{
+      unauthenticated_conn: conn
+    } do
+      insert(
+        :listing,
+        tags: [
+          build(:tag, name: "Tag 1", name_slug: "tag-1", visibility: "public"),
+          build(:tag, name: "Tag 2", name_slug: "tag-2", visibility: "public"),
+          build(:tag, name: "Tag 3", name_slug: "tag-3", visibility: "private")
+        ]
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              tags {
+                nameSlug
+              }
+            }
+          }
+        }
+      """
+
+      expected = %{
+        "listings" => [
+          %{
+            "tags" => [
+              %{"nameSlug" => "tag-1"},
+              %{"nameSlug" => "tag-2"}
+            ]
+          }
+        ]
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert expected == json_response(conn, 200)["data"]["listings"]
     end
   end
 

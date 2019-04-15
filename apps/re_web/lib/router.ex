@@ -14,6 +14,7 @@ defmodule ReWeb.Router do
 
   pipeline :webhooks do
     plug(:accepts, ["json"])
+    plug(ProperCase.Plug.SnakeCaseParams)
   end
 
   scope "/", ReWeb do
@@ -40,6 +41,10 @@ defmodule ReWeb.Router do
     get("/listing_coordinates", ListingController, :coordinates)
   end
 
+  scope "/" do
+    forward("/robots.txt", ReWeb.RobotsPlug)
+  end
+
   scope "/graphql_api" do
     pipe_through :graphql
 
@@ -58,7 +63,9 @@ defmodule ReWeb.Router do
   scope "/webhooks" do
     pipe_through :webhooks
 
-    forward("/pipedrive", ReWeb.Pipedrive.Plug)
+    forward("/pipedrive", ReWeb.Webhooks.PipedrivePlug)
+    forward("/grupozap", ReWeb.Webhooks.GrupozapPlug)
+    forward("/zapier", ReWeb.Webhooks.ZapierPlug)
   end
 
   scope "/exporters" do
