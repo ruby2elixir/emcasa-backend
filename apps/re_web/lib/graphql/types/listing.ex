@@ -232,8 +232,8 @@ defmodule ReWeb.Types.Listing do
     field :max_floor_count, :integer
     field :min_unit_per_floor, :integer
     field :max_unit_per_floor, :integer
-    field :orientation, :string
-    field :sun_period, :string
+    field :orientations, list_of(non_null(:orientation_type))
+    field :sun_periods, list_of(non_null(:sun_period_type))
     field :min_age, :integer
     field :max_age, :integer
     field :min_price_per_area, :float
@@ -264,6 +264,16 @@ defmodule ReWeb.Types.Listing do
     field :statuses, list_of(:string)
     field :tags_slug, list_of(:string)
     field :tags_uuid, list_of(:uuid)
+    field :min_floor_count, :integer
+    field :max_floor_count, :integer
+    field :min_unit_per_floor, :integer
+    field :max_unit_per_floor, :integer
+    field :orientations, list_of(non_null(:orientation_type))
+    field :sun_periods, list_of(non_null(:sun_period_type))
+    field :min_age, :integer
+    field :max_age, :integer
+    field :min_price_per_area, :float
+    field :max_price_per_area, :float
   end
 
   object :price_history do
