@@ -347,8 +347,26 @@ defmodule Re.ListingsTest do
       "rooms" => 3,
       "bathrooms" => 2,
       "garage_spots" => 1,
+      "area" => 100
+    }
+
+    @insert_admin_listing_params %{
+      "type" => "Apartamento",
+      "complement" => "100",
+      "description" => String.duplicate("a", 256),
+      "price" => 1_000_000,
+      "floor" => "3",
+      "rooms" => 3,
+      "bathrooms" => 2,
+      "garage_spots" => 1,
       "area" => 100,
-      "score" => 3
+      "score" => 3,
+      "orientation" => "frente",
+      "sun_period" => "morning",
+      "floor_count" => 10,
+      "unit_per_floor" => 4,
+      "elevators" => 2,
+      "construction_year" => 2005
     }
 
     test "should insert with description size bigger than 255" do
@@ -366,9 +384,14 @@ defmodule Re.ListingsTest do
       address = insert(:address)
       user = insert(:user, role: "admin")
 
-      assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address, user)
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_admin_listing_params, address, user)
+
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.status == "inactive"
+
+      assert retrieved_listing.price_per_area ==
+               @insert_admin_listing_params["price"] / @insert_admin_listing_params["area"]
     end
 
     test "should insert inactive for normal user" do
@@ -378,6 +401,9 @@ defmodule Re.ListingsTest do
       assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address, user)
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.status == "inactive"
+
+      assert retrieved_listing.price_per_area ==
+               @insert_listing_params["price"] / @insert_listing_params["area"]
     end
 
     test "should insert if user provides a phone" do
@@ -405,34 +431,6 @@ defmodule Re.ListingsTest do
 
       assert {:ok, listing} = Listings.insert(@insert_listing_params, address, user)
       assert Repo.get(Listing, listing.id)
-    end
-
-    test "should insert extra info for admin user" do
-      address = insert(:address)
-      user = insert(:user, role: "admin")
-
-      params =
-        Map.merge(
-          @insert_listing_params,
-          %{
-            "orientation" => "frente",
-            "sun_period" => "morning",
-            "floor_count" => 10,
-            "unit_per_floor" => 4,
-            "elevators" => 2,
-            "construction_year" => 2005
-          }
-        )
-
-      assert {:ok, listing} = Listings.insert(params, address, user)
-
-      assert listing.orientation == "frente"
-      assert listing.sun_period == "morning"
-      assert listing.floor_count == 10
-      assert listing.unit_per_floor == 4
-      assert listing.elevators == 2
-      assert listing.construction_year == 2005
-      assert listing.price_per_area == params["price"] / params["area"]
     end
   end
 
