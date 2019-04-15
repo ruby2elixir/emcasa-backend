@@ -38,10 +38,6 @@ defmodule ReWeb.Types.Image do
     field :image_ids, non_null(list_of(non_null(:id)))
   end
 
-  input_object :image_activate_input do
-    field :image_ids, non_null(list_of(non_null(:id)))
-  end
-
   object :image_output do
     field :image, :image
     field :parent_listing, :listing

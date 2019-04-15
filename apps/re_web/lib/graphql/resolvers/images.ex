@@ -98,10 +98,6 @@ defmodule ReWeb.Resolvers.Images do
     config_subscription(args, current_user, "images_deactivated")
   end
 
-  def images_activated_config(args, %{context: %{current_user: current_user}}) do
-    config_subscription(args, current_user, "images_activated")
-  end
-
   def images_updated_config(args, %{context: %{current_user: current_user}}) do
     config_subscription(args, current_user, "images_updated")
   end
