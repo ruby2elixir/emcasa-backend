@@ -81,7 +81,11 @@ defmodule Re.Addresses.Neighborhoods do
     %{state: "RJ", neighborhood: "São Conrado", city: "Rio de Janeiro"},
     %{state: "RJ", neighborhood: "Urca", city: "Rio de Janeiro"},
     %{state: "SP", neighborhood: "Perdizes", city: "São Paulo"},
-    %{state: "SP", neighborhood: "Vila Pompéia", city: "São Paulo"}
+    %{state: "SP", neighborhood: "Vila Pompéia", city: "São Paulo"},
+    %{state: "SP", neighborhood: "Pinheiros", city: "São Paulo"},
+    %{state: "SP", neighborhood: "Sumaré", city: "São Paulo"},
+    %{state: "SP", neighborhood: "Sumarezinho", city: "São Paulo"},
+    %{state: "SP", neighborhood: "Vila Anglo Brasileira", city: "São Paulo"}
   ]
 
   def is_covered(neighborhood) do
