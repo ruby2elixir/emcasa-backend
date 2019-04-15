@@ -98,18 +98,12 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     "name" => "mah full naem",
     "email" => "mah@email",
     "phone" => "11999999999",
-    "listingId" => "manhattan brooklyn harlem",
+    "listingId" => "2000",
     "source" => "imovelweb_buyer"
   }
 
   @imovelweb_buyer_invalid_payload %{
-    "full_name" => "mah full naem",
-    "timestamp" => "2019-01-01T00:00:00.000Z",
-    "lead_id" => "193846287346183764187",
-    "email" => "mah@email",
-    "phone_number" => "11999999999",
-    "neighborhoods" => "manhattan brooklyn harlem",
-    "location" => "asdasda",
+    "name" => "mah full naem",
     "source" => "imovelweb_buyer"
   }
 
