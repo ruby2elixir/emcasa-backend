@@ -143,7 +143,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     end
 
     @tag capture_log: true
-    test "invalid location request", %{authenticated_conn: conn} do
+    test "missing attributes request", %{authenticated_conn: conn} do
       conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_invalid_payload)
 
       assert text_response(conn, 422) == "Unprocessable Entity"
