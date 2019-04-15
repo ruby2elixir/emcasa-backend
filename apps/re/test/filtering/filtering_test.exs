@@ -195,10 +195,10 @@ defmodule Re.FilteringTest do
     end
 
     test "filter listing with empty orientation fetch all instances" do
-      %{id: listing_1} = insert(:listing, orientation: "frente")
-      %{id: listing_2} = insert(:listing, orientation: "fundos")
+      %{id: listing_1} = insert(:listing, orientation: "frontside")
+      %{id: listing_2} = insert(:listing, orientation: "backside")
       %{id: listing_3} = insert(:listing, orientation: "lateral")
-      %{id: listing_4} = insert(:listing, orientation: "meio")
+      %{id: listing_4} = insert(:listing, orientation: "inside")
 
       result =
         Listing
@@ -211,14 +211,14 @@ defmodule Re.FilteringTest do
     end
 
     test "filter listing by orientation" do
-      listing = insert(:listing, orientation: "frente")
-      insert(:listing, orientation: "fundos")
+      listing = insert(:listing, orientation: "frontside")
+      insert(:listing, orientation: "backside")
       insert(:listing, orientation: "lateral")
-      insert(:listing, orientation: "meio")
+      insert(:listing, orientation: "inside")
 
       result =
         Listing
-        |> Filtering.apply(%{orientations: ["frente"]})
+        |> Filtering.apply(%{orientations: ["frontside"]})
         |> Repo.all()
 
       assert [listing] == result

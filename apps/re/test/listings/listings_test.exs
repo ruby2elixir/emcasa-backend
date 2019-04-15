@@ -361,7 +361,7 @@ defmodule Re.ListingsTest do
       "garage_spots" => 1,
       "area" => 100,
       "score" => 3,
-      "orientation" => "frente",
+      "orientation" => "frontside",
       "sun_period" => "morning",
       "floor_count" => 10,
       "unit_per_floor" => 4,

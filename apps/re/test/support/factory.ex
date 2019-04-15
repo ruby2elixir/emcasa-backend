@@ -52,7 +52,7 @@ defmodule Re.Factory do
       is_exclusive: Enum.random([true, false]),
       is_release: Enum.random([true, false]),
       is_exportable: Enum.random([true, false]),
-      orientation: Enum.random(~w(frente fundos lateral meio)),
+      orientation: Enum.random(~w(frontside backside lateral inside)),
       floor_count: floor_count,
       unit_per_floor: Enum.random(1..10),
       sun_period: Enum.random(~w(morning evening)),
