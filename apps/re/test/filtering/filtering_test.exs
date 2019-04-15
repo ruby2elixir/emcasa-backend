@@ -201,7 +201,7 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{orientation: "frente"})
+        |> Filtering.apply(%{orientations: ["frente"]})
         |> Repo.all()
 
       assert [listing] == result
@@ -213,7 +213,7 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{sun_period: "morning"})
+        |> Filtering.apply(%{sun_periods: ["morning"]})
         |> Repo.all()
 
       assert [listing] == result
