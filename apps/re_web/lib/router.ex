@@ -14,6 +14,7 @@ defmodule ReWeb.Router do
 
   pipeline :webhooks do
     plug(:accepts, ["json"])
+    plug(ProperCase.Plug.SnakeCaseParams)
   end
 
   scope "/", ReWeb do

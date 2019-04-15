@@ -30,16 +30,6 @@ defmodule Re.ImagesTest do
     end
   end
 
-  describe "check_same_listing/1" do
-    test "should return error when images are from distinct listings" do
-      assert {:error, :distinct_listings} ==
-               Images.check_same_listing([
-                 {:ok, %{listing_id: 1}, %{position: 1}},
-                 {:ok, %{listing_id: 2}, %{position: 2}}
-               ])
-    end
-  end
-
   describe "update_images/1" do
     test "should error when input is invalid" do
       [image1, image2, image3] = insert_list(3, :image)

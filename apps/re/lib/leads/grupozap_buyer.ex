@@ -23,12 +23,15 @@ defmodule Re.Leads.GrupozapBuyer do
     timestamps()
   end
 
-  @params ~w(lead_origin timestamp origin_lead_id origin_listing_id client_listing_id
+  @required ~w(client_listing_id)a
+  @optional ~w(lead_origin timestamp origin_lead_id origin_listing_id
     name email ddd phone message)a
+  @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @params)
+    |> validate_required(@required)
     |> generate_uuid()
   end
 

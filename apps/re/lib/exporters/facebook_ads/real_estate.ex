@@ -108,7 +108,7 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
       [
         {"component", %{name: "addr1"}, escape_cdata("#{address.street}")},
         {"component", %{name: "city"}, escape_cdata("#{address.city}")},
-        {"component", %{name: "region"}, escape_cdata("#{address.state}")},
+        {"component", %{name: "region"}, escape_cdata("#{address.neighborhood}")},
         {"component", %{name: "country"}, escape_cdata("Brazil")},
         {"component", %{name: "postal_code"}, escape_cdata("#{address.postal_code}")}
       ]

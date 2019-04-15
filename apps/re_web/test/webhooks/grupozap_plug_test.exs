@@ -7,30 +7,30 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
   }
 
   @payload %{
-      "leadOrigin" => "VivaReal",
-      "timestamp" => "2019-01-01T00:00:00.000Z",
-      "originLeadId" => "59ee0fc6e4b043e1b2a6d863",
-      "originListingId" => "87027856",
-      "clientListingId" => "a40171",
-      "name" => "mah name",
-      "email" => "mah@email",
-      "ddd" => "11",
-      "phone" => "999999999",
-      "message" => "mah msg"
-    }
+    "leadOrigin" => "VivaReal",
+    "timestamp" => "2019-01-01T00:00:00.000Z",
+    "originLeadId" => "59ee0fc6e4b043e1b2a6d863",
+    "originListingId" => "87027856",
+    "clientListingId" => "a40171",
+    "name" => "mah name",
+    "email" => "mah@email",
+    "ddd" => "11",
+    "phone" => "999999999",
+    "message" => "mah msg"
+  }
 
   @invalid_payload %{
-      "leadOrigin" => "VivaReal",
-      "timestamp" => "2019-01-01T00:00:00.000Z",
-      "originLeadId" => "59ee0fc6e4b043e1b2a6d863",
-      "originListingId" => "87027856",
-      "clientListingId" => nil,
-      "name" => "mah name",
-      "email" => "mah@email",
-      "ddd" => "11",
-      "phone" => "999999999",
-      "message" => "mah msg"
-    }
+    "leadOrigin" => "VivaReal",
+    "timestamp" => "2019-01-01T00:00:00.000Z",
+    "originLeadId" => "59ee0fc6e4b043e1b2a6d863",
+    "originListingId" => "87027856",
+    "clientListingId" => nil,
+    "name" => "mah name",
+    "email" => "mah@email",
+    "ddd" => "11",
+    "phone" => "999999999",
+    "message" => "mah msg"
+  }
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
@@ -50,7 +50,32 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
 
       assert text_response(conn, 200) == "ok"
 
-      assert Repo.one(GrupozapBuyer)
+      assert gb = Repo.one(GrupozapBuyer)
+      assert gb.origin_lead_id
+      assert gb.origin_listing_id
+      assert gb.client_listing_id
+    end
+
+    @long_message_payload %{
+      "leadOrigin" => "VivaReal",
+      "timestamp" => "2019-01-01T00:00:00.000Z",
+      "originLeadId" => "59ee0fc6e4b043e1b2a6d863",
+      "originListingId" => "87027856",
+      "clientListingId" => "a40171",
+      "name" => "mah name",
+      "email" => "mah@email",
+      "ddd" => "11",
+      "phone" => "999999999",
+      "message" => String.duplicate("a", 256)
+    }
+
+    test "should save long message", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/grupozap", @long_message_payload)
+
+      assert text_response(conn, 200) == "ok"
+
+      assert gb = Repo.one(GrupozapBuyer)
+      assert gb.message
     end
 
     @tag capture_log: true
