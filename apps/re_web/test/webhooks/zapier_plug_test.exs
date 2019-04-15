@@ -169,4 +169,14 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     refute Repo.one(FacebookBuyer)
     refute Repo.one(ImovelWebBuyer)
   end
+
+  @tag capture_log: true
+  test "inexisting source", %{authenticated_conn: conn} do
+    conn = post(conn, "/webhooks/zapier", %{})
+
+    assert text_response(conn, 422) == "Unprocessable Entity"
+
+    refute Repo.one(FacebookBuyer)
+    refute Repo.one(ImovelWebBuyer)
+  end
 end
