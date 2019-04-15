@@ -5,6 +5,7 @@ defmodule Re.FilteringTest do
     Filtering,
     Listing,
     Listings,
+    Listings.Queries,
     Repo
   }
 
@@ -161,7 +162,8 @@ defmodule Re.FilteringTest do
       listing = insert(:listing)
 
       result =
-        Filtering.apply(Listing, %{statuses: []})
+        Listing
+        |> Filtering.apply(%{statuses: []})
         |> Repo.all()
 
       assert [listing] == result
@@ -172,7 +174,8 @@ defmodule Re.FilteringTest do
       insert(:listing, status: "inactive")
 
       result =
-        Filtering.apply(Listing, %{statuses: ["active"]})
+        Listing
+        |> Filtering.apply(%{statuses: ["active"]})
         |> Repo.all()
 
       assert [listing] == result
@@ -184,7 +187,149 @@ defmodule Re.FilteringTest do
       insert(:listing, status: "sold")
 
       result =
-        Filtering.apply(Listing, %{statuses: ["active", "inactive"]})
+        Listing
+        |> Filtering.apply(%{statuses: ["active", "inactive"]})
+        |> Repo.all()
+
+      assert [listing_1, listing_2] == result
+    end
+
+    test "filter listing with empty orientation fetch all instances" do
+      %{id: listing_1} = insert(:listing, orientation: "frente")
+      %{id: listing_2} = insert(:listing, orientation: "fundos")
+      %{id: listing_3} = insert(:listing, orientation: "lateral")
+      %{id: listing_4} = insert(:listing, orientation: "meio")
+
+      result =
+        Listing
+        |> Filtering.apply(%{orientations: []})
+        |> Queries.order_by_id()
+        |> Repo.all()
+        |> Enum.map(& &1.id)
+
+      assert [listing_1, listing_2, listing_3, listing_4] == result
+    end
+
+    test "filter listing by orientation" do
+      listing = insert(:listing, orientation: "frente")
+      insert(:listing, orientation: "fundos")
+      insert(:listing, orientation: "lateral")
+      insert(:listing, orientation: "meio")
+
+      result =
+        Listing
+        |> Filtering.apply(%{orientations: ["frente"]})
+        |> Repo.all()
+
+      assert [listing] == result
+    end
+
+    test "filter listing with empty sun period fetch all instances" do
+      %{id: listing_1} = insert(:listing, sun_period: "morning")
+      %{id: listing_2} = insert(:listing, sun_period: "evening")
+
+      result =
+        Listing
+        |> Filtering.apply(%{sun_periods: []})
+        |> Queries.order_by_id()
+        |> Repo.all()
+        |> Enum.map(& &1.id)
+
+      assert [listing_1, listing_2] == result
+    end
+
+    test "filter listing by sun period" do
+      listing = insert(:listing, sun_period: "morning")
+      insert(:listing, sun_period: "evening")
+
+      result =
+        Listing
+        |> Filtering.apply(%{sun_periods: ["morning"]})
+        |> Repo.all()
+
+      assert [listing] == result
+    end
+
+    test "filter listing by floor count" do
+      listing_1 = insert(:listing, floor_count: 1)
+      listing_2 = insert(:listing, floor_count: 2)
+      listing_3 = insert(:listing, floor_count: 3)
+      listing_4 = insert(:listing, floor_count: 4)
+
+      result =
+        Listing
+        |> Filtering.apply(%{min_floor_count: 3})
+        |> Repo.all()
+
+      assert [listing_3, listing_4] == result
+
+      result =
+        Listing
+        |> Filtering.apply(%{max_floor_count: 2})
+        |> Repo.all()
+
+      assert [listing_1, listing_2] == result
+    end
+
+    test "filter listing by unit per floor" do
+      listing_1 = insert(:listing, unit_per_floor: 1)
+      listing_2 = insert(:listing, unit_per_floor: 2)
+      listing_3 = insert(:listing, unit_per_floor: 3)
+      listing_4 = insert(:listing, unit_per_floor: 4)
+
+      result =
+        Listing
+        |> Filtering.apply(%{min_unit_per_floor: 3})
+        |> Repo.all()
+
+      assert [listing_3, listing_4] == result
+
+      result =
+        Listing
+        |> Filtering.apply(%{max_unit_per_floor: 2})
+        |> Repo.all()
+
+      assert [listing_1, listing_2] == result
+    end
+
+    test "filter listing by age" do
+      base_year = Date.utc_today().year
+      listing_1 = insert(:listing, construction_year: base_year - 5)
+      listing_2 = insert(:listing, construction_year: base_year - 10)
+      listing_3 = insert(:listing, construction_year: base_year - 15)
+      listing_4 = insert(:listing, construction_year: base_year - 20)
+
+      result =
+        Listing
+        |> Filtering.apply(%{max_age: 10})
+        |> Repo.all()
+
+      assert [listing_1, listing_2] == result
+
+      result =
+        Listing
+        |> Filtering.apply(%{min_age: 15})
+        |> Repo.all()
+
+      assert [listing_3, listing_4] == result
+    end
+
+    test "filter listing by price per area" do
+      listing_1 = insert(:listing, price: 10, area: 1, price_per_area: 10)
+      listing_2 = insert(:listing, price: 15, area: 1, price_per_area: 15)
+      listing_3 = insert(:listing, price: 20, area: 1, price_per_area: 20)
+      listing_4 = insert(:listing, price: 25, area: 1, price_per_area: 25)
+
+      result =
+        Listing
+        |> Filtering.apply(%{min_price_per_area: 20})
+        |> Repo.all()
+
+      assert [listing_3, listing_4] == result
+
+      result =
+        Listing
+        |> Filtering.apply(%{max_price_per_area: 15})
         |> Repo.all()
 
       assert [listing_1, listing_2] == result

@@ -32,6 +32,13 @@ defmodule Re.Listing do
     field :is_exclusive, :boolean, default: false
     field :is_release, :boolean
     field :is_exportable, :boolean, default: true
+    field :orientation, :string
+    field :floor_count, :integer
+    field :unit_per_floor, :integer
+    field :sun_period, :string
+    field :elevators, :integer
+    field :construction_year, :integer
+    field :price_per_area, :float
     field :visualisations, :integer, virtual: true
     field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
@@ -71,6 +78,10 @@ defmodule Re.Listing do
 
   @garage_types ~w(contract condominium)
 
+  @orientation_types ~w(frente lateral fundo meio)
+
+  @sun_period_types ~w(morning evening)
+
   @user_required ~w(type)a
   @user_optional ~w(description price rooms bathrooms area garage_spots garage_type address_id
                     user_id suites dependencies has_elevator complement floor is_exclusive
@@ -91,12 +102,15 @@ defmodule Re.Listing do
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
     |> generate_uuid()
+    |> calculate_price_per_area()
   end
 
   @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
-  @admin_optional ~w(complement floor matterport_code is_exclusive status
-                     property_tax maintenance_fee balconies restrooms is_release is_exportable)a
+  @admin_optional ~w(complement floor matterport_code is_exclusive status property_tax
+                     maintenance_fee balconies restrooms is_release is_exportable
+                     orientation floor_count unit_per_floor sun_period elevators
+                     construction_year)a
 
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
@@ -113,7 +127,18 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types,
       message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
     )
+    |> validate_inclusion(
+      :orientation,
+      @orientation_types,
+      "should be one of: [#{Enum.join(@orientation_types, " ")}]"
+    )
+    |> validate_inclusion(
+      :sun_period,
+      @sun_period_types,
+      "should be one of: [#{Enum.join(@sun_period_types, " ")}]"
+    )
     |> generate_uuid()
+    |> calculate_price_per_area()
   end
 
   @development_required ~w(type description has_elevator address_id user_id development_uuid)a
@@ -152,4 +177,16 @@ defmodule Re.Listing do
   def listing_types(), do: @types
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
+
+  defp calculate_price_per_area(
+         %Ecto.Changeset{valid?: true, changes: %{price: price, area: area}} = changeset
+       ) do
+    case {price, area} do
+      {0, _} -> changeset
+      {_, 0} -> changeset
+      _ -> put_change(changeset, :price_per_area, price / area)
+    end
+  end
+
+  defp calculate_price_per_area(changeset), do: changeset
 end

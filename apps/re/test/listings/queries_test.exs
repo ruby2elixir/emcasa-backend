@@ -93,4 +93,25 @@ defmodule Re.Listings.QueriesTest do
       assert 2 == result
     end
   end
+
+  describe "order_by/2" do
+    test "order listings by price per area" do
+      %{id: listing_id_1} =
+        insert(:listing, price: 20, area: 1, price_per_area: 20, status: "active")
+
+      %{id: listing_id_2} =
+        insert(:listing, price: 15, area: 1, price_per_area: 15, status: "active")
+
+      %{id: listing_id_3} =
+        insert(:listing, price: 10, area: 1, price_per_area: 10, status: "active")
+
+      result =
+        Queries.active()
+        |> Queries.order_by(%{order_by: [%{field: :price_per_area, type: :asc}]})
+        |> Repo.all()
+        |> Enum.map(& &1.id)
+
+      assert [listing_id_3, listing_id_2, listing_id_1] == result
+    end
+  end
 end
