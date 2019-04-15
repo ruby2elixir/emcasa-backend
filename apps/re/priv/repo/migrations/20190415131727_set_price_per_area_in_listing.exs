@@ -6,7 +6,7 @@ defmodule Re.Repo.Migrations.SetPricePerAreaInListing do
   def up do
     query =
       from(
-        l in Re.Listing,
+        l in "listings",
         update: [set: [price_per_area: l.price / l.area]],
         where: l.price > 0 and l.area > 0
       )
@@ -15,6 +15,6 @@ defmodule Re.Repo.Migrations.SetPricePerAreaInListing do
   end
 
   def down do
-    Re.Repo.update_all(Re.Listing, set: [price_per_area: nil])
+    Re.Repo.update_all("listings", set: [price_per_area: nil])
   end
 end
