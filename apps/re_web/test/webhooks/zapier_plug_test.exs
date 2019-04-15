@@ -3,6 +3,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
   alias Re.{
     Leads.FacebookBuyer,
+    Leads.ImovelWebBuyer,
     Repo
   }
 
@@ -84,12 +85,84 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
       refute Repo.one(FacebookBuyer)
     end
 
-    test "authenticated request", %{authenticated_conn: conn} do
+    test "get should not be allowed", %{authenticated_conn: conn} do
       conn = get(conn, "/webhooks/zapier", @facebook_buyer_payload)
 
       assert text_response(conn, 405) == "GET not allowed"
 
       refute Repo.one(FacebookBuyer)
+    end
+  end
+
+  @imovelweb_buyer_payload %{
+    "name" => "mah full naem",
+    "email" => "mah@email",
+    "phone" => "11999999999",
+    "listingId" => "manhattan brooklyn harlem",
+    "source" => "imovelweb_buyer"
+  }
+
+  @imovelweb_buyer_invalid_payload %{
+    "full_name" => "mah full naem",
+    "timestamp" => "2019-01-01T00:00:00.000Z",
+    "lead_id" => "193846287346183764187",
+    "email" => "mah@email",
+    "phone_number" => "11999999999",
+    "neighborhoods" => "manhattan brooklyn harlem",
+    "location" => "asdasda",
+    "source" => "imovelweb_buyer"
+  }
+
+  describe "imovelweb buyer leads" do
+    test "authenticated request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_payload)
+
+      assert text_response(conn, 200) == "ok"
+
+      assert fb = Repo.one(ImovelWebBuyer)
+      assert fb.uuid
+    end
+
+    @tag capture_log: true
+    test "invalid payload", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", %{"wat" => "ok"})
+
+      assert text_response(conn, 422) == "Unprocessable Entity"
+
+      refute Repo.one(ImovelWebBuyer)
+    end
+
+    test "unauthenticated request", %{unauthenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_payload)
+
+      assert text_response(conn, 401) == "Unauthorized"
+
+      refute Repo.one(ImovelWebBuyer)
+    end
+
+    test "invalid auth request", %{invalid_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_payload)
+
+      assert text_response(conn, 401) == "Unauthorized"
+
+      refute Repo.one(ImovelWebBuyer)
+    end
+
+    @tag capture_log: true
+    test "invalid location request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_invalid_payload)
+
+      assert text_response(conn, 422) == "Unprocessable Entity"
+
+      refute Repo.one(ImovelWebBuyer)
+    end
+
+    test "get should now be allowed", %{authenticated_conn: conn} do
+      conn = get(conn, "/webhooks/zapier", @imovelweb_buyer_payload)
+
+      assert text_response(conn, 405) == "GET not allowed"
+
+      refute Repo.one(ImovelWebBuyer)
     end
   end
 
@@ -100,5 +173,6 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     assert text_response(conn, 422) == "Unprocessable Entity"
 
     refute Repo.one(FacebookBuyer)
+    refute Repo.one(ImovelWebBuyer)
   end
 end
