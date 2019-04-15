@@ -631,7 +631,7 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
   end
 
   describe "deactivate" do
-    test "admin should deactivate image", %{admin_conn: conn} do
+    test "admin should deactivate listing image", %{admin_conn: conn} do
       %{id: listing_id} = insert(:listing)
 
       [%{id: id1}, %{id: id2}, %{id: id3}] =
@@ -639,6 +639,50 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
           3,
           :image,
           listing_id: listing_id,
+          position: 5,
+          description: "wah",
+          filename: "test.jpg"
+        )
+
+      variables = %{
+        "input" => %{
+          "image_ids" => [id1, id2, id3]
+        }
+      }
+
+      mutation = """
+        mutation ImagesDeactivate ($input: ImageDeactivateInput!) {
+          imagesDeactivate(input: $input) {
+            images {
+              id
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{
+               "images" => [
+                 %{"id" => to_string(id1)},
+                 %{"id" => to_string(id2)},
+                 %{"id" => to_string(id3)}
+               ]
+             } == json_response(conn, 200)["data"]["imagesDeactivate"]
+
+      refute Repo.get(Re.Image, id1).is_active
+      refute Repo.get(Re.Image, id2).is_active
+      refute Repo.get(Re.Image, id3).is_active
+    end
+
+    test "admin should deactivate development image", %{admin_conn: conn} do
+      %{uuid: development_uuid} = insert(:development)
+
+      [%{id: id1}, %{id: id2}, %{id: id3}] =
+        insert_list(
+          3,
+          :image,
+          development_uuid: development_uuid,
           position: 5,
           description: "wah",
           filename: "test.jpg"
@@ -720,7 +764,7 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [%{"message" => "distinct_listings"}] = json_response(conn, 200)["errors"]
+      assert [%{"message" => "distinct_parents"}] = json_response(conn, 200)["errors"]
 
       assert Repo.get(Re.Image, id1).is_active
       assert Repo.get(Re.Image, id2).is_active
@@ -728,108 +772,6 @@ defmodule ReWeb.GraphQL.Images.MutationTest do
       assert Repo.get(Re.Image, id4).is_active
       assert Repo.get(Re.Image, id5).is_active
       assert Repo.get(Re.Image, id6).is_active
-    end
-  end
-
-  describe "activate" do
-    test "admin should activate image", %{admin_conn: conn} do
-      %{id: listing_id} = insert(:listing)
-
-      [%{id: id1}, %{id: id2}, %{id: id3}] =
-        insert_list(
-          3,
-          :image,
-          listing_id: listing_id,
-          position: 5,
-          description: "wah",
-          filename: "test.jpg",
-          is_active: false
-        )
-
-      variables = %{
-        "input" => %{
-          "image_ids" => [id1, id2, id3]
-        }
-      }
-
-      mutation = """
-        mutation ImagesActivate ($input: ImageActivateInput!) {
-          imagesActivate(input: $input) {
-            images {
-              id
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
-
-      assert %{
-               "images" => [
-                 %{"id" => to_string(id1)},
-                 %{"id" => to_string(id2)},
-                 %{"id" => to_string(id3)}
-               ]
-             } == json_response(conn, 200)["data"]["imagesActivate"]
-
-      assert Repo.get(Re.Image, id1).is_active
-      assert Repo.get(Re.Image, id2).is_active
-      assert Repo.get(Re.Image, id3).is_active
-    end
-
-    test "admin should not activate images from different listings", %{admin_conn: conn} do
-      %{id: listing_id1} = insert(:listing)
-
-      [%{id: id1}, %{id: id2}, %{id: id3}] =
-        insert_list(
-          3,
-          :image,
-          listing_id: listing_id1,
-          position: 5,
-          description: "wah",
-          filename: "test.jpg",
-          is_active: false
-        )
-
-      %{id: listing_id2} = insert(:listing)
-
-      [%{id: id4}, %{id: id5}, %{id: id6}] =
-        insert_list(
-          3,
-          :image,
-          listing_id: listing_id2,
-          position: 5,
-          description: "wah",
-          filename: "test.jpg",
-          is_active: false
-        )
-
-      variables = %{
-        "input" => %{
-          "image_ids" => [id1, id2, id3, id4, id5, id6]
-        }
-      }
-
-      mutation = """
-        mutation ImagesActivate ($input: ImageActivateInput!) {
-          imagesActivate(input: $input) {
-            images {
-              id
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
-
-      assert [%{"message" => "distinct_listings"}] = json_response(conn, 200)["errors"]
-
-      refute Repo.get(Re.Image, id1).is_active
-      refute Repo.get(Re.Image, id2).is_active
-      refute Repo.get(Re.Image, id3).is_active
-      refute Repo.get(Re.Image, id4).is_active
-      refute Repo.get(Re.Image, id5).is_active
-      refute Repo.get(Re.Image, id6).is_active
     end
   end
 end

@@ -9,7 +9,6 @@ defmodule Re.Images do
     Images.DataloaderQueries,
     Images.Parents,
     Images.Queries,
-    Listings,
     Repo
   }
 
@@ -99,13 +98,6 @@ defmodule Re.Images do
     end
   end
 
-  def fetch_listing(images) do
-    case Enum.uniq_by(images, fn %{listing_id: id} -> id end) do
-      [%{listing_id: listing_id}] -> Listings.get(listing_id)
-      _ -> {:error, :distinct_listings}
-    end
-  end
-
   def update_images(images_and_inputs), do: {:ok, Enum.map(images_and_inputs, &do_update_image/1)}
 
   defp do_update_image({:ok, image, input}) do
@@ -130,29 +122,19 @@ defmodule Re.Images do
     end
   end
 
-  def activate_images(images) do
-    ids = Enum.map(images, fn %{id: id} -> id end)
-
-    Image
-    |> Queries.with_ids(ids)
-    |> Repo.update_all(set: [is_active: true])
-    |> case do
-      {_, nil} -> {:ok, images}
-      error -> error
-    end
-  end
-
   def deactivate(image) do
     image
     |> Image.deactivate_changeset(%{is_active: false})
     |> Repo.update()
   end
 
-  def get_parent(images) do
+  def get_parent([{_, _, _} | _] = images) do
     images
     |> extract_image_list()
     |> Parents.get_parent_from_image_list()
   end
+
+  def get_parent(images), do: Parents.get_parent_from_image_list(images)
 
   defp extract_image_list(images_and_inputs),
     do: Enum.map(images_and_inputs, fn {_, image, _} -> image end)
