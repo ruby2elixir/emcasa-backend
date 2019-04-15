@@ -35,10 +35,10 @@ defmodule ReWeb.Types.Listing do
     field :is_exclusive, :boolean
     field :is_release, :boolean
     field :is_exportable, :boolean
-    field :orientation, :string
+    field :orientation, :orientation_type
     field :floor_count, :integer
     field :unit_per_floor, :integer
-    field :sun_period, :string
+    field :sun_period, :sun_period_type
     field :elevators, :integer
     field :construction_year, :integer
     field :price_per_area, :float
@@ -110,10 +110,10 @@ defmodule ReWeb.Types.Listing do
     field :is_release, :boolean
     field :is_exportable, :boolean
     field :score, :integer
-    field :orientation, :string
+    field :orientation, :orientation_type
     field :floor_count, :integer
     field :unit_per_floor, :integer
-    field :sun_period, :string
+    field :sun_period, :sun_period_type
     field :elevators, :integer
     field :construction_year, :integer
 
@@ -128,6 +128,10 @@ defmodule ReWeb.Types.Listing do
   end
 
   enum :garage_type, values: ~w(contract condominium)
+
+  enum :orientation_type, values: ~w(frontside backside lateral inside)
+
+  enum :sun_period_type, values: ~w(morning evening)
 
   object :address do
     field :id, :id
