@@ -64,7 +64,7 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
-          "<component name=\"region\"><![CDATA[SP]]></component>" <>
+          "<component name=\"region\"><![CDATA[Ipiranga]]></component>" <>
           "<component name=\"country\"><![CDATA[Brazil]]></component>" <>
           "<component name=\"postal_code\"><![CDATA[04732-192]]></component>" <>
           "</address>" <>
@@ -125,7 +125,7 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
-          "<component name=\"region\"><![CDATA[SP]]></component>" <>
+          "<component name=\"region\"><![CDATA[Ipiranga]]></component>" <>
           "<component name=\"country\"><![CDATA[Brazil]]></component>" <>
           "<component name=\"postal_code\"><![CDATA[04732-192]]></component>" <>
           "</address>" <>
@@ -181,7 +181,7 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
           "<address format=\"simple\">" <>
           "<component name=\"addr1\"><![CDATA[Rua do Ipiranga]]></component>" <>
           "<component name=\"city\"><![CDATA[São Paulo]]></component>" <>
-          "<component name=\"region\"><![CDATA[SP]]></component>" <>
+          "<component name=\"region\"><![CDATA[Ipiranga]]></component>" <>
           "<component name=\"country\"><![CDATA[Brazil]]></component>" <>
           "<component name=\"postal_code\"><![CDATA[04732-192]]></component>" <>
           "</address>" <>

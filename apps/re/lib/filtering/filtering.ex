@@ -41,8 +41,8 @@ defmodule Re.Filtering do
     field :max_floor_count, :integer
     field :min_unit_per_floor, :integer
     field :max_unit_per_floor, :integer
-    field :orientation, :string
-    field :sun_period, :string
+    field :orientations, {:array, :string}
+    field :sun_periods, {:array, :string}
     field :min_age, :integer
     field :max_age, :integer
     field :min_price_per_area, :float
@@ -53,7 +53,7 @@ defmodule Re.Filtering do
               neighborhoods types max_lat min_lat max_lng min_lng neighborhoods_slugs
               max_garage_spots min_garage_spots garage_types cities cities_slug states_slug
               exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
-              min_unit_per_floor max_unit_per_floor orientation sun_period min_age max_age
+              min_unit_per_floor max_unit_per_floor orientations sun_periods min_age max_age
               min_price_per_area max_price_per_area)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
@@ -277,17 +277,21 @@ defmodule Re.Filtering do
     )
   end
 
-  defp attr_filter({:orientation, orientation}, query) do
+  defp attr_filter({:orientations, []}, query), do: query
+
+  defp attr_filter({:orientations, orientations}, query) do
     from(
       l in query,
-      where: l.orientation == ^orientation
+      where: l.orientation in ^orientations
     )
   end
 
-  defp attr_filter({:sun_period, sun_period}, query) do
+  defp attr_filter({:sun_periods, []}, query), do: query
+
+  defp attr_filter({:sun_periods, sun_periods}, query) do
     from(
       l in query,
-      where: l.sun_period == ^sun_period
+      where: l.sun_period in ^sun_periods
     )
   end
 

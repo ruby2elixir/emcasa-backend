@@ -22,7 +22,7 @@ defmodule Re.Listings.Queries do
     images: Images.Queries.listing_preload()
   ]
 
-  @orderable_fields ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies updated_at)a
+  @orderable_fields ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies updated_at price_per_area)a
 
   def active(query \\ Listing), do: where(query, [l], l.status == "active")
 

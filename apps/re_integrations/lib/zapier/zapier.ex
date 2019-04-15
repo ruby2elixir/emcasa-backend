@@ -6,10 +6,11 @@ defmodule ReIntegrations.Zapier do
 
   alias Re.{
     Leads.FacebookBuyer,
+    Leads.ImovelWebBuyer,
     Repo
   }
 
-  def new_buyer_lead(payload) do
+  def new_buyer_lead(%{"source" => "facebook_buyer"} = payload) do
     %FacebookBuyer{}
     |> FacebookBuyer.changeset(payload)
     |> case do
@@ -23,5 +24,33 @@ defmodule ReIntegrations.Zapier do
 
         {:error, :unexpected_payload, errors}
     end
+  end
+
+  def new_buyer_lead(%{"source" => "imovelweb_buyer"} = payload) do
+    %ImovelWebBuyer{}
+    |> ImovelWebBuyer.changeset(payload)
+    |> case do
+      %{valid?: true} = changeset ->
+        Repo.insert(changeset)
+
+      %{errors: errors} ->
+        Logger.warn(
+          "Invalid payload from zapier's imovelweb buyer. Errors: #{Kernel.inspect(errors)}"
+        )
+
+        {:error, :unexpected_payload, errors}
+    end
+  end
+
+  def new_buyer_lead(%{"source" => _source} = payload) do
+    Logger.warn("Invalid payload source. Payload: #{Kernel.inspect(payload)}")
+
+    {:error, :unexpected_payload, payload}
+  end
+
+  def new_buyer_lead(payload) do
+    Logger.warn("No payload source. Payload: #{Kernel.inspect(payload)}")
+
+    {:error, :unexpected_payload, payload}
   end
 end

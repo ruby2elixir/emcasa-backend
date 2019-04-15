@@ -266,7 +266,7 @@ defmodule Re.ListingTest do
       assert changeset.changes.price_per_area == @valid_attrs.price / @valid_attrs.area
     end
 
-    test "set to nil when price or area are nil" do
+    test "set to nil when price is nil" do
       attrs = Map.merge(@valid_attrs, %{addres_id: 1, user_id: 1})
 
       nil_price_attrs = %{attrs | price: nil}
@@ -275,6 +275,10 @@ defmodule Re.ListingTest do
 
       assert changeset.valid?
       refute Map.get(changeset.changes, :price_per_area)
+    end
+
+    test "set to nil when area is nil" do
+      attrs = Map.merge(@valid_attrs, %{addres_id: 1, user_id: 1})
 
       nil_area_attrs = %{attrs | area: nil}
 
@@ -284,7 +288,7 @@ defmodule Re.ListingTest do
       refute Map.get(changeset.changes, :price_per_area)
     end
 
-    test "set to nil when price or area are zero" do
+    test "set to nil when price is zero" do
       attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
 
       zero_price_attrs = %{attrs | price: 0}
@@ -293,6 +297,10 @@ defmodule Re.ListingTest do
 
       assert changeset.valid?
       refute Map.get(changeset.changes, :price_per_area)
+    end
+
+    test "set to nil when area is zero" do
+      attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
 
       zero_area_attrs = %{attrs | area: 0}
 
