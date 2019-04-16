@@ -37,7 +37,12 @@ defmodule ReWeb.Listing.MutationHelpers do
         "isExclusive" => listing.is_exclusive,
         "isRelease" => listing.is_release,
         "isExportable" => listing.is_exportable,
-        "score" => listing.score
+        "score" => listing.score,
+        "orientation" => String.upcase(listing.orientation),
+        "sunPeriod" => String.upcase(listing.sun_period),
+        "floorCount" => listing.floor_count,
+        "unitPerFloor" => listing.unit_per_floor,
+        "elevators" => listing.elevators
       }
     }
   end
@@ -77,7 +82,12 @@ defmodule ReWeb.Listing.MutationHelpers do
         "isExclusive" => listing.is_exclusive,
         "isRelease" => listing.is_release,
         "isExportable" => listing.is_exportable,
-        "score" => listing.score
+        "score" => listing.score,
+        "orientation" => String.upcase(listing.orientation),
+        "sunPeriod" => String.upcase(listing.sun_period),
+        "floorCount" => listing.floor_count,
+        "unitPerFloor" => listing.unit_per_floor,
+        "elevators" => listing.elevators
       }
     }
   end
@@ -123,6 +133,11 @@ defmodule ReWeb.Listing.MutationHelpers do
           isRelease
           isExportable
           score
+          orientation
+          sunPeriod
+          floorCount
+          unitPerFloor
+          elevators
         }
       }
     """
@@ -169,6 +184,11 @@ defmodule ReWeb.Listing.MutationHelpers do
           isRelease
           isExportable
           score
+          orientation
+          sunPeriod
+          floorCount
+          unitPerFloor
+          elevators
         }
       }
     """

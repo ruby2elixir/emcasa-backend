@@ -74,6 +74,11 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["isRelease"] == listing.is_release
       assert inserted_listing["isExportable"] == listing.is_exportable
       assert inserted_listing["score"] == listing.score
+      assert inserted_listing["orientation"] == String.upcase(listing.orientation)
+      assert inserted_listing["sunPeriod"] == String.upcase(listing.sun_period)
+      assert inserted_listing["floorCount"] == listing.floor_count
+      assert inserted_listing["unitPerFloor"] == listing.unit_per_floor
+      assert inserted_listing["elevators"] == listing.elevators
 
       refute inserted_listing["isActive"]
 
@@ -545,6 +550,11 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert updated_listing["isRelease"] == new_listing.is_release
       assert updated_listing["isExportable"] == new_listing.is_exportable
       assert updated_listing["score"] == new_listing.score
+      assert updated_listing["orientation"] == String.upcase(new_listing.orientation)
+      assert updated_listing["sunPeriod"] == String.upcase(new_listing.sun_period)
+      assert updated_listing["floorCount"] == new_listing.floor_count
+      assert updated_listing["unitPerFloor"] == new_listing.unit_per_floor
+      assert updated_listing["elevators"] == new_listing.elevators
 
       assert inserted_address["city"] == new_address.city
       assert inserted_address["state"] == new_address.state

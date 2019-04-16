@@ -325,7 +325,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "contract",
-        tags: [tag_1]
+        tags: [tag_1],
+        price_per_area: 12_222.22
       )
 
       insert(
@@ -345,7 +346,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "condominium",
-        tags: [tag_1]
+        tags: [tag_1],
+        price_per_area: 8_777.78
       )
 
       insert(
@@ -365,7 +367,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "contract",
-        tags: [tag_1]
+        tags: [tag_1],
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -385,7 +388,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "condominium",
-        tags: [tag_1]
+        tags: [tag_1],
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -405,7 +409,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "contract",
-        tags: [tag_1]
+        tags: [tag_1],
+        price_per_area: 8181.82
       )
 
       insert(
@@ -425,7 +430,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "condominium",
-        tags: [tag_2]
+        tags: [tag_2],
+        price_per_area: 12_857.14
       )
 
       insert(
@@ -445,7 +451,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "contract",
-        tags: [tag_2]
+        tags: [tag_2],
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -465,7 +472,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "condominium",
-        tags: [tag_2]
+        tags: [tag_2],
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -485,7 +493,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "contract",
-        tags: [tag_2]
+        tags: [tag_2],
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -505,7 +514,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "condominium",
-        tags: [tag_2]
+        tags: [tag_2],
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -525,7 +535,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "contract",
-        tags: [tag_1, tag_2]
+        tags: [tag_1, tag_2],
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -545,7 +556,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 2,
         garage_type: "condominium",
-        tags: [tag_1, tag_2]
+        tags: [tag_1, tag_2],
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -564,7 +576,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 0,
-        tags: [tag_1, tag_2]
+        tags: [tag_1, tag_2],
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -583,7 +596,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 4,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        price_per_area: 10_000.00
       )
 
       insert(
@@ -606,7 +620,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             lng: 50.0
           ),
         garage_spots: 4,
-        garage_type: "condominium"
+        garage_type: "condominium",
+        price_per_area: 10_000.00
       )
 
       listing1 =
@@ -631,13 +646,16 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             ),
           garage_spots: 2,
           garage_type: "contract",
-          tags: [tag_1, tag_2]
+          tags: [tag_1, tag_2],
+          price_per_area: 10_000.00
         )
 
       variables = %{
         "filters" => %{
           "maxPrice" => 1_000_000,
           "minPrice" => 800_000,
+          "maxPricePerArea" => 10_500,
+          "minPricePerArea" => 9_500,
           "maxRooms" => 4,
           "minRooms" => 2,
           "maxSuites" => 2,

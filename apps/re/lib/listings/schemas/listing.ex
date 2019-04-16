@@ -78,7 +78,7 @@ defmodule Re.Listing do
 
   @garage_types ~w(contract condominium)
 
-  @orientation_types ~w(frente lateral fundo meio)
+  @orientation_types ~w(frontside backside lateral inside)
 
   @sun_period_types ~w(morning evening)
 
