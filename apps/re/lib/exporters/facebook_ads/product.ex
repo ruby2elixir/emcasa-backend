@@ -5,7 +5,7 @@ defmodule Re.Exporters.FacebookAds.Product do
   """
 
   @exported_attributes ~w(id url title sell_type condition brand description price
-  listing_type street neighborhood rooms bathrooms area price_per_area image additional_image)a
+  listing_type street neighborhood rooms bathrooms area image additional_image)a
   @default_options %{attributes: @exported_attributes}
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
@@ -141,14 +141,6 @@ defmodule Re.Exporters.FacebookAds.Product do
 
   defp convert_attribute(:area, %{area: area}) do
     {"custom_label_4", %{}, area}
-  end
-
-  defp convert_attribute(:price_per_area, %{price_per_area: nil}) do
-    {"sale_price", %{}, nil}
-  end
-
-  defp convert_attribute(:price_per_area, %{price_per_area: price_per_area}) do
-    {"sale_price", %{}, "#{price_per_area |> :erlang.float_to_binary(decimals: 2)} BRL"}
   end
 
   defp escape_cdata(nil) do
