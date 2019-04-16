@@ -19,6 +19,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
         price: 800,
         type: "Apartamento",
         area: 300,
+        price_per_area: 800 / 300,
         rooms: 4,
         bathrooms: 4,
         description:
@@ -66,6 +67,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
+          "<sale_price><![CDATA[2.67 BRL]]></sale_price>" <>
           "<image_link><![CDATA[#{@image_url}/living_room.png]]></image_link>" <>
           "<additional_image_link><![CDATA[#{@image_url}/suite_1.png,#{@image_url}/bath_1.png]]></additional_image_link>" <>
           "</entry>"
@@ -84,6 +86,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
         price: 800,
         type: "Apartamento",
         area: 300,
+        price_per_area: 800 / 300,
         rooms: 4,
         bathrooms: 4,
         description:
@@ -123,6 +126,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
+          "<sale_price><![CDATA[2.67 BRL]]></sale_price>" <>
           "<image_link><![CDATA[#{@image_url}/living_room.png]]></image_link>" <>
           "<additional_image_link><![CDATA[]]></additional_image_link>" <> "</entry>"
 
@@ -140,6 +144,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
         price: 800,
         type: "Apartamento",
         area: 300,
+        price_per_area: 800 / 300,
         rooms: 4,
         bathrooms: 4,
         description:
@@ -173,6 +178,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
+          "<sale_price><![CDATA[2.67 BRL]]></sale_price>" <>
           "<image_link/><additional_image_link/>" <> "</entry>"
 
       generated_xml =
@@ -189,6 +195,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
         price: 800,
         type: "Apartamento",
         area: 300,
+        price_per_area: 800 / 300,
         rooms: nil,
         bathrooms: nil,
         description:
@@ -222,6 +229,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<custom_label_2><![CDATA[0]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[0]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
+          "<sale_price><![CDATA[2.67 BRL]]></sale_price>" <>
           "<image_link/><additional_image_link/>" <> "</entry>"
 
       generated_xml =
