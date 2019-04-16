@@ -67,7 +67,6 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
-          "<sale_price><![CDATA[2.67 BRL]]></sale_price>" <>
           "<image_link><![CDATA[#{@image_url}/living_room.png]]></image_link>" <>
           "<additional_image_link><![CDATA[#{@image_url}/suite_1.png,#{@image_url}/bath_1.png]]></additional_image_link>" <>
           "</entry>"
@@ -126,7 +125,6 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
-          "<sale_price><![CDATA[2.67 BRL]]></sale_price>" <>
           "<image_link><![CDATA[#{@image_url}/living_room.png]]></image_link>" <>
           "<additional_image_link><![CDATA[]]></additional_image_link>" <> "</entry>"
 
@@ -178,7 +176,6 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
-          "<sale_price><![CDATA[2.67 BRL]]></sale_price>" <>
           "<image_link/><additional_image_link/>" <> "</entry>"
 
       generated_xml =
@@ -229,42 +226,11 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<custom_label_2><![CDATA[0]]></custom_label_2>" <>
           "<custom_label_3><![CDATA[0]]></custom_label_3>" <>
           "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
-          "<sale_price><![CDATA[2.67 BRL]]></sale_price>" <>
           "<image_link/><additional_image_link/>" <> "</entry>"
 
       generated_xml =
         listing
         |> FacebookAds.Product.build_node(FacebookAds.Product.merge_default_options(%{}))
-        |> XmlBuilder.generate(format: :none)
-
-      assert expected_xml == generated_xml
-    end
-
-    test "should export sale_price when price_area is nil" do
-      listing = %Listing{
-        price_per_area: nil
-      }
-
-      expected_xml = "<entry><sale_price/></entry>"
-
-      generated_xml =
-        listing
-        |> FacebookAds.Product.build_node(%{attributes: [:price_per_area]})
-        |> XmlBuilder.generate(format: :none)
-
-      assert expected_xml == generated_xml
-    end
-
-    test "should export sale_price as decimal" do
-      listing = %Listing{
-        price_per_area: 850_000 / 300
-      }
-
-      expected_xml = "<entry><sale_price><![CDATA[2833.33 BRL]]></sale_price></entry>"
-
-      generated_xml =
-        listing
-        |> FacebookAds.Product.build_node(%{attributes: [:price_per_area]})
         |> XmlBuilder.generate(format: :none)
 
       assert expected_xml == generated_xml
