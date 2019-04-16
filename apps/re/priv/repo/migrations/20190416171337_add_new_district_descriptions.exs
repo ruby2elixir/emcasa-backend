@@ -55,6 +55,7 @@ defmodule Re.Repo.Migrations.AddNewDistrictDescriptions do
       """
     }
   ]
+
   def up do
     Enum.each(@districts, &Repo.insert!/1)
   end
