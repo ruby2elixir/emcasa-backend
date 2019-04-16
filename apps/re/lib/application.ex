@@ -10,7 +10,7 @@ defmodule Re.Application do
   alias Re.{
     Listings.History.Server,
     Statistics.Visualizations,
-    Leads.GrupozapBuyer.JobQueue,
+    Leads.Buyer.JobQueue,
     PubSub,
     Repo
   }

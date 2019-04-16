@@ -3,7 +3,5 @@ defmodule Re.Leads.Buyer.JobQueue do
 
   alias Ecto.Multi
 
-  def perform(%Multi{} = multi, %{} = job) do
-    :ok
-  end
+  def perform(%Multi{} = multi, %{} = job), do: multi
 end
