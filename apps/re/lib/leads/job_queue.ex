@@ -8,11 +8,11 @@ defmodule Re.Leads.Buyer.JobQueue do
   require Logger
 
   alias Re.{
+    Accounts.Users,
     Leads.Buyer,
     Leads.GrupozapBuyer,
     Listings,
-    Repo,
-    User
+    Repo
   }
 
   alias Ecto.Multi
@@ -48,9 +48,9 @@ defmodule Re.Leads.Buyer.JobQueue do
   defp persist(changeset, multi), do: Multi.insert(multi, :insert_buyer_lead, changeset)
 
   defp extract_user_uuid(phone_number) do
-    case Repo.get_by(User, phone: phone_number) do
-      nil -> nil
-      user -> user.uuid
+    case Users.get_by_phone(phone_number) do
+      {:ok, user} -> user.uuid
+      _error -> nil
     end
   end
 
