@@ -143,8 +143,12 @@ defmodule Re.Exporters.FacebookAds.Product do
     {"custom_label_4", %{}, area}
   end
 
+  defp convert_attribute(:price_per_area, %{price_per_area: nil}) do
+    {"sale_price", %{}, nil}
+  end
+
   defp convert_attribute(:price_per_area, %{price_per_area: price_per_area}) do
-    {"sale_price", %{}, "#{price_per_area |> Float.ceil(2)} BRL"}
+    {"sale_price", %{}, "#{price_per_area |> :erlang.float_to_binary(decimals: 2)} BRL"}
   end
 
   defp escape_cdata(nil) do

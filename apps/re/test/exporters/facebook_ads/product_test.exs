@@ -239,6 +239,36 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
 
       assert expected_xml == generated_xml
     end
+
+    test "should export sale_price when price_area is nil" do
+      listing = %Listing{
+        price_per_area: nil
+      }
+
+      expected_xml = "<entry><sale_price/></entry>"
+
+      generated_xml =
+        listing
+        |> FacebookAds.Product.build_node(%{attributes: [:price_per_area]})
+        |> XmlBuilder.generate(format: :none)
+
+      assert expected_xml == generated_xml
+    end
+
+    test "should export sale_price as decimal" do
+      listing = %Listing{
+        price_per_area: 850_000 / 300
+      }
+
+      expected_xml = "<entry><sale_price><![CDATA[2833.33 BRL]]></sale_price></entry>"
+
+      generated_xml =
+        listing
+        |> FacebookAds.Product.build_node(%{attributes: [:price_per_area]})
+        |> XmlBuilder.generate(format: :none)
+
+      assert expected_xml == generated_xml
+    end
   end
 
   describe "build_additional_image_node/1" do
