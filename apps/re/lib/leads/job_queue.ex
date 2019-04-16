@@ -1,4 +1,8 @@
 defmodule Re.Leads.Buyer.JobQueue do
+  @moduledoc """
+  Module for processing buyer leads to extract only necessary attributes
+  Also attempts to associate user and listings
+  """
   use EctoJob.JobQueue, table_name: "buyer_leads_jobs"
 
   require Logger
