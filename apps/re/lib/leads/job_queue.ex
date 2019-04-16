@@ -13,14 +13,14 @@ defmodule Re.Leads.Buyer.JobQueue do
 
   alias Ecto.Multi
 
-  def perform(%Multi{} = multi, %{"type" => "grupozap_buyer_lead", "uuid" => uuid} = job) do
+  def perform(%Multi{} = multi, %{"type" => "grupozap_buyer_lead", "uuid" => uuid}) do
     GrupozapBuyer
     |> Repo.get(uuid)
     |> buyer_lead_changeset()
     |> persist(multi)
   end
 
-  def perform(multi, job) do
+  def perform(_multi, job) do
     Logger.warn("Job format not handled. Job: #{Kernel.inspect(job)}")
 
     raise "Job not handled"
