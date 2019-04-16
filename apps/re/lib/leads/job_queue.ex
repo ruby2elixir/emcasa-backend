@@ -10,7 +10,7 @@ defmodule Re.Leads.Buyer.JobQueue do
   alias Re.{
     Leads.Buyer,
     Leads.GrupozapBuyer,
-    Listing,
+    Listings,
     Repo,
     User
   }
@@ -55,9 +55,9 @@ defmodule Re.Leads.Buyer.JobQueue do
   end
 
   defp extract_listing_uuid(id) do
-    case Repo.get(Listing, id) do
-      nil -> nil
-      listing -> listing.uuid
+    case Listings.get(id) do
+      {:ok, listing} -> listing.uuid
+      _error -> nil
     end
   end
 end
