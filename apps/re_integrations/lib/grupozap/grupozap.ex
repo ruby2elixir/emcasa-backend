@@ -5,8 +5,8 @@ defmodule ReIntegrations.Grupozap do
   require Logger
 
   alias Re.{
-    Leads.GrupozapBuyer,
     Leads.Buyer.JobQueue,
+    Leads.GrupozapBuyer,
     Repo
   }
 

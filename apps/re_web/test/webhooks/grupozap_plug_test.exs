@@ -2,8 +2,8 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
   use ReWeb.ConnCase
 
   alias Re.{
-    Leads.GrupozapBuyer,
     Leads.Buyer.JobQueue,
+    Leads.GrupozapBuyer,
     Repo
   }
 

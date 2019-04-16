@@ -8,8 +8,8 @@ defmodule Re.Leads.Buyer.JobQueue do
   require Logger
 
   alias Re.{
-    Leads.GrupozapBuyer,
     Leads.Buyer,
+    Leads.GrupozapBuyer,
     Listing,
     Repo,
     User

@@ -4,8 +4,8 @@ defmodule Re.Leads.Buyer.JobQueueTest do
   import Re.Factory
 
   alias Re.{
-    Leads.Buyer.JobQueue,
     Leads.Buyer,
+    Leads.Buyer.JobQueue,
     Repo
   }
 

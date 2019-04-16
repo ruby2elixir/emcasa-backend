@@ -8,11 +8,11 @@ defmodule Re.Application do
   import Supervisor.Spec
 
   alias Re.{
-    Listings.History.Server,
-    Statistics.Visualizations,
     Leads.Buyer.JobQueue,
+    Listings.History.Server,
     PubSub,
-    Repo
+    Repo,
+    Statistics.Visualizations
   }
 
   def start(_type, _args) do
