@@ -15,6 +15,7 @@
     drop: 1,
     remove: 1,
     create: 1,
-    add: 2
+    add: 2,
+    add: 3
   ]
 ]

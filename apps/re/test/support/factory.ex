@@ -205,6 +205,16 @@ defmodule Re.Factory do
     }
   end
 
+  def grupozap_buyer_lead_factory do
+    %Re.Leads.GrupozapBuyer{
+      uuid: UUID.uuid4(),
+      lead_origin: "VivaReal",
+      name: Name.name(),
+      email: Internet.email(),
+      message: Shakespeare.hamlet()
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
