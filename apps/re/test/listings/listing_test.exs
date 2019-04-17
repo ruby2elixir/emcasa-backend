@@ -309,5 +309,38 @@ defmodule Re.ListingTest do
       assert changeset.valid?
       refute Map.get(changeset.changes, :price_per_area)
     end
+
+    test "calculate price per area when area is changed" do
+      attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
+
+      attrs = %{attrs | area: 100, price: 100_000}
+
+      changeset = Listing.changeset(%Listing{price: 100_000, area: 90}, attrs, "user")
+
+      assert changeset.valid?
+      assert attrs.price / attrs.area == changeset.changes.price_per_area
+    end
+
+    test "calculate price per area when price is changed" do
+      attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
+
+      attrs = %{attrs | area: 100, price: 100_000}
+
+      changeset = Listing.changeset(%Listing{price: 90_000, area: 100}, attrs, "user")
+
+      assert changeset.valid?
+      assert attrs.price / attrs.area == changeset.changes.price_per_area
+    end
+
+    test "calculate price per area when price and area remain the same" do
+      attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
+
+      attrs = %{attrs | area: 100, price: 100_000}
+
+      changeset = Listing.changeset(%Listing{price: 100_000, area: 100}, attrs, "user")
+
+      assert changeset.valid?
+      assert attrs.price / attrs.area == changeset.changes.price_per_area
+    end
   end
 end

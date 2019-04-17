@@ -35,23 +35,26 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
 
     test "admin should get districts", %{admin_conn: conn} do
       insert(:district, is_active: false)
+      insert_list(5, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
-      assert 23 == Enum.count(json_response(conn, 200)["data"]["districts"])
+      assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "user should get districts", %{user_conn: conn} do
       insert(:district, is_active: false)
+      insert_list(5, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
-      assert 23 == Enum.count(json_response(conn, 200)["data"]["districts"])
+      assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "anonymous should get districts", %{unauthenticated_conn: conn} do
       insert(:district, is_active: false)
+      insert_list(5, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
-      assert 23 == Enum.count(json_response(conn, 200)["data"]["districts"])
+      assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
   end
 

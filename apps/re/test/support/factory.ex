@@ -125,7 +125,8 @@ defmodule Re.Factory do
 
   def interest_type_factory do
     %Re.InterestType{
-      name: "Just looking"
+      name: Shakespeare.hamlet(),
+      enabled: true
     }
   end
 

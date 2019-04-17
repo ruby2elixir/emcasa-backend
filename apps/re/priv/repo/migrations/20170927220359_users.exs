@@ -9,6 +9,7 @@ defmodule Re.Repo.Migrations.Users do
 
       timestamps()
     end
+
     create unique_index(:users, [:email])
   end
 end

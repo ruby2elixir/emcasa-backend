@@ -6,9 +6,6 @@ defmodule Re.Repo.Migrations.AddRegisteringConfirmationFields do
       add :confirmation_token, :string
       add :confirmed, :boolean
     end
-
-    flush()
-    # Re.Repo.update_all(Re.User, set: [confirmed: true])
   end
 
   def down do
