@@ -102,7 +102,8 @@ defmodule Re.Factory do
       name: name,
       city: city_name,
       state: state_name,
-      description: Shakespeare.hamlet()
+      description: Shakespeare.hamlet(),
+      is_active: true
     }
   end
 
