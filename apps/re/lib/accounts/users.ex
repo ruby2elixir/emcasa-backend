@@ -41,4 +41,11 @@ defmodule Re.Accounts.Users do
     |> Repo.preload(favorited: [:images])
     |> Map.get(:favorited)
   end
+
+  def get_by_phone(phone) do
+    case Repo.get_by(User, phone: phone) do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
+  end
 end

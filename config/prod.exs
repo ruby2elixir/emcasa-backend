@@ -1,5 +1,7 @@
 use Mix.Config
 
+config :logger, :console, level: :info
+
 config :re_web, ReWeb.Endpoint,
   http: [port: {:system, "PORT"}],
   url: [scheme: "https", host: System.get_env("HOST"), port: 443],

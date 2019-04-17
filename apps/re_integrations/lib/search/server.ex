@@ -11,18 +11,9 @@ defmodule ReIntegrations.Search.Server do
     Repo
   }
 
-  alias ReIntegrations.{
-    Search.Cluster,
-    Search.Store
-  }
+  alias ReIntegrations.Search.Cluster
 
   @index "listings"
-
-  @settings %{
-    settings: "priv/elasticsearch/listings.json",
-    store: Store,
-    sources: [Re.Listing]
-  }
 
   @type action :: :build_index | :cleanup_index
 
@@ -41,7 +32,7 @@ defmodule ReIntegrations.Search.Server do
 
   @spec handle_cast(action, any) :: {:noreply, any}
   def handle_cast(:build_index, state) do
-    case Elasticsearch.Index.hot_swap(Cluster, @index, @settings) do
+    case Elasticsearch.Index.hot_swap(Cluster, @index) do
       :ok -> Logger.debug("Listings index created.")
       error -> Logger.error("Listings index creation failed. Reason: #{inspect(error)}")
     end

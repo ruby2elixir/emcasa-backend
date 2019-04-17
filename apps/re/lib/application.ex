@@ -8,7 +8,10 @@ defmodule Re.Application do
   import Supervisor.Spec
 
   alias Re.{
+    Leads.Buyer.JobQueue,
     Listings.History.Server,
+    PubSub,
+    Repo,
     Statistics.Visualizations
   }
 
@@ -17,8 +20,8 @@ defmodule Re.Application do
 
     children =
       [
-        supervisor(Re.Repo, []),
-        supervisor(Phoenix.PubSub.PG2, [Re.PubSub, []])
+        supervisor(Repo, []),
+        supervisor(Phoenix.PubSub.PG2, [PubSub, []])
       ] ++ extra_processes(Mix.env())
 
     opts = [strategy: :one_for_one, name: Re.Supervisor]
@@ -30,7 +33,8 @@ defmodule Re.Application do
   defp extra_processes(_),
     do: [
       worker(Server, []),
-      worker(Visualizations, [])
+      worker(Visualizations, []),
+      {JobQueue, repo: Repo}
     ]
 
   defp attach_telemetry do
