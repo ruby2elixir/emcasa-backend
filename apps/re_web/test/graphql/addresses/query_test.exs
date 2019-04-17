@@ -34,6 +34,7 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
     """
 
     test "admin should get districts", %{admin_conn: conn} do
+      insert(:district, status: "inactive")
       insert_list(5, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
@@ -41,6 +42,7 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
     end
 
     test "user should get districts", %{user_conn: conn} do
+      insert(:district, status: "inactive")
       insert_list(5, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
@@ -48,6 +50,7 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
     end
 
     test "anonymous should get districts", %{unauthenticated_conn: conn} do
+      insert(:district, status: "inactive")
       insert_list(5, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 

@@ -16,11 +16,14 @@ defmodule Re.Addresses.District do
     field :city_slug, :string
     field :name_slug, :string
     field :description, :string
+    field :status, :string, default: "inactive"
 
     timestamps()
   end
 
   @required ~w(state city name description)a
+  @optional ~w(status)a
+  @params @required ++ @optional
 
   @sluggified_attr ~w(state city name)a
 
@@ -29,7 +32,7 @@ defmodule Re.Addresses.District do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @required)
+    |> cast(params, @params)
     |> validate_required(@required)
     |> validate_length(:name, max: 128)
     |> validate_length(:city, max: 128)
