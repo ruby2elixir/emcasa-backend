@@ -5,17 +5,23 @@ defmodule ReWeb.InterestControllerTest do
 
   alias Re.Interest
 
-  @params %{name: "Test Name", email: "test@email.com", interest_type_id: 1}
-
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe "create" do
     test "show interest in listing", %{conn: conn} do
+      %{id: id} = insert(:interest_type)
+
+      params = %{
+        name: "Test Name",
+        email: "test@email.com",
+        interest_type_id: id
+      }
+
       listing = insert(:listing, address: build(:address))
 
-      conn = post(conn, listing_interest_path(conn, :create, listing.id), interest: @params)
+      conn = post(conn, listing_interest_path(conn, :create, listing.id), interest: params)
 
       response = json_response(conn, 201)
 
@@ -24,7 +30,15 @@ defmodule ReWeb.InterestControllerTest do
     end
 
     test "show interest in invalid listing", %{conn: conn} do
-      conn = post(conn, listing_interest_path(conn, :create, -1), interest: @params)
+      %{id: id} = insert(:interest_type)
+
+      params = %{
+        name: "Test Name",
+        email: "test@email.com",
+        interest_type_id: id
+      }
+
+      conn = post(conn, listing_interest_path(conn, :create, -1), interest: params)
 
       assert response = json_response(conn, 422)
 

@@ -17,7 +17,9 @@ defmodule ReWeb.GraphQL.Interests.InterestType.QueryTest do
   end
 
   test "should query interest types for admins", %{admin_conn: conn} do
-    insert(:interest_type, name: "type2", enabled: false)
+    %{id: id1, name: name1} = insert(:interest_type, name: "type1", enabled: true)
+    %{id: id2, name: name2} = insert(:interest_type, name: "type2", enabled: true)
+    insert(:interest_type, name: "type3", enabled: false)
 
     query = """
       query InterestTypes {
@@ -30,16 +32,16 @@ defmodule ReWeb.GraphQL.Interests.InterestType.QueryTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-    assert [
-             %{"id" => "1", "name" => "Me ligue dentro de 5 minutos"},
-             %{"id" => "2", "name" => "Me ligue em um horário específico"},
-             %{"id" => "3", "name" => "Agendamento por e-mail"},
-             %{"id" => "4", "name" => "Agendamento por Whatsapp"}
-           ] == json_response(conn, 200)["data"]["interestTypes"]
+    assert types = json_response(conn, 200)["data"]["interestTypes"]
+
+    assert Enum.member?(types, %{"id" => to_string(id1), "name" => name1})
+    assert Enum.member?(types, %{"id" => to_string(id2), "name" => name2})
   end
 
   test "should query interest types for user", %{user_conn: conn} do
-    insert(:interest_type, name: "type2", enabled: false)
+    %{id: id1, name: name1} = insert(:interest_type, name: "type1", enabled: true)
+    %{id: id2, name: name2} = insert(:interest_type, name: "type2", enabled: true)
+    insert(:interest_type, name: "type3", enabled: false)
 
     query = """
       query InterestTypes {
@@ -52,16 +54,16 @@ defmodule ReWeb.GraphQL.Interests.InterestType.QueryTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-    assert [
-             %{"id" => "1", "name" => "Me ligue dentro de 5 minutos"},
-             %{"id" => "2", "name" => "Me ligue em um horário específico"},
-             %{"id" => "3", "name" => "Agendamento por e-mail"},
-             %{"id" => "4", "name" => "Agendamento por Whatsapp"}
-           ] == json_response(conn, 200)["data"]["interestTypes"]
+    assert types = json_response(conn, 200)["data"]["interestTypes"]
+
+    assert Enum.member?(types, %{"id" => to_string(id1), "name" => name1})
+    assert Enum.member?(types, %{"id" => to_string(id2), "name" => name2})
   end
 
   test "should query interest types for anonymous", %{unauthenticated_conn: conn} do
-    insert(:interest_type, name: "type2", enabled: false)
+    %{id: id1, name: name1} = insert(:interest_type, name: "type1", enabled: true)
+    %{id: id2, name: name2} = insert(:interest_type, name: "type2", enabled: true)
+    insert(:interest_type, name: "type3", enabled: false)
 
     query = """
       query InterestTypes {
@@ -74,11 +76,9 @@ defmodule ReWeb.GraphQL.Interests.InterestType.QueryTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-    assert [
-             %{"id" => "1", "name" => "Me ligue dentro de 5 minutos"},
-             %{"id" => "2", "name" => "Me ligue em um horário específico"},
-             %{"id" => "3", "name" => "Agendamento por e-mail"},
-             %{"id" => "4", "name" => "Agendamento por Whatsapp"}
-           ] == json_response(conn, 200)["data"]["interestTypes"]
+    assert types = json_response(conn, 200)["data"]["interestTypes"]
+
+    assert Enum.member?(types, %{"id" => to_string(id1), "name" => name1})
+    assert Enum.member?(types, %{"id" => to_string(id2), "name" => name2})
   end
 end

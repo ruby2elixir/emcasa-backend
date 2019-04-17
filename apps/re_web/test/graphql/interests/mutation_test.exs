@@ -18,6 +18,7 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
   end
 
   test "anonymous should request contact", %{unauthenticated_conn: conn} do
+    %{id: interest_type_id, name: interest_type_name} = insert(:interest_type)
     %{id: listing_id} = insert(:listing)
 
     variables = %{
@@ -26,7 +27,7 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
         "email" => "testemail@emcasa.com",
         "phone" => "123321123",
         "message" => "this website is cool",
-        "interestTypeId" => 2,
+        "interestTypeId" => interest_type_id,
         "listingId" => listing_id
       }
     }
@@ -57,8 +58,8 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              "phone" => "123321123",
              "message" => "this website is cool",
              "interestType" => %{
-               "id" => "2",
-               "name" => "Me ligue em um horário específico"
+               "id" => to_string(interest_type_id),
+               "name" => interest_type_name
              },
              "listing" => %{
                "id" => to_string(listing_id)
@@ -69,6 +70,7 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
   end
 
   test "user should request contact", %{user_conn: conn} do
+    %{id: interest_type_id, name: interest_type_name} = insert(:interest_type)
     %{id: listing_id} = insert(:listing)
 
     variables = %{
@@ -77,7 +79,7 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
         "email" => "testemail@emcasa.com",
         "phone" => "123321123",
         "message" => "this website is cool",
-        "interestTypeId" => 2,
+        "interestTypeId" => interest_type_id,
         "listingId" => listing_id
       }
     }
@@ -108,8 +110,8 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              "phone" => "123321123",
              "message" => "this website is cool",
              "interestType" => %{
-               "id" => "2",
-               "name" => "Me ligue em um horário específico"
+               "id" => to_string(interest_type_id),
+               "name" => interest_type_name
              },
              "listing" => %{
                "id" => to_string(listing_id)
