@@ -21,7 +21,6 @@ defmodule Re.Leads.Buyer.JobQueueTest do
 
       Multi.new()
       |> JobQueue.perform(%{"type" => "grupozap_buyer_lead", "uuid" => uuid})
-      |> Repo.transaction()
 
       assert buyer = Repo.one(Buyer)
       assert buyer.user_uuid == user_uuid
@@ -36,7 +35,6 @@ defmodule Re.Leads.Buyer.JobQueueTest do
 
       Multi.new()
       |> JobQueue.perform(%{"type" => "grupozap_buyer_lead", "uuid" => uuid})
-      |> Repo.transaction()
 
       assert buyer = Repo.one(Buyer)
       refute buyer.user_uuid
@@ -53,7 +51,6 @@ defmodule Re.Leads.Buyer.JobQueueTest do
 
       Multi.new()
       |> JobQueue.perform(%{"type" => "grupozap_buyer_lead", "uuid" => uuid})
-      |> Repo.transaction()
 
       assert buyer = Repo.one(Buyer)
       assert buyer.user_uuid == user_uuid

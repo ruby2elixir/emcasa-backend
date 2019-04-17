@@ -22,6 +22,7 @@ defmodule Re.Leads.Buyer.JobQueue do
     |> Repo.get(uuid)
     |> buyer_lead_changeset()
     |> persist(multi)
+    |> Repo.transaction()
   end
 
   def perform(_multi, job) do
@@ -30,7 +31,11 @@ defmodule Re.Leads.Buyer.JobQueue do
     raise "Job not handled"
   end
 
-  defp buyer_lead_changeset(nil), do: raise("Leads.GrupozapBuyer not found")
+  defp buyer_lead_changeset(nil) do
+    Logger.warn("Leads.GrupozapBuyer not found")
+
+    raise("Leads.GrupozapBuyer not found")
+  end
 
   defp buyer_lead_changeset(gzb) do
     phone_number = "+55" <> gzb.ddd <> gzb.phone
