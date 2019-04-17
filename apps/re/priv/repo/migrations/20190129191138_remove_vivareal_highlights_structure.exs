@@ -1,6 +1,9 @@
 defmodule Re.Repo.Migrations.RemoveVivarealHighlightsStructure do
   use Ecto.Migration
 
+  alias Re.Repo
+  alias Ecto.Adapters.SQL
+
   def change do
     drop_if_exists unique_index(:vivareal_highlights, [:listing_id])
     drop_if_exists table(:vivareal_highlights)
@@ -25,8 +28,8 @@ defmodule Re.Repo.Migrations.RemoveVivarealHighlightsStructure do
     column = Atom.to_string(column)
 
     {:ok, result} =
-      Ecto.Adapters.SQL.query(
-        Re.Repo,
+      SQL.query(
+        Repo,
         "SELECT column_name " <>
           "FROM information_schema.columns " <>
           "WHERE table_name=$1 and column_name=$2",
