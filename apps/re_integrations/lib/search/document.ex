@@ -1,6 +1,8 @@
 defimpl Elasticsearch.Document, for: Re.Listing do
   def id(listing), do: listing.id
 
+  def routing(listing), do: listing.id
+
   def encode(listing) do
     %{
       everything: """

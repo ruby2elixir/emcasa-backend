@@ -38,7 +38,7 @@ defmodule ReIntegrations.Mixfile do
       {:cors_plug, "~> 1.2"},
       {:comeonin, "~> 3.2"},
       {:swoosh, "~> 0.23"},
-      {:elasticsearch, "~> 0.4"},
+      {:elasticsearch, "~> 1.0.0"},
       {:pigeon, "~> 1.2.2"},
       {:kadabra, "~> 0.4.2"},
       {:retry, "~> 0.10"},
