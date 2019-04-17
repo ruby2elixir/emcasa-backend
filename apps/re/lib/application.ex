@@ -33,8 +33,7 @@ defmodule Re.Application do
   defp extra_processes(_),
     do: [
       worker(Server, []),
-      worker(Visualizations, []),
-      {JobQueue, repo: Repo}
+      worker(Visualizations, [])
     ]
 
   defp attach_telemetry do
