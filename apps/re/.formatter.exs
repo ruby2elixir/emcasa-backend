@@ -1,5 +1,5 @@
 [
-  inputs: ["mix.exs", "lib/**/*.{ex,exs}"],
+  inputs: ["mix.exs", "lib/**/*.{ex,exs}", "priv/repo/migrations/*.exs"],
   locals_without_parens: [
     field: 2,
     field: 3,
@@ -16,6 +16,10 @@
     remove: 1,
     create: 1,
     add: 2,
-    add: 3
+    add: 3,
+    rename: 3,
+    modify: 2,
+    modify: 3,
+    drop_if_exists: 1
   ]
 ]

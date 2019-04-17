@@ -14,7 +14,9 @@ defmodule Re.Repo.Migrations.RemoveVivarealHighlightsStructure do
         alter table(table) do
           remove column
         end
-      _ -> nil
+
+      _ ->
+        nil
     end
   end
 
@@ -22,12 +24,14 @@ defmodule Re.Repo.Migrations.RemoveVivarealHighlightsStructure do
     table = Atom.to_string(table)
     column = Atom.to_string(column)
 
-    {:ok, result} = Ecto.Adapters.SQL.query(Re.Repo,
-      "SELECT column_name " <>
-      "FROM information_schema.columns " <>
-      "WHERE table_name=$1 and column_name=$2",
-      [table, column]
-    )
+    {:ok, result} =
+      Ecto.Adapters.SQL.query(
+        Re.Repo,
+        "SELECT column_name " <>
+          "FROM information_schema.columns " <>
+          "WHERE table_name=$1 and column_name=$2",
+        [table, column]
+      )
 
     Map.get(result, :num_rows) == 1
   end
