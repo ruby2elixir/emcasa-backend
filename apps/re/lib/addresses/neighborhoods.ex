@@ -34,7 +34,7 @@ defmodule Re.Addresses.Neighborhoods do
     end
   end
 
-  def districts, do: Repo.all(from(d in District, where: d.is_active == true))
+  def districts, do: Repo.all(from(d in District, where: d.status == "active"))
 
   def get_district(params) do
     case Repo.get_by(District, params) do

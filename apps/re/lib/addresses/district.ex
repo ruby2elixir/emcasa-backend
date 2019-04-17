@@ -16,13 +16,13 @@ defmodule Re.Addresses.District do
     field :city_slug, :string
     field :name_slug, :string
     field :description, :string
-    field :is_active, :boolean, default: false
+    field :status, :string, default: "inactive"
 
     timestamps()
   end
 
   @required ~w(state city name description)a
-  @optional ~w(is_active)a
+  @optional ~w(status)a
   @params @required ++ @optional
 
   @sluggified_attr ~w(state city name)a

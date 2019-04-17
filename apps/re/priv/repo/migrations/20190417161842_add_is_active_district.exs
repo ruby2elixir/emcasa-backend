@@ -5,19 +5,19 @@ defmodule Re.Repo.Migrations.AddIsActiveDistrict do
 
   def up do
     alter table(:districts) do
-      add :is_active, :boolean
+      add :status, :string
     end
 
     flush()
 
     q = from(d in "districts")
 
-    Re.Repo.update_all(q, set: [is_active: true])
+    Re.Repo.update_all(q, set: [status: "active"])
   end
 
   def down do
     alter table(:districts) do
-      remove :is_active
+      remove :status
     end
   end
 end
