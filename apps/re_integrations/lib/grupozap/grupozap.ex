@@ -5,8 +5,14 @@ defmodule ReIntegrations.Grupozap do
   require Logger
 
   alias Re.{
+    Leads.Buyer.JobQueue,
     Leads.GrupozapBuyer,
     Repo
+  }
+
+  alias Ecto.{
+    Changeset,
+    Multi
   }
 
   def new_buyer_lead(payload) do
@@ -14,7 +20,12 @@ defmodule ReIntegrations.Grupozap do
     |> GrupozapBuyer.changeset(payload)
     |> case do
       %{valid?: true} = changeset ->
-        Repo.insert(changeset)
+        uuid = Changeset.get_field(changeset, :uuid)
+
+        Multi.new()
+        |> JobQueue.enqueue(:grupozap_job, %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
+        |> Multi.insert(:add_grupozap_buyer_lead, changeset)
+        |> Repo.transaction()
 
       %{errors: errors} = changeset ->
         Logger.warn("Invalid payload from grupozap buyer. Errors: #{Kernel.inspect(changeset)}")
