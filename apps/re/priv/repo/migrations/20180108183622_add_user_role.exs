@@ -1,6 +1,5 @@
 defmodule Re.Repo.Migrations.AddUserRole do
   use Ecto.Migration
-  import Ecto.Query
 
   def up do
     alter table(:users) do
