@@ -8,7 +8,6 @@ defmodule Re.Application do
   import Supervisor.Spec
 
   alias Re.{
-    Leads.Buyer.JobQueue,
     Listings.History.Server,
     PubSub,
     Repo,
