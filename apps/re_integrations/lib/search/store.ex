@@ -4,8 +4,6 @@ defmodule ReIntegrations.Search.Store do
   """
   @behaviour Elasticsearch.Store
 
-  import Ecto.Query
-
   alias Re.{
     Images,
     Listing,
@@ -18,16 +16,17 @@ defmodule ReIntegrations.Search.Store do
     images: Images.Queries.listing_preload()
   ]
 
-  def load(Listing, offset, limit) do
+  @impl true
+  def transaction(fun) do
+    {:ok, result} = Repo.transaction(fun, timeout: :infinity)
+    result
+  end
+
+  @impl true
+  def stream(Listing) do
     Listing
-    |> offset(^offset)
-    |> limit(^limit)
     |> Queries.preload_relations(@partial_preload)
     |> Queries.active()
     |> Repo.all()
-  end
-
-  def load(_schema, _offset, _limit) do
-    []
   end
 end
