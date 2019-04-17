@@ -1,8 +1,8 @@
 defmodule Re.Repo.Migrations.RemoveZapHighlightsAndZapSuperHighlights do
   use Ecto.Migration
 
-  alias Re.Repo
   alias Ecto.Adapters.SQL
+  alias Re.Repo
 
   def change do
     drop_if_exists unique_index(:zap_highlights, [:listing_id])
