@@ -181,12 +181,35 @@ defmodule Re.Listing do
   defp calculate_price_per_area(
          %Ecto.Changeset{valid?: true, changes: %{price: price, area: area}} = changeset
        ) do
-    case {price, area} do
-      {0, _} -> changeset
-      {_, 0} -> changeset
-      _ -> put_change(changeset, :price_per_area, price / area)
-    end
+    set_price_per_area(price, area, changeset)
+  end
+
+  defp calculate_price_per_area(
+         %Ecto.Changeset{valid?: true, changes: %{price: price}, data: %{area: area}} = changeset
+       ) do
+    set_price_per_area(price, area, changeset)
+  end
+
+  defp calculate_price_per_area(
+         %Ecto.Changeset{valid?: true, changes: %{area: area}, data: %{price: price}} = changeset
+       ) do
+    set_price_per_area(price, area, changeset)
+  end
+
+  defp calculate_price_per_area(
+         %Ecto.Changeset{valid?: true, data: %{price: price, area: area}} = changeset
+       ) do
+    set_price_per_area(price, area, changeset)
   end
 
   defp calculate_price_per_area(changeset), do: changeset
+
+  defp set_price_per_area(0, _, changeset), do: changeset
+  defp set_price_per_area(nil, _, changeset), do: changeset
+  defp set_price_per_area(_, 0, changeset), do: changeset
+  defp set_price_per_area(_, nil, changeset), do: changeset
+
+  defp set_price_per_area(price, area, changeset) do
+    put_change(changeset, :price_per_area, price / area)
+  end
 end
