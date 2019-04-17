@@ -8,6 +8,5 @@ defmodule Re.Repo.Migrations.CreateListing do
 
       timestamps()
     end
-
   end
 end

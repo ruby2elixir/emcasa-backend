@@ -13,7 +13,9 @@ defmodule Re.Repo.Migrations.RemoveOnlineSchedule do
     flush()
 
     case Re.Repo.get_by(Re.InterestType, name: "Agendamento online") do
-      nil -> Re.Repo.insert(%Re.InterestType{name: "Agendamento online", enabled: false})
+      nil ->
+        Re.Repo.insert(%Re.InterestType{name: "Agendamento online", enabled: false})
+
       interest_type ->
         interest_type
         |> Re.InterestType.changeset(%{enabled: false})

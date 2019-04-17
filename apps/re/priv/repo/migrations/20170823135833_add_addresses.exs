@@ -11,6 +11,5 @@ defmodule Re.Repo.Migrations.AddAddresses do
 
       timestamps()
     end
-
   end
 end
