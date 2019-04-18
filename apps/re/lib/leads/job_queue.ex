@@ -21,7 +21,7 @@ defmodule Re.Leads.Buyer.JobQueue do
     GrupozapBuyer
     |> Repo.get(uuid)
     |> buyer_lead_changeset()
-    |> persist(multi)
+    |> insert_buyer_lead(multi)
     |> Repo.transaction()
   end
 
@@ -38,7 +38,7 @@ defmodule Re.Leads.Buyer.JobQueue do
   end
 
   defp buyer_lead_changeset(gzb) do
-    phone_number = "+55" <> gzb.ddd <> gzb.phone
+    phone_number = concat_phone_number(gzb)
 
     Buyer.changeset(%Buyer{}, %{
       name: gzb.name,
@@ -50,7 +50,17 @@ defmodule Re.Leads.Buyer.JobQueue do
     })
   end
 
-  defp persist(changeset, multi), do: Multi.insert(multi, :insert_buyer_lead, changeset)
+  defp concat_phone_number(%{ddd: nil, phone: nil}), do: "not informed"
+
+  defp concat_phone_number(%{ddd: _ddd, phone: nil}), do: "not informed"
+
+  defp concat_phone_number(%{ddd: nil, phone: phone}), do: "+55" <> phone
+
+  defp concat_phone_number(%{ddd: ddd, phone: phone}), do: "+55" <> ddd <> phone
+
+  defp insert_buyer_lead(changeset, multi), do: Multi.insert(multi, :insert_buyer_lead, changeset)
+
+  defp extract_user_uuid("not informed"), do: nil
 
   defp extract_user_uuid(phone_number) do
     case Users.get_by_phone(phone_number) do

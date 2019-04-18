@@ -53,11 +53,11 @@ defmodule Re.Listings.ExporterTest do
                )
     end
 
-    test "should accept page_size" do
+    test "should not accept page_size" do
       sao_paulo = insert(:address, city_slug: "sao-paulo", state_slug: "sp")
 
       %{id: id_1} = insert(:listing, address_id: sao_paulo.id, is_exportable: true)
-      insert(:listing, address_id: sao_paulo.id, is_exportable: true)
+      %{id: id_2} = insert(:listing, address_id: sao_paulo.id, is_exportable: true)
 
       result =
         Exporter.exportable(
@@ -65,13 +65,13 @@ defmodule Re.Listings.ExporterTest do
           %{page_size: 1}
         )
 
-      assert [%{id: ^id_1}] = result
+      assert [%{id: ^id_1}, %{id: ^id_2}] = result
     end
 
-    test "should accept offset" do
+    test "should not accept offset" do
       sao_paulo = insert(:address, city_slug: "sao-paulo", state_slug: "sp")
 
-      insert(:listing, address_id: sao_paulo.id, is_exportable: true)
+      %{id: id_1} = insert(:listing, address_id: sao_paulo.id, is_exportable: true)
       %{id: id_2} = insert(:listing, address_id: sao_paulo.id, is_exportable: true)
 
       result =
@@ -80,7 +80,7 @@ defmodule Re.Listings.ExporterTest do
           %{offset: 1}
         )
 
-      assert [%{id: ^id_2}] = result
+      assert [%{id: ^id_1}, %{id: ^id_2}] = result
     end
 
     test "should only return exportable listings" do
