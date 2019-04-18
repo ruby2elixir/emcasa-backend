@@ -21,7 +21,7 @@ defmodule Re.TagTest do
     refute changeset.valid?
 
     assert Keyword.get(changeset.errors, :category) ==
-             {"should be one of: [infrastructure, location, realty, view]",
+             {"should be one of: [infrastructure, location, realty, view, concierge]",
               [validation: :inclusion]}
   end
 
