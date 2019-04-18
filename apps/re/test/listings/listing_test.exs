@@ -27,7 +27,12 @@ defmodule Re.ListingTest do
     matterport_code: "",
     is_exclusive: false,
     is_release: false,
-    is_exportable: true
+    is_exportable: true,
+    orientation: "frontside",
+    sun_period: "morning",
+    floor_count: 10,
+    unit_per_floor: 4,
+    elevators: 2
   }
   @invalid_attrs %{
     type: "ApartmentApartmentApartmentApartmentApartment",
@@ -45,7 +50,12 @@ defmodule Re.ListingTest do
     score: 5,
     is_exclusive: "banana",
     is_release: "banana",
-    is_exportable: "banana"
+    is_exportable: "banana",
+    orientation: "frente",
+    sun_period: "manha/tarde",
+    floor_count: 10.1,
+    unit_per_floor: 4.1,
+    elevators: 2.1
   }
 
   describe "user" do
@@ -180,6 +190,21 @@ defmodule Re.ListingTest do
 
       assert Keyword.get(changeset.errors, :is_exportable) ==
                {"is invalid", [type: :boolean, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :orientation) ==
+               {"should be one of: [frontside backside lateral inside]", [validation: :inclusion]}
+
+      assert Keyword.get(changeset.errors, :sun_period) ==
+               {"should be one of: [morning evening]", [validation: :inclusion]}
+
+      assert Keyword.get(changeset.errors, :floor_count) ==
+               {"is invalid", [type: :integer, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :unit_per_floor) ==
+               {"is invalid", [type: :integer, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :elevators) ==
+               {"is invalid", [type: :integer, validation: :cast]}
 
       changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000}, "admin")
       refute changeset.valid?

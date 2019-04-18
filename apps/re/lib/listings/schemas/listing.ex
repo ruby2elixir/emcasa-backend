@@ -130,12 +130,12 @@ defmodule Re.Listing do
     |> validate_inclusion(
       :orientation,
       @orientation_types,
-      "should be one of: [#{Enum.join(@orientation_types, " ")}]"
+      message: "should be one of: [#{Enum.join(@orientation_types, " ")}]"
     )
     |> validate_inclusion(
       :sun_period,
       @sun_period_types,
-      "should be one of: [#{Enum.join(@sun_period_types, " ")}]"
+      message: "should be one of: [#{Enum.join(@sun_period_types, " ")}]"
     )
     |> generate_uuid()
     |> calculate_price_per_area()
