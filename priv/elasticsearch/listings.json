@@ -2,40 +2,29 @@
   "mappings": {
     "_doc": {
       "properties" : {
-        "everything" : {
-          "type" : "text",
-          "analyzer" : "br_analyzer"
-        },
-        "rooms" :{
+        "type":  {
           "type" : "keyword"
         },
-        "bathrooms" :{
+        "price": {
+          "type" : "integer"
+        },
+        "rooms": {
+          "type" :  "integer"
+        },
+        "area" : {
+          "type": "integer"
+        },
+        "neighborhood_slug" : {
           "type" : "keyword"
         },
-        "garage_spots" :{
-          "type" : "keyword"
-        },
-        "restrooms" :{
-          "type" : "keyword"
-        },
-        "suites" :{
-          "type" : "keyword"
-        },
-        "dependencies" :{
-          "type" : "keyword"
-        },
-        "balconies" :{
-          "type" : "keyword"
-        },
-        "address" :{
-          "type" : "text",
-          "analyzer" : "br_analyzer"
+        "garage_spots" : {
+          "type": "integer"
         },
         "inserted_at" : {
           "type" : "date"
         },
-        "location" : {
-          "type" : "geo_point"
+        "updated_at" : {
+          "type" : "date"
         }
       }
     }
