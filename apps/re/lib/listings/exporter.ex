@@ -15,15 +15,13 @@ defmodule Re.Listings.Exporter do
     images: Images.Queries.listing_preload()
   ]
 
-  def exportable(filters, params) do
+  def exportable(filters, _params) do
     filters = Map.put(filters, :exportable, true)
 
     Queries.active()
     |> Filtering.apply(filters)
     |> Queries.preload_relations(@partial_preload)
     |> Queries.order_by_id()
-    |> Queries.offset(params)
-    |> Queries.limit(params)
     |> Repo.all()
   end
 end
