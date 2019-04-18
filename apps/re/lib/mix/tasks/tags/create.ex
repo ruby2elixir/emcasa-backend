@@ -1,4 +1,7 @@
 defmodule Mix.Tasks.Re.Tags.Create do
+  @moduledoc """
+  Create all tags from our system.
+  """
   use Mix.Task
 
   require Logger
