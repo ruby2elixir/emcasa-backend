@@ -27,6 +27,46 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert buyer.listing_uuid == listing_uuid
     end
 
+    test "process lead with nil ddd" do
+      %{id: id, uuid: listing_uuid} = insert(:listing)
+
+      %{uuid: uuid} =
+        insert(:grupozap_buyer_lead, ddd: nil, phone: "999999999", client_listing_id: "#{id}")
+
+      JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
+
+      assert buyer = Repo.one(Buyer)
+      refute buyer.user_uuid
+      assert buyer.listing_uuid == listing_uuid
+    end
+
+    test "process lead with nil phone" do
+      %{id: id, uuid: listing_uuid} = insert(:listing)
+
+      %{uuid: uuid} =
+        insert(:grupozap_buyer_lead, ddd: "11", phone: nil, client_listing_id: "#{id}")
+
+      JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
+
+      assert buyer = Repo.one(Buyer)
+      refute buyer.user_uuid
+      assert buyer.listing_uuid == listing_uuid
+    end
+
+    test "process lead with nil ddd and phone" do
+      %{id: id, uuid: listing_uuid} = insert(:listing)
+
+      %{uuid: uuid} =
+        insert(:grupozap_buyer_lead, ddd: nil, phone: nil, client_listing_id: "#{id}")
+
+      JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
+
+      assert buyer = Repo.one(Buyer)
+      refute buyer.user_uuid
+      assert buyer.phone_number == "not informed"
+      assert buyer.listing_uuid == listing_uuid
+    end
+
     test "process lead with no user" do
       %{id: id, uuid: listing_uuid} = insert(:listing)
 
