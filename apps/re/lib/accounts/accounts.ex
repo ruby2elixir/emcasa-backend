@@ -13,7 +13,7 @@ defmodule Re.Accounts do
 
   def query(query, _args), do: query
 
-  def promote_user_admin(phone) do
+  def promote_user_to_admin(phone) do
     case Users.get_by_phone(phone) do
       {:ok, user} ->
         user
