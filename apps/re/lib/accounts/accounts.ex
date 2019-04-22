@@ -4,9 +4,9 @@ defmodule Re.Accounts do
   """
 
   alias Re.{
+    Accounts.Users,
     Repo,
-    User,
-    Users
+    User
   }
 
   def data(params), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)

@@ -20,10 +20,7 @@ defmodule Re.Accounts.AccountsTest do
     end
 
     test "should error when user doesn't exist" do
-      {:ok, user} = Accounts.promote_user_admin("+5511999999999")
-
-      assert user = Repo.get(User, id)
-      assert "admin" == user.role
+      {:error, :not_found} = Accounts.promote_user_admin("+5511999999999")
     end
   end
 end
