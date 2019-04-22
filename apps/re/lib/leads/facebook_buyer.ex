@@ -6,7 +6,7 @@ defmodule Re.Leads.FacebookBuyer do
 
   import Ecto.Changeset
 
-  @primary_key {:uuid, :binary_id, autogenerate: true}
+  @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "facebook_buyer_leads" do
     field :full_name, :string
@@ -32,5 +32,8 @@ defmodule Re.Leads.FacebookBuyer do
     |> validate_inclusion(:location, @locations,
       message: "should be one of: [#{Enum.join(@locations, " ")}]"
     )
+    |> generate_uuid()
   end
+
+  defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
 end
