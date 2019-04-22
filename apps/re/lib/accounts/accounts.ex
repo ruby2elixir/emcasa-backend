@@ -3,7 +3,25 @@ defmodule Re.Accounts do
   Context boundary to Accounts management
   """
 
-  def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
+  alias Re.{
+    Accounts.Users,
+    Repo,
+    User
+  }
+
+  def data(params), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
 
   def query(query, _args), do: query
+
+  def promote_user_to_admin(phone) do
+    case Users.get_by_phone(phone) do
+      {:ok, user} ->
+        user
+        |> User.update_changeset(%{role: "admin"})
+        |> Repo.update()
+
+      error ->
+        error
+    end
+  end
 end
