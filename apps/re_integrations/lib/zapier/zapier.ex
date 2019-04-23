@@ -5,9 +5,15 @@ defmodule ReIntegrations.Zapier do
   require Logger
 
   alias Re.{
+    Leads.Buyer.JobQueue,
     Leads.FacebookBuyer,
     Leads.ImovelWebBuyer,
     Repo
+  }
+
+  alias Ecto.{
+    Changeset,
+    Multi
   }
 
   def new_buyer_lead(%{"source" => "facebook_buyer"} = payload) do
@@ -37,7 +43,12 @@ defmodule ReIntegrations.Zapier do
   defp do_new_buyer_lead(changeset, type) do
     case changeset do
       %{valid?: true} = changeset ->
-        Repo.insert(changeset)
+        uuid = Changeset.get_field(changeset, :uuid)
+
+        Multi.new()
+        |> JobQueue.enqueue(:buyer_lead_job, %{"type" => type, "uuid" => uuid})
+        |> Multi.insert(:add_buyer_lead, changeset)
+        |> Repo.transaction()
 
       %{errors: errors} ->
         Logger.warn(
