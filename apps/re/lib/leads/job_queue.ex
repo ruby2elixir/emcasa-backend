@@ -8,7 +8,9 @@ defmodule Re.Leads.Buyer.JobQueue do
   require Logger
 
   alias Re.{
+    Leads.FacebookBuyer,
     Leads.GrupozapBuyer,
+    Leads.ImovelWebBuyer,
     Repo
   }
 
@@ -18,6 +20,22 @@ defmodule Re.Leads.Buyer.JobQueue do
     GrupozapBuyer
     |> Repo.get(uuid)
     |> GrupozapBuyer.buyer_lead_changeset()
+    |> insert_buyer_lead(multi)
+    |> Repo.transaction()
+  end
+
+  def perform(%Multi{} = multi, %{"type" => "facebook_buyer", "uuid" => uuid}) do
+    FacebookBuyer
+    |> Repo.get(uuid)
+    |> FacebookBuyer.buyer_lead_changeset()
+    |> insert_buyer_lead(multi)
+    |> Repo.transaction()
+  end
+
+  def perform(%Multi{} = multi, %{"type" => "imovelweb_buyer", "uuid" => uuid}) do
+    ImovelWebBuyer
+    |> Repo.get(uuid)
+    |> ImovelWebBuyer.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
   end

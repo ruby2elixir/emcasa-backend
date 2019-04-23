@@ -51,9 +51,7 @@ defmodule ReIntegrations.Zapier do
         |> Repo.transaction()
 
       %{errors: errors} ->
-        Logger.warn(
-          "Invalid payload from zapier's imovelweb buyer. Errors: #{Kernel.inspect(errors)}"
-        )
+        Logger.warn("Invalid payload from #{type}. Errors: #{Kernel.inspect(errors)}")
 
         {:error, :unexpected_payload, errors}
     end
