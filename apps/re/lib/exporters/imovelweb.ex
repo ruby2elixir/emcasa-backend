@@ -56,7 +56,7 @@ defmodule Re.Exporters.Imovelweb do
     do: {"TituloImovel", %{}, "#{listing.type} a venda em #{listing.address.city}"}
 
   defp convert_attribute(:description, listing, _),
-    do: {"Observacao", %{}, {:cdata, listing.description}}
+    do: {"Observacao", %{}, {:cdata, listing.description || ""}}
 
   defp convert_attribute(:highlight, listing, options) do
     {
