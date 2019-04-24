@@ -40,11 +40,7 @@ defmodule Re.Leads.Buyer.JobQueue do
     |> Repo.transaction()
   end
 
-  def perform(_multi, job) do
-    Logger.warn("Job format not handled. Job: #{Kernel.inspect(job)}")
-
-    raise "Job not handled"
-  end
+  def perform(_multi, job), do: raise("Job type not handled. Job: #{Kernel.inspect(job)}")
 
   defp insert_buyer_lead(changeset, multi), do: Multi.insert(multi, :insert_buyer_lead, changeset)
 end

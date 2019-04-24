@@ -38,11 +38,7 @@ defmodule Re.Leads.ImovelWebBuyer do
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
 
-  def buyer_lead_changeset(nil) do
-    Logger.warn("Leads.FacebookBuyer not found")
-
-    raise("Leads.FacebookBuyer not found")
-  end
+  def buyer_lead_changeset(nil), do: raise("Leads.FacebookBuyer not found")
 
   def buyer_lead_changeset(lead) do
     phone_number = format_phone_number(lead.phone)

@@ -45,11 +45,7 @@ defmodule Re.Leads.GrupozapBuyer do
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
 
-  def buyer_lead_changeset(nil) do
-    Logger.warn("Leads.GrupozapBuyer not found")
-
-    raise("Leads.GrupozapBuyer not found")
-  end
+  def buyer_lead_changeset(nil), do: raise("Leads.GrupozapBuyer not found")
 
   def buyer_lead_changeset(gzb) do
     phone_number = concat_phone_number(gzb)
