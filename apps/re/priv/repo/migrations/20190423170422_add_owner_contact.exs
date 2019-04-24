@@ -2,7 +2,7 @@ defmodule Re.Repo.Migrations.AddOwnerContact do
   use Ecto.Migration
 
   def change do
-    create table(:owners_contacts, primary_key: false) do
+    create table(:owner_contacts, primary_key: false) do
       add :uuid, :uuid, primary_key: true
       add :name, :string, null: false
       add :name_slug, :string, null: false
@@ -13,9 +13,9 @@ defmodule Re.Repo.Migrations.AddOwnerContact do
     end
 
     create unique_index(
-             :owners_contacts,
+             :owner_contacts,
              [:name_slug, :phone],
-             name: :owners_contacts_name_phone_index
+             name: :owner_contacts_name_phone_index
            )
   end
 end

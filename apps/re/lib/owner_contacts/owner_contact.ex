@@ -13,7 +13,7 @@ defmodule Re.OwnerContact do
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
-  schema "owners_contacts" do
+  schema "owner_contacts" do
     field :name, :string
     field :name_slug, :string
     field :phone, :string
