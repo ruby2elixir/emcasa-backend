@@ -207,6 +207,18 @@ defmodule Re.Factory do
     }
   end
 
+  def owner_contact_factory do
+    name = Name.name()
+
+    %Re.OwnerContact{
+      uuid: UUID.uuid4(),
+      name: name,
+      name_slug: Re.Slugs.sluggify(name),
+      phone: Phone.EnUs.phone(),
+      email: Enum.random([nil, Internet.email()])
+    }
+  end
+
   def grupozap_buyer_lead_factory do
     %Re.Leads.GrupozapBuyer{
       uuid: UUID.uuid4(),
