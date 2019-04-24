@@ -5,7 +5,6 @@ defmodule Re.Listings.Units.PropagatorTest do
   import Re.Factory
 
   describe "update_listing/2" do
-    @tag pending: true
     test "copy infos from the unit with the lowest price" do
       development = insert(:development)
       {:ok, listing} = %Re.Listing{}

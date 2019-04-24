@@ -31,7 +31,22 @@ defmodule Re.Listings.Units.ServerTest do
     end
 
     test "match updated_unit topic" do
+      development = insert(:development)
+      listing = insert(:listing, price: 1_000_000, development_uuid: development.uuid)
+      attrs = Map.merge(@insert_unit_params, %{listing_id: listing.id})
+      unit = insert(:unit, attrs)
 
+      assert {:noreply, []} ==
+               Server.handle_info(
+                 %{
+                   topic: "update_unit",
+                   type: :update,
+                   content: %{
+                     new: unit
+                   }
+                 },
+                 []
+               )
     end
   end
 end
