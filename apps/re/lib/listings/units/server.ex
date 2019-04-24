@@ -1,4 +1,3 @@
-# maybe move this module to units
 defmodule Re.Listings.Units.Server do
   @moduledoc """
   Module responsible for replicate unit data on listings.
@@ -29,8 +28,7 @@ defmodule Re.Listings.Units.Server do
   def handle_info(%{topic: "new_unit", type: :new, new: unit}, state) do
     with {:ok, listing} <- Listings.get(unit.listing_id),
          units <- Units.by_listing(unit.listing_id),
-         unit_price_list <- create_price_list(units),
-         {:ok, _listing} <- Propagator.update_listing(listing, unit_price_list) do
+         {:ok, _listing} <- Propagator.update_listing(listing, units) do
       {:noreply, state}
     else
       error ->
@@ -47,8 +45,7 @@ defmodule Re.Listings.Units.Server do
       ) do
     with {:ok, listing} <- Listings.get(unit.listing_id),
          units <- Units.by_listing(unit.listing_id),
-         unit_price_list <- create_price_list(units),
-         {:ok, _listing} <- Propagator.update_listing(listing, unit_price_list) do
+         {:ok, _listing} <- Propagator.update_listing(listing, units) do
       {:noreply, state}
     else
       error ->
@@ -61,8 +58,4 @@ defmodule Re.Listings.Units.Server do
   def handle_info(_, state), do: {:noreply, state}
 
   def handle_call(:inspect, _caller, state), do: {:reply, state, state}
-
-  defp create_price_list(units) do
-    Enum.map(units, fn unit -> unit.price end)
-  end
 end

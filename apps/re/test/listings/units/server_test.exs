@@ -29,5 +29,9 @@ defmodule Re.Listings.Units.ServerTest do
                  []
                )
     end
+
+    test "match updated_unit topic" do
+
+    end
   end
 end
