@@ -13,7 +13,8 @@ defmodule Re.Listings.Units.Propagator do
 
   def update_listing(listing, units) do
     params =
-      Enum.min_by(units, fn unit -> Map.get(unit, :price) end)
+      units
+      |> Enum.min_by(fn unit -> Map.get(unit, :price) end)
       |> Map.take(@cloned_attributes)
 
     Listings.update_from_unit_params(listing, params)
