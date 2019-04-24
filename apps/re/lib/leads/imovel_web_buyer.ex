@@ -44,16 +44,16 @@ defmodule Re.Leads.ImovelWebBuyer do
     raise("Leads.FacebookBuyer not found")
   end
 
-  def buyer_lead_changeset(iw) do
-    phone_number = format_phone_number(iw.phone)
+  def buyer_lead_changeset(lead) do
+    phone_number = format_phone_number(lead.phone)
 
     Buyer.changeset(%Buyer{}, %{
-      name: iw.name,
-      email: iw.email,
-      phone_number: iw.phone,
+      name: lead.name,
+      email: lead.email,
+      phone_number: lead.phone,
       origin: "imovelweb",
       user_uuid: extract_user_uuid(phone_number),
-      listing_uuid: extract_listing_uuid(iw.listing_id)
+      listing_uuid: extract_listing_uuid(lead.listing_id)
     })
   end
 

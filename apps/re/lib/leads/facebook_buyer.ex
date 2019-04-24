@@ -50,13 +50,13 @@ defmodule Re.Leads.FacebookBuyer do
     raise("Leads.FacebookBuyer not found")
   end
 
-  def buyer_lead_changeset(fb) do
+  def buyer_lead_changeset(lead) do
     Buyer.changeset(%Buyer{}, %{
-      name: fb.full_name,
-      email: fb.email,
-      phone_number: fb.phone_number,
+      name: lead.full_name,
+      email: lead.email,
+      phone_number: lead.phone_number,
       origin: "facebook",
-      user_uuid: extract_user_uuid(fb.phone_number)
+      user_uuid: extract_user_uuid(lead.phone_number)
     })
   end
 
