@@ -165,10 +165,10 @@ defmodule Re.Listings do
     |> PubSub.publish_update(changeset, "update_listing", %{user: user})
   end
 
-  def update_price(listing, new_price) do
+  def update_from_unit_params(listing, params) do
     changeset =
       listing
-      |> Changeset.change(price: new_price)
+      |> Changeset.change(params)
 
     changeset
     |> Repo.update()

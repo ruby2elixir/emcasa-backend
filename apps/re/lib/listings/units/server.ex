@@ -27,7 +27,7 @@ defmodule Re.Listings.Units.Server do
   @spec handle_info(map(), any) :: {:noreply, any}
   def handle_info(%{topic: "new_unit", type: :new, new: unit}, state) do
     with {:ok, listing} <- Listings.get(unit.listing_id),
-         units <- Units.by_listing(unit.listing_id),
+         units <- Units.get_by_listing(unit.listing_id),
          {:ok, _listing} <- Propagator.update_listing(listing, units) do
       {:noreply, state}
     else
@@ -44,7 +44,7 @@ defmodule Re.Listings.Units.Server do
         state
       ) do
     with {:ok, listing} <- Listings.get(unit.listing_id),
-         units <- Units.by_listing(unit.listing_id),
+         units <- Units.get_by_listing(unit.listing_id),
          {:ok, _listing} <- Propagator.update_listing(listing, units) do
       {:noreply, state}
     else

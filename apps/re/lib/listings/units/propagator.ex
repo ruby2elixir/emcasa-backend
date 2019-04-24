@@ -4,32 +4,29 @@ defmodule Re.Listings.Units.Propagator do
   be replicated/reflected in listings until we migrate replicated structure to units.
   """
 
-  alias Ecto.Changeset
   alias Re.Listings
 
   def update_listing(listing, []), do: {:ok, listing}
 
   def update_listing(listing, units) do
-    head = Enum.min_by(units, fn unit -> Map.get(unit, :price) end)
+    unit = Enum.min_by(units, fn unit -> Map.get(unit, :price) end)
 
     params = %{
-      complement: head.complement,
-      price: head.price,
-      property_tax: head.property_tax,
-      maintenance_fee: head.maintenance_fee,
-      floor: head.floor,
-      rooms: head.rooms,
-      bathrooms: head.bathrooms,
-      restrooms: head.restrooms,
-      area: head.area,
-      garage_spots: head.garage_spots,
-      garage_type: head.garage_type,
-      suites: head.suites,
-      balconies: head.balconies
+      complement: unit.complement,
+      price: unit.price,
+      property_tax: unit.property_tax,
+      maintenance_fee: unit.maintenance_fee,
+      floor: unit.floor,
+      rooms: unit.rooms,
+      bathrooms: unit.bathrooms,
+      restrooms: unit.restrooms,
+      area: unit.area,
+      garage_spots: unit.garage_spots,
+      garage_type: unit.garage_type,
+      suites: unit.suites,
+      balconies: unit.balconies
     }
 
-    listing
-    |> Changeset.change(params)
-    |> Re.Repo.update()
+    Listings.update_from_unit_params(listing, params)
   end
 end
