@@ -64,8 +64,6 @@ defmodule Re.Leads.GrupozapBuyer do
     })
   end
 
-  defp concat_phone_number(%{ddd: nil, phone: nil}), do: "not informed"
-
   defp concat_phone_number(%{ddd: _ddd, phone: nil}), do: "not informed"
 
   defp concat_phone_number(%{ddd: nil, phone: phone}), do: "+55" <> phone
