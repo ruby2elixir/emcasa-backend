@@ -7,7 +7,7 @@ defmodule Re.Listings.Units.Propagator do
   alias Re.Listings
 
   @cloned_attributes ~w(complement price property_tax maintenance_fee floor rooms bathrooms
-    restrooms area garage_spots garage_type suites balconies)a
+    restrooms area garage_spots garage_type suites dependencies balconies)a
 
   def update_listing(listing, []), do: {:ok, listing}
 
