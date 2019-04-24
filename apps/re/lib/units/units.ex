@@ -20,9 +20,9 @@ defmodule Re.Units do
 
   def query(_query, _args), do: Re.Unit
 
-  def by_listing(listing_id) do
     Unit
     |> Queries.by_listing(listing_id)
+    |> Queries.active()
     |> Repo.all()
   end
 
