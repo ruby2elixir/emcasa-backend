@@ -53,6 +53,11 @@ defmodule Re.Listing do
 
     belongs_to :user, Re.User
 
+    belongs_to :owner_contact, Re.OwnerContact,
+      references: :uuid,
+      foreign_key: :owner_contact_uuid,
+      type: Ecto.UUID
+
     has_many :images, Re.Image
     has_many :price_history, Re.Listings.PriceHistory
     has_many :listings_visualisations, Re.Statistics.ListingVisualization
@@ -110,7 +115,7 @@ defmodule Re.Listing do
   @admin_optional ~w(complement floor matterport_code is_exclusive status property_tax
                      maintenance_fee balconies restrooms is_release is_exportable
                      orientation floor_count unit_per_floor sun_period elevators
-                     construction_year)a
+                     construction_year owner_contact_uuid)a
 
   @admin_attributes @admin_required ++ @admin_optional
   def changeset(struct, params, "admin") do
