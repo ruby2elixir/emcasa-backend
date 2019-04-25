@@ -4,8 +4,8 @@ defmodule Re.SellerLeads do
   """
 
   alias Re.{
-    SellerLeads.SiteLead,
-    Repo
+    Repo,
+    SellerLeads.SiteLead
   }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
