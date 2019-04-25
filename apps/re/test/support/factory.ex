@@ -231,6 +231,22 @@ defmodule Re.Factory do
     }
   end
 
+  def facebook_buyer_lead_factory do
+    %Re.Leads.FacebookBuyer{
+      uuid: UUID.uuid4(),
+      full_name: Name.name(),
+      email: Internet.email()
+    }
+  end
+
+  def imovelweb_buyer_lead_factory do
+    %Re.Leads.ImovelWebBuyer{
+      uuid: UUID.uuid4(),
+      name: Name.name(),
+      email: Internet.email()
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999

@@ -6,6 +6,14 @@ defmodule Re.Leads.GrupozapBuyer do
 
   import Ecto.Changeset
 
+  require Logger
+
+  alias Re.{
+    Accounts.Users,
+    Leads.Buyer,
+    Listings
+  }
+
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "grupozap_buyer_leads" do
@@ -36,4 +44,41 @@ defmodule Re.Leads.GrupozapBuyer do
   end
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
+
+  def buyer_lead_changeset(nil), do: raise("Leads.GrupozapBuyer not found")
+
+  def buyer_lead_changeset(gzb) do
+    phone_number = concat_phone_number(gzb)
+
+    Buyer.changeset(%Buyer{}, %{
+      name: gzb.name,
+      email: gzb.email,
+      phone_number: phone_number,
+      origin: gzb.lead_origin,
+      user_uuid: extract_user_uuid(phone_number),
+      listing_uuid: extract_listing_uuid(gzb.client_listing_id)
+    })
+  end
+
+  defp concat_phone_number(%{ddd: _ddd, phone: nil}), do: "not informed"
+
+  defp concat_phone_number(%{ddd: nil, phone: phone}), do: "+55" <> phone
+
+  defp concat_phone_number(%{ddd: ddd, phone: phone}), do: "+55" <> ddd <> phone
+
+  defp extract_user_uuid("not informed"), do: nil
+
+  defp extract_user_uuid(phone_number) do
+    case Users.get_by_phone(phone_number) do
+      {:ok, user} -> user.uuid
+      _error -> nil
+    end
+  end
+
+  defp extract_listing_uuid(id) do
+    case Listings.get(id) do
+      {:ok, listing} -> listing.uuid
+      _error -> nil
+    end
+  end
 end
