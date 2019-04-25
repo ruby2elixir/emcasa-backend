@@ -1,9 +1,9 @@
-defmodule Re.Leads.SiteSellerTest do
+defmodule Re.SellerLeads.SiteLeadTest do
   use Re.ModelCase
 
   import Re.Factory
 
-  alias Re.Leads.SiteSeller
+  alias Re.SellerLeads.SiteLead
 
   @valid_attributes %{
     complement: "100",
@@ -30,12 +30,12 @@ defmodule Re.Leads.SiteSellerTest do
         |> Map.put(:price_request_id, price_suggestion_request.id)
         |> Map.put(:tour_appointment_id, tour_appointment.id)
 
-      changeset = SiteSeller.changeset(%SiteSeller{}, attrs)
+      changeset = SiteLead.changeset(%SiteLead{}, attrs)
       assert changeset.valid?
     end
 
     test "should be invalid" do
-      changeset = SiteSeller.changeset(%SiteSeller{}, @invalid_attributes)
+      changeset = SiteLead.changeset(%SiteLead{}, @invalid_attributes)
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :type) ==

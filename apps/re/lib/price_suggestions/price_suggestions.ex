@@ -16,6 +16,10 @@ defmodule Re.PriceSuggestions do
 
   alias Ecto.Changeset
 
+  def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
+
+  def query(_query, _args), do: Re.PriceSuggestions.Request
+
   def suggest_price(listing) do
     listing
     |> preload_if_struct()

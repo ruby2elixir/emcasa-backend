@@ -1,4 +1,4 @@
-defmodule Re.Leads.SiteSeller do
+defmodule Re.SellerLeads.SiteLead do
   @moduledoc """
   Schema for site's seller leads
   """
