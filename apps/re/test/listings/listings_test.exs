@@ -372,22 +372,33 @@ defmodule Re.ListingsTest do
     test "should insert with description size bigger than 255" do
       address = insert(:address)
       user = insert(:user, role: "user")
+      owner_contact = insert(:owner_contact)
 
       assert {:ok, inserted_listing} =
-               Listings.insert(@insert_listing_params, address: address, user: user)
+               Listings.insert(@insert_listing_params,
+                 address: address,
+                 user: user,
+                 owner_contact: owner_contact
+               )
 
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.address_id == address.id
       assert retrieved_listing.user_id == user.id
+      assert retrieved_listing.owner_contact_uuid == owner_contact.uuid
       assert retrieved_listing.uuid
     end
 
     test "should insert inactive for admin user" do
       address = insert(:address)
       user = insert(:user, role: "admin")
+      owner_contact = insert(:owner_contact)
 
       assert {:ok, inserted_listing} =
-               Listings.insert(@insert_admin_listing_params, address: address, user: user)
+               Listings.insert(@insert_admin_listing_params,
+                 address: address,
+                 user: user,
+                 owner_contact: owner_contact
+               )
 
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.status == "inactive"
@@ -514,6 +525,38 @@ defmodule Re.ListingsTest do
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.status == "inactive"
       assert [] = Repo.all(Re.Listings.PriceHistory)
+    end
+
+    test "should update owner contact" do
+      user = insert(:user)
+      address = insert(:address)
+      original_owner_contact = insert(:owner_contact)
+      listing = insert(:listing, user: user, owner_contact: original_owner_contact)
+
+      updated_owner_contact = insert(:owner_contact)
+
+      Listings.update(listing, %{},
+        address: address,
+        user: user,
+        owner_contact: updated_owner_contact
+      )
+
+      updated_listing = Repo.get(Listing, listing.id)
+      assert updated_listing.owner_contact_uuid == updated_owner_contact.uuid
+    end
+
+    test "should not change user who created listing" do
+      original_user = insert(:user)
+      address = insert(:address)
+      listing = insert(:listing, address: address, user: original_user, rooms: 3)
+
+      updated_user = insert(:user)
+      assert updated_user.id != original_user.id
+
+      Listings.update(listing, %{rooms: 4}, address: address, user: updated_user)
+
+      updated_listing = Repo.get(Listing, listing.id)
+      assert updated_listing.user_id == original_user.id
     end
   end
 

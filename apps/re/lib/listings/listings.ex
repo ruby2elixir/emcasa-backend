@@ -143,10 +143,10 @@ defmodule Re.Listings do
     |> PubSub.publish_update(changeset, "update_listing", %{user: opts.user})
   end
 
-  def do_update(listing, params, %{address: address, user: user}) do
+  def do_update(listing, params, %{user: user} = opts) do
     changeset =
       listing
-      |> Changeset.change(address_id: address.id)
+      |> changeset_for_opts(opts)
       |> Listing.changeset(params, user.role)
       |> deactivate_if_not_admin(user)
 
@@ -155,7 +155,7 @@ defmodule Re.Listings do
     |> PubSub.publish_update(changeset, "update_listing", %{user: user})
   end
 
-  defp changeset_for_opts(listing, opts) do
+  defp changeset_for_opts(%{user_id: user_id} = listing, opts) do
     Enum.reduce(opts, Changeset.change(listing), fn
       {:development, development}, changeset ->
         Changeset.change(changeset, %{development_uuid: development.uuid, is_exportable: false})
@@ -163,8 +163,14 @@ defmodule Re.Listings do
       {:address, address}, changeset ->
         Changeset.change(changeset, %{address_id: address.id})
 
-      {:user, user}, changeset ->
+      {:user, user}, changeset when user_id == nil ->
         Changeset.change(changeset, %{user_id: user.id})
+
+      {:user, _}, changeset ->
+        changeset
+
+      {:owner_contact, owner_contact}, changeset ->
+        Changeset.change(changeset, %{owner_contact_uuid: owner_contact.uuid})
     end)
   end
 
