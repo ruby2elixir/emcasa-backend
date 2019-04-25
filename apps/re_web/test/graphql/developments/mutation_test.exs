@@ -34,6 +34,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
           phase
           builder
           description
+          floor_count
+          units_per_floor
+          elevators
           address {
             id
           }
@@ -61,6 +64,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert insert_development["phase"] == development.phase
       assert insert_development["builder"] == development.builder
       assert insert_development["description"] == development.description
+      assert insert_development["floor_count"] == development.floor_count
+      assert insert_development["units_per_floor"] == development.units_per_floor
+      assert insert_development["elevators"] == development.elevators
 
       assert inserted_address["id"] == Integer.to_string(address.id)
     end
@@ -106,6 +112,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
           phase
           builder
           description
+          floor_count
+          units_per_floor
+          elevators
           address {
             id
           }
@@ -133,6 +142,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       assert updated_development["builder"] == new_development.builder
       assert updated_development["phase"] == new_development.phase
       assert updated_development["description"] == new_development.description
+      assert updated_development["floor_count"] == new_development.floor_count
+      assert updated_development["units_per_floor"] == new_development.units_per_floor
+      assert updated_development["elevators"] == new_development.elevators
 
       assert updated_address["id"] == Integer.to_string(new_address.id)
     end
@@ -178,6 +190,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
         "phase" => development.phase,
         "builder" => development.builder,
         "description" => development.description,
+        "floor_count" => development.floor_count,
+        "units_per_floor" => development.units_per_floor,
+        "elevators" => development.elevators,
         "address_id" => address.id
       }
     }
@@ -192,6 +207,9 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
         "phase" => development.phase,
         "builder" => development.builder,
         "description" => development.description,
+        "floor_count" => development.floor_count,
+        "units_per_floor" => development.units_per_floor,
+        "elevators" => development.elevators,
         "address_id" => address.id
       }
     }

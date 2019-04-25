@@ -15,6 +15,9 @@ defmodule Re.Development do
     field :phase, :string
     field :builder, :string
     field :description, :string
+    field :floor_count, :integer
+    field :units_per_floor, :integer
+    field :elevators, :integer
 
     belongs_to :address, Re.Address
 
@@ -29,9 +32,11 @@ defmodule Re.Development do
 
   @required ~w(name title phase builder description address_id)a
 
+  @optional ~w(floor_count units_per_floor elevators)a
+
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @required)
+    |> cast(params, @required ++ @optional)
     |> validate_required(@required)
     |> validate_inclusion(:phase, @phases,
       message: "should be one of: [#{Enum.join(@phases, " ")}]"

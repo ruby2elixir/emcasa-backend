@@ -467,6 +467,21 @@ defmodule Re.ListingsTest do
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.is_exportable == false
     end
+
+    test "should copy infrastructure info from development" do
+      address = insert(:address)
+      development = insert(:development, address_id: address.id)
+      user = insert(:user, role: "admin")
+
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_development_listing_params, address, user, development)
+
+      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
+      assert retrieved_listing.development_uuid == development.uuid
+      assert retrieved_listing.floor_count == development.floor_count
+      assert retrieved_listing.unit_per_floor == development.units_per_floor
+      assert retrieved_listing.elevators == development.elevators
+    end
   end
 
   describe "update/4" do

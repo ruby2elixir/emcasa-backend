@@ -15,6 +15,9 @@ defmodule ReWeb.Types.Development do
     field :phase, :string
     field :builder, :string
     field :description, :string
+    field :floor_count, :integer
+    field :units_per_floor, :integer
+    field :elevators, :integer
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_development/3)
@@ -35,6 +38,9 @@ defmodule ReWeb.Types.Development do
     field :phase, :string
     field :builder, :string
     field :description, :string
+    field :floor_count, :integer
+    field :units_per_floor, :integer
+    field :elevators, :integer
 
     field :address_id, :id
   end
