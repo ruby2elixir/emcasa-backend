@@ -97,7 +97,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
       assert seller_lead["suites"] == 2
     end
 
-    test "anonymous should add seller lead", %{
+    test "anonymous should not add seller lead", %{
       unauthenticated_conn: conn,
       price_request: price_request,
       tour_appointment: tour_appointment
