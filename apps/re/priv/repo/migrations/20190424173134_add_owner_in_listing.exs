@@ -3,7 +3,7 @@ defmodule Re.Repo.Migrations.AddOwnerInListing do
 
   def change do
     alter table(:listings) do
-      add :owner_uuid, references(:owner_contacts, column: :uuid, type: :uuid)
+      add :owner_contact_uuid, references(:owner_contacts, column: :uuid, type: :uuid)
     end
   end
 end
