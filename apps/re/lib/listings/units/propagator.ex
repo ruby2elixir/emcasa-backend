@@ -6,14 +6,17 @@ defmodule Re.Listings.Units.Propagator do
 
   alias Re.Listings
 
+  @cloned_attributes ~w(complement price property_tax maintenance_fee floor rooms bathrooms
+    restrooms area garage_spots garage_type suites dependencies balconies)a
+
   def update_listing(listing, []), do: {:ok, listing}
 
-  def update_listing(listing, unit_prices_list) when is_nil(unit_prices_list),
-    do: {:ok, listing}
+  def update_listing(listing, units) do
+    params =
+      units
+      |> Enum.min_by(fn unit -> Map.get(unit, :price) end)
+      |> Map.take(@cloned_attributes)
 
-  def update_listing(listing, unit_price_list) do
-    min_price = Enum.min(unit_price_list)
-
-    Listings.update_price(listing, min_price)
+    Listings.update_from_unit_params(listing, params)
   end
 end
