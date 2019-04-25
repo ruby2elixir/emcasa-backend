@@ -99,7 +99,10 @@ defmodule Re.Listings do
       development_uuid: development.uuid,
       address_id: address.id,
       user_id: user.id,
-      is_exportable: false
+      is_exportable: false,
+      floor_count: development.floor_count,
+      unit_per_floor: development.units_per_floor,
+      elevators: development.elevators
     })
     |> Listing.development_changeset(params)
     |> Repo.insert()
