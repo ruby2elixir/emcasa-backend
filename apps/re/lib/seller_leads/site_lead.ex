@@ -18,7 +18,7 @@ defmodule Re.SellerLeads.SiteLead do
     belongs_to :price_request, Re.PriceSuggestions.Request
     belongs_to :tour_appointment, Re.Calendars.TourAppointment
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @types ~w(Apartamento Casa Cobertura)
