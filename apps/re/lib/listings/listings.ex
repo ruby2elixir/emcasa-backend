@@ -99,14 +99,20 @@ defmodule Re.Listings do
       development_uuid: development.uuid,
       address_id: address.id,
       user_id: user.id,
-      is_exportable: false,
+      is_exportable: false
+    })
+    |> copy_infrastructure(development)
+    |> Listing.development_changeset(params)
+    |> Repo.insert()
+    |> publish_if_admin(user.role)
+  end
+
+  defp copy_infrastructure(changeset, development) do
+    Changeset.change(changeset, %{
       floor_count: development.floor_count,
       unit_per_floor: development.units_per_floor,
       elevators: development.elevators
     })
-    |> Listing.development_changeset(params)
-    |> Repo.insert()
-    |> publish_if_admin(user.role)
   end
 
   defp do_insert(params, address, user) do
