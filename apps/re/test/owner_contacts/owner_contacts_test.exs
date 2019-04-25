@@ -55,7 +55,13 @@ defmodule Re.OwnerContactsTest do
 
   describe "upsert/1" do
     test "should insert an owner contact" do
-      params = %{name: "Jon Snow", phone: "+5511987654321", email: "jon@snow.com"}
+      params = %{
+        name: "Jon Snow",
+        phone: "+5511987654321",
+        email: "jon@snow.com",
+        additional_phones: ["+5511654321098"],
+        additional_emails: ["jon@snow2.com"]
+      }
 
       assert {:ok, inserted_owner_contact} = OwnerContacts.upsert(params)
 
@@ -64,6 +70,8 @@ defmodule Re.OwnerContactsTest do
       assert inserted_owner_contact.name == params.name
       assert inserted_owner_contact.phone == params.phone
       assert inserted_owner_contact.email == params.email
+      assert inserted_owner_contact.additional_phones == params.additional_phones
+      assert inserted_owner_contact.additional_emails == params.additional_emails
     end
 
     test "should upsert existing owner contact" do
@@ -75,7 +83,12 @@ defmodule Re.OwnerContactsTest do
           email: nil
         )
 
-      params = %{name: "JON SNOW", phone: "+5511987654321", email: "jon@snow.com"}
+      params = %{
+        name: "JON SNOW",
+        phone: "+5511987654321",
+        email: "jon@snow.com",
+        additional_emails: ["jon@snow2.com"]
+      }
 
       assert {:ok, updated_owner_contact} = OwnerContacts.upsert(params)
 
@@ -84,6 +97,7 @@ defmodule Re.OwnerContactsTest do
       assert updated_owner_contact.phone == owner_contact.phone
       assert updated_owner_contact.name == params.name
       assert updated_owner_contact.email == params.email
+      assert updated_owner_contact.additional_emails == params.additional_emails
     end
   end
 

@@ -18,13 +18,15 @@ defmodule Re.OwnerContact do
     field :name_slug, :string
     field :phone, :string
     field :email, :string
+    field :additional_phones, {:array, :string}, default: []
+    field :additional_emails, {:array, :string}, default: []
 
     timestamps(type: :utc_datetime)
   end
 
   @required ~w(name phone)a
 
-  @optional ~w(email)a
+  @optional ~w(email additional_phones additional_emails)a
 
   @sluggified_attr ~w(name)a
 

@@ -21,6 +21,8 @@ defmodule Re.OwnerContacts do
   defp get_response(nil), do: {:error, :not_found}
   defp get_response(contact), do: {:ok, contact}
 
+  @replace_fields ~w(name email additional_phones additional_emails updated_at)a
+
   def upsert(params) do
     upsert(%OwnerContact{}, params)
   end
@@ -31,7 +33,7 @@ defmodule Re.OwnerContacts do
     |> OwnerContact.changeset(params)
     |> Repo.insert(
       returning: true,
-      on_conflict: {:replace, [:name, :email, :updated_at]},
+      on_conflict: {:replace, @replace_fields},
       conflict_target: [:name_slug, :phone]
     )
   end

@@ -215,7 +215,9 @@ defmodule Re.Factory do
       name: name,
       name_slug: Re.Slugs.sluggify(name),
       phone: Phone.EnUs.phone(),
-      email: Enum.random([nil, Internet.email()])
+      email: Enum.random([nil, Internet.email()]),
+      additional_phones: [Phone.EnUs.phone()],
+      additional_emails: [Internet.email()]
     }
   end
 

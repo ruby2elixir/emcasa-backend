@@ -8,6 +8,8 @@ defmodule Re.Repo.Migrations.AddOwnerContact do
       add :name_slug, :string, null: false
       add :phone, :string, null: false
       add :email, :string
+      add :additional_phones, {:array, :string}, default: []
+      add :additional_emails, {:array, :string}, default: []
 
       timestamps(type: :timestamptz)
     end
