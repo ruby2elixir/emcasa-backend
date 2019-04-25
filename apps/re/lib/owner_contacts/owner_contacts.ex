@@ -1,10 +1,13 @@
 defmodule Re.OwnerContacts do
+  @moduledoc """
+  Context for owner contacts.
+  """
   alias Re.{
     OwnerContact,
     Repo
   }
 
-  def all(), do: Repo.all(OwnerContact)
+  def all, do: Repo.all(OwnerContact)
 
   def get(uuid) do
     OwnerContact
