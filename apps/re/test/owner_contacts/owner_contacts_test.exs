@@ -53,11 +53,11 @@ defmodule Re.OwnerContactsTest do
     end
   end
 
-  describe "insert/1" do
+  describe "upsert/1" do
     test "should insert an owner contact" do
       params = %{name: "Jon Snow", phone: "+5511987654321", email: "jon@snow.com"}
 
-      assert {:ok, inserted_owner_contact} = OwnerContacts.insert(params)
+      assert {:ok, inserted_owner_contact} = OwnerContacts.upsert(params)
 
       assert inserted_owner_contact.uuid != nil
       assert inserted_owner_contact.name_slug == "jon-snow"
@@ -77,7 +77,7 @@ defmodule Re.OwnerContactsTest do
 
       params = %{name: "JON SNOW", phone: "+5511987654321", email: "jon@snow.com"}
 
-      assert {:ok, updated_owner_contact} = OwnerContacts.insert(params)
+      assert {:ok, updated_owner_contact} = OwnerContacts.upsert(params)
 
       assert updated_owner_contact.uuid == owner_contact.uuid
       assert updated_owner_contact.name_slug == owner_contact.name_slug
@@ -87,7 +87,7 @@ defmodule Re.OwnerContactsTest do
     end
   end
 
-  describe "update/2" do
+  describe "upsert/2" do
     test "should update an existing owner contact" do
       owner_contact =
         insert(:owner_contact,
@@ -97,15 +97,51 @@ defmodule Re.OwnerContactsTest do
           email: "jon@snow.com"
         )
 
-      params = %{name: "Joan Snow", phone: "+5511876543210", email: "joan@snow.com"}
+      params = %{name: "JON SNOW", phone: owner_contact.phone, email: "joan@snow.com"}
 
-      assert {:ok, updated_owner_contact} = OwnerContacts.update(owner_contact, params)
+      assert {:ok, updated_owner_contact} = OwnerContacts.upsert(owner_contact, params)
 
       assert updated_owner_contact.uuid == owner_contact.uuid
       assert updated_owner_contact.name == params.name
-      assert updated_owner_contact.phone == params.phone
+      assert updated_owner_contact.phone == owner_contact.phone
       assert updated_owner_contact.email == params.email
-      assert updated_owner_contact.name_slug == "joan-snow"
+      assert updated_owner_contact.name_slug == owner_contact.name_slug
+    end
+
+    test "should insert new contact if name changes" do
+      owner_contact =
+        insert(:owner_contact,
+          name: "Jon Snow",
+          name_slug: "jon-snow",
+          phone: "+5511987654321"
+        )
+
+      params = %{name: "Aegon Targaryen", phone: owner_contact.phone}
+
+      assert {:ok, inserted_owner_contact} = OwnerContacts.upsert(owner_contact, params)
+
+      assert inserted_owner_contact.uuid != owner_contact.uuid
+      assert inserted_owner_contact.name == params.name
+      assert inserted_owner_contact.name_slug == "aegon-targaryen"
+      assert inserted_owner_contact.phone == owner_contact.phone
+    end
+
+    test "should insert new contact if phone changes" do
+      owner_contact =
+        insert(:owner_contact,
+          name: "Jon Snow",
+          name_slug: "jon-snow",
+          phone: "+5511987654321"
+        )
+
+      params = %{name: owner_contact.name, phone: "+5511876543210"}
+
+      assert {:ok, inserted_owner_contact} = OwnerContacts.upsert(owner_contact, params)
+
+      assert inserted_owner_contact.uuid != owner_contact.uuid
+      assert inserted_owner_contact.name == owner_contact.name
+      assert inserted_owner_contact.name_slug == owner_contact.name_slug
+      assert inserted_owner_contact.phone == params.phone
     end
   end
 end

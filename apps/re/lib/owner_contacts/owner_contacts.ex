@@ -21,19 +21,18 @@ defmodule Re.OwnerContacts do
   defp get_response(nil), do: {:error, :not_found}
   defp get_response(contact), do: {:ok, contact}
 
-  def insert(params) do
-    %OwnerContact{}
+  def upsert(params) do
+    upsert(%OwnerContact{}, params)
+  end
+
+  def upsert(struct, params) do
+    struct
+    |> Map.put(:uuid, nil)
     |> OwnerContact.changeset(params)
     |> Repo.insert(
       returning: true,
       on_conflict: {:replace, [:name, :email, :updated_at]},
       conflict_target: [:name_slug, :phone]
     )
-  end
-
-  def update(owner_contact, params) do
-    owner_contact
-    |> OwnerContact.changeset(params)
-    |> Repo.update()
   end
 end
