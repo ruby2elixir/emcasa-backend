@@ -2,7 +2,7 @@
 version: '3'
 services:
   db:
-    image: 'postgres:10.6-alpine'
+    image: 'postgres:11.2-alpine'
     hostname: &pg_hostname db
     volumes:
       - './priv/docker/postgres/init-emcasa.sql:/docker-entrypoint-initdb.d/init-emcasa.sql'
