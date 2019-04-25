@@ -9,7 +9,8 @@ defmodule Re.Application do
 
   alias Re.{
     Leads.Buyer.JobQueue,
-    Listings.History.Server,
+    Listings.History,
+    Listings.Units,
     PubSub,
     Repo,
     Statistics.Visualizations
@@ -32,7 +33,8 @@ defmodule Re.Application do
 
   defp extra_processes(_),
     do: [
-      worker(Server, []),
+      worker(History.Server, []),
+      worker(Units.Server, []),
       worker(Visualizations, []),
       {JobQueue, repo: Repo}
     ]
