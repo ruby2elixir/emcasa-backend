@@ -13,7 +13,7 @@ defmodule Re.Repo.Migrations.CreateSiteSellerLeads do
       add :price_request_id, references(:price_suggestion_requests)
       add :tour_appointment_id, references(:tour_appointments)
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
 
     create index(:site_seller_leads, [:price_request_id, :tour_appointment_id])
