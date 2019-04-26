@@ -85,6 +85,8 @@ defmodule ReWeb.Types.Listing do
     field :development, :development, resolve: &Resolvers.Developments.per_listing/3
 
     field :tags, list_of(:tag), resolve: &Resolvers.Tags.per_listing/3
+
+    field :owner_contact, :owner_contact, resolve: &Resolvers.OwnerContacts.per_listing/3
   end
 
   input_object :listing_input do
