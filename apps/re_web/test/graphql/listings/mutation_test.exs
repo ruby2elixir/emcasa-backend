@@ -329,6 +329,57 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert expected == json_response(conn, 200)["data"]
     end
 
+    test "admin should insert listing with owner contact", %{
+      admin_conn: conn,
+      old_address: address
+    } do
+      variables = %{
+        "input" => %{
+          "type" => "Apartamento",
+          "addressId" => address.id,
+          "ownerContact" => %{
+            "name" => "Jon Snow",
+            "phone" => "+5511987654321",
+            "email" => "jon@snow.com",
+            "additionalPhones" => ["+5511876543210"],
+            "additionalEmails" => ["jonsnow@gmail.com"]
+          }
+        }
+      }
+
+      mutation = """
+        mutation InsertListing ($input: ListingInput!) {
+          insertListing(input: $input) {
+            type
+            ownerContact {
+              name
+              phone
+              email
+              additionalPhones
+              additionalEmails
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      expected = %{
+        "insertListing" => %{
+          "type" => "Apartamento",
+          "ownerContact" => %{
+            "name" => "Jon Snow",
+            "phone" => "+5511987654321",
+            "email" => "jon@snow.com",
+            "additionalPhones" => ["+5511876543210"],
+            "additionalEmails" => ["jonsnow@gmail.com"]
+          }
+        }
+      }
+
+      assert expected == json_response(conn, 200)["data"]
+    end
+
     test "anonymous should not insert listing", %{
       unauthenticated_conn: conn,
       listing: listing,
