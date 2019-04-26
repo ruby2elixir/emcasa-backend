@@ -1,7 +1,10 @@
 defmodule Re.OwnerContactsTest do
   use Re.ModelCase
 
-  alias Re.OwnerContacts
+  alias Re.{
+    OwnerContact,
+    OwnerContacts
+  }
 
   import Re.Factory
 
@@ -156,6 +159,33 @@ defmodule Re.OwnerContactsTest do
       assert inserted_owner_contact.name == owner_contact.name
       assert inserted_owner_contact.name_slug == owner_contact.name_slug
       assert inserted_owner_contact.phone == params.phone
+    end
+  end
+
+  describe "data/1" do
+    test "should fetch owner contact through dataloader" do
+      owner_contact = insert(:owner_contact)
+
+      loader =
+        Dataloader.add_source(
+          Dataloader.new(),
+          :owner_contacts,
+          OwnerContacts.data(%{})
+        )
+
+      loader =
+        loader
+        |> Dataloader.load(
+          :owner_contacts,
+          OwnerContact,
+          owner_contact.uuid
+        )
+        |> Dataloader.run()
+
+      owner_contact_fetched =
+        Dataloader.get(loader, :owner_contacts, OwnerContact, owner_contact.uuid)
+
+      assert owner_contact == owner_contact_fetched
     end
   end
 end
