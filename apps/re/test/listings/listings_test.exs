@@ -514,7 +514,11 @@ defmodule Re.ListingsTest do
       user = insert(:user, role: "admin")
 
       assert {:ok, inserted_listing} =
-               Listings.insert(@insert_development_listing_params, address, user, development)
+               Listings.insert(@insert_development_listing_params,
+                 address: address,
+                 user: user,
+                 development: development
+               )
 
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.development_uuid == development.uuid
