@@ -92,9 +92,10 @@ defmodule Re.Listings do
          do: do_insert(params, opts_map)
   end
 
-  defp do_insert(params, %{development: _} = opts) do
+  defp do_insert(params, %{development: development} = opts) do
     %Listing{}
     |> changeset_for_opts(opts)
+    |> copy_infrastructure(development)
     |> Listing.development_changeset(params)
     |> Repo.insert()
     |> publish_if_admin(opts.user.role)
@@ -106,6 +107,14 @@ defmodule Re.Listings do
     |> Listing.changeset(params, opts.user.role)
     |> Repo.insert()
     |> publish_if_admin(opts.user.role)
+  end
+
+  defp copy_infrastructure(changeset, development) do
+    Changeset.change(changeset, %{
+      floor_count: development.floor_count,
+      unit_per_floor: development.units_per_floor,
+      elevators: development.elevators
+    })
   end
 
   defp publish_if_admin(result, "user"), do: PubSub.publish_new(result, "new_listing")

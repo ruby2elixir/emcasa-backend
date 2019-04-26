@@ -14,6 +14,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.Unit
   import_types ReWeb.Types.Tag
   import_types ReWeb.Types.OwnerContact
+  import_types ReWeb.Types.SellerLead
   import_types ReWeb.Types.Custom.UUID
   import_types Absinthe.Type.Custom
 
@@ -48,6 +49,7 @@ defmodule ReWeb.Schema do
     import_fields(:development_mutations)
     import_fields(:unit_mutations)
     import_fields(:tag_mutations)
+    import_fields(:seller_lead_mutations)
   end
 
   subscription do

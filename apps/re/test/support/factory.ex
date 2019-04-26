@@ -167,7 +167,10 @@ defmodule Re.Factory do
       title: Name.name(),
       phase: Enum.random(~w(pre-launch planning building delivered)),
       builder: Name.name(),
-      description: Shakespeare.hamlet()
+      description: Shakespeare.hamlet(),
+      floor_count: Enum.random(1..20),
+      units_per_floor: Enum.random(1..20),
+      elevators: Enum.random(1..5)
     }
   end
 
