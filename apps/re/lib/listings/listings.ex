@@ -169,6 +169,9 @@ defmodule Re.Listings do
       {:user, _}, changeset ->
         changeset
 
+      {:owner_contact, nil}, changeset ->
+        changeset
+
       {:owner_contact, owner_contact}, changeset ->
         Changeset.change(changeset, %{owner_contact_uuid: owner_contact.uuid})
     end)

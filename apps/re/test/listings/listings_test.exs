@@ -421,6 +421,18 @@ defmodule Re.ListingsTest do
                @insert_listing_params["price"] / @insert_listing_params["area"]
     end
 
+    test "should insert if owner contact is nil" do
+      address = insert(:address)
+      user = insert(:user, role: "admin")
+
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_admin_listing_params,
+                 address: address,
+                 user: user,
+                 owner_contact: nil
+               )
+    end
+
     test "should insert if user provides a phone" do
       address = insert(:address)
       user = insert(:user, role: "user", phone: nil)
@@ -543,6 +555,22 @@ defmodule Re.ListingsTest do
 
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.owner_contact_uuid == updated_owner_contact.uuid
+    end
+
+    test "should update if owner contact is nil" do
+      user = insert(:user)
+      address = insert(:address)
+      original_owner_contact = insert(:owner_contact)
+      listing = insert(:listing, user: user, owner_contact: original_owner_contact)
+
+      Listings.update(listing, %{},
+        address: address,
+        user: user,
+        owner_contact: nil
+      )
+
+      updated_listing = Repo.get(Listing, listing.id)
+      assert updated_listing.owner_contact_uuid == original_owner_contact.uuid
     end
 
     test "should not change user who created listing" do
