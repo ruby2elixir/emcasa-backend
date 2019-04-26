@@ -112,8 +112,13 @@ defmodule ReWeb.Resolvers.Listings do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, current_user, listing),
          {:ok, address} <- get_address(listing_params),
+         {:ok, owner_contact} <- upsert_owner_contact(listing_params),
          {:ok, listing} <-
-           Listings.update(listing, listing_params, address: address, user: current_user),
+           Listings.update(listing, listing_params,
+             address: address,
+             user: current_user,
+             owner_contact: owner_contact
+           ),
          {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
       {:ok, listing}
     end
