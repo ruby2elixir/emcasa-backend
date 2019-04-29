@@ -29,7 +29,11 @@ defmodule ReWeb.Types.Development do
       resolve &Resolvers.Images.per_development/3
     end
 
-    field :listings, list_of(:listing), resolve: dataloader(Re.Listings)
+    field :listings, list_of(:listing) do
+      arg :filters, :listing_filter_input
+
+      resolve &Resolvers.Listings.per_development/3
+    end
   end
 
   input_object :development_input do

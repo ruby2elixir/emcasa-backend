@@ -125,6 +125,41 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
              } == json_response(conn, 200)["data"]["development"]
     end
 
+    test "admin should query listings's development with filters", %{admin_conn: conn} do
+      listing_1 = insert(:listing, price: 1_000_000)
+      listing_2 = insert(:listing, price: 2_000_000)
+
+      %{uuid: development_uuid} = insert(:development, listings: [listing_1, listing_2])
+
+      variables = %{
+        "uuid" => development_uuid,
+        "filters" => %{
+          "maxPrice" => 1_500_000
+        }
+      }
+
+      query = """
+        query Development (
+          $uuid: UUID!,
+          $filters: ListingFilterInput
+          ) {
+          development (uuid: $uuid) {
+            listings(filters: $filters) {
+              id
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert %{
+               "listings" => [
+                 %{"id" => to_string(listing_1.id)}
+               ]
+             } == json_response(conn, 200)["data"]["development"]
+    end
+
     test "user should query development", %{user_conn: conn} do
       %{filename: image_filename1} = image1 = insert(:image, is_active: true, position: 1)
       %{filename: image_filename2} = image2 = insert(:image, is_active: true, position: 2)
