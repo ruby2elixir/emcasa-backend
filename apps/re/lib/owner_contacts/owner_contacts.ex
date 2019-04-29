@@ -2,10 +2,18 @@ defmodule Re.OwnerContacts do
   @moduledoc """
   Context for owner contacts.
   """
+  @behaviour Bodyguard.Policy
+
   alias Re.{
     OwnerContact,
     Repo
   }
+
+  defdelegate authorize(action, user, params), to: __MODULE__.Policy
+
+  def data(params), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+
+  def query(_query, _args), do: OwnerContact
 
   def all, do: Repo.all(OwnerContact)
 

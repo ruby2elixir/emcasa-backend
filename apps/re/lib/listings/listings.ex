@@ -86,25 +86,27 @@ defmodule Re.Listings do
   def get_partial_preloaded(id, preload),
     do: do_get(Queries.preload_relations(Listing, preload), id)
 
-  def insert(params, address, user, development \\ nil)
-
-  def insert(params, address, user, nil) do
-    with {:ok, user} <- validate_phone_number(params, user),
-         do: do_insert(params, address, user)
+  def insert(params, opts \\ []) do
+    with {:ok, _} <- validate_phone_number(params, Keyword.get(opts, :user)),
+         opts_map <- Enum.into(opts, %{}),
+         do: do_insert(params, opts_map)
   end
 
-  def insert(params, address, user, development) do
+  defp do_insert(params, %{development: development} = opts) do
     %Listing{}
-    |> Changeset.change(%{
-      development_uuid: development.uuid,
-      address_id: address.id,
-      user_id: user.id,
-      is_exportable: false
-    })
+    |> changeset_for_opts(opts)
     |> copy_infrastructure(development)
     |> Listing.development_changeset(params)
     |> Repo.insert()
-    |> publish_if_admin(user.role)
+    |> publish_if_admin(opts.user.role)
+  end
+
+  defp do_insert(params, opts) do
+    %Listing{}
+    |> changeset_for_opts(opts)
+    |> Listing.changeset(params, opts.user.role)
+    |> Repo.insert()
+    |> publish_if_admin(opts.user.role)
   end
 
   defp copy_infrastructure(changeset, development) do
@@ -113,15 +115,6 @@ defmodule Re.Listings do
       unit_per_floor: development.units_per_floor,
       elevators: development.elevators
     })
-  end
-
-  defp do_insert(params, address, user) do
-    %Listing{}
-    |> Changeset.change(address_id: address.id)
-    |> Changeset.change(user_id: user.id)
-    |> Listing.changeset(params, user.role)
-    |> Repo.insert()
-    |> publish_if_admin(user.role)
   end
 
   defp publish_if_admin(result, "user"), do: PubSub.publish_new(result, "new_listing")
@@ -144,12 +137,25 @@ defmodule Re.Listings do
     |> Repo.update()
   end
 
-  def update(listing, params, address, user, development \\ nil)
+  def update(listing, params, opts \\ []) do
+    do_update(listing, params, Enum.into(opts, %{}))
+  end
 
-  def update(listing, params, address, user, nil) do
+  def do_update(listing, params, %{development: _} = opts) do
     changeset =
       listing
-      |> Changeset.change(address_id: address.id)
+      |> changeset_for_opts(opts)
+      |> Listing.development_changeset(params)
+
+    changeset
+    |> Repo.update()
+    |> PubSub.publish_update(changeset, "update_listing", %{user: opts.user})
+  end
+
+  def do_update(listing, params, %{user: user} = opts) do
+    changeset =
+      listing
+      |> changeset_for_opts(opts)
       |> Listing.changeset(params, user.role)
       |> deactivate_if_not_admin(user)
 
@@ -158,20 +164,26 @@ defmodule Re.Listings do
     |> PubSub.publish_update(changeset, "update_listing", %{user: user})
   end
 
-  def update(listing, params, address, user, development) do
-    changeset =
-      listing
-      |> Changeset.change(%{
-        development_uuid: development.uuid,
-        address_id: address.id,
-        user_id: user.id,
-        is_exportable: false
-      })
-      |> Listing.development_changeset(params)
+  defp changeset_for_opts(%{user_id: user_id} = listing, opts) do
+    Enum.reduce(opts, Changeset.change(listing), fn
+      {:development, development}, changeset ->
+        Changeset.change(changeset, %{development_uuid: development.uuid, is_exportable: false})
 
-    changeset
-    |> Repo.update()
-    |> PubSub.publish_update(changeset, "update_listing", %{user: user})
+      {:address, address}, changeset ->
+        Changeset.change(changeset, %{address_id: address.id})
+
+      {:user, user}, changeset when user_id == nil ->
+        Changeset.change(changeset, %{user_id: user.id})
+
+      {:user, _}, changeset ->
+        changeset
+
+      {:owner_contact, nil}, changeset ->
+        changeset
+
+      {:owner_contact, owner_contact}, changeset ->
+        Changeset.change(changeset, %{owner_contact_uuid: owner_contact.uuid})
+    end)
   end
 
   def update_from_unit_params(listing, params) do

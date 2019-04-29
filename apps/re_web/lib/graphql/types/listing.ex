@@ -85,6 +85,8 @@ defmodule ReWeb.Types.Listing do
     field :development, :development, resolve: &Resolvers.Developments.per_listing/3
 
     field :tags, list_of(:tag), resolve: &Resolvers.Tags.per_listing/3
+
+    field :owner_contact, :owner_contact, resolve: &Resolvers.OwnerContacts.per_listing/3
   end
 
   input_object :listing_input do
@@ -125,6 +127,8 @@ defmodule ReWeb.Types.Listing do
     field :development_uuid, :uuid
 
     field :tags, list_of(non_null(:uuid))
+
+    field :owner_contact, :owner_contact_input
   end
 
   enum :garage_type, values: ~w(contract condominium)

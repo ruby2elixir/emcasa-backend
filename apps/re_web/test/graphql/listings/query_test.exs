@@ -984,6 +984,107 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       assert expected == json_response(conn, 200)["data"]["listings"]
     end
+
+    test "admin should query listing with owner contact", %{admin_conn: conn} do
+      insert(
+        :listing,
+        owner_contact:
+          build(:owner_contact, name: "Jon Snow", name_slug: "jon-snow", phone: "+5511987654321")
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              ownerContact {
+                name
+                phone
+              }
+            }
+          }
+        }
+      """
+
+      expected = %{
+        "listings" => [
+          %{
+            "ownerContact" => %{"name" => "Jon Snow", "phone" => "+5511987654321"}
+          }
+        ]
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert expected == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "user should not query listing with owner contact", %{user_conn: conn} do
+      insert(
+        :listing,
+        owner_contact:
+          build(:owner_contact, name: "Jon Snow", name_slug: "jon-snow", phone: "+5511987654321")
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              ownerContact {
+                name
+                phone
+              }
+            }
+          }
+        }
+      """
+
+      expected = %{
+        "listings" => [
+          %{
+            "ownerContact" => nil
+          }
+        ]
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert expected == json_response(conn, 200)["data"]["listings"]
+    end
+
+    test "anonymous user should not query listing with owner contact", %{
+      unauthenticated_conn: conn
+    } do
+      insert(
+        :listing,
+        owner_contact:
+          build(:owner_contact, name: "Jon Snow", name_slug: "jon-snow", phone: "+5511987654321")
+      )
+
+      query = """
+        query Listings {
+          listings {
+            listings {
+              ownerContact {
+                name
+                phone
+              }
+            }
+          }
+        }
+      """
+
+      expected = %{
+        "listings" => [
+          %{
+            "ownerContact" => nil
+          }
+        ]
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert expected == json_response(conn, 200)["data"]["listings"]
+    end
   end
 
   describe "listing" do

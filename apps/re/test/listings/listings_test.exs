@@ -372,20 +372,33 @@ defmodule Re.ListingsTest do
     test "should insert with description size bigger than 255" do
       address = insert(:address)
       user = insert(:user, role: "user")
+      owner_contact = insert(:owner_contact)
 
-      assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address, user)
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_listing_params,
+                 address: address,
+                 user: user,
+                 owner_contact: owner_contact
+               )
+
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.address_id == address.id
       assert retrieved_listing.user_id == user.id
+      assert retrieved_listing.owner_contact_uuid == owner_contact.uuid
       assert retrieved_listing.uuid
     end
 
     test "should insert inactive for admin user" do
       address = insert(:address)
       user = insert(:user, role: "admin")
+      owner_contact = insert(:owner_contact)
 
       assert {:ok, inserted_listing} =
-               Listings.insert(@insert_admin_listing_params, address, user)
+               Listings.insert(@insert_admin_listing_params,
+                 address: address,
+                 user: user,
+                 owner_contact: owner_contact
+               )
 
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.status == "inactive"
@@ -398,7 +411,9 @@ defmodule Re.ListingsTest do
       address = insert(:address)
       user = insert(:user, role: "user")
 
-      assert {:ok, inserted_listing} = Listings.insert(@insert_listing_params, address, user)
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_listing_params, address: address, user: user)
+
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.status == "inactive"
 
@@ -406,12 +421,27 @@ defmodule Re.ListingsTest do
                @insert_listing_params["price"] / @insert_listing_params["area"]
     end
 
+    test "should insert if owner contact is nil" do
+      address = insert(:address)
+      user = insert(:user, role: "admin")
+
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_admin_listing_params,
+                 address: address,
+                 user: user,
+                 owner_contact: nil
+               )
+    end
+
     test "should insert if user provides a phone" do
       address = insert(:address)
       user = insert(:user, role: "user", phone: nil)
 
       assert {:ok, inserted_listing} =
-               Listings.insert(Map.put(@insert_listing_params, "phone", "123321"), address, user)
+               Listings.insert(Map.put(@insert_listing_params, "phone", "123321"),
+                 address: address,
+                 user: user
+               )
 
       assert inserted_listing = Repo.get(Listing, inserted_listing.id)
       assert inserted_listing.status == "inactive"
@@ -422,14 +452,16 @@ defmodule Re.ListingsTest do
       user = insert(:user, role: "user", phone: nil)
 
       assert {:error, :phone_number_required} =
-               Listings.insert(@insert_listing_params, address, user)
+               Listings.insert(@insert_listing_params, address: address, user: user)
     end
 
     test "should insert if user doesn't have phone but is admin" do
       address = insert(:address)
       user = insert(:user, role: "admin", phone: nil)
 
-      assert {:ok, listing} = Listings.insert(@insert_listing_params, address, user)
+      assert {:ok, listing} =
+               Listings.insert(@insert_listing_params, address: address, user: user)
+
       assert Repo.get(Listing, listing.id)
     end
   end
@@ -447,7 +479,11 @@ defmodule Re.ListingsTest do
       user = insert(:user, role: "admin")
 
       assert {:ok, inserted_listing} =
-               Listings.insert(@insert_development_listing_params, address, user, development)
+               Listings.insert(@insert_development_listing_params,
+                 address: address,
+                 user: user,
+                 development: development
+               )
 
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.development_uuid == development.uuid
@@ -462,7 +498,11 @@ defmodule Re.ListingsTest do
       user = insert(:user, role: "admin")
 
       assert {:ok, inserted_listing} =
-               Listings.insert(@insert_development_listing_params, address, user, development)
+               Listings.insert(@insert_development_listing_params,
+                 address: address,
+                 user: user,
+                 development: development
+               )
 
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.is_exportable == false
@@ -474,7 +514,11 @@ defmodule Re.ListingsTest do
       user = insert(:user, role: "admin")
 
       assert {:ok, inserted_listing} =
-               Listings.insert(@insert_development_listing_params, address, user, development)
+               Listings.insert(@insert_development_listing_params,
+                 address: address,
+                 user: user,
+                 development: development
+               )
 
       assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
       assert retrieved_listing.development_uuid == development.uuid
@@ -492,7 +536,7 @@ defmodule Re.ListingsTest do
       address = insert(:address)
       listing = insert(:listing, user: user, price: 1_000_000)
 
-      Listings.update(listing, %{price: listing.price + 50_000}, address, user)
+      Listings.update(listing, %{price: listing.price + 50_000}, address: address, user: user)
 
       GenServer.call(Server, :inspect)
 
@@ -507,11 +551,59 @@ defmodule Re.ListingsTest do
       address = insert(:address)
       listing = insert(:listing, user: user, rooms: 3)
 
-      Listings.update(listing, %{rooms: 4}, address, user)
+      Listings.update(listing, %{rooms: 4}, address: address, user: user)
 
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.status == "inactive"
       assert [] = Repo.all(Re.Listings.PriceHistory)
+    end
+
+    test "should update owner contact" do
+      user = insert(:user)
+      address = insert(:address)
+      original_owner_contact = insert(:owner_contact)
+      listing = insert(:listing, user: user, owner_contact: original_owner_contact)
+
+      updated_owner_contact = insert(:owner_contact)
+
+      Listings.update(listing, %{},
+        address: address,
+        user: user,
+        owner_contact: updated_owner_contact
+      )
+
+      updated_listing = Repo.get(Listing, listing.id)
+      assert updated_listing.owner_contact_uuid == updated_owner_contact.uuid
+    end
+
+    test "should update if owner contact is nil" do
+      user = insert(:user)
+      address = insert(:address)
+      original_owner_contact = insert(:owner_contact)
+      listing = insert(:listing, user: user, owner_contact: original_owner_contact)
+
+      Listings.update(listing, %{},
+        address: address,
+        user: user,
+        owner_contact: nil
+      )
+
+      updated_listing = Repo.get(Listing, listing.id)
+      assert updated_listing.owner_contact_uuid == original_owner_contact.uuid
+    end
+
+    test "should not change user who created listing" do
+      original_user = insert(:user)
+      address = insert(:address)
+      listing = insert(:listing, address: address, user: original_user, rooms: 3)
+
+      updated_user = insert(:user)
+      assert updated_user.id != original_user.id
+
+      Listings.update(listing, %{rooms: 4}, address: address, user: updated_user)
+
+      updated_listing = Repo.get(Listing, listing.id)
+      assert updated_listing.user_id == original_user.id
     end
   end
 
@@ -522,7 +614,11 @@ defmodule Re.ListingsTest do
       development = insert(:development, address: address)
       listing = insert(:listing, user: user)
 
-      Listings.update(listing, %{is_exportable: true}, address, user, development)
+      Listings.update(listing, %{is_exportable: true},
+        address: address,
+        user: user,
+        development: development
+      )
 
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.is_exportable == false

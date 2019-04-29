@@ -13,6 +13,7 @@ defmodule ReWeb.Resolvers.Listings do
     Listings.Featured,
     Listings.History.Prices,
     Listings.Related,
+    OwnerContacts,
     PriceSuggestions
   }
 
@@ -48,7 +49,12 @@ defmodule ReWeb.Resolvers.Listings do
            Bodyguard.permit(Listings, :create_development_listing, current_user, listing_params),
          {:ok, address} <- get_address(listing_params),
          {:ok, development} <- get_development(listing_params),
-         {:ok, listing} <- Listings.insert(listing_params, address, current_user, development),
+         {:ok, listing} <-
+           Listings.insert(listing_params,
+             address: address,
+             user: current_user,
+             development: development
+           ),
          {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
       {:ok, listing}
     else
@@ -60,7 +66,13 @@ defmodule ReWeb.Resolvers.Listings do
   def insert(%{input: listing_params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, current_user, listing_params),
          {:ok, address} <- get_address(listing_params),
-         {:ok, listing} <- Listings.insert(listing_params, address, current_user),
+         {:ok, owner_contact} <- upsert_owner_contact(listing_params),
+         {:ok, listing} <-
+           Listings.insert(listing_params,
+             address: address,
+             user: current_user,
+             owner_contact: owner_contact
+           ),
          {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
       {:ok, listing}
     else
@@ -84,7 +96,11 @@ defmodule ReWeb.Resolvers.Listings do
          address <- listing.address,
          development <- listing.development,
          {:ok, listing} <-
-           Listings.update(listing, listing_params, address, current_user, development),
+           Listings.update(listing, listing_params,
+             address: address,
+             user: current_user,
+             development: development
+           ),
          {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
       {:ok, listing}
     end
@@ -96,11 +112,22 @@ defmodule ReWeb.Resolvers.Listings do
     with {:ok, listing} <- Listings.get(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, current_user, listing),
          {:ok, address} <- get_address(listing_params),
-         {:ok, listing} <- Listings.update(listing, listing_params, address, current_user),
+         {:ok, owner_contact} <- upsert_owner_contact(listing_params),
+         {:ok, listing} <-
+           Listings.update(listing, listing_params,
+             address: address,
+             user: current_user,
+             owner_contact: owner_contact
+           ),
          {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
       {:ok, listing}
     end
   end
+
+  defp upsert_owner_contact(%{owner_contact: owner_contact}),
+    do: OwnerContacts.upsert(owner_contact)
+
+  defp upsert_owner_contact(_), do: {:ok, nil}
 
   def is_active(%{status: "active"}, _, _), do: {:ok, true}
   def is_active(_, _, _), do: {:ok, false}

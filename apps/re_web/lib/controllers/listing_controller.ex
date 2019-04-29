@@ -26,7 +26,7 @@ defmodule ReWeb.ListingController do
   def create(conn, %{"listing" => listing_params, "address" => address_params} = params, user) do
     with :ok <- Bodyguard.permit(Listings, :create_listing, user, params),
          {:ok, address} <- Addresses.insert_or_update(address_params),
-         {:ok, listing} <- Listings.insert(listing_params, address, user) do
+         {:ok, listing} <- Listings.insert(listing_params, address: address, user: user) do
       send_email_if_not_admin(listing, user)
 
       conn
@@ -60,7 +60,7 @@ defmodule ReWeb.ListingController do
     with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :update_listing, user, listing),
          {:ok, address} <- Addresses.insert_or_update(address_params),
-         {:ok, listing} <- Listings.update(listing, listing_params, address, user) do
+         {:ok, listing} <- Listings.update(listing, listing_params, address: address, user: user) do
       conn
       |> put_view(get_view(user))
       |> render("edit.json", listing: listing)
