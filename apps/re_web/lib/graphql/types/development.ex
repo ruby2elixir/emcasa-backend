@@ -4,7 +4,7 @@ defmodule ReWeb.Types.Development do
   """
   use Absinthe.Schema.Notation
 
-  import Absinthe.Resolution.Helpers, only: [dataloader: 2, dataloader: 1]
+  import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
   alias ReWeb.Resolvers
 
