@@ -11,12 +11,12 @@ defmodule ReWeb.Resolvers.Images do
   }
 
   def per_listing(listing, params, %{context: %{loader: loader, current_user: current_user}}) do
-    is_admin? = admin_rights?(listing, current_user)
+    params = Map.put(params, :has_admin_rights, admin_rights?(listing, current_user))
 
     loader
     |> Dataloader.load(
       Re.Images,
-      {:images, Map.put(params, :has_admin_rights, is_admin?)},
+      {:images, params},
       listing
     )
     |> on_load(fn loader ->
@@ -24,7 +24,7 @@ defmodule ReWeb.Resolvers.Images do
         loader
         |> Dataloader.get(
           Re.Images,
-          {:images, Map.put(params, :has_admin_rights, is_admin?)},
+          {:images, params},
           listing
         )
         |> limit(params)
@@ -36,12 +36,12 @@ defmodule ReWeb.Resolvers.Images do
   def per_development(development, params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    is_admin? = admin_rights?(nil, current_user)
+    params = Map.put(params, :has_admin_rights, admin_rights?(nil, current_user))
 
     loader
     |> Dataloader.load(
       Re.Images,
-      {:images, Map.put(params, :has_admin_rights, is_admin?)},
+      {:images, params},
       development
     )
     |> on_load(fn loader ->
@@ -49,7 +49,7 @@ defmodule ReWeb.Resolvers.Images do
         loader
         |> Dataloader.get(
           Re.Images,
-          {:images, Map.put(params, :has_admin_rights, is_admin?)},
+          {:images, params},
           development
         )
 
