@@ -11,15 +11,13 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
     user_user = insert(:user, email: "user@email.com", role: "user")
 
     price_request = insert(:price_suggestion_request)
-    tour_appointment = insert(:tour_appointment)
 
     {
       :ok,
       unauthenticated_conn: conn,
       admin_conn: login_as(conn, admin_user),
       user_conn: login_as(conn, user_user),
-      price_request: price_request,
-      tour_appointment: tour_appointment
+      price_request: price_request
     }
   end
 
@@ -39,8 +37,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
 
     test "admin should add seller lead", %{
       admin_conn: conn,
-      price_request: price_request,
-      tour_appointment: tour_appointment
+      price_request: price_request
     } do
       variables = %{
         "input" => %{
@@ -49,8 +46,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
           "maintenance_fee" => 100.00,
           "suites" => 2,
           "price" => 800_000,
-          "priceRequestId" => price_request.id,
-          "tourAppointmentId" => tour_appointment.id
+          "priceRequestId" => price_request.id
         }
       }
 
@@ -69,8 +65,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
 
     test "user should add seller lead", %{
       user_conn: conn,
-      price_request: price_request,
-      tour_appointment: tour_appointment
+      price_request: price_request
     } do
       variables = %{
         "input" => %{
@@ -79,8 +74,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
           "maintenance_fee" => 100.00,
           "suites" => 2,
           "price" => 800_000,
-          "priceRequestId" => price_request.id,
-          "tourAppointmentId" => tour_appointment.id
+          "priceRequestId" => price_request.id
         }
       }
 
@@ -99,8 +93,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
 
     test "anonymous should not add seller lead", %{
       unauthenticated_conn: conn,
-      price_request: price_request,
-      tour_appointment: tour_appointment
+      price_request: price_request
     } do
       variables = %{
         "input" => %{
@@ -109,8 +102,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
           "maintenance_fee" => 100.00,
           "suites" => 2,
           "price" => 800_000,
-          "priceRequestId" => price_request.id,
-          "tourAppointmentId" => tour_appointment.id
+          "priceRequestId" => price_request.id
         }
       }
 

@@ -23,12 +23,8 @@ defmodule Re.SellerLeads.SiteLeadTest do
   describe "changeset" do
     test "should be valid" do
       price_suggestion_request = insert(:price_suggestion_request)
-      tour_appointment = insert(:tour_appointment)
 
-      attrs =
-        @valid_attributes
-        |> Map.put(:price_request_id, price_suggestion_request.id)
-        |> Map.put(:tour_appointment_id, tour_appointment.id)
+      attrs = Map.put(@valid_attributes, :price_request_id, price_suggestion_request.id)
 
       changeset = SiteLead.changeset(%SiteLead{}, attrs)
       assert changeset.valid?
@@ -54,9 +50,6 @@ defmodule Re.SellerLeads.SiteLeadTest do
                 [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :price_request_id) ==
-               {"can't be blank", [validation: :required]}
-
-      assert Keyword.get(changeset.errors, :tour_appointment_id) ==
                {"can't be blank", [validation: :required]}
     end
   end
