@@ -36,7 +36,7 @@ defmodule ReWeb.Resolvers.Images do
   def per_development(development, params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    params = Map.put(params, :has_admin_rights, Listings.has_admin_rights?(nil, current_user))
+    params = Map.put(params, :has_admin_rights, admin?(current_user))
 
     loader
     |> Dataloader.load(
@@ -120,6 +120,9 @@ defmodule ReWeb.Resolvers.Images do
 
   def insert_image_trigger(%{parent: %Re.Development{uuid: uuid}}),
     do: "development_updated:#{uuid}"
+
+  defp admin?(%{role: "admin"}), do: true
+  defp admin?(_), do: false
 
   defp config_subscription(%{listing_id: id}, %{role: "admin"}, topic),
     do: {:ok, topic: "#{topic}:#{id}"}

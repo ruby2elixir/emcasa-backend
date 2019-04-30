@@ -16,7 +16,7 @@ defmodule ReWeb.Resolvers.Addresses do
   end
 
   def per_development(_development, params, %{context: %{current_user: current_user}}) do
-    admin? = Listings.has_admin_rights?(nil, current_user)
+    admin? = admin?(current_user)
 
     {:address, Map.put(params, :has_admin_rights, admin?)}
   end
@@ -44,4 +44,7 @@ defmodule ReWeb.Resolvers.Addresses do
   end
 
   def is_covered(address, _, _), do: {:ok, Addresses.is_covered(address)}
+
+  defp admin?(%{role: "admin"}), do: true
+  defp admin?(_), do: false
 end
