@@ -454,7 +454,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
           development {
             uuid
             name
-            title
             phase
             builder
             description
@@ -513,7 +512,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       assert associated_development["uuid"] == development.uuid
       assert associated_development["name"] == development.name
-      assert associated_development["title"] == development.title
       assert associated_development["phase"] == development.phase
       assert associated_development["builder"] == development.builder
       assert associated_development["description"] == development.description

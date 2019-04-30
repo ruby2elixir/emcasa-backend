@@ -11,7 +11,6 @@ defmodule Re.DevelopmentsTest do
   describe "insert/2" do
     @insert_development_params %{
       name: "Condomínio EmCasa",
-      title: "Condomínio EmCasa",
       phase: "building",
       builder: "EmCasa Corp",
       description: "Mi casa es su casa."
@@ -41,7 +40,6 @@ defmodule Re.DevelopmentsTest do
       updated_development = Repo.get(Development, development.uuid)
       assert updated_development.address_id == new_address.id
       assert updated_development.name == Map.get(new_development_params, :name)
-      assert updated_development.title == Map.get(new_development_params, :title)
       assert updated_development.builder == Map.get(new_development_params, :builder)
       assert updated_development.description == Map.get(new_development_params, :description)
       assert updated_development.phase == Map.get(new_development_params, :phase)

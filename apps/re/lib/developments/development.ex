@@ -11,7 +11,6 @@ defmodule Re.Development do
 
   schema "developments" do
     field :name, :string
-    field :title, :string
     field :phase, :string
     field :builder, :string
     field :description, :string
@@ -30,7 +29,7 @@ defmodule Re.Development do
 
   @phases ~w(pre-launch planning building delivered)
 
-  @required ~w(name title phase builder description address_id)a
+  @required ~w(name phase builder description address_id)a
 
   @optional ~w(floor_count units_per_floor elevators)a
 
