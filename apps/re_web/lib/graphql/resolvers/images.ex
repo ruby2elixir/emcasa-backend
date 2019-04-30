@@ -7,11 +7,12 @@ defmodule ReWeb.Resolvers.Images do
   alias Re.{
     Developments,
     Images,
+    Images.Policy,
     Listings
   }
 
   def per_listing(listing, params, %{context: %{loader: loader, current_user: current_user}}) do
-    params = Map.put(params, :has_admin_rights, Listings.has_admin_rights?(listing, current_user))
+    params = Map.put(params, :has_admin_rights, access_inactive_images?(current_user, listing))
 
     loader
     |> Dataloader.load(
@@ -36,7 +37,8 @@ defmodule ReWeb.Resolvers.Images do
   def per_development(development, params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    params = Map.put(params, :has_admin_rights, admin?(current_user))
+    params =
+      Map.put(params, :has_admin_rights, access_inactive_images?(current_user, development))
 
     loader
     |> Dataloader.load(
@@ -121,8 +123,12 @@ defmodule ReWeb.Resolvers.Images do
   def insert_image_trigger(%{parent: %Re.Development{uuid: uuid}}),
     do: "development_updated:#{uuid}"
 
-  defp admin?(%{role: "admin"}), do: true
-  defp admin?(_), do: false
+  defp access_inactive_images?(user, parent) do
+    case Policy.authorize(:show_inactive_images, user, parent) do
+      :ok -> true
+      _ -> false
+    end
+  end
 
   defp config_subscription(%{listing_id: id}, %{role: "admin"}, topic),
     do: {:ok, topic: "#{topic}:#{id}"}
