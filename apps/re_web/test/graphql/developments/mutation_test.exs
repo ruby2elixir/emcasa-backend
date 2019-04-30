@@ -30,7 +30,6 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
         insertDevelopment(input: $input) {
           uuid
           name
-          title
           phase
           builder
           description
@@ -60,7 +59,6 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
 
       assert insert_development["uuid"]
       assert insert_development["name"] == development.name
-      assert insert_development["title"] == development.title
       assert insert_development["phase"] == development.phase
       assert insert_development["builder"] == development.builder
       assert insert_development["description"] == development.description
@@ -108,7 +106,6 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
         updateDevelopment(uuid: $uuid, input: $input) {
           uuid
           name
-          title
           phase
           builder
           description
@@ -138,7 +135,6 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
              } = json_response(conn, 200)["data"]
 
       assert updated_development["name"] == new_development.name
-      assert updated_development["title"] == new_development.title
       assert updated_development["builder"] == new_development.builder
       assert updated_development["phase"] == new_development.phase
       assert updated_development["description"] == new_development.description
@@ -186,7 +182,6 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     %{
       "input" => %{
         "name" => development.name,
-        "title" => development.title,
         "phase" => development.phase,
         "builder" => development.builder,
         "description" => development.description,
@@ -203,7 +198,6 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
       "uuid" => uuid,
       "input" => %{
         "name" => development.name,
-        "title" => development.title,
         "phase" => development.phase,
         "builder" => development.builder,
         "description" => development.description,
