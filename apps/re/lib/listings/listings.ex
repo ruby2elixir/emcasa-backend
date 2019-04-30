@@ -265,4 +265,8 @@ defmodule Re.Listings do
     |> Listing.changeset_update_tags(tags)
     |> Repo.update()
   end
+
+  def has_admin_rights?(_, %{role: "admin"}), do: true
+  def has_admin_rights?(%{user_id: user_id}, %{id: user_id}), do: true
+  def has_admin_rights?(_, _), do: false
 end

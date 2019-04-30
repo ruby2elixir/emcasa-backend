@@ -695,6 +695,27 @@ defmodule Re.ListingsTest do
     end
   end
 
+  describe "has_admin_rights?/2" do
+    test "is true when user is admin" do
+      listing = build(:listing)
+      user = %{role: "admin"}
+      assert Listings.has_admin_rights?(listing, user) == true
+    end
+
+    test "is true when user is owner" do
+      user = insert(:user)
+      listing = insert(:listing, user: user)
+      assert Listings.has_admin_rights?(listing, user) == true
+    end
+
+    test "is false if user isn't owner neither admin" do
+      owner = insert(:user)
+      other_user = insert(:user, role: "user")
+      listing = insert(:listing, user: owner)
+      assert Listings.has_admin_rights?(listing, other_user) == false
+    end
+  end
+
   defp chunk_and_short(listings) do
     listings
     |> Enum.chunk_by(& &1.score)

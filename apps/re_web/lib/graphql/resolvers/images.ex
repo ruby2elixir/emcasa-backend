@@ -11,7 +11,7 @@ defmodule ReWeb.Resolvers.Images do
   }
 
   def per_listing(listing, params, %{context: %{loader: loader, current_user: current_user}}) do
-    params = Map.put(params, :has_admin_rights, admin_rights?(listing, current_user))
+    params = Map.put(params, :has_admin_rights, Listings.has_admin_rights?(listing, current_user))
 
     loader
     |> Dataloader.load(
@@ -36,7 +36,7 @@ defmodule ReWeb.Resolvers.Images do
   def per_development(development, params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    params = Map.put(params, :has_admin_rights, admin_rights?(nil, current_user))
+    params = Map.put(params, :has_admin_rights, Listings.has_admin_rights?(nil, current_user))
 
     loader
     |> Dataloader.load(
@@ -126,10 +126,6 @@ defmodule ReWeb.Resolvers.Images do
 
   defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
   defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
-
-  defp admin_rights?(%{user_id: user_id}, %{id: user_id}), do: true
-  defp admin_rights?(_, %{role: "admin"}), do: true
-  defp admin_rights?(_, _), do: false
 
   defp limit(images, %{limit: limit}), do: Enum.take(images, limit)
   defp limit(images, _), do: images
