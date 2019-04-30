@@ -19,11 +19,16 @@ defmodule Re.Calendars.TourAppointment do
       foreign_key: :listing_uuid,
       type: Ecto.UUID
 
+    belongs_to :site_seller_lead, Re.SellerLeads.SiteLead,
+      references: :uuid,
+      foreign_key: :site_seller_lead_uuid,
+      type: Ecto.UUID
+
     timestamps()
   end
 
   @required ~w(wants_pictures wants_tour)a
-  @optional ~w(user_id listing_uuid)a
+  @optional ~w(user_id listing_uuid site_seller_lead_uuid)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.

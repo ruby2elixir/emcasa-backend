@@ -250,6 +250,17 @@ defmodule Re.Factory do
     }
   end
 
+  def site_seller_lead_factory do
+    %Re.SellerLeads.SiteLead{
+      uuid: UUID.uuid4(),
+      complement: Address.secondary_address(),
+      type: random(:listing_type),
+      maintenance_fee: random(:price_float),
+      suites: Enum.random(0..10),
+      price: random(:price)
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
