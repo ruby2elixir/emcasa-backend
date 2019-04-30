@@ -41,11 +41,7 @@ defmodule ReWeb.Resolvers.Listings do
     params = Map.put(params, :has_admin_rights, admin?(current_user))
 
     loader
-    |> Dataloader.load(
-      Re.Listings,
-      {:listings, params},
-      development
-    )
+    |> Dataloader.load(Re.Listings, {:listings, params}, development)
     |> on_load(fn loader ->
       listings =
         loader
