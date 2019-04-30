@@ -6,26 +6,22 @@ defmodule ReWeb.Resolvers.Addresses do
   alias Re.{
     Addresses,
     Addresses.Neighborhoods,
-    Addresses.Policy
+    Development,
+    Developments,
+    Listing,
+    Listings
   }
 
   def per_listing(listing, params, %{context: %{current_user: current_user}}) do
-    admin = access_complete_address?(current_user, listing)
+    admin = has_admin_rights?(current_user, listing)
 
     {:address, Map.put(params, :has_admin_rights, admin)}
   end
 
   def per_development(development, params, %{context: %{current_user: current_user}}) do
-    admin = access_complete_address?(current_user, development)
+    admin = has_admin_rights?(current_user, development)
 
     {:address, Map.put(params, :has_admin_rights, admin)}
-  end
-
-  defp access_complete_address?(user, parent) do
-    case Policy.authorize(:show_complete_address, user, parent) do
-      :ok -> true
-      _ -> false
-    end
   end
 
   def insert(%{input: params}, %{context: %{current_user: current_user}}) do
@@ -51,4 +47,18 @@ defmodule ReWeb.Resolvers.Addresses do
   end
 
   def is_covered(address, _, _), do: {:ok, Addresses.is_covered(address)}
+
+  defp has_admin_rights?(user, %Listing{} = listing) do
+    case Listings.authorize(:has_admin_rights, user, listing) do
+      :ok -> true
+      _ -> false
+    end
+  end
+
+  defp has_admin_rights?(user, %Development{} = development) do
+    case Developments.authorize(:has_admin_rights, user, development) do
+      :ok -> true
+      _ -> false
+    end
+  end
 end

@@ -5,14 +5,15 @@ defmodule ReWeb.Resolvers.Images do
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
   alias Re.{
+    Development,
     Developments,
     Images,
-    Images.Policy,
+    Listing,
     Listings
   }
 
   def per_listing(listing, params, %{context: %{loader: loader, current_user: current_user}}) do
-    params = Map.put(params, :has_admin_rights, access_inactive_images?(current_user, listing))
+    params = Map.put(params, :has_admin_rights, has_admin_rights?(current_user, listing))
 
     loader
     |> Dataloader.load(
@@ -37,8 +38,7 @@ defmodule ReWeb.Resolvers.Images do
   def per_development(development, params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    params =
-      Map.put(params, :has_admin_rights, access_inactive_images?(current_user, development))
+    params = Map.put(params, :has_admin_rights, has_admin_rights?(current_user, development))
 
     loader
     |> Dataloader.load(
@@ -123,8 +123,15 @@ defmodule ReWeb.Resolvers.Images do
   def insert_image_trigger(%{parent: %Re.Development{uuid: uuid}}),
     do: "development_updated:#{uuid}"
 
-  defp access_inactive_images?(user, parent) do
-    case Policy.authorize(:show_inactive_images, user, parent) do
+  defp has_admin_rights?(user, %Listing{} = listing) do
+    case Listings.authorize(:has_admin_rights, user, listing) do
+      :ok -> true
+      _ -> false
+    end
+  end
+
+  defp has_admin_rights?(user, %Development{} = development) do
+    case Developments.authorize(:has_admin_rights, user, development) do
       :ok -> true
       _ -> false
     end
