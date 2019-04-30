@@ -22,7 +22,6 @@ defmodule ReWeb.Types.SellerLead do
     field :maintenance_fee, :float
     field :suites, :integer
     field :price_request_id, non_null(:id)
-    field :tour_appointment_id, non_null(:id)
   end
 
   object :seller_lead_mutations do
