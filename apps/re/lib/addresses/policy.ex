@@ -3,14 +3,9 @@ defmodule Re.Addresses.Policy do
   Policy module for user permission on addresses
   """
 
-  alias Re.{
-    Listing,
-    User
-  }
+  alias Re.User
 
-  def authorize(_, %User{role: "admin"}, _), do: :ok
   def authorize(:insert, %User{}, _), do: :ok
-  def authorize(:show_complete_address, %User{id: id}, %Listing{user_id: id}), do: :ok
 
   def authorize(_, nil, _), do: {:error, :unauthorized}
 
