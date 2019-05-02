@@ -204,10 +204,8 @@ defmodule ReIntegrations.Notifications.Emails.User do
         wants_tour: wants_tour,
         options: options,
         user: user,
-        listing: listing
+        site_seller_lead: site_seller_lead
       }) do
-    listing_url = build_url(@listing_path, to_string(listing.id))
-
     new()
     |> to(@to)
     |> from(@admin_email)
@@ -216,14 +214,12 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Telefone: #{user.phone}<br>
                   #{wants_pictures(wants_pictures)}<br>
                   #{wants_tour(wants_tour)}<br>
-                  Opções de horário: #{options(options)}
-                  <a href=\"#{listing_url}\">Imóvel</a><br>")
+                  Opções de horário: #{options(options)}")
     |> text_body("Nome: #{user.name}<br>
                   Telefone: #{user.phone}<br>
                   #{wants_pictures(wants_pictures)}<br>
                   #{wants_tour(wants_tour)}<br>
-                  Opções de horário: #{options(options)}
-                  <a href=\"#{listing_url}\">Imóvel</a><br>")
+                  Opções de horário: #{options(options)}")
   end
 
   defp wants_pictures(true), do: "Foto profissional: <b>Sim</b>"

@@ -259,14 +259,15 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       datetime1 = %Re.Calendars.Option{datetime: ~N[2018-05-29 10:00:00]}
       datetime2 = %Re.Calendars.Option{datetime: ~N[2018-05-29 11:00:00]}
       user = insert(:user)
-      listing = insert(:listing, user: user)
+      price_request = insert(:price_suggestion_request, user: user)
+      site_seller_lead = insert(:site_seller_lead, price_request: price_request)
 
       tour_appointment =
         insert(:tour_appointment,
           wants_pictures: true,
           wants_tour: true,
           options: [datetime1, datetime2],
-          listing: listing,
+          site_seller_lead: site_seller_lead,
           user: user
         )
 
@@ -281,7 +282,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
           wants_tour: true,
           options: [datetime1, datetime2],
           user: user,
-          listing: listing
+          site_seller_lead: site_seller_lead
         })
       )
     end
