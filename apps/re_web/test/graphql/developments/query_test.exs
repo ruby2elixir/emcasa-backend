@@ -24,7 +24,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
       developments {
         uuid
         name
-        title
         phase
         builder
         description
@@ -63,7 +62,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
       %{
         uuid: development_uuid,
         name: name,
-        title: title,
         phase: phase,
         builder: builder,
         description: description
@@ -85,7 +83,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
           ) {
           development (uuid: $uuid) {
             name
-            title
             phase
             builder
             description
@@ -107,7 +104,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
 
       assert %{
                "name" => name,
-               "title" => title,
                "phase" => phase,
                "builder" => builder,
                "description" => description,
@@ -171,7 +167,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
       %{
         uuid: development_uuid,
         name: name,
-        title: title,
         phase: phase,
         builder: builder,
         description: description
@@ -193,7 +188,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
           ) {
           development (uuid: $uuid) {
             name
-            title
             phase
             builder
             description
@@ -215,7 +209,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
 
       assert %{
                "name" => name,
-               "title" => title,
                "phase" => phase,
                "builder" => builder,
                "description" => description,
@@ -244,7 +237,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
       %{
         uuid: development_uuid,
         name: name,
-        title: title,
         phase: phase,
         builder: builder,
         description: description
@@ -266,7 +258,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
           ) {
           development (uuid: $uuid) {
             name
-            title
             phase
             builder
             description
@@ -288,7 +279,6 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
 
       assert %{
                "name" => name,
-               "title" => title,
                "phase" => phase,
                "builder" => builder,
                "description" => description,

@@ -164,7 +164,6 @@ defmodule Re.Factory do
     %Re.Development{
       uuid: UUID.uuid4(),
       name: Name.name(),
-      title: Name.name(),
       phase: Enum.random(~w(pre-launch planning building delivered)),
       builder: Name.name(),
       description: Shakespeare.hamlet(),
