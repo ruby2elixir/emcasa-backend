@@ -56,7 +56,7 @@ defmodule ReWeb.Resolvers.Listings do
   end
 
   defp has_admin_rights?(user, development) do
-    case Developments.authorize(:has_admin_rights, user, development) do
+    case Bodyguard.permit(Developments, :has_admin_rights, user, development) do
       :ok -> true
       _ -> false
     end

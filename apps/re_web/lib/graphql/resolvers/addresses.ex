@@ -49,14 +49,14 @@ defmodule ReWeb.Resolvers.Addresses do
   def is_covered(address, _, _), do: {:ok, Addresses.is_covered(address)}
 
   defp has_admin_rights?(user, %Listing{} = listing) do
-    case Listings.authorize(:has_admin_rights, user, listing) do
+    case Bodyguard.permit(Listings, :has_admin_rights, user, listing) do
       :ok -> true
       _ -> false
     end
   end
 
   defp has_admin_rights?(user, %Development{} = development) do
-    case Developments.authorize(:has_admin_rights, user, development) do
+    case Bodyguard.permit(Developments, :has_admin_rights, user, development) do
       :ok -> true
       _ -> false
     end

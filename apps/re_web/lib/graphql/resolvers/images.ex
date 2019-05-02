@@ -124,14 +124,14 @@ defmodule ReWeb.Resolvers.Images do
     do: "development_updated:#{uuid}"
 
   defp has_admin_rights?(user, %Listing{} = listing) do
-    case Listings.authorize(:has_admin_rights, user, listing) do
+    case Bodyguard.permit(Listings, :has_admin_rights, user, listing) do
       :ok -> true
       _ -> false
     end
   end
 
   defp has_admin_rights?(user, %Development{} = development) do
-    case Developments.authorize(:has_admin_rights, user, development) do
+    case Bodyguard.permit(Developments, :has_admin_rights, user, development) do
       :ok -> true
       _ -> false
     end
