@@ -25,6 +25,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
 
   test "admin should schedule tour appointment", %{admin_conn: conn, admin_user: user} do
     listing = insert(:listing)
+    site_seller_lead = insert(:site_seller_lead)
 
     args = %{
       "input" => %{
@@ -33,7 +34,8 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
         ],
         "wantsPictures" => true,
         "wantsTour" => true,
-        "listingId" => listing.id
+        "listingId" => listing.id,
+        "siteSellerLeadUuid" => site_seller_lead.uuid
       }
     }
 
@@ -69,11 +71,13 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
     assert response["data"]["tourSchedule"]["wantsPictures"]
 
     id = response["data"]["tourSchedule"]["id"]
-    assert Repo.get(TourAppointment, id)
+    assert tour_appointment = Repo.get(TourAppointment, id)
+    assert tour_appointment.site_seller_lead_uuid == site_seller_lead.uuid
   end
 
   test "user should schedule tour appointment", %{user_conn: conn, user_user: user} do
     listing = insert(:listing)
+    site_seller_lead = insert(:site_seller_lead)
 
     args = %{
       "input" => %{
@@ -82,7 +86,8 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
         ],
         "wantsPictures" => true,
         "wantsTour" => true,
-        "listingId" => listing.id
+        "listingId" => listing.id,
+        "siteSellerLeadUuid" => site_seller_lead.uuid
       }
     }
 
@@ -118,11 +123,13 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
     assert response["data"]["tourSchedule"]["wantsPictures"]
 
     id = response["data"]["tourSchedule"]["id"]
-    assert Repo.get(TourAppointment, id)
+    assert tour_appointment = Repo.get(TourAppointment, id)
+    assert tour_appointment.site_seller_lead_uuid == site_seller_lead.uuid
   end
 
   test "anonymous should not schedule tour appointment", %{unauthenticated_conn: conn} do
     listing = insert(:listing)
+    site_seller_lead = insert(:site_seller_lead)
 
     args = %{
       "input" => %{
@@ -131,7 +138,8 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
         ],
         "wantsPictures" => true,
         "wantsTour" => true,
-        "listingId" => listing.id
+        "listingId" => listing.id,
+        "siteSellerLeadUuid" => site_seller_lead.uuid
       }
     }
 

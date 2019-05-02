@@ -4,19 +4,29 @@ defmodule Re.Calendars do
   """
   alias Re.{
     Calendars.TourAppointment,
+    Listing,
     PubSub,
     Repo
   }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
-  def schedule_tour(params, listing) do
+  def schedule_tour(params) do
     %TourAppointment{}
     |> TourAppointment.changeset(params)
-    |> TourAppointment.changeset(%{listing_uuid: listing.uuid, listing_id: listing.id})
+    |> add_listing_id(params)
     |> Repo.insert()
     |> PubSub.publish_new("tour_appointment")
   end
+
+  defp add_listing_id(changeset, %{listing_id: listing_id}) do
+    case Repo.get(Listing, listing_id) do
+      nil -> changeset
+      listing -> TourAppointment.changeset(changeset, %{listing_uuid: listing.uuid})
+    end
+  end
+
+  defp add_listing_id(changeset, _params), do: changeset
 
   @format "{D}-{M}-{YYYY} {h12}:{m} {AM}"
 
