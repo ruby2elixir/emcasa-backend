@@ -56,10 +56,7 @@ defmodule ReWeb.Resolvers.Listings do
   end
 
   defp has_admin_rights?(user, development) do
-    case Bodyguard.permit(Developments, :has_admin_rights, user, development) do
-      :ok -> true
-      _ -> false
-    end
+    Bodyguard.permit?(Developments, :has_admin_rights, user, development)
   end
 
   def show(%{id: id}, %{context: %{current_user: current_user}}) do
