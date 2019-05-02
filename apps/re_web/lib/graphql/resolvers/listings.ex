@@ -38,7 +38,12 @@ defmodule ReWeb.Resolvers.Listings do
   def per_development(development, params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    params = Map.put(params, :has_admin_rights, has_admin_rights?(current_user, development))
+    params =
+      Map.put(
+        params,
+        :has_admin_rights,
+        Bodyguard.permit?(Developments, :has_admin_rights, current_user, development)
+      )
 
     loader
     |> Dataloader.load(Re.Listings, {:listings, params}, development)
@@ -53,10 +58,6 @@ defmodule ReWeb.Resolvers.Listings do
 
       {:ok, listings}
     end)
-  end
-
-  defp has_admin_rights?(user, development) do
-    Bodyguard.permit?(Developments, :has_admin_rights, user, development)
   end
 
   def show(%{id: id}, %{context: %{current_user: current_user}}) do
