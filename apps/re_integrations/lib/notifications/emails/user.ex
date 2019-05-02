@@ -114,7 +114,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
     new()
     |> to(@to)
     |> from(@admin_email)
-    |> subject("Novo seller lead de #{address.city}, #{address.neighborhood} em #{address.state}")
+    |> subject("Novo seller lead de #{address.city}, #{address.state} em #{address.neighborhood}")
     |> html_body("Nome: #{user.name}<br>
                   Email: #{user.email}<br>
                   Telefone: #{user.phone}<br>
