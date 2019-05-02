@@ -108,6 +108,37 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   #{changes_txt}")
   end
 
+  def new_site_seller_lead(
+        %{price_request: %{user: user, address: address} = price_request} = site_lead
+      ) do
+    new()
+    |> to(@to)
+    |> from(@admin_email)
+    |> subject("Novo seller lead")
+    |> html_body("Nome: #{user.name}<br>
+                  Email: #{user.email}<br>
+                  Telefone: #{user.phone}<br>
+                  Área: #{price_request.area}<br>
+                  Quartos: #{price_request.rooms}<br>
+                  Banheiros: #{price_request.bathrooms}<br>
+                  Vagas: #{price_request.garage_spots}<br>
+                  Rua: #{address.street}<br>
+                  Número: #{address.street_number}<br>
+                  Preço: #{site_lead.price}<br>
+                  ")
+    |> text_body("Nome: #{user.name}
+                  Email: #{user.email}
+                  Telefone: #{user.phone}
+                  Área: #{price_request.area}
+                  Quartos: #{price_request.rooms}
+                  Banheiros: #{price_request.bathrooms}
+                  Vagas: #{price_request.garage_spots}
+                  Rua: #{address.street}
+                  Número: #{address.street_number}
+                  Preço: #{site_lead.price}
+                  ")
+  end
+
   defp build_changes(changes) do
     {Enum.map(changes, fn {attr, value} -> "Atributo: #{attr}, novo valor: #{value}<br>" end),
      Enum.map(changes, fn {attr, value} -> "Atributo: #{attr}, novo valor: #{value}" end)}
