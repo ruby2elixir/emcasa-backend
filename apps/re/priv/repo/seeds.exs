@@ -16,7 +16,7 @@ alias Re.{
   Statistics.InPersonVisit,
   Statistics.ListingVisualization,
   Statistics.TourVisualization,
-  Tags,
+  Tag,
   Unit,
   User
 }
@@ -38,6 +38,7 @@ Repo.delete_all(Address)
 Repo.delete_all(ContactRequest)
 Repo.delete_all(User)
 Repo.delete_all(Development)
+Repo.delete_all(Tag)
 
 {:ok, admin1} =
   Repo.insert(%User{
@@ -187,10 +188,9 @@ Repo.delete_all(Development)
     is_active: true
   })
 
-all_tags = Re.Tags.all()
-
 {:ok, listing1} =
   Repo.insert(%Listing{
+    uuid: UUID.uuid4(),
     type: "Apartamento",
     description: "A description about the listing.",
     floor: "1",
@@ -206,8 +206,15 @@ all_tags = Re.Tags.all()
     status: "active"
   })
 
-Tags.all()
-|> Enum.map(fn tag -> %ListingTag{listing_id: listing1.id, tag_uuid: tag.uuid} end)
+{:ok, tag1} =
+  Repo.insert(%Tag{
+    uuid: UUID.uuid4(),
+    name: "Piscina",
+    name_slug: "piscina"
+  })
+
+[tag1]
+|> Enum.map(fn tag -> %ListingTag{listing_uuid: listing1.uuid, tag_uuid: tag.uuid} end)
 |> Enum.map(&Repo.insert/1)
 
 {:ok, listing2} =
@@ -329,7 +336,6 @@ Tags.all()
   Repo.insert(%Development{
     uuid: UUID.uuid4(),
     name: "EmCasa condominium",
-    title: "Live in your dreams",
     phase: "building",
     builder: "EmCasa",
     description: "I awesome place to live in."
