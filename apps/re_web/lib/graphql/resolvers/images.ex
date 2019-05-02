@@ -5,18 +5,20 @@ defmodule ReWeb.Resolvers.Images do
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
   alias Re.{
+    Development,
     Developments,
     Images,
+    Listing,
     Listings
   }
 
   def per_listing(listing, params, %{context: %{loader: loader, current_user: current_user}}) do
-    is_admin? = admin_rights?(listing, current_user)
+    params = Map.put(params, :has_admin_rights, has_admin_rights?(current_user, listing))
 
     loader
     |> Dataloader.load(
       Re.Images,
-      {:images, Map.put(params, :has_admin_rights, is_admin?)},
+      {:images, params},
       listing
     )
     |> on_load(fn loader ->
@@ -24,7 +26,7 @@ defmodule ReWeb.Resolvers.Images do
         loader
         |> Dataloader.get(
           Re.Images,
-          {:images, Map.put(params, :has_admin_rights, is_admin?)},
+          {:images, params},
           listing
         )
         |> limit(params)
@@ -36,12 +38,12 @@ defmodule ReWeb.Resolvers.Images do
   def per_development(development, params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    is_admin? = admin_rights?(nil, current_user)
+    params = Map.put(params, :has_admin_rights, has_admin_rights?(current_user, development))
 
     loader
     |> Dataloader.load(
       Re.Images,
-      {:images, Map.put(params, :has_admin_rights, is_admin?)},
+      {:images, params},
       development
     )
     |> on_load(fn loader ->
@@ -49,7 +51,7 @@ defmodule ReWeb.Resolvers.Images do
         loader
         |> Dataloader.get(
           Re.Images,
-          {:images, Map.put(params, :has_admin_rights, is_admin?)},
+          {:images, params},
           development
         )
 
@@ -121,15 +123,19 @@ defmodule ReWeb.Resolvers.Images do
   def insert_image_trigger(%{parent: %Re.Development{uuid: uuid}}),
     do: "development_updated:#{uuid}"
 
+  defp has_admin_rights?(user, %Listing{} = listing) do
+    Bodyguard.permit?(Listings, :has_admin_rights, user, listing)
+  end
+
+  defp has_admin_rights?(user, %Development{} = development) do
+    Bodyguard.permit?(Developments, :has_admin_rights, user, development)
+  end
+
   defp config_subscription(%{listing_id: id}, %{role: "admin"}, topic),
     do: {:ok, topic: "#{topic}:#{id}"}
 
   defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
   defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
-
-  defp admin_rights?(%{user_id: user_id}, %{id: user_id}), do: true
-  defp admin_rights?(_, %{role: "admin"}), do: true
-  defp admin_rights?(_, _), do: false
 
   defp limit(images, %{limit: limit}), do: Enum.take(images, limit)
   defp limit(images, _), do: images

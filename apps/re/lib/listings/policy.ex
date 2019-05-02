@@ -25,6 +25,7 @@ defmodule Re.Listings.Policy do
   def authorize(:per_user, %User{}, _), do: :ok
 
   def authorize(:show_stats, %User{id: id}, %{user_id: id}), do: :ok
+  def authorize(:has_admin_rights, %User{id: id}, %{user_id: id}), do: :ok
 
   def authorize(_, nil, _), do: {:error, :unauthorized}
 

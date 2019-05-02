@@ -5,19 +5,23 @@ defmodule ReWeb.Resolvers.Addresses do
 
   alias Re.{
     Addresses,
-    Addresses.Neighborhoods
+    Addresses.Neighborhoods,
+    Development,
+    Developments,
+    Listing,
+    Listings
   }
 
   def per_listing(listing, params, %{context: %{current_user: current_user}}) do
-    admin? = admin_permissions?(listing, current_user)
+    admin = has_admin_rights?(current_user, listing)
 
-    {:address, Map.put(params, :has_admin_rights, admin?)}
+    {:address, Map.put(params, :has_admin_rights, admin)}
   end
 
-  def per_development(_development, params, %{context: %{current_user: current_user}}) do
-    admin? = admin_permissions?(nil, current_user)
+  def per_development(development, params, %{context: %{current_user: current_user}}) do
+    admin = has_admin_rights?(current_user, development)
 
-    {:address, Map.put(params, :has_admin_rights, admin?)}
+    {:address, Map.put(params, :has_admin_rights, admin)}
   end
 
   def insert(%{input: params}, %{context: %{current_user: current_user}}) do
@@ -44,7 +48,11 @@ defmodule ReWeb.Resolvers.Addresses do
 
   def is_covered(address, _, _), do: {:ok, Addresses.is_covered(address)}
 
-  defp admin_permissions?(%{user_id: user_id}, %{id: user_id}), do: true
-  defp admin_permissions?(_, %{role: "admin"}), do: true
-  defp admin_permissions?(_, _), do: false
+  defp has_admin_rights?(user, %Listing{} = listing) do
+    Bodyguard.permit?(Listings, :has_admin_rights, user, listing)
+  end
+
+  defp has_admin_rights?(user, %Development{} = development) do
+    Bodyguard.permit?(Developments, :has_admin_rights, user, development)
+  end
 end
