@@ -7,7 +7,6 @@ defmodule Re.DevelopmentTest do
 
   @invalid_attrs %{
     name: "",
-    title: "",
     phase: "unexpected",
     builder: "",
     description: ""
@@ -15,7 +14,6 @@ defmodule Re.DevelopmentTest do
 
   @valid_attrs %{
     name: "Em casa development",
-    title: "Em casa - living in your dream",
     phase: "pre-launch",
     builder: "EmCasa",
     description: "description"
@@ -41,8 +39,6 @@ defmodule Re.DevelopmentTest do
               [validation: :inclusion]}
 
     assert Keyword.get(changeset.errors, :name) == {"can't be blank", [validation: :required]}
-
-    assert Keyword.get(changeset.errors, :title) == {"can't be blank", [validation: :required]}
 
     assert Keyword.get(changeset.errors, :builder) == {"can't be blank", [validation: :required]}
 
