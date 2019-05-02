@@ -14,13 +14,12 @@ defmodule ReWeb.Resolvers.Calendars do
          do: {:ok, Calendars.generate_tour_options(Timex.now(), 5)}
   end
 
-  def schedule_tour(%{input: %{listing_id: listing_id} = params}, %{
+  def schedule_tour(%{input: params}, %{
         context: %{current_user: current_user}
       }) do
     with :ok <- Bodyguard.permit(Calendars, :schedule_tour, current_user, %{}),
-         {:ok, listing} <- Listings.get(listing_id),
          params <- Map.put(params, :user_id, current_user.id) do
-      Calendars.schedule_tour(params, listing)
+      Calendars.schedule_tour(params)
     end
   end
 
