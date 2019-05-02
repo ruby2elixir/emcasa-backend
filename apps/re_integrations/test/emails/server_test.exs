@@ -259,7 +259,8 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       datetime1 = %Re.Calendars.Option{datetime: ~N[2018-05-29 10:00:00]}
       datetime2 = %Re.Calendars.Option{datetime: ~N[2018-05-29 11:00:00]}
       user = insert(:user)
-      price_request = insert(:price_suggestion_request, user: user)
+      address = insert(:address)
+      price_request = insert(:price_suggestion_request, user: user, address: address)
       site_seller_lead = insert(:site_seller_lead, price_request: price_request)
 
       tour_appointment =

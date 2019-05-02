@@ -204,7 +204,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
         wants_tour: wants_tour,
         options: options,
         user: user,
-        site_seller_lead: site_seller_lead
+        site_seller_lead: %{price_request: %{address: address} = price_request} = site_seller_lead
       }) do
     new()
     |> to(@to)
@@ -214,11 +214,33 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Telefone: #{user.phone}<br>
                   #{wants_pictures(wants_pictures)}<br>
                   #{wants_tour(wants_tour)}<br>
+                  Área: #{price_request.area}<br>
+                  Quartos: #{price_request.rooms}<br>
+                  Banheiros: #{price_request.bathrooms}<br>
+                  Vagas: #{price_request.garage_spots}<br>
+                  Rua: #{address.street}<br>
+                  Número: #{address.street_number}<br>
+                  Bairro: #{address.neighborhood}<br>
+                  Cidade: #{address.city}<br>
+                  Estado: #{address.state}<br>
+                  CEP: #{address.postal_code}<br>
+                  Preço: #{site_seller_lead.price}<br>
                   Opções de horário: #{options(options)}")
     |> text_body("Nome: #{user.name}<br>
                   Telefone: #{user.phone}<br>
                   #{wants_pictures(wants_pictures)}<br>
                   #{wants_tour(wants_tour)}<br>
+                  Área: #{price_request.area}<br>
+                  Quartos: #{price_request.rooms}<br>
+                  Banheiros: #{price_request.bathrooms}<br>
+                  Vagas: #{price_request.garage_spots}<br>
+                  Rua: #{address.street}<br>
+                  Número: #{address.street_number}<br>
+                  Bairro: #{address.neighborhood}<br>
+                  Cidade: #{address.city}<br>
+                  Estado: #{address.state}<br>
+                  CEP: #{address.postal_code}<br>
+                  Preço: #{site_seller_lead.price}<br>
                   Opções de horário: #{options(options)}")
   end
 

@@ -110,7 +110,8 @@ defmodule ReIntegrations.Notifications.Emails.Server do
   end
 
   def handle_info(%{topic: "tour_appointment", type: :new, new: tour_appointment}, state) do
-    tour_appointment = Repo.preload(tour_appointment, [:user, :site_seller_lead])
+    tour_appointment =
+      Repo.preload(tour_appointment, [:user, site_seller_lead: [price_request: [:address]]])
 
     handle_cast({Emails.User, :tour_appointment, [tour_appointment]}, state)
   end
