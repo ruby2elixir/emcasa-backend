@@ -4,6 +4,7 @@ defmodule Re.SellerLeads do
   """
 
   alias Re.{
+    PubSub,
     Repo,
     SellerLeads.SiteLead
   }
@@ -14,5 +15,6 @@ defmodule Re.SellerLeads do
     %SiteLead{}
     |> SiteLead.changeset(params)
     |> Repo.insert()
+    |> PubSub.publish_new("new_site_seller_lead")
   end
 end

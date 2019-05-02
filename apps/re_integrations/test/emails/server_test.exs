@@ -308,5 +308,23 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
 
       assert_email_sent(Emails.User.listing_added_admin(user, listing))
     end
+
+    test "should send e-mail when a new site seller lead is added" do
+      user = insert(:user)
+      address = insert(:address)
+      price_suggestion_request = insert(:price_suggestion_request, user: user, address: address)
+      site_seller_lead = insert(:site_seller_lead, price_request: price_suggestion_request)
+
+      Emails.Server.handle_info(
+        %{
+          topic: "new_site_seller_lead",
+          type: :new,
+          new: site_seller_lead
+        },
+        []
+      )
+
+      assert_email_sent(Emails.User.new_site_seller_lead(site_seller_lead))
+    end
   end
 end
