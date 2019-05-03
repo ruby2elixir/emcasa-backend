@@ -5,81 +5,40 @@ defmodule ReWeb.Resolvers.Statistics do
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
   def interest_count(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
-    if is_admin(listing, current_user) do
-      loader
-      |> Dataloader.load(Re.Interests, :interests, listing)
-      |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Interests, :interests, listing))}
-      end)
-    else
-      {:ok, nil}
-    end
+    count_stats(loader, Re.Interest, listing, current_user)
   end
 
   def in_person_visit_count(listing, _params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    if is_admin(listing, current_user) do
-      loader
-      |> Dataloader.load(Re.Statistics.InPersonVisits, :in_person_visits, listing)
-      |> on_load(fn loader ->
-        {:ok,
-         Enum.count(
-           Dataloader.get(loader, Re.Statistics.InPersonVisits, :in_person_visits, listing)
-         )}
-      end)
-    else
-      {:ok, nil}
-    end
+    count_stats(loader, Re.Statistics.InPersonVisit, listing, current_user)
   end
 
   def listings_favorite_count(listing, _params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    if is_admin(listing, current_user) do
-      loader
-      |> Dataloader.load(Re.Favorites, :listings_favorites, listing)
-      |> on_load(fn loader ->
-        {:ok, Enum.count(Dataloader.get(loader, Re.Favorites, :listings_favorites, listing))}
-      end)
-    else
-      {:ok, nil}
-    end
+    count_stats(loader, Re.Favorite, listing, current_user)
   end
 
   def tour_visualisation_count(listing, _params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    if is_admin(listing, current_user) do
-      loader
-      |> Dataloader.load(Re.Statistics.TourVisualizations, :tour_visualisations, listing)
-      |> on_load(fn loader ->
-        {:ok,
-         Enum.count(
-           Dataloader.get(loader, Re.Statistics.TourVisualizations, :tour_visualisations, listing)
-         )}
-      end)
-    else
-      {:ok, nil}
-    end
+    count_stats(loader, Re.Statistics.TourVisualization, listing, current_user)
   end
 
   def listing_visualisation_count(listing, _params, %{
         context: %{loader: loader, current_user: current_user}
       }) do
-    if is_admin(listing, current_user) do
+    count_stats(loader, Re.Statistics.ListingVisualization, listing, current_user)
+  end
+
+  defp count_stats(loader, module, listing, user) do
+    if is_admin(listing, user) do
       loader
-      |> Dataloader.load(Re.Statistics.ListingVisualizations, :listings_visualisations, listing)
+      |> Dataloader.load(Re.Statistics, {:many, module}, count: listing)
       |> on_load(fn loader ->
-        {:ok,
-         Enum.count(
-           Dataloader.get(
-             loader,
-             Re.Statistics.ListingVisualizations,
-             :listings_visualisations,
-             listing
-           )
-         )}
+        [count] = Dataloader.get(loader, Re.Statistics, {:many, module}, count: listing)
+        {:ok, count}
       end)
     else
       {:ok, nil}
