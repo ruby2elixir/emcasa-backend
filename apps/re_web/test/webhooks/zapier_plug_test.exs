@@ -4,6 +4,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
   alias Re.{
     Leads.FacebookBuyer,
     Leads.ImovelWebBuyer,
+    SellerLeads.Facebook,
     Repo
   }
 
@@ -178,5 +179,82 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
     refute Repo.one(FacebookBuyer)
     refute Repo.one(ImovelWebBuyer)
+  end
+
+  @facebook_seller_payload %{
+    "full_name" => "mah full naem",
+    "timestamp" => "2019-01-01T00:00:00.000Z",
+    "lead_id" => "193846287346183764187",
+    "email" => "mah@email",
+    "phone_number" => "11999999999",
+    "neighborhoods" => "manhattan brooklyn harlem",
+    "objective" => "just chillin",
+    "location" => "RJ",
+    "source" => "facebook_seller"
+  }
+
+  @facebook_seller_invalid_payload %{
+    "full_name" => "mah full naem",
+    "timestamp" => "2019-01-01T00:00:00.000Z",
+    "lead_id" => "193846287346183764187",
+    "email" => "mah@email",
+    "phone_number" => "11999999999",
+    "neighborhoods" => "manhattan brooklyn harlem",
+    "objective" => "just chillin",
+    "location" => "asdasda",
+    "source" => "facebook_buyer"
+  }
+
+  describe "facebook seller leads" do
+    test "authenticated request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @facebook_seller_payload)
+
+      assert text_response(conn, 200) == "ok"
+
+      assert fb = Repo.one(Facebook)
+      assert fb.uuid
+    end
+
+    @tag capture_log: true
+    test "invalid payload", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", %{"wat" => "ok"})
+
+      assert text_response(conn, 422) == "Unprocessable Entity"
+
+      refute Repo.one(Facebook)
+    end
+
+    test "unauthenticated request", %{unauthenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @facebook_seller_payload)
+
+      assert text_response(conn, 401) == "Unauthorized"
+
+      refute Repo.one(Facebook)
+    end
+
+    test "invalid auth request", %{invalid_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @facebook_seller_payload)
+
+      assert text_response(conn, 401) == "Unauthorized"
+
+      refute Repo.one(Facebook)
+    end
+
+    @tag capture_log: true
+    test "invalid location request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @facebook_seller_invalid_payload)
+
+      assert text_response(conn, 422) == "Unprocessable Entity"
+
+      refute Repo.one(Facebook)
+    end
+
+    test "get should not be allowed", %{authenticated_conn: conn} do
+      conn = get(conn, "/webhooks/zapier", @facebook_seller_payload)
+
+      assert text_response(conn, 405) == "GET not allowed"
+
+      refute Repo.one(Facebook)
+    end
   end
 end
