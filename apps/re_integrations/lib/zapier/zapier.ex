@@ -8,6 +8,7 @@ defmodule ReIntegrations.Zapier do
     Leads.Buyer.JobQueue,
     Leads.FacebookBuyer,
     Leads.ImovelWebBuyer,
+    SellerLeads.Facebook,
     Repo
   }
 
@@ -16,25 +17,31 @@ defmodule ReIntegrations.Zapier do
     Multi
   }
 
-  def new_buyer_lead(%{"source" => "facebook_buyer"} = payload) do
+  def new_lead(%{"source" => "facebook_buyer"} = payload) do
     %FacebookBuyer{}
     |> FacebookBuyer.changeset(payload)
     |> do_new_buyer_lead("facebook_buyer")
   end
 
-  def new_buyer_lead(%{"source" => "imovelweb_buyer"} = payload) do
+  def new_lead(%{"source" => "imovelweb_buyer"} = payload) do
     %ImovelWebBuyer{}
     |> ImovelWebBuyer.changeset(payload)
     |> do_new_buyer_lead("imovelweb_buyer")
   end
 
-  def new_buyer_lead(%{"source" => _source} = payload) do
+  def new_lead(%{"source" => "facebook_seller"} = payload) do
+    %Facebook{}
+    |> Facebook.changeset(payload)
+    |> Repo.insert()
+  end
+
+  def new_lead(%{"source" => _source} = payload) do
     Logger.warn("Invalid payload source. Payload: #{Kernel.inspect(payload)}")
 
     {:error, :unexpected_payload, payload}
   end
 
-  def new_buyer_lead(payload) do
+  def new_lead(payload) do
     Logger.warn("No payload source. Payload: #{Kernel.inspect(payload)}")
 
     {:error, :unexpected_payload, payload}
