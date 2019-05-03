@@ -48,6 +48,9 @@ defmodule Re.SellerLeads.SiteLeadTest do
       assert Keyword.get(changeset.errors, :price) ==
                {"must be greater than or equal to %{number}",
                 [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
+
+      assert Keyword.get(changeset.errors, :price_request_id) ==
+               {"can't be blank", [validation: :required]}
     end
   end
 end

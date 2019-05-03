@@ -91,7 +91,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
       assert seller_lead["suites"] == 2
     end
 
-    test "user should add seller lead without priceRequestId", %{
+    test "user should not add seller lead without priceRequestId", %{
       user_conn: conn
     } do
       variables = %{
@@ -107,14 +107,13 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
 
-      assert %{"siteSellerLeadCreate" => seller_lead} = json_response(conn, 200)["data"]
-
-      assert seller_lead["uuid"]
-      assert seller_lead["complement"] == "100"
-      assert seller_lead["type"] == "Apartamento"
-      assert seller_lead["price"] == 800_000
-      assert seller_lead["maintenanceFee"] == 100.00
-      assert seller_lead["suites"] == 2
+      assert [
+               %{
+                 "locations" => [%{"column" => 26, "line" => 2}],
+                 "message" =>
+                   "Argument \"input\" has invalid value $input.\nIn field \"priceRequestId\": Expected type \"ID!\", found null."
+               }
+             ] = json_response(conn, 200)["errors"]
     end
 
     test "anonymous should not add seller lead", %{
