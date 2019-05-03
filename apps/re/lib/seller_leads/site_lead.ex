@@ -22,14 +22,11 @@ defmodule Re.SellerLeads.SiteLead do
 
   @types ~w(Apartamento Casa Cobertura)
 
-  @required ~w(price_request_id)a
-  @optional ~w(complement type maintenance_fee suites price)a
-  @params @required ++ @optional
+  @params ~w(complement type maintenance_fee suites price price_request_id)a
 
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @params)
-    |> validate_required(@required)
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
     |> generate_uuid()
     |> validate_attributes()
