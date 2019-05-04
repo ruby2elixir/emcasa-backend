@@ -114,7 +114,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
     new()
     |> to(@to)
     |> from(@admin_email)
-    |> subject("Novo seller lead")
+    |> subject("Novo seller lead de #{address.city}, #{address.state} em #{address.neighborhood}")
     |> html_body("Nome: #{user.name}<br>
                   Email: #{user.email}<br>
                   Telefone: #{user.phone}<br>
@@ -204,10 +204,8 @@ defmodule ReIntegrations.Notifications.Emails.User do
         wants_tour: wants_tour,
         options: options,
         user: user,
-        listing: listing
+        site_seller_lead: %{price_request: %{address: address} = price_request} = site_seller_lead
       }) do
-    listing_url = build_url(@listing_path, to_string(listing.id))
-
     new()
     |> to(@to)
     |> from(@admin_email)
@@ -216,14 +214,34 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Telefone: #{user.phone}<br>
                   #{wants_pictures(wants_pictures)}<br>
                   #{wants_tour(wants_tour)}<br>
-                  Opções de horário: #{options(options)}
-                  <a href=\"#{listing_url}\">Imóvel</a><br>")
+                  Área: #{price_request.area}<br>
+                  Quartos: #{price_request.rooms}<br>
+                  Banheiros: #{price_request.bathrooms}<br>
+                  Vagas: #{price_request.garage_spots}<br>
+                  Rua: #{address.street}<br>
+                  Número: #{address.street_number}<br>
+                  Bairro: #{address.neighborhood}<br>
+                  Cidade: #{address.city}<br>
+                  Estado: #{address.state}<br>
+                  CEP: #{address.postal_code}<br>
+                  Preço: #{site_seller_lead.price}<br>
+                  Opções de horário: #{options(options)}")
     |> text_body("Nome: #{user.name}<br>
                   Telefone: #{user.phone}<br>
                   #{wants_pictures(wants_pictures)}<br>
                   #{wants_tour(wants_tour)}<br>
-                  Opções de horário: #{options(options)}
-                  <a href=\"#{listing_url}\">Imóvel</a><br>")
+                  Área: #{price_request.area}<br>
+                  Quartos: #{price_request.rooms}<br>
+                  Banheiros: #{price_request.bathrooms}<br>
+                  Vagas: #{price_request.garage_spots}<br>
+                  Rua: #{address.street}<br>
+                  Número: #{address.street_number}<br>
+                  Bairro: #{address.neighborhood}<br>
+                  Cidade: #{address.city}<br>
+                  Estado: #{address.state}<br>
+                  CEP: #{address.postal_code}<br>
+                  Preço: #{site_seller_lead.price}<br>
+                  Opções de horário: #{options(options)}")
   end
 
   defp wants_pictures(true), do: "Foto profissional: <b>Sim</b>"
