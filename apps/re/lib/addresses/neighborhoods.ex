@@ -82,6 +82,7 @@ defmodule Re.Addresses.Neighborhoods do
     %{state: "RJ", neighborhood: "Urca", city: "Rio de Janeiro"},
     %{state: "SP", neighborhood: "Perdizes", city: "São Paulo"},
     %{state: "SP", neighborhood: "Vila Pompéia", city: "São Paulo"},
+    %{state: "SP", neighborhood: "Pompeia", city: "São Paulo"},
     %{state: "SP", neighborhood: "Pinheiros", city: "São Paulo"},
     %{state: "SP", neighborhood: "Sumaré", city: "São Paulo"},
     %{state: "SP", neighborhood: "Sumarezinho", city: "São Paulo"},
