@@ -19,7 +19,7 @@ defmodule Re.Calendars.TourAppointment do
       foreign_key: :listing_uuid,
       type: Ecto.UUID
 
-    belongs_to :site_seller_lead, Re.SellerLeads.SiteLead,
+    belongs_to :site_seller_lead, Re.SellerLeads.Site,
       references: :uuid,
       foreign_key: :site_seller_lead_uuid,
       type: Ecto.UUID

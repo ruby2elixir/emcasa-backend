@@ -2,8 +2,8 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
   use ReWeb.ConnCase
 
   alias Re.{
-    Leads.Buyer.JobQueue,
-    Leads.GrupozapBuyer,
+    BuyerLeads.JobQueue,
+    BuyerLeads.Grupozap,
     Repo
   }
 
@@ -51,7 +51,7 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
 
       assert text_response(conn, 200) == "ok"
 
-      assert gb = Repo.one(GrupozapBuyer)
+      assert gb = Repo.one(Grupozap)
       assert gb.origin_lead_id
       assert gb.origin_listing_id
       assert gb.client_listing_id
@@ -76,7 +76,7 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
 
       assert text_response(conn, 200) == "ok"
 
-      assert gb = Repo.one(GrupozapBuyer)
+      assert gb = Repo.one(Grupozap)
       assert gb.message
       assert Repo.one(JobQueue)
     end
@@ -87,7 +87,7 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
-      refute Repo.one(GrupozapBuyer)
+      refute Repo.one(Grupozap)
       refute Repo.one(JobQueue)
     end
 
@@ -96,7 +96,7 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
 
       assert text_response(conn, 401) == "Unauthorized"
 
-      refute Repo.one(GrupozapBuyer)
+      refute Repo.one(Grupozap)
       refute Repo.one(JobQueue)
     end
 
@@ -105,7 +105,7 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
 
       assert text_response(conn, 401) == "Unauthorized"
 
-      refute Repo.one(GrupozapBuyer)
+      refute Repo.one(Grupozap)
       refute Repo.one(JobQueue)
     end
 
@@ -115,7 +115,7 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
-      refute Repo.one(GrupozapBuyer)
+      refute Repo.one(Grupozap)
       refute Repo.one(JobQueue)
     end
   end
@@ -126,7 +126,7 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
 
       assert text_response(conn, 405) == "GET not allowed"
 
-      refute Repo.one(GrupozapBuyer)
+      refute Repo.one(Grupozap)
       refute Repo.one(JobQueue)
     end
   end
