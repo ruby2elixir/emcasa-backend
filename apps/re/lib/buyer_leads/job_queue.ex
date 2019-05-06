@@ -1,4 +1,4 @@
-defmodule Re.Leads.Buyer.JobQueue do
+defmodule Re.BuyerLeads.JobQueue do
   @moduledoc """
   Module for processing buyer leads to extract only necessary attributes
   Also attempts to associate user and listings
@@ -8,34 +8,34 @@ defmodule Re.Leads.Buyer.JobQueue do
   require Logger
 
   alias Re.{
-    Leads.FacebookBuyer,
-    Leads.GrupozapBuyer,
-    Leads.ImovelWebBuyer,
+    BuyerLeads.Facebook,
+    BuyerLeads.Grupozap,
+    BuyerLeads.ImovelWeb,
     Repo
   }
 
   alias Ecto.Multi
 
   def perform(%Multi{} = multi, %{"type" => "grupozap_buyer_lead", "uuid" => uuid}) do
-    GrupozapBuyer
+    Grupozap
     |> Repo.get(uuid)
-    |> GrupozapBuyer.buyer_lead_changeset()
+    |> Grupozap.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
   end
 
   def perform(%Multi{} = multi, %{"type" => "facebook_buyer", "uuid" => uuid}) do
-    FacebookBuyer
+    Facebook
     |> Repo.get(uuid)
-    |> FacebookBuyer.buyer_lead_changeset()
+    |> Facebook.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
   end
 
   def perform(%Multi{} = multi, %{"type" => "imovelweb_buyer", "uuid" => uuid}) do
-    ImovelWebBuyer
+    ImovelWeb
     |> Repo.get(uuid)
-    |> ImovelWebBuyer.buyer_lead_changeset()
+    |> ImovelWeb.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
   end

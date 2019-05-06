@@ -1,11 +1,11 @@
-defmodule Re.Leads.Buyer.JobQueueTest do
+defmodule Re.BuyerLeads.JobQueueTest do
   use Re.ModelCase
 
   import Re.Factory
 
   alias Re.{
-    Leads.Buyer,
-    Leads.Buyer.JobQueue,
+    BuyerLead,
+    BuyerLeads.JobQueue,
     Repo
   }
 
@@ -22,7 +22,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       assert buyer.user_uuid == user_uuid
       assert buyer.listing_uuid == listing_uuid
     end
@@ -36,7 +36,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
     end
@@ -50,7 +50,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
     end
@@ -64,7 +64,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       refute buyer.user_uuid
       assert buyer.phone_number == "not informed"
       assert buyer.listing_uuid == listing_uuid
@@ -79,7 +79,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
     end
@@ -95,7 +95,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
     end
@@ -110,7 +110,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
     end
@@ -121,7 +121,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:error, :insert_buyer_lead, _, _} =
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
-      refute Repo.one(Buyer)
+      refute Repo.one(BuyerLead)
     end
 
     test "process lead with no user" do
@@ -130,7 +130,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       refute buyer.user_uuid
     end
   end
@@ -145,7 +145,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       assert buyer.user_uuid == user_uuid
       assert buyer.listing_uuid == listing_uuid
     end
@@ -158,7 +158,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:error, :insert_buyer_lead, _, _} =
                JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
 
-      refute Repo.one(Buyer)
+      refute Repo.one(BuyerLead)
     end
 
     test "process lead with no user" do
@@ -169,7 +169,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
     end
@@ -184,7 +184,7 @@ defmodule Re.Leads.Buyer.JobQueueTest do
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
 
-      assert buyer = Repo.one(Buyer)
+      assert buyer = Repo.one(BuyerLead)
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
     end

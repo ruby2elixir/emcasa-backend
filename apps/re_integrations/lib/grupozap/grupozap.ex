@@ -5,8 +5,8 @@ defmodule ReIntegrations.Grupozap do
   require Logger
 
   alias Re.{
-    Leads.Buyer.JobQueue,
-    Leads.GrupozapBuyer,
+    BuyerLeads.JobQueue,
+    BuyerLeads.Grupozap,
     Repo
   }
 
@@ -16,8 +16,8 @@ defmodule ReIntegrations.Grupozap do
   }
 
   def new_buyer_lead(payload) do
-    %GrupozapBuyer{}
-    |> GrupozapBuyer.changeset(payload)
+    %Grupozap{}
+    |> Grupozap.changeset(payload)
     |> case do
       %{valid?: true} = changeset ->
         uuid = Changeset.get_field(changeset, :uuid)
