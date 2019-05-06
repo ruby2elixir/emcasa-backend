@@ -12,7 +12,7 @@ defmodule Re.Statistics.DataloaderQueries do
       query
       |> where([p], p.listing_id in ^listing_ids)
       |> group_by([p], p.listing_id)
-      |> select([p], {p.listing_id, count("*")})
+      |> select([p], {p.listing_id, count(1)})
       |> Re.Repo.all(repo_opts)
       |> Map.new()
 
