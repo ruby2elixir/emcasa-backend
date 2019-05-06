@@ -84,9 +84,7 @@ defmodule ReWeb.Schema do
       Re.Interests.Types,
       Re.Favorites,
       Re.OwnerContacts,
-      Re.Statistics.ListingVisualizations,
-      Re.Statistics.TourVisualizations,
-      Re.Statistics.InPersonVisits,
+      Re.Statistics,
       Re.Tags,
       Re.Units
     ]
