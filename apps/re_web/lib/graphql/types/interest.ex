@@ -10,6 +10,7 @@ defmodule ReWeb.Types.Interest do
 
   object :interest do
     field :id, :id
+    field :uuid, :uuid
     field :name, :string
     field :email, :string
     field :phone, :string
