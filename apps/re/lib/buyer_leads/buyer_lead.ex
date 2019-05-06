@@ -1,4 +1,4 @@
-defmodule Re.Leads.Buyer do
+defmodule Re.BuyerLead do
   @moduledoc """
   Schema for buyer leads
   """

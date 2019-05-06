@@ -5,10 +5,10 @@ defmodule ReIntegrations.Zapier do
   require Logger
 
   alias Re.{
-    Leads.Buyer.JobQueue,
-    Leads.FacebookBuyer,
-    Leads.ImovelWebBuyer,
-    SellerLeads.Facebook,
+    BuyerLeads,
+    BuyerLeads.JobQueue,
+    BuyerLeads.ImovelWeb,
+    SellerLeads,
     Repo
   }
 
@@ -18,20 +18,20 @@ defmodule ReIntegrations.Zapier do
   }
 
   def new_lead(%{"source" => "facebook_buyer"} = payload) do
-    %FacebookBuyer{}
-    |> FacebookBuyer.changeset(payload)
+    %BuyerLeads.Facebook{}
+    |> BuyerLeads.Facebook.changeset(payload)
     |> do_new_buyer_lead("facebook_buyer")
   end
 
   def new_lead(%{"source" => "imovelweb_buyer"} = payload) do
-    %ImovelWebBuyer{}
-    |> ImovelWebBuyer.changeset(payload)
+    %ImovelWeb{}
+    |> ImovelWeb.changeset(payload)
     |> do_new_buyer_lead("imovelweb_buyer")
   end
 
   def new_lead(%{"source" => "facebook_seller"} = payload) do
-    %Facebook{}
-    |> Facebook.changeset(payload)
+    %SellerLeads.Facebook{}
+    |> SellerLeads.Facebook.changeset(payload)
     |> Repo.insert()
   end
 

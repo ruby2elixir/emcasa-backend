@@ -2,9 +2,9 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
   use ReWeb.ConnCase
 
   alias Re.{
-    Leads.FacebookBuyer,
-    Leads.ImovelWebBuyer,
-    SellerLeads.Facebook,
+    BuyerLeads,
+    BuyerLeads.ImovelWeb,
+    SellerLeads,
     Repo
   }
 
@@ -48,7 +48,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 200) == "ok"
 
-      assert fb = Repo.one(FacebookBuyer)
+      assert fb = Repo.one(BuyerLeads.Facebook)
       assert fb.uuid
     end
 
@@ -58,7 +58,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
-      refute Repo.one(FacebookBuyer)
+      refute Repo.one(BuyerLeads.Facebook)
     end
 
     test "unauthenticated request", %{unauthenticated_conn: conn} do
@@ -66,7 +66,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 401) == "Unauthorized"
 
-      refute Repo.one(FacebookBuyer)
+      refute Repo.one(BuyerLeads.Facebook)
     end
 
     test "invalid auth request", %{invalid_conn: conn} do
@@ -74,7 +74,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 401) == "Unauthorized"
 
-      refute Repo.one(FacebookBuyer)
+      refute Repo.one(BuyerLeads.Facebook)
     end
 
     @tag capture_log: true
@@ -83,7 +83,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
-      refute Repo.one(FacebookBuyer)
+      refute Repo.one(BuyerLeads.Facebook)
     end
 
     test "get should not be allowed", %{authenticated_conn: conn} do
@@ -91,7 +91,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 405) == "GET not allowed"
 
-      refute Repo.one(FacebookBuyer)
+      refute Repo.one(BuyerLeads.Facebook)
     end
   end
 
@@ -114,7 +114,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 200) == "ok"
 
-      assert fb = Repo.one(ImovelWebBuyer)
+      assert fb = Repo.one(ImovelWeb)
       assert fb.uuid
     end
 
@@ -124,7 +124,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
-      refute Repo.one(ImovelWebBuyer)
+      refute Repo.one(ImovelWeb)
     end
 
     test "unauthenticated request", %{unauthenticated_conn: conn} do
@@ -132,7 +132,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 401) == "Unauthorized"
 
-      refute Repo.one(ImovelWebBuyer)
+      refute Repo.one(ImovelWeb)
     end
 
     test "invalid auth request", %{invalid_conn: conn} do
@@ -140,7 +140,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 401) == "Unauthorized"
 
-      refute Repo.one(ImovelWebBuyer)
+      refute Repo.one(ImovelWeb)
     end
 
     @tag capture_log: true
@@ -149,7 +149,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
-      refute Repo.one(ImovelWebBuyer)
+      refute Repo.one(ImovelWeb)
     end
 
     test "get should now be allowed", %{authenticated_conn: conn} do
@@ -157,7 +157,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 405) == "GET not allowed"
 
-      refute Repo.one(ImovelWebBuyer)
+      refute Repo.one(ImovelWeb)
     end
   end
 
@@ -167,8 +167,8 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
     assert text_response(conn, 422) == "Unprocessable Entity"
 
-    refute Repo.one(FacebookBuyer)
-    refute Repo.one(ImovelWebBuyer)
+    refute Repo.one(BuyerLeads.Facebook)
+    refute Repo.one(ImovelWeb)
   end
 
   @tag capture_log: true
@@ -177,8 +177,8 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
     assert text_response(conn, 422) == "Unprocessable Entity"
 
-    refute Repo.one(FacebookBuyer)
-    refute Repo.one(ImovelWebBuyer)
+    refute Repo.one(BuyerLeads.Facebook)
+    refute Repo.one(ImovelWeb)
   end
 
   @facebook_seller_payload %{
@@ -211,7 +211,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 200) == "ok"
 
-      assert fb = Repo.one(Facebook)
+      assert fb = Repo.one(SellerLeads.Facebook)
       assert fb.uuid
     end
 
@@ -221,7 +221,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
-      refute Repo.one(Facebook)
+      refute Repo.one(SellerLeads.Facebook)
     end
 
     test "unauthenticated request", %{unauthenticated_conn: conn} do
@@ -229,7 +229,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 401) == "Unauthorized"
 
-      refute Repo.one(Facebook)
+      refute Repo.one(SellerLeads.Facebook)
     end
 
     test "invalid auth request", %{invalid_conn: conn} do
@@ -237,7 +237,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 401) == "Unauthorized"
 
-      refute Repo.one(Facebook)
+      refute Repo.one(SellerLeads.Facebook)
     end
 
     @tag capture_log: true
@@ -246,7 +246,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
-      refute Repo.one(Facebook)
+      refute Repo.one(SellerLeads.Facebook)
     end
 
     test "get should not be allowed", %{authenticated_conn: conn} do
@@ -254,7 +254,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert text_response(conn, 405) == "GET not allowed"
 
-      refute Repo.one(Facebook)
+      refute Repo.one(SellerLeads.Facebook)
     end
   end
 end

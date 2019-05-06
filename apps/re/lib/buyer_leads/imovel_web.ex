@@ -1,4 +1,4 @@
-defmodule Re.Leads.ImovelWebBuyer do
+defmodule Re.BuyerLeads.ImovelWeb do
   @moduledoc """
   Schema for ImovelWeb buyer leads
   """
@@ -10,7 +10,7 @@ defmodule Re.Leads.ImovelWebBuyer do
 
   alias Re.{
     Accounts.Users,
-    Leads.Buyer,
+    BuyerLead,
     Listings
   }
 
@@ -43,7 +43,7 @@ defmodule Re.Leads.ImovelWebBuyer do
   def buyer_lead_changeset(lead) do
     phone_number = format_phone_number(lead.phone)
 
-    Buyer.changeset(%Buyer{}, %{
+    BuyerLead.changeset(%BuyerLead{}, %{
       name: lead.name,
       email: lead.email,
       phone_number: lead.phone,

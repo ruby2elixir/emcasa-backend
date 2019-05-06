@@ -1,4 +1,4 @@
-defmodule Re.Leads.GrupozapBuyer do
+defmodule Re.BuyerLeads.Grupozap do
   @moduledoc """
   Schema for buyer leads
   """
@@ -10,7 +10,7 @@ defmodule Re.Leads.GrupozapBuyer do
 
   alias Re.{
     Accounts.Users,
-    Leads.Buyer,
+    BuyerLead,
     Listings
   }
 
@@ -50,7 +50,7 @@ defmodule Re.Leads.GrupozapBuyer do
   def buyer_lead_changeset(gzb) do
     phone_number = concat_phone_number(gzb)
 
-    Buyer.changeset(%Buyer{}, %{
+    BuyerLead.changeset(%BuyerLead{}, %{
       name: gzb.name,
       email: gzb.email,
       phone_number: phone_number,

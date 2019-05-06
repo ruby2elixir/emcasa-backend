@@ -224,7 +224,7 @@ defmodule Re.Factory do
   end
 
   def grupozap_buyer_lead_factory do
-    %Re.Leads.GrupozapBuyer{
+    %Re.BuyerLeads.Grupozap{
       uuid: UUID.uuid4(),
       lead_origin: "VivaReal",
       name: Name.name(),
@@ -234,7 +234,7 @@ defmodule Re.Factory do
   end
 
   def facebook_buyer_lead_factory do
-    %Re.Leads.FacebookBuyer{
+    %Re.BuyerLeads.Facebook{
       uuid: UUID.uuid4(),
       full_name: Name.name(),
       email: Internet.email()
@@ -242,7 +242,7 @@ defmodule Re.Factory do
   end
 
   def imovelweb_buyer_lead_factory do
-    %Re.Leads.ImovelWebBuyer{
+    %Re.BuyerLeads.ImovelWeb{
       uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email()
@@ -250,7 +250,7 @@ defmodule Re.Factory do
   end
 
   def site_seller_lead_factory do
-    %Re.SellerLeads.SiteLead{
+    %Re.SellerLeads.Site{
       uuid: UUID.uuid4(),
       complement: Address.secondary_address(),
       type: random(:listing_type),

@@ -1,4 +1,4 @@
-defmodule Re.Leads.FacebookBuyer do
+defmodule Re.BuyerLeads.Facebook do
   @moduledoc """
   Schema for facebook buyer leads
   """
@@ -10,7 +10,7 @@ defmodule Re.Leads.FacebookBuyer do
 
   alias Re.{
     Accounts.Users,
-    Leads.Buyer
+    BuyerLead
   }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
@@ -47,7 +47,7 @@ defmodule Re.Leads.FacebookBuyer do
   def buyer_lead_changeset(nil), do: raise("Leads.FacebookBuyer not found")
 
   def buyer_lead_changeset(lead) do
-    Buyer.changeset(%Buyer{}, %{
+    BuyerLead.changeset(%BuyerLead{}, %{
       name: lead.full_name,
       email: lead.email,
       phone_number: lead.phone_number,

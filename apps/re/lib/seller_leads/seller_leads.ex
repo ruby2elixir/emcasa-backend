@@ -6,14 +6,14 @@ defmodule Re.SellerLeads do
   alias Re.{
     PubSub,
     Repo,
-    SellerLeads.SiteLead
+    SellerLeads.Site
   }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def create_site(params) do
-    %SiteLead{}
-    |> SiteLead.changeset(params)
+    %Site{}
+    |> Site.changeset(params)
     |> Repo.insert()
     |> PubSub.publish_new("new_site_seller_lead")
   end

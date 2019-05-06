@@ -6,7 +6,7 @@ defmodule Re.SellerLeadsTest do
   alias Re.{
     PubSub,
     SellerLeads,
-    SellerLeads.SiteLead
+    SellerLeads.Site
   }
 
   describe "create_site" do
@@ -20,7 +20,7 @@ defmodule Re.SellerLeadsTest do
 
       {:ok, _site_lead} = SellerLeads.create_site(params)
 
-      assert %{uuid: uuid} = Repo.one(SiteLead)
+      assert %{uuid: uuid} = Repo.one(Site)
 
       assert_received %{topic: "new_site_seller_lead", new: %{uuid: ^uuid}}
     end
