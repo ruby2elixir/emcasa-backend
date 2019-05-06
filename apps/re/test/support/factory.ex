@@ -119,7 +119,8 @@ defmodule Re.Factory do
 
   def interest_factory do
     %Re.Interest{
-      name: "John Doe"
+      name: "John Doe",
+      uuid: UUID.uuid4()
     }
   end
 

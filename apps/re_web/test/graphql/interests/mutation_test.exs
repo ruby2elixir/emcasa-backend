@@ -66,7 +66,8 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              }
            } == json_response(conn, 200)["data"]["interestCreate"]
 
-    assert Repo.get_by(Interest, name: "Mah Name")
+    assert interest = Repo.get_by(Interest, name: "Mah Name")
+    assert interest.uuid
   end
 
   test "user should request contact", %{user_conn: conn} do
@@ -118,6 +119,7 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              }
            } == json_response(conn, 200)["data"]["interestCreate"]
 
-    assert Repo.get_by(Interest, name: "Mah Name")
+    assert interest = Repo.get_by(Interest, name: "Mah Name")
+    assert interest.uuid
   end
 end
