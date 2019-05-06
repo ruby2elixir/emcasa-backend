@@ -181,7 +181,8 @@ defmodule Re.InterestsTest do
           listing_id: listing.id
         })
 
-      assert Repo.get(Interest, interest.id)
+      assert interest = Repo.get(Interest, interest.id)
+      assert interest.uuid
       assert_receive %{new: _, topic: "new_interest", type: :new}
     end
 

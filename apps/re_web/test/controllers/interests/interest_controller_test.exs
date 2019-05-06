@@ -26,7 +26,8 @@ defmodule ReWeb.InterestControllerTest do
       response = json_response(conn, 201)
 
       interest_id = response["data"]["id"]
-      assert Repo.get(Interest, interest_id)
+      assert interest = Repo.get(Interest, interest_id)
+      assert interest.uuid
     end
 
     test "show interest in invalid listing", %{conn: conn} do

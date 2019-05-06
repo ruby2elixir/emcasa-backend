@@ -7,6 +7,7 @@ defmodule Re.Interest do
   import Ecto.Changeset
 
   schema "interests" do
+    field :uuid, Ecto.UUID
     field :name, :string
     field :email, :string
     field :phone, :string
@@ -19,7 +20,7 @@ defmodule Re.Interest do
   end
 
   @required ~w(name listing_id)a
-  @optional ~w(email phone message interest_type_id)a
+  @optional ~w(email phone message interest_type_id uuid)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -32,5 +33,8 @@ defmodule Re.Interest do
       name: :interests_listing_id_fkey,
       message: "does not exist."
     )
+    |> generate_uuid()
   end
+
+  defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
 end
