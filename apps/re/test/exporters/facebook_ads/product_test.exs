@@ -1,10 +1,13 @@
 defmodule Re.Exporters.FacebookAds.ProductTest do
   use Re.ModelCase
 
+  import Re.Factory
+
   alias Re.{
+    Address,
+    Development,
     Exporters.FacebookAds,
     Image,
-    Address,
     Listing
   }
 
@@ -48,7 +51,8 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
             filename: "bath_1.png",
             description: nil
           }
-        ]
+        ],
+        units: []
       }
 
       expected_xml =
@@ -57,7 +61,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<link><![CDATA[#{@frontend_url}/imoveis/7004578]]></link>" <>
           "<title><![CDATA[Apartamento a venda em São Paulo]]></title>" <>
           "<availability><![CDATA[in stock]]></availability>" <>
-          "<condition><![CDATA[new]]></condition>" <>
+          "<condition><![CDATA[used]]></condition>" <>
           "<brand><![CDATA[EmCasa]]></brand>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
@@ -70,6 +74,69 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<image_link><![CDATA[#{@image_url}/living_room.png]]></image_link>" <>
           "<additional_image_link><![CDATA[#{@image_url}/suite_1.png,#{@image_url}/bath_1.png]]></additional_image_link>" <>
           "</entry>"
+
+      generated_xml =
+        listing
+        |> FacebookAds.Product.build_node(FacebookAds.Product.merge_default_options(%{}))
+        |> XmlBuilder.generate(format: :none)
+
+      assert expected_xml == generated_xml
+    end
+
+    test "export XML for new units' listings" do
+      t(
+        listing = %Listing{
+          id: 7_004_578,
+          price: 800,
+          type: "Apartamento",
+          area: 300,
+          price_per_area: 800 / 300,
+          rooms: 4,
+          bathrooms: 4,
+          description:
+            "Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço",
+          address: %Address{
+            street: "Rua do Ipiranga",
+            street_number: 20,
+            neighborhood: "Ipiranga",
+            city: "São Paulo",
+            state: "SP",
+            postal_code: "04732-192",
+            lat: 51.496401,
+            lng: -0.179
+          },
+          matterport_code: "mY123",
+          images: [
+            %Image{
+              filename: "living_room.png",
+              description: "Living room"
+            }
+          ],
+          units: build_list(3, :unit),
+          development: %Development{
+            phase: "building"
+          }
+        }
+      )
+
+      expected_xml =
+        "<entry>" <>
+          "<id><![CDATA[7004578]]></id>" <>
+          "<link><![CDATA[#{@frontend_url}/imoveis/7004578]]></link>" <>
+          "<title><![CDATA[Apartamento a venda em São Paulo]]></title>" <>
+          "<availability><![CDATA[available for order]]></availability>" <>
+          "<condition><![CDATA[new]]></condition>" <>
+          "<brand><![CDATA[EmCasa]]></brand>" <>
+          "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
+          "<price><![CDATA[800 BRL]]></price>" <>
+          "<product_type><![CDATA[Apartamento]]></product_type>" <>
+          "<custom_label_0><![CDATA[Rua do Ipiranga]]></custom_label_0>" <>
+          "<custom_label_1><![CDATA[Ipiranga]]></custom_label_1>" <>
+          "<custom_label_2><![CDATA[4]]></custom_label_2>" <>
+          "<custom_label_3><![CDATA[4]]></custom_label_3>" <>
+          "<custom_label_4><![CDATA[300]]></custom_label_4>" <>
+          "<image_link><![CDATA[#{@image_url}/living_room.png]]></image_link>" <>
+          "<additional_image_link><![CDATA[]]></additional_image_link>" <> "</entry>"
 
       generated_xml =
         listing
@@ -106,7 +173,8 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
             filename: "living_room.png",
             description: "Living room"
           }
-        ]
+        ],
+        units: []
       }
 
       expected_xml =
@@ -115,7 +183,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<link><![CDATA[#{@frontend_url}/imoveis/7004578]]></link>" <>
           "<title><![CDATA[Apartamento a venda em São Paulo]]></title>" <>
           "<availability><![CDATA[in stock]]></availability>" <>
-          "<condition><![CDATA[new]]></condition>" <>
+          "<condition><![CDATA[used]]></condition>" <>
           "<brand><![CDATA[EmCasa]]></brand>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
@@ -157,7 +225,8 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           lat: 51.496401,
           lng: -0.179
         },
-        images: []
+        images: [],
+        units: []
       }
 
       expected_xml =
@@ -166,7 +235,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<link><![CDATA[#{@frontend_url}/imoveis/7004578]]></link>" <>
           "<title><![CDATA[Apartamento a venda em São Paulo]]></title>" <>
           "<availability><![CDATA[in stock]]></availability>" <>
-          "<condition><![CDATA[new]]></condition>" <>
+          "<condition><![CDATA[used]]></condition>" <>
           "<brand><![CDATA[EmCasa]]></brand>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
@@ -207,7 +276,8 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           lat: 51.496401,
           lng: -0.179
         },
-        images: []
+        images: [],
+        units: []
       }
 
       expected_xml =
@@ -216,7 +286,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           "<link><![CDATA[#{@frontend_url}/imoveis/7004578]]></link>" <>
           "<title><![CDATA[Apartamento a venda em São Paulo]]></title>" <>
           "<availability><![CDATA[in stock]]></availability>" <>
-          "<condition><![CDATA[new]]></condition>" <>
+          "<condition><![CDATA[used]]></condition>" <>
           "<brand><![CDATA[EmCasa]]></brand>" <>
           "<description><![CDATA[Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço]]></description>" <>
           "<price><![CDATA[800 BRL]]></price>" <>
