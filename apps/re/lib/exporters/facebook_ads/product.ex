@@ -4,13 +4,19 @@ defmodule Re.Exporters.FacebookAds.Product do
   https://developers.facebook.com/docs/marketing-api/dynamic-product-ads/product-catalog
   """
 
-  @exported_attributes ~w(id url title sell_type condition brand description price
+  @exported_attributes ~w(id url title availability condition brand description price
   listing_type street neighborhood rooms bathrooms area image additional_image)a
   @default_options %{attributes: @exported_attributes}
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
   @max_additional_images 20
+  @availabilities %{
+    "pre-launch" => "preorder",
+    "planning" => "preorder",
+    "building" => "available for order",
+    "delivered" => "in stock"
+  }
 
   def export_listings_xml(listings, options \\ %{}) do
     options = merge_default_options(options)
@@ -69,12 +75,12 @@ defmodule Re.Exporters.FacebookAds.Product do
     {"title", %{}, "#{type} a venda em #{city}"}
   end
 
-  defp convert_attribute(:sell_type, _) do
+  defp convert_attribute(:availability, %{units: []}) do
     {"availability", %{}, "in stock"}
   end
 
-  defp convert_attribute(:condition, _) do
-    {"condition", %{}, "new"}
+  defp convert_attribute(:availability, %{units: [_ | _], development: %{phase: phase}}) do
+    {"availability", %{}, Map.get(@availabilities, phase)}
   end
 
   defp convert_attribute(:brand, _) do
@@ -113,6 +119,14 @@ defmodule Re.Exporters.FacebookAds.Product do
 
   defp convert_attribute(:listing_type, %{type: type}) do
     {"product_type", %{}, type}
+  end
+
+  defp convert_attribute(:condition, %{units: []}) do
+    {"condition", %{}, "used"}
+  end
+
+  defp convert_attribute(:condition, %{units: [_ | _]}) do
+    {"condition", %{}, "new"}
   end
 
   defp convert_attribute(:street, %{address: address}) do
