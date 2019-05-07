@@ -84,40 +84,38 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
     end
 
     test "export XML for new units' listings" do
-      t(
-        listing = %Listing{
-          id: 7_004_578,
-          price: 800,
-          type: "Apartamento",
-          area: 300,
-          price_per_area: 800 / 300,
-          rooms: 4,
-          bathrooms: 4,
-          description:
-            "Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço",
-          address: %Address{
-            street: "Rua do Ipiranga",
-            street_number: 20,
-            neighborhood: "Ipiranga",
-            city: "São Paulo",
-            state: "SP",
-            postal_code: "04732-192",
-            lat: 51.496401,
-            lng: -0.179
-          },
-          matterport_code: "mY123",
-          images: [
-            %Image{
-              filename: "living_room.png",
-              description: "Living room"
-            }
-          ],
-          units: build_list(3, :unit),
-          development: %Development{
-            phase: "building"
+      listing = %Listing{
+        id: 7_004_578,
+        price: 800,
+        type: "Apartamento",
+        area: 300,
+        price_per_area: 800 / 300,
+        rooms: 4,
+        bathrooms: 4,
+        description:
+          "Sobrado, 4 dormitórios, 3 suites, 4 vagas de garagem, 2 salas , 1 lavabo, 1 banheiro, área de serviço",
+        address: %Address{
+          street: "Rua do Ipiranga",
+          street_number: 20,
+          neighborhood: "Ipiranga",
+          city: "São Paulo",
+          state: "SP",
+          postal_code: "04732-192",
+          lat: 51.496401,
+          lng: -0.179
+        },
+        matterport_code: "mY123",
+        images: [
+          %Image{
+            filename: "living_room.png",
+            description: "Living room"
           }
+        ],
+        units: build_list(3, :unit),
+        development: %Development{
+          phase: "building"
         }
-      )
+      }
 
       expected_xml =
         "<entry>" <>
