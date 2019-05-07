@@ -65,7 +65,7 @@ defmodule ReWeb.InterestControllerTest do
 
       response = json_response(conn, 422)
 
-      IO.inspect(response["errors"])
+      assert %{"phone" => ["can't be blank"]} == response["errors"]
       refute Repo.one(Interest)
       refute Repo.one(JobQueue)
     end

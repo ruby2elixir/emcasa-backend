@@ -17,8 +17,8 @@ defmodule Re.BuyerLeads.JobQueue do
   }
 
   alias Ecto.{
-    Query,
-    Multi
+    Multi,
+    Query
   }
 
   def perform(%Multi{} = multi, %{"type" => "grupozap_buyer_lead", "uuid" => uuid}) do
