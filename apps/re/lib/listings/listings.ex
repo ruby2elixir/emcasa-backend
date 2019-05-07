@@ -167,7 +167,7 @@ defmodule Re.Listings do
   defp changeset_for_opts(%{user_id: user_id} = listing, opts) do
     Enum.reduce(opts, Changeset.change(listing), fn
       {:development, development}, changeset ->
-        Changeset.change(changeset, %{development_uuid: development.uuid, is_exportable: false})
+        Changeset.change(changeset, %{development_uuid: development.uuid})
 
       {:address, address}, changeset ->
         Changeset.change(changeset, %{address_id: address.id})
