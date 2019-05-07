@@ -337,7 +337,7 @@ defmodule Re.ListingsTest do
     end
   end
 
-  describe "insert/3" do
+  describe "insert/2" do
     @insert_listing_params %{
       "type" => "Apartamento",
       "complement" => "100",
@@ -464,13 +464,12 @@ defmodule Re.ListingsTest do
 
       assert Repo.get(Listing, listing.id)
     end
-  end
 
-  describe "insert/4" do
     @insert_development_listing_params %{
       "type" => "Apartamento",
       "has_elevator" => true,
-      "description" => "Awesome new brand building"
+      "description" => "Awesome new brand building",
+      "is_exportable" => true
     }
 
     test "should insert development listing" do
@@ -489,23 +488,8 @@ defmodule Re.ListingsTest do
       assert retrieved_listing.development_uuid == development.uuid
       assert retrieved_listing.address_id == address.id
       assert retrieved_listing.user_id == user.id
+      assert retrieved_listing.is_exportable == true
       assert retrieved_listing.uuid
-    end
-
-    test "should set is_exportable to false" do
-      address = insert(:address)
-      development = insert(:development, address_id: address.id)
-      user = insert(:user, role: "admin")
-
-      assert {:ok, inserted_listing} =
-               Listings.insert(@insert_development_listing_params,
-                 address: address,
-                 user: user,
-                 development: development
-               )
-
-      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
-      assert retrieved_listing.is_exportable == false
     end
 
     test "should copy infrastructure info from development" do
@@ -604,24 +588,6 @@ defmodule Re.ListingsTest do
 
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.user_id == original_user.id
-    end
-  end
-
-  describe "update/5" do
-    test "should set is exportable as false" do
-      user = insert(:user)
-      address = insert(:address)
-      development = insert(:development, address: address)
-      listing = insert(:listing, user: user)
-
-      Listings.update(listing, %{is_exportable: true},
-        address: address,
-        user: user,
-        development: development
-      )
-
-      updated_listing = Repo.get(Listing, listing.id)
-      assert updated_listing.is_exportable == false
     end
   end
 
