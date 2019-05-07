@@ -3,7 +3,10 @@ defmodule ReWeb.InterestControllerTest do
 
   import Re.Factory
 
-  alias Re.Interest
+  alias Re.{
+    BuyerLeads.JobQueue,
+    Interest
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -15,7 +18,7 @@ defmodule ReWeb.InterestControllerTest do
 
       params = %{
         name: "Test Name",
-        email: "test@email.com",
+        phone: "011999999999",
         interest_type_id: id
       }
 
@@ -28,6 +31,7 @@ defmodule ReWeb.InterestControllerTest do
       interest_id = response["data"]["id"]
       assert interest = Repo.get(Interest, interest_id)
       assert interest.uuid
+      assert Repo.one(JobQueue)
     end
 
     test "show interest in invalid listing", %{conn: conn} do
@@ -35,7 +39,7 @@ defmodule ReWeb.InterestControllerTest do
 
       params = %{
         name: "Test Name",
-        email: "test@email.com",
+        phone: "011999999999",
         interest_type_id: id
       }
 
@@ -44,6 +48,26 @@ defmodule ReWeb.InterestControllerTest do
       assert response = json_response(conn, 422)
 
       assert %{"listing_id" => ["does not exist."]} == response["errors"]
+    end
+
+    test "error when no phone", %{conn: conn} do
+      %{id: id} = insert(:interest_type)
+
+      params = %{
+        name: "Test Name",
+        email: "mah@email.com",
+        interest_type_id: id
+      }
+
+      listing = insert(:listing, address: build(:address))
+
+      conn = post(conn, listing_interest_path(conn, :create, listing.id), interest: params)
+
+      response = json_response(conn, 422)
+
+      IO.inspect(response["errors"])
+      refute Repo.one(Interest)
+      refute Repo.one(JobQueue)
     end
   end
 end

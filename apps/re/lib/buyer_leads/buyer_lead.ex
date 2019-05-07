@@ -27,8 +27,8 @@ defmodule Re.BuyerLead do
     timestamps()
   end
 
-  @required ~w(name phone_number email origin)a
-  @optional ~w(listing_uuid user_uuid)a
+  @required ~w(name phone_number origin)a
+  @optional ~w(email listing_uuid user_uuid)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do

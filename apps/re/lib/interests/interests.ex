@@ -3,8 +3,16 @@ defmodule Re.Interests do
   Context to manage operation between users and listings
   """
 
+  import Ecto.Query
+
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
+
   alias Re.{
     Addresses,
+    BuyerLeads.JobQueue,
     Interest,
     Interests.ContactRequest,
     Interests.NotifyWhenCovered,
@@ -15,8 +23,6 @@ defmodule Re.Interests do
     User
   }
 
-  import Ecto.Query
-
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
 
   def query(_query, _args), do: Re.Interest
@@ -24,7 +30,7 @@ defmodule Re.Interests do
   def show_interest(params) do
     %Interest{}
     |> Interest.changeset(params)
-    |> Repo.insert()
+    |> insert()
     |> PubSub.publish_new("new_interest")
   end
 
@@ -62,6 +68,21 @@ defmodule Re.Interests do
     |> Repo.insert()
     |> PubSub.publish_new("notify_when_covered")
   end
+
+  defp insert(%{valid?: true} = changeset) do
+    uuid = Changeset.get_field(changeset, :uuid)
+
+    Multi.new()
+    |> JobQueue.enqueue(:buyer_lead_job, %{"type" => "interest", "uuid" => uuid})
+    |> Multi.insert(:add_interest, changeset)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{add_interest: interest}} -> {:ok, interest}
+      error -> error
+    end
+  end
+
+  defp insert(changeset), do: {:error, changeset}
 
   defp attach_user(changeset, %User{id: id}),
     do: ContactRequest.changeset(changeset, %{user_id: id})
