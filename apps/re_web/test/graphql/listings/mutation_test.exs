@@ -497,8 +497,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["description"] == listing.description
       assert inserted_listing["hasElevator"] == listing.has_elevator
       assert inserted_listing["matterportCode"] == listing.matterport_code
+      assert inserted_listing["isExportable"] == listing.is_exportable
 
-      refute inserted_listing["isExportable"]
       refute inserted_listing["isActive"]
 
       assert associated_address["city"] == address.city
@@ -895,7 +895,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert updated_listing["description"] == new_listing.description
       assert updated_listing["hasElevator"] == new_listing.has_elevator
       assert updated_listing["matterportCode"] == new_listing.matterport_code
-      refute updated_listing["isExportable"]
+      assert updated_listing["isExportable"] == new_listing.is_exportable
 
       assert updated_address["id"] == to_string(new_address.id)
       assert updated_development["uuid"] == development.uuid
@@ -977,6 +977,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       "description" => listing.description,
       "hasElevator" => listing.has_elevator,
       "matterportCode" => listing.matterport_code,
+      "isExportable" => listing.is_exportable,
       "address_id" => address_id,
       "development_uuid" => development_uuid
     }

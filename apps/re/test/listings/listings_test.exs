@@ -591,24 +591,6 @@ defmodule Re.ListingsTest do
     end
   end
 
-  describe "update/5" do
-    test "should set is exportable as false" do
-      user = insert(:user)
-      address = insert(:address)
-      development = insert(:development, address: address)
-      listing = insert(:listing, user: user)
-
-      Listings.update(listing, %{is_exportable: true},
-        address: address,
-        user: user,
-        development: development
-      )
-
-      updated_listing = Repo.get(Listing, listing.id)
-      assert updated_listing.is_exportable == false
-    end
-  end
-
   describe "upsert_tags/2" do
     test "should insert tags" do
       tag_1 = insert(:tag, name: "tag 1", name_slug: "tag-1")

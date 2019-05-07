@@ -148,7 +148,7 @@ defmodule Re.Listing do
 
   @development_required ~w(type description has_elevator address_id user_id development_uuid)a
 
-  @development_optional ~w(matterport_code is_exclusive status is_release)a
+  @development_optional ~w(matterport_code is_exclusive status is_release is_exportable)a
 
   @development_attributes @development_required ++ @development_optional
 
