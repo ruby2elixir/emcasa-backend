@@ -15,7 +15,7 @@ defmodule Re.Exporters.FacebookAds.Product do
     "pre-launch" => "preorder",
     "planning" => "preorder",
     "building" => "available for order",
-    "delivered" => "in-stock"
+    "delivered" => "in stock"
   }
 
   def export_listings_xml(listings, options \\ %{}) do
