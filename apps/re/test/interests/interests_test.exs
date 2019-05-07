@@ -2,6 +2,7 @@ defmodule Re.InterestsTest do
   use Re.ModelCase
 
   alias Re.{
+    BuyerLeads.JobQueue,
     PriceSuggestions.Request,
     Interest,
     Interests,
@@ -184,12 +185,13 @@ defmodule Re.InterestsTest do
       assert interest = Repo.get(Interest, interest.id)
       assert interest.uuid
       assert_receive %{new: _, topic: "new_interest", type: :new}
+      assert Repo.one(JobQueue)
     end
 
     test "should not create interest in invalid listing" do
       Re.PubSub.subscribe("new_interest")
 
-      {:error, _} =
+      {:error, :add_interest, _, _} =
         Interests.show_interest(%{name: "naem", phone: "123", interest_type: 2, listing_id: -1})
 
       refute_receive %{new: _, topic: "new_interest", type: :new}

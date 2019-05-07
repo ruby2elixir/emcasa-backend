@@ -6,6 +6,7 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
   import Re.Factory
 
   alias Re.{
+    BuyerLeads.JobQueue,
     Interest,
     Repo
   }
@@ -68,6 +69,7 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
 
     assert interest = Repo.get_by(Interest, name: "Mah Name")
     assert interest.uuid
+    assert Repo.one(JobQueue)
   end
 
   test "user should request contact", %{user_conn: conn} do

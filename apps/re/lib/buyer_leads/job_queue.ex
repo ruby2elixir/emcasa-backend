@@ -5,16 +5,21 @@ defmodule Re.BuyerLeads.JobQueue do
   """
   use EctoJob.JobQueue, table_name: "buyer_leads_jobs"
 
+  require Ecto.Query
   require Logger
 
   alias Re.{
     BuyerLeads.Facebook,
     BuyerLeads.Grupozap,
     BuyerLeads.ImovelWeb,
+    Interest,
     Repo
   }
 
-  alias Ecto.Multi
+  alias Ecto.{
+    Multi,
+    Query
+  }
 
   def perform(%Multi{} = multi, %{"type" => "grupozap_buyer_lead", "uuid" => uuid}) do
     Grupozap
@@ -36,6 +41,15 @@ defmodule Re.BuyerLeads.JobQueue do
     ImovelWeb
     |> Repo.get(uuid)
     |> ImovelWeb.buyer_lead_changeset()
+    |> insert_buyer_lead(multi)
+    |> Repo.transaction()
+  end
+
+  def perform(%Multi{} = multi, %{"type" => "interest", "uuid" => uuid}) do
+    Interest
+    |> Query.preload(:listing)
+    |> Repo.get_by(uuid: uuid)
+    |> Interest.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
   end

@@ -6,6 +6,11 @@ defmodule Re.Interest do
 
   import Ecto.Changeset
 
+  alias Re.{
+    Accounts.Users,
+    BuyerLead
+  }
+
   schema "interests" do
     field :uuid, Ecto.UUID
     field :name, :string
@@ -19,8 +24,8 @@ defmodule Re.Interest do
     timestamps()
   end
 
-  @required ~w(name listing_id)a
-  @optional ~w(email phone message interest_type_id uuid)a
+  @required ~w(name phone listing_id)a
+  @optional ~w(email message interest_type_id uuid)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -37,4 +42,32 @@ defmodule Re.Interest do
   end
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
+
+  def buyer_lead_changeset(nil), do: raise("Interest not found")
+
+  def buyer_lead_changeset(interest) do
+    phone_number = format(interest.phone)
+
+    BuyerLead.changeset(%BuyerLead{}, %{
+      name: interest.name,
+      phone_number: phone_number,
+      email: interest.email,
+      origin: "site",
+      listing_uuid: interest.listing.uuid,
+      user_uuid: extract_user_uuid(phone_number)
+    })
+  end
+
+  defp format(nil), do: nil
+
+  defp format(phone_number), do: String.replace(phone_number, ["(", ")", "-", " "], "")
+
+  defp extract_user_uuid(nil), do: nil
+
+  defp extract_user_uuid(phone_number) do
+    case Users.get_by_phone(phone_number) do
+      {:ok, user} -> user.uuid
+      _error -> nil
+    end
+  end
 end

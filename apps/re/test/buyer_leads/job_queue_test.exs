@@ -189,4 +189,43 @@ defmodule Re.BuyerLeads.JobQueueTest do
       refute buyer.listing_uuid
     end
   end
+
+  describe "interest" do
+    test "process lead with existing user and listing" do
+      %{uuid: listing_uuid} = listing = insert(:listing)
+      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+
+      %{uuid: uuid} = insert(:interest, listing: listing, phone: "+5511999999999")
+
+      assert {:ok, _} = JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
+
+      assert buyer = Repo.one(BuyerLead)
+      assert buyer.user_uuid == user_uuid
+      assert buyer.listing_uuid == listing_uuid
+    end
+
+    test "process lead with nil phone" do
+      listing = insert(:listing)
+
+      %{uuid: uuid} = insert(:interest, listing: listing, phone: nil)
+
+      assert {:error, :insert_buyer_lead, _, _} =
+               JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
+
+      refute Repo.one(BuyerLead)
+    end
+
+    test "process lead with no user" do
+      %{id: id, uuid: listing_uuid} = insert(:listing)
+
+      %{uuid: uuid} = insert(:interest, phone: "011999999999", listing_id: "#{id}")
+
+      assert {:ok, _} = JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
+
+      assert buyer = Repo.one(BuyerLead)
+      refute buyer.user_uuid
+      assert buyer.phone_number == "011999999999"
+      assert buyer.listing_uuid == listing_uuid
+    end
+  end
 end
