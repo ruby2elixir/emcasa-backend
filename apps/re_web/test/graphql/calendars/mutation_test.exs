@@ -30,7 +30,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
     args = %{
       "input" => %{
         "options" => [
-          %{"datetime" => "2018-01-01T10:00:00.000000"}
+          %{"datetime" => "2018-01-01T10:00:00"}
         ],
         "wantsPictures" => true,
         "wantsTour" => true,
@@ -84,7 +84,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
     args = %{
       "input" => %{
         "options" => [
-          %{"datetime" => "2018-01-01T10:00:00.000000"}
+          %{"datetime" => "2018-01-01T10:00:00"}
         ],
         "wantsPictures" => true,
         "wantsTour" => true,
@@ -138,7 +138,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
     args = %{
       "input" => %{
         "options" => [
-          %{"datetime" => "2018-01-01T10:00:00.000000"}
+          %{"datetime" => "2018-01-01T10:00:00"}
         ],
         "wantsPictures" => true,
         "wantsTour" => true,

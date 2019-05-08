@@ -9,13 +9,16 @@ defmodule Re.Calendars do
     Repo
   }
 
+  alias Ecto.Changeset
+
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def schedule_tour(params) do
     option = get_one_datetime(params)
 
     %TourAppointment{}
-    |> TourAppointment.changeset(Map.merge(%{option: option}, params))
+    |> TourAppointment.changeset(params)
+    |> Changeset.change(%{option: option})
     |> add_listing_id(params)
     |> Repo.insert()
     |> PubSub.publish_new("tour_appointment")
