@@ -56,7 +56,7 @@ defmodule Re.CalendarsTest do
 
       params = %{
         options: [
-          %{datetime: ~N[2018-01-01 10:00:00]}
+          %{datetime: ~N[2018-01-01 10:00:00.000Z]}
         ],
         wants_pictures: true,
         wants_tour: true,
