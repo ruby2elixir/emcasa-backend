@@ -4,13 +4,19 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
   https://developers.facebook.com/docs/marketing-api/dynamic-ads-for-real-estate
   """
 
-  @exported_attributes ~w(id url title sell_type description price listing_type
+  @exported_attributes ~w(id url title availability listing_type description price property_type
     rooms bathrooms units area_unit area neighborhood address latitude longitude image)a
   @default_options %{attributes: @exported_attributes}
 
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @image_url "https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385"
   @max_images 20
+  @availabilities %{
+    "pre-launch" => "off_market",
+    "planning" => "off_market",
+    "building" => "available_soon",
+    "delivered" => "for_sale"
+  }
 
   def export_listings_xml(listings, options \\ %{}) do
     options = merge_default_options(options)
@@ -73,8 +79,20 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
     {"name", %{}, "#{type} a venda em #{city}"}
   end
 
-  defp convert_attribute(:sell_type, _) do
+  defp convert_attribute(:availability, %{development: nil}) do
     {"availability", %{}, "for_sale"}
+  end
+
+  defp convert_attribute(:availability, %{development: %{phase: phase}}) do
+    {"availability", %{}, Map.get(@availabilities, phase, "for_sale")}
+  end
+
+  defp convert_attribute(:listing_type, %{development: nil}) do
+    {"listing_type", %{}, "for_sale_by_owner"}
+  end
+
+  defp convert_attribute(:listing_type, _) do
+    {"listing_type", %{}, "new_listing"}
   end
 
   defp convert_attribute(:description, %{description: description}) do
@@ -85,7 +103,7 @@ defmodule Re.Exporters.FacebookAds.RealEstate do
     {"price", %{}, "#{price} BRL"}
   end
 
-  defp convert_attribute(:listing_type, %{type: type}) do
+  defp convert_attribute(:property_type, %{type: type}) do
     {"property_type", %{}, expand_type(type)}
   end
 
