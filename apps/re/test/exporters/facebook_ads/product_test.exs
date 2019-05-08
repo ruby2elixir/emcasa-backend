@@ -1,8 +1,6 @@
 defmodule Re.Exporters.FacebookAds.ProductTest do
   use Re.ModelCase
 
-  import Re.Factory
-
   alias Re.{
     Address,
     Development,
@@ -52,7 +50,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
             description: nil
           }
         ],
-        units: []
+        development: nil
       }
 
       expected_xml =
@@ -111,7 +109,6 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
             description: "Living room"
           }
         ],
-        units: build_list(3, :unit),
         development: %Development{
           phase: "building"
         }
@@ -172,7 +169,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
             description: "Living room"
           }
         ],
-        units: []
+        development: nil
       }
 
       expected_xml =
@@ -224,7 +221,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           lng: -0.179
         },
         images: [],
-        units: []
+        development: nil
       }
 
       expected_xml =
@@ -275,7 +272,7 @@ defmodule Re.Exporters.FacebookAds.ProductTest do
           lng: -0.179
         },
         images: [],
-        units: []
+        development: nil
       }
 
       expected_xml =

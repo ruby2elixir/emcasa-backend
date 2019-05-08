@@ -75,11 +75,11 @@ defmodule Re.Exporters.FacebookAds.Product do
     {"title", %{}, "#{type} a venda em #{city}"}
   end
 
-  defp convert_attribute(:availability, %{units: []}) do
+  defp convert_attribute(:availability, %{development: nil}) do
     {"availability", %{}, "in stock"}
   end
 
-  defp convert_attribute(:availability, %{units: [_ | _], development: %{phase: phase}}) do
+  defp convert_attribute(:availability, %{development: %{phase: phase}}) do
     {"availability", %{}, Map.get(@availabilities, phase)}
   end
 
@@ -121,11 +121,11 @@ defmodule Re.Exporters.FacebookAds.Product do
     {"product_type", %{}, type}
   end
 
-  defp convert_attribute(:condition, %{units: []}) do
+  defp convert_attribute(:condition, %{development: nil}) do
     {"condition", %{}, "used"}
   end
 
-  defp convert_attribute(:condition, %{units: [_ | _]}) do
+  defp convert_attribute(:condition, _) do
     {"condition", %{}, "new"}
   end
 

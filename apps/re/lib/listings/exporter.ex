@@ -10,8 +10,9 @@ defmodule Re.Listings.Exporter do
     Repo
   }
 
-  @partial_preload [
+  @preload [
     :address,
+    :development,
     images: Images.Queries.listing_preload()
   ]
 
@@ -20,7 +21,7 @@ defmodule Re.Listings.Exporter do
 
     Queries.active()
     |> Filtering.apply(filters)
-    |> Queries.preload_relations(@partial_preload)
+    |> Queries.preload_relations(@preload)
     |> Queries.order_by_id()
     |> Repo.all()
   end
