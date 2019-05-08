@@ -24,7 +24,8 @@ defmodule Re.Calendars do
     |> PubSub.publish_new("tour_appointment")
   end
 
-  defp get_one_datetime(%{options: [%{datetime: datetime} | _rest]}), do: datetime
+  defp get_one_datetime(%{options: [%{datetime: datetime} | _rest]}),
+    do: NaiveDateTime.truncate(datetime, :second)
 
   defp get_one_datetime(_), do: nil
 
