@@ -30,7 +30,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
     args = %{
       "input" => %{
         "options" => [
-          %{"datetime" => "2018-01-01T10:00:00.000000"}
+          %{"datetime" => "2018-01-01T10:00:00.000Z"}
         ],
         "wantsPictures" => true,
         "wantsTour" => true,
@@ -48,6 +48,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
           options {
             datetime
           }
+          option
           user {
             id
           }
@@ -69,6 +70,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
 
     assert response["data"]["tourSchedule"]["wantsTour"]
     assert response["data"]["tourSchedule"]["wantsPictures"]
+    assert response["data"]["tourSchedule"]["option"]
 
     id = response["data"]["tourSchedule"]["id"]
     assert tour_appointment = Repo.get(TourAppointment, id)
@@ -82,7 +84,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
     args = %{
       "input" => %{
         "options" => [
-          %{"datetime" => "2018-01-01T10:00:00.000000"}
+          %{"datetime" => "2018-01-01T10:00:00.000Z"}
         ],
         "wantsPictures" => true,
         "wantsTour" => true,
@@ -100,6 +102,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
           options {
             datetime
           }
+          option
           user {
             id
           }
@@ -121,6 +124,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
 
     assert response["data"]["tourSchedule"]["wantsTour"]
     assert response["data"]["tourSchedule"]["wantsPictures"]
+    assert response["data"]["tourSchedule"]["option"]
 
     id = response["data"]["tourSchedule"]["id"]
     assert tour_appointment = Repo.get(TourAppointment, id)
@@ -134,7 +138,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
     args = %{
       "input" => %{
         "options" => [
-          %{"datetime" => "2018-01-01T10:00:00.000000"}
+          %{"datetime" => "2018-01-01T10:00:00.000Z"}
         ],
         "wantsPictures" => true,
         "wantsTour" => true,
@@ -152,6 +156,7 @@ defmodule ReWeb.GraphQL.Calendars.MutationTest do
           options {
             datetime
           }
+          option
           user {
             id
           }
