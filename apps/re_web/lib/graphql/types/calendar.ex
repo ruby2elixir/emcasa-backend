@@ -13,6 +13,7 @@ defmodule ReWeb.Types.Calendar do
     field :wants_pictures, :boolean
     field :wants_tour, :boolean
     field :options, list_of(:datetime_option)
+    field :option, :naive_datetime
 
     field :user, :user, resolve: dataloader(Re.Accounts)
     field :listing, :listing, resolve: &Resolvers.Calendars.listings/3

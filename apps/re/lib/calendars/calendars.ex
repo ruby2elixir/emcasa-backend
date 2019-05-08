@@ -9,15 +9,24 @@ defmodule Re.Calendars do
     Repo
   }
 
+  alias Ecto.Changeset
+
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def schedule_tour(params) do
+    option = get_one_datetime(params)
+
     %TourAppointment{}
     |> TourAppointment.changeset(params)
+    |> Changeset.change(%{option: option})
     |> add_listing_id(params)
     |> Repo.insert()
     |> PubSub.publish_new("tour_appointment")
   end
+
+  defp get_one_datetime(%{options: [%{datetime: datetime} | _rest]}), do: datetime
+
+  defp get_one_datetime(_), do: nil
 
   defp add_listing_id(changeset, %{listing_id: listing_id}) do
     case Repo.get(Listing, listing_id) do

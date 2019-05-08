@@ -12,6 +12,8 @@ defmodule Re.Calendars.TourAppointment do
 
     embeds_many :options, Re.Calendars.Option
 
+    field :option, :naive_datetime
+
     belongs_to :user, Re.User
 
     belongs_to :listing, Re.Listing,
@@ -28,7 +30,7 @@ defmodule Re.Calendars.TourAppointment do
   end
 
   @required ~w(wants_pictures wants_tour)a
-  @optional ~w(user_id listing_uuid site_seller_lead_uuid)a
+  @optional ~w(user_id listing_uuid site_seller_lead_uuid option)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
