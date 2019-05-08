@@ -12,7 +12,7 @@ defmodule Re.Calendars do
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def schedule_tour(params) do
-    option = get_one_datetimte(params)
+    option = get_one_datetime(params)
 
     %TourAppointment{}
     |> TourAppointment.changeset(Map.merge(%{option: option}, params))
@@ -21,9 +21,9 @@ defmodule Re.Calendars do
     |> PubSub.publish_new("tour_appointment")
   end
 
-  defp get_one_datetimte(%{options: [%{datetime: datetime} | _rest]}), do: datetime
+  defp get_one_datetime(%{options: [%{datetime: datetime} | _rest]}), do: datetime
 
-  defp get_one_datetimte(_), do: nil
+  defp get_one_datetime(_), do: nil
 
   defp add_listing_id(changeset, %{listing_id: listing_id}) do
     case Repo.get(Listing, listing_id) do
