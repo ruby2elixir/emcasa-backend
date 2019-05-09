@@ -13,6 +13,10 @@ defmodule Re.Accounts do
 
   def query(query, _args), do: query
 
+  def all() do
+    Repo.all(User)
+  end
+
   def promote_user_to_admin(phone) do
     case Users.get_by_phone(phone) do
       {:ok, user} ->
