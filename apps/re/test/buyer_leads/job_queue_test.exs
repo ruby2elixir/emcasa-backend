@@ -214,7 +214,10 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
   describe "interest" do
     test "process lead with existing user and listing" do
-      %{uuid: listing_uuid} = listing = insert(:listing, address: build(:address))
+      %{uuid: listing_uuid} =
+        listing =
+        insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
+
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} = insert(:interest, listing: listing, phone: "+5511999999999")
@@ -224,10 +227,12 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer = Repo.one(BuyerLead)
       assert buyer.user_uuid == user_uuid
       assert buyer.listing_uuid == listing_uuid
+      assert buyer.location == "manhattan|ny"
     end
 
     test "process lead with nil phone" do
-      listing = insert(:listing, address: build(:address))
+      listing =
+        insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
 
       %{uuid: uuid} = insert(:interest, listing: listing, phone: nil)
 
@@ -238,7 +243,8 @@ defmodule Re.BuyerLeads.JobQueueTest do
     end
 
     test "process lead with no user" do
-      %{id: id, uuid: listing_uuid} = insert(:listing, address: build(:address))
+      %{id: id, uuid: listing_uuid} =
+        insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
 
       %{uuid: uuid} = insert(:interest, phone: "011999999999", listing_id: "#{id}")
 
@@ -248,6 +254,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       refute buyer.user_uuid
       assert buyer.phone_number == "011999999999"
       assert buyer.listing_uuid == listing_uuid
+      assert buyer.location == "manhattan|ny"
     end
   end
 end
