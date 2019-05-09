@@ -13,7 +13,9 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
   describe "grupozap_buyer_lead" do
     test "process lead with existing user and listing" do
-      %{id: id, uuid: listing_uuid} = insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
+      %{id: id, uuid: listing_uuid} =
+        insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
+
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
@@ -153,7 +155,9 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
   describe "imovelweb_buyer_lead" do
     test "process lead with existing user and listing" do
-      %{id: id, uuid: listing_uuid} = insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
+      %{id: id, uuid: listing_uuid} =
+        insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
+
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} = insert(:imovelweb_buyer_lead, phone: "011999999999", listing_id: "#{id}")
