@@ -55,7 +55,7 @@ defmodule ReWeb.Mixfile do
       {:timber_plug, "~> 1.0"},
       {:timber_phoenix, "~> 1.1"},
       {:jason, "~> 1.0"},
-      {:sentry, "~> 6.4"},
+      {:sentry, "~> 7.0"},
       {:proper_case, "~> 1.3"}
     ]
   end

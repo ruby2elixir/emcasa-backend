@@ -54,7 +54,8 @@ defmodule Re.Mixfile do
       {:uuid, "~> 1.1"},
       {:phoenix_pubsub, "~> 1.1"},
       {:scrivener_ecto, "~> 2.1"},
-      {:sentry, "~> 6.4"},
+      {:sentry, "~> 7.0"},
+      {:jason, "~> 1.1"},
       {:ecto_job, "~> 2.0"}
     ]
   end
