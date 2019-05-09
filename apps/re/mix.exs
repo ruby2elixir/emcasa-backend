@@ -40,7 +40,7 @@ defmodule Re.Mixfile do
       {:comeonin, "~> 3.2"},
       {:ex_machina, "~> 2.2", only: :test},
       {:bodyguard, "~> 2.1"},
-      {:faker, "~> 0.9.0", only: :test},
+      {:faker, "~> 0.12.0", only: :test},
       {:email_checker, "~> 0.1"},
       {:dataloader, "~> 1.0"},
       {:currency_formatter, "~> 0.4"},
@@ -54,7 +54,8 @@ defmodule Re.Mixfile do
       {:uuid, "~> 1.1"},
       {:phoenix_pubsub, "~> 1.1"},
       {:scrivener_ecto, "~> 2.1"},
-      {:sentry, "~> 6.4"},
+      {:sentry, "~> 7.0"},
+      {:jason, "~> 1.1"},
       {:ecto_job, "~> 2.0"}
     ]
   end
