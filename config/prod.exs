@@ -86,4 +86,5 @@ config :account_kit,
   app_secret: System.get_env("ACCOUNT_KIT_APP_SECRET")
 
 config :sentry,
+  filter: ReWeb.SentryEventFilter,
   dsn: System.get_env("SENTRY_DSN")
