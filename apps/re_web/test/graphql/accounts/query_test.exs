@@ -276,7 +276,6 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
   end
 
   describe "users" do
-    @tag dev: true
     test "for admin list all users", %{admin_conn: conn, admin_user: admin, user_user: user} do
       query = """
         query Users {
@@ -306,6 +305,22 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
                }
              ] ==
                json_response(conn, 200)["data"]["users"]
+    end
+
+    test "for non admin user should return an empty list", %{user_conn: conn} do
+      query = """
+        query Users {
+          users {
+            id
+            name
+            phone
+            role
+         }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+      assert [] == json_response(conn, 200)["data"]["users"]
     end
   end
 end
