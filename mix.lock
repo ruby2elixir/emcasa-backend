@@ -28,7 +28,7 @@
   "email_checker": {:hex, :email_checker, "0.1.2", "05b3121c71b69f1ab5df7d8b4844046898bf218031998ef53f20c6b8bfd219e9", [:mix], [{:socket, "~> 0.3.1", [hex: :socket, repo: "hexpm", optional: false]}], "hexpm"},
   "ex_machina": {:hex, :ex_machina, "2.2.2", "d84217a6fb7840ff771d2561b8aa6d74a0d8968e4b10ecc0d7e9890dc8fb1c6a", [:mix], [{:ecto, "~> 2.2 or ~> 3.0", [hex: :ecto, repo: "hexpm", optional: true]}, {:ecto_sql, "~> 3.0", [hex: :ecto_sql, repo: "hexpm", optional: true]}], "hexpm"},
   "excoveralls": {:hex, :excoveralls, "0.10.6", "e2b9718c9d8e3ef90bc22278c3f76c850a9f9116faf4ebe9678063310742edc2", [:mix], [{:hackney, "~> 1.13", [hex: :hackney, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm"},
-  "faker": {:hex, :faker, "0.9.0", "b22c55967fbd3413b9e5c121e59e75a553065587cf31e5aa2271b6fae2775cde", [:mix], [], "hexpm"},
+  "faker": {:hex, :faker, "0.12.0", "796cbac868c86c2df6f273ea4cdf2e271860863820e479e04a374b7ee6c376b6", [:mix], [], "hexpm"},
   "gen_stage": {:hex, :gen_stage, "0.14.0", "65ae78509f85b59d360690ce3378d5096c3130a0694bab95b0c4ae66f3008fad", [:mix], [], "hexpm"},
   "gettext": {:hex, :gettext, "0.16.1", "e2130b25eebcbe02bb343b119a07ae2c7e28bd4b146c4a154da2ffb2b3507af2", [:mix], [], "hexpm"},
   "guardian": {:hex, :guardian, "1.2.1", "bdc8dd3dbf0fb7216cb6f91c11831faa1a64d39cdaed9a611e37f2413e584983", [:mix], [{:jose, "~> 1.8", [hex: :jose, repo: "hexpm", optional: false]}, {:phoenix, "~> 1.3", [hex: :phoenix, repo: "hexpm", optional: true]}, {:plug, "~> 1.3.3 or ~> 1.4", [hex: :plug, repo: "hexpm", optional: true]}], "hexpm"},
