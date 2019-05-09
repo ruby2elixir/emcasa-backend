@@ -65,6 +65,10 @@ defmodule ReWeb.Resolvers.Accounts do
     end
   end
 
+  def users(_params, %{context: %{current_user: _current_user}}) do
+    {:ok, Re.Accounts.all()}
+  end
+
   defp is_admin(_, :system), do: true
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true

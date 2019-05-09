@@ -60,6 +60,11 @@ defmodule ReWeb.Types.User do
 
       resolve &AccountsResolver.profile/2
     end
+
+    @desc "Get user list"
+    field :users, list_of(:user) do
+      resolve &AccountsResolver.users/2
+    end
   end
 
   object :user_mutations do

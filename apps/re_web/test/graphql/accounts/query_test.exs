@@ -274,4 +274,38 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
              } == json_response(conn, 200)["data"]["userProfile"]
     end
   end
+
+  describe "users" do
+    @tag dev: true
+    test "for admin list all users", %{admin_conn: conn, admin_user: admin, user_user: user} do
+      query = """
+        query Users {
+          users {
+            id
+            name
+            phone
+            role
+         }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert [
+               %{
+                 "id" => to_string(admin.id),
+                 "name" => admin.name,
+                 "phone" => admin.phone,
+                 "role" => admin.role
+               },
+               %{
+                 "id" => to_string(user.id),
+                 "name" => user.name,
+                 "phone" => user.phone,
+                 "role" => user.role
+               }
+             ] ==
+               json_response(conn, 200)["data"]["users"]
+    end
+  end
 end
