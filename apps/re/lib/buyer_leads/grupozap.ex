@@ -49,16 +49,21 @@ defmodule Re.BuyerLeads.Grupozap do
 
   def buyer_lead_changeset(gzb) do
     phone_number = concat_phone_number(gzb)
+    listing = Listings.get_partial_preloaded(gzb.client_listing_id, [:address])
 
     BuyerLead.changeset(%BuyerLead{}, %{
       name: gzb.name,
       email: gzb.email,
       phone_number: phone_number,
       origin: gzb.lead_origin,
+      location: get_location(listing),
       user_uuid: extract_user_uuid(phone_number),
-      listing_uuid: extract_listing_uuid(gzb.client_listing_id)
+      listing_uuid: get_listing_uuid(listing)
     })
   end
+
+  defp get_location({:ok, %{address: address}}), do: "#{address.city_slug}|#{address.state_slug}"
+  defp get_location(_), do: "unknown"
 
   defp concat_phone_number(%{ddd: _ddd, phone: nil}), do: "not informed"
 
@@ -75,10 +80,6 @@ defmodule Re.BuyerLeads.Grupozap do
     end
   end
 
-  defp extract_listing_uuid(id) do
-    case Listings.get(id) do
-      {:ok, listing} -> listing.uuid
-      _error -> nil
-    end
-  end
+  defp get_listing_uuid({:ok, listing}), do: listing.uuid
+  defp get_listing_uuid(_), do: nil
 end

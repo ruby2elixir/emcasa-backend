@@ -52,9 +52,14 @@ defmodule Re.BuyerLeads.Facebook do
       email: lead.email,
       phone_number: lead.phone_number,
       origin: "facebook",
+      location: get_location(lead.location),
       user_uuid: extract_user_uuid(lead.phone_number)
     })
   end
+
+  defp get_location("SP"), do: "sao-paulo|sp"
+  defp get_location("RJ"), do: "rio-de-janeiro|rj"
+  defp get_location(_), do: "unknown"
 
   defp extract_user_uuid(nil), do: nil
 
