@@ -53,10 +53,13 @@ defmodule Re.Interest do
       phone_number: phone_number,
       email: interest.email,
       origin: "site",
+      location: get_location(interest.listing),
       listing_uuid: interest.listing.uuid,
       user_uuid: extract_user_uuid(phone_number)
     })
   end
+
+  defp get_location(%{address: address}), do: "#{address.city_slug}|#{address.state_slug}"
 
   defp format(nil), do: nil
 

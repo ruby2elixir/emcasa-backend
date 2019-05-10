@@ -47,7 +47,7 @@ defmodule Re.BuyerLeads.JobQueue do
 
   def perform(%Multi{} = multi, %{"type" => "interest", "uuid" => uuid}) do
     Interest
-    |> Query.preload(:listing)
+    |> Query.preload(listing: [:address])
     |> Repo.get_by(uuid: uuid)
     |> Interest.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
