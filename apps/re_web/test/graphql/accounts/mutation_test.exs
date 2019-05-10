@@ -383,10 +383,10 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     end
   end
 
-  describe "userUpdateRole" do
+  describe "userUpdateRoleToAdmin" do
     @update_role_mutation """
-      mutation UserUpdateRole($uuid: UUID!, $role: UserRole) {
-        userUpdateRole(uuid: $uuid, role: $role) {
+      mutation UserUpdateRoleToAdmin($uuid: UUID!) {
+        userUpdateRoleToAdmin(uuid: $uuid) {
           uuid
           role
         }
@@ -397,8 +397,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       user = insert(:user)
 
       variables = %{
-        "uuid" => user.uuid,
-        "role" => "ADMIN"
+        "uuid" => user.uuid
       }
 
       conn =
@@ -407,17 +406,15 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
           "/graphql_api",
           AbsintheHelpers.mutation_wrapper(@update_role_mutation, variables)
         )
-
       assert %{"uuid" => user.uuid, "role" => "admin"} ==
-               json_response(conn, 200)["data"]["userUpdateRole"]
+               json_response(conn, 200)["data"]["userUpdateRoleToAdmin"]
     end
 
     test "common user cannot update user role", %{user_conn: conn} do
       user = insert(:user)
 
       variables = %{
-        "uuid" => user.uuid,
-        "role" => "ADMIN"
+        "uuid" => user.uuid
       }
 
       conn =
@@ -428,7 +425,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         )
 
       assert_forbidden_response(json_response(conn, 200))
-      assert %{"userUpdateRole" => nil} == json_response(conn, 200)["data"]
+      assert %{"userUpdateRoleToAdmin" => nil} == json_response(conn, 200)["data"]
     end
 
     test "unauthenticated user cannot update user role", %{unauthenticated_conn: conn} do
@@ -436,7 +433,6 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       variables = %{
         "uuid" => user.uuid,
-        "role" => "ADMIN"
       }
 
       conn =
@@ -447,7 +443,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
         )
 
       assert_unauthorized_response(json_response(conn, 200))
-      assert %{"userUpdateRole" => nil} == json_response(conn, 200)["data"]
+      assert %{"userUpdateRoleToAdmin" => nil} == json_response(conn, 200)["data"]
     end
   end
 end

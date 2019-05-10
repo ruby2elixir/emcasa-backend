@@ -55,10 +55,10 @@ defmodule ReWeb.Resolvers.Accounts do
     end
   end
 
-  def change_role(%{uuid: uuid, role: role}, %{context: %{current_user: current_user}}) do
-    with :ok <- Bodyguard.permit(Users, :update_role, current_user),
+  def change_role(%{uuid: uuid}, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Users, :update_role_to_admin, current_user),
          {:ok, user} <- Accounts.get_by_uuid(uuid),
-         {:ok, user} <- Accounts.change_role(user, role) do
+         {:ok, user} <- Accounts.promote_user_to_admin(user) do
       {:ok, user}
     else
       {:error, %Ecto.Changeset{} = changeset} -> {:error, format_errors(changeset)}

@@ -42,8 +42,6 @@ defmodule ReWeb.Types.User do
     field :user, :user
   end
 
-  enum :user_role, values: ~w(admin user)
-
   input_object :notification_preferences_input do
     field :email, :boolean
     field :app, :boolean
@@ -92,10 +90,9 @@ defmodule ReWeb.Types.User do
       resolve &AccountsResolver.change_email/2
     end
 
-    @desc "Change role"
-    field :user_update_role, type: :user do
+    @desc "Promote an user to admin role"
+    field :user_update_role_to_admin, type: :user do
       arg :uuid, non_null(:uuid)
-      arg :role, non_null(:user_role)
 
       resolve &AccountsResolver.change_role/2
     end
