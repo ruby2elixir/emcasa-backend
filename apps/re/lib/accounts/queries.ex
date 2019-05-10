@@ -1,10 +1,9 @@
 defmodule Re.Accounts.Queries do
-
   alias Re.User
   import Ecto.Query, only: [from: 2]
 
-  defp limit(query \\ User,_)
-  
+  defp limit(query \\ User, _)
+
   defp limit(query, %{page_size: page_size}) do
     from(u in query, limit: ^page_size)
   end
@@ -24,5 +23,4 @@ defmodule Re.Accounts.Queries do
     limit(params)
     |> offset(params)
   end
-
 end

@@ -67,12 +67,12 @@ defmodule ReWeb.Resolvers.Accounts do
 
   def users(params, %{context: %{current_user: current_user}}) do
     pagination = Map.get(params, :pagination, %{})
-    if is_admin(nil,current_user) do
+
+    if is_admin(nil, current_user) do
       {:ok, Re.Accounts.all(pagination)}
     else
       {:ok, []}
     end
-
   end
 
   defp is_admin(_, :system), do: true
