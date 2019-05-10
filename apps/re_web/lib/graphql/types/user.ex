@@ -10,6 +10,7 @@ defmodule ReWeb.Types.User do
 
   object :user do
     field :id, :id
+    field :uuid, :uuid
     field :name, :string
     field :email, :string
     field :phone, :string
@@ -40,6 +41,8 @@ defmodule ReWeb.Types.User do
     field :jwt, :string
     field :user, :user
   end
+
+  enum :user_role, values: ~w(admin user)
 
   input_object :notification_preferences_input do
     field :email, :boolean
@@ -87,6 +90,14 @@ defmodule ReWeb.Types.User do
       arg :email, :string
 
       resolve &AccountsResolver.change_email/2
+    end
+
+    @desc "Change role"
+    field :user_update_role, type: :user do
+      arg :uuid, non_null(:uuid)
+      arg :role, non_null(:user_role)
+
+      resolve &AccountsResolver.change_role/2
     end
   end
 end

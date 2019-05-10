@@ -53,6 +53,17 @@ defmodule ReWeb.Resolvers.Accounts do
     end
   end
 
+  def change_role(%{uuid: uuid, role: role}, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Users, :update_role, current_user),
+         {:ok, user} <- Users.get_by_uuid(uuid),
+         {:ok, user} <- Users.change_role(user, role) do
+      {:ok, user}
+    else
+      {:error, %Ecto.Changeset{} = changeset} -> {:error, format_errors(changeset)}
+      error -> error
+    end
+  end
+
   def owner(listing, _params, %{context: %{loader: loader, current_user: current_user}}) do
     if is_admin(listing, current_user) do
       loader
