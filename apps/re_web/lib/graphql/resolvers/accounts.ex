@@ -4,6 +4,8 @@ defmodule ReWeb.Resolvers.Accounts do
   """
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
+  alias Re.Accounts
+
   alias Re.Accounts.{
     Auth,
     Users
@@ -55,8 +57,8 @@ defmodule ReWeb.Resolvers.Accounts do
 
   def change_role(%{uuid: uuid, role: role}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Users, :update_role, current_user),
-         {:ok, user} <- Users.get_by_uuid(uuid),
-         {:ok, user} <- Users.change_role(user, role) do
+         {:ok, user} <- Accounts.get_by_uuid(uuid),
+         {:ok, user} <- Accounts.change_role(user, role) do
       {:ok, user}
     else
       {:error, %Ecto.Changeset{} = changeset} -> {:error, format_errors(changeset)}
