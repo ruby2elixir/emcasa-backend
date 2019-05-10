@@ -57,7 +57,7 @@ defmodule ReWeb.Resolvers.Accounts do
 
   def change_role(%{uuid: uuid}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Users, :update_role_to_admin, current_user),
-         {:ok, user} <- Accounts.get_by_uuid(uuid),
+         {:ok, user} <- Users.get_by_uuid(uuid),
          {:ok, user} <- Accounts.promote_user_to_admin(user) do
       {:ok, user}
     else
