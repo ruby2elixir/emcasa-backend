@@ -3,6 +3,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
   import Re.Factory
 
+  use ReWeb.AbsintheAssertions
   alias ReWeb.AbsintheHelpers
   alias Re.User
 
@@ -379,6 +380,70 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       assert errors["message"] == "Invalid OAuth access token."
       assert errors["code"] == 190
+    end
+  end
+
+  describe "userUpdateRoleToAdmin" do
+    @update_role_mutation """
+      mutation UserUpdateRoleToAdmin($uuid: UUID!) {
+        userUpdateRoleToAdmin(uuid: $uuid) {
+          uuid
+          role
+        }
+      }
+    """
+
+    test "admin can update user role", %{admin_conn: conn} do
+      user = insert(:user)
+
+      variables = %{
+        "uuid" => user.uuid
+      }
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@update_role_mutation, variables)
+        )
+      assert %{"uuid" => user.uuid, "role" => "admin"} ==
+               json_response(conn, 200)["data"]["userUpdateRoleToAdmin"]
+    end
+
+    test "common user cannot update user role", %{user_conn: conn} do
+      user = insert(:user)
+
+      variables = %{
+        "uuid" => user.uuid
+      }
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@update_role_mutation, variables)
+        )
+
+      assert_forbidden_response(json_response(conn, 200))
+      assert %{"userUpdateRoleToAdmin" => nil} == json_response(conn, 200)["data"]
+    end
+
+    test "unauthenticated user cannot update user role", %{unauthenticated_conn: conn} do
+      user = insert(:user)
+
+      variables = %{
+        "uuid" => user.uuid,
+      }
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@update_role_mutation, variables)
+        )
+
+      assert_unauthorized_response(json_response(conn, 200))
+      assert %{"userUpdateRoleToAdmin" => nil} == json_response(conn, 200)["data"]
     end
   end
 end

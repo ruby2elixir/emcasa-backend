@@ -24,6 +24,20 @@ defmodule Re.Accounts.Users do
     end
   end
 
+  def get_by_phone(phone) do
+    case Repo.get_by(User, phone: phone) do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
+  end
+
+  def get_by_uuid(uuid) do
+    case Repo.get_by(User, uuid: uuid) do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
+  end
+
   def update(user, params) do
     user
     |> User.update_changeset(params)
@@ -40,12 +54,5 @@ defmodule Re.Accounts.Users do
     user
     |> Repo.preload(favorited: [:images])
     |> Map.get(:favorited)
-  end
-
-  def get_by_phone(phone) do
-    case Repo.get_by(User, phone: phone) do
-      nil -> {:error, :not_found}
-      user -> {:ok, user}
-    end
   end
 end

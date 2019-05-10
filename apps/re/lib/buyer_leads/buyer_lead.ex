@@ -6,7 +6,7 @@ defmodule Re.BuyerLead do
 
   import Ecto.Changeset
 
-  @primary_key {:uuid, :binary_id, autogenerate: true}
+  @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "buyer_leads" do
     field :name, :string
@@ -36,5 +36,8 @@ defmodule Re.BuyerLead do
     struct
     |> cast(params, @params)
     |> validate_required(@required)
+    |> generate_uuid()
   end
+
+  defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
 end
