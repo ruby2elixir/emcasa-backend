@@ -48,4 +48,17 @@ defmodule Re.Accounts.Users do
       user -> {:ok, user}
     end
   end
+
+  def get_by_uuid(uuid) do
+    case Repo.get_by(User, uuid: uuid) do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
+  end
+
+  def change_role(user, new_role) do
+    user
+    |> User.update_changeset(%{role: new_role})
+    |> Repo.update()
+  end
 end
