@@ -42,16 +42,21 @@ defmodule Re.BuyerLeads.ImovelWeb do
 
   def buyer_lead_changeset(lead) do
     phone_number = format_phone_number(lead.phone)
+    listing = Listings.get_partial_preloaded(lead.listing_id, [:address])
 
     BuyerLead.changeset(%BuyerLead{}, %{
       name: lead.name,
       email: lead.email,
       phone_number: lead.phone,
       origin: "imovelweb",
+      location: get_location(listing),
       user_uuid: extract_user_uuid(phone_number),
-      listing_uuid: extract_listing_uuid(lead.listing_id)
+      listing_uuid: get_listing_uuid(listing)
     })
   end
+
+  defp get_location({:ok, %{address: address}}), do: "#{address.city_slug}|#{address.state_slug}"
+  defp get_location(_), do: "unknown"
 
   defp format_phone_number(nil), do: nil
 
@@ -68,10 +73,6 @@ defmodule Re.BuyerLeads.ImovelWeb do
     end
   end
 
-  defp extract_listing_uuid(id) do
-    case Listings.get(id) do
-      {:ok, listing} -> listing.uuid
-      _error -> nil
-    end
-  end
+  defp get_listing_uuid({:ok, listing}), do: listing.uuid
+  defp get_listing_uuid(_), do: nil
 end
