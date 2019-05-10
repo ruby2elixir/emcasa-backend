@@ -76,6 +76,14 @@ defmodule ReWeb.Router do
     forward("/facebook-ads", ReWeb.Exporters.FacebookAds.Plug)
   end
 
+  checks = [
+    %PlugCheckup.Check{name: "DB", module: ReWeb.HealthChecks, function: :check_repo}
+  ]
+
+  scope "/health-check" do
+    forward("/", PlugCheckup, PlugCheckup.Options.new(json_encoder: Jason, checks: checks))
+  end
+
   if Mix.env() == :dev do
     pipeline :browser do
       plug(:accepts, ["html"])
