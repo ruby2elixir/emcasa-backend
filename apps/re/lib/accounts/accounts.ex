@@ -4,7 +4,6 @@ defmodule Re.Accounts do
   """
 
   alias Re.{
-    Accounts.Users,
     Repo,
     User
   }
@@ -13,15 +12,9 @@ defmodule Re.Accounts do
 
   def query(query, _args), do: query
 
-  def promote_user_to_admin(phone) do
-    case Users.get_by_phone(phone) do
-      {:ok, user} ->
-        user
-        |> User.update_changeset(%{role: "admin"})
-        |> Repo.update()
-
-      error ->
-        error
-    end
+  def promote_user_to_admin(user) do
+    user
+    |> User.update_changeset(%{role: "admin"})
+    |> Repo.update()
   end
 end

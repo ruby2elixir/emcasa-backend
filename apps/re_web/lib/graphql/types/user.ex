@@ -10,6 +10,7 @@ defmodule ReWeb.Types.User do
 
   object :user do
     field :id, :id
+    field :uuid, :uuid
     field :name, :string
     field :email, :string
     field :phone, :string
@@ -87,6 +88,13 @@ defmodule ReWeb.Types.User do
       arg :email, :string
 
       resolve &AccountsResolver.change_email/2
+    end
+
+    @desc "Promote an user to admin role"
+    field :user_update_role_to_admin, type: :user do
+      arg :uuid, non_null(:uuid)
+
+      resolve &AccountsResolver.change_role/2
     end
   end
 end
