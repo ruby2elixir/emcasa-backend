@@ -240,7 +240,7 @@ defmodule ReWeb.GraphQL.Addresses.MutationTest do
 
   test "should insert covered neighborhood", %{user_conn: conn} do
     address = insert(:address)
-    from_address(address)
+    district_from_address(address)
 
     variables = %{
       "input" => %{

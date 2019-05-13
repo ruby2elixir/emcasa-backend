@@ -113,7 +113,7 @@ defmodule Re.Factory do
     }
   end
 
-  def from_address(address) do
+  def district_from_address(address) do
     insert(:district,
       name: address.neighborhood,
       name_slug: address.neighborhood_slug,
@@ -121,6 +121,7 @@ defmodule Re.Factory do
       city_slug: address.city_slug,
       state: address.state,
       state_slug: address.state_slug,
+      description: Shakespeare.hamlet(),
       status: "active"
     )
   end
