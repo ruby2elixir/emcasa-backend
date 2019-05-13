@@ -48,8 +48,8 @@ defmodule ReWeb.Types.User do
   end
 
   input_object :pagination_input do
-    field :page, :integer
-    field :page_size, :integer
+    field :page, non_null(:integer)
+    field :page_size, non_null(:integer)
   end
 
   object :user_pagination do
