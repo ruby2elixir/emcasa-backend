@@ -93,15 +93,19 @@ defmodule Re.Factory do
 
   def district_factory do
     name = Pokemon.location()
+    name_slug = Re.Slugs.sluggify(name)
 
-    city_name = Address.city()
+    city = Address.city()
+    city_slug = Re.Slugs.sluggify(city)
 
-    state_name = Address.state_abbr()
+    state = Address.state_abbr()
+    state_slug = Re.Slugs.sluggify(state)
 
     %Re.Addresses.District{
       name: name,
-      city: city_name,
-      state: state_name,
+      name_slug: name_slug,
+      city_slug: city_slug,
+      state_slug: state_slug,
       description: Shakespeare.hamlet(),
       status: "active"
     }

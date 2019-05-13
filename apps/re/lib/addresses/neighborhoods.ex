@@ -25,9 +25,9 @@ defmodule Re.Addresses.Neighborhoods do
 
   def get_description(address) do
     case Repo.get_by(District,
-           state: address.state,
-           city: address.city,
-           name: address.neighborhood
+           state_slug: address.state_slug,
+           city_slug: address.city_slug,
+           name_slug: address.neighborhood_slug
          ) do
       nil -> {:error, :not_found}
       description -> {:ok, description}
