@@ -52,6 +52,14 @@ defmodule ReWeb.Types.User do
     field :page_size, :integer
   end
 
+  object :user_pagination do
+    field :entries, list_of(:user)
+    field :page_number, :integer
+    field :page_size, :integer
+    field :total_pages, :integer
+    field :total_entries, :integer
+  end
+
   object :user_queries do
     @desc "Get favorited users"
     field :show_favorited_users, list_of(:user) do
@@ -68,7 +76,7 @@ defmodule ReWeb.Types.User do
     end
 
     @desc "Get user list"
-    field :users, list_of(:user) do
+    field :users, list_of(:user_pagination) do
       arg :pagination, :pagination_input
 
       resolve &AccountsResolver.users/2

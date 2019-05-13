@@ -3,6 +3,8 @@ defmodule Re.Accounts do
   Context boundary to Accounts management
   """
 
+  import Ecto.Query, only: [from: 1]
+
   alias Re.{
     Accounts.Queries,
     Repo,
@@ -13,10 +15,11 @@ defmodule Re.Accounts do
 
   def query(query, _args), do: query
 
-  def all(params) do
-    params
-    |> Queries.build_query()
-    |> Repo.all()
+  def paginated(params) do
+    pagination = Map.get(params, :pagination, %{})
+
+    from(u in Re.User)
+    |> Repo.paginate(pagination)
   end
 
   def promote_user_to_admin(user) do
