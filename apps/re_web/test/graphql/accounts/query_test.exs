@@ -1,8 +1,5 @@
 defmodule ReWeb.GraphQL.Accounts.QueryTest do
-  use ReWeb.{
-    AbsintheAssertions,
-    ConnCase
-  }
+  use ReWeb.ConnCase
 
   import Re.Factory
 
