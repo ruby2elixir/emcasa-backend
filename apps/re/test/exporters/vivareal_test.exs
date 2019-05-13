@@ -208,7 +208,8 @@ defmodule Re.Exporters.VivarealTest do
           type: listing_type,
           images: [
             %Image{filename: "test_1.jpg", description: nil}
-          ]
+          ],
+          updated_at: ~N[2018-06-07 15:30:00.000000]
         }
 
         translated_type = Map.get(Vivareal.listing_type_map(), listing_type)
@@ -219,7 +220,7 @@ defmodule Re.Exporters.VivarealTest do
           "<Listing>" <>
             "<Details>" <>
             "<PropertyType>Residential / #{Map.get(Vivareal.listing_type_map(), listing_type)}</PropertyType>" <>
-            "<Description><![CDATA[]]></Description>" <>
+            "<Description><![CDATA[Atualizado em: 2018-06-07]]></Description>" <>
             "<ListPrice/>" <>
             "<LivingArea unit=\"square metres\"/>" <>
             "<Bedrooms>0</Bedrooms>" <>
@@ -275,7 +276,7 @@ defmodule Re.Exporters.VivarealTest do
   defp details_tags do
     "<Details>" <>
       "<PropertyType>Residential / Apartment</PropertyType>" <>
-      "<Description><![CDATA[descr]]></Description>" <>
+      "<Description><![CDATA[descr\n Atualizado em: 2018-06-07]]></Description>" <>
       "<ListPrice>1000000</ListPrice>" <>
       "<LivingArea unit=\"square metres\">50</LivingArea>" <>
       "<PropertyAdministrationFee currency=\"BRL\">1000</PropertyAdministrationFee>" <>
@@ -287,7 +288,7 @@ defmodule Re.Exporters.VivarealTest do
   defp details_tags_nils do
     "<Details>" <>
       "<PropertyType>Residential / Apartment</PropertyType>" <>
-      "<Description><![CDATA[]]></Description>" <>
+      "<Description><![CDATA[Atualizado em: 2018-06-07]]></Description>" <>
       "<ListPrice>1000000</ListPrice>" <>
       "<LivingArea unit=\"square metres\">50</LivingArea>" <>
       "<Bedrooms>2</Bedrooms>" <>
@@ -297,7 +298,7 @@ defmodule Re.Exporters.VivarealTest do
   defp rooms_nil_details_tags do
     "<Details>" <>
       "<PropertyType>Residential / Apartment</PropertyType>" <>
-      "<Description><![CDATA[descr]]></Description>" <>
+      "<Description><![CDATA[descr\n Atualizado em: 2018-06-07]]></Description>" <>
       "<ListPrice>1000000</ListPrice>" <>
       "<LivingArea unit=\"square metres\">50</LivingArea>" <>
       "<PropertyAdministrationFee currency=\"BRL\">1000</PropertyAdministrationFee>" <>

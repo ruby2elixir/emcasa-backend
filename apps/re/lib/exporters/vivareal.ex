@@ -133,7 +133,7 @@ defmodule Re.Exporters.Vivareal do
   end
 
   defp build_details(:description, acc, listing) do
-    [{"Description", %{}, {:cdata, listing.description || ""}} | acc]
+    [{"Description", %{}, add_description_timestamp(listing)} | acc]
   end
 
   defp build_details(:price, acc, listing) do
@@ -196,5 +196,12 @@ defmodule Re.Exporters.Vivareal do
 
   defp merge_defaults(options) do
     Map.merge(@default_options, options)
+  end
+
+  defp add_description_timestamp(%{description: nil, updated_at: updated_at}),
+    do: {:cdata, "Atualizado em: #{to_string(Timex.to_date(updated_at))}"}
+
+  defp add_description_timestamp(%{description: description, updated_at: updated_at}) do
+    {:cdata, description <> "\n Atualizado em: #{to_string(Timex.to_date(updated_at))}"}
   end
 end
