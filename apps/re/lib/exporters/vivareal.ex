@@ -92,7 +92,7 @@ defmodule Re.Exporters.Vivareal do
     {"Media", %{}, Enum.map(images, &build_image/1)}
   end
 
-  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms garage_spots)a
+  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms suites garage_spots)a
 
   defp convert_attribute(:details, listing, _) do
     {"Details", %{},
@@ -167,6 +167,10 @@ defmodule Re.Exporters.Vivareal do
 
   defp build_details(:bathrooms, acc, listing) do
     [{"Bathrooms", %{}, listing.bathrooms || 0} | acc]
+  end
+
+  defp build_details(:suites, acc, listing) do
+    [{"Suites", %{}, listing.suites || 0} | acc]
   end
 
   defp build_details(:garage_spots, acc, listing) do

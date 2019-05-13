@@ -209,7 +209,8 @@ defmodule Re.Exporters.VivarealTest do
           images: [
             %Image{filename: "test_1.jpg", description: nil}
           ],
-          updated_at: ~N[2018-06-07 15:30:00.000000]
+          updated_at: ~N[2018-06-07 15:30:00.000000],
+          suites: 0
         }
 
         translated_type = Map.get(Vivareal.listing_type_map(), listing_type)
@@ -225,6 +226,7 @@ defmodule Re.Exporters.VivarealTest do
             "<LivingArea unit=\"square metres\"/>" <>
             "<Bedrooms>0</Bedrooms>" <>
             "<Bathrooms>0</Bathrooms>" <>
+            "<Suites>0</Suites>" <>
             "<Garage type=\"Parking Space\">0</Garage>" <> "</Details>" <> "</Listing>"
 
         created_xml =
@@ -282,7 +284,9 @@ defmodule Re.Exporters.VivarealTest do
       "<PropertyAdministrationFee currency=\"BRL\">1000</PropertyAdministrationFee>" <>
       "<YearlyTax currency=\"BRL\">1000</YearlyTax>" <>
       "<Bedrooms>2</Bedrooms>" <>
-      "<Bathrooms>2</Bathrooms>" <> "<Garage type=\"Parking Space\">2</Garage>" <> "</Details>"
+      "<Bathrooms>2</Bathrooms>" <>
+      "<Suites>0</Suites>" <>
+      "<Garage type=\"Parking Space\">2</Garage>" <> "</Details>"
   end
 
   defp details_tags_nils do
@@ -292,7 +296,9 @@ defmodule Re.Exporters.VivarealTest do
       "<ListPrice>1000000</ListPrice>" <>
       "<LivingArea unit=\"square metres\">50</LivingArea>" <>
       "<Bedrooms>2</Bedrooms>" <>
-      "<Bathrooms>2</Bathrooms>" <> "<Garage type=\"Parking Space\">2</Garage>" <> "</Details>"
+      "<Bathrooms>2</Bathrooms>" <>
+      "<Suites>0</Suites>" <>
+      "<Garage type=\"Parking Space\">2</Garage>" <> "</Details>"
   end
 
   defp rooms_nil_details_tags do
@@ -304,7 +310,9 @@ defmodule Re.Exporters.VivarealTest do
       "<PropertyAdministrationFee currency=\"BRL\">1000</PropertyAdministrationFee>" <>
       "<YearlyTax currency=\"BRL\">1000</YearlyTax>" <>
       "<Bedrooms>0</Bedrooms>" <>
-      "<Bathrooms>0</Bathrooms>" <> "<Garage type=\"Parking Space\">0</Garage>" <> "</Details>"
+      "<Bathrooms>0</Bathrooms>" <>
+      "<Suites>0</Suites>" <>
+      "<Garage type=\"Parking Space\">0</Garage>" <> "</Details>"
   end
 
   defp location_tags do
