@@ -27,6 +27,8 @@ defmodule Re.Addresses.District do
 
   @sluggified_attr ~w(state city name)a
 
+  @statuses ~w(active inactive)
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
@@ -38,6 +40,9 @@ defmodule Re.Addresses.District do
     |> validate_length(:city, max: 128)
     |> validate_length(:state, is: 2)
     |> unique_constraint(:neighborhood, name: :neighborhood)
+    |> validate_inclusion(:status, @statuses,
+      message: "should be one of: [#{Enum.join(@statuses, " ")}]"
+    )
     |> generate_slugs()
   end
 

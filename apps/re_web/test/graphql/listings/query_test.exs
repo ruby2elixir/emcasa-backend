@@ -1102,12 +1102,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       %{state: state, city: city, street: street, street_number: street_number} =
         address = insert(:address)
 
-      insert(:district,
-        state: address.state,
-        city: address.city,
-        name: address.neighborhood,
-        description: "descr"
-      )
+      district = district_from_address(address)
 
       user = insert(:user)
       development = insert(:development)
@@ -1221,7 +1216,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                "address" => %{
                  "street" => street,
                  "streetNumber" => street_number,
-                 "neighborhoodDescription" => "descr"
+                 "neighborhoodDescription" => district.description
                },
                "activeImages" => [
                  %{"filename" => to_string(active_image_filename1)},
@@ -1274,12 +1269,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       %{street: street, street_number: street_number} = address = insert(:address)
 
-      insert(:district,
-        state: address.state,
-        city: address.city,
-        name: address.neighborhood,
-        description: "descr"
-      )
+      district = district_from_address(address)
 
       interests = insert_list(3, :interest)
       in_person_visits = insert_list(3, :in_person_visit)
@@ -1385,7 +1375,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                "address" => %{
                  "street" => street,
                  "streetNumber" => street_number,
-                 "neighborhoodDescription" => "descr"
+                 "neighborhoodDescription" => district.description
                },
                "activeImages" => [
                  %{"filename" => to_string(active_image_filename1)},
@@ -1430,12 +1420,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       image5 = insert(:image, is_active: false, position: 5)
       %{street: street} = address = insert(:address)
 
-      insert(:district,
-        state: address.state,
-        city: address.city,
-        name: address.neighborhood,
-        description: "descr"
-      )
+      district = district_from_address(address)
 
       user = insert(:user)
       [unit1, unit2] = insert_list(2, :unit)
@@ -1513,7 +1498,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                "address" => %{
                  "street" => street,
                  "streetNumber" => nil,
-                 "neighborhoodDescription" => "descr"
+                 "neighborhoodDescription" => district.description
                },
                "activeImages" => [
                  %{"filename" => to_string(active_image_filename1)},
@@ -1555,12 +1540,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       image5 = insert(:image, is_active: false, position: 5)
       %{street: street} = address = insert(:address)
 
-      insert(:district,
-        state: address.state,
-        city: address.city,
-        name: address.neighborhood,
-        description: "descr"
-      )
+      district = district_from_address(address)
 
       user = insert(:user)
       [unit1, unit2] = insert_list(2, :unit)
@@ -1638,7 +1618,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                "address" => %{
                  "street" => street,
                  "streetNumber" => nil,
-                 "neighborhoodDescription" => "descr"
+                 "neighborhoodDescription" => district.description
                },
                "activeImages" => [
                  %{"filename" => to_string(active_image_filename1)},
