@@ -78,6 +78,16 @@ defmodule ReWeb.Resolvers.Accounts do
     end
   end
 
+  def users(params, %{context: %{current_user: current_user}}) do
+    pagination = Map.get(params, :pagination, %{})
+
+    if Bodyguard.permit?(Users, :list_users, current_user) do
+      {:ok, Re.Accounts.paginated(pagination)}
+    else
+      {:ok, []}
+    end
+  end
+
   defp is_admin(_, :system), do: true
   defp is_admin(%{user_id: user_id}, %{id: user_id}), do: true
   defp is_admin(_, %{role: "admin"}), do: true
