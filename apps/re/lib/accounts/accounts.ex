@@ -14,7 +14,8 @@ defmodule Re.Accounts do
   def query(query, _args), do: query
 
   def all(params) do
-    Queries.build_query(params)
+    params
+    |> Queries.build_query()
     |> Repo.all()
   end
 
