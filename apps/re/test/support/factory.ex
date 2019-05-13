@@ -104,11 +104,25 @@ defmodule Re.Factory do
     %Re.Addresses.District{
       name: name,
       name_slug: name_slug,
+      city: city,
       city_slug: city_slug,
+      state: state,
       state_slug: state_slug,
       description: Shakespeare.hamlet(),
       status: "active"
     }
+  end
+
+  def from_address(address) do
+    insert(:district,
+      name: address.neighborhood,
+      name_slug: address.neighborhood_slug,
+      city: address.city,
+      city_slug: address.city_slug,
+      state: address.state,
+      state_slug: address.state_slug,
+      status: "active"
+    )
   end
 
   def image_factory do

@@ -240,14 +240,15 @@ defmodule ReWeb.GraphQL.Addresses.MutationTest do
 
   test "should insert covered neighborhood", %{user_conn: conn} do
     address = insert(:address)
+    from_address(address)
 
     variables = %{
       "input" => %{
-        "city" => "Rio de Janeiro",
-        "state" => "RJ",
+        "city" => address.city,
+        "state" => address.state,
         "lat" => address.lat,
         "lng" => address.lng,
-        "neighborhood" => "Copacabana",
+        "neighborhood" => address.neighborhood,
         "street" => address.street,
         "streetNumber" => address.street_number,
         "postalCode" => address.postal_code
@@ -275,11 +276,11 @@ defmodule ReWeb.GraphQL.Addresses.MutationTest do
 
     assert %{
              "id" => to_string(address.id),
-             "city" => "Rio de Janeiro",
-             "state" => "RJ",
+             "city" => address.city,
+             "state" => address.state,
              "lat" => address.lat,
              "lng" => address.lng,
-             "neighborhood" => "Copacabana",
+             "neighborhood" => address.neighborhood,
              "street" => address.street,
              "streetNumber" => address.street_number,
              "postalCode" => address.postal_code,
