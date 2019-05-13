@@ -19,19 +19,25 @@ defmodule Re.NeighborhoodsTest do
 
   describe "get_description" do
     test "should return neighborhood description according to address" do
-      address = insert(:address, city: "Rio de Janeiro", state: "RJ", neighborhood: "Lapa")
+      address = insert(:address)
 
       insert(:district,
-        city: "Rio de Janeiro",
-        state: "RJ",
-        name: "Lapa",
+        city: address.city,
+        city_slug: address.city_slug,
+        state: address.state,
+        state_slug: address.state_slug,
+        name: address.neighborhood,
+        name_slug: address.neighborhood_slug,
         description: "descr"
       )
 
       {:ok, district} = Neighborhoods.get_description(address)
-      assert district.city == "Rio de Janeiro"
-      assert district.state == "RJ"
-      assert district.name == "Lapa"
+      assert district.city == address.city
+      assert district.city_slug == address.city_slug
+      assert district.state == address.state
+      assert district.state_slug == address.state_slug
+      assert district.name == address.neighborhood
+      assert district.name_slug == address.neighborhood_slug
       assert district.description == "descr"
     end
 
@@ -50,6 +56,20 @@ defmodule Re.NeighborhoodsTest do
   end
 
   describe "is_covered/1" do
+    setup do
+      district =
+        insert(:district,
+          state: "RJ",
+          state_slug: "rj",
+          name: "Humaitá",
+          name_slug: "humaita",
+          city: "Rio de Janeiro",
+          city_slug: "rio-de-janeiro"
+        )
+
+      {:ok, district: district}
+    end
+
     test "should be true when neighborhood exists" do
       neighborhood = %{state: "RJ", neighborhood: "Humaitá", city: "Rio de Janeiro"}
       assert Neighborhoods.is_covered(neighborhood)

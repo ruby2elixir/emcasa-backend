@@ -49,11 +49,7 @@ defmodule Re.Addresses do
     |> Repo.insert_or_update()
   end
 
-  def is_covered(address) do
-    address
-    |> Map.take(~w(state city neighborhood)a)
-    |> Neighborhoods.is_covered()
-  end
+  def is_covered(address), do: Neighborhoods.is_covered(address)
 
   defp build_address({:error, :not_found}, %{
          "street" => street,

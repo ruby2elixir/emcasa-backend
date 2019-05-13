@@ -180,10 +180,12 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
     """
 
     test "should confirm that address is is covered", %{unauthenticated_conn: conn} do
+      district = insert(:district)
+
       variables = %{
-        "state" => "RJ",
-        "city" => "Rio de Janeiro",
-        "neighborhood" => "Joá"
+        "state" => district.state,
+        "city" => district.city,
+        "neighborhood" => district.name
       }
 
       conn =

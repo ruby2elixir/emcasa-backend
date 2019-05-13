@@ -25,9 +25,9 @@ defmodule Re.Addresses.Neighborhoods do
 
   def get_description(address) do
     case Repo.get_by(District,
-           state: address.state,
-           city: address.city,
-           name: address.neighborhood
+           state_slug: address.state_slug,
+           city_slug: address.city_slug,
+           name_slug: address.neighborhood_slug
          ) do
       nil -> {:error, :not_found}
       description -> {:ok, description}
@@ -59,52 +59,30 @@ defmodule Re.Addresses.Neighborhoods do
   def nearby("Leblon"), do: "Gávea"
   def nearby("São Conrado"), do: "Itanhangá"
 
-  @covered_neighborhoods [
-    %{state: "RJ", neighborhood: "Humaitá", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Copacabana", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Botafogo", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Catete", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Cosme Velho", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Flamengo", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Gávea", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Ipanema", city: "Rio de Janeiro"},
-    %{
-      state: "RJ",
-      neighborhood: "Jardim Botânico",
-      city: "Rio de Janeiro"
-    },
-    %{state: "RJ", neighborhood: "Joá", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Lagoa", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Laranjeiras", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Leblon", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Leme", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "São Conrado", city: "Rio de Janeiro"},
-    %{state: "RJ", neighborhood: "Urca", city: "Rio de Janeiro"},
-    %{state: "SP", neighborhood: "Perdizes", city: "São Paulo"},
-    %{state: "SP", neighborhood: "Vila Pompéia", city: "São Paulo"},
-    %{state: "SP", neighborhood: "Pompeia", city: "São Paulo"},
-    %{state: "SP", neighborhood: "Pinheiros", city: "São Paulo"},
-    %{state: "SP", neighborhood: "Sumaré", city: "São Paulo"},
-    %{state: "SP", neighborhood: "Sumarezinho", city: "São Paulo"},
-    %{state: "SP", neighborhood: "Vila Anglo Brasileira", city: "São Paulo"}
-  ]
+  defp do_is_covered(neighborhood) do
+    case Repo.get_by(District,
+           name_slug: neighborhood.neighborhood_slug,
+           city_slug: neighborhood.city_slug,
+           state_slug: neighborhood.state_slug,
+           status: "active"
+         ) do
+      nil -> false
+      _district -> true
+    end
+  end
+
+  def is_covered(%Address{} = address), do: do_is_covered(address)
 
   def is_covered(neighborhood) do
-    @covered_neighborhoods
-    |> sluggify_covered_neighborhoods()
-    |> MapSet.member?(sluggify_attributes(neighborhood))
+    neighborhood
+    |> sluggify_attributes()
+    |> do_is_covered()
   end
 
-  defp sluggify_covered_neighborhoods(covered_neighborhoods) do
-    covered_neighborhoods
-    |> Enum.map(&sluggify_attributes(&1))
-    |> MapSet.new()
-  end
-
-  defp sluggify_attributes(neighborhoods) do
-    neighborhoods
-    |> Map.update!(:city, &Slugs.sluggify(&1))
-    |> Map.update!(:neighborhood, &Slugs.sluggify(&1))
-    |> Map.update!(:state, &Slugs.sluggify(&1))
+  defp sluggify_attributes(neighborhood) do
+    neighborhood
+    |> Map.put(:city_slug, Slugs.sluggify(neighborhood.city))
+    |> Map.put(:neighborhood_slug, Slugs.sluggify(neighborhood.neighborhood))
+    |> Map.put(:state_slug, Slugs.sluggify(neighborhood.state))
   end
 end
