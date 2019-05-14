@@ -12,15 +12,13 @@ defmodule Re.Accounts do
 
   def query(query, _args), do: query
 
-  def paginated(params) do
-    pagination = Map.get(params, :pagination, %{})
-
-    Repo.paginate(Re.User, pagination)
+  def paginated(params \\ %{}) do
+    Repo.paginate(Re.User, params)
   end
 
-  def promote_user_to_admin(user) do
+  def change_role(user, role) do
     user
-    |> User.update_changeset(%{role: "admin"})
+    |> User.update_changeset(%{role: role})
     |> Repo.update()
   end
 end

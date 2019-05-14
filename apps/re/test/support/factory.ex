@@ -21,6 +21,10 @@ defmodule Re.Factory do
     }
   end
 
+  def make_admin(user) do
+    %{user | role: "admin"}
+  end
+
   def listing_factory do
     price = random(:price)
     area = Enum.random(1..500)
