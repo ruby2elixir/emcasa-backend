@@ -1,5 +1,8 @@
 defmodule ReWeb.GraphQL.Accounts.QueryTest do
-  use ReWeb.ConnCase
+  use ReWeb.{
+    AbsintheAssertions,
+    ConnCase
+  }
 
   import Re.Factory
 
@@ -307,7 +310,7 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
                  "role" => user.role
                }
              ] ==
-               json_response(conn, 200)["data"]["users"] |> List.first() |> Map.get("entries")
+               json_response(conn, 200)["data"]["users"]["entries"]
     end
 
     test "for non admin user should return an empty list", %{user_conn: conn} do
@@ -325,7 +328,8 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
-      assert [] == json_response(conn, 200)["data"]["users"]
+      refute json_response(conn, 200)["data"]["users"]
+      assert_forbidden_response(json_response(conn, 200))
     end
 
     test "for unauthenticated user should return an empty list", %{unauthenticated_conn: conn} do
@@ -343,7 +347,8 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
-      assert [] == json_response(conn, 200)["data"]["users"]
+      refute json_response(conn, 200)["data"]["users"]
+      assert_unauthorized_response(json_response(conn, 200))
     end
   end
 end

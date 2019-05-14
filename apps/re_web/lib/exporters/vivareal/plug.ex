@@ -1,6 +1,6 @@
 defmodule ReWeb.Exporters.Vivareal.Plug do
   @moduledoc """
-  Plug to handle pipedrive webhooks
+  Plug to handle vivareal listing export
   """
   import Plug.Conn
 

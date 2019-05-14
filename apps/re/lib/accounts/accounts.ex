@@ -12,10 +12,8 @@ defmodule Re.Accounts do
 
   def query(query, _args), do: query
 
-  def paginated(params) do
-    pagination = Map.get(params, :pagination, %{})
-
-    Repo.paginate(Re.User, pagination)
+  def paginated(params \\ %{}) do
+    Repo.paginate(Re.User, params)
   end
 
   def change_role(user, role) do
