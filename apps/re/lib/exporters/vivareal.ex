@@ -92,7 +92,7 @@ defmodule Re.Exporters.Vivareal do
     {"Media", %{}, Enum.map(images, &build_image/1)}
   end
 
-  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms garage_spots)a
+  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms suites garage_spots)a
 
   defp convert_attribute(:details, listing, _) do
     {"Details", %{},
@@ -133,7 +133,7 @@ defmodule Re.Exporters.Vivareal do
   end
 
   defp build_details(:description, acc, listing) do
-    [{"Description", %{}, {:cdata, listing.description || ""}} | acc]
+    [{"Description", %{}, add_description_timestamp(listing)} | acc]
   end
 
   defp build_details(:price, acc, listing) do
@@ -169,6 +169,10 @@ defmodule Re.Exporters.Vivareal do
     [{"Bathrooms", %{}, listing.bathrooms || 0} | acc]
   end
 
+  defp build_details(:suites, acc, listing) do
+    [{"Suites", %{}, listing.suites || 0} | acc]
+  end
+
   defp build_details(:garage_spots, acc, listing) do
     [{"Garage", %{type: "Parking Space"}, listing.garage_spots || 0} | acc]
   end
@@ -196,5 +200,12 @@ defmodule Re.Exporters.Vivareal do
 
   defp merge_defaults(options) do
     Map.merge(@default_options, options)
+  end
+
+  defp add_description_timestamp(%{description: nil, updated_at: updated_at}),
+    do: {:cdata, "Atualizado em: #{to_string(Timex.to_date(updated_at))}"}
+
+  defp add_description_timestamp(%{description: description, updated_at: updated_at}) do
+    {:cdata, description <> "\n Atualizado em: #{to_string(Timex.to_date(updated_at))}"}
   end
 end
