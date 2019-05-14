@@ -76,7 +76,7 @@ defmodule ReWeb.Types.User do
     end
 
     @desc "Get user list"
-    field :users, list_of(:user_pagination) do
+    field :users, :user_pagination do
       arg :pagination, :pagination_input
 
       resolve &AccountsResolver.users/2
