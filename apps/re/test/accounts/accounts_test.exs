@@ -9,14 +9,23 @@ defmodule Re.Accounts.AccountsTest do
 
   import Re.Factory
 
-  describe "promote_user_to_admin/1" do
-    test "should promote user to admin" do
-      %{uuid: uuid} = user = insert(:user)
+  describe "change_role/2" do
+    test "should make a common user an admin" do
+      %{uuid: uuid} = user = insert(:user, role: "user")
 
-      assert {:ok, _user} = Accounts.promote_user_to_admin(user)
+      assert {:ok, _user} = Accounts.change_role(user, "admin")
 
       assert user = Repo.get_by(User, uuid: uuid)
       assert "admin" == user.role
+    end
+
+    test "should make an admin a common user" do
+      %{uuid: uuid} = user = insert(:user) |> make_admin()
+
+      assert {:ok, _user} = Accounts.change_role(user, "user")
+
+      assert user = Repo.get_by(User, uuid: uuid)
+      assert "user" == user.role
     end
   end
 end

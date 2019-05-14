@@ -18,9 +18,9 @@ defmodule Re.Accounts do
     Repo.paginate(Re.User, pagination)
   end
 
-  def promote_user_to_admin(user) do
+  def change_role(user, role) do
     user
-    |> User.update_changeset(%{role: "admin"})
+    |> User.update_changeset(%{role: role})
     |> Repo.update()
   end
 end
