@@ -9,7 +9,7 @@ defmodule Re.Accounts.Filtering do
     Changeset
   }
 
-  schema "account_filter" do
+  schema "accounts_filter" do
     field :search, :string
   end
 
