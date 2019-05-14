@@ -34,7 +34,7 @@ defmodule Re.Accounts.Filtering do
   defp attr_filter({:search, search}, query) do
     from(l in query,
       where: like(l.phone, ^"%#{search}%"),
-      or_where: ilike(l.name, ^"%#{search}%") ,
+      or_where: ilike(l.name, ^"%#{search}%"),
       or_where: ilike(l.email, ^"%#{search}%")
     )
   end
