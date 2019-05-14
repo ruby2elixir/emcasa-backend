@@ -18,7 +18,8 @@ defmodule Re.Accounts.FilteringTest do
         |> Repo.insert()
 
       result =
-        Filtering.apply(User, %{search: "999"})
+        User
+        |> Filtering.apply(%{search: "999"})
         |> Repo.all()
 
       assert result == [user]
@@ -32,7 +33,8 @@ defmodule Re.Accounts.FilteringTest do
         |> Repo.insert()
 
       result =
-        Filtering.apply(User, %{search: "ali"})
+        User
+        |> Filtering.apply(%{search: "ali"})
         |> Repo.all()
 
       assert result == [user]
@@ -46,7 +48,8 @@ defmodule Re.Accounts.FilteringTest do
         |> Repo.insert()
 
       result =
-        Filtering.apply(User, %{search: "GMAIL"})
+        User
+        |> Filtering.apply(%{search: "GMAIL"})
         |> Repo.all()
 
       assert result == [user]
