@@ -102,7 +102,7 @@ defmodule Re.Exporters.Vivareal do
   end
 
   defp convert_attribute(:location, %{address: address}, _) do
-    {"Location", %{displayAddress: "Neighborhood"},
+    {"Location", %{displayAddress: "Street"},
      [
        {"Country", %{abbreviation: "BR"}, "Brasil"},
        {"State", %{abbreviation: address.state}, expand_state(address.state)},
