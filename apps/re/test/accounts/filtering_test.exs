@@ -9,7 +9,6 @@ defmodule Re.Accounts.FilteringTest do
   import Re.Factory
 
   describe "apply/2" do
-    @tag dev: true
     test "filter by phone number" do
       user_1 = insert(:user, phone: "(99)999999999")
       insert(:user, phone: "(88)88888888")
@@ -21,7 +20,6 @@ defmodule Re.Accounts.FilteringTest do
       assert result == [user_1]
     end
 
-    @tag dev: true
     test "filter by user name not considering case" do
       user_1 = insert(:user, name: "Alice")
       insert(:user, name: "Bob")
@@ -33,7 +31,6 @@ defmodule Re.Accounts.FilteringTest do
       assert result == [user_1]
     end
 
-    @tag dev: true
     test "filter by user email not considering case" do
       user_1 = insert(:user, email: "alice@gmail.com")
       insert(:user, email: "bob@bol.com")
