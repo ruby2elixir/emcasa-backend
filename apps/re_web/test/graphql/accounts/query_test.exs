@@ -276,7 +276,6 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
   end
 
   describe "users" do
-    @tag dev: true
     test "for admin list all users", %{admin_conn: conn, admin_user: admin, user_user: user} do
       query = """
         query User {
