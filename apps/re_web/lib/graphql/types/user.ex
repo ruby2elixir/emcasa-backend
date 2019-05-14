@@ -42,6 +42,14 @@ defmodule ReWeb.Types.User do
     field :user, :user
   end
 
+  object :user_pagination do
+    field :entries, list_of(:user)
+    field :page_number, :integer
+    field :page_size, :integer
+    field :total_pages, :integer
+    field :total_entries, :integer
+  end
+
   enum :user_role, values: ~w(admin user)
 
   input_object :notification_preferences_input do
@@ -55,15 +63,7 @@ defmodule ReWeb.Types.User do
   end
 
   input_object :user_filter_input do
-    field :search, :string
-  end
-
-  object :user_pagination do
-    field :entries, list_of(:user)
-    field :page_number, :integer
-    field :page_size, :integer
-    field :total_pages, :integer
-    field :total_entries, :integer
+    field :search, non_null(:string)
   end
 
   object :user_queries do

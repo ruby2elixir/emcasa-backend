@@ -14,7 +14,7 @@ defmodule Re.Accounts do
   def query(query, _args), do: query
 
   def paginated(params \\ %{}) do
-    Re.User
+    User
     |> Filtering.apply(params)
     |> Repo.paginate(params)
   end

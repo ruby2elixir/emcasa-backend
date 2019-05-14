@@ -32,10 +32,10 @@ defmodule Re.Accounts.Filtering do
   defp build_query(params, query), do: Enum.reduce(params, query, &attr_filter/2)
 
   defp attr_filter({:search, search}, query) do
-    from(l in query,
-      where: like(l.phone, ^"%#{search}%"),
-      or_where: ilike(l.name, ^"%#{search}%"),
-      or_where: ilike(l.email, ^"%#{search}%")
+    from(u in query,
+      where: like(u.phone, ^"%#{search}%"),
+      or_where: ilike(u.name, ^"%#{search}%"),
+      or_where: ilike(u.email, ^"%#{search}%")
     )
   end
 end
