@@ -9,7 +9,7 @@ defmodule Re.Exporters.Zap do
 
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
                           price maintenance_fee util_area area_unit rooms bathrooms garage_spots
-                          property_tax description images highlight)a
+                          property_tax description images highlight tags)a
 
   @default_options %{attributes: @exported_attributes, highlight_ids: [], super_highlight_ids: []}
 
@@ -133,16 +133,58 @@ defmodule Re.Exporters.Zap do
     [{"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)} | acc]
   end
 
-  defp convert_attribute(:highlight, %{id: id}, %{
-         highlight_ids: highlight_ids,
-         super_highlight_ids: super_highlight_ids
-       }, acc) do
+  defp convert_attribute(
+         :highlight,
+         %{id: id},
+         %{
+           highlight_ids: highlight_ids,
+           super_highlight_ids: super_highlight_ids
+         },
+         acc
+       ) do
     cond do
       id in super_highlight_ids -> [{"TipoOferta", %{}, @super_highlight} | acc]
       id in highlight_ids -> [{"TipoOferta", %{}, @highlight} | acc]
       true -> [{"TipoOferta", %{}, @normal} | acc]
     end
   end
+
+  defp convert_attribute(:tags, %{tags: tags}, _, acc) do
+    tags_xml = Enum.reduce(tags, [], &convert_tag/2)
+
+    tags_xml ++ acc
+  end
+
+  defp convert_tag(%{name_slug: "academia"}, acc), do: [{"Academia", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "churrasqueira"}, acc), do: [{"Churrasqueira", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "espaco-verde"}, acc), do: [{"Jardim", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "espaco-gourmet"}, acc), do: [{"EspacoGourmet", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "piscina"}, acc), do: [{"Piscina", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "playground"}, acc), do: [{"Playground", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "quadra"}, acc), do: [{"QuadraPoliEsportiva", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "salao-de-festas"}, acc), do: [{"SalaoFestas", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "salao-de-jogos"}, acc), do: [{"SalaoJogos", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "sauna"}, acc), do: [{"Sauna", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "armarios-embutidos"}, acc),
+    do: [{"ArmarioEmbutido", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "dependencia-empregados"}, acc),
+    do: [{"QuartoWCEmpregada", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "banheiro-empregados"}, acc),
+    do: [{"WCEmpregada", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "fogao-embutido"}, acc), do: [{"Fogao", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "lavabo"}, acc), do: [{"Lavabo", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "terraco"}, acc), do: [{"Terraco", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "varanda"}, acc), do: [{"Varanda", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "varanda-gourmet"}, acc), do: [{"VarandaGourmet", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "portaria-24-horas"}, acc),
+    do: [{"Acesso24Horas", %{}, nil} | acc]
+
+  defp convert_tag(_tag, acc), do: acc
 
   defp merge_defaults(map) do
     Map.merge(@default_options, map)

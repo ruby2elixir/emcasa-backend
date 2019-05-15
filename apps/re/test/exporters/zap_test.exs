@@ -32,6 +32,11 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
+          tags: [
+            build(:tag, name: "Piscina", name_slug: "piscina"),
+            build(:tag, name: "Academia", name_slug: "academia"),
+            build(:tag, name: "Not Mapped", name_slug: "not-mapped")
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -63,7 +68,10 @@ defmodule Re.Exporters.ZapTest do
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>descr</Observacao>" <>
-          images_tags() <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
+          images_tags() <>
+          "<TipoOferta>1</TipoOferta>" <>
+          tags() <>
+          "</Imovel>"
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -90,6 +98,11 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
+          tags: [
+            build(:tag, name: "Piscina", name_slug: "piscina"),
+            build(:tag, name: "Academia", name_slug: "academia"),
+            build(:tag, name: "Not Mapped", name_slug: "not-mapped")
+          ],
           description: nil,
           area: 50,
           price: 1_000_000,
@@ -120,12 +133,16 @@ defmodule Re.Exporters.ZapTest do
           "<QtdBanheiros>2</QtdBanheiros>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao/>" <> images_tags() <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
+          "<Observacao/>" <>
+          images_tags() <>
+          "<TipoOferta>1</TipoOferta>" <>
+          tags() <>
+          "</Imovel>"
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
 
-    test "export XML from listing with no images" do
+    test "export XML from listing with no images and no tags" do
       %{id: id} =
         listing =
         insert(:listing,
@@ -141,6 +158,7 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: [],
+          tags: [],
           description: nil,
           area: 50,
           price: 1_000_000,
@@ -198,6 +216,11 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
+          tags: [
+            build(:tag, name: "Piscina", name_slug: "piscina"),
+            build(:tag, name: "Academia", name_slug: "academia"),
+            build(:tag, name: "Not Mapped", name_slug: "not-mapped")
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -231,7 +254,10 @@ defmodule Re.Exporters.ZapTest do
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>descr</Observacao>" <>
-          images_tags() <> "<TipoOferta>2</TipoOferta>" <> "</Imovel>"
+          images_tags() <>
+          "<TipoOferta>2</TipoOferta>" <>
+          tags() <>
+          "</Imovel>"
 
       assert expected_xml ==
                listing |> Zap.build_xml(options) |> XmlBuilder.generate(format: :none)
@@ -259,6 +285,11 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
+          tags: [
+            build(:tag, name: "Piscina", name_slug: "piscina"),
+            build(:tag, name: "Academia", name_slug: "academia"),
+            build(:tag, name: "Not Mapped", name_slug: "not-mapped")
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -292,7 +323,10 @@ defmodule Re.Exporters.ZapTest do
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>descr</Observacao>" <>
-          images_tags() <> "<TipoOferta>3</TipoOferta>" <> "</Imovel>"
+          images_tags() <>
+          "<TipoOferta>3</TipoOferta>" <>
+          tags() <>
+          "</Imovel>"
 
       assert expected_xml ==
                listing |> Zap.build_xml(options) |> XmlBuilder.generate(format: :none)
@@ -329,5 +363,10 @@ defmodule Re.Exporters.ZapTest do
       "<URLArquivo>https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/test3.jpg</URLArquivo>" <>
       "<NomeArquivo>test3.jpg</NomeArquivo>" <>
       "<Alterada>0</Alterada>" <> "</Foto>" <> "</Fotos>"
+  end
+
+  defp tags do
+    "<Academia/>" <>
+      "<Piscina/>"
   end
 end
