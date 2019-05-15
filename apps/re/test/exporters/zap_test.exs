@@ -44,7 +44,8 @@ defmodule Re.Exporters.ZapTest do
           bathrooms: 2,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       expected_xml =
@@ -67,7 +68,7 @@ defmodule Re.Exporters.ZapTest do
           "<QtdBanheiros>2</QtdBanheiros>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao>descr</Observacao>" <>
+          "<Observacao>descr\n Atualizado em: 2010-01-01</Observacao>" <>
           images_tags() <>
           "<TipoOferta>1</TipoOferta>" <>
           tags() <>
@@ -110,7 +111,8 @@ defmodule Re.Exporters.ZapTest do
           bathrooms: 2,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       expected_xml =
@@ -133,7 +135,7 @@ defmodule Re.Exporters.ZapTest do
           "<QtdBanheiros>2</QtdBanheiros>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao/>" <>
+          "<Observacao>Atualizado em: 2010-01-01</Observacao>" <>
           images_tags() <>
           "<TipoOferta>1</TipoOferta>" <>
           tags() <>
@@ -166,7 +168,8 @@ defmodule Re.Exporters.ZapTest do
           bathrooms: 2,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       expected_xml =
@@ -189,7 +192,8 @@ defmodule Re.Exporters.ZapTest do
           "<QtdBanheiros>2</QtdBanheiros>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao/>" <> "<Fotos/>" <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
+          "<Observacao>Atualizado em: 2010-01-01</Observacao>" <>
+          "<Fotos/>" <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -228,7 +232,8 @@ defmodule Re.Exporters.ZapTest do
           bathrooms: 2,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       options = %{highlight_ids: [id]}
@@ -253,7 +258,7 @@ defmodule Re.Exporters.ZapTest do
           "<QtdBanheiros>2</QtdBanheiros>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao>descr</Observacao>" <>
+          "<Observacao>descr\n Atualizado em: 2010-01-01</Observacao>" <>
           images_tags() <>
           "<TipoOferta>2</TipoOferta>" <>
           tags() <>
@@ -297,7 +302,8 @@ defmodule Re.Exporters.ZapTest do
           bathrooms: 2,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       options = %{super_highlight_ids: [id]}
@@ -322,7 +328,7 @@ defmodule Re.Exporters.ZapTest do
           "<QtdBanheiros>2</QtdBanheiros>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao>descr</Observacao>" <>
+          "<Observacao>descr\n Atualizado em: 2010-01-01</Observacao>" <>
           images_tags() <>
           "<TipoOferta>3</TipoOferta>" <>
           tags() <>

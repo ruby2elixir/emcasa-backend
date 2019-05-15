@@ -122,8 +122,21 @@ defmodule Re.Exporters.Zap do
     end
   end
 
-  defp convert_attribute(:description, listing, _, acc) do
-    [{"Observacao", %{}, listing.description} | acc]
+  defp convert_attribute(:description, %{description: nil, updated_at: updated_at}, _, acc) do
+    [{"Observacao", %{}, "Atualizado em: #{to_string(Timex.to_date(updated_at))}"} | acc]
+  end
+
+  defp convert_attribute(
+         :description,
+         %{description: description, updated_at: updated_at},
+         _,
+         acc
+       ) do
+    [
+      {"Observacao", %{},
+       description <> "\n Atualizado em: #{to_string(Timex.to_date(updated_at))}"}
+      | acc
+    ]
   end
 
   defp convert_attribute(:images, %{images: []}, _, acc), do: [{"Fotos", %{}, nil} | acc]
