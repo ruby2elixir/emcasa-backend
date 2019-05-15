@@ -4,6 +4,7 @@ defmodule Re.Accounts do
   """
 
   alias Re.{
+    Accounts.Queries,
     Repo,
     User
   }
@@ -13,7 +14,11 @@ defmodule Re.Accounts do
   def query(query, _args), do: query
 
   def paginated(params \\ %{}) do
-    Repo.paginate(Re.User, params)
+    User
+    |> Queries.or_contains_email(params)
+    |> Queries.or_contains_name(params)
+    |> Queries.or_contains_phone(params)
+    |> Repo.paginate(params)
   end
 
   def change_role(user, role) do

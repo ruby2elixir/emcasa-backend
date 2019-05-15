@@ -80,8 +80,12 @@ defmodule ReWeb.Resolvers.Accounts do
 
   def users(params, %{context: %{current_user: current_user}}) do
     pagination = Map.get(params, :pagination, %{})
+    search = Map.get(params, :search, %{})
 
-    params = Map.merge(params, pagination)
+    params =
+      params
+      |> Map.merge(pagination)
+      |> Map.merge(search)
 
     case Bodyguard.permit(Users, :list_users, current_user) do
       :ok -> {:ok, Re.Accounts.paginated(params)}
