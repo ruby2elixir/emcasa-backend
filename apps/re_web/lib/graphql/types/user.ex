@@ -62,7 +62,7 @@ defmodule ReWeb.Types.User do
     field :page_size, non_null(:integer)
   end
 
-  input_object :user_filter_input do
+  input_object :user_search_input do
     field :search, non_null(:string)
   end
 
@@ -84,7 +84,7 @@ defmodule ReWeb.Types.User do
     @desc "Get user list"
     field :users, :user_pagination do
       arg :pagination, :pagination_input
-      arg :filters, :user_filter_input
+      arg :search, :user_search_input
 
       resolve &AccountsResolver.users/2
     end
