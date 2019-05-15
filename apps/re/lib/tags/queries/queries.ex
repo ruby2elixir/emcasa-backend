@@ -34,4 +34,14 @@ defmodule Re.Tags.Queries do
   def filter_next({:visibility, visibility}, query) do
     where(query, [t], t.visibility == ^visibility)
   end
+
+  def listing_preload(query \\ Tag) do
+    query
+    |> public()
+    |> order_by_name_slug()
+  end
+
+  def public(query \\ Tag), do: where(query, [t], t.visibility == "public")
+
+  def order_by_name_slug(query \\ Tag), do: order_by(query, [t], desc: t.name_slug)
 end

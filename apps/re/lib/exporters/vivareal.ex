@@ -92,7 +92,8 @@ defmodule Re.Exporters.Vivareal do
     {"Media", %{}, Enum.map(images, &build_image/1)}
   end
 
-  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms suites garage_spots)a
+  @details_attributes ~w(type description price area maintenance_fee property_tax rooms bathrooms
+                         suites garage_spots tags)a
 
   defp convert_attribute(:details, listing, _) do
     {"Details", %{},
@@ -176,6 +177,35 @@ defmodule Re.Exporters.Vivareal do
   defp build_details(:garage_spots, acc, listing) do
     [{"Garage", %{type: "Parking Space"}, listing.garage_spots || 0} | acc]
   end
+
+  defp build_details(:tags, acc, listing) do
+    [{"Features", %{}, Enum.reduce(listing.tags, [], &build_feature/2)} | acc]
+  end
+
+  defp build_feature(%{name_slug: name_slug}, acc) do
+    case map_feature(name_slug) do
+      {:ok, mapped_name} -> [{"Feature", %{}, mapped_name} | acc]
+      {:error, :not_mapped} -> acc
+    end
+  end
+
+  defp map_feature("academia"), do: {:ok, "Gym"}
+  defp map_feature("churrasqueira"), do: {:ok, "BBQ"}
+  defp map_feature("espaco-gourmet"), do: {:ok, "Gourmet Area"}
+  defp map_feature("espaco-verde"), do: {:ok, "Green space / Park"}
+  defp map_feature("parque"), do: {:ok, "Green space / Park"}
+  defp map_feature("piscina"), do: {:ok, "Pool"}
+  defp map_feature("playground"), do: {:ok, "Playground"}
+  defp map_feature("quadra"), do: {:ok, "Sports Court"}
+  defp map_feature("salao-de-festas"), do: {:ok, "Party Room"}
+  defp map_feature("salao-de-jogos"), do: {:ok, "Game room"}
+  defp map_feature("sacada"), do: {:ok, "Balcony"}
+  defp map_feature("varanda"), do: {:ok, "Veranda"}
+  defp map_feature("varanda-gourmet"), do: {:ok, "Veranda"}
+  defp map_feature("portaria-24-horas"), do: {:ok, "Security Guard on Duty"}
+  defp map_feature("vista-mar"), do: {:ok, "Ocean View"}
+  defp map_feature("vista-montanhas"), do: {:ok, "Mountain View"}
+  defp map_feature(_), do: {:error, :not_mapped}
 
   defp build_image(%{filename: filename, description: description}) do
     {"Item", %{caption: description, medium: "image"},

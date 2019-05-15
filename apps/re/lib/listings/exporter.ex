@@ -7,12 +7,14 @@ defmodule Re.Listings.Exporter do
     Images,
     Filtering,
     Listings.Queries,
-    Repo
+    Repo,
+    Tags
   }
 
   @preload [
     :address,
     :development,
+    tags: Tags.Queries.listing_preload(),
     images: Images.Queries.listing_preload()
   ]
 
