@@ -8,7 +8,7 @@ defmodule Re.Exporters.Zap do
   @super_highlight 3
 
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
-                          price maintenance_fee util_area area_unit rooms bathrooms garage_spots
+                          price maintenance_fee util_area area_unit rooms bathrooms suites garage_spots
                           property_tax description images highlight tags)a
 
   @default_options %{attributes: @exported_attributes, highlight_ids: [], super_highlight_ids: []}
@@ -109,6 +109,10 @@ defmodule Re.Exporters.Zap do
 
   defp convert_attribute(:bathrooms, listing, _, acc) do
     [{"QtdBanheiros", %{}, listing.bathrooms} | acc]
+  end
+
+  defp convert_attribute(:suites, listing, _, acc) do
+    [{"QtdSuites", %{}, listing.suites} | acc]
   end
 
   defp convert_attribute(:garage_spots, listing, _, acc) do

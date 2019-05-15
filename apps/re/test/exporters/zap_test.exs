@@ -42,6 +42,7 @@ defmodule Re.Exporters.ZapTest do
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
           property_tax: 1000.00,
@@ -66,6 +67,7 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>descr\n Atualizado em: 2010-01-01</Observacao>" <>
@@ -109,6 +111,7 @@ defmodule Re.Exporters.ZapTest do
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
           property_tax: 1000.00,
@@ -133,6 +136,7 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>Atualizado em: 2010-01-01</Observacao>" <>
@@ -166,6 +170,7 @@ defmodule Re.Exporters.ZapTest do
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
           property_tax: 1000.00,
@@ -190,6 +195,7 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>Atualizado em: 2010-01-01</Observacao>" <>
@@ -230,6 +236,7 @@ defmodule Re.Exporters.ZapTest do
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
           property_tax: 1000.00,
@@ -256,6 +263,7 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>descr\n Atualizado em: 2010-01-01</Observacao>" <>
@@ -300,6 +308,8 @@ defmodule Re.Exporters.ZapTest do
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
           property_tax: 1000.00,
@@ -326,6 +336,7 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
           "<Observacao>descr\n Atualizado em: 2010-01-01</Observacao>" <>
