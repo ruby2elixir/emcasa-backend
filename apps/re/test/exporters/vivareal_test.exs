@@ -5,7 +5,8 @@ defmodule Re.Exporters.VivarealTest do
     Address,
     Exporters.Vivareal,
     Image,
-    Listing
+    Listing,
+    Tag
   }
 
   describe "build_xml/1" do
@@ -28,6 +29,11 @@ defmodule Re.Exporters.VivarealTest do
             %Image{filename: "test1.jpg", description: "descr"},
             %Image{filename: "test2.jpg", description: "descr"},
             %Image{filename: "test3.jpg", description: "descr"}
+          ],
+          tags: [
+            %Tag{name: "Piscina", name_slug: "piscina"},
+            %Tag{name: "Academia", name_slug: "academia"},
+            %Tag{name: "Not Mapped", name_slug: "not-mapped"}
           ],
           description: "descr",
           area: 50,
@@ -76,6 +82,11 @@ defmodule Re.Exporters.VivarealTest do
             %Image{filename: "test2.jpg", description: "descr"},
             %Image{filename: "test3.jpg", description: "descr"}
           ],
+          tags: [
+            %Tag{name: "Piscina", name_slug: "piscina"},
+            %Tag{name: "Academia", name_slug: "academia"},
+            %Tag{name: "Not Mapped", name_slug: "not-mapped"}
+          ],
           description: nil,
           area: 50,
           price: 1_000_000,
@@ -122,6 +133,11 @@ defmodule Re.Exporters.VivarealTest do
             %Image{filename: "test1.jpg", description: "descr"},
             %Image{filename: "test2.jpg", description: "descr"},
             %Image{filename: "test3.jpg", description: "descr"}
+          ],
+          tags: [
+            %Tag{name: "Piscina", name_slug: "piscina"},
+            %Tag{name: "Academia", name_slug: "academia"},
+            %Tag{name: "Not Mapped", name_slug: "not-mapped"}
           ],
           description: "descr",
           area: 50,
@@ -170,6 +186,11 @@ defmodule Re.Exporters.VivarealTest do
             %Image{filename: "test2.jpg", description: "descr"},
             %Image{filename: "test3.jpg", description: "descr"}
           ],
+          tags: [
+            %Tag{name: "Piscina", name_slug: "piscina"},
+            %Tag{name: "Academia", name_slug: "academia"},
+            %Tag{name: "Not Mapped", name_slug: "not-mapped"}
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
@@ -209,6 +230,11 @@ defmodule Re.Exporters.VivarealTest do
           images: [
             %Image{filename: "test_1.jpg", description: nil}
           ],
+          tags: [
+            %Tag{name: "Piscina", name_slug: "piscina"},
+            %Tag{name: "Academia", name_slug: "academia"},
+            %Tag{name: "Not Mapped", name_slug: "not-mapped"}
+          ],
           updated_at: ~N[2018-06-07 15:30:00.000000],
           suites: 0
         }
@@ -227,7 +253,12 @@ defmodule Re.Exporters.VivarealTest do
             "<Bedrooms>0</Bedrooms>" <>
             "<Bathrooms>0</Bathrooms>" <>
             "<Suites>0</Suites>" <>
-            "<Garage type=\"Parking Space\">0</Garage>" <> "</Details>" <> "</Listing>"
+            "<Garage type=\"Parking Space\">0</Garage>" <>
+            "<Features>" <>
+            "<Feature>Gym</Feature>" <>
+            "<Feature>Pool</Feature>" <>
+            "</Features>" <>
+            "</Details>" <> "</Listing>"
 
         created_xml =
           listing
@@ -286,7 +317,12 @@ defmodule Re.Exporters.VivarealTest do
       "<Bedrooms>2</Bedrooms>" <>
       "<Bathrooms>2</Bathrooms>" <>
       "<Suites>0</Suites>" <>
-      "<Garage type=\"Parking Space\">2</Garage>" <> "</Details>"
+      "<Garage type=\"Parking Space\">2</Garage>" <>
+      "<Features>" <>
+      "<Feature>Gym</Feature>" <>
+      "<Feature>Pool</Feature>" <>
+      "</Features>" <>
+      "</Details>"
   end
 
   defp details_tags_nils do
@@ -298,7 +334,12 @@ defmodule Re.Exporters.VivarealTest do
       "<Bedrooms>2</Bedrooms>" <>
       "<Bathrooms>2</Bathrooms>" <>
       "<Suites>0</Suites>" <>
-      "<Garage type=\"Parking Space\">2</Garage>" <> "</Details>"
+      "<Garage type=\"Parking Space\">2</Garage>" <>
+      "<Features>" <>
+      "<Feature>Gym</Feature>" <>
+      "<Feature>Pool</Feature>" <>
+      "</Features>" <>
+      "</Details>"
   end
 
   defp rooms_nil_details_tags do
@@ -312,7 +353,12 @@ defmodule Re.Exporters.VivarealTest do
       "<Bedrooms>0</Bedrooms>" <>
       "<Bathrooms>0</Bathrooms>" <>
       "<Suites>0</Suites>" <>
-      "<Garage type=\"Parking Space\">0</Garage>" <> "</Details>"
+      "<Garage type=\"Parking Space\">0</Garage>" <>
+      "<Features>" <>
+      "<Feature>Gym</Feature>" <>
+      "<Feature>Pool</Feature>" <>
+      "</Features>" <>
+      "</Details>"
   end
 
   defp location_tags do
