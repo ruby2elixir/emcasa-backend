@@ -6,13 +6,21 @@ defmodule Re.Accounts.Queries do
 
   import Ecto.Query
 
-  def search_by_name_or_email_or_phone(query, %{search: search}) do
-    from(u in query,
-      where: like(u.phone, ^"%#{search}%"),
-      or_where: ilike(u.name, ^"%#{search}%"),
-      or_where: ilike(u.email, ^"%#{search}%")
-    )
+  def or_contains_email(query, %{search: search}) do
+    from(u in query, or_where: ilike(u.email, ^"%#{search}%"))
   end
 
-  def search_by_name_or_email_or_phone(query, _), do: query
+  def or_contains_email(query, _), do: query
+
+  def or_contains_name(query, %{search: search}) do
+    from(u in query, or_where: ilike(u.name, ^"%#{search}%"))
+  end
+
+  def or_contains_name(query, _), do: query
+
+  def or_contains_phone(query, %{search: search}) do
+    from(u in query, or_where: like(u.phone, ^"%#{search}%"))
+  end
+
+  def or_contains_phone(query, _), do: query
 end

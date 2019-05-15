@@ -15,7 +15,9 @@ defmodule Re.Accounts do
 
   def paginated(params \\ %{}) do
     User
-    |> Queries.search_by_name_or_email_or_phone(params)
+    |> Queries.or_contains_email(params)
+    |> Queries.or_contains_name(params)
+    |> Queries.or_contains_phone(params)
     |> Repo.paginate(params)
   end
 
