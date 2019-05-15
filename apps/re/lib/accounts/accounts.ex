@@ -4,7 +4,7 @@ defmodule Re.Accounts do
   """
 
   alias Re.{
-    Accounts.Filtering,
+    Accounts.Queries,
     Repo,
     User
   }
@@ -15,7 +15,7 @@ defmodule Re.Accounts do
 
   def paginated(params \\ %{}) do
     User
-    |> Filtering.apply(params)
+    |> Queries.search_by_name_or_email_or_phone(params)
     |> Repo.paginate(params)
   end
 

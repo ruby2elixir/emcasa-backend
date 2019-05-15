@@ -1,15 +1,15 @@
-defmodule Re.Accounts.FilteringTest do
+defmodule Re.Accounts.QueriesTest do
   use Re.ModelCase
 
   alias Re.{
-    Accounts.Filtering,
+    Accounts.Queries,
     Repo,
     User
   }
 
   import Re.Factory
 
-  describe "apply/2" do
+  describe "search_by_name_or_email_or_phone/2" do
     test "filter by phone number" do
       user = insert(:user, phone: "(99)999999999")
 
@@ -19,7 +19,7 @@ defmodule Re.Accounts.FilteringTest do
 
       result =
         User
-        |> Filtering.apply(%{search: "999"})
+        |> Queries.search_by_name_or_email_or_phone(%{search: "999"})
         |> Repo.all()
 
       assert result == [user]
@@ -34,7 +34,7 @@ defmodule Re.Accounts.FilteringTest do
 
       result =
         User
-        |> Filtering.apply(%{search: "ali"})
+        |> Queries.search_by_name_or_email_or_phone(%{search: "ali"})
         |> Repo.all()
 
       assert result == [user]
@@ -49,7 +49,7 @@ defmodule Re.Accounts.FilteringTest do
 
       result =
         User
-        |> Filtering.apply(%{search: "GMAIL"})
+        |> Queries.search_by_name_or_email_or_phone(%{search: "GMAIL"})
         |> Repo.all()
 
       assert result == [user]
