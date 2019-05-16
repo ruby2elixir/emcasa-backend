@@ -3,7 +3,7 @@ defmodule Re.UnitsTest do
 
   alias Re.{
     Listing,
-    Listings.Units.Server,
+    Developments.Units.Server,
     Unit,
     Units
   }
@@ -45,7 +45,9 @@ defmodule Re.UnitsTest do
     test "update listing with unit attributes when unit is inserted" do
       Server.start_link()
       development = insert(:development)
-      {:ok, listing} = Re.Repo.insert(%Re.Listing{}, development_uuid: development.uuid, price: 1_000_000)
+
+      {:ok, listing} =
+        Re.Repo.insert(%Re.Listing{}, development_uuid: development.uuid, price: 1_000_000)
 
       assert {:ok, inserted_unit} = Units.insert(@unit_attrs, development, listing)
 

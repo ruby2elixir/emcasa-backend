@@ -1,4 +1,4 @@
-defmodule Re.Listings.Units.Propagator do
+defmodule Re.Developments.Units.Propagator do
   @moduledoc """
   Context module for listing units interactions, usually changes in units would
   be replicated/reflected in listings until we migrate replicated structure to units.

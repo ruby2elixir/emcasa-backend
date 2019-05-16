@@ -10,7 +10,7 @@ defmodule Re.Application do
   alias Re.{
     BuyerLeads.JobQueue,
     Listings.History,
-    Listings.Units,
+    Developments.Units,
     PubSub,
     Repo,
     Statistics.Visualizations
