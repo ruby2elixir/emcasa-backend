@@ -490,11 +490,11 @@ defmodule ReWeb.ListingControllerTest do
                }
     end
 
-    test "edit if listing belongs to user", %{user_conn: conn, user_user: user} do
+    test "do not edit if listing as user", %{user_conn: conn, user_user: user} do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
       conn = get(conn, listing_path(conn, :edit, listing))
-      assert json_response(conn, 200)
+      assert json_response(conn, 403)
     end
 
     test "fails if listing does not belong to user", %{user_conn: conn, admin_user: user} do
@@ -537,16 +537,15 @@ defmodule ReWeb.ListingControllerTest do
       assert listing.user_id == user.id
     end
 
-    test "creates and renders resource as user", %{user_conn: conn, user_user: user} do
+    test "do not creates and renders resource as user", %{user_conn: conn} do
       conn =
         post(conn, listing_path(conn, :create), %{
           listing: @valid_attrs_user,
           address: @valid_address_attrs
         })
 
-      json_response(conn, 201)
-      assert listing = Repo.get_by(Listing, @valid_attrs_user)
-      assert listing.user_id == user.id
+      json_response(conn, 403)
+      refute Repo.one(Listing)
     end
 
     test "creates and renders resource with existing address", %{admin_conn: conn} do
@@ -641,7 +640,10 @@ defmodule ReWeb.ListingControllerTest do
       refute Repo.get_by(Listing, @valid_attrs_user)
     end
 
-    test "update resource when listing belongs to user", %{user_conn: conn, user_user: user} do
+    test "do not update resource when listing belongs to user", %{
+      user_conn: conn,
+      user_user: user
+    } do
       listing = insert(:listing, address: build(:address), user: user)
 
       conn =
@@ -653,8 +655,7 @@ defmodule ReWeb.ListingControllerTest do
           address: @valid_address_attrs
         )
 
-      assert json_response(conn, 200)
-      assert Repo.get_by(Listing, @valid_attrs_user)
+      assert json_response(conn, 403)
     end
 
     test "does not update resource when listing doesn't belong to user", %{
@@ -694,12 +695,15 @@ defmodule ReWeb.ListingControllerTest do
       assert listing.status == "active"
     end
 
-    test "delete resource when listing belongs to user", %{user_conn: conn, user_user: user} do
+    test "do not delete resource when listing belongs to user", %{
+      user_conn: conn,
+      user_user: user
+    } do
       listing = insert(:listing, user: user)
       conn = delete(conn, listing_path(conn, :delete, listing))
-      assert response(conn, 204)
+      assert response(conn, 403)
       assert listing = Repo.get(Listing, listing.id)
-      assert listing.status == "inactive"
+      assert listing.status == "active"
     end
 
     test "doest not delete resource when listing doesn't belong to user", %{

@@ -2,25 +2,12 @@ defmodule Re.Listings.Policy do
   @moduledoc """
   Policy module for user permission on listings
   """
-
-  alias Re.{
-    Listing,
-    User
-  }
+  alias Re.User
 
   def authorize(_, %User{role: "admin"}, _), do: :ok
-  def authorize(:create_listing, %User{role: "user"}, _), do: :ok
   def authorize(:show_listing, _, %{status: "active"}), do: :ok
   def authorize(:show_listing, %User{id: id}, %{user_id: id}), do: :ok
   def authorize(:show_listing, _, _), do: {:error, :not_found}
-  def authorize(:edit_listing, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
-  def authorize(:update_listing, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
-  def authorize(:delete_listing, %User{id: id, role: "user"}, %Listing{user_id: id}), do: :ok
-
-  def authorize(:per_user, %User{id: id}, %User{id: id}), do: :ok
-
-  def authorize(:order_listing_images, %User{id: id, role: "user"}, %Listing{user_id: id}),
-    do: :ok
 
   def authorize(:per_user, %User{}, _), do: :ok
 

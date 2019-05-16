@@ -129,7 +129,10 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
              } == json_response(conn, 200)["data"]
     end
 
-    test "user should insert listing with address id", %{user_conn: conn, old_address: address} do
+    test "user should not insert listing with address id", %{
+      user_conn: conn,
+      old_address: address
+    } do
       variables = %{
         "input" => %{
           "type" => "Apartamento",
@@ -153,17 +156,9 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{
-               "insertListing" => %{
-                 "type" => "Apartamento",
-                 "address" => %{
-                   "id" => to_string(address.id),
-                   "street" => address.street,
-                   "postalCode" => address.postal_code,
-                   "streetNumber" => address.street_number
-                 }
-               }
-             } == json_response(conn, 200)["data"]
+      response = json_response(conn, 200)
+      assert_forbidden_response(response)
+      assert [%{"message" => "Forbidden", "code" => 403}] = response["errors"]
     end
 
     test "admin should not insert listing without address", %{admin_conn: conn} do
@@ -207,7 +202,9 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [%{"message" => "Bad request", "code" => 400}] = json_response(conn, 200)["errors"]
+      response = json_response(conn, 200)
+      assert_forbidden_response(response)
+      assert [%{"message" => "Forbidden", "code" => 403}] = response["errors"]
     end
 
     test "admin should insert listing with tags", %{admin_conn: conn, old_address: address} do
@@ -241,7 +238,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert expected == json_response(conn, 200)["data"]
     end
 
-    test "user should insert listing with tags", %{user_conn: conn, old_address: address} do
+    test "user should not insert listing with tags", %{user_conn: conn, old_address: address} do
       tag = insert(:tag)
 
       variables = %{
@@ -265,11 +262,9 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      expected = %{
-        "insertListing" => %{"type" => "Apartamento", "tags" => [%{"nameSlug" => tag.name_slug}]}
-      }
-
-      assert expected == json_response(conn, 200)["data"]
+      response = json_response(conn, 200)
+      assert_forbidden_response(response)
+      assert [%{"message" => "Forbidden", "code" => 403}] = response["errors"]
     end
 
     test "admin should insert listing with owner contact", %{
@@ -624,7 +619,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert expected == json_response(conn, 200)["data"]["updateListing"]
     end
 
-    test "owner should update tags from listing", %{
+    test "owner should not update tags from listing", %{
       user_conn: conn,
       old_address: address,
       old_listing: listing
@@ -656,9 +651,9 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      expected = %{"id" => "#{listing.id}", "tags" => [%{"nameSlug" => "tag-1"}]}
-
-      assert expected == json_response(conn, 200)["data"]["updateListing"]
+      response = json_response(conn, 200)
+      assert_forbidden_response(response)
+      assert [%{"message" => "Forbidden", "code" => 403}] = response["errors"]
     end
 
     test "admin should update owner contact from listing", %{

@@ -13,8 +13,7 @@ defmodule Re.Listings do
     Listings.Queries,
     PubSub,
     Repo,
-    Tags,
-    User
+    Tags
   }
 
   alias Ecto.Changeset
