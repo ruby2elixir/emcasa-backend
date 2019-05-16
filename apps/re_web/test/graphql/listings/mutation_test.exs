@@ -11,8 +11,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     Listing.MutationHelpers
   }
 
-  alias Re.Listing
-
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
     admin_user = insert(:user, email: "admin@email.com", role: "admin")
@@ -94,61 +92,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert owner["id"] == to_string(user.id)
     end
 
-    test "user should insert listing", %{
-      user_conn: conn,
-      user_user: user,
-      listing: listing,
-      address: address
-    } do
-      variables = MutationHelpers.insert_listing_variables(listing, address)
-
-      mutation = MutationHelpers.insert_listing_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
-
-      assert %{
-               "insertListing" =>
-                 %{"address" => inserted_address, "owner" => owner} = inserted_listing
-             } = json_response(conn, 200)["data"]
-
-      assert inserted_listing["id"]
-      assert inserted_listing["type"] == listing.type
-      assert inserted_listing["price"] == listing.price
-      assert inserted_listing["complement"] == listing.complement
-      assert inserted_listing["description"] == listing.description
-      assert inserted_listing["propertyTax"] == listing.property_tax
-      assert inserted_listing["maintenanceFee"] == listing.maintenance_fee
-      assert inserted_listing["floor"] == listing.floor
-      assert inserted_listing["rooms"] == listing.rooms
-      assert inserted_listing["bathrooms"] == listing.bathrooms
-      assert inserted_listing["restrooms"] == listing.restrooms
-      assert inserted_listing["area"] == listing.area
-      assert inserted_listing["garageSpots"] == listing.garage_spots
-      assert inserted_listing["garageType"] == String.upcase(listing.garage_type)
-      assert inserted_listing["suites"] == listing.suites
-      assert inserted_listing["dependencies"] == listing.dependencies
-      assert inserted_listing["balconies"] == listing.balconies
-      assert inserted_listing["hasElevator"] == listing.has_elevator
-      assert inserted_listing["matterportCode"] == nil
-      assert inserted_listing["isExclusive"] == listing.is_exclusive
-      assert inserted_listing["isRelease"] == listing.is_release
-      assert inserted_listing["isExportable"] == true
-      assert inserted_listing["score"] == nil
-
-      refute inserted_listing["isActive"]
-
-      assert inserted_address["city"] == address.city
-      assert inserted_address["state"] == address.state
-      assert inserted_address["lat"] == address.lat
-      assert inserted_address["lng"] == address.lng
-      assert inserted_address["neighborhood"] == address.neighborhood
-      assert inserted_address["street"] == address.street
-      assert inserted_address["streetNumber"] == address.street_number
-      assert inserted_address["postalCode"] == address.postal_code
-
-      assert owner["id"] == to_string(user.id)
-    end
-
     test "admin should insert listing with address id", %{admin_conn: conn, old_address: address} do
       variables = %{
         "input" => %{
@@ -186,7 +129,10 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
              } == json_response(conn, 200)["data"]
     end
 
-    test "user should insert listing with address id", %{user_conn: conn, old_address: address} do
+    test "user should not insert listing with address id", %{
+      user_conn: conn,
+      old_address: address
+    } do
       variables = %{
         "input" => %{
           "type" => "Apartamento",
@@ -210,17 +156,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{
-               "insertListing" => %{
-                 "type" => "Apartamento",
-                 "address" => %{
-                   "id" => to_string(address.id),
-                   "street" => address.street,
-                   "postalCode" => address.postal_code,
-                   "streetNumber" => address.street_number
-                 }
-               }
-             } == json_response(conn, 200)["data"]
+      response = json_response(conn, 200)
+      assert_forbidden_response(response)
     end
 
     test "admin should not insert listing without address", %{admin_conn: conn} do
@@ -264,7 +201,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert [%{"message" => "Bad request", "code" => 400}] = json_response(conn, 200)["errors"]
+      response = json_response(conn, 200)
+      assert_forbidden_response(response)
     end
 
     test "admin should insert listing with tags", %{admin_conn: conn, old_address: address} do
@@ -298,7 +236,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert expected == json_response(conn, 200)["data"]
     end
 
-    test "user should insert listing with tags", %{user_conn: conn, old_address: address} do
+    test "user should not insert listing with tags", %{user_conn: conn, old_address: address} do
       tag = insert(:tag)
 
       variables = %{
@@ -322,11 +260,8 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      expected = %{
-        "insertListing" => %{"type" => "Apartamento", "tags" => [%{"nameSlug" => tag.name_slug}]}
-      }
-
-      assert expected == json_response(conn, 200)["data"]
+      response = json_response(conn, 200)
+      assert_forbidden_response(response)
     end
 
     test "admin should insert listing with owner contact", %{
@@ -615,59 +550,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_address["postalCode"] == new_address.postal_code
     end
 
-    test "owner should update listing", %{
-      user_conn: conn,
-      old_listing: old_listing,
-      listing: new_listing,
-      address: new_address
-    } do
-      variables =
-        MutationHelpers.update_listing_variables(old_listing.id, new_listing, new_address)
-
-      mutation = MutationHelpers.update_listing_mutation()
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
-
-      assert %{"updateListing" => %{"address" => inserted_address} = updated_listing} =
-               json_response(conn, 200)["data"]
-
-      assert updated_listing["type"] == new_listing.type
-      assert updated_listing["price"] == new_listing.price
-      assert updated_listing["complement"] == new_listing.complement
-      assert updated_listing["description"] == new_listing.description
-      assert updated_listing["propertyTax"] == new_listing.property_tax
-      assert updated_listing["maintenanceFee"] == new_listing.maintenance_fee
-      assert updated_listing["floor"] == new_listing.floor
-      assert updated_listing["rooms"] == new_listing.rooms
-      assert updated_listing["bathrooms"] == new_listing.bathrooms
-      assert updated_listing["restrooms"] == new_listing.restrooms
-      assert updated_listing["area"] == new_listing.area
-      assert updated_listing["garageSpots"] == new_listing.garage_spots
-      assert updated_listing["garageType"] == String.upcase(new_listing.garage_type)
-      assert updated_listing["suites"] == new_listing.suites
-      assert updated_listing["dependencies"] == new_listing.dependencies
-      assert updated_listing["balconies"] == new_listing.balconies
-      assert updated_listing["hasElevator"] == new_listing.has_elevator
-      assert updated_listing["matterportCode"] == old_listing.matterport_code
-      assert updated_listing["isExclusive"] == new_listing.is_exclusive
-      assert updated_listing["isRelease"] == new_listing.is_release
-      assert updated_listing["isExportable"] == old_listing.is_exportable
-
-      refute updated_listing["score"]
-      refute updated_listing["isActive"]
-
-      assert inserted_address["city"] == new_address.city
-      assert inserted_address["state"] == new_address.state
-      assert inserted_address["lat"] == new_address.lat
-      assert inserted_address["lng"] == new_address.lng
-      assert inserted_address["neighborhood"] == new_address.neighborhood
-      assert inserted_address["street"] == new_address.street
-      assert inserted_address["streetNumber"] == new_address.street_number
-      assert inserted_address["postalCode"] == new_address.postal_code
-
-      assert Repo.get(Listing, old_listing.id).score == old_listing.score
-    end
-
     test "user should not update listing", %{user_conn: conn, address: address, listing: listing} do
       not_current_user = insert(:user)
       old_listing = insert(:listing, user: not_current_user)
@@ -734,7 +616,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert expected == json_response(conn, 200)["data"]["updateListing"]
     end
 
-    test "owner should update tags from listing", %{
+    test "owner should not update tags from listing", %{
       user_conn: conn,
       old_address: address,
       old_listing: listing
@@ -766,9 +648,9 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      expected = %{"id" => "#{listing.id}", "tags" => [%{"nameSlug" => "tag-1"}]}
-
-      assert expected == json_response(conn, 200)["data"]["updateListing"]
+      response = json_response(conn, 200)
+      assert_forbidden_response(response)
+      assert [%{"message" => "Forbidden", "code" => 403}] = response["errors"]
     end
 
     test "admin should update owner contact from listing", %{

@@ -203,7 +203,7 @@ defmodule ReWeb.ImageControllerTest do
       assert json_response(conn, 401)
     end
 
-    test "update images order when listing belongs to user", %{user_conn: conn, user_user: user} do
+    test "do not update images order as user", %{user_conn: conn, user_user: user} do
       listing = insert(:listing, user: user)
       [%{id: id1}, %{id: id2}, %{id: id3}] = insert_list(3, :image, listing_id: listing.id)
 
@@ -221,7 +221,7 @@ defmodule ReWeb.ImageControllerTest do
           images: image_params
         )
 
-      assert response(conn, 204)
+      assert response(conn, 403)
     end
 
     test "does not update images order when listing doesn't belong to user", %{

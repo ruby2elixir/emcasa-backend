@@ -58,70 +58,6 @@ defmodule Re.ListingTest do
     elevators: 2.1
   }
 
-  describe "user" do
-    test "changeset with valid attributes" do
-      address = insert(:address)
-      user = insert(:user)
-
-      attrs =
-        @valid_attrs
-        |> Map.put(:address_id, address.id)
-        |> Map.put(:user_id, user.id)
-
-      changeset = Listing.changeset(%Listing{}, attrs, "user")
-      assert changeset.valid?
-    end
-
-    test "changeset with invalid attributes" do
-      changeset = Listing.changeset(%Listing{}, @invalid_attrs, "user")
-      refute changeset.valid?
-
-      assert Keyword.get(changeset.errors, :type) ==
-               {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
-
-      assert Keyword.get(changeset.errors, :property_tax) ==
-               {"must be greater than or equal to %{number}",
-                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
-
-      assert Keyword.get(changeset.errors, :maintenance_fee) ==
-               {"must be greater than or equal to %{number}",
-                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
-
-      assert Keyword.get(changeset.errors, :bathrooms) ==
-               {"must be greater than or equal to %{number}",
-                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
-
-      assert Keyword.get(changeset.errors, :restrooms) ==
-               {"must be greater than or equal to %{number}",
-                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
-
-      assert Keyword.get(changeset.errors, :suites) ==
-               {"must be greater than or equal to %{number}",
-                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
-
-      assert Keyword.get(changeset.errors, :dependencies) ==
-               {"must be greater than or equal to %{number}",
-                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
-
-      assert Keyword.get(changeset.errors, :balconies) ==
-               {"must be greater than or equal to %{number}",
-                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
-
-      assert Keyword.get(changeset.errors, :garage_spots) ==
-               {"must be greater than or equal to %{number}",
-                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
-
-      assert Keyword.get(changeset.errors, :garage_type) ==
-               {"should be one of: [contract condominium]", [validation: :inclusion]}
-
-      assert Keyword.get(changeset.errors, :is_exclusive) ==
-               {"is invalid", [type: :boolean, validation: :cast]}
-
-      assert Keyword.get(changeset.errors, :is_release) ==
-               {"is invalid", [type: :boolean, validation: :cast]}
-    end
-  end
-
   describe "admin" do
     test "changeset with valid attributes" do
       address = insert(:address)
@@ -132,12 +68,12 @@ defmodule Re.ListingTest do
         |> Map.put(:address_id, address.id)
         |> Map.put(:user_id, user.id)
 
-      changeset = Listing.changeset(%Listing{}, attrs, "admin")
+      changeset = Listing.changeset(%Listing{}, attrs)
       assert changeset.valid?
     end
 
     test "changeset with invalid attributes" do
-      changeset = Listing.changeset(%Listing{}, @invalid_attrs, "admin")
+      changeset = Listing.changeset(%Listing{}, @invalid_attrs)
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :type) ==
@@ -206,7 +142,7 @@ defmodule Re.ListingTest do
       assert Keyword.get(changeset.errors, :elevators) ==
                {"is invalid", [type: :integer, validation: :cast]}
 
-      changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000}, "admin")
+      changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000})
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :score) ==
@@ -216,6 +152,16 @@ defmodule Re.ListingTest do
       assert Keyword.get(changeset.errors, :price) ==
                {"must be less than or equal to %{number}",
                 [validation: :number, kind: :less_than_or_equal_to, number: 100_000_000]}
+    end
+
+    test "set to nil when price is zero" do
+      attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
+
+      zero_price_attrs = %{attrs | price: 0}
+
+      changeset = Listing.changeset(%Listing{}, zero_price_attrs)
+
+      refute changeset.valid?
     end
   end
 
@@ -285,7 +231,7 @@ defmodule Re.ListingTest do
   describe "price per area" do
     test "calculate when price and area set to proper value" do
       attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
-      changeset = Listing.changeset(%Listing{}, attrs, "admin")
+      changeset = Listing.changeset(%Listing{}, attrs)
 
       assert changeset.valid?
       assert changeset.changes.price_per_area == @valid_attrs.price / @valid_attrs.area
@@ -296,7 +242,7 @@ defmodule Re.ListingTest do
 
       nil_price_attrs = %{attrs | price: nil}
 
-      changeset = Listing.changeset(%Listing{}, nil_price_attrs, "user")
+      changeset = Listing.changeset(%Listing{}, nil_price_attrs)
 
       assert changeset.valid?
       refute Map.get(changeset.changes, :price_per_area)
@@ -307,18 +253,7 @@ defmodule Re.ListingTest do
 
       nil_area_attrs = %{attrs | area: nil}
 
-      changeset = Listing.changeset(%Listing{}, nil_area_attrs, "admin")
-
-      assert changeset.valid?
-      refute Map.get(changeset.changes, :price_per_area)
-    end
-
-    test "set to nil when price is zero" do
-      attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
-
-      zero_price_attrs = %{attrs | price: 0}
-
-      changeset = Listing.changeset(%Listing{}, zero_price_attrs, "user")
+      changeset = Listing.changeset(%Listing{}, nil_area_attrs)
 
       assert changeset.valid?
       refute Map.get(changeset.changes, :price_per_area)
@@ -329,7 +264,7 @@ defmodule Re.ListingTest do
 
       zero_area_attrs = %{attrs | area: 0}
 
-      changeset = Listing.changeset(%Listing{}, zero_area_attrs, "user")
+      changeset = Listing.changeset(%Listing{}, zero_area_attrs)
 
       assert changeset.valid?
       refute Map.get(changeset.changes, :price_per_area)
@@ -338,9 +273,9 @@ defmodule Re.ListingTest do
     test "calculate price per area when area is changed" do
       attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
 
-      attrs = %{attrs | area: 100, price: 100_000}
+      attrs = %{attrs | area: 100, price: 250_000}
 
-      changeset = Listing.changeset(%Listing{price: 100_000, area: 90}, attrs, "user")
+      changeset = Listing.changeset(%Listing{price: 300_000, area: 90}, attrs)
 
       assert changeset.valid?
       assert attrs.price / attrs.area == changeset.changes.price_per_area
@@ -349,9 +284,9 @@ defmodule Re.ListingTest do
     test "calculate price per area when price is changed" do
       attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
 
-      attrs = %{attrs | area: 100, price: 100_000}
+      attrs = %{attrs | area: 100, price: 250_000}
 
-      changeset = Listing.changeset(%Listing{price: 90_000, area: 100}, attrs, "user")
+      changeset = Listing.changeset(%Listing{price: 300_000, area: 100}, attrs)
 
       assert changeset.valid?
       assert attrs.price / attrs.area == changeset.changes.price_per_area
@@ -360,9 +295,9 @@ defmodule Re.ListingTest do
     test "calculate price per area when price and area remain the same" do
       attrs = Map.merge(@valid_attrs, %{address_id: 1, user_id: 1})
 
-      attrs = %{attrs | area: 100, price: 100_000}
+      attrs = %{attrs | area: 100, price: 250_000}
 
-      changeset = Listing.changeset(%Listing{price: 100_000, area: 100}, attrs, "user")
+      changeset = Listing.changeset(%Listing{price: 300_000, area: 100}, attrs)
 
       assert changeset.valid?
       assert attrs.price / attrs.area == changeset.changes.price_per_area

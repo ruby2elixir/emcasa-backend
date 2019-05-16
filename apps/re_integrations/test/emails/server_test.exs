@@ -55,8 +55,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       user = insert(:user, role: "user")
       listing = insert(:listing, price: 950_000, rooms: 3, user: user)
 
-      %{changes: changes} =
-        changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "user")
+      %{changes: changes} = changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4})
 
       Emails.Server.handle_info(
         %{
@@ -75,8 +74,7 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       user = insert(:user, role: "admin")
       listing = insert(:listing, price: 950_000, rooms: 3, user: user)
 
-      %{changes: changes} =
-        changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4}, "admin")
+      %{changes: changes} = changeset = Listing.changeset(listing, %{price: 1_000_000, rooms: 4})
 
       Emails.Server.handle_info(
         %{

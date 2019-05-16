@@ -433,38 +433,6 @@ defmodule Re.ListingsTest do
                )
     end
 
-    test "should insert if user provides a phone" do
-      address = insert(:address)
-      user = insert(:user, role: "user", phone: nil)
-
-      assert {:ok, inserted_listing} =
-               Listings.insert(Map.put(@insert_listing_params, "phone", "123321"),
-                 address: address,
-                 user: user
-               )
-
-      assert inserted_listing = Repo.get(Listing, inserted_listing.id)
-      assert inserted_listing.status == "inactive"
-    end
-
-    test "should fail if user doesn't have phone" do
-      address = insert(:address)
-      user = insert(:user, role: "user", phone: nil)
-
-      assert {:error, :phone_number_required} =
-               Listings.insert(@insert_listing_params, address: address, user: user)
-    end
-
-    test "should insert if user doesn't have phone but is admin" do
-      address = insert(:address)
-      user = insert(:user, role: "admin", phone: nil)
-
-      assert {:ok, listing} =
-               Listings.insert(@insert_listing_params, address: address, user: user)
-
-      assert Repo.get(Listing, listing.id)
-    end
-
     @insert_development_listing_params %{
       "type" => "Apartamento",
       "has_elevator" => true,
@@ -513,23 +481,6 @@ defmodule Re.ListingsTest do
   end
 
   describe "update/4" do
-    test "should deactivate if non-admin updates" do
-      Server.start_link()
-
-      user = insert(:user)
-      address = insert(:address)
-      listing = insert(:listing, user: user, price: 1_000_000)
-
-      Listings.update(listing, %{price: listing.price + 50_000}, address: address, user: user)
-
-      GenServer.call(Server, :inspect)
-
-      updated_listing = Repo.get(Listing, listing.id)
-      assert updated_listing.status == "inactive"
-
-      assert [%{price: 1_000_000}] = Repo.all(Re.Listings.PriceHistory)
-    end
-
     test "should not save price history if price is not changed" do
       user = insert(:user)
       address = insert(:address)
@@ -537,9 +488,7 @@ defmodule Re.ListingsTest do
 
       Listings.update(listing, %{rooms: 4}, address: address, user: user)
 
-      updated_listing = Repo.get(Listing, listing.id)
-      assert updated_listing.status == "inactive"
-      assert [] = Repo.all(Re.Listings.PriceHistory)
+      refute Repo.one(Re.Listings.PriceHistory)
     end
 
     test "should update owner contact" do

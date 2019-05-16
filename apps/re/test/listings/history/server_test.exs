@@ -14,7 +14,7 @@ defmodule Re.Listings.History.ServerTest do
   describe "handle_info/2" do
     test "save price when it's updated" do
       listing = insert(:listing)
-      changeset = Listing.changeset(listing, %{price: listing.price + 50}, "admin")
+      changeset = Listing.changeset(listing, %{price: listing.price + 50})
 
       Server.handle_info(
         %{
@@ -33,7 +33,7 @@ defmodule Re.Listings.History.ServerTest do
 
     test "do not save price when it's not updated" do
       listing = insert(:listing)
-      changeset = Listing.changeset(listing, %{description: "descr"}, "admin")
+      changeset = Listing.changeset(listing, %{description: "descr"})
 
       Server.handle_info(
         %{
@@ -52,7 +52,7 @@ defmodule Re.Listings.History.ServerTest do
 
     test "save status history when it's activated" do
       listing = insert(:listing, status: "inactive")
-      changeset = Listing.changeset(listing, %{status: "active"}, "admin")
+      changeset = Listing.changeset(listing, %{status: "active"})
 
       Server.handle_info(
         %{
@@ -71,7 +71,7 @@ defmodule Re.Listings.History.ServerTest do
 
     test "save status history when it's deactivated" do
       listing = insert(:listing, status: "active")
-      changeset = Listing.changeset(listing, %{status: "inactive"}, "admin")
+      changeset = Listing.changeset(listing, %{status: "inactive"})
 
       Server.handle_info(
         %{
