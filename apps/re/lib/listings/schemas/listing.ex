@@ -87,40 +87,17 @@ defmodule Re.Listing do
 
   @sun_period_types ~w(morning evening)
 
-  @user_required ~w(type)a
-  @user_optional ~w(description price rooms bathrooms area garage_spots garage_type address_id
-                    user_id suites dependencies has_elevator complement floor is_exclusive
-                    property_tax maintenance_fee balconies restrooms is_release)a
-  @user_attributes @user_required ++ @user_optional
-  @doc """
-  Builds a changeset based on the `struct` and `params` and user role.
-  """
-  def changeset(struct, params \\ %{}, role \\ "user")
-
-  def changeset(struct, params, "user") do
-    struct
-    |> cast(params, @user_attributes)
-    |> validate_required(@user_required)
-    |> validate_attributes()
-    |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
-    |> validate_inclusion(:garage_type, @garage_types,
-      message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
-    )
-    |> generate_uuid()
-    |> calculate_price_per_area()
-  end
-
-  @admin_required ~w(type description price rooms bathrooms area garage_spots garage_type
+  @required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
-  @admin_optional ~w(complement floor matterport_code is_exclusive status property_tax
+  @optional ~w(complement floor matterport_code is_exclusive status property_tax
                      maintenance_fee balconies restrooms is_release is_exportable
                      orientation floor_count unit_per_floor sun_period elevators
                      construction_year owner_contact_uuid)a
 
-  @admin_attributes @admin_required ++ @admin_optional
-  def changeset(struct, params, "admin") do
+  @attributes @required ++ @optional
+  def changeset(struct, params) do
     struct
-    |> cast(params, @admin_attributes)
+    |> cast(params, @attributes)
     |> validate_attributes()
     |> validate_number(
       :price,

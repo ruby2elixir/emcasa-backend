@@ -102,7 +102,7 @@ defmodule Re.Listings do
   defp do_insert(params, opts) do
     %Listing{}
     |> changeset_for_opts(opts)
-    |> Listing.changeset(params, opts.user.role)
+    |> Listing.changeset(params)
     |> Repo.insert()
   end
 
@@ -133,7 +133,7 @@ defmodule Re.Listings do
     changeset =
       listing
       |> changeset_for_opts(opts)
-      |> Listing.changeset(params, user.role)
+      |> Listing.changeset(params)
       |> deactivate_if_not_admin(user)
 
     changeset
