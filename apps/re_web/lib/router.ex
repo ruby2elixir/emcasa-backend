@@ -32,7 +32,6 @@ defmodule ReWeb.Router do
     end
 
     resources("/featured_listings", FeaturedController, only: [:index])
-    resources("/admin_dashboard", AdminDashboardController, only: [:index])
     resources("/relaxed_listings", RelaxedController, only: [:index])
     resources("/search", SearchController, only: [:index])
     resources("/interest_types", InterestTypeController, only: [:index])

@@ -207,24 +207,6 @@ defmodule Re.Listings do
     |> Repo.all()
   end
 
-  @full_preload [
-    :address,
-    :listings_visualisations,
-    :tour_visualisations,
-    :in_person_visits,
-    :listings_favorites,
-    :interests,
-    :tags,
-    images: Images.Queries.listing_preload()
-  ]
-
-  def with_stats do
-    Queries.active()
-    |> Queries.order_by()
-    |> Queries.preload_relations(@full_preload)
-    |> Repo.all()
-  end
-
   def upsert_tags(listing, nil), do: {:ok, listing}
 
   def upsert_tags(listing, tag_uuids) do
