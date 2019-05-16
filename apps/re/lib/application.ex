@@ -8,7 +8,8 @@ defmodule Re.Application do
   import Supervisor.Spec
 
   alias Re.{
-    BuyerLeads.JobQueue,
+    BuyerLeads,
+    Developments,
     Developments.Units,
     Listings.History,
     PubSub,
@@ -36,7 +37,8 @@ defmodule Re.Application do
       worker(History.Server, []),
       worker(Units.Server, []),
       worker(Visualizations, []),
-      {JobQueue, repo: Repo}
+      {BuyerLeads.JobQueue, repo: Repo},
+      {Developments.JobQueue, repo: Repo}
     ]
 
   defp attach_telemetry do

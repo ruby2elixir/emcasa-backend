@@ -5,9 +5,15 @@ defmodule Re.Units do
   """
   @behaviour Bodyguard.Policy
 
-  alias Ecto.Changeset
+  require Logger
+
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
 
   alias Re.{
+    Developments.JobQueue,
     PubSub,
     Repo,
     Unit,
@@ -41,8 +47,24 @@ defmodule Re.Units do
     |> Changeset.change(development_uuid: development.uuid)
     |> Changeset.change(listing_id: listing.id)
     |> Unit.changeset(params)
-    |> Repo.insert()
-    |> publish_new()
+    |> do_new_unit()
+  end
+
+  defp do_new_unit(changeset) do
+    case changeset do
+      %{valid?: true} = changeset ->
+        uuid = Changeset.get_field(changeset, :uuid)
+
+        Multi.new()
+        |> JobQueue.enqueue(:units_job, %{"type" => "new_unit", "uuid" => uuid})
+        |> Multi.insert(:add_unit, changeset)
+        |> Repo.transaction()
+
+      %{errors: errors} = changeset ->
+        Logger.warn("Invalid payload from new_unit. Errors: #{Kernel.inspect(errors)}")
+
+        {:error, changeset}
+    end
   end
 
   def update(unit, params, development, listing) do
@@ -56,8 +78,6 @@ defmodule Re.Units do
     |> Repo.update()
     |> publish_update(changeset)
   end
-
-  defp publish_new(result), do: PubSub.publish_new(result, "new_unit")
 
   defp publish_update(result, changeset),
     do: PubSub.publish_update(result, changeset, "update_unit")

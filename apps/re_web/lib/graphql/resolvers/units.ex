@@ -14,7 +14,7 @@ defmodule ReWeb.Resolvers.Units do
     with :ok <- Bodyguard.permit(Units, :create_unit, current_user, params),
          {:ok, development} <- get_development(params),
          {:ok, listing} <- get_listing(params),
-         {:ok, new_unit} <- Units.insert(params, development, listing) do
+         {:ok, %{add_unit: new_unit}} <- Units.insert(params, development, listing) do
       {:ok, new_unit}
     else
       {:error, _, error, _} -> {:error, error}

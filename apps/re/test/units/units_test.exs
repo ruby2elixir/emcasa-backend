@@ -33,41 +33,14 @@ defmodule Re.UnitsTest do
       development = insert(:development)
       listing = insert(:listing, development_uuid: development.uuid)
 
-      assert {:ok, inserted_unit} = Units.insert(@unit_attrs, development, listing)
+      assert {:ok, %{add_unit: inserted_unit, units_job: _}} =
+               Units.insert(@unit_attrs, development, listing)
 
       retrieved_unit = Repo.get(Unit, inserted_unit.uuid)
 
       assert retrieved_unit == inserted_unit
       assert retrieved_unit.development_uuid == development.uuid
       assert retrieved_unit.listing_id == listing.id
-    end
-
-    test "update listing with unit attributes when unit is inserted" do
-      Server.start_link()
-      development = insert(:development)
-
-      {:ok, listing} =
-        Re.Repo.insert(%Re.Listing{}, development_uuid: development.uuid, price: 1_000_000)
-
-      assert {:ok, inserted_unit} = Units.insert(@unit_attrs, development, listing)
-
-      GenServer.call(Server, :inspect)
-
-      listing = Repo.get(Listing, listing.id)
-      assert listing.complement
-      assert listing.price
-      assert listing.property_tax
-      assert listing.maintenance_fee
-      assert listing.floor
-      assert listing.rooms
-      assert listing.bathrooms
-      assert listing.restrooms
-      assert listing.area
-      assert listing.garage_spots
-      assert listing.garage_type
-      assert listing.suites
-      assert listing.dependencies
-      assert listing.balconies
     end
   end
 
