@@ -185,13 +185,11 @@ defmodule Re.ListingTest do
 
     test "is valid with required params" do
       address = insert(:address)
-      user = insert(:user)
       development = insert(:development)
 
       attrs =
         @valid_development_attrs
         |> Map.put(:address_id, address.id)
-        |> Map.put(:user_id, user.id)
         |> Map.put(:development_uuid, development.uuid)
 
       changeset = Listing.development_changeset(%Listing{}, attrs)
@@ -209,9 +207,6 @@ defmodule Re.ListingTest do
                {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :address_id) ==
-               {"can't be blank", [validation: :required]}
-
-      assert Keyword.get(changeset.errors, :user_id) ==
                {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :development_uuid) ==
