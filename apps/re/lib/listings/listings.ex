@@ -87,9 +87,8 @@ defmodule Re.Listings do
     do: do_get(Queries.preload_relations(Listing, preload), id)
 
   def insert(params, opts \\ []) do
-    with {:ok, _} <- validate_phone_number(params, Keyword.get(opts, :user)),
-         opts_map <- Enum.into(opts, %{}),
-         do: do_insert(params, opts_map)
+    opts_map = Enum.into(opts, %{})
+    do_insert(params, opts_map)
   end
 
   defp do_insert(params, %{development: development} = opts) do
@@ -98,7 +97,6 @@ defmodule Re.Listings do
     |> copy_infrastructure(development)
     |> Listing.development_changeset(params)
     |> Repo.insert()
-    |> publish_if_admin(opts.user.role)
   end
 
   defp do_insert(params, opts) do
@@ -106,7 +104,6 @@ defmodule Re.Listings do
     |> changeset_for_opts(opts)
     |> Listing.changeset(params, opts.user.role)
     |> Repo.insert()
-    |> publish_if_admin(opts.user.role)
   end
 
   defp copy_infrastructure(changeset, development) do
@@ -115,26 +112,6 @@ defmodule Re.Listings do
       unit_per_floor: development.units_per_floor,
       elevators: development.elevators
     })
-  end
-
-  defp publish_if_admin(result, "user"), do: PubSub.publish_new(result, "new_listing")
-
-  defp publish_if_admin(result, _), do: result
-
-  defp validate_phone_number(params, user) do
-    phone = params["phone"] || params[:phone] || user.phone
-
-    case {phone, user} do
-      {nil, %{role: "admin"}} -> {:ok, user}
-      {nil, _user} -> {:error, :phone_number_required}
-      {phone, user} -> save_phone_number(user, phone)
-    end
-  end
-
-  defp save_phone_number(user, phone) do
-    user
-    |> User.update_changeset(%{phone: phone})
-    |> Repo.update()
   end
 
   def update(listing, params, opts \\ []) do
