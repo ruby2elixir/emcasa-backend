@@ -158,7 +158,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       response = json_response(conn, 200)
       assert_forbidden_response(response)
-      assert [%{"message" => "Forbidden", "code" => 403}] = response["errors"]
     end
 
     test "admin should not insert listing without address", %{admin_conn: conn} do
@@ -204,7 +203,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       response = json_response(conn, 200)
       assert_forbidden_response(response)
-      assert [%{"message" => "Forbidden", "code" => 403}] = response["errors"]
     end
 
     test "admin should insert listing with tags", %{admin_conn: conn, old_address: address} do
@@ -264,7 +262,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       response = json_response(conn, 200)
       assert_forbidden_response(response)
-      assert [%{"message" => "Forbidden", "code" => 403}] = response["errors"]
     end
 
     test "admin should insert listing with owner contact", %{
