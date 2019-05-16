@@ -201,12 +201,6 @@ defmodule Re.Listings do
     end
   end
 
-  def coordinates do
-    Listing
-    |> Queries.preload_relations([:address])
-    |> Repo.all()
-  end
-
   def upsert_tags(listing, nil), do: {:ok, listing}
 
   def upsert_tags(listing, tag_uuids) do
