@@ -9,6 +9,8 @@ defmodule Re.Developments.JobQueue do
   require Logger
 
   alias Re.{
+    Developments.Listings,
+    Developments.Units.Propagator,
     Repo
   }
 
@@ -18,6 +20,8 @@ defmodule Re.Developments.JobQueue do
   }
 
   def perform(%Multi{} = multi, %{"type" => "new_unit", "uuid" => uuid}) do
-    :ok
+    Re.Units.get(uuid)
+    |> Propagator.insert()
+    |> Listings.insert()
   end
 end

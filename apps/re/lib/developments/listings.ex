@@ -38,6 +38,39 @@ defmodule Re.Developments.Listings do
     end)
   end
 
+  @unit_cloned_attributes ~w(area price rooms bathrooms garage_spots garage_type
+                     suites complement floor matterport_code
+                     status property_tax maintenance_fee balconies restrooms is_release is_exportable)a
+
+  @development_cloned_attributes ~w(description floor_count unit_per_floor elevators construction_year)a
+
+  @static_params %{
+    type: "Apartamento",
+    is_release: true,
+    garage_type: "unknown"
+  }
+
+  def listing_from_unit(%Re.Unit{} = unit, %Re.Development{} = development) do
+    params_from_unit = extract_listing_params_from_unit(unit)
+    params_from_development = extract_listing_params_from_development(development)
+
+    %Re.Listing{}
+    |> Map.merge(params_from_unit)
+    |> Map.merge(params_from_development)
+    |> Map.merge(@static_params)
+  end
+
+  defp extract_listing_params_from_development(development) do
+    units_per_floor = Map.get(development, :units_per_floor)
+
+    Map.take(development, @development_cloned_attributes)
+    |> Map.put(:unit_per_floor, units_per_floor)
+  end
+
+  defp extract_listing_params_from_unit(unit) do
+    Map.take(unit, @unit_cloned_attributes)
+  end
+
   def update_from_unit_params(listing, params) do
     changeset =
       listing

@@ -3,7 +3,8 @@ defmodule Re.Developments.ListingsTest do
 
   alias Re.{
     Development,
-    Developments
+    Developments,
+    Developments.Listings
   }
 
   import Re.Factory
@@ -72,6 +73,37 @@ defmodule Re.Developments.ListingsTest do
       assert updated_development.builder == Map.get(new_development_params, :builder)
       assert updated_development.description == Map.get(new_development_params, :description)
       assert updated_development.phase == Map.get(new_development_params, :phase)
+    end
+  end
+
+  describe "listing_from_unit/2" do
+    test "should parse unit and development into listing" do
+      development = build(:development)
+      unit = build(:unit, development: development)
+      listing = Listings.listing_from_unit(unit, development)
+
+      assert unit.price == listing.price
+      assert unit.area == listing.area
+      assert unit.rooms == listing.rooms
+      assert unit.bathrooms == listing.bathrooms
+      assert unit.garage_spots == listing.garage_spots
+      assert unit.suites == listing.suites
+      assert unit.complement == listing.complement
+      assert unit.floor == listing.floor
+      assert unit.status == listing.status
+      assert unit.property_tax == listing.property_tax
+      assert unit.maintenance_fee == listing.maintenance_fee
+      assert unit.balconies == listing.balconies
+      assert unit.restrooms == listing.restrooms
+
+      assert development.description == listing.description
+      assert development.floor_count == listing.floor_count
+      assert development.units_per_floor == listing.unit_per_floor
+      assert development.elevators == listing.elevators
+
+      assert listing.type == "Apartamento"
+      assert listing.garage_type == "unknown"
+      assert listing.is_release == true
     end
   end
 end
