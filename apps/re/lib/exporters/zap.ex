@@ -8,8 +8,8 @@ defmodule Re.Exporters.Zap do
   @super_highlight 3
 
   @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
-                          price maintenance_fee util_area area_unit rooms bathrooms garage_spots
-                          property_tax description images highlight)a
+                          price maintenance_fee util_area area_unit rooms bathrooms suites garage_spots
+                          property_tax description images highlight tags)a
 
   @default_options %{attributes: @exported_attributes, highlight_ids: [], super_highlight_ids: []}
 
@@ -38,108 +38,170 @@ defmodule Re.Exporters.Zap do
     {"Imovel", %{}, convert_attributes(listing, options)}
   end
 
-  def convert_attributes(listing, %{attributes: attributes} = options),
-    do: Enum.map(attributes, &convert_attribute(&1, listing, options))
-
-  defp convert_attribute(:id, %{id: id}, _) do
-    {"CodigoImovel", %{}, id}
+  def convert_attributes(listing, %{attributes: attributes} = options) do
+    attributes
+    |> Enum.reverse()
+    |> Enum.reduce([], &convert_attribute(&1, listing, options, &2))
   end
 
-  defp convert_attribute(:type, listing, _) do
-    {"TipoImovel", %{}, listing_type(listing)}
+  defp convert_attribute(:id, %{id: id}, _, acc) do
+    [{"CodigoImovel", %{}, id} | acc]
   end
 
-  defp convert_attribute(:subtype, listing, _) do
-    {"SubTipoImovel", %{}, listing_subtype(listing)}
+  defp convert_attribute(:type, listing, _, acc) do
+    [{"TipoImovel", %{}, listing_type(listing)} | acc]
   end
 
-  defp convert_attribute(:category, listing, _) do
-    {"CategoriaImovel", %{}, listing_category(listing)}
+  defp convert_attribute(:subtype, listing, _, acc) do
+    [{"SubTipoImovel", %{}, listing_subtype(listing)}, acc]
   end
 
-  defp convert_attribute(:address, listing, _) do
-    {"Endereco", %{}, listing.address.street}
+  defp convert_attribute(:category, listing, _, acc) do
+    [{"CategoriaImovel", %{}, listing_category(listing)} | acc]
   end
 
-  defp convert_attribute(:state, listing, _) do
-    {"UF", %{}, listing.address.state}
+  defp convert_attribute(:address, listing, _, acc) do
+    [{"Endereco", %{}, listing.address.street} | acc]
   end
 
-  defp convert_attribute(:city, listing, _) do
-    {"Cidade", %{}, listing.address.city}
+  defp convert_attribute(:state, listing, _, acc) do
+    [{"UF", %{}, listing.address.state} | acc]
   end
 
-  defp convert_attribute(:neighborhood, listing, _) do
-    {"Bairro", %{}, listing.address.neighborhood}
+  defp convert_attribute(:city, listing, _, acc) do
+    [{"Cidade", %{}, listing.address.city} | acc]
   end
 
-  defp convert_attribute(:street_number, listing, _) do
-    {"Numero", %{}, listing.address.street_number}
+  defp convert_attribute(:neighborhood, listing, _, acc) do
+    [{"Bairro", %{}, listing.address.neighborhood} | acc]
   end
 
-  defp convert_attribute(:complement, listing, _) do
-    {"Complemento", %{}, listing.complement}
+  defp convert_attribute(:street_number, listing, _, acc) do
+    [{"Numero", %{}, listing.address.street_number} | acc]
   end
 
-  defp convert_attribute(:price, listing, _) do
-    {"PrecoVenda", %{}, listing.price}
+  defp convert_attribute(:complement, listing, _, acc) do
+    [{"Complemento", %{}, listing.complement} | acc]
   end
 
-  defp convert_attribute(:maintenance_fee, listing, _) do
+  defp convert_attribute(:price, listing, _, acc) do
+    [{"PrecoVenda", %{}, listing.price} | acc]
+  end
+
+  defp convert_attribute(:maintenance_fee, listing, _, acc) do
     case listing.maintenance_fee do
-      nil -> {"PrecoCondominio", %{}, ""}
-      maintenance_fee -> {"PrecoCondominio", %{}, trunc(maintenance_fee)}
+      nil -> [{"PrecoCondominio", %{}, ""} | acc]
+      maintenance_fee -> [{"PrecoCondominio", %{}, trunc(maintenance_fee)} | acc]
     end
   end
 
-  defp convert_attribute(:util_area, listing, _) do
-    {"AreaUtil", %{}, listing.area}
+  defp convert_attribute(:util_area, listing, _, acc) do
+    [{"AreaUtil", %{}, listing.area} | acc]
   end
 
-  defp convert_attribute(:area_unit, _, _) do
-    {"UnidadeMetrica", %{}, "M2"}
+  defp convert_attribute(:area_unit, _, _, acc) do
+    [{"UnidadeMetrica", %{}, "M2"} | acc]
   end
 
-  defp convert_attribute(:rooms, listing, _) do
-    {"QtdDormitorios", %{}, listing.rooms}
+  defp convert_attribute(:rooms, listing, _, acc) do
+    [{"QtdDormitorios", %{}, listing.rooms} | acc]
   end
 
-  defp convert_attribute(:bathrooms, listing, _) do
-    {"QtdBanheiros", %{}, listing.bathrooms}
+  defp convert_attribute(:bathrooms, listing, _, acc) do
+    [{"QtdBanheiros", %{}, listing.bathrooms} | acc]
   end
 
-  defp convert_attribute(:garage_spots, listing, _) do
-    {"QtdVagas", %{}, listing.garage_spots}
+  defp convert_attribute(:suites, listing, _, acc) do
+    [{"QtdSuites", %{}, listing.suites} | acc]
   end
 
-  defp convert_attribute(:property_tax, listing, _) do
+  defp convert_attribute(:garage_spots, listing, _, acc) do
+    [{"QtdVagas", %{}, listing.garage_spots} | acc]
+  end
+
+  defp convert_attribute(:property_tax, listing, _, acc) do
     case listing.property_tax do
-      nil -> {"ValorIPTU", %{}, ""}
-      property_tax -> {"ValorIPTU", %{}, trunc(property_tax)}
+      nil -> [{"ValorIPTU", %{}, ""} | acc]
+      property_tax -> [{"ValorIPTU", %{}, trunc(property_tax)} | acc]
     end
   end
 
-  defp convert_attribute(:description, listing, _) do
-    {"Observacao", %{}, listing.description}
+  defp convert_attribute(:description, %{description: nil, updated_at: updated_at}, _, acc) do
+    [{"Observacao", %{}, "Atualizado em: #{to_string(Timex.to_date(updated_at))}"} | acc]
   end
 
-  defp convert_attribute(:images, %{images: []}, _), do: {"Fotos", %{}, nil}
+  defp convert_attribute(
+         :description,
+         %{description: description, updated_at: updated_at},
+         _,
+         acc
+       ) do
+    [
+      {"Observacao", %{},
+       description <> "\n Atualizado em: #{to_string(Timex.to_date(updated_at))}"}
+      | acc
+    ]
+  end
 
-  defp convert_attribute(:images, %{images: [main_image | rest]}, _) do
+  defp convert_attribute(:images, %{images: []}, _, acc), do: [{"Fotos", %{}, nil} | acc]
+
+  defp convert_attribute(:images, %{images: [main_image | rest]}, _, acc) do
     main_image = Map.put(main_image, :main, true)
-    {"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)}
+    [{"Fotos", %{}, Enum.map([main_image | rest], &build_image/1)} | acc]
   end
 
-  defp convert_attribute(:highlight, %{id: id}, %{
-         highlight_ids: highlight_ids,
-         super_highlight_ids: super_highlight_ids
-       }) do
+  defp convert_attribute(
+         :highlight,
+         %{id: id},
+         %{
+           highlight_ids: highlight_ids,
+           super_highlight_ids: super_highlight_ids
+         },
+         acc
+       ) do
     cond do
-      id in super_highlight_ids -> {"TipoOferta", %{}, @super_highlight}
-      id in highlight_ids -> {"TipoOferta", %{}, @highlight}
-      true -> {"TipoOferta", %{}, @normal}
+      id in super_highlight_ids -> [{"TipoOferta", %{}, @super_highlight} | acc]
+      id in highlight_ids -> [{"TipoOferta", %{}, @highlight} | acc]
+      true -> [{"TipoOferta", %{}, @normal} | acc]
     end
   end
+
+  defp convert_attribute(:tags, %{tags: tags}, _, acc) do
+    tags_xml = Enum.reduce(tags, [], &convert_tag/2)
+
+    tags_xml ++ acc
+  end
+
+  defp convert_tag(%{name_slug: "academia"}, acc), do: [{"Academia", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "churrasqueira"}, acc), do: [{"Churrasqueira", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "espaco-verde"}, acc), do: [{"Jardim", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "espaco-gourmet"}, acc), do: [{"EspacoGourmet", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "piscina"}, acc), do: [{"Piscina", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "playground"}, acc), do: [{"Playground", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "quadra"}, acc), do: [{"QuadraPoliEsportiva", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "salao-de-festas"}, acc), do: [{"SalaoFestas", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "salao-de-jogos"}, acc), do: [{"SalaoJogos", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "sauna"}, acc), do: [{"Sauna", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "armarios-embutidos"}, acc),
+    do: [{"ArmarioEmbutido", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "dependencia-empregados"}, acc),
+    do: [{"QuartoWCEmpregada", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "banheiro-empregados"}, acc),
+    do: [{"WCEmpregada", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "fogao-embutido"}, acc), do: [{"Fogao", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "lavabo"}, acc), do: [{"Lavabo", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "terraco"}, acc), do: [{"Terraco", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "varanda"}, acc), do: [{"Varanda", %{}, nil} | acc]
+  defp convert_tag(%{name_slug: "varanda-gourmet"}, acc), do: [{"VarandaGourmet", %{}, nil} | acc]
+
+  defp convert_tag(%{name_slug: "portaria-24-horas"}, acc),
+    do: [{"Acesso24Horas", %{}, nil} | acc]
+
+  defp convert_tag(_tag, acc), do: acc
 
   defp merge_defaults(map) do
     Map.merge(@default_options, map)

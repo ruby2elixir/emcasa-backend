@@ -32,14 +32,21 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
+          tags: [
+            build(:tag, name: "Piscina", name_slug: "piscina"),
+            build(:tag, name: "Academia", name_slug: "academia"),
+            build(:tag, name: "Not Mapped", name_slug: "not-mapped")
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       expected_xml =
@@ -60,10 +67,14 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao>descr</Observacao>" <>
-          images_tags() <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
+          "<Observacao>descr\n Atualizado em: 2010-01-01</Observacao>" <>
+          images_tags() <>
+          "<TipoOferta>1</TipoOferta>" <>
+          tags() <>
+          "</Imovel>"
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -90,14 +101,21 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
+          tags: [
+            build(:tag, name: "Piscina", name_slug: "piscina"),
+            build(:tag, name: "Academia", name_slug: "academia"),
+            build(:tag, name: "Not Mapped", name_slug: "not-mapped")
+          ],
           description: nil,
           area: 50,
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       expected_xml =
@@ -118,14 +136,19 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao/>" <> images_tags() <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
+          "<Observacao>Atualizado em: 2010-01-01</Observacao>" <>
+          images_tags() <>
+          "<TipoOferta>1</TipoOferta>" <>
+          tags() <>
+          "</Imovel>"
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
 
-    test "export XML from listing with no images" do
+    test "export XML from listing with no images and no tags" do
       %{id: id} =
         listing =
         insert(:listing,
@@ -141,14 +164,17 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: [],
+          tags: [],
           description: nil,
           area: 50,
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       expected_xml =
@@ -169,9 +195,11 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao/>" <> "<Fotos/>" <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
+          "<Observacao>Atualizado em: 2010-01-01</Observacao>" <>
+          "<Fotos/>" <> "<TipoOferta>1</TipoOferta>" <> "</Imovel>"
 
       assert expected_xml == listing |> Zap.build_xml() |> XmlBuilder.generate(format: :none)
     end
@@ -198,14 +226,21 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
+          tags: [
+            build(:tag, name: "Piscina", name_slug: "piscina"),
+            build(:tag, name: "Academia", name_slug: "academia"),
+            build(:tag, name: "Not Mapped", name_slug: "not-mapped")
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       options = %{highlight_ids: [id]}
@@ -228,10 +263,14 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao>descr</Observacao>" <>
-          images_tags() <> "<TipoOferta>2</TipoOferta>" <> "</Imovel>"
+          "<Observacao>descr\n Atualizado em: 2010-01-01</Observacao>" <>
+          images_tags() <>
+          "<TipoOferta>2</TipoOferta>" <>
+          tags() <>
+          "</Imovel>"
 
       assert expected_xml ==
                listing |> Zap.build_xml(options) |> XmlBuilder.generate(format: :none)
@@ -259,14 +298,22 @@ defmodule Re.Exporters.ZapTest do
             ),
           complement: "basement",
           images: images,
+          tags: [
+            build(:tag, name: "Piscina", name_slug: "piscina"),
+            build(:tag, name: "Academia", name_slug: "academia"),
+            build(:tag, name: "Not Mapped", name_slug: "not-mapped")
+          ],
           description: "descr",
           area: 50,
           price: 1_000_000,
           rooms: 2,
           bathrooms: 2,
+          suites: 1,
+          suites: 1,
           garage_spots: 1,
           maintenance_fee: 1000.00,
-          property_tax: 1000.00
+          property_tax: 1000.00,
+          updated_at: ~N[2010-01-01 10:00:00]
         )
 
       options = %{super_highlight_ids: [id]}
@@ -289,10 +336,14 @@ defmodule Re.Exporters.ZapTest do
           "<UnidadeMetrica>M2</UnidadeMetrica>" <>
           "<QtdDormitorios>2</QtdDormitorios>" <>
           "<QtdBanheiros>2</QtdBanheiros>" <>
+          "<QtdSuites>1</QtdSuites>" <>
           "<QtdVagas>1</QtdVagas>" <>
           "<ValorIPTU>1000</ValorIPTU>" <>
-          "<Observacao>descr</Observacao>" <>
-          images_tags() <> "<TipoOferta>3</TipoOferta>" <> "</Imovel>"
+          "<Observacao>descr\n Atualizado em: 2010-01-01</Observacao>" <>
+          images_tags() <>
+          "<TipoOferta>3</TipoOferta>" <>
+          tags() <>
+          "</Imovel>"
 
       assert expected_xml ==
                listing |> Zap.build_xml(options) |> XmlBuilder.generate(format: :none)
@@ -329,5 +380,10 @@ defmodule Re.Exporters.ZapTest do
       "<URLArquivo>https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/test3.jpg</URLArquivo>" <>
       "<NomeArquivo>test3.jpg</NomeArquivo>" <>
       "<Alterada>0</Alterada>" <> "</Foto>" <> "</Fotos>"
+  end
+
+  defp tags do
+    "<Academia/>" <>
+      "<Piscina/>"
   end
 end
