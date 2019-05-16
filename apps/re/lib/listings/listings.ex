@@ -133,7 +133,6 @@ defmodule Re.Listings do
       listing
       |> changeset_for_opts(opts)
       |> Listing.changeset(params)
-      |> deactivate_if_not_admin(user)
 
     changeset
     |> Repo.update()
@@ -171,11 +170,6 @@ defmodule Re.Listings do
     |> Repo.update()
     |> PubSub.publish_update(changeset, "update_listing")
   end
-
-  defp deactivate_if_not_admin(changeset, %{role: "user"}),
-    do: Changeset.change(changeset, status: "inactive")
-
-  defp deactivate_if_not_admin(changeset, %{role: "admin"}), do: changeset
 
   def deactivate(listing) do
     changeset = Changeset.change(listing, status: "inactive")
