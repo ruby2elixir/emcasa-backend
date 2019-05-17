@@ -44,7 +44,7 @@ defmodule Re.Developments.Listings do
 
   @development_cloned_attributes ~w(description floor_count unit_per_floor elevators construction_year)a
 
-  @static_params %{
+  @static_attributes %{
     type: "Apartamento",
     is_release: true,
     garage_type: "unknown"
@@ -57,7 +57,7 @@ defmodule Re.Developments.Listings do
     %Re.Listing{}
     |> Map.merge(params_from_unit)
     |> Map.merge(params_from_development)
-    |> Map.merge(@static_params)
+    |> Map.merge(@static_attributes)
   end
 
   defp extract_listing_params_from_development(development) do
