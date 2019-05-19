@@ -1,4 +1,4 @@
-FROM elixir:1.8.1
+FROM elixir:1.8.2
 ARG BUILD_DATE
 ARG VCS_REF
 LABEL maintainer="EmCasa <dev@emcasa.com>" \
