@@ -7,8 +7,8 @@ defmodule Re.Developments.Units.Server do
   require Logger
 
   alias Re.{
-    Listings,
     Developments.Units.Propagator,
+    Listings,
     PubSub,
     Units
   }

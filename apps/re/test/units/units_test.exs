@@ -2,8 +2,8 @@ defmodule Re.UnitsTest do
   use Re.ModelCase
 
   alias Re.{
-    Listing,
     Developments.Units.Server,
+    Listing,
     Unit,
     Units
   }

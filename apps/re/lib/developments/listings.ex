@@ -1,4 +1,7 @@
 defmodule Re.Developments.Listings do
+  @moduledoc """
+  Module to handle listings for developments (primary market) context.
+  """
   alias Re.{
     Listing,
     PubSub,
