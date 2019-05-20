@@ -124,11 +124,13 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Vagas: #{price_request.garage_spots}<br>
                   Rua: #{address.street}<br>
                   Número: #{address.street_number}<br>
+                  Complemento: #{site_lead.complement}<br>
                   Bairro: #{address.neighborhood}<br>
                   Cidade: #{address.city}<br>
                   Estado: #{address.state}<br>
                   CEP: #{address.postal_code}<br>
                   Preço: #{site_lead.price}<br>
+                  Condomínio: #{site_lead.maintenance_fee}<br>
                   ")
     |> text_body("Nome: #{user.name}
                   Email: #{user.email}
@@ -144,6 +146,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Estado: #{address.state}
                   CEP: #{address.postal_code}
                   Preço: #{site_lead.price}
+                  Condomínio: #{site_lead.maintenance_fee}
                   ")
   end
 
