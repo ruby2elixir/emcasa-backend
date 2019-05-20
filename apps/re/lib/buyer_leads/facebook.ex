@@ -23,12 +23,13 @@ defmodule Re.BuyerLeads.Facebook do
     field :timestamp, :utc_datetime
     field :lead_id, :string
     field :location, :string
+    field :budget, :string
 
     timestamps()
   end
 
   @required ~w(full_name email phone_number timestamp lead_id location)a
-  @optional ~w(neighborhoods)a
+  @optional ~w(neighborhoods budget)a
   @params @required ++ @optional
   @locations ~w(RJ SP)
 
@@ -53,6 +54,7 @@ defmodule Re.BuyerLeads.Facebook do
       phone_number: lead.phone_number,
       origin: "facebook",
       location: get_location(lead.location),
+      budget: lead.budget,
       user_uuid: extract_user_uuid(lead.phone_number)
     })
   end

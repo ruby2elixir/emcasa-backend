@@ -16,7 +16,8 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     "phone_number" => "11999999999",
     "neighborhoods" => "manhattan brooklyn harlem",
     "location" => "RJ",
-    "source" => "facebook_buyer"
+    "source" => "facebook_buyer",
+    "budget" => "$1000 to $10000"
   }
 
   @facebook_buyer_invalid_payload %{
@@ -27,7 +28,8 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     "phone_number" => "11999999999",
     "neighborhoods" => "manhattan brooklyn harlem",
     "location" => "asdasda",
-    "source" => "facebook_buyer"
+    "source" => "facebook_buyer",
+    "budget" => "$1000 to $10000"
   }
 
   setup %{conn: conn} do
