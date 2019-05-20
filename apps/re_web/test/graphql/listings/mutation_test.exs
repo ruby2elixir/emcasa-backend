@@ -428,7 +428,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["id"]
       assert inserted_listing["type"] == listing.type
       assert inserted_listing["description"] == listing.description
-      assert inserted_listing["hasElevator"] == listing.has_elevator
       assert inserted_listing["matterportCode"] == listing.matterport_code
       assert inserted_listing["isExportable"] == listing.is_exportable
 
@@ -853,11 +852,12 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     %{
       "type" => listing.type,
       "description" => listing.description,
-      "hasElevator" => listing.has_elevator,
       "matterportCode" => listing.matterport_code,
       "isExportable" => listing.is_exportable,
       "address_id" => address_id,
-      "development_uuid" => development_uuid
+      "development_uuid" => development_uuid,
+      "price" => 1_000_000,
+      "area" => 100
     }
   end
 end

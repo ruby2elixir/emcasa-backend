@@ -3,11 +3,7 @@ defmodule Re.Developments.ListingsTest do
 
   use Re.ModelCase
 
-  alias Re.{
-    Development,
-    Developments,
-    Developments.Listings
-  }
+  alias Re.Developments.Listings
 
   import Re.Factory
 
