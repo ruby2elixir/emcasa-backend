@@ -124,6 +124,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Vagas: #{price_request.garage_spots}<br>
                   Rua: #{address.street}<br>
                   Número: #{address.street_number}<br>
+                  Complemento: #{site_lead.complement}<br>
                   Bairro: #{address.neighborhood}<br>
                   Cidade: #{address.city}<br>
                   Estado: #{address.state}<br>
