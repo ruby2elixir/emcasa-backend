@@ -16,6 +16,24 @@ defmodule Re.PriceSuggestions do
 
   alias Ecto.Changeset
 
+  def suggest_price(%Request{} = request) do
+    request
+    |> preload_if_struct()
+    |> get_factor_by_address()
+    |> do_suggest_price(request)
+    |> case do
+      {:ok, suggested_price} ->
+        request
+        |> Request.changeset(%{suggested_price: suggested_price})
+        |> Repo.update()
+
+        {:ok, suggested_price}
+
+      error ->
+        error
+    end
+  end
+
   def suggest_price(listing) do
     listing
     |> preload_if_struct()
