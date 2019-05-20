@@ -13,8 +13,7 @@ defmodule ReWeb.Resolvers.Units do
   def insert(%{input: params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Units, :create_unit, current_user, params),
          {:ok, development} <- get_development(params),
-         {:ok, listing} <- get_listing(params),
-         {:ok, %{add_unit: new_unit}} <- Units.insert(params, development, listing) do
+         {:ok, %{add_unit: new_unit}} <- Units.insert(params, development) do
       {:ok, new_unit}
     else
       {:error, _, error, _} -> {:error, error}
@@ -28,8 +27,7 @@ defmodule ReWeb.Resolvers.Units do
     with :ok <- Bodyguard.permit(Units, :update_unit, current_user, params),
          {:ok, unit} <- Units.get(uuid),
          {:ok, development} <- get_development(params),
-         {:ok, listing} <- get_listing(params),
-         {:ok, new_unit} <- Units.update(unit, params, development, listing) do
+         {:ok, new_unit} <- Units.update(unit, params, development) do
       {:ok, new_unit}
     end
   end

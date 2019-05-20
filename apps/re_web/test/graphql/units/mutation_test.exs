@@ -60,10 +60,9 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     test "admin should add unit", %{
       admin_conn: conn,
       new_unit: new_unit,
-      development: development,
-      listing: listing
+      development: development
     } do
-      variables = insert_unit_variables(new_unit, development, listing)
+      variables = insert_unit_variables(new_unit, development)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
@@ -93,10 +92,9 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     test "regular user should not add unit", %{
       user_conn: conn,
       new_unit: new_unit,
-      development: development,
-      listing: listing
+      development: development
     } do
-      variables = insert_unit_variables(new_unit, development, listing)
+      variables = insert_unit_variables(new_unit, development)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
@@ -109,10 +107,9 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     test "unauthenticated user should not add unit", %{
       unauthenticated_conn: conn,
       new_unit: new_unit,
-      development: development,
-      listing: listing
+      development: development
     } do
-      variables = insert_unit_variables(new_unit, development, listing)
+      variables = insert_unit_variables(new_unit, development)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@insert_mutation, variables))
@@ -151,10 +148,9 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       admin_conn: conn,
       old_unit: old_unit,
       new_unit: new_unit,
-      development: development,
-      listing: listing
+      development: development
     } do
-      variables = update_unit_variables(old_unit.uuid, new_unit, development, listing)
+      variables = update_unit_variables(old_unit.uuid, new_unit, development)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
@@ -185,10 +181,9 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       user_conn: conn,
       old_unit: old_unit,
       new_unit: new_unit,
-      development: development,
-      listing: listing
+      development: development
     } do
-      variables = update_unit_variables(old_unit.uuid, new_unit, development, listing)
+      variables = update_unit_variables(old_unit.uuid, new_unit, development)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
@@ -202,10 +197,9 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       unauthenticated_conn: conn,
       old_unit: old_unit,
       new_unit: new_unit,
-      development: development,
-      listing: listing
+      development: development
     } do
-      variables = update_unit_variables(old_unit.uuid, new_unit, development, listing)
+      variables = update_unit_variables(old_unit.uuid, new_unit, development)
 
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@update_mutation, variables))
@@ -216,20 +210,20 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
     end
   end
 
-  def insert_unit_variables(unit, development, listing) do
+  def insert_unit_variables(unit, development) do
     %{
-      "input" => unit_input(unit, development, listing)
+      "input" => unit_input(unit, development)
     }
   end
 
-  def update_unit_variables(uuid, unit, development, listing) do
+  def update_unit_variables(uuid, unit, development) do
     %{
       "uuid" => uuid,
-      "input" => unit_input(unit, development, listing)
+      "input" => unit_input(unit, development)
     }
   end
 
-  defp unit_input(unit, development, listing) do
+  defp unit_input(unit, development) do
     %{
       "complement" => unit.complement,
       "price" => unit.price,
@@ -246,7 +240,6 @@ defmodule ReWeb.GraphQL.Units.MutationTest do
       "dependencies" => unit.dependencies,
       "balconies" => unit.balconies,
       "status" => unit.status,
-      "listing_id" => listing.id,
       "development_uuid" => development.uuid
     }
   end

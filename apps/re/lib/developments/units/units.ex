@@ -42,10 +42,9 @@ defmodule Re.Units do
     end
   end
 
-  def insert(params, development, listing) do
+  def insert(params, development) do
     %Unit{}
     |> Changeset.change(development_uuid: development.uuid)
-    |> Changeset.change(listing_id: listing.id)
     |> Unit.changeset(params)
     |> do_new_unit()
   end
@@ -67,11 +66,11 @@ defmodule Re.Units do
     end
   end
 
-  def update(unit, params, development, listing) do
+  def update(unit, params, development) do
     changeset =
       unit
       |> Changeset.change(development_uuid: development.uuid)
-      |> Changeset.change(listing_id: listing.id)
+      # |> Changeset.change(listing_id: listing.id)
       |> Unit.changeset(params)
 
     changeset
