@@ -129,6 +129,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Estado: #{address.state}<br>
                   CEP: #{address.postal_code}<br>
                   Preço: #{site_lead.price}<br>
+                  Condomínio: #{site_lead.maintenance_fee}<br>
                   ")
     |> text_body("Nome: #{user.name}
                   Email: #{user.email}
@@ -144,6 +145,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Estado: #{address.state}
                   CEP: #{address.postal_code}
                   Preço: #{site_lead.price}
+                  Condomínio: #{site_lead.maintenance_fee}
                   ")
   end
 
