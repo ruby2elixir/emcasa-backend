@@ -1,4 +1,4 @@
-defmodule Re.Listings.Units.Server do
+defmodule Re.Developments.Units.Server do
   @moduledoc """
   Module responsible for replicate unit data on listings.
   """
@@ -7,8 +7,8 @@ defmodule Re.Listings.Units.Server do
   require Logger
 
   alias Re.{
+    Developments.Units.Propagator,
     Listings,
-    Listings.Units.Propagator,
     PubSub,
     Units
   }

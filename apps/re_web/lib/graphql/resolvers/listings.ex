@@ -75,9 +75,8 @@ defmodule ReWeb.Resolvers.Listings do
          {:ok, address} <- get_address(listing_params),
          {:ok, development} <- get_development(listing_params),
          {:ok, listing} <-
-           Listings.insert(listing_params,
+           Developments.Listings.insert(listing_params,
              address: address,
-             user: current_user,
              development: development
            ),
          {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do
@@ -121,9 +120,8 @@ defmodule ReWeb.Resolvers.Listings do
          address <- listing.address,
          development <- listing.development,
          {:ok, listing} <-
-           Listings.update(listing, listing_params,
+           Developments.Listings.update(listing, listing_params,
              address: address,
-             user: current_user,
              development: development
            ),
          {:ok, listing} <- Listings.upsert_tags(listing, Map.get(listing_params, :tags)) do

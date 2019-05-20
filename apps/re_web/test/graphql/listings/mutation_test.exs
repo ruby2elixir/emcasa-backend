@@ -404,7 +404,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
     test "admin should insert development listing", %{
       admin_conn: conn,
-      admin_user: user,
       listing: listing,
       old_address: address
     } do
@@ -422,7 +421,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
                "insertListing" =>
                  %{
                    "address" => associated_address,
-                   "owner" => owner,
                    "development" => associated_development
                  } = inserted_listing
              } = json_response(conn, 200)["data"]
@@ -450,8 +448,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert associated_development["phase"] == development.phase
       assert associated_development["builder"] == development.builder
       assert associated_development["description"] == development.description
-
-      assert owner["id"] == to_string(user.id)
     end
 
     test "regular user should not insert development listing", %{
