@@ -10,7 +10,6 @@ defmodule Re.Application do
   alias Re.{
     BuyerLeads,
     Developments,
-    Developments.Units,
     Listings.History,
     PubSub,
     Repo,
@@ -35,7 +34,6 @@ defmodule Re.Application do
   defp extra_processes(_),
     do: [
       worker(History.Server, []),
-      worker(Units.Server, []),
       worker(Visualizations, []),
       {BuyerLeads.JobQueue, repo: Repo},
       {Developments.JobQueue, repo: Repo}

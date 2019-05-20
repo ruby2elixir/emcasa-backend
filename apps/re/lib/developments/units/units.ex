@@ -14,7 +14,6 @@ defmodule Re.Units do
 
   alias Re.{
     Developments.JobQueue,
-    PubSub,
     Repo,
     Unit,
     Units.Queries
@@ -75,9 +74,5 @@ defmodule Re.Units do
 
     changeset
     |> Repo.update()
-    |> publish_update(changeset)
   end
-
-  defp publish_update(result, changeset),
-    do: PubSub.publish_update(result, changeset, "update_unit")
 end

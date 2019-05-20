@@ -2,8 +2,6 @@ defmodule Re.UnitsTest do
   use Re.ModelCase
 
   alias Re.{
-    Developments.Units.Server,
-    Listing,
     Unit,
     Units
   }
@@ -40,34 +38,9 @@ defmodule Re.UnitsTest do
       assert retrieved_unit == inserted_unit
       assert retrieved_unit.development_uuid == development.uuid
     end
-  end
 
-  describe "update/2" do
-    test "update listing with unit attributes when unit is updated" do
-      Server.start_link()
-      development = insert(:development)
-      {:ok, listing} = Re.Repo.insert(%Re.Listing{}, development_uuid: development.uuid)
-      unit = insert(:unit, development_uuid: development.uuid)
-
-      assert {:ok, _updated_unit} = Units.update(unit, @unit_attrs, development, listing)
-
-      GenServer.call(Server, :inspect)
-
-      listing = Repo.get(Listing, listing.id)
-      assert listing.complement
-      assert listing.price
-      assert listing.property_tax
-      assert listing.maintenance_fee
-      assert listing.floor
-      assert listing.rooms
-      assert listing.bathrooms
-      assert listing.restrooms
-      assert listing.area
-      assert listing.garage_spots
-      assert listing.garage_type
-      assert listing.suites
-      assert listing.dependencies
-      assert listing.balconies
+    @tag dev: true
+    test "create new add_unit job" do
     end
   end
 end
