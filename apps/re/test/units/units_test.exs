@@ -41,6 +41,11 @@ defmodule Re.UnitsTest do
 
     @tag dev: true
     test "create new add_unit job" do
+      development = insert(:development)
+
+      assert {:ok, _} = Units.insert(@unit_attrs, development)
+
+      assert Repo.one(Re.Developments.JobQueue)
     end
   end
 end

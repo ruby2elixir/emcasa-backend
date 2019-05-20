@@ -6,7 +6,6 @@ defmodule ReWeb.Resolvers.Units do
 
   alias Re.{
     Developments,
-    Listings,
     Units
   }
 
@@ -42,7 +41,4 @@ defmodule ReWeb.Resolvers.Units do
 
   defp get_development(%{development_uuid: uuid}), do: Developments.get(uuid)
   defp get_development(_), do: {:error, :bad_request}
-
-  defp get_listing(%{listing_id: id}), do: Listings.get(id)
-  defp get_listing(_), do: {:error, :bad_request}
 end
