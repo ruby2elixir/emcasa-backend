@@ -12,7 +12,6 @@ defmodule Re.Developments.JobQueue do
     Addresses,
     Developments,
     Developments.Listings,
-    Repo,
     Units
   }
 
@@ -21,21 +20,10 @@ defmodule Re.Developments.JobQueue do
   def perform(%Multi{} = multi, %{"type" => "new_unit", "uuid" => uuid}) do
     {:ok, %{development_uuid: development_uuid}} = {:ok, unit} = Units.get(uuid)
     {:ok, %{address_id: address_id}} = {:ok, development} = Developments.get(development_uuid)
-    {:ok, _address} = Addresses.get_by_id(address_id)
+    {:ok, address} = Addresses.get_by_id(address_id)
 
-    params =
-      Listings.listing_from_unit(unit, development)
-      |> Map.put(:development_uuid, development_uuid)
-      |> Map.put(:address_id, address_id)
+    params = Listings.listing_params_from_unit(unit, development)
 
-    Re.Listing.development_changeset(params, %{})
-    |> insert(multi)
-    |> Repo.transaction()
-
-    # |> Listings.insert(development: development, address: address)
-  end
-
-  defp insert(changeset, multi) do
-    Multi.insert(multi, :listing, changeset)
+    Listings.multi_insert(multi, params, development: development, address: address)
   end
 end

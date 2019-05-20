@@ -183,7 +183,6 @@ defmodule Re.ListingTest do
       is_release: "apple"
     }
 
-    @tag dev: true
     test "is valid with required params" do
       address = insert(:address)
       development = insert(:development)

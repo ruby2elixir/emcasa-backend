@@ -770,7 +770,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       assert updated_listing["type"] == new_listing.type
       assert updated_listing["description"] == new_listing.description
-      assert updated_listing["hasElevator"] == new_listing.has_elevator
       assert updated_listing["matterportCode"] == new_listing.matterport_code
       assert updated_listing["isExportable"] == new_listing.is_exportable
 

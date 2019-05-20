@@ -8,13 +8,28 @@ defmodule Re.Developments.Listings do
     Repo
   }
 
-  alias Ecto.Changeset
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
 
   def insert(params, opts) do
     %Listing{}
     |> changeset_for_opts(opts)
     |> Listing.development_changeset(params)
     |> Repo.insert()
+  end
+
+  def multi_insert(multi, params, opts) do
+    %Listing{}
+    |> changeset_for_opts(opts)
+    |> Listing.development_changeset(params)
+    |> insert_listing_on_multi(multi)
+    |> Repo.transaction()
+  end
+
+  defp insert_listing_on_multi(changeset, multi) do
+    Multi.insert(multi, :listing, changeset)
   end
 
   def update(listing, params, opts) do
@@ -50,11 +65,11 @@ defmodule Re.Developments.Listings do
     garage_type: "unknown"
   }
 
-  def listing_from_unit(%Re.Unit{} = unit, %Re.Development{} = development) do
+  def listing_params_from_unit(%Re.Unit{} = unit, %Re.Development{} = development) do
     params_from_unit = extract_listing_params_from_unit(unit)
     params_from_development = extract_listing_params_from_development(development)
 
-    %Re.Listing{}
+    %{}
     |> Map.merge(params_from_unit)
     |> Map.merge(params_from_development)
     |> Map.merge(@static_attributes)
