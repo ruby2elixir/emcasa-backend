@@ -43,7 +43,7 @@ defmodule ReWeb.Mixfile do
       {:cors_plug, "~> 1.2"},
       {:guardian, "~> 1.2.1"},
       {:bodyguard, "~> 2.1"},
-      {:absinthe, "~> 1.5.0-alpha.1", override: true},
+      {:absinthe, "~> 1.5.0-alpha.4", override: true},
       {:absinthe_plug, "~> 1.4.6"},
       {:absinthe_phoenix, "~> 1.4"},
       {:dataloader, "~> 1.0.4"},
