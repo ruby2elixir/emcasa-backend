@@ -305,6 +305,34 @@ defmodule Re.ListingsTest do
                  ]
                })
     end
+
+    test "should order by inserted_at asc" do
+      %{id: id1} = insert(:listing, inserted_at: ~N[2010-01-01 10:00:00])
+      %{id: id2} = insert(:listing, inserted_at: ~N[2010-01-02 10:00:00])
+      %{id: id3} = insert(:listing, inserted_at: ~N[2010-01-03 10:00:00])
+
+      assert %{
+               listings: [
+                 %{id: ^id1},
+                 %{id: ^id2},
+                 %{id: ^id3}
+               ]
+             } = Listings.paginated(%{order_by: [%{field: :inserted_at, type: :asc}]})
+    end
+
+    test "should order by inserted_at desc" do
+      %{id: id1} = insert(:listing, inserted_at: ~N[2010-01-01 10:00:00])
+      %{id: id2} = insert(:listing, inserted_at: ~N[2010-01-02 10:00:00])
+      %{id: id3} = insert(:listing, inserted_at: ~N[2010-01-03 10:00:00])
+
+      assert %{
+               listings: [
+                 %{id: ^id3},
+                 %{id: ^id2},
+                 %{id: ^id1}
+               ]
+             } = Listings.paginated(%{order_by: [%{field: :inserted_at, type: :desc}]})
+    end
   end
 
   describe "deactivate/1" do
