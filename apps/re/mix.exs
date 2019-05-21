@@ -36,6 +36,7 @@ defmodule Re.Mixfile do
       {:ecto, "~> 3.0"},
       {:ecto_sql, "~> 3.0"},
       {:postgrex, "~> 0.13.0 or ~> 0.14.0"},
+      {:geo_postgis, "~> 3.1"},
       {:poison, "~> 3.0 or ~> 4.0"},
       {:comeonin, "~> 3.2"},
       {:ex_machina, "~> 2.2", only: :test},

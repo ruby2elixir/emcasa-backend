@@ -26,7 +26,8 @@ config :re, Re.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true,
-  migration_source: "old_schema_migrations"
+  migration_source: "old_schema_migrations",
+  types: Re.PostgresTypes
 
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
