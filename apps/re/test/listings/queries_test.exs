@@ -2,7 +2,7 @@ defmodule Re.Listings.QueriesTest do
   use Re.ModelCase
 
   alias Re.{
-    Filtering,
+    Listings.Filters,
     Listing,
     Listings.Queries,
     Repo
@@ -71,7 +71,7 @@ defmodule Re.Listings.QueriesTest do
 
       result =
         Listing
-        |> Filtering.apply(%{tags_uuid: [tag_1.uuid]})
+        |> Filters.apply(%{tags_uuid: [tag_1.uuid]})
         |> Queries.remaining_count()
         |> Repo.one()
 
@@ -86,7 +86,7 @@ defmodule Re.Listings.QueriesTest do
 
       result =
         Listing
-        |> Filtering.apply(%{tags_uuid: [tag_1.uuid, tag_2.uuid]})
+        |> Filters.apply(%{tags_uuid: [tag_1.uuid, tag_2.uuid]})
         |> Queries.remaining_count()
         |> Repo.one()
 

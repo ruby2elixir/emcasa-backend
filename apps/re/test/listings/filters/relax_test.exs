@@ -1,7 +1,7 @@
-defmodule Re.Filtering.RelaxTest do
+defmodule Re.Listings.Filters.RelaxTest do
   use Re.ModelCase
 
-  alias Re.Filtering.Relax
+  alias Re.Listings.Filters.Relax
 
   describe "price/1" do
     test "max price" do

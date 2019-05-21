@@ -5,7 +5,7 @@ defmodule Re.Listings.Highlights.Scores do
   """
 
   alias Re.{
-    Filtering,
+    Listings.Filters,
     Listings.Queries,
     Repo
   }
@@ -48,7 +48,7 @@ defmodule Re.Listings.Highlights.Scores do
 
   defp get_average_price_per_area_by_neighborhood() do
     Queries.average_price_per_area_by_neighborhood()
-    |> Filtering.apply(@profile_score_filters)
+    |> Filters.apply(@profile_score_filters)
     |> Repo.all()
     |> Enum.reduce(%{}, fn item, acc ->
       Map.merge(acc, %{item.neighborhood_slug => item.average_price_per_area})
@@ -77,7 +77,7 @@ defmodule Re.Listings.Highlights.Scores do
   def filter_with_profile_score(query, filters \\ %{}) do
     updated_filters = mount_filter(filters)
 
-    Filtering.apply(query, updated_filters)
+    Filters.apply(query, updated_filters)
   end
 
   defp mount_filter(filters) do
