@@ -55,7 +55,8 @@ defmodule Re.BuyerLeads.Facebook do
       origin: "facebook",
       location: get_location(lead.location),
       budget: lead.budget,
-      user_uuid: extract_user_uuid(lead.phone_number)
+      user_uuid: extract_user_uuid(lead.phone_number),
+      neighborhood: lead.neighborhoods
     })
   end
 

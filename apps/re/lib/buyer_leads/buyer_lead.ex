@@ -15,6 +15,7 @@ defmodule Re.BuyerLead do
     field :origin, :string
     field :location, :string
     field :budget, :string
+    field :neighborhood, :string
 
     belongs_to :listing, Re.Listing,
       references: :uuid,
@@ -30,7 +31,7 @@ defmodule Re.BuyerLead do
   end
 
   @required ~w(name phone_number origin)a
-  @optional ~w(email location listing_uuid user_uuid budget)a
+  @optional ~w(email location listing_uuid user_uuid budget neighborhood)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do
