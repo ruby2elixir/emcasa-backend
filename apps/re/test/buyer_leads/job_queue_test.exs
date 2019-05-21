@@ -118,7 +118,8 @@ defmodule Re.BuyerLeads.JobQueueTest do
         insert(:facebook_buyer_lead,
           phone_number: "+5511999999999",
           location: "SP",
-          budget: "$1000 to $10000"
+          budget: "$1000 to $10000",
+          neighborhoods: "downtown"
         )
 
       assert {:ok, _} =

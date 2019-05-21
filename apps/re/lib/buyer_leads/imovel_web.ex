@@ -51,7 +51,8 @@ defmodule Re.BuyerLeads.ImovelWeb do
       origin: "imovelweb",
       location: get_location(listing),
       user_uuid: extract_user_uuid(phone_number),
-      listing_uuid: get_listing_uuid(listing)
+      listing_uuid: get_listing_uuid(listing),
+      neighborhood: get_neighborhood(listing)
     })
   end
 
@@ -75,4 +76,7 @@ defmodule Re.BuyerLeads.ImovelWeb do
 
   defp get_listing_uuid({:ok, listing}), do: listing.uuid
   defp get_listing_uuid(_), do: nil
+
+  defp get_neighborhood({:ok, %{address: address}}), do: address.neighborhood
+  defp get_neighborhood(_), do: nil
 end
