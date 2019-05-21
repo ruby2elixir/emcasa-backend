@@ -66,25 +66,24 @@ defmodule Re.Developments.Listings do
   }
 
   def listing_params_from_unit(%Re.Unit{} = unit, %Re.Development{} = development) do
-    params_from_unit = extract_listing_params_from_unit(unit)
-    params_from_development = extract_listing_params_from_development(development)
-
-    %{}
-    |> Map.merge(params_from_unit)
-    |> Map.merge(params_from_development)
-    |> Map.merge(@static_attributes)
+    @static_attributes
+    |> merge_with_unit_attributes(unit)
+    |> merge_with_development_attributes(development)
   end
 
-  defp extract_listing_params_from_development(development) do
+  defp merge_with_development_attributes(params, development) do
     units_per_floor = Map.get(development, :units_per_floor)
 
     development
     |> Map.take(@development_cloned_attributes)
     |> Map.put(:unit_per_floor, units_per_floor)
+    |> Map.merge(params)
   end
 
-  defp extract_listing_params_from_unit(unit) do
-    Map.take(unit, @unit_cloned_attributes)
+  defp merge_with_unit_attributes(params, unit) do
+    unit
+    |> Map.take(@unit_cloned_attributes)
+    |> Map.merge(params)
   end
 
   def update_from_unit_params(listing, params) do
