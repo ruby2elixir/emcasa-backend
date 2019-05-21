@@ -65,11 +65,23 @@ defmodule Re.Units do
     end
   end
 
-  def update(unit, params, development) do
+  def update(unit, params, development, listing \\ nil)
+
+  def update(unit, params, development, nil) do
     changeset =
       unit
       |> Changeset.change(development_uuid: development.uuid)
-      # |> Changeset.change(listing_id: listing.id)
+      |> Unit.changeset(params)
+
+    changeset
+    |> Repo.update()
+  end
+
+  def update(unit, params, development, listing) do
+    changeset =
+      unit
+      |> Changeset.change(development_uuid: development.uuid)
+      |> Changeset.change(listing_id: listing.id)
       |> Unit.changeset(params)
 
     changeset

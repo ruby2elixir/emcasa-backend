@@ -1,7 +1,7 @@
 defmodule Re.Developments.JobQueue do
   @moduledoc """
-  Module for processing buyer leads to extract only necessary attributes
-  Also attempts to associate user and listings
+  Module for processing developments listings to extract attributes from unit and
+  create an listing from
   """
   use EctoJob.JobQueue, table_name: "units_jobs"
 
@@ -24,6 +24,12 @@ defmodule Re.Developments.JobQueue do
 
     params = Listings.listing_params_from_unit(unit, development)
 
-    Listings.multi_insert(multi, params, development: development, address: address)
+    multi =
+      {:ok, %{listing: listing}} =
+      Listings.multi_insert(multi, params, development: development, address: address)
+
+    Units.update(unit, %{}, development, listing)
+
+    multi
   end
 end

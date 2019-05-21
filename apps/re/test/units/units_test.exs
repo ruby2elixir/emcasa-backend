@@ -39,7 +39,6 @@ defmodule Re.UnitsTest do
       assert retrieved_unit.development_uuid == development.uuid
     end
 
-    @tag dev: true
     test "create new add_unit job" do
       development = insert(:development)
 
