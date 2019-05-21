@@ -1,7 +1,7 @@
-defmodule Re.Filtering.RelaxedTest do
+defmodule Re.Listings.Filters.RelaxedTest do
   use Re.ModelCase
 
-  alias Re.Filtering.Relaxed
+  alias Re.Listings.Filters.Relaxed
 
   import Re.Factory
 

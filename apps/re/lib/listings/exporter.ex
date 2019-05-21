@@ -5,7 +5,7 @@ defmodule Re.Listings.Exporter do
 
   alias Re.{
     Images,
-    Filtering,
+    Listings.Filters,
     Listings.Queries,
     Repo,
     Tags
@@ -22,7 +22,7 @@ defmodule Re.Listings.Exporter do
     filters = Map.put(filters, :exportable, true)
 
     Queries.active()
-    |> Filtering.apply(filters)
+    |> Filters.apply(filters)
     |> Queries.preload_relations(@preload)
     |> Queries.order_by_id()
     |> Repo.all()

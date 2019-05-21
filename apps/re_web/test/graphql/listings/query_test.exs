@@ -326,7 +326,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "contract",
         tags: [tag_1],
-        price_per_area: 12_222.22
+        price_per_area: 12_222.22,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -347,7 +348,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "condominium",
         tags: [tag_1],
-        price_per_area: 8_777.78
+        price_per_area: 8_777.78,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -368,7 +370,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "contract",
         tags: [tag_1],
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -389,7 +392,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "condominium",
         tags: [tag_1],
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -410,7 +414,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "contract",
         tags: [tag_1],
-        price_per_area: 8181.82
+        price_per_area: 8181.82,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -431,7 +436,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "condominium",
         tags: [tag_2],
-        price_per_area: 12_857.14
+        price_per_area: 12_857.14,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -452,7 +458,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "contract",
         tags: [tag_2],
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -473,7 +480,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "condominium",
         tags: [tag_2],
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -494,7 +502,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "contract",
         tags: [tag_2],
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -515,7 +524,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "condominium",
         tags: [tag_2],
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 120.0
       )
 
       insert(
@@ -536,7 +546,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "contract",
         tags: [tag_1, tag_2],
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 80.0
       )
 
       insert(
@@ -557,7 +568,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_spots: 2,
         garage_type: "condominium",
         tags: [tag_1, tag_2],
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 80.0
       )
 
       insert(
@@ -577,7 +589,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 0,
         tags: [tag_1, tag_2],
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 80.0
       )
 
       insert(
@@ -597,7 +610,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 4,
         garage_type: "condominium",
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 80.0
       )
 
       insert(
@@ -621,7 +635,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ),
         garage_spots: 4,
         garage_type: "condominium",
-        price_per_area: 10_000.00
+        price_per_area: 10_000.00,
+        maintenance_fee: 120.0
       )
 
       listing1 =
@@ -647,7 +662,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           garage_spots: 2,
           garage_type: "contract",
           tags: [tag_1, tag_2],
-          price_per_area: 10_000.00
+          price_per_area: 10_000.00,
+          maintenance_fee: 100.0
         )
 
       variables = %{
@@ -674,7 +690,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "garageTypes" => ["CONTRACT"],
           "cities" => ["Rio de Janeiro"],
           "citiesSlug" => ["rio-de-janeiro"],
-          "tagsSlug" => ["tag-1", "tag-2"]
+          "tagsSlug" => ["tag-1", "tag-2"],
+          "minMaintenanceFee" => 90.0,
+          "maxMaintenanceFee" => 110.0
         }
       }
 
