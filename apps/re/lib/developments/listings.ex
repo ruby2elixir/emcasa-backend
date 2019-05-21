@@ -78,7 +78,8 @@ defmodule Re.Developments.Listings do
   defp extract_listing_params_from_development(development) do
     units_per_floor = Map.get(development, :units_per_floor)
 
-    Map.take(development, @development_cloned_attributes)
+    development
+    |> Map.take(@development_cloned_attributes)
     |> Map.put(:unit_per_floor, units_per_floor)
   end
 
