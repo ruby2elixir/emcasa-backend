@@ -4,7 +4,7 @@ defmodule Re.Listings.DataloaderQueries do
   """
   import Ecto.Query
 
-  alias Re.Filtering
+  alias Re.Listings.Filters
 
   def build(query, args) do
     query
@@ -22,7 +22,7 @@ defmodule Re.Listings.DataloaderQueries do
 
   defp paginate(query, _args), do: query
 
-  defp filter(query, %{filters: args}), do: Filtering.apply(query, args)
+  defp filter(query, %{filters: args}), do: Filters.apply(query, args)
 
   defp filter(query, _args), do: query
 

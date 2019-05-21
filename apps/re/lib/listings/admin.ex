@@ -4,7 +4,7 @@ defmodule Re.Listings.Admin do
   """
 
   alias Re.{
-    Filtering,
+    Listings.Filters,
     Listing,
     Listings.Queries,
     Repo
@@ -16,7 +16,7 @@ defmodule Re.Listings.Admin do
 
     Listing
     |> Queries.order_by(params)
-    |> Filtering.apply(filters)
+    |> Filters.apply(filters)
     |> Repo.paginate(pagination)
   end
 end

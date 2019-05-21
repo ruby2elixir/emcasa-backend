@@ -1,4 +1,4 @@
-defmodule Re.Filtering do
+defmodule Re.Listings.Filters do
   @moduledoc """
   Module for grouping filter queries
   """
@@ -9,7 +9,7 @@ defmodule Re.Filtering do
     Changeset
   }
 
-  alias Re.Filtering.Relax
+  alias Re.Listings.Filters.Relax
 
   schema "listings_filter" do
     field :max_price, :integer

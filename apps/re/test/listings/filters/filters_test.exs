@@ -1,8 +1,8 @@
-defmodule Re.FilteringTest do
+defmodule Re.Listings.FiltersTest do
   use Re.ModelCase
 
   alias Re.{
-    Filtering,
+    Listings.Filters,
     Listing,
     Listings,
     Listings.Queries,
@@ -25,7 +25,7 @@ defmodule Re.FilteringTest do
         |> Listings.upsert_tags([tag_2.uuid])
 
       result =
-        Filtering.apply(Listing, %{tags_slug: [tag_1.name_slug]})
+        Filters.apply(Listing, %{tags_slug: [tag_1.name_slug]})
         |> Repo.all()
 
       assert 1 == Enum.count(result)
@@ -46,7 +46,7 @@ defmodule Re.FilteringTest do
         |> Listings.upsert_tags([tag_2.uuid, tag_3.uuid])
 
       result =
-        Filtering.apply(Listing, %{tags_slug: [tag_2.name_slug, tag_3.name_slug]})
+        Filters.apply(Listing, %{tags_slug: [tag_2.name_slug, tag_3.name_slug]})
         |> Repo.all()
 
       assert 2 == Enum.count(result)
@@ -62,7 +62,7 @@ defmodule Re.FilteringTest do
         |> Listings.upsert_tags([tag_1.uuid])
 
       result =
-        Filtering.apply(Listing, %{tags_slug: ["non-existent-tag-1"]})
+        Filters.apply(Listing, %{tags_slug: ["non-existent-tag-1"]})
         |> Repo.all()
 
       assert 0 == Enum.count(result)
@@ -76,7 +76,7 @@ defmodule Re.FilteringTest do
         |> Listings.upsert_tags([tag_1.uuid])
 
       result =
-        Filtering.apply(Listing, %{tags_slug: []})
+        Filters.apply(Listing, %{tags_slug: []})
         |> Repo.all()
 
       assert 1 == Enum.count(result)
@@ -98,7 +98,7 @@ defmodule Re.FilteringTest do
         |> Listings.upsert_tags([tag_2.uuid])
 
       result =
-        Filtering.apply(Listing, %{tags_uuid: [tag_1.uuid]})
+        Filters.apply(Listing, %{tags_uuid: [tag_1.uuid]})
         |> Repo.all()
 
       assert 1 == Enum.count(result)
@@ -119,7 +119,7 @@ defmodule Re.FilteringTest do
         |> Listings.upsert_tags([tag_2.uuid, tag_3.uuid])
 
       result =
-        Filtering.apply(Listing, %{tags_uuid: [tag_2.uuid, tag_3.uuid]})
+        Filters.apply(Listing, %{tags_uuid: [tag_2.uuid, tag_3.uuid]})
         |> Repo.all()
 
       assert 2 == Enum.count(result)
@@ -135,7 +135,7 @@ defmodule Re.FilteringTest do
         |> Listings.upsert_tags([tag_1.uuid])
 
       result =
-        Filtering.apply(Listing, %{tags_uuid: [UUID.uuid4()]})
+        Filters.apply(Listing, %{tags_uuid: [UUID.uuid4()]})
         |> Repo.all()
 
       assert 0 == Enum.count(result)
@@ -149,7 +149,7 @@ defmodule Re.FilteringTest do
         |> Listings.upsert_tags([tag_1.uuid])
 
       result =
-        Filtering.apply(Listing, %{tags_uuid: []})
+        Filters.apply(Listing, %{tags_uuid: []})
         |> Repo.all()
 
       assert 1 == Enum.count(result)
@@ -163,7 +163,7 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{statuses: []})
+        |> Filters.apply(%{statuses: []})
         |> Repo.all()
 
       assert [listing] == result
@@ -175,7 +175,7 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{statuses: ["active"]})
+        |> Filters.apply(%{statuses: ["active"]})
         |> Repo.all()
 
       assert [listing] == result
@@ -188,7 +188,7 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{statuses: ["active", "inactive"]})
+        |> Filters.apply(%{statuses: ["active", "inactive"]})
         |> Repo.all()
 
       assert [listing_1, listing_2] == result
@@ -202,7 +202,7 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{orientations: []})
+        |> Filters.apply(%{orientations: []})
         |> Queries.order_by_id()
         |> Repo.all()
         |> Enum.map(& &1.id)
@@ -218,7 +218,7 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{orientations: ["frontside"]})
+        |> Filters.apply(%{orientations: ["frontside"]})
         |> Repo.all()
 
       assert [listing] == result
@@ -230,7 +230,7 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{sun_periods: []})
+        |> Filters.apply(%{sun_periods: []})
         |> Queries.order_by_id()
         |> Repo.all()
         |> Enum.map(& &1.id)
@@ -244,7 +244,7 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{sun_periods: ["morning"]})
+        |> Filters.apply(%{sun_periods: ["morning"]})
         |> Repo.all()
 
       assert [listing] == result
@@ -258,14 +258,14 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{min_floor_count: 3})
+        |> Filters.apply(%{min_floor_count: 3})
         |> Repo.all()
 
       assert [listing_3, listing_4] == result
 
       result =
         Listing
-        |> Filtering.apply(%{max_floor_count: 2})
+        |> Filters.apply(%{max_floor_count: 2})
         |> Repo.all()
 
       assert [listing_1, listing_2] == result
@@ -279,14 +279,14 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{min_unit_per_floor: 3})
+        |> Filters.apply(%{min_unit_per_floor: 3})
         |> Repo.all()
 
       assert [listing_3, listing_4] == result
 
       result =
         Listing
-        |> Filtering.apply(%{max_unit_per_floor: 2})
+        |> Filters.apply(%{max_unit_per_floor: 2})
         |> Repo.all()
 
       assert [listing_1, listing_2] == result
@@ -301,14 +301,14 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{max_age: 10})
+        |> Filters.apply(%{max_age: 10})
         |> Repo.all()
 
       assert [listing_1, listing_2] == result
 
       result =
         Listing
-        |> Filtering.apply(%{min_age: 15})
+        |> Filters.apply(%{min_age: 15})
         |> Repo.all()
 
       assert [listing_3, listing_4] == result
@@ -322,14 +322,14 @@ defmodule Re.FilteringTest do
 
       result =
         Listing
-        |> Filtering.apply(%{min_price_per_area: 20})
+        |> Filters.apply(%{min_price_per_area: 20})
         |> Repo.all()
 
       assert [listing_3, listing_4] == result
 
       result =
         Listing
-        |> Filtering.apply(%{max_price_per_area: 15})
+        |> Filters.apply(%{max_price_per_area: 15})
         |> Repo.all()
 
       assert [listing_1, listing_2] == result

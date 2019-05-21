@@ -8,7 +8,7 @@ defmodule ReWeb.Resolvers.Listings do
     Addresses,
     Addresses.Neighborhoods,
     Developments,
-    Filtering,
+    Listings.Filters,
     Listings,
     Listings.Featured,
     Listings.History.Prices,
@@ -275,7 +275,7 @@ defmodule ReWeb.Resolvers.Listings do
     relaxed_filters =
       params
       |> Map.get(:filters, %{})
-      |> Filtering.relax()
+      |> Filters.relax()
 
     params =
       params
