@@ -335,4 +335,46 @@ defmodule Re.Listings.FiltersTest do
       assert [listing_1, listing_2] == result
     end
   end
+
+  describe "apply/2: filter by maintenance_fee" do
+    test "filter by max" do
+      %{id: id} = insert(:listing, maintenance_fee: 100.0)
+      insert(:listing, maintenance_fee: 120.0)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_maintenance_fee: 110.0})
+        |> Repo.all()
+
+      assert 1 == Enum.count(result)
+      assert id == Enum.at(result, 0).id
+    end
+
+    test "filter by min" do
+      %{id: id} = insert(:listing, maintenance_fee: 100.0)
+      insert(:listing, maintenance_fee: 80.0)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_maintenance_fee: 90.0})
+        |> Repo.all()
+
+      assert 1 == Enum.count(result)
+      assert id == Enum.at(result, 0).id
+    end
+
+    test "filter by max and min" do
+      insert(:listing, maintenance_fee: 120.0)
+      %{id: id} = insert(:listing, maintenance_fee: 100.0)
+      insert(:listing, maintenance_fee: 80.0)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_maintenance_fee: 90.0, max_maintenance_fee: 110.0})
+        |> Repo.all()
+
+      assert 1 == Enum.count(result)
+      assert id == Enum.at(result, 0).id
+    end
+  end
 end

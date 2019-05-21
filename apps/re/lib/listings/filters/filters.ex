@@ -47,6 +47,8 @@ defmodule Re.Listings.Filters do
     field :max_age, :integer
     field :min_price_per_area, :float
     field :max_price_per_area, :float
+    field :min_maintenance_fee, :float
+    field :max_maintenance_fee, :float
   end
 
   @filters ~w(max_price min_price max_rooms min_rooms max_suites min_suites min_area max_area
@@ -54,7 +56,7 @@ defmodule Re.Listings.Filters do
               max_garage_spots min_garage_spots garage_types cities cities_slug states_slug
               exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
               min_unit_per_floor max_unit_per_floor orientations sun_periods min_age max_age
-              min_price_per_area max_price_per_area)a
+              min_price_per_area max_price_per_area min_maintenance_fee max_maintenance_fee)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -320,6 +322,20 @@ defmodule Re.Listings.Filters do
     from(
       l in query,
       where: l.price_per_area <= ^price_per_area
+    )
+  end
+
+  defp attr_filter({:min_maintenance_fee, maintenance_fee}, query) do
+    from(
+      l in query,
+      where: l.maintenance_fee >= ^maintenance_fee
+    )
+  end
+
+  defp attr_filter({:max_maintenance_fee, maintenance_fee}, query) do
+    from(
+      l in query,
+      where: l.maintenance_fee <= ^maintenance_fee
     )
   end
 
