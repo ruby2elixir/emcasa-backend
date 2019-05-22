@@ -54,7 +54,7 @@ defmodule Re.Units do
         uuid = Changeset.get_field(changeset, :uuid)
 
         Multi.new()
-        |> JobQueue.enqueue(:units_job, %{"type" => "new_unit", "uuid" => uuid})
+        |> JobQueue.enqueue(:units_job, %{"type" => "mirror_new_unit_to_listing", "uuid" => uuid})
         |> Multi.insert(:add_unit, changeset)
         |> Repo.transaction()
 

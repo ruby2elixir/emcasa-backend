@@ -16,7 +16,7 @@ defmodule Re.Developments.JobQueue do
 
   alias Ecto.Multi
 
-  def perform(%Multi{} = multi, %{"type" => "new_unit", "uuid" => uuid}) do
+  def perform(%Multi{} = multi, %{"type" => "mirror_new_unit_to_listing", "uuid" => uuid}) do
     %{development: %{address: address} = development} =
       unit =
       Unit
