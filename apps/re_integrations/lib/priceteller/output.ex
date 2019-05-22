@@ -1,6 +1,6 @@
 defmodule ReIntegrations.PriceTeller.Output do
   @moduledoc """
-  Module for grouping credipronto simulator query input params
+  Module for validating priceteller output payload
   """
   use Ecto.Schema
 
