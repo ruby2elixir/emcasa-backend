@@ -34,7 +34,7 @@ defmodule ReIntegrations.PriceTeller.Input do
     end
   end
 
-  defp changeset(struct, params \\ %{}) do
+  defp changeset(struct, params) do
     struct
     |> cast(params, @params)
     |> validate_required(@params)

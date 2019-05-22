@@ -24,9 +24,7 @@ defmodule ReIntegrations.PriceTeller.Output do
     end
   end
 
-  def validate(payload), do: {:error, :invalid_output, payload}
-
-  defp changeset(struct, params \\ %{}) do
+  defp changeset(struct, params) do
     struct
     |> cast(params, @params)
     |> validate_required(@params)
