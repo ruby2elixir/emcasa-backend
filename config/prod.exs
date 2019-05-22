@@ -71,7 +71,10 @@ config :re_integrations,
   zapier_webhook_user: System.get_env("ZAPIER_WEBHOOK_USER"),
   zapier_webhook_pass: System.get_env("ZAPIER_WEBHOOK_PASS"),
   priceteller_url: System.get_env("PRICETELLER_URL"),
-  priceteller_token: System.get_env("PRICETELLER_TOKEN")
+  priceteller_token: System.get_env("PRICETELLER_TOKEN"),
+  orulo_url: System.get_env("ORULO_URL"),
+  orulo_api_token: System.get_env("ORULO_API_TOKEN"),
+  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN")
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),

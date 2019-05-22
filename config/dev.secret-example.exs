@@ -35,7 +35,10 @@ config :re_integrations,
   zapier_webhook_user: "testuser",
   zapier_webhook_pass: "testpass",
   priceteller_url: "priceteller_url",
-  priceteller_token: "mahtoken"
+  priceteller_token: "mahtoken",
+  orulo_url: "orulo_url",
+  orulo_api_token: "orulo_api_token",
+  orulo_client_token: "orulo_client_token"
 
 config :re,
   vivareal_highlights_size_rio_de_janeiro: 10,
