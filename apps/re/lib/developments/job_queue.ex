@@ -10,8 +10,7 @@ defmodule Re.Developments.JobQueue do
   alias Re.{
     Developments.Listings,
     Repo,
-    Unit,
-    Units
+    Unit
   }
 
   alias Ecto.Multi
@@ -25,12 +24,6 @@ defmodule Re.Developments.JobQueue do
 
     params = Listings.listing_params_from_unit(unit, development)
 
-    multi =
-      {:ok, %{listing: listing}} =
-      Listings.multi_insert(multi, params, development: development, address: address)
-
-    Units.update(unit, %{}, development, listing)
-
-    multi
+    Listings.multi_insert(multi, params, development: development, address: address, unit: unit)
   end
 end

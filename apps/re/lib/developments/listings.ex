@@ -50,6 +50,9 @@ defmodule Re.Developments.Listings do
 
       {:address, address}, changeset ->
         Changeset.change(changeset, %{address_id: address.id})
+
+      {:unit, unit}, changeset ->
+        Changeset.change(changeset, %{units: [unit]})
     end)
   end
 
