@@ -15,12 +15,12 @@ defmodule ReIntegrations.PriceTeller.Output do
 
   @params ~w(listing_price listing_price_rounded sale_price sale_price_rounded)a
 
-  def validate(%{"output" => output}) do
+  def validate(payload) do
     %__MODULE__{}
-    |> changeset(output)
+    |> changeset(payload)
     |> case do
       %{valid?: true} = changeset -> {:ok, changeset.changes}
-      changeset -> {:error, :invalid_output, output, changeset}
+      changeset -> {:error, :invalid_output, payload, changeset}
     end
   end
 
