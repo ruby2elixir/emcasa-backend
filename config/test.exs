@@ -60,7 +60,8 @@ config :re_integrations,
   pipedrive_webhook_pass: "testpass",
   grupozap_webhook_secret: "testsecret",
   zapier_webhook_user: "testuser",
-  zapier_webhook_pass: "testpass"
+  zapier_webhook_pass: "testpass",
+  priceteller_url: "http://www.emcasa.com/priceteller"
 
 config :junit_formatter,
   report_file: "report_file_test.xml",

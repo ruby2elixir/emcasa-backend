@@ -6,4 +6,16 @@ defmodule ReIntegrations.TestHTTP do
 
   def get(%URI{path: "/simulator"}, [], _opts),
     do: {:ok, %{body: "{\"cem\":\"10,8%\",\"cet\":\"11,3%\"}"}}
+
+  def post(%URI{path: "/priceteller"}, _),
+    do:
+      {:ok,
+       %{
+         body:
+           "{\"output\":{" <>
+             "\"listing_price\":632868.63," <>
+             "\"listing_price_rounded\":635000.0," <>
+             "\"sale_price\":575910.45," <>
+             "\"sale_price_rounded\":575000.0}}"
+       }}
 end
