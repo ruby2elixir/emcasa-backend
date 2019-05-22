@@ -1,7 +1,6 @@
 defmodule Re.Developments.JobQueue do
   @moduledoc """
-  Module for processing developments listings to extract attributes from unit and
-  create an listing from
+  Module for processing jobs related with developments domain.
   """
   use EctoJob.JobQueue, table_name: "units_jobs"
 
@@ -9,18 +8,20 @@ defmodule Re.Developments.JobQueue do
   require Logger
 
   alias Re.{
-    Addresses,
-    Developments,
     Developments.Listings,
+    Repo,
+    Unit,
     Units
   }
 
   alias Ecto.Multi
 
   def perform(%Multi{} = multi, %{"type" => "new_unit", "uuid" => uuid}) do
-    {:ok, %{development_uuid: development_uuid}} = {:ok, unit} = Units.get(uuid)
-    {:ok, %{address_id: address_id}} = {:ok, development} = Developments.get(development_uuid)
-    {:ok, address} = Addresses.get_by_id(address_id)
+    %{development: %{address: address} = development} =
+      unit =
+      Unit
+      |> Ecto.Query.preload(development: [:address])
+      |> Repo.get(uuid)
 
     params = Listings.listing_params_from_unit(unit, development)
 
