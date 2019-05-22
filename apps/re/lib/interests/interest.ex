@@ -55,7 +55,8 @@ defmodule Re.Interest do
       origin: "site",
       location: get_location(interest.listing),
       listing_uuid: interest.listing.uuid,
-      user_uuid: extract_user_uuid(phone_number)
+      user_uuid: extract_user_uuid(phone_number),
+      neighborhood: get_neighborhood(interest.listing)
     })
   end
 
@@ -73,4 +74,7 @@ defmodule Re.Interest do
       _error -> nil
     end
   end
+
+  defp get_neighborhood(%{address: address}), do: address.neighborhood
+  defp get_neighborhood(_), do: nil
 end

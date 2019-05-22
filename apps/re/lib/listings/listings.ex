@@ -6,7 +6,7 @@ defmodule Re.Listings do
 
   alias Re.{
     Listing,
-    Filtering,
+    Listings.Filters,
     Images,
     Listings.DataloaderQueries,
     Listings.Opts,
@@ -75,7 +75,7 @@ defmodule Re.Listings do
     |> Queries.order_by(params)
     |> Queries.limit(params)
     |> Queries.preload_relations(@partial_preload)
-    |> Filtering.apply(params)
+    |> Filters.apply(params)
   end
 
   def get(id), do: do_get(Listing, id)

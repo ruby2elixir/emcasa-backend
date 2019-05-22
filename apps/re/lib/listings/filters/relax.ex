@@ -1,10 +1,10 @@
-defmodule Re.Filtering.Relax do
+defmodule Re.Listings.Filters.Relax do
   @moduledoc """
   Module to group logic to relax filter parameters
   """
 
   alias Re.{
-    Filtering,
+    Listings.Filters,
     Addresses.Neighborhoods
   }
 
@@ -20,35 +20,35 @@ defmodule Re.Filtering.Relax do
 
   defp do_apply(:price, params) do
     params
-    |> Filtering.cast()
+    |> Filters.cast()
     |> max_price()
     |> min_price()
   end
 
   defp do_apply(:area, params) do
     params
-    |> Filtering.cast()
+    |> Filters.cast()
     |> max_area()
     |> min_area()
   end
 
   defp do_apply(:room, params) do
     params
-    |> Filtering.cast()
+    |> Filters.cast()
     |> max_rooms()
     |> min_rooms()
   end
 
   defp do_apply(:garage_spots, params) do
     params
-    |> Filtering.cast()
+    |> Filters.cast()
     |> max_garage_spots()
     |> min_garage_spots()
   end
 
   defp do_apply(:neighborhoods, params) do
     params
-    |> Filtering.cast()
+    |> Filters.cast()
     |> neighborhoods()
   end
 

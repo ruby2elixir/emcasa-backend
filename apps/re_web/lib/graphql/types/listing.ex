@@ -204,7 +204,7 @@ defmodule ReWeb.Types.Listing do
   enum :orderable_field,
     values:
       ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies
-      price_per_area)a
+      price_per_area inserted_at)a
 
   enum :order_type, values: ~w(desc asc)a
 
@@ -242,6 +242,8 @@ defmodule ReWeb.Types.Listing do
     field :max_age, :integer
     field :min_price_per_area, :float
     field :max_price_per_area, :float
+    field :min_maintenance_fee, :float
+    field :max_maintenance_fee, :float
   end
 
   object :listing_filter do
