@@ -39,12 +39,10 @@ defmodule Re.UnitTest do
 
   describe "changeset/3" do
     test "with valid attributes for development" do
-      %{id: listing_id} = insert(:listing)
       %{uuid: development_uuid} = insert(:development)
 
       attrs =
         @valid_attrs
-        |> Map.put(:listing_id, listing_id)
         |> Map.put(:development_uuid, development_uuid)
 
       changeset = Unit.changeset(%Unit{}, attrs)
@@ -67,9 +65,6 @@ defmodule Re.UnitTest do
       assert Keyword.get(changeset.errors, :suites) == {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :development_uuid) ==
-               {"can't be blank", [validation: :required]}
-
-      assert Keyword.get(changeset.errors, :listing_id) ==
                {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :status) == {"can't be blank", [validation: :required]}

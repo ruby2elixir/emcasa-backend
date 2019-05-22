@@ -203,7 +203,6 @@ defmodule Re.Exporters.FacebookAds.RealEstateTest do
       assert expected_xml == generated_xml
     end
 
-    @tag pending: true
     test "export XML for unit's listings" do
       listing = %Listing{
         id: 7_004_578,

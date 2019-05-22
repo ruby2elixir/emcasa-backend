@@ -5,10 +5,15 @@ defmodule Re.Units do
   """
   @behaviour Bodyguard.Policy
 
-  alias Ecto.Changeset
+  require Logger
+
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
 
   alias Re.{
-    PubSub,
+    Developments.JobQueue,
     Repo,
     Unit,
     Units.Queries
@@ -36,13 +41,40 @@ defmodule Re.Units do
     end
   end
 
-  def insert(params, development, listing) do
+  def insert(params, development) do
     %Unit{}
     |> Changeset.change(development_uuid: development.uuid)
-    |> Changeset.change(listing_id: listing.id)
     |> Unit.changeset(params)
-    |> Repo.insert()
-    |> publish_new()
+    |> do_new_unit()
+  end
+
+  defp do_new_unit(changeset) do
+    case changeset do
+      %{valid?: true} = changeset ->
+        uuid = Changeset.get_field(changeset, :uuid)
+
+        Multi.new()
+        |> JobQueue.enqueue(:units_job, %{"type" => "mirror_new_unit_to_listing", "uuid" => uuid})
+        |> Multi.insert(:add_unit, changeset)
+        |> Repo.transaction()
+
+      %{errors: errors} = changeset ->
+        Logger.warn("Invalid payload from new_unit. Errors: #{Kernel.inspect(errors)}")
+
+        {:error, changeset}
+    end
+  end
+
+  def update(unit, params, development, listing \\ nil)
+
+  def update(unit, params, development, nil) do
+    changeset =
+      unit
+      |> Changeset.change(development_uuid: development.uuid)
+      |> Unit.changeset(params)
+
+    changeset
+    |> Repo.update()
   end
 
   def update(unit, params, development, listing) do
@@ -54,11 +86,5 @@ defmodule Re.Units do
 
     changeset
     |> Repo.update()
-    |> publish_update(changeset)
   end
-
-  defp publish_new(result), do: PubSub.publish_new(result, "new_unit")
-
-  defp publish_update(result, changeset),
-    do: PubSub.publish_update(result, changeset, "update_unit")
 end
