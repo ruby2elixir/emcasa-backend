@@ -81,7 +81,7 @@ defmodule Re.Listing do
 
   @types ~w(Apartamento Casa Cobertura)
 
-  @garage_types ~w(contract condominium)
+  @garage_types ~w(contract condominium unknown)
 
   @orientation_types ~w(frontside backside lateral inside)
 

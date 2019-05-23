@@ -78,6 +78,7 @@ defmodule Re.Developments.ListingsTest do
       assert unit.rooms == listing.rooms
       assert unit.bathrooms == listing.bathrooms
       assert unit.garage_spots == listing.garage_spots
+      assert listing.garage_type == listing.garage_type
       assert unit.suites == listing.suites
       assert unit.complement == listing.complement
       assert unit.floor == listing.floor
@@ -93,7 +94,6 @@ defmodule Re.Developments.ListingsTest do
       assert development.elevators == listing.elevators
 
       assert listing.type == "Apartamento"
-      assert listing.garage_type == "unknown"
       assert listing.is_release == true
     end
   end
