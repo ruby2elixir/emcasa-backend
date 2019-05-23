@@ -70,7 +70,8 @@ config :re_integrations,
   grupozap_webhook_secret: System.get_env("GRUPOZAP_WEBHOOK_SECRET"),
   zapier_webhook_user: System.get_env("ZAPIER_WEBHOOK_USER"),
   zapier_webhook_pass: System.get_env("ZAPIER_WEBHOOK_PASS"),
-  priceteller_url: System.get_env("PRICETELLER_URL")
+  priceteller_url: System.get_env("PRICETELLER_URL"),
+  priceteller_token: System.get_env("PRICETELLER_TOKEN")
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
