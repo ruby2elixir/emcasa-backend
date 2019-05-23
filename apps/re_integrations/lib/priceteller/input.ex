@@ -41,10 +41,10 @@ defmodule ReIntegrations.PriceTeller.Input do
     |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
     |> validate_length(:zip_code, is: 8)
     |> validate_number(:area, greater_than: 15, less_than: 600)
-    |> validate_number(:bathrooms, greater_than: 0, less_than: 20)
-    |> validate_number(:bedrooms, greater_than: 0, less_than: 20)
-    |> validate_number(:suites, greater_than: 0, less_than: 20)
-    |> validate_number(:parking, greater_than: 0, less_than: 20)
-    |> validate_number(:condo_fee, greater_than: 0, less_than: 10_000)
+    |> validate_number(:bathrooms, greater_than_or_equal_to: 0, less_than: 20)
+    |> validate_number(:bedrooms, greater_than_or_equal_to: 0, less_than: 20)
+    |> validate_number(:suites, greater_than_or_equal_to: 0, less_than: 20)
+    |> validate_number(:parking, greater_than_or_equal_to: 0, less_than: 20)
+    |> validate_number(:condo_fee, greater_than_or_equal_to: 0, less_than: 10_000)
   end
 end

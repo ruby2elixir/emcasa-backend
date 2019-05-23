@@ -22,10 +22,10 @@ defmodule ReIntegrations.PriceTellerTest do
     zip_code: "003346010",
     street_number: nil,
     area: 13,
-    bathrooms: 0,
-    bedrooms: 0,
-    suites: 0,
-    parking: 0,
+    bathrooms: -1,
+    bedrooms: 25,
+    suites: -1,
+    parking: 25,
     condo_fee: 11_000,
     lat: nil,
     lng: nil
@@ -58,20 +58,20 @@ defmodule ReIntegrations.PriceTellerTest do
                 [validation: :number, kind: :greater_than, number: 15]}
 
       assert Keyword.get(changeset.errors, :bathrooms) ==
-               {"must be greater than %{number}",
-                [validation: :number, kind: :greater_than, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :bedrooms) ==
-               {"must be greater than %{number}",
-                [validation: :number, kind: :greater_than, number: 0]}
+               {"must be less than %{number}",
+                [validation: :number, kind: :less_than, number: 20]}
 
       assert Keyword.get(changeset.errors, :suites) ==
-               {"must be greater than %{number}",
-                [validation: :number, kind: :greater_than, number: 0]}
+               {"must be greater than or equal to %{number}",
+                [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :parking) ==
-               {"must be greater than %{number}",
-                [validation: :number, kind: :greater_than, number: 0]}
+               {"must be less than %{number}",
+                [validation: :number, kind: :less_than, number: 20]}
 
       assert Keyword.get(changeset.errors, :condo_fee) ==
                {"must be less than %{number}",
