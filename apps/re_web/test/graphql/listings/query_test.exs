@@ -1,6 +1,8 @@
 defmodule ReWeb.GraphQL.Listings.QueryTest do
   use ReWeb.ConnCase
 
+  import Re.CustomAssertion
+
   import Re.Factory
 
   alias ReWeb.AbsintheHelpers

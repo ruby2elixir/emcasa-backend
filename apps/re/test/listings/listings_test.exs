@@ -1,6 +1,8 @@
 defmodule Re.ListingsTest do
   use Re.ModelCase
 
+  import Re.CustomAssertion
+
   alias Re.{
     Listings.History.Server,
     Listing,
