@@ -1,6 +1,8 @@
 defmodule ReWeb.GraphQL.Listings.QueryTest do
   use ReWeb.ConnCase
 
+  import Re.CustomAssertion
+
   import Re.Factory
 
   alias ReWeb.AbsintheHelpers
@@ -876,14 +878,18 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-      assert %{
-               "listings" => [
-                 %{"priceRecentlyReduced" => false},
-                 %{"priceRecentlyReduced" => true},
-                 %{"priceRecentlyReduced" => false},
-                 %{"priceRecentlyReduced" => false}
-               ]
-             } == json_response(conn, 200)["data"]["listings"]
+      price_recently_reduced = fn items -> Enum.map(items, & &1["priceRecentlyReduced"]) end
+
+      assert_mapper_match(
+        [
+          %{"priceRecentlyReduced" => false},
+          %{"priceRecentlyReduced" => true},
+          %{"priceRecentlyReduced" => false},
+          %{"priceRecentlyReduced" => false}
+        ],
+        json_response(conn, 200)["data"]["listings"]["listings"],
+        price_recently_reduced
+      )
     end
 
     test "admin should query listing with all tags", %{admin_conn: conn} do
