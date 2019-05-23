@@ -58,14 +58,13 @@ defmodule Re.Developments.Listings do
 
   @unit_cloned_attributes ~w(area price rooms bathrooms garage_spots garage_type
                      suites complement floor matterport_code
-                     status property_tax maintenance_fee balconies restrooms is_release is_exportable)a
+                     status property_tax maintenance_fee balconies restrooms is_exportable)a
 
   @development_cloned_attributes ~w(description floor_count unit_per_floor elevators construction_year)a
 
   @static_attributes %{
     type: "Apartamento",
-    is_release: true,
-    garage_type: "unknown"
+    is_release: true
   }
 
   def listing_params_from_unit(%Re.Unit{} = unit, %Re.Development{} = development) do
