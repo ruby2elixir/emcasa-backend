@@ -8,6 +8,7 @@ defmodule Re.Developments do
 
   alias Re.{
     Development,
+    Developments.JobQueue,
     Developments.Queries,
     Repo
   }
@@ -44,6 +45,12 @@ defmodule Re.Developments do
     |> Changeset.change(address_id: address.id)
     |> Development.changeset(params)
     |> Repo.insert()
+  end
+
+  def insert_from_orulo(id) do
+    %{"type" => "import_development_from_orulo", "external_id" => id}
+    |> JobQueue.new()
+    |> Re.Repo.insert()
   end
 
   def update(development, params, address) do
