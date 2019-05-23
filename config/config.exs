@@ -5,6 +5,7 @@ config :re,
   use_logger: true
 
 config :re_integrations,
+  ecto_repos: [ReIntegrations.Repo],
   frontend_url: "http://localhost:3000",
   to: "dev1@email.com|dev2@email.com",
   from: "admin@email.com",

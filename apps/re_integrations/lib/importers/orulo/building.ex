@@ -1,4 +1,4 @@
-defmodule Re.Developments.Orulo.Building do
+defmodule Re.Importers.Orulo.Building do
   @moduledoc """
   Schema for Orulo Buildings sincronization
   """
@@ -8,7 +8,7 @@ defmodule Re.Developments.Orulo.Building do
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
-  schema "orulo_buildings" do
+  schema "re_integrations_orulo_buildings" do
     field :external_id, :integer
     field :payload, :map
 

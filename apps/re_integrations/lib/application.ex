@@ -9,11 +9,15 @@ defmodule ReIntegrations.Application do
 
   alias ReIntegrations.{
     Notifications.Emails,
-    Search
+    Search,
+    Repo
   }
 
   def start(_type, _args) do
-    children = [] ++ extra_applications(Mix.env())
+    children =
+      [
+        supervisor(Repo, [])
+      ] ++ extra_applications(Mix.env())
 
     opts = [strategy: :one_for_one, name: ReIntegrations.Supervisor]
     Supervisor.start_link(children, opts)

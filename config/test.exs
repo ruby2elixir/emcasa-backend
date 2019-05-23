@@ -32,6 +32,16 @@ config :re, Re.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   migration_source: "old_schema_migrations"
 
+config :re_integrations, ReIntegrations.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: System.get_env("POSTGRES_USERNAME") || "postgres",
+  password: System.get_env("POSTGRES_PASSWORD") || "postgres",
+  database: "re_test",
+  port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
+  hostname: System.get_env("POSTGRES_HOSTNAME") || "localhost",
+  pool: Ecto.Adapters.SQL.Sandbox,
+  migration_source: "re_integrations_schema_migrations"
+
 config :account_kit,
   app_id: "123"
 
