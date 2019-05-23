@@ -33,7 +33,9 @@ config :re_integrations,
   credipronto_account_id: "CREDIPRONTO_ACCOUNT_ID",
   grupozap_webhook_secret: "grupozap_secret",
   zapier_webhook_user: "testuser",
-  zapier_webhook_pass: "testpass"
+  zapier_webhook_pass: "testpass",
+  priceteller_url: "priceteller_url",
+  priceteller_token: "mahtoken"
 
 config :re,
   vivareal_highlights_size_rio_de_janeiro: 10,
