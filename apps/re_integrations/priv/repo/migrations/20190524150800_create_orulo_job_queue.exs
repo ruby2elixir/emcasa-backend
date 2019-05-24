@@ -1,11 +1,13 @@
 defmodule ReIntegrations.Repo.Migrations.CreateOruloJobQueue do
   use Ecto.Migration
 
+  alias EctoJob.Migrations.CreateJobTable
+
   def up do
-    EctoJob.Migrations.CreateJobTable.up("orulo_fetch_jobs")
+    CreateJobTable.up("orulo_fetch_jobs")
   end
 
   def down do
-    EctoJob.Migrations.Install.down()
+    CreateJobTable.down("orulo_fetch_jobs")
   end
 end
