@@ -48,7 +48,7 @@ defmodule Re.Developments do
 
   def insert_from_orulo(id) do
     # NOTE: it should be proxed to integrations? what is the best way? also how we should test it?
-    ReIntegrations.Orulo.get_building_from_orulo(id)
+    ReIntegrations.Orulo.get_building_payload(id)
   end
 
   def update(development, params, address) do
