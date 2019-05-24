@@ -5,8 +5,7 @@ defmodule Re.DevelopmentsTest do
 
   alias Re.{
     Development,
-    Developments,
-    Developments.JobQueue
+    Developments
   }
 
   import Re.Factory
@@ -46,13 +45,6 @@ defmodule Re.DevelopmentsTest do
       assert updated_development.builder == Map.get(new_development_params, :builder)
       assert updated_development.description == Map.get(new_development_params, :description)
       assert updated_development.phase == Map.get(new_development_params, :phase)
-    end
-  end
-
-  describe "insert_from_orulo/2" do
-    test "create o new job with to sync development" do
-      assert {:ok, _} = Developments.insert_from_orulo(100)
-      assert Repo.one(JobQueue)
     end
   end
 end

@@ -8,7 +8,6 @@ defmodule Re.Developments do
 
   alias Re.{
     Development,
-    Developments.JobQueue,
     Developments.Queries,
     Repo
   }
@@ -48,9 +47,8 @@ defmodule Re.Developments do
   end
 
   def insert_from_orulo(id) do
-    %{"type" => "import_development_from_orulo", "external_id" => id}
-    |> JobQueue.new()
-    |> Re.Repo.insert()
+    # NOTE: it should be proxed to integrations? what is the best way? also how we should test it?
+    ReIntegrations.Orulo.get_building_from_orulo(id)
   end
 
   def update(development, params, address) do

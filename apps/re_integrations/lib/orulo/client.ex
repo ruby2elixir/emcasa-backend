@@ -1,4 +1,4 @@
-defmodule Importers.Orulo.Client do
+defmodule ReIntegrations.Orulo.Client do
   @moduledoc """
   Module to wripe orulo API logic
   """

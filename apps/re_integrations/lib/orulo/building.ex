@@ -1,4 +1,4 @@
-defmodule ReIntegrations.Importers.Orulo.Building do
+defmodule ReIntegrations.Orulo.Building do
   @moduledoc """
   Schema for Orulo Buildings sincronization
   """
