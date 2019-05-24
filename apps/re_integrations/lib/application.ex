@@ -9,6 +9,7 @@ defmodule ReIntegrations.Application do
 
   alias ReIntegrations.{
     Notifications.Emails,
+    Orulo,
     Search,
     Repo
   }
@@ -29,7 +30,7 @@ defmodule ReIntegrations.Application do
     do: [
       worker(Emails.Server, []),
       worker(Search.Server, []),
-      {Orulo.JobQueue, repo: Repo},
+      {Orulo.FetchJobQueue, repo: Repo},
       Search.Cluster
     ]
 end

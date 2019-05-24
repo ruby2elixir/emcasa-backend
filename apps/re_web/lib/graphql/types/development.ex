@@ -78,5 +78,12 @@ defmodule ReWeb.Types.Development do
 
       resolve &Resolvers.Developments.update/2
     end
+
+    @desc "Import development from orulo"
+    field :import_development_from_orulo, type: :string do
+      arg :external_id, non_null(:id)
+
+      resolve &Resolvers.Developments.import_from_orulo/2
+    end
   end
 end

@@ -47,6 +47,15 @@ defmodule ReWeb.Resolvers.Developments do
     end
   end
 
+  def import_from_orulo(%{external_id: id}, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Developments, :import_development_from_orulo, current_user) do
+      ReIntegrations.Orulo.get_building_payload(id)
+      {:ok, "vai dar certo, acredita!!"}
+    else
+      error -> {:ok, "An error has occured: #{Kernel.inspect(error)}"}
+    end
+  end
+
   defp get_address(%{address_id: id}), do: Addresses.get_by_id(id)
   defp get_address(_), do: {:error, :bad_request}
 end
