@@ -9,7 +9,6 @@ defmodule Re.Developments.JobQueue do
 
   alias Re.{
     Developments.Listings,
-    Developments.Orulo.Building,
     Repo,
     Unit
   }
@@ -26,16 +25,5 @@ defmodule Re.Developments.JobQueue do
     params = Listings.listing_params_from_unit(unit, development)
 
     Listings.multi_insert(multi, params, development: development, address: address, unit: unit)
-  end
-
-  def perform(%Multi{} = multi, %{"type" => "import_development_from_orulo", "external_id" => id}) do
-    case ReIntegrations.Importers.Importer.get_building_from_orulo(id) do
-      {:ok, payload} ->
-        Building.changeset(%Building{}, %{external_id: id, payload: payload})
-        |> Repo.insert()
-
-      {:error, error} ->
-        Logger.error(error)
-    end
   end
 end

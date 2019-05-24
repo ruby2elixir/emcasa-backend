@@ -29,6 +29,7 @@ defmodule ReIntegrations.Application do
     do: [
       worker(Emails.Server, []),
       worker(Search.Server, []),
+      {Orulo.JobQueue, repo: Repo},
       Search.Cluster
     ]
 end

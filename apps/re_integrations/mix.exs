@@ -47,7 +47,8 @@ defmodule ReIntegrations.Mixfile do
       {:retry, "~> 0.10"},
       {:httpoison, "~> 1.3", override: true},
       {:jason, "~> 1.0"},
-      {:sentry, "~> 7.0"}
+      {:sentry, "~> 7.0"},
+      {:ecto_job, "~> 2.0"}
     ]
   end
 
