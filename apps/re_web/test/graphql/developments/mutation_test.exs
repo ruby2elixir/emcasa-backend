@@ -178,6 +178,64 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     end
   end
 
+  describe "importDevelopmentFromOrulo/2" do
+    @import_from_orulo_mutation """
+      mutation ImportDevelopmentFromOrulo ($external_id: ID!) {
+        importDevelopmentFromOrulo(external_id: $external_id) {
+          message
+        }
+      }
+    """
+
+    test "admin should create development through Orulo integration", %{
+      admin_conn: conn
+    } do
+      variables = %{"external_id" => Enum.random(1..1_000_000)}
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@import_from_orulo_mutation, variables)
+        )
+
+      assert %{"importDevelopmentFromOrulo" => %{"message" => "ack"}} ==
+               json_response(conn, 200)["data"]
+    end
+
+    test "regular user shouldn't create development through Orulo integration", %{
+      user_conn: conn
+    } do
+      variables = %{"external_id" => Enum.random(1..1_000_000)}
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@import_from_orulo_mutation, variables)
+        )
+
+      assert %{"importDevelopmentFromOrulo" => nil} == json_response(conn, 200)["data"]
+      assert_forbidden_response(json_response(conn, 200))
+    end
+
+    test "unauthenticated user shouldn't create development through Orulo integration", %{
+      unauthenticated_conn: conn
+    } do
+      variables = %{"external_id" => Enum.random(1..1_000_000)}
+
+      conn =
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@import_from_orulo_mutation, variables)
+        )
+
+      assert %{"importDevelopmentFromOrulo" => nil} == json_response(conn, 200)["data"]
+      assert_unauthorized_response(json_response(conn, 200))
+    end
+  end
+
   def insert_development_variables(development, address) do
     %{
       "input" => %{

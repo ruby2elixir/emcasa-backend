@@ -36,6 +36,10 @@ defmodule ReWeb.Types.Development do
     end
   end
 
+  object :async_response do
+    field :message, :string
+  end
+
   input_object :development_input do
     field :name, :string
     field :title, :string
@@ -80,7 +84,7 @@ defmodule ReWeb.Types.Development do
     end
 
     @desc "Import development from orulo"
-    field :import_development_from_orulo, type: :string do
+    field :import_development_from_orulo, type: :async_response do
       arg :external_id, non_null(:id)
 
       resolve &Resolvers.Developments.import_from_orulo/2
