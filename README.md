@@ -13,7 +13,8 @@
 ## Install
 
 * Install dependencies with `mix deps.get`
-* Create, migrate and seed your database with `cd apps/re && mix ecto.setup`
+* Create, migrate and seed your core database with `cd apps/re && mix ecto.setup`
+* Create, migrate and seed your integrations database with `cd apps/re_integration && mix ecto.setup`
 * Rename `config/dev.secret-example.exs` to `config/dev.secret.exs` and follow instructions at the top of the file to generate necessary keys.
 * Install git hooks with `mix git.hook`
 
