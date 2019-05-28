@@ -150,7 +150,10 @@ defmodule ReIntegrations.Notifications.Emails.Server do
       ) do
     request = Repo.preload(request, [:address, :user])
 
-    handle_cast({Emails.User, :price_suggestion_requested, [request, price]}, state)
+    case request do
+      %{user: %{role: "admin"}} -> {:noreply, state}
+      request -> handle_cast({Emails.User, :price_suggestion_requested, [request, price]}, state)
+    end
   end
 
   def handle_info(_, state), do: {:noreply, state}
