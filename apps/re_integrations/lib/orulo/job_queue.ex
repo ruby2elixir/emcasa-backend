@@ -2,7 +2,7 @@ defmodule ReIntegrations.Orulo.JobQueue do
   @moduledoc """
   Module for processing jobs related with orulo entitiens payloads.
   """
-  use EctoJob.JobQueue, table_name: "orulo_jobs"
+  use EctoJob.JobQueue, table_name: "orulo_jobs", schema_prefix: "re_integrations"
 
   require Ecto.Query
   require Logger
