@@ -52,7 +52,7 @@ defmodule ReWeb.Resolvers.Developments do
   def import_from_orulo(%{external_id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Developments, :import_development_from_orulo, current_user),
          {:ok, _job} <- ReIntegrations.Orulo.get_building_payload(id) do
-      {:ok, %{message: "ack"}}
+      {:ok, %{message: "Development syncronization scheduled!"}}
     end
   end
 

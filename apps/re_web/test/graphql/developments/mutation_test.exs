@@ -178,10 +178,10 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
     end
   end
 
-  describe "importDevelopmentFromOrulo/2" do
+  describe "scheduleDevelopmentCreationFromOrulo/2" do
     @import_from_orulo_mutation """
-      mutation ImportDevelopmentFromOrulo ($external_id: ID!) {
-        importDevelopmentFromOrulo(external_id: $external_id) {
+      mutation ScheduleDevelopmentCreationFromOrulo ($external_id: ID!) {
+        scheduleDevelopmentCreationFromOrulo(external_id: $external_id) {
           message
         }
       }
@@ -199,7 +199,11 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
           AbsintheHelpers.mutation_wrapper(@import_from_orulo_mutation, variables)
         )
 
-      assert %{"importDevelopmentFromOrulo" => %{"message" => "ack"}} ==
+      assert %{
+               "scheduleDevelopmentCreationFromOrulo" => %{
+                 "message" => "Development syncronization scheduled!"
+               }
+             } ==
                json_response(conn, 200)["data"]
     end
 
@@ -215,7 +219,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
           AbsintheHelpers.mutation_wrapper(@import_from_orulo_mutation, variables)
         )
 
-      assert %{"importDevelopmentFromOrulo" => nil} == json_response(conn, 200)["data"]
+      assert %{"scheduleDevelopmentCreationFromOrulo" => nil} == json_response(conn, 200)["data"]
       assert_forbidden_response(json_response(conn, 200))
     end
 
@@ -231,7 +235,7 @@ defmodule ReWeb.GraphQL.Developments.MutationTest do
           AbsintheHelpers.mutation_wrapper(@import_from_orulo_mutation, variables)
         )
 
-      assert %{"importDevelopmentFromOrulo" => nil} == json_response(conn, 200)["data"]
+      assert %{"scheduleDevelopmentCreationFromOrulo" => nil} == json_response(conn, 200)["data"]
       assert_unauthorized_response(json_response(conn, 200))
     end
   end

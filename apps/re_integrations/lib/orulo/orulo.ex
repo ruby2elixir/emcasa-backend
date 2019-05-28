@@ -4,7 +4,7 @@ defmodule ReIntegrations.Orulo do
   """
   alias ReIntegrations.{
     Orulo.Building,
-    Orulo.FetchJobQueue,
+    Orulo.JobQueue,
     Repo
   }
 
@@ -12,7 +12,7 @@ defmodule ReIntegrations.Orulo do
 
   def get_building_payload(id) do
     %{"type" => "import_development_from_orulo", "external_id" => id}
-    |> FetchJobQueue.new()
+    |> JobQueue.new()
     |> Re.Repo.insert()
   end
 

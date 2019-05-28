@@ -1,8 +1,8 @@
-defmodule ReIntegrations.Orulo.FetchJobQueue do
+defmodule ReIntegrations.Orulo.JobQueue do
   @moduledoc """
   Module for processing jobs related with orulo entitiens payloads.
   """
-  use EctoJob.JobQueue, table_name: "orulo_fetch_jobs"
+  use EctoJob.JobQueue, table_name: "orulo_jobs"
 
   require Ecto.Query
   require Logger
