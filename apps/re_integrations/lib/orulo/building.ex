@@ -6,9 +6,10 @@ defmodule ReIntegrations.Orulo.Building do
 
   import Ecto.Changeset
 
+  @schema_prefix "re_integrations"
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
-  schema "re_integrations_orulo_buildings" do
+  schema "orulo_buildings" do
     field :external_id, :integer
     field :payload, :map
 
