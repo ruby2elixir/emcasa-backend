@@ -39,10 +39,7 @@ defmodule Re.Listing do
     field :elevators, :integer
     field :construction_year, :integer
     field :price_per_area, :float
-    field :visualisations, :integer, virtual: true
-    field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
-    field :in_person_visit_count, :integer, virtual: true
 
     belongs_to :address, Re.Address
 
@@ -60,9 +57,6 @@ defmodule Re.Listing do
 
     has_many :images, Re.Image
     has_many :price_history, Re.Listings.PriceHistory
-    has_many :listings_visualisations, Re.Statistics.ListingVisualization
-    has_many :tour_visualisations, Re.Statistics.TourVisualization
-    has_many :in_person_visits, Re.Statistics.InPersonVisit
 
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :user]

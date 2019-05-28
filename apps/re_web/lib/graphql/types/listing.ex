@@ -6,10 +6,7 @@ defmodule ReWeb.Types.Listing do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
-  alias ReWeb.{
-    GraphQL.Middlewares,
-    Resolvers
-  }
+  alias ReWeb.Resolvers
 
   object :listing do
     field :id, :id
@@ -302,7 +299,6 @@ defmodule ReWeb.Types.Listing do
       arg :id, non_null(:id)
 
       resolve &Resolvers.Listings.show/2
-      middleware(Middlewares.Visualizations)
     end
 
     @desc "List user listings"
@@ -403,7 +399,7 @@ defmodule ReWeb.Types.Listing do
     field :tour_visualized, type: :listing do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.ListingStats.tour_visualized/2
+      resolve &Resolvers.Listings.show/2
     end
   end
 
