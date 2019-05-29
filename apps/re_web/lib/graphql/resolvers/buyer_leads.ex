@@ -1,6 +1,6 @@
 defmodule ReWeb.Resolvers.BuyerLeads do
   @moduledoc """
-  Resolver module for seller leads
+  Resolver module for buyer leads
   """
 
   def create_budget(_, %{context: %{current_user: nil}}), do: {:error, :unauthorized}
