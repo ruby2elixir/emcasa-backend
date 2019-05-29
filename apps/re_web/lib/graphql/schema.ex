@@ -15,6 +15,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.Tag
   import_types ReWeb.Types.OwnerContact
   import_types ReWeb.Types.SellerLead
+  import_types ReWeb.Types.BuyerLead
   import_types ReWeb.Types.Custom.UUID
   import_types Absinthe.Type.Custom
 
@@ -27,6 +28,10 @@ defmodule ReWeb.Schema do
   def middleware(middleware, _field, _object) do
     [ApolloTracing.Middleware.Tracing, ApolloTracing.Middleware.Caching] ++
       middleware ++ [Middlewares.ErrorHandler]
+  end
+
+  object :async_response do
+    field :message, :string
   end
 
   query do
@@ -50,6 +55,7 @@ defmodule ReWeb.Schema do
     import_fields(:unit_mutations)
     import_fields(:tag_mutations)
     import_fields(:seller_lead_mutations)
+    import_fields(:buyer_lead_mutations)
   end
 
   subscription do
