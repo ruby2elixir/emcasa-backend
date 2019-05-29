@@ -283,9 +283,20 @@ defmodule Re.BuyerLeads.JobQueueTest do
     test "proecss lead" do
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
-      %{uuid: uuid} = insert(:budget_buyer_lead, user_uuid: user_uuid, city: "New York", city_slug: "new-york", state: "NY", state_slug: "ny")
+      %{uuid: uuid} =
+        insert(:budget_buyer_lead,
+          user_uuid: user_uuid,
+          city: "New York",
+          city_slug: "new-york",
+          state: "NY",
+          state_slug: "ny"
+        )
 
-      assert {:ok, _} = JobQueue.perform(Multi.new(), %{"type" => "process_budget_buyer_lead", "uuid" => uuid})
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_budget_buyer_lead",
+                 "uuid" => uuid
+               })
 
       assert buyer = Repo.one(BuyerLead)
       assert buyer.uuid

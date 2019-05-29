@@ -33,10 +33,6 @@ defmodule Re.BuyerLeads do
       "type" => "process_budget_buyer_lead",
       "uuid" => uuid
     })
-    |> JobQueue.enqueue(:notify_buyer_lead_job, %{
-      "type" => "notify_budget_buyer_lead",
-      "uuid" => uuid
-    })
     |> Multi.insert(:add_buyer_lead, changeset)
     |> Repo.transaction()
     |> case do

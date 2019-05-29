@@ -19,7 +19,7 @@ defmodule Re.BuyerLeadsTest do
 
       assert Repo.one(Budget)
 
-      assert [_, _] = Repo.all(JobQueue)
+      assert Repo.one(JobQueue)
     end
   end
 end
