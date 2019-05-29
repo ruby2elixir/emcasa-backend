@@ -40,7 +40,8 @@ config :re_integrations, ReIntegrations.Repo,
   port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
   hostname: System.get_env("POSTGRES_HOSTNAME") || "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
-  migration_source: "re_integrations_schema_migrations"
+  migration_source: "re_integrations_schema_migrations",
+  migration_default_prefix: "re_integrations"
 
 config :account_kit,
   app_id: "123"

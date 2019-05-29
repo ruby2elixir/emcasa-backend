@@ -31,7 +31,8 @@ config :re_integrations, ReIntegrations.Repo,
   database: "re_dev",
   hostname: System.get_env("POSTGRES_HOSTNAME") || "localhost",
   pool_size: 10,
-  migration_source: "re_integrations_schema_migrations"
+  migration_source: "re_integrations_schema_migrations",
+  migration_default_prefix: "re_integrations"
 
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Local

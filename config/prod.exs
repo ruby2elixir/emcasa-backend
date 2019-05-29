@@ -28,6 +28,14 @@ config :re, Re.Repo,
   ssl: true,
   migration_source: "old_schema_migrations"
 
+config :re_integrations, ReIntegrations.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  url: System.get_env("DATABASE_URL"),
+  pool_size: String.to_integer(System.get_env("RE_INTEGRATIONS_POLL_SIZE")) || 10,
+  ssl: true,
+  migration_source: "re_integrations_schema_migrations",
+  migration_default_prefix: "re_integrations"
+
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: System.get_env("SEND_GRID_API_KEY")
