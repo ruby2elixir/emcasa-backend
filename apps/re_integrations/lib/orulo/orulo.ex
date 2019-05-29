@@ -13,7 +13,7 @@ defmodule ReIntegrations.Orulo do
   def get_building_payload(id) do
     %{"type" => "import_development_from_orulo", "external_id" => id}
     |> JobQueue.new()
-    |> Re.Repo.insert()
+    |> Repo.insert()
   end
 
   def multi_building_insert(multi, params) do

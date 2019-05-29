@@ -1,7 +1,7 @@
 defmodule ReIntegrations.OruloTest do
   @moduledoc false
 
-  use Re.ModelCase
+  use ReIntegrations.ModelCase
 
   alias ReIntegrations.{
     Orulo,

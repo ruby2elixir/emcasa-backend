@@ -45,9 +45,11 @@ defmodule ReWeb.ConnCase do
 
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Re.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ReIntegrations.Repo)
 
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Re.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(ReIntegrations.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
