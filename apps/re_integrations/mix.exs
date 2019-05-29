@@ -33,6 +33,9 @@ defmodule ReIntegrations.Mixfile do
 
   defp deps do
     [
+      {:ecto, "~> 3.0"},
+      {:ecto_sql, "~> 3.0"},
+      {:postgrex, "~> 0.13.0 or ~> 0.14.0"},
       {:re, in_umbrella: true},
       {:plug_cowboy, "~> 2.0"},
       {:cors_plug, "~> 1.2"},
@@ -44,13 +47,14 @@ defmodule ReIntegrations.Mixfile do
       {:retry, "~> 0.10"},
       {:httpoison, "~> 1.3", override: true},
       {:jason, "~> 1.0"},
-      {:sentry, "~> 7.0"}
+      {:sentry, "~> 7.0"},
+      {:ecto_job, "~> 2.0"}
     ]
   end
 
   defp aliases do
     [
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]

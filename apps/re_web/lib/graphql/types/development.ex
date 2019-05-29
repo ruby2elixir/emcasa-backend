@@ -36,6 +36,10 @@ defmodule ReWeb.Types.Development do
     end
   end
 
+  object :async_response do
+    field :message, :string
+  end
+
   input_object :development_input do
     field :name, :string
     field :title, :string
@@ -77,6 +81,13 @@ defmodule ReWeb.Types.Development do
       arg :input, non_null(:development_input)
 
       resolve &Resolvers.Developments.update/2
+    end
+
+    @desc "Schedule a job to create a new Development from orulo"
+    field :schedule_development_creation_from_orulo, type: :async_response do
+      arg :external_id, non_null(:integer)
+
+      resolve &Resolvers.Developments.import_from_orulo/2
     end
   end
 end

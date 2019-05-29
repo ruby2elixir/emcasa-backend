@@ -9,11 +9,16 @@ defmodule ReIntegrations.Application do
 
   alias ReIntegrations.{
     Notifications.Emails,
+    Orulo,
+    Repo,
     Search
   }
 
   def start(_type, _args) do
-    children = [] ++ extra_applications(Mix.env())
+    children =
+      [
+        supervisor(Repo, [])
+      ] ++ extra_applications(Mix.env())
 
     opts = [strategy: :one_for_one, name: ReIntegrations.Supervisor]
     Supervisor.start_link(children, opts)
@@ -25,6 +30,7 @@ defmodule ReIntegrations.Application do
     do: [
       worker(Emails.Server, []),
       worker(Search.Server, []),
+      {Orulo.JobQueue, repo: Repo},
       Search.Cluster
     ]
 end

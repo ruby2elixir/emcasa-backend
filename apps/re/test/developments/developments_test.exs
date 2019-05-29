@@ -1,4 +1,6 @@
 defmodule Re.DevelopmentsTest do
+  @moduledoc false
+
   use Re.ModelCase
 
   alias Re.{
