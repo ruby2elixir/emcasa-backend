@@ -11,7 +11,7 @@ defmodule ReIntegrations.Orulo.Client do
 
   def get_building(id) when is_integer(id) do
     @base_url
-    |> build_uri("/buildings/#{id}")
+    |> build_uri("buildings/#{id}")
     |> @http_client.get(@client_headers)
   end
 

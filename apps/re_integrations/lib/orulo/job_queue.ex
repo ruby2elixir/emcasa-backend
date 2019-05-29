@@ -15,12 +15,12 @@ defmodule ReIntegrations.Orulo.JobQueue do
   alias Ecto.Multi
 
   def perform(%Multi{} = multi, %{"type" => "import_development_from_orulo", "external_id" => id}) do
-    case Client.get_building(id) do
-      {:ok, payload} ->
-        Orulo.multi_building_insert(multi, %{external_id: id, payload: payload})
-
-      {:error, error} ->
-        Logger.error(error)
+    with {:ok, %{body: body}} <- Client.get_building(id),
+         {:ok, payload} <- Jason.decode(body),
+         {:ok, _} <- Orulo.multi_building_insert(multi, %{external_id: id, payload: payload}) do
+    else
+      {:error, error} -> Logger.error(error)
+      error -> Logger.error(error)
     end
   end
 end

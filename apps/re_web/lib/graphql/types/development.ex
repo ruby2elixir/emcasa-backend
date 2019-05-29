@@ -85,7 +85,7 @@ defmodule ReWeb.Types.Development do
 
     @desc "Schedule a job to create a new Development from orulo"
     field :schedule_development_creation_from_orulo, type: :async_response do
-      arg :external_id, non_null(:id)
+      arg :external_id, non_null(:integer)
 
       resolve &Resolvers.Developments.import_from_orulo/2
     end
