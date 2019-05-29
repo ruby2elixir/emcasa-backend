@@ -1,5 +1,8 @@
 defmodule ReIntegrations.ModelCase do
+  @moduledoc false
+
   use ExUnit.CaseTemplate
+  alias Ecto.Adapters.SQL.Sandbox
 
   using do
     quote do
@@ -17,10 +20,10 @@ defmodule ReIntegrations.ModelCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ReIntegrations.Repo)
+    :ok = Sandbox.checkout(ReIntegrations.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(ReIntegrations.Repo, {:shared, self()})
+      Sandbox.mode(ReIntegrations.Repo, {:shared, self()})
     end
 
     :ok
