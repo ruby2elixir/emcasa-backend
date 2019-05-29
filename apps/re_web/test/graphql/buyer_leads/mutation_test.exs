@@ -30,14 +30,15 @@ defmodule ReWeb.GraphQL.BuyerLeads.MutationTest do
     test "admin should add budget buyer lead", %{
       admin_conn: conn
     } do
-      %{state: state, city: city, neighborhood: neighborhood} = insert(:address)
+      %{state: state, city: city, neighborhood: neighborhood, budget: budget} =
+        params_for(:budget_buyer_lead)
 
       variables = %{
         "input" => %{
           "state" => state,
           "city" => city,
           "neighborhood" => neighborhood,
-          "budget" => "$100 to 1000"
+          "budget" => budget
         }
       }
 
@@ -52,14 +53,15 @@ defmodule ReWeb.GraphQL.BuyerLeads.MutationTest do
     test "user should add budget buyer lead", %{
       user_conn: conn
     } do
-      %{state: state, city: city, neighborhood: neighborhood} = insert(:address)
+      %{state: state, city: city, neighborhood: neighborhood, budget: budget} =
+        params_for(:budget_buyer_lead)
 
       variables = %{
         "input" => %{
           "state" => state,
           "city" => city,
           "neighborhood" => neighborhood,
-          "budget" => "$100 to 1000"
+          "budget" => budget
         }
       }
 
@@ -74,14 +76,15 @@ defmodule ReWeb.GraphQL.BuyerLeads.MutationTest do
     test "anonymous should add budget buyer lead", %{
       unauthenticated_conn: conn
     } do
-      %{state: state, city: city, neighborhood: neighborhood} = insert(:address)
+      %{state: state, city: city, neighborhood: neighborhood, budget: budget} =
+        params_for(:budget_buyer_lead)
 
       variables = %{
         "input" => %{
           "state" => state,
           "city" => city,
           "neighborhood" => neighborhood,
-          "budget" => "$100 to 1000"
+          "budget" => budget
         }
       }
 

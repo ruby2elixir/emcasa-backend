@@ -273,6 +273,26 @@ defmodule Re.Factory do
     }
   end
 
+  def budget_buyer_lead_factory do
+    neighborhood = Pokemon.location()
+
+    city = Address.city()
+    city_slug = Re.Slugs.sluggify(city)
+
+    state = Address.state_abbr()
+    state_slug = Re.Slugs.sluggify(state)
+
+    %Re.BuyerLeads.Budget{
+      uuid: UUID.uuid4(),
+      neighborhood: neighborhood,
+      city: city,
+      city_slug: city_slug,
+      state: state,
+      state_slug: state_slug,
+      budget: Shakespeare.hamlet()
+    }
+  end
+
   def site_seller_lead_factory do
     %Re.SellerLeads.Site{
       uuid: UUID.uuid4(),
