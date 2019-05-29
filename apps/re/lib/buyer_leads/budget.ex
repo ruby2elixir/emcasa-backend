@@ -53,9 +53,9 @@ defmodule Re.BuyerLeads.Budget do
 
   def buyer_lead_changeset(lead) do
     BuyerLead.changeset(%BuyerLead{}, %{
-      name: lead.name,
-      email: lead.email,
-      phone_number: lead.phone,
+      name: lead.user.name,
+      email: lead.user.email,
+      phone_number: lead.user.phone,
       origin: "site",
       location: "#{lead.city_slug}|#{lead.state_slug}",
       budget: lead.budget,
