@@ -81,7 +81,7 @@ defmodule Re.Listing do
 
   @types ~w(Apartamento Casa Cobertura)
 
-  @garage_types ~w(contract condominium)
+  @garage_types ~w(contract condominium unknown)
 
   @orientation_types ~w(frontside backside lateral inside)
 
@@ -123,9 +123,14 @@ defmodule Re.Listing do
     |> calculate_price_per_area()
   end
 
-  @development_required ~w(type description has_elevator address_id user_id development_uuid)a
+  @development_required ~w(type description price area address_id development_uuid)a
 
-  @development_optional ~w(matterport_code is_exclusive status is_release is_exportable)a
+  @development_optional ~w(rooms bathrooms garage_spots garage_type
+                     suites dependencies complement floor matterport_code
+                     is_exclusive status property_tax
+                     maintenance_fee balconies restrooms is_release is_exportable
+                     orientation floor_count unit_per_floor sun_period elevators
+                     construction_year)a
 
   @development_attributes @development_required ++ @development_optional
 

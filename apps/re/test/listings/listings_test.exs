@@ -1,6 +1,8 @@
 defmodule Re.ListingsTest do
   use Re.ModelCase
 
+  import Re.CustomAssertion
+
   alias Re.{
     Listings.History.Server,
     Listing,
@@ -107,95 +109,95 @@ defmodule Re.ListingsTest do
         )
 
       result = Listings.paginated(%{"max_price" => 105})
-      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_price" => 95})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_rooms" => 3})
-      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id2}, %{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_rooms" => 4})
-      assert [%{id: ^id1}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_suites" => 2})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_suites" => 2})
-      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id2}, %{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_area" => 55})
-      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"neighborhoods" => ["São Conrado", "Leblon"]})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"neighborhoods_slugs" => ["sao-conrado", "leblon"]})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"types" => ["Apartamento"]})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_lat" => -22.95})
-      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_lat" => -22.98})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_lng" => -43.199})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_lng" => -43.203})
-      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"max_garage_spots" => 2})
-      assert [%{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id2}, %{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"min_garage_spots" => 2})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"garage_types" => ["contract", "condominium"]})
-      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}, %{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"garage_types" => ["contract"]})
-      assert [%{id: ^id1}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"garage_types" => ["condominium"]})
-      assert [%{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"cities" => ["São Paulo"]})
-      assert [%{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"cities_slug" => ["sao-paulo"]})
-      assert [%{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id3}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"tags_slug" => ["tag-2"]})
-      assert [%{id: ^id1}, %{id: ^id2}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
       result = Listings.paginated(%{"tags_slug" => ["tag-1", "tag-2"], "page_size" => 1})
-      assert [%{id: ^id1}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}], result.listings, &map_id/1)
       assert 1 == result.remaining_count
     end
 
@@ -217,19 +219,19 @@ defmodule Re.ListingsTest do
         insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento", tags: [tag_3])
 
       result = Listings.paginated(%{"neighborhoods" => []})
-      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}, %{id: id3}], result.listings, &map_id/1)
 
       result = Listings.paginated(%{"types" => []})
-      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}, %{id: id3}], result.listings, &map_id/1)
 
       result = Listings.paginated(%{"garage_types" => []})
-      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}, %{id: id3}], result.listings, &map_id/1)
 
       result = Listings.paginated(%{"tags_slug" => []})
-      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}, %{id: id3}], result.listings, &map_id/1)
 
       result = Listings.paginated(%{"tags_uuid" => []})
-      assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}] = chunk_and_short(result.listings)
+      assert_mapper_match([%{id: id1}, %{id: id2}, %{id: id3}], result.listings, &map_id/1)
     end
 
     test "should return paginated result" do
@@ -304,6 +306,34 @@ defmodule Re.ListingsTest do
                    %{field: :rooms, type: :asc}
                  ]
                })
+    end
+
+    test "should order by inserted_at asc" do
+      %{id: id1} = insert(:listing, inserted_at: ~N[2010-01-01 10:00:00])
+      %{id: id2} = insert(:listing, inserted_at: ~N[2010-01-02 10:00:00])
+      %{id: id3} = insert(:listing, inserted_at: ~N[2010-01-03 10:00:00])
+
+      assert %{
+               listings: [
+                 %{id: ^id1},
+                 %{id: ^id2},
+                 %{id: ^id3}
+               ]
+             } = Listings.paginated(%{order_by: [%{field: :inserted_at, type: :asc}]})
+    end
+
+    test "should order by inserted_at desc" do
+      %{id: id1} = insert(:listing, inserted_at: ~N[2010-01-01 10:00:00])
+      %{id: id2} = insert(:listing, inserted_at: ~N[2010-01-02 10:00:00])
+      %{id: id3} = insert(:listing, inserted_at: ~N[2010-01-03 10:00:00])
+
+      assert %{
+               listings: [
+                 %{id: ^id3},
+                 %{id: ^id2},
+                 %{id: ^id1}
+               ]
+             } = Listings.paginated(%{order_by: [%{field: :inserted_at, type: :desc}]})
     end
   end
 
@@ -431,52 +461,6 @@ defmodule Re.ListingsTest do
                  user: user,
                  owner_contact: nil
                )
-    end
-
-    @insert_development_listing_params %{
-      "type" => "Apartamento",
-      "has_elevator" => true,
-      "description" => "Awesome new brand building",
-      "is_exportable" => true
-    }
-
-    test "should insert development listing" do
-      address = insert(:address)
-      development = insert(:development, address_id: address.id)
-      user = insert(:user, role: "admin")
-
-      assert {:ok, inserted_listing} =
-               Listings.insert(@insert_development_listing_params,
-                 address: address,
-                 user: user,
-                 development: development
-               )
-
-      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
-      assert retrieved_listing.development_uuid == development.uuid
-      assert retrieved_listing.address_id == address.id
-      assert retrieved_listing.user_id == user.id
-      assert retrieved_listing.is_exportable == true
-      assert retrieved_listing.uuid
-    end
-
-    test "should copy infrastructure info from development" do
-      address = insert(:address)
-      development = insert(:development, address_id: address.id)
-      user = insert(:user, role: "admin")
-
-      assert {:ok, inserted_listing} =
-               Listings.insert(@insert_development_listing_params,
-                 address: address,
-                 user: user,
-                 development: development
-               )
-
-      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
-      assert retrieved_listing.development_uuid == development.uuid
-      assert retrieved_listing.floor_count == development.floor_count
-      assert retrieved_listing.unit_per_floor == development.units_per_floor
-      assert retrieved_listing.elevators == development.elevators
     end
   end
 
@@ -610,10 +594,5 @@ defmodule Re.ListingsTest do
     end
   end
 
-  defp chunk_and_short(listings) do
-    listings
-    |> Enum.chunk_by(& &1.score)
-    |> Enum.map(&Enum.sort/1)
-    |> List.flatten()
-  end
+  defp map_id(items), do: Enum.map(items, & &1.id)
 end

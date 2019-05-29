@@ -36,8 +36,6 @@ defmodule ReWeb.Router do
     resources("/search", SearchController, only: [:index])
     resources("/interest_types", InterestTypeController, only: [:index])
     resources("/sitemap_listings", SitemapController, only: [:index])
-
-    get("/listing_coordinates", ListingController, :coordinates)
   end
 
   scope "/" do

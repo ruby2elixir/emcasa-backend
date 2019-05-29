@@ -6,7 +6,7 @@ defmodule Re.Listings do
 
   alias Re.{
     Listing,
-    Filtering,
+    Listings.Filters,
     Images,
     Listings.DataloaderQueries,
     Listings.Opts,
@@ -75,7 +75,7 @@ defmodule Re.Listings do
     |> Queries.order_by(params)
     |> Queries.limit(params)
     |> Queries.preload_relations(@partial_preload)
-    |> Filtering.apply(params)
+    |> Filters.apply(params)
   end
 
   def get(id), do: do_get(Listing, id)
@@ -86,49 +86,13 @@ defmodule Re.Listings do
     do: do_get(Queries.preload_relations(Listing, preload), id)
 
   def insert(params, opts \\ []) do
-    opts_map = Enum.into(opts, %{})
-    do_insert(params, opts_map)
-  end
-
-  defp do_insert(params, %{development: development} = opts) do
-    %Listing{}
-    |> changeset_for_opts(opts)
-    |> copy_infrastructure(development)
-    |> Listing.development_changeset(params)
-    |> Repo.insert()
-  end
-
-  defp do_insert(params, opts) do
     %Listing{}
     |> changeset_for_opts(opts)
     |> Listing.changeset(params)
     |> Repo.insert()
   end
 
-  defp copy_infrastructure(changeset, development) do
-    Changeset.change(changeset, %{
-      floor_count: development.floor_count,
-      unit_per_floor: development.units_per_floor,
-      elevators: development.elevators
-    })
-  end
-
   def update(listing, params, opts \\ []) do
-    do_update(listing, params, Enum.into(opts, %{}))
-  end
-
-  def do_update(listing, params, %{development: _} = opts) do
-    changeset =
-      listing
-      |> changeset_for_opts(opts)
-      |> Listing.development_changeset(params)
-
-    changeset
-    |> Repo.update()
-    |> PubSub.publish_update(changeset, "update_listing", %{user: opts.user})
-  end
-
-  def do_update(listing, params, %{user: user} = opts) do
     changeset =
       listing
       |> changeset_for_opts(opts)
@@ -136,14 +100,11 @@ defmodule Re.Listings do
 
     changeset
     |> Repo.update()
-    |> PubSub.publish_update(changeset, "update_listing", %{user: user})
+    |> PubSub.publish_update(changeset, "update_listing")
   end
 
   defp changeset_for_opts(%{user_id: user_id} = listing, opts) do
     Enum.reduce(opts, Changeset.change(listing), fn
-      {:development, development}, changeset ->
-        Changeset.change(changeset, %{development_uuid: development.uuid})
-
       {:address, address}, changeset ->
         Changeset.change(changeset, %{address_id: address.id})
 
@@ -159,16 +120,6 @@ defmodule Re.Listings do
       {:owner_contact, owner_contact}, changeset ->
         Changeset.change(changeset, %{owner_contact_uuid: owner_contact.uuid})
     end)
-  end
-
-  def update_from_unit_params(listing, params) do
-    changeset =
-      listing
-      |> Changeset.change(params)
-
-    changeset
-    |> Repo.update()
-    |> PubSub.publish_update(changeset, "update_listing")
   end
 
   def deactivate(listing) do
@@ -199,12 +150,6 @@ defmodule Re.Listings do
       nil -> {:error, :not_found}
       listing -> {:ok, listing}
     end
-  end
-
-  def coordinates do
-    Listing
-    |> Queries.preload_relations([:address])
-    |> Repo.all()
   end
 
   def upsert_tags(listing, nil), do: {:ok, listing}

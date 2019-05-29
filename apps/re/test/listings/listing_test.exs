@@ -169,9 +169,9 @@ defmodule Re.ListingTest do
     @valid_development_attrs %{
       type: "Apartamento",
       description: "some content",
-      has_elevator: true,
       matterport_code: "",
-      is_exclusive: nil,
+      area: 100,
+      price: 100_000_000,
       is_release: nil
     }
 
@@ -185,13 +185,11 @@ defmodule Re.ListingTest do
 
     test "is valid with required params" do
       address = insert(:address)
-      user = insert(:user)
       development = insert(:development)
 
       attrs =
         @valid_development_attrs
         |> Map.put(:address_id, address.id)
-        |> Map.put(:user_id, user.id)
         |> Map.put(:development_uuid, development.uuid)
 
       changeset = Listing.development_changeset(%Listing{}, attrs)
@@ -208,20 +206,17 @@ defmodule Re.ListingTest do
       assert Keyword.get(changeset.errors, :description) ==
                {"can't be blank", [validation: :required]}
 
-      assert Keyword.get(changeset.errors, :address_id) ==
+      assert Keyword.get(changeset.errors, :price) ==
                {"can't be blank", [validation: :required]}
 
-      assert Keyword.get(changeset.errors, :user_id) ==
+      assert Keyword.get(changeset.errors, :area) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :address_id) ==
                {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :development_uuid) ==
                {"can't be blank", [validation: :required]}
-
-      assert Keyword.get(changeset.errors, :has_elevator) ==
-               {"is invalid", [type: :boolean, validation: :cast]}
-
-      assert Keyword.get(changeset.errors, :is_exclusive) ==
-               {"is invalid", [type: :boolean, validation: :cast]}
 
       assert Keyword.get(changeset.errors, :is_release) ==
                {"is invalid", [type: :boolean, validation: :cast]}

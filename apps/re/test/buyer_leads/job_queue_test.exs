@@ -114,7 +114,13 @@ defmodule Re.BuyerLeads.JobQueueTest do
     test "process lead with existing user and listing" do
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
-      %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: "+5511999999999", location: "SP")
+      %{uuid: uuid} =
+        insert(:facebook_buyer_lead,
+          phone_number: "+5511999999999",
+          location: "SP",
+          budget: "$1000 to $10000",
+          neighborhoods: "downtown"
+        )
 
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
@@ -124,6 +130,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
       assert buyer.location == "sao-paulo|sp"
+      assert buyer.budget == "$1000 to $10000"
     end
 
     test "process lead with nil phone" do
