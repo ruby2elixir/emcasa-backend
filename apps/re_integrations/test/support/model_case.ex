@@ -20,10 +20,12 @@ defmodule ReIntegrations.ModelCase do
   end
 
   setup tags do
+    :ok = Sandbox.checkout(Re.Repo)
     :ok = Sandbox.checkout(ReIntegrations.Repo)
 
     unless tags[:async] do
       Sandbox.mode(ReIntegrations.Repo, {:shared, self()})
+      Sandbox.mode(Re.Repo, {:shared, self()})
     end
 
     :ok
