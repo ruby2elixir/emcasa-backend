@@ -9,6 +9,7 @@ defmodule Re.BuyerLeads.JobQueue do
   require Logger
 
   alias Re.{
+    BuyerLeads.Budget,
     BuyerLeads.Facebook,
     BuyerLeads.Grupozap,
     BuyerLeads.ImovelWeb,
@@ -50,6 +51,15 @@ defmodule Re.BuyerLeads.JobQueue do
     |> Query.preload(listing: [:address])
     |> Repo.get_by(uuid: uuid)
     |> Interest.buyer_lead_changeset()
+    |> insert_buyer_lead(multi)
+    |> Repo.transaction()
+  end
+
+  def perform(%Multi{} = multi, %{"type" => "process_budget_buyer_lead", "uuid" => uuid}) do
+    Budget
+    |> Query.preload(:user)
+    |> Repo.get(uuid)
+    |> Budget.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
   end
