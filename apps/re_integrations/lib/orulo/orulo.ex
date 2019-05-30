@@ -5,6 +5,7 @@ defmodule ReIntegrations.Orulo do
   alias ReIntegrations.{
     Orulo.Building,
     Orulo.JobQueue,
+    Orulo.Mapper,
     Repo
   }
 
@@ -32,5 +33,17 @@ defmodule ReIntegrations.Orulo do
       "uuid" => uuid
     })
     |> Repo.transaction()
+  end
+
+  def insert_development_from_building(uuid) do
+    with building <- Repo.get(Building, uuid),
+         address_params <- Mapper.building_payload_into_address_params(building),
+         {:ok, new_address} <- Re.Addresses.insert_or_update(address_params),
+         development_params <- Mapper.building_payload_into_development_params(building),
+         {:ok, new_development} <- Re.Developments.insert(development_params, new_address) do
+      {:ok, new_development}
+    else
+      err -> err
+    end
   end
 end
