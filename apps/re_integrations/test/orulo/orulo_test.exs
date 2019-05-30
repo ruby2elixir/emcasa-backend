@@ -12,6 +12,8 @@ defmodule ReIntegrations.OruloTest do
 
   alias Ecto.Multi
 
+  import ReIntegrations.Factory
+
   describe "get_building_payload/2" do
     test "create o new job with to sync development" do
       assert {:ok, _} = Orulo.get_building_payload(100)
@@ -38,40 +40,10 @@ defmodule ReIntegrations.OruloTest do
     end
   end
 
-  @building %Building{
-    external_id: 999,
-    payload: %{
-      id: "999",
-      name: "EmCasa 01",
-      description:
-        "Com 3 dormitórios e espaços amplos, o apartamento foi desenhado de uma forma que permite ventilação e iluminação natural e generosas em praticamente todos os seus ambientes – e funciona quase como uma casa solta no ar. Na melhor localização de Perdizes: com ótimas escolas, restaurantes e lojinhas simpáticas no entorno.",
-      floor_area: 0.0,
-      apts_per_floor: 2,
-      number_of_floors: 8,
-      status: "Em construção",
-      webpage: "http://www.emcasa.com/",
-      developer: %{
-        id: "799",
-        name: "EmCasa Incorporadora"
-      },
-      address: %{
-        street_type: "Avenida",
-        street: "Copacabana",
-        number: 926,
-        area: "Copacabana",
-        city: "Rio de Janeiro",
-        latitude: -23.5345,
-        longitude: -46.6871,
-        state: "RJ",
-        zip_code: "05021-001"
-      }
-    }
-  }
-
   describe "insert_development_from_building/1" do
     test "create new address from building" do
       %{uuid: uuid} =
-        @building
+        build(:building)
         |> Building.changeset()
         |> Repo.insert!()
 
@@ -88,21 +60,21 @@ defmodule ReIntegrations.OruloTest do
     end
 
     test "create new development from building" do
-      %{payload: payload = %{developer: developer}} = @building
+      %{payload: payload = %{"developer" => developer}} = building = build(:building)
 
       %{uuid: uuid} =
-        @building
+        building
         |> Building.changeset()
         |> Repo.insert!()
 
       assert {:ok, development} = Orulo.insert_development_from_building(uuid)
-      assert development.name == Map.get(payload, :name)
-      assert development.description == Map.get(payload, :description)
+      assert development.name == Map.get(payload, "name")
+      assert development.description == Map.get(payload, "description")
       assert development.phase == "building"
-      assert development.floor_count == Map.get(payload, :number_of_floors)
-      assert development.units_per_floor == Map.get(payload, :apts_per_floor)
+      assert development.floor_count == Map.get(payload, "number_of_floors")
+      assert development.units_per_floor == Map.get(payload, "apts_per_floor")
 
-      assert development.builder == Map.get(developer, :name)
+      assert development.builder == Map.get(developer, "name")
     end
   end
 end

@@ -6,8 +6,11 @@ defmodule ReIntegrations.Orulo.Mapper do
     Orulo.Building
   }
 
+  @development_attributes ~w(name description developer number_of_floors apts_per_floor status)
   def building_payload_into_development_params(%Building{} = %{payload: payload}) do
-    Enum.reduce(payload, %{}, &convert_development_attribute(&1, &2))
+    payload
+    |> Map.take(@development_attributes)
+    |> Enum.reduce(%{}, &convert_development_attribute(&1, &2))
   end
 
   defp convert_development_attribute({"name", name}, acc), do: Map.put(acc, :name, name)
@@ -40,8 +43,11 @@ defmodule ReIntegrations.Orulo.Mapper do
 
   defp convert_development_attribute(_, acc), do: acc
 
+  @address_attributes ~w(street area city state zip_code latitude longitude number)
   def building_payload_into_address_params(%Building{} = %{payload: %{"address" => address}}) do
-    Enum.reduce(address, %{}, &convert_address_attribute(&1, &2))
+    address
+    |> Map.take(@address_attributes)
+    |> Enum.reduce(%{}, &convert_address_attribute(&1, &2))
   end
 
   defp convert_address_attribute({"street", street}, acc) do

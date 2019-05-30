@@ -27,7 +27,8 @@ defmodule ReIntegrations.Orulo do
 
     uuid = Changeset.get_field(changeset, :uuid)
 
-    Multi.insert(multi, :building, changeset)
+    multi
+    |> Multi.insert(:building, changeset)
     |> JobQueue.enqueue(:building_parse, %{
       "type" => "parse_building_into_development",
       "uuid" => uuid
