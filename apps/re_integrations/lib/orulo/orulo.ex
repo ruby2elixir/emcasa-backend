@@ -8,7 +8,10 @@ defmodule ReIntegrations.Orulo do
     Repo
   }
 
-  alias Ecto.Multi
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
 
   def get_building_payload(id) do
     %{"type" => "import_development_from_orulo", "external_id" => id}
@@ -17,13 +20,17 @@ defmodule ReIntegrations.Orulo do
   end
 
   def multi_building_insert(multi, params) do
-    %Building{}
-    |> Building.changeset(params)
-    |> insert_building_on_multi(multi)
-    |> Repo.transaction()
-  end
+    changeset =
+      %Building{}
+      |> Building.changeset(params)
 
-  defp insert_building_on_multi(changeset, multi) do
+    uuid = Changeset.get_field(changeset, :uuid)
+
     Multi.insert(multi, :building, changeset)
+    |> JobQueue.enqueue(:building_parse, %{
+      "type" => "parse_building_into_development",
+      "uuid" => uuid
+    })
+    |> Repo.transaction()
   end
 end
