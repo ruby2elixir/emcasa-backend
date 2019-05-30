@@ -23,7 +23,4 @@ defmodule ReIntegrations.Orulo.JobQueue do
       error -> Logger.error(error)
     end
   end
-
-  def perform(%Multi{} = multi, %{"type" => "parse_building_into_development", "uuid" => uuid}) do
-  end
 end

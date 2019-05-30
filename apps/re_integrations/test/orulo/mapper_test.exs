@@ -25,23 +25,22 @@ defmodule ReIntegrations.Orulo.MapperTest do
         name: "EmCasa Incorporadora"
       },
       address: %{
-        street_type: "Rua",
-        street: "Cotoxó",
+        street_type: "Avenida",
+        street: "Copacabana",
         number: 926,
-        area: "Perdizes",
-        city: "São Paulo",
+        area: "Copacabana",
+        city: "Rio de Janeiro",
         latitude: -23.5345,
         longitude: -46.6871,
-        state: "SP",
+        state: "RJ",
         zip_code: "05021-001"
       }
     }
   }
 
   describe "building_payload_into_development_params" do
-    @tag dev: true
     test "parse building payload into development" do
-      %{payload: payload} = @building
+      %{payload: %{developer: developer} = payload} = @building
       params = Mapper.building_payload_into_development_params(@building)
 
       assert params == %{
@@ -51,6 +50,24 @@ defmodule ReIntegrations.Orulo.MapperTest do
                floor_count: 8,
                units_per_floor: 2,
                phase: "building"
+             }
+    end
+  end
+
+  describe "building_payload_into_address_params" do
+    test "parse building payload into address params" do
+      %{payload: %{address: address}} = @building
+      params = Mapper.building_payload_into_address_params(@building)
+
+      assert params == %{
+               street: Map.get(address, :street),
+               neighborhood: Map.get(address, :area),
+               city: Map.get(address, :city),
+               state: Map.get(address, :state),
+               postal_code: Map.get(address, :zip_code),
+               lat: Map.get(address, :latitude),
+               lng: Map.get(address, :longitude),
+               street_number: Map.get(address, :number)
              }
     end
   end
