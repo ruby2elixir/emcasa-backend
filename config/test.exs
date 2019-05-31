@@ -78,3 +78,8 @@ config :re_integrations,
 config :junit_formatter,
   report_file: "report_file_test.xml",
   print_report_file: true
+
+config :cloudex,
+  api_key: "api_key",
+  secret: "secret",
+  cloud_name: "cloud"
