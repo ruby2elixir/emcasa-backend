@@ -1,26 +1,36 @@
 defmodule ReWeb.Monitoring do
   @moduledoc """
-  Configuration for Prometheus monitoring
+  Configuration for Prometheus monitoring for ReWeb app
   """
 
-  def setup() do
-    ReWeb.Endpoint.PhoenixInstrumenter.setup()
-    ReWeb.PlugPipelineInstrumenter.setup()
-    ReWeb.PlugExporter.setup()
-    require Prometheus.Registry
+  require Prometheus.Registry
+
+  alias ReWeb.{
+    Endpoint,
+    PlugExporter,
+    PlugPipelineInstrumenter
+  }
+
+  def setup do
+    Endpoint.PhoenixInstrumenter.setup()
+    PlugPipelineInstrumenter.setup()
+    PlugExporter.setup()
 
     Prometheus.Registry.register_collector(:prometheus_process_collector)
   end
 end
 
 defmodule ReWeb.PlugPipelineInstrumenter do
+  @moduledoc false
   use Prometheus.PlugPipelineInstrumenter
 end
 
 defmodule ReWeb.Endpoint.PhoenixInstrumenter do
+  @moduledoc false
   use Prometheus.PhoenixInstrumenter
 end
 
 defmodule ReWeb.PlugExporter do
+  @moduledoc false
   use Prometheus.PlugExporter
 end

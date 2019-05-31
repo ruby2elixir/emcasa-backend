@@ -1,11 +1,13 @@
 defmodule Re.Monitoring do
   @moduledoc """
-  Configuration for Prometheus monitoring
+  Configuration for Prometheus monitoring for Re app
   """
+  require Prometheus.Registry
 
-  def setup() do
-    Re.Repo.Instrumenter.setup()
-    require Prometheus.Registry
+  alias Re.Repo.Instrumenter
+
+  def setup do
+    Instrumenter.setup()
 
     Prometheus.Registry.register_collector(:prometheus_process_collector)
 
@@ -25,12 +27,13 @@ defmodule Re.Monitoring do
       :telemetry.attach(
         "prometheus-ecto",
         [:re, :repo, :query],
-        &Re.Repo.Instrumenter.handle_event/4,
+        &Instrumenter.handle_event/4,
         %{}
       )
   end
 end
 
 defmodule Re.Repo.Instrumenter do
+  @moduledoc false
   use Prometheus.EctoInstrumenter
 end
