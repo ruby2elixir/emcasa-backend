@@ -39,4 +39,5 @@ COPY priv/docker/scripts/wait-for-it.sh /usr/local/bin/
 COPY priv/docker/scripts/docker-entrypoint.sh /usr/local/bin/
 RUN chmod 755 /usr/local/bin/wait-for-it.sh \
     && chmod 755 /usr/local/bin/docker-entrypoint.sh
+RUN apk add --no-cache --update inotify-tools make g++
 CMD ["/usr/local/bin/docker-entrypoint.sh"]

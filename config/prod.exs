@@ -101,3 +101,6 @@ config :account_kit,
 config :sentry,
   filter: ReWeb.SentryEventFilter,
   dsn: System.get_env("SENTRY_DSN")
+
+config :prometheus, ReWeb.MetricsExporterPlug,
+  auth: {:basic, System.get_env("PROMETHEUS_USER"), System.get_env("PROMETHEUS_PASS")}

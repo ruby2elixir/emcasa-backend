@@ -7,13 +7,13 @@ defmodule ReWeb.Application do
 
   import Supervisor.Spec
 
-  alias ReWeb.{
-    Endpoint
-  }
+  alias ReWeb.Endpoint
 
   alias ReIntegrations.Pipedrive
 
   def start(_type, _args) do
+    ReWeb.Monitoring.setup()
+
     children =
       [
         supervisor(Endpoint, []),

@@ -17,7 +17,9 @@ defmodule Re.Umbrella.Mixfile do
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:timber, "~> 3.1"},
       {:excoveralls, "~> 0.10", only: :test},
-      {:junit_formatter, "~> 3.0", only: :test, runtime: false}
+      {:junit_formatter, "~> 3.0", only: :test, runtime: false},
+      {:prometheus_ex, "~> 3.0"},
+      {:prometheus_process_collector, "~> 1.0"}
     ]
   end
 

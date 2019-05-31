@@ -14,6 +14,9 @@ defmodule ReWeb.Endpoint do
     plug(Phoenix.CodeReloader)
   end
 
+  plug(ReWeb.PlugPipelineInstrumenter)
+  plug(ReWeb.PlugExporter)
+
   plug(Plug.RequestId)
 
   plug(

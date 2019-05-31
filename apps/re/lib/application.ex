@@ -17,7 +17,7 @@ defmodule Re.Application do
   }
 
   def start(_type, _args) do
-    attach_telemetry()
+    Re.Monitoring.setup()
 
     children =
       [
@@ -38,14 +38,4 @@ defmodule Re.Application do
       {BuyerLeads.JobQueue, repo: Repo},
       {Developments.JobQueue, repo: Repo}
     ]
-
-  defp attach_telemetry do
-    :ok =
-      :telemetry.attach(
-        "timber-ecto-query-handler",
-        [:re, :repo, :query],
-        &Timber.Ecto.handle_event/4,
-        []
-      )
-  end
 end

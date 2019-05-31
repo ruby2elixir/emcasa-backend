@@ -57,7 +57,9 @@ defmodule ReWeb.Mixfile do
       {:jason, "~> 1.0"},
       {:sentry, "~> 7.0"},
       {:proper_case, "~> 1.3"},
-      {:plug_checkup, "~> 0.5"}
+      {:plug_checkup, "~> 0.5"},
+      {:prometheus_phoenix, "~> 1.2"},
+      {:prometheus_plugs, "~> 1.1"}
     ]
   end
 
