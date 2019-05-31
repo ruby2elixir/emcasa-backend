@@ -47,8 +47,9 @@ defmodule ReIntegrations.OruloTest do
         |> Building.changeset()
         |> Repo.insert!()
 
-      Orulo.insert_development_from_building(uuid)
-      assert new_address = Re.Repo.one(Re.Address)
+      assert {:ok, %{insert_address: new_address}} =
+               Orulo.insert_development_from_building(Multi.new(), uuid)
+
       assert new_address.street == "Copacabana"
       assert new_address.street_number == "926"
       assert new_address.neighborhood == "Copacabana"
@@ -67,7 +68,10 @@ defmodule ReIntegrations.OruloTest do
         |> Building.changeset()
         |> Repo.insert!()
 
-      assert {:ok, development} = Orulo.insert_development_from_building(uuid)
+      assert {:ok, %{insert_development: development}} =
+               Orulo.insert_development_from_building(Multi.new(), uuid)
+
+      assert development.uuid
       assert development.name == Map.get(payload, "name")
       assert development.description == Map.get(payload, "description")
       assert development.phase == "building"

@@ -36,15 +36,29 @@ defmodule ReIntegrations.Orulo do
     |> Repo.transaction()
   end
 
-  def insert_development_from_building(uuid) do
-    with building <- Repo.get(Building, uuid),
+  def insert_development_from_building(multi, building_uuid) do
+    with building <- Repo.get(Building, building_uuid),
          address_params <- Mapper.building_payload_into_address_params(building),
-         {:ok, new_address} <- Re.Addresses.insert_or_update(address_params),
          development_params <- Mapper.building_payload_into_development_params(building),
-         {:ok, new_development} <- Re.Developments.insert(development_params, new_address) do
-      {:ok, new_development}
+         {:ok, transaction} <- insert_transaction(multi, address_params, development_params) do
+      {:ok, transaction}
     else
       err -> err
     end
   end
+
+  defp insert_transaction(multi, address_params, development_params) do
+    multi
+    |> Multi.run(:insert_address, fn _repo, _changes ->
+      insert_address(address_params)
+    end)
+    |> Multi.run(:insert_development, fn _repo, %{insert_address: new_address} ->
+      insert_development(development_params, new_address)
+    end)
+    |> Repo.transaction()
+  end
+
+  defp insert_address(params), do: Re.Addresses.insert_or_update(params)
+
+  defp insert_development(params, address), do: Re.Developments.insert(params, address)
 end

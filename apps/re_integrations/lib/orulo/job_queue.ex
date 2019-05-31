@@ -9,8 +9,7 @@ defmodule ReIntegrations.Orulo.JobQueue do
 
   alias ReIntegrations.{
     Orulo,
-    Orulo.Client,
-    Repo
+    Orulo.Client
   }
 
   alias Ecto.Multi
@@ -26,7 +25,6 @@ defmodule ReIntegrations.Orulo.JobQueue do
   end
 
   def perform(%Multi{} = multi, %{"type" => "parse_building_into_development", "uuid" => uuid}) do
-    Orulo.insert_development_from_building(uuid)
-    Repo.transaction(multi)
+    Orulo.insert_development_from_building(multi, uuid)
   end
 end
