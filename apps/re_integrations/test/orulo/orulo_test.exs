@@ -5,7 +5,7 @@ defmodule ReIntegrations.OruloTest do
 
   alias ReIntegrations.{
     Orulo,
-    Orulo.Building,
+    Orulo.BuildingPayload,
     Orulo.JobQueue,
     Repo
   }
@@ -40,15 +40,15 @@ defmodule ReIntegrations.OruloTest do
     end
   end
 
-  describe "insert_development_from_building/1" do
+  describe "insert_development_from_building_payload/1" do
     test "create new address from building" do
       %{uuid: uuid} =
         build(:building)
-        |> Building.changeset()
+        |> BuildingPayload.changeset()
         |> Repo.insert!()
 
       assert {:ok, %{insert_address: new_address}} =
-               Orulo.insert_development_from_building(Multi.new(), uuid)
+               Orulo.insert_development_from_building_payload(Multi.new(), uuid)
 
       assert new_address.street == "Copacabana"
       assert new_address.street_number == "926"
@@ -65,11 +65,11 @@ defmodule ReIntegrations.OruloTest do
 
       %{uuid: uuid} =
         building
-        |> Building.changeset()
+        |> BuildingPayload.changeset()
         |> Repo.insert!()
 
       assert {:ok, %{insert_development: development}} =
-               Orulo.insert_development_from_building(Multi.new(), uuid)
+               Orulo.insert_development_from_building_payload(Multi.new(), uuid)
 
       assert development.uuid
       assert development.name == Map.get(payload, "name")
