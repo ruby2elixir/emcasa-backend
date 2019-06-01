@@ -3,11 +3,11 @@ defmodule ReIntegrations.Orulo.Mapper do
   Module to map external structures into persistable internal structures.
   """
   alias ReIntegrations.{
-    Orulo.Building
+    Orulo.BuildingPayload
   }
 
   @development_attributes ~w(name description developer number_of_floors apts_per_floor status)
-  def building_payload_into_development_params(%Building{} = %{payload: payload}) do
+  def building_payload_into_development_params(%BuildingPayload{} = %{payload: payload}) do
     payload
     |> Map.take(@development_attributes)
     |> Enum.reduce(%{}, &convert_development_attribute(&1, &2))
@@ -44,7 +44,9 @@ defmodule ReIntegrations.Orulo.Mapper do
   defp convert_development_attribute(_, acc), do: acc
 
   @address_attributes ~w(street area city state zip_code latitude longitude number)
-  def building_payload_into_address_params(%Building{} = %{payload: %{"address" => address}}) do
+  def building_payload_into_address_params(
+        %BuildingPayload{} = %{payload: %{"address" => address}}
+      ) do
     address
     |> Map.take(@address_attributes)
     |> Enum.reduce(%{}, &convert_address_attribute(&1, &2))
