@@ -77,7 +77,6 @@ services:
   prometheus:
     image: 'prom/prometheus:latest'
     volumes:
-      - './ops/local/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
       - './priv/docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml'
     ports:
       - '9090:9090'
