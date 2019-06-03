@@ -25,6 +25,17 @@ defmodule ReIntegrations.Orulo.JobQueue do
     end
   end
 
+  def perform(%Multi{} = multi, %{"type" => "fetch_images_from_orulo", "external_id" => id}) do
+    with {:ok, %{body: body}} <- Client.get_images(id),
+         {:ok, payload} <- Jason.decode(body),
+         {:ok, _} <-
+           Orulo.multi_images_payload_insert(multi, %{external_id: id, payload: payload}) do
+    else
+      {:error, error} -> Logger.error(error)
+      error -> Logger.error(error)
+    end
+  end
+
   def perform(%Multi{} = multi, %{"type" => "parse_building_into_development", "uuid" => uuid}) do
     Orulo.insert_development_from_building_payload(multi, uuid)
   end
