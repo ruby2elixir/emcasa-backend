@@ -17,7 +17,8 @@ defmodule ReIntegrations.Orulo.JobQueue do
   def perform(%Multi{} = multi, %{"type" => "import_development_from_orulo", "external_id" => id}) do
     with {:ok, %{body: body}} <- Client.get_building(id),
          {:ok, payload} <- Jason.decode(body),
-         {:ok, _} <- Orulo.multi_building_insert(multi, %{external_id: id, payload: payload}) do
+         {:ok, _} <-
+           Orulo.multi_building_payload_insert(multi, %{external_id: id, payload: payload}) do
     else
       {:error, error} -> Logger.error(error)
       error -> Logger.error(error)

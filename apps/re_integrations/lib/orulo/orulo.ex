@@ -20,7 +20,7 @@ defmodule ReIntegrations.Orulo do
     |> Repo.insert()
   end
 
-  def multi_building_insert(multi, params) do
+  def multi_building_payload_insert(multi, params) do
     changeset =
       %BuildingPayload{}
       |> BuildingPayload.changeset(params)

@@ -21,12 +21,12 @@ defmodule ReIntegrations.OruloTest do
     end
   end
 
-  describe "multi_building_insert/2" do
+  describe "multi_building_payload_insert/2" do
     test "create new building" do
       params = %{external_id: 666, payload: %{test: "building_payload"}}
 
       assert {:ok, %{building: inserted_building}} =
-               Orulo.multi_building_insert(Multi.new(), params)
+               Orulo.multi_building_payload_insert(Multi.new(), params)
 
       assert inserted_building.uuid
       assert inserted_building.external_id == 666
@@ -35,7 +35,7 @@ defmodule ReIntegrations.OruloTest do
 
     test "enqueue a new parse job" do
       params = %{external_id: 666, payload: %{test: "building_payload"}}
-      assert {:ok, _} = Orulo.multi_building_insert(Multi.new(), params)
+      assert {:ok, _} = Orulo.multi_building_payload_insert(Multi.new(), params)
       assert Repo.one(JobQueue)
     end
   end
