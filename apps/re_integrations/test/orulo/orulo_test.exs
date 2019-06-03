@@ -80,5 +80,18 @@ defmodule ReIntegrations.OruloTest do
 
       assert development.builder == Map.get(developer, "name")
     end
+
+    test "enqueue a new job to fetch images" do
+      building = build(:building)
+
+      %{uuid: uuid} =
+        building
+        |> BuildingPayload.changeset()
+        |> Repo.insert!()
+
+      assert {:ok, _} = Orulo.insert_development_from_building_payload(Multi.new(), uuid)
+
+      assert Repo.one(JobQueue)
+    end
   end
 end

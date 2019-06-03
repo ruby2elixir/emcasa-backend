@@ -40,14 +40,15 @@ defmodule ReIntegrations.Orulo do
     with building <- Repo.get(BuildingPayload, building_uuid),
          address_params <- Mapper.building_payload_into_address_params(building),
          development_params <- Mapper.building_payload_into_development_params(building),
-         {:ok, transaction} <- insert_transaction(multi, address_params, development_params) do
+         {:ok, transaction} <-
+           insert_transaction(multi, address_params, development_params, building_uuid) do
       {:ok, transaction}
     else
       err -> err
     end
   end
 
-  defp insert_transaction(multi, address_params, development_params) do
+  defp insert_transaction(multi, address_params, development_params, building_uuid) do
     multi
     |> Multi.run(:insert_address, fn _repo, _changes ->
       insert_address(address_params)
@@ -55,6 +56,10 @@ defmodule ReIntegrations.Orulo do
     |> Multi.run(:insert_development, fn _repo, %{insert_address: new_address} ->
       insert_development(development_params, new_address)
     end)
+    |> JobQueue.enqueue(:fetch_images, %{
+      "type" => "fetch_images_from_orulo",
+      "uuid" => building_uuid
+    })
     |> Repo.transaction()
   end
 
