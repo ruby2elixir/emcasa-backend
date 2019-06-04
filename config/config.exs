@@ -17,7 +17,8 @@ config :re_web, ReWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "AFa6xCBxoVrAjCy3YRiSjY9e1TfUn75VT2QhSALdwJ+q/oA693/5mJ0OKptYSIID",
   render_errors: [view: ReWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: ReWeb.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: ReWeb.PubSub, adapter: Phoenix.PubSub.PG2],
+  instrumenters: [ReWeb.PlugPipelineInstrumenter, ReWeb.Endpoint.PhoenixInstrumenter]
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -69,6 +70,12 @@ config :phoenix, :json_library, Jason
 config :sentry,
   included_environments: ~w(production staging),
   environment_name: System.get_env("ENV") || "development"
+
+config :prometheus, ReWeb.PlugExporter,
+  path: "/metrics",
+  format: :auto,
+  registry: :default,
+  auth: false
 
 import_config "#{Mix.env()}.exs"
 

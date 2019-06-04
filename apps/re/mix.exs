@@ -24,7 +24,7 @@ defmodule Re.Mixfile do
   def application do
     [
       mod: {Re.Application, []},
-      extra_applications: [:logger, :runtime_tools, :sentry]
+      extra_applications: [:logger, :runtime_tools, :sentry, :prometheus_ex]
     ]
   end
 
@@ -56,7 +56,8 @@ defmodule Re.Mixfile do
       {:scrivener_ecto, "~> 2.1"},
       {:sentry, "~> 7.0"},
       {:jason, "~> 1.1"},
-      {:ecto_job, "~> 2.0"}
+      {:ecto_job, "~> 2.0"},
+      {:prometheus_ecto, "~> 1.4"}
     ]
   end
 

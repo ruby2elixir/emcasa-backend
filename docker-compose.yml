@@ -74,6 +74,15 @@ services:
       ELASTICSEARCH_HOSTNAME: *es_hostname
       SENTRY_DSN: ${SENTRY_DSN:-https://local@sentry/1}
     hostname: backend
+  prometheus:
+    image: 'prom/prometheus:latest'
+    volumes:
+      - './priv/docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml'
+    ports:
+      - '9090:9090'
+    hostname: prometheus
+    depends_on:
+      - backend
   app:
     image: 'abiosoft/caddy:0.11.2'
     networks:
@@ -84,6 +93,7 @@ services:
           - api.dev.emcasa.com
           - kibana.dev.emcasa.com
           - sentry.dev.emcasa.com
+          - prometheus.dev.emcasa.com
       default:
         aliases:
           - app
