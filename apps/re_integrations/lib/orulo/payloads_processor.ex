@@ -2,6 +2,10 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
   @moduledoc """
   Module to process payloads into internal representations.
   """
+
+  # @claudinary_client Cloudex
+  @cloudinary_client Application.get_env(:re_integrations, :cloudinary_client, Cloudex)
+
   alias ReIntegrations.{
     Orulo.BuildingPayload,
     Orulo.ImagePayload,
@@ -11,7 +15,6 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
   }
 
   alias Ecto.{
-    Changeset,
     Multi
   }
 
@@ -46,7 +49,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
 
   defp insert_development(params, address), do: Re.Developments.insert(params, address)
 
-  def insert_images_from_image_payload(multi, external_uuid, development_uuid) do
+  def insert_images_from_image_payload(_multi, external_uuid, development_uuid) do
     %{payload: %{"images" => image_payload}} = Repo.get(ImagePayload, external_uuid)
 
     image_url_list =
@@ -54,26 +57,36 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
       |> Enum.map(fn image -> Map.get(image, "1024x1024") end)
       |> Enum.map(fn image_url -> image_url end)
 
-    save_images(image_url_list, development_uuid)
+    image_url_list
+    |> upload_images()
+    |> save_images(development_uuid)
   end
 
-  def save_images(image_list, dev_uuid) do
-    upload_response = Cloudex.upload(image_list)
+  defp upload_images(image_list) do
+    upload_response = @cloudinary_client.upload(image_list)
 
-    {failed_uploads, success_uploads} =
-      Enum.split_with(upload_response, fn upload_result -> Map.has_key?(upload_result, :error) end)
+    {success_uploads, failed_uploads} =
+      Enum.split_with(upload_response, fn response -> success_response?(response) end)
 
     log_failed_response(failed_uploads)
 
-    Enum.map(success_uploads, fn image_upload -> Map.get(image_upload, :url) end)
-    |> Enum.map(&extract_filename/1)
-    |> Enum.map(fn image_upload -> %{filename: image_upload} end)
-    |> Enum.map(&Re.Images.insert(&1, Repo.get!(Re.Development, dev_uuid)))
+    success_uploads
   end
 
-  def log_failed_response(uploads), do: uploads
+  defp success_response?({:ok, _response}), do: true
+  defp success_response?(_), do: false
 
-  def extract_filename(filename) do
+  defp save_images(image_urls, _dev_uuid) do
+    Enum.map(image_urls, fn {:ok, url} -> Map.get(url, :url) end)
+    |> Enum.map(&extract_filename/1)
+    |> Enum.map(fn image_upload -> %{filename: image_upload} end)
+
+    # |> Enum.map(&Re.Images.insert(&1, Repo.get!(Re.Development, dev_uuid)))
+  end
+
+  defp log_failed_response(uploads), do: uploads
+
+  defp extract_filename(filename) do
     filename
     |> String.split("/")
     |> List.last()

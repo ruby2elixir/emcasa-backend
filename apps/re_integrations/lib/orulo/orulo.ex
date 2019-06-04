@@ -6,7 +6,6 @@ defmodule ReIntegrations.Orulo do
     Orulo.BuildingPayload,
     Orulo.ImagePayload,
     Orulo.JobQueue,
-    Orulo.Mapper,
     Repo
   }
 

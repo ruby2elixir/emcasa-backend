@@ -70,20 +70,27 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
       assert Repo.one(JobQueue)
     end
   end
+
+  describe "insert_images_from_image_payload/3" do
+    @tag dev: true
+    test "create new images from image payload" do
+      %{uuid: payload_uuid} =
+        build(:images_payload)
+        |> ImagePayload.changeset()
+        |> Repo.insert!()
+
+      %{uuid: development_uuid} = Re.Factory.insert(:development)
+
+      assert [%{filename: filename}] =
+               PayloadsProcessor.insert_images_from_image_payload(
+                 Multi.new(),
+                 payload_uuid,
+                 development_uuid
+               )
+    end
+
+    test "log upload error" do
+      assert 1 == 2
+    end
+  end
 end
-
-# describe "insert_images_from_image_payload/3" do
-#   @tag dev: true
-#   test "create new images from image payload" do
-#     %{uuid: payload_uuid} =
-#       build(:images_payload)
-#       |> ImagePayload.changeset()
-#       |> Repo.insert!()
-
-#     %{uuid: development_uuid} = Re.Factory.insert(:development)
-
-#     assert {:ok, _} =
-#              Orulo.insert_images_from_image_payload(Multi.new(), payload_uuid, development_uuid)
-
-#   end
-# end
