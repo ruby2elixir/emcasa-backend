@@ -36,4 +36,26 @@ defmodule ReIntegrations.Factory do
       }
     }
   end
+
+  def images_payload_factory do
+    %ReIntegrations.Orulo.ImagePayload{
+      external_id: 999,
+      payload: %{
+        "images" => [
+          %{
+            "id" => "100",
+            "description" => "Fachada",
+            "1024x1024" =>
+              "https://s3.amazonaws.com/uploaded.prod.corretordireto/images/properties/large/180227.jpg?1557215818"
+          },
+          %{
+            "id" => "101",
+            "description" => "Hall",
+            "1024x1024" =>
+              "https://s3.amazonaws.com/uploaded.prod.corretordireto/images/properties/large/180221.jpg?1557215921"
+          }
+        ]
+      }
+    }
+  end
 end
