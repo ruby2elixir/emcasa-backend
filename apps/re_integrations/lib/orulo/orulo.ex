@@ -3,7 +3,7 @@ defmodule ReIntegrations.Orulo do
   Context module to use importers.
   """
   alias ReIntegrations.{
-    Orulo.Building,
+    Orulo.BuildingPayload,
     Orulo.JobQueue,
     Orulo.Mapper,
     Repo
@@ -22,8 +22,8 @@ defmodule ReIntegrations.Orulo do
 
   def multi_building_insert(multi, params) do
     changeset =
-      %Building{}
-      |> Building.changeset(params)
+      %BuildingPayload{}
+      |> BuildingPayload.changeset(params)
 
     uuid = Changeset.get_field(changeset, :uuid)
 
@@ -36,8 +36,8 @@ defmodule ReIntegrations.Orulo do
     |> Repo.transaction()
   end
 
-  def insert_development_from_building(multi, building_uuid) do
-    with building <- Repo.get(Building, building_uuid),
+  def insert_development_from_building_payload(multi, building_uuid) do
+    with building <- Repo.get(BuildingPayload, building_uuid),
          address_params <- Mapper.building_payload_into_address_params(building),
          development_params <- Mapper.building_payload_into_development_params(building),
          {:ok, transaction} <- insert_transaction(multi, address_params, development_params) do

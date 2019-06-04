@@ -25,6 +25,6 @@ defmodule ReIntegrations.Orulo.JobQueue do
   end
 
   def perform(%Multi{} = multi, %{"type" => "parse_building_into_development", "uuid" => uuid}) do
-    Orulo.insert_development_from_building(multi, uuid)
+    Orulo.insert_development_from_building_payload(multi, uuid)
   end
 end

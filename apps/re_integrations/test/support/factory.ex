@@ -6,7 +6,7 @@ defmodule ReIntegrations.Factory do
   use ExMachina.Ecto, repo: ReIntegrations.Repo
 
   def building_factory do
-    %ReIntegrations.Orulo.Building{
+    %ReIntegrations.Orulo.BuildingPayload{
       external_id: 999,
       payload: %{
         "id" => "999",
