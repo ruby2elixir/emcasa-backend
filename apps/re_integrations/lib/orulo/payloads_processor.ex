@@ -47,34 +47,54 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
 
   defp insert_development(params, address), do: Re.Developments.insert(params, address)
 
-  def insert_images_from_image_payload(_multi, external_uuid, orulo_id) do
+  def insert_images_from_image_payload(multi, external_uuid, orulo_id) do
     %{payload: %{"images" => image_payload}} = Repo.get(ImagePayload, external_uuid)
 
     {:ok, development} = get_development_by_orulo_id(orulo_id)
 
-    image_payload
-    |> extract_url_from_payload()
-    |> upload_images()
-    |> save_images(development)
+    images_upload_response =
+      image_payload
+      |> extract_url_list_from_payload()
+      |> upload_images()
+
+    multi
+    |> Multi.run(:insert_images, fn _repo, _changes ->
+      case images_upload_response do
+        [_] ->
+          saved_images =
+            images_upload_response
+            |> extract_images_params_from_response()
+            |> save_images(development)
+
+          {:ok, saved_images}
+
+        [] ->
+          {:error, "Could not upload development images."}
+      end
+    end)
+    |> Repo.transaction()
   end
 
   defp upload_images(image_urls), do: Cloudinary.Client.upload(image_urls)
 
-  defp extract_url_from_payload(image_payload) do
+  @resolution "1024x1024"
+  defp extract_url_list_from_payload(image_payload) do
     image_payload
-    |> Enum.map(fn image -> Map.get(image, "1024x1024") end)
-    |> Enum.map(fn image_url -> image_url end)
+    |> Enum.map(fn image -> Map.get(image, @resolution) end)
   end
 
-  defp save_images(image_urls, development) do
-    params =
-      Enum.map(image_urls, fn {:ok, url} -> Map.get(url, :url) end)
-      |> Enum.map(&extract_filename/1)
-      |> Enum.map(fn image_upload -> %{filename: image_upload} end)
-
-    params
+  defp save_images(image_names, development) do
+    image_names
     |> Enum.map(&Re.Images.insert(&1, development))
   end
+
+  defp extract_images_params_from_response(uploaded_images) do
+    Enum.map(uploaded_images, &mount_filename_from_response/1)
+    |> Enum.map(fn filename -> %{filename: filename} end)
+  end
+
+  defp mount_filename_from_response({:ok, %{public_id: public_id, format: format}}),
+    do: "#{public_id}.#{format}"
 
   def get_development_by_orulo_id(orulo_id) do
     case Developments.get_by_orulo_id(orulo_id) do
@@ -84,11 +104,5 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
       error ->
         error
     end
-  end
-
-  defp extract_filename(filename) do
-    filename
-    |> String.split("/")
-    |> List.last()
   end
 end
