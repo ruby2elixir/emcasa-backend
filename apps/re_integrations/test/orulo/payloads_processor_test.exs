@@ -79,18 +79,16 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
         |> ImagePayload.changeset()
         |> Repo.insert!()
 
-      %{uuid: development_uuid} = Re.Factory.insert(:development)
+      Re.Factory.insert(:development, orulo_id: "999")
 
-      assert [%{filename: filename}] =
+      assert [ok: inserted_image] =
                PayloadsProcessor.insert_images_from_image_payload(
                  Multi.new(),
                  payload_uuid,
-                 development_uuid
+                 "999"
                )
-    end
 
-    test "log upload error" do
-      assert 1 == 2
+      assert inserted_image.filename == "qxo1cimsxmb2vnu5kcxw.jpg"
     end
   end
 end

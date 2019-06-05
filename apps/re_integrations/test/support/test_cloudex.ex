@@ -17,8 +17,8 @@ defmodule ReIntegrations.TestCloudex do
         resource_type: "image",
         secure_url:
           "https://res.cloudinary.com/emcasa/image/upload/v1559642962/qxo1cimsxmb2vnu5kcxw.jpg",
-        signature: "0b63c9b5f1b4cb0f140d1d424ff38eda9135cd22",
-        source: "/home/pmargreff/Pictures/chill/c.jpg",
+        signature: "xxx",
+        source: "/home/room.jpg",
         tags: [],
         type: "upload",
         url: "http://res.cloudinary.com/emcasa/image/upload/v1559642962/qxo1cimsxmb2vnu5kcxw.jpg",

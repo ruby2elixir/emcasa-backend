@@ -49,7 +49,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
 
   defp insert_development(params, address), do: Re.Developments.insert(params, address)
 
-  def insert_images_from_image_payload(_multi, external_uuid, development_uuid) do
+  def insert_images_from_image_payload(_multi, external_uuid, orulo_id) do
     %{payload: %{"images" => image_payload}} = Repo.get(ImagePayload, external_uuid)
 
     image_url_list =
@@ -59,7 +59,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
 
     image_url_list
     |> upload_images()
-    |> save_images(development_uuid)
+    |> save_images(orulo_id)
   end
 
   defp upload_images(image_list) do
@@ -76,12 +76,18 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
   defp success_response?({:ok, _response}), do: true
   defp success_response?(_), do: false
 
-  defp save_images(image_urls, _dev_uuid) do
-    Enum.map(image_urls, fn {:ok, url} -> Map.get(url, :url) end)
-    |> Enum.map(&extract_filename/1)
-    |> Enum.map(fn image_upload -> %{filename: image_upload} end)
+  defp save_images(image_urls, orulo_id) do
+    params =
+      Enum.map(image_urls, fn {:ok, url} -> Map.get(url, :url) end)
+      |> Enum.map(&extract_filename/1)
+      |> Enum.map(fn image_upload -> %{filename: image_upload} end)
 
-    # |> Enum.map(&Re.Images.insert(&1, Repo.get!(Re.Development, dev_uuid)))
+    development =
+      Re.Repo.get_by!(Re.Development, orulo_id: orulo_id)
+      |> Re.Repo.preload([:images])
+
+    params
+    |> Enum.map(&Re.Images.insert(&1, development))
   end
 
   defp log_failed_response(uploads), do: uploads
