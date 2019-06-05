@@ -31,7 +31,7 @@ defmodule Re.BuyerLeads do
 
     %EmptySearch{}
     |> EmptySearch.changeset(params)
-    |> Repo.insert()
+    |> insert_with_job("process_empty_search_buyer_lead")
   end
 
   defp insert_with_job(%{valid?: true} = changeset, type) do
