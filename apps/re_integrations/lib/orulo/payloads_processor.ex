@@ -3,10 +3,8 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
   Module to process payloads into internal representations.
   """
 
-  # @claudinary_client Cloudex
-  @cloudinary_client Application.get_env(:re_integrations, :cloudinary_client, Cloudex)
-
   alias ReIntegrations.{
+    Cloudinary,
     Orulo.BuildingPayload,
     Orulo.ImagePayload,
     Orulo.JobQueue,
@@ -52,29 +50,19 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
   def insert_images_from_image_payload(_multi, external_uuid, orulo_id) do
     %{payload: %{"images" => image_payload}} = Repo.get(ImagePayload, external_uuid)
 
-    image_url_list =
-      image_payload
-      |> Enum.map(fn image -> Map.get(image, "1024x1024") end)
-      |> Enum.map(fn image_url -> image_url end)
-
-    image_url_list
+    image_payload
+    |> extract_url_from_payload()
     |> upload_images()
     |> save_images(orulo_id)
   end
 
-  defp upload_images(image_list) do
-    upload_response = @cloudinary_client.upload(image_list)
+  defp upload_images(image_urls), do: Cloudinary.Client.upload(image_urls)
 
-    {success_uploads, failed_uploads} =
-      Enum.split_with(upload_response, fn response -> success_response?(response) end)
-
-    log_failed_response(failed_uploads)
-
-    success_uploads
+  defp extract_url_from_payload(image_payload) do
+    image_payload
+    |> Enum.map(fn image -> Map.get(image, "1024x1024") end)
+    |> Enum.map(fn image_url -> image_url end)
   end
-
-  defp success_response?({:ok, _response}), do: true
-  defp success_response?(_), do: false
 
   defp save_images(image_urls, orulo_id) do
     params =
@@ -89,8 +77,6 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
     params
     |> Enum.map(&Re.Images.insert(&1, development))
   end
-
-  defp log_failed_response(uploads), do: uploads
 
   defp extract_filename(filename) do
     filename

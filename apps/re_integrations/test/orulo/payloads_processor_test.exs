@@ -72,7 +72,6 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
   end
 
   describe "insert_images_from_image_payload/3" do
-    @tag dev: true
     test "create new images from image payload" do
       %{uuid: payload_uuid} =
         build(:images_payload)
