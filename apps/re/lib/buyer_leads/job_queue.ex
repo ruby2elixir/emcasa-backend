@@ -10,6 +10,7 @@ defmodule Re.BuyerLeads.JobQueue do
 
   alias Re.{
     BuyerLeads.Budget,
+    BuyerLeads.EmptySearch,
     BuyerLeads.Facebook,
     BuyerLeads.Grupozap,
     BuyerLeads.ImovelWeb,
@@ -60,6 +61,15 @@ defmodule Re.BuyerLeads.JobQueue do
     |> Query.preload(:user)
     |> Repo.get(uuid)
     |> Budget.buyer_lead_changeset()
+    |> insert_buyer_lead(multi)
+    |> Repo.transaction()
+  end
+
+  def perform(%Multi{} = multi, %{"type" => "process_empty_search_buyer_lead", "uuid" => uuid}) do
+    EmptySearch
+    |> Query.preload(:user)
+    |> Repo.get(uuid)
+    |> EmptySearch.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
   end
