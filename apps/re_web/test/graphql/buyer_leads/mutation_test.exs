@@ -148,7 +148,7 @@ defmodule ReWeb.GraphQL.BuyerLeads.MutationTest do
       assert buyer_lead["message"] == "ok"
     end
 
-    test "anonymous should add empty search buyer lead", %{
+    test "anonymous shouldn't add empty search buyer lead", %{
       unauthenticated_conn: conn
     } do
       %{state: state, city: city, url: url} = params_for(:empty_search_buyer_lead)
