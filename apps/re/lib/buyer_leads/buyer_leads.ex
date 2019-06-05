@@ -6,6 +6,7 @@ defmodule Re.BuyerLeads do
 
   alias Re.{
     BuyerLeads.Budget,
+    BuyerLeads.EmptySearch,
     BuyerLeads.JobQueue,
     Repo
   }
@@ -22,15 +23,23 @@ defmodule Re.BuyerLeads do
 
     %Budget{}
     |> Budget.changeset(params)
-    |> insert_with_job()
+    |> insert_with_job("process_budget_buyer_lead")
   end
 
-  defp insert_with_job(%{valid?: true} = changeset) do
+  def create_empty_search(params, %{uuid: uuid}) do
+    params = Map.merge(params, %{user_uuid: uuid})
+
+    %EmptySearch{}
+    |> EmptySearch.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp insert_with_job(%{valid?: true} = changeset, type) do
     uuid = Changeset.get_field(changeset, :uuid)
 
     Multi.new()
     |> JobQueue.enqueue(:process_buyer_lead_job, %{
-      "type" => "process_budget_buyer_lead",
+      "type" => type,
       "uuid" => uuid
     })
     |> Multi.insert(:add_buyer_lead, changeset)
