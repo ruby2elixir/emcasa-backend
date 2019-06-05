@@ -362,7 +362,7 @@ defmodule Re.Exporters.VivarealTest do
   end
 
   defp location_tags do
-    "<Location displayAddress=\"Street\">" <>
+    "<Location displayAddress=\"All\">" <>
       "<Country abbreviation=\"BR\">Brasil</Country>" <>
       "<State abbreviation=\"RJ\">Rio de Janeiro</State>" <>
       "<City>Rio de Janeiro</City>" <>
