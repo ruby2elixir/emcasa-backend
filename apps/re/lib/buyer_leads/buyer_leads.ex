@@ -55,5 +55,5 @@ defmodule Re.BuyerLeads do
     end
   end
 
-  defp insert_with_job(changeset), do: {:error, changeset}
+  defp insert_with_job(changeset, _), do: {:error, changeset}
 end

@@ -6,6 +6,8 @@ defmodule Re.BuyerLeads.EmptySearch do
 
   import Ecto.Changeset
 
+  alias Re.BuyerLead
+
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "empty_search_buyer_leads" do
@@ -43,4 +45,18 @@ defmodule Re.BuyerLeads.EmptySearch do
   end
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
+
+  def buyer_lead_changeset(nil), do: raise("BuyerLeads.EmptySearch not found")
+
+  def buyer_lead_changeset(lead) do
+    BuyerLead.changeset(%BuyerLead{}, %{
+      name: lead.user.name,
+      email: lead.user.email,
+      phone_number: lead.user.phone,
+      origin: "site",
+      location: "#{lead.city_slug}|#{lead.state_slug}",
+      user_uuid: lead.user_uuid,
+      url: lead.url
+    })
+  end
 end
