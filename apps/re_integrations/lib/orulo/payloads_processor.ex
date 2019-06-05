@@ -3,6 +3,10 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
   Module to process payloads into internal representations.
   """
 
+  alias Ecto.Multi
+
+  alias Re.Developments
+
   alias ReIntegrations.{
     Cloudinary,
     Orulo.BuildingPayload,
@@ -10,10 +14,6 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
     Orulo.JobQueue,
     Orulo.Mapper,
     Repo
-  }
-
-  alias Ecto.{
-    Multi
   }
 
   def insert_development_from_building_payload(multi, building_uuid) do
@@ -50,10 +50,12 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
   def insert_images_from_image_payload(_multi, external_uuid, orulo_id) do
     %{payload: %{"images" => image_payload}} = Repo.get(ImagePayload, external_uuid)
 
+    {:ok, development} = get_development_by_orulo_id(orulo_id)
+
     image_payload
     |> extract_url_from_payload()
     |> upload_images()
-    |> save_images(orulo_id)
+    |> save_images(development)
   end
 
   defp upload_images(image_urls), do: Cloudinary.Client.upload(image_urls)
@@ -64,18 +66,24 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
     |> Enum.map(fn image_url -> image_url end)
   end
 
-  defp save_images(image_urls, orulo_id) do
+  defp save_images(image_urls, development) do
     params =
       Enum.map(image_urls, fn {:ok, url} -> Map.get(url, :url) end)
       |> Enum.map(&extract_filename/1)
       |> Enum.map(fn image_upload -> %{filename: image_upload} end)
 
-    development =
-      Re.Repo.get_by!(Re.Development, orulo_id: orulo_id)
-      |> Re.Repo.preload([:images])
-
     params
     |> Enum.map(&Re.Images.insert(&1, development))
+  end
+
+  def get_development_by_orulo_id(orulo_id) do
+    case Developments.get_by_orulo_id(orulo_id) do
+      {:ok, development} ->
+        {:ok, Developments.preload(development, [:images])}
+
+      error ->
+        error
+    end
   end
 
   defp extract_filename(filename) do
