@@ -6,7 +6,7 @@ defmodule ReIntegrations.Orulo.Mapper do
     Orulo.BuildingPayload
   }
 
-  @development_attributes ~w(name description developer number_of_floors apts_per_floor status)
+  @development_attributes ~w(name description developer number_of_floors apts_per_floor status id)
   def building_payload_into_development_params(%BuildingPayload{} = %{payload: payload}) do
     payload
     |> Map.take(@development_attributes)
@@ -39,6 +39,10 @@ defmodule ReIntegrations.Orulo.Mapper do
   defp convert_development_attribute({"status", status}, acc) do
     phase = Map.get(@phase_map, status)
     Map.put(acc, :phase, phase)
+  end
+
+  defp convert_development_attribute({"id", orulo_id}, acc) do
+    Map.put(acc, :orulo_id, orulo_id)
   end
 
   defp convert_development_attribute(_, acc), do: acc

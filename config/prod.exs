@@ -104,3 +104,8 @@ config :sentry,
 
 config :prometheus, ReWeb.MetricsExporterPlug,
   auth: {:basic, System.get_env("PROMETHEUS_USER"), System.get_env("PROMETHEUS_PASS")}
+
+config :cloudex,
+  api_key: System.get_env("CLOUDINARY_API_KEY"),
+  secret: System.get_env("CLOUDINARY_SECRET"),
+  cloud_name: System.get_env("CLOUDINARY_CLOUD_NAME")

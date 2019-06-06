@@ -20,7 +20,8 @@ defmodule ReIntegrations.Orulo.MapperTest do
                builder: Map.get(developer, "name"),
                floor_count: Map.get(payload, "number_of_floors"),
                units_per_floor: Map.get(payload, "apts_per_floor"),
-               phase: "building"
+               phase: "building",
+               orulo_id: Map.get(payload, "id")
              }
     end
   end

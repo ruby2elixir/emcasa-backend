@@ -73,8 +73,14 @@ config :re_integrations,
   zapier_webhook_user: "testuser",
   zapier_webhook_pass: "testpass",
   priceteller_url: "http://www.emcasa.com/priceteller",
-  priceteller_token: "mahtoken"
+  priceteller_token: "mahtoken",
+  cloudinary_client: ReIntegrations.TestCloudex
 
 config :junit_formatter,
   report_file: "report_file_test.xml",
   print_report_file: true
+
+config :cloudex,
+  api_key: "api_key",
+  secret: "secret",
+  cloud_name: "cloud"

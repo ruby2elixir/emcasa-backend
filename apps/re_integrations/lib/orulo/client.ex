@@ -5,14 +5,22 @@ defmodule ReIntegrations.Orulo.Client do
 
   @http_client Application.get_env(:re_integrations, :http_client, HTTPoison)
   @base_url Application.get_env(:re_integrations, :orulo_url, "")
-  @client_token Application.get_env(:re_integrations, :orulo_client_token, "")
+  @api_token Application.get_env(:re_integrations, :orulo_api_token, "")
 
-  @client_headers [{"Authorization", "Bearer #{@client_token}"}]
+  @api_headers [{"Authorization", "Bearer #{@api_token}"}]
 
   def get_building(id) when is_integer(id) do
     @base_url
     |> build_uri("buildings/#{id}")
-    |> @http_client.get(@client_headers)
+    |> @http_client.get(@api_headers)
+  end
+
+  def get_images(id) do
+    dimensions_param = "dimensions[]=1024x1024"
+
+    @base_url
+    |> build_uri("buildings/#{id}/images?#{dimensions_param}")
+    |> @http_client.get(@api_headers)
   end
 
   def build_uri(url, type) do

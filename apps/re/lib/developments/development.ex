@@ -17,6 +17,7 @@ defmodule Re.Development do
     field :floor_count, :integer
     field :units_per_floor, :integer
     field :elevators, :integer
+    field :orulo_id, :string
 
     belongs_to :address, Re.Address
 
@@ -31,7 +32,7 @@ defmodule Re.Development do
 
   @required ~w(name phase builder description address_id)a
 
-  @optional ~w(floor_count units_per_floor elevators)a
+  @optional ~w(floor_count units_per_floor elevators orulo_id)a
 
   def changeset(struct, params \\ %{}) do
     struct

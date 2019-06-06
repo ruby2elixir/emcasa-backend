@@ -4,8 +4,8 @@ defmodule ReIntegrations.Orulo do
   """
   alias ReIntegrations.{
     Orulo.BuildingPayload,
+    Orulo.ImagePayload,
     Orulo.JobQueue,
-    Orulo.Mapper,
     Repo
   }
 
@@ -20,7 +20,7 @@ defmodule ReIntegrations.Orulo do
     |> Repo.insert()
   end
 
-  def multi_building_insert(multi, params) do
+  def multi_building_payload_insert(multi, params) do
     changeset =
       %BuildingPayload{}
       |> BuildingPayload.changeset(params)
@@ -36,29 +36,19 @@ defmodule ReIntegrations.Orulo do
     |> Repo.transaction()
   end
 
-  def insert_development_from_building_payload(multi, building_uuid) do
-    with building <- Repo.get(BuildingPayload, building_uuid),
-         address_params <- Mapper.building_payload_into_address_params(building),
-         development_params <- Mapper.building_payload_into_development_params(building),
-         {:ok, transaction} <- insert_transaction(multi, address_params, development_params) do
-      {:ok, transaction}
-    else
-      err -> err
-    end
-  end
+  def multi_images_payload_insert(multi, params) do
+    changeset =
+      %ImagePayload{}
+      |> ImagePayload.changeset(params)
 
-  defp insert_transaction(multi, address_params, development_params) do
+    uuid = Changeset.get_field(changeset, :uuid)
+
     multi
-    |> Multi.run(:insert_address, fn _repo, _changes ->
-      insert_address(address_params)
-    end)
-    |> Multi.run(:insert_development, fn _repo, %{insert_address: new_address} ->
-      insert_development(development_params, new_address)
-    end)
+    |> Multi.insert(:insert_images_payload, changeset)
+    |> JobQueue.enqueue(:parse_images_job, %{
+      "type" => "parse_images_payloads_into_images",
+      "uuid" => uuid
+    })
     |> Repo.transaction()
   end
-
-  defp insert_address(params), do: Re.Addresses.insert_or_update(params)
-
-  defp insert_development(params, address), do: Re.Developments.insert(params, address)
 end
