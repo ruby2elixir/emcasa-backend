@@ -51,9 +51,9 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
 
   defp insert_development(params, address), do: Re.Developments.insert(params, address)
 
-  def insert_images_from_image_payload(multi, external_uuid) do
+  def insert_images_from_image_payload(multi, payload_uuid) do
     %{payload: %{"images" => image_payload}, external_id: orulo_id} =
-      Repo.get(ImagePayload, external_uuid)
+      Repo.get(ImagePayload, payload_uuid)
 
     {:ok, development} = get_development_by_orulo_id(orulo_id)
 
@@ -66,6 +66,10 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
     |> Multi.run(:insert_images, fn _repo, _changes ->
       case images_upload_response do
         [] ->
+          Sentry.capture_message("images_upload_failed",
+            extra: %{payload_uuid: payload_uuid, payload: image_payload}
+          )
+
           {:error, "Could not upload development images."}
 
         _ ->
