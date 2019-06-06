@@ -9,7 +9,7 @@ defmodule ReIntegrations.Cloudinary.ClientTest do
   describe "upload/1" do
     @tag capture_log: true
     test "return only success uploads when failed upload image" do
-      assert [_] = ReIntegrations.Cloudinary.Client.upload(["/garage.jpg", "/room.jpg"])
+      assert [_] = Client.upload(["/garage.jpg", "/room.jpg"])
     end
 
     test "log failed uploads" do
