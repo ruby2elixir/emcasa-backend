@@ -56,7 +56,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
       assert development.builder == Map.get(developer, "name")
     end
 
-    test "enqueue a new job to fetch images" do
+    test "enqueue fetch images and process tag jobs" do
       building = build(:building)
 
       %{uuid: uuid} =
@@ -67,7 +67,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
       assert {:ok, _} =
                PayloadsProcessor.insert_development_from_building_payload(Multi.new(), uuid)
 
-      assert Repo.one(JobQueue)
+      assert 2 == Enum.count(Repo.all(JobQueue))
     end
   end
 
@@ -87,6 +87,63 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
         )
 
       assert inserted_image.filename == "qxo1cimsxmb2vnu5kcxw.jpg"
+    end
+  end
+
+  describe "process_orulo_tags/2" do
+    test "create new tags from building payload" do
+      Re.Factory.insert(:tag, name: "Academia", name_slug: "academia")
+      Re.Factory.insert(:tag, name: "Portaria Eletrônica", name_slug: "portaria-eletronica")
+      %{uuid: building_uuid} = insert(:building)
+
+      development = Re.Factory.insert(:development, orulo_id: "999")
+
+      {:ok, %{insert_tags: _}} = PayloadsProcessor.process_orulo_tags(Multi.new(), building_uuid)
+
+      development = Re.Repo.preload(development, :tags)
+      assert 2 == Enum.count(development.tags)
+    end
+
+    test "do not create new tags when there's no feature on payload" do
+      %{uuid: building_uuid} =
+        insert(:building,
+          payload: %{
+            "id" => "999",
+            "name" => "EmCasa 01",
+            "description" =>
+              "Com 3 dormitórios e espaços amplos, o apartamento foi desenhado de uma forma que permite ventilação e iluminação natural e generosas em praticamente todos os seus ambientes – e funciona quase como uma casa solta no ar. Na melhor localização de Perdizes: com ótimas escolas, restaurantes e lojinhas simpáticas no entorno.",
+            "floor_area" => 0.0,
+            "apts_per_floor" => 2,
+            "number_of_floors" => 8,
+            "status" => "Em construção",
+            "webpage" => "http://www.emcasa.com/",
+            "developer" => %{
+              "id" => "799",
+              "name" => "EmCasa Incorporadora"
+            },
+            "address" => %{
+              "street_type" => "Avenida",
+              "street" => "Copacabana",
+              "number" => 926,
+              "area" => "Copacabana",
+              "city" => "Rio de Janeiro",
+              "latitude" => -23.5345,
+              "longitude" => -46.6871,
+              "state" => "RJ",
+              "zip_code" => "05021-001"
+            }
+          }
+        )
+
+      Re.Factory.insert(:tag, name: "Academia", name_slug: "academia")
+      Re.Factory.insert(:tag, name: "Portaria Eletrônica", name_slug: "portaria-eletronica")
+
+      development = Re.Factory.insert(:development, orulo_id: "999")
+
+      {:ok, %{insert_tags: _}} = PayloadsProcessor.process_orulo_tags(Multi.new(), building_uuid)
+
+      development = Re.Repo.preload(development, :tags)
+      assert 0 == Enum.count(development.tags)
     end
   end
 end

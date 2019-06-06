@@ -7,6 +7,7 @@ defmodule ReIntegrations.Factory do
 
   def building_factory do
     %ReIntegrations.Orulo.BuildingPayload{
+      uuid: UUID.uuid4(),
       external_id: 999,
       payload: %{
         "id" => "999",
@@ -32,7 +33,13 @@ defmodule ReIntegrations.Factory do
           "longitude" => -46.6871,
           "state" => "RJ",
           "zip_code" => "05021-001"
-        }
+        },
+        "features" => [
+          "Fitness",
+          "Fitness ao ar livre",
+          "Invalid Feature",
+          "Porteiro eletrônico"
+        ]
       }
     }
   end
