@@ -10,16 +10,18 @@ defmodule Re.DevelopmentTag do
 
   schema "developments_tags" do
     belongs_to :listing, Re.Development,
-      type: :binary_id,
+      type: Ecto.UUID,
       foreign_key: :development_uuid,
       references: :uuid,
       primary_key: true
 
     belongs_to :tag, Re.Tag,
-      type: :binary_id,
+      type: Ecto.UUID,
       foreign_key: :tag_uuid,
       references: :uuid,
       primary_key: true
+
+    timestamps(type: :utc_datetime)
   end
 
   @params ~w(development_uuid tag_uuid)a

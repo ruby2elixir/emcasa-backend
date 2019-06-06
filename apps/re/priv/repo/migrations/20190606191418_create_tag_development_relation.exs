@@ -7,6 +7,8 @@ defmodule Re.Repo.Migrations.CreateTagDevelopmentRelation do
         primary_key: true
 
       add :tag_uuid, references(:tags, column: :uuid, type: :uuid), primary_key: true
+
+      timestamps(type: :timestamptz)
     end
 
     create index(:developments_tags, [:development_uuid, :tag_uuid])
