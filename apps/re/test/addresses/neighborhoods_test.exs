@@ -57,17 +57,25 @@ defmodule Re.NeighborhoodsTest do
 
   describe "is_covered/1" do
     setup do
-      district =
-        insert(:district,
-          state: "RJ",
-          state_slug: "rj",
-          name: "Humaitá",
-          name_slug: "humaita",
-          city: "Rio de Janeiro",
-          city_slug: "rio-de-janeiro"
-        )
+      insert(:district,
+        state: "RJ",
+        state_slug: "rj",
+        name: "Humaitá",
+        name_slug: "humaita",
+        city: "Rio de Janeiro",
+        city_slug: "rio-de-janeiro"
+      )
 
-      {:ok, district: district}
+      insert(:district,
+        state: "SP",
+        state_slug: "sp",
+        name: "Vila Pompeia",
+        name_slug: "vila-pompeia",
+        city: "São Paulo",
+        city_slug: "sao-paulo"
+      )
+
+      :ok
     end
 
     test "should be true when neighborhood exists" do
@@ -98,6 +106,11 @@ defmodule Re.NeighborhoodsTest do
     test "should be false when state does not exists" do
       neighborhood = %{state: "RJ", neighborhood: "Humaitá", city: "Porto Alegre"}
       refute Neighborhoods.is_covered(neighborhood)
+    end
+
+    test "should be true when alternative name is provided" do
+      neighborhood = %{state: "SP", neighborhood: "Pompeia", city: "São Paulo"}
+      assert Neighborhoods.is_covered(neighborhood)
     end
   end
 end
