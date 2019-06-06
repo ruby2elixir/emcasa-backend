@@ -21,14 +21,18 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
          address_params <- Mapper.building_payload_into_address_params(building),
          development_params <- Mapper.building_payload_into_development_params(building),
          {:ok, transaction} <-
-           insert_transaction(multi, address_params, development_params, building_uuid) do
+           insert_transaction(multi, address_params, development_params) do
       {:ok, transaction}
     else
       err -> err
     end
   end
 
-  defp insert_transaction(multi, address_params, development_params, building_uuid) do
+  defp insert_transaction(
+         multi,
+         address_params,
+         development_params = %{orulo_id: orulo_id}
+       ) do
     multi
     |> Multi.run(:insert_address, fn _repo, _changes ->
       insert_address(address_params)
@@ -38,7 +42,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
     end)
     |> JobQueue.enqueue(:fetch_images, %{
       "type" => "fetch_images_from_orulo",
-      "uuid" => building_uuid
+      "external_id" => orulo_id
     })
     |> Repo.transaction()
   end
@@ -47,8 +51,9 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
 
   defp insert_development(params, address), do: Re.Developments.insert(params, address)
 
-  def insert_images_from_image_payload(multi, external_uuid, orulo_id) do
-    %{payload: %{"images" => image_payload}} = Repo.get(ImagePayload, external_uuid)
+  def insert_images_from_image_payload(multi, external_uuid) do
+    %{payload: %{"images" => image_payload}, external_id: orulo_id} =
+      Repo.get(ImagePayload, external_uuid)
 
     {:ok, development} = get_development_by_orulo_id(orulo_id)
 
@@ -60,16 +65,16 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
     multi
     |> Multi.run(:insert_images, fn _repo, _changes ->
       case images_upload_response do
-        [_] ->
+        [] ->
+          {:error, "Could not upload development images."}
+
+        _ ->
           saved_images =
             images_upload_response
             |> extract_images_params_from_response()
             |> save_images(development)
 
           {:ok, saved_images}
-
-        [] ->
-          {:error, "Could not upload development images."}
       end
     end)
     |> Repo.transaction()
@@ -97,7 +102,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
     do: "#{public_id}.#{format}"
 
   def get_development_by_orulo_id(orulo_id) do
-    case Developments.get_by_orulo_id(orulo_id) do
+    case Developments.get_by_orulo_id(Integer.to_string(orulo_id)) do
       {:ok, development} ->
         {:ok, Developments.preload(development, [:images])}
 

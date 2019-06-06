@@ -83,8 +83,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
       {:ok, %{insert_images: [ok: inserted_image]}} =
         PayloadsProcessor.insert_images_from_image_payload(
           Multi.new(),
-          payload_uuid,
-          "999"
+          payload_uuid
         )
 
       assert inserted_image.filename == "qxo1cimsxmb2vnu5kcxw.jpg"

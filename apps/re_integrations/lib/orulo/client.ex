@@ -5,7 +5,7 @@ defmodule ReIntegrations.Orulo.Client do
 
   @http_client Application.get_env(:re_integrations, :http_client, HTTPoison)
   @base_url Application.get_env(:re_integrations, :orulo_url, "")
-  @api_token Application.get_env(:re_integrations, :orulo_client_token, "")
+  @api_token Application.get_env(:re_integrations, :orulo_api_token, "")
 
   @api_headers [{"Authorization", "Bearer #{@api_token}"}]
 
@@ -15,7 +15,7 @@ defmodule ReIntegrations.Orulo.Client do
     |> @http_client.get(@api_headers)
   end
 
-  def get_images(id) when is_integer(id) do
+  def get_images(id) do
     dimensions_param = "dimensions[]=1024x1024"
 
     @base_url

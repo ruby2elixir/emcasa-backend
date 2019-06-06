@@ -42,10 +42,9 @@ defmodule ReIntegrations.Orulo.JobQueue do
   end
 
   def perform(%Multi{} = multi, %{
-        "type" => "parse_building_into_development",
-        "uuid" => uuid,
-        "development_uuid" => development_uuid
+        "type" => "parse_images_payloads_into_images",
+        "uuid" => uuid
       }) do
-    PayloadsProcessor.insert_images_from_image_payload(multi, uuid, development_uuid)
+    PayloadsProcessor.insert_images_from_image_payload(multi, uuid)
   end
 end
