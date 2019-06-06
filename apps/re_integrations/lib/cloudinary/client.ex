@@ -1,4 +1,8 @@
 defmodule ReIntegrations.Cloudinary.Client do
+  @moduledoc """
+  Client to handle images through cloudinary.
+  """
+
   @client Application.get_env(:re_integrations, :cloudinary_client, Cloudex)
 
   require Logger
@@ -6,12 +10,12 @@ defmodule ReIntegrations.Cloudinary.Client do
   def upload(image_list) do
     upload_response = @client.upload(image_list)
 
-    {success_uploads, failed_uploads} =
+    {successful_uploads, failed_uploads} =
       Enum.split_with(upload_response, fn response -> success_response?(response) end)
 
     log_failed_uploads(failed_uploads)
 
-    success_uploads
+    successful_uploads
   end
 
   defp success_response?({:ok, _response}), do: true

@@ -31,7 +31,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
   defp insert_transaction(
          multi,
          address_params,
-         development_params = %{orulo_id: orulo_id}
+         %{orulo_id: orulo_id} = development_params
        ) do
     multi
     |> Multi.run(:insert_address, fn _repo, _changes ->
@@ -94,7 +94,8 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
   end
 
   defp extract_images_params_from_response(uploaded_images) do
-    Enum.map(uploaded_images, &mount_filename_from_response/1)
+    uploaded_images
+    |> Enum.map(&mount_filename_from_response/1)
     |> Enum.map(fn filename -> %{filename: filename} end)
   end
 
