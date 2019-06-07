@@ -10,7 +10,8 @@ defmodule Re.BuyerLeads.Facebook do
 
   alias Re.{
     Accounts.Users,
-    BuyerLead
+    BuyerLead,
+    BuyerLeads.FacebookClient
   }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
@@ -48,6 +49,8 @@ defmodule Re.BuyerLeads.Facebook do
   def buyer_lead_changeset(nil), do: raise("Leads.FacebookBuyer not found")
 
   def buyer_lead_changeset(lead) do
+    {:ok, listing_uuid} = extract_listing_uuid(lead.lead_id)
+
     BuyerLead.changeset(%BuyerLead{}, %{
       name: lead.full_name,
       email: lead.email,
@@ -56,6 +59,7 @@ defmodule Re.BuyerLeads.Facebook do
       location: get_location(lead.location),
       budget: lead.budget,
       user_uuid: extract_user_uuid(lead.phone_number),
+      listing_uuid: listing_uuid,
       neighborhood: lead.neighborhoods
     })
   end
@@ -70,6 +74,21 @@ defmodule Re.BuyerLeads.Facebook do
     case Users.get_by_phone(phone_number) do
       {:ok, user} -> user.uuid
       _error -> nil
+    end
+  end
+
+  defp extract_listing_uuid(lead_id) do
+    with {:ok, %{body: body}} <- FacebookClient.get_lead(lead_id),
+         {:ok, %{"retailer_item_id" => listing_id}} <- Jason.decode(body),
+         {:ok, listing} <- Re.Listings.get(listing_id) do
+      {:ok, listing.uuid}
+    else
+      error ->
+        Sentry.capture_message("error when processing facebook buyer lead",
+          extra: %{lead_id: lead_id, error: error}
+        )
+
+        {:ok, nil}
     end
   end
 end
