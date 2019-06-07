@@ -387,5 +387,47 @@ defmodule Re.Listings.FiltersTest do
     end
   end
 
+  describe "apply/2: filter by bathrooms" do
+    test "filter by max" do
+      %{id: id} = insert(:listing, bathrooms: 1)
+      insert(:listing, bathrooms: 2)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_bathrooms: 1})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+      assert 1 == Enum.count(result)
+    end
+
+    test "filter by min" do
+      %{id: id} = insert(:listing, bathrooms: 2)
+      insert(:listing, bathrooms: 1)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_bathrooms: 2})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+      assert 1 == Enum.count(result)
+    end
+
+    test "filter by max and min" do
+      insert(:listing, bathrooms: 1)
+      %{id: id} = insert(:listing, bathrooms: 3)
+      insert(:listing, bathrooms: 5)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_bathrooms: 2, max_bathrooms: 4})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+      assert 1 == Enum.count(result)
+    end
+  end
+
   defp map_id(items), do: Enum.map(items, & &1.id)
 end
