@@ -41,13 +41,11 @@ defmodule Re.Tags do
   end
 
   def get(uuid, user) do
-    tag =
-      %{uuid: uuid}
-      |> query_visibility(user)
-      |> Queries.filter_by()
-      |> Repo.one()
-
-    case tag do
+    %{uuid: uuid}
+    |> query_visibility(user)
+    |> Queries.filter_by()
+    |> Repo.one()
+    |> case do
       nil -> {:error, :not_found}
       tag -> {:ok, tag}
     end

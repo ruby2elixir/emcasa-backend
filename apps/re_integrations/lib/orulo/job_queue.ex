@@ -47,4 +47,11 @@ defmodule ReIntegrations.Orulo.JobQueue do
       }) do
     PayloadsProcessor.insert_images_from_image_payload(multi, uuid)
   end
+
+  def perform(%Multi{} = multi, %{
+        "type" => "process_orulo_tags",
+        "uuid" => uuid
+      }) do
+    PayloadsProcessor.process_orulo_tags(multi, uuid)
+  end
 end

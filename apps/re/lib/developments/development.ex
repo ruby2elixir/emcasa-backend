@@ -25,6 +25,11 @@ defmodule Re.Development do
     has_many :images, Re.Image
     has_many :listings, Re.Listing
 
+    many_to_many :tags, Re.Tag,
+      join_through: Re.DevelopmentTag,
+      join_keys: [development_uuid: :uuid, tag_uuid: :uuid],
+      on_replace: :delete
+
     timestamps()
   end
 

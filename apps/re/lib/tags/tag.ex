@@ -24,6 +24,11 @@ defmodule Re.Tag do
       join_keys: [tag_uuid: :uuid, listing_uuid: :uuid],
       on_replace: :delete
 
+    many_to_many :developments, Re.Development,
+      join_through: Re.DevelopmentTag,
+      join_keys: [tag_uuid: :uuid, development_uuid: :uuid],
+      on_replace: :delete
+
     timestamps()
   end
 
