@@ -1,4 +1,7 @@
 defmodule Re.BuyerLeads.FacebookClient do
+  @moduledoc """
+  Module for facebook http API
+  """
   require Mockery.Macro
 
   @token Application.get_env(:re, :facebook_access_token, "")
@@ -16,5 +19,5 @@ defmodule Re.BuyerLeads.FacebookClient do
     |> Map.put(:query, URI.encode_query(%{access_token: @token}))
   end
 
-  defp http_client(), do: Mockery.Macro.mockable(HTTPoison)
+  defp http_client, do: Mockery.Macro.mockable(HTTPoison)
 end

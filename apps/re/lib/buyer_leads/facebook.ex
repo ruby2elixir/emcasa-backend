@@ -10,7 +10,8 @@ defmodule Re.BuyerLeads.Facebook do
 
   alias Re.{
     Accounts.Users,
-    BuyerLead
+    BuyerLead,
+    BuyerLeads.FacebookClient
   }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
@@ -78,7 +79,7 @@ defmodule Re.BuyerLeads.Facebook do
 
   defp extract_listing_uuid(lead_id) do
     with {:facebook_client_call, {:ok, %{body: body}}} <-
-           {:facebook_client_call, Re.BuyerLeads.FacebookClient.get_lead(lead_id)},
+           {:facebook_client_call, FacebookClient.get_lead(lead_id)},
          {:ok, %{"retailer_item_id" => listing_id}} <- Jason.decode(body),
          {:ok, listing} <- Re.Listings.get(listing_id) do
       {:ok, listing.uuid}
