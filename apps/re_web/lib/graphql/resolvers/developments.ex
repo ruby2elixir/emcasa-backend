@@ -1,4 +1,6 @@
 defmodule ReWeb.Resolvers.Developments do
+  @moduledoc false
+
   alias Re.{
     Addresses,
     Developments
@@ -44,6 +46,13 @@ defmodule ReWeb.Resolvers.Developments do
          {:ok, address} <- get_address(development_params),
          {:ok, development} <- Developments.update(development, development_params, address) do
       {:ok, development}
+    end
+  end
+
+  def import_from_orulo(%{external_id: id}, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Developments, :import_development_from_orulo, current_user),
+         {:ok, _job} <- ReIntegrations.Orulo.get_building_payload(id) do
+      {:ok, %{message: "Development syncronization scheduled!"}}
     end
   end
 

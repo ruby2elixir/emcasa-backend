@@ -27,6 +27,13 @@ defmodule Re.Developments do
 
   def get(uuid), do: do_get(Development, uuid)
 
+  def get_by_orulo_id(orulo_id) do
+    case Repo.get_by(Development, orulo_id: orulo_id) do
+      nil -> {:error, :not_found}
+      development -> {:ok, development}
+    end
+  end
+
   def get_preloaded(uuid, preload),
     do: do_get(Queries.preload_relations(Development, preload), uuid)
 
@@ -45,6 +52,8 @@ defmodule Re.Developments do
     |> Development.changeset(params)
     |> Repo.insert()
   end
+
+  def preload(development, preload), do: Re.Repo.preload(development, preload)
 
   def update(development, params, address) do
     development

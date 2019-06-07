@@ -26,7 +26,16 @@ config :re, Re.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true,
-  migration_source: "old_schema_migrations"
+  migration_source: "old_schema_migrations",
+  facebook_access_token: System.get_env("FACEBOOK_ACCESS_TOKEN")
+
+config :re_integrations, ReIntegrations.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  url: System.get_env("DATABASE_URL"),
+  pool_size: String.to_integer(System.get_env("RE_INTEGRATIONS_POLL_SIZE")) || 10,
+  ssl: true,
+  migration_source: "re_integrations_schema_migrations",
+  migration_default_prefix: "re_integrations"
 
 config :re_integrations, ReIntegrations.Notifications.Emails.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
@@ -67,7 +76,10 @@ config :re_integrations,
   zapier_webhook_user: System.get_env("ZAPIER_WEBHOOK_USER"),
   zapier_webhook_pass: System.get_env("ZAPIER_WEBHOOK_PASS"),
   priceteller_url: System.get_env("PRICETELLER_URL"),
-  priceteller_token: System.get_env("PRICETELLER_TOKEN")
+  priceteller_token: System.get_env("PRICETELLER_TOKEN"),
+  orulo_url: System.get_env("ORULO_URL"),
+  orulo_api_token: System.get_env("ORULO_API_TOKEN"),
+  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN")
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
@@ -86,3 +98,11 @@ config :account_kit,
 config :sentry,
   filter: ReWeb.SentryEventFilter,
   dsn: System.get_env("SENTRY_DSN")
+
+config :prometheus, ReWeb.MetricsExporterPlug,
+  auth: {:basic, System.get_env("PROMETHEUS_USER"), System.get_env("PROMETHEUS_PASS")}
+
+config :cloudex,
+  api_key: System.get_env("CLOUDINARY_API_KEY"),
+  secret: System.get_env("CLOUDINARY_SECRET"),
+  cloud_name: System.get_env("CLOUDINARY_CLOUD_NAME")

@@ -17,12 +17,18 @@ defmodule Re.Development do
     field :floor_count, :integer
     field :units_per_floor, :integer
     field :elevators, :integer
+    field :orulo_id, :string
 
     belongs_to :address, Re.Address
 
     has_many :units, Re.Unit
     has_many :images, Re.Image
     has_many :listings, Re.Listing
+
+    many_to_many :tags, Re.Tag,
+      join_through: Re.DevelopmentTag,
+      join_keys: [development_uuid: :uuid, tag_uuid: :uuid],
+      on_replace: :delete
 
     timestamps()
   end
@@ -31,7 +37,7 @@ defmodule Re.Development do
 
   @required ~w(name phase builder description address_id)a
 
-  @optional ~w(floor_count units_per_floor elevators)a
+  @optional ~w(floor_count units_per_floor elevators orulo_id)a
 
   def changeset(struct, params \\ %{}) do
     struct

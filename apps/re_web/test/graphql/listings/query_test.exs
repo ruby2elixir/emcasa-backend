@@ -647,6 +647,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           price: 900_000,
           rooms: 3,
           suites: 1,
+          bathrooms: 1,
           area: 90,
           type: "Apartamento",
           address:
@@ -678,6 +679,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "minRooms" => 2,
           "maxSuites" => 2,
           "minSuites" => 1,
+          "maxBathrooms" => 2,
+          "minBathrooms" => 1,
           "minArea" => 80,
           "maxArea" => 100,
           "neighborhoods" => ["Copacabana", "Leblon"],

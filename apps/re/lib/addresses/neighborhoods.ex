@@ -76,6 +76,7 @@ defmodule Re.Addresses.Neighborhoods do
   def is_covered(neighborhood) do
     neighborhood
     |> sluggify_attributes()
+    |> normalize()
     |> do_is_covered()
   end
 
@@ -85,4 +86,12 @@ defmodule Re.Addresses.Neighborhoods do
     |> Map.put(:neighborhood_slug, Slugs.sluggify(neighborhood.neighborhood))
     |> Map.put(:state_slug, Slugs.sluggify(neighborhood.state))
   end
+
+  defp normalize(
+         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "pompeia"} = neighborhood
+       ) do
+    %{neighborhood | neighborhood_slug: "vila-pompeia", neighborhood: "Vila Pompeia"}
+  end
+
+  defp normalize(neighborhood), do: neighborhood
 end

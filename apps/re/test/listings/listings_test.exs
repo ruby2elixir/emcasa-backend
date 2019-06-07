@@ -335,6 +335,34 @@ defmodule Re.ListingsTest do
                ]
              } = Listings.paginated(%{order_by: [%{field: :inserted_at, type: :desc}]})
     end
+
+    test "should order by floor asc" do
+      %{id: id1} = insert(:listing, floor: "1")
+      %{id: id2} = insert(:listing, floor: "2")
+      %{id: id3} = insert(:listing, floor: "A")
+
+      assert %{
+               listings: [
+                 %{id: ^id1},
+                 %{id: ^id2},
+                 %{id: ^id3}
+               ]
+             } = Listings.paginated(%{order_by: [%{field: :floor, type: :asc}]})
+    end
+
+    test "should order by floor desc" do
+      %{id: id1} = insert(:listing, floor: "1")
+      %{id: id2} = insert(:listing, floor: "2")
+      %{id: id3} = insert(:listing, floor: "A")
+
+      assert %{
+               listings: [
+                 %{id: ^id3},
+                 %{id: ^id2},
+                 %{id: ^id1}
+               ]
+             } = Listings.paginated(%{order_by: [%{field: :floor, type: :desc}]})
+    end
   end
 
   describe "deactivate/1" do
@@ -536,7 +564,7 @@ defmodule Re.ListingsTest do
         insert(:listing, user: user)
         |> Repo.preload([:tags])
 
-      assert Enum.count(listing.tags) == 0
+      assert [] == listing.tags
 
       assert {:ok, updated_listing} = Listings.upsert_tags(listing, [tag_1.uuid, tag_2.uuid])
 
@@ -573,7 +601,7 @@ defmodule Re.ListingsTest do
 
       {:ok, updated_listing} = Listings.upsert_tags(listing, [])
 
-      assert Enum.count(updated_listing.tags) == 0
+      assert [] == updated_listing.tags
       refute Enum.member?(updated_listing.tags, tag_1)
       refute Enum.member?(updated_listing.tags, tag_2)
     end

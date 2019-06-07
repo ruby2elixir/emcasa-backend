@@ -226,6 +226,43 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
       )
     end
 
+    test "do not send price suggestion requested when user is admin" do
+      address = insert(:address)
+      user = insert(:user, role: "admin")
+      request = insert(:price_suggestion_request, address: address, user: user, is_covered: false)
+
+      Emails.Server.handle_info(
+        %{
+          topic: "new_price_suggestion_request",
+          type: :new,
+          new: %{req: request, price: {:ok, 10.10}}
+        },
+        []
+      )
+
+      assert_email_not_sent(
+        Emails.User.price_suggestion_requested(
+          %{
+            name: request.name,
+            email: request.email,
+            area: request.area,
+            rooms: request.rooms,
+            bathrooms: request.bathrooms,
+            garage_spots: request.garage_spots,
+            address: %{
+              street: address.street,
+              street_number: address.street_number
+            },
+            user: %{
+              phone: user.phone
+            },
+            is_covered: false
+          },
+          10.10
+        )
+      )
+    end
+
     test "notify when covered requested" do
       request =
         insert(:notify_when_covered,

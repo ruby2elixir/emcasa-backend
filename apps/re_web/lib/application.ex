@@ -7,15 +7,15 @@ defmodule ReWeb.Application do
 
   import Supervisor.Spec
 
-  alias ReWeb.{
-    Endpoint
-  }
+  alias ReWeb.Endpoint
 
   def start(_type, _args) do
     children = [
       supervisor(Endpoint, []),
       supervisor(Absinthe.Subscription, [Endpoint])
     ]
+
+    ReWeb.Monitoring.setup()
 
     opts = [strategy: :one_for_one, name: ReWeb.Supervisor]
     Supervisor.start_link(children, opts)

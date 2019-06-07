@@ -31,7 +31,10 @@ config :re_integrations,
   zapier_webhook_user: "testuser",
   zapier_webhook_pass: "testpass",
   priceteller_url: "priceteller_url",
-  priceteller_token: "mahtoken"
+  priceteller_token: "mahtoken",
+  orulo_url: "orulo_url",
+  orulo_api_token: "orulo_api_token",
+  orulo_client_token: "orulo_client_token"
 
 config :re,
   vivareal_highlights_size_rio_de_janeiro: 10,
@@ -44,10 +47,16 @@ config :re,
   imovelweb_highlights_size_sao_paulo: 10,
   imovelweb_super_highlights_size_rio_de_janeiro: 10,
   imovelweb_super_highlights_size_sao_paulo: 10,
-  imovelweb_identity: "1"
+  imovelweb_identity: "1",
+  facebook_access_token: "FACEBOOK_ACCESS_TOKEN"
 
 config :account_kit,
   app_id: "your_dev_app_id",
   app_secret: "your_dev_app_secret",
   require_appsecret: false,
   api_version: "v1.0"
+
+config :cloudex,
+  api_key: "api_key",
+  secret: "secret",
+  cloud_name: "cloud"

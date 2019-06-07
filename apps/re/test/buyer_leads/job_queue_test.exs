@@ -3,6 +3,8 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
   import Re.Factory
 
+  import Mockery
+
   alias Re.{
     BuyerLead,
     BuyerLeads.JobQueue,
@@ -112,6 +114,85 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
   describe "facebook_buyer_lead" do
     test "process lead with existing user and listing" do
+      %{id: listing_id, uuid: listing_uuid} = insert(:listing)
+      mock(HTTPoison, :get, {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}})
+      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+
+      %{uuid: uuid} =
+        insert(:facebook_buyer_lead,
+          phone_number: "+5511999999999",
+          location: "SP",
+          budget: "$1000 to $10000",
+          neighborhoods: "downtown"
+        )
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
+
+      assert buyer = Repo.one(BuyerLead)
+      assert buyer.uuid
+      assert buyer.user_uuid == user_uuid
+      assert listing_uuid == buyer.listing_uuid
+      assert buyer.location == "sao-paulo|sp"
+      assert buyer.budget == "$1000 to $10000"
+    end
+
+    test "process lead with nil phone" do
+      %{id: listing_id} = insert(:listing)
+
+      mock(HTTPoison, [get: 1], fn _ ->
+        {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
+      end)
+
+      %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: nil)
+
+      assert {:error, :insert_buyer_lead, _, _} =
+               JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
+
+      refute Repo.one(BuyerLead)
+    end
+
+    test "process lead with no user" do
+      %{id: listing_id, uuid: listing_uuid} = insert(:listing)
+
+      mock(HTTPoison, [get: 1], fn _ ->
+        {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
+      end)
+
+      %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: "+5511999999999")
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
+
+      assert buyer = Repo.one(BuyerLead)
+      assert buyer.uuid
+      refute buyer.user_uuid
+      assert listing_uuid == buyer.listing_uuid
+    end
+
+    test "process lead with unknown location" do
+      %{id: listing_id, uuid: listing_uuid} = insert(:listing)
+
+      mock(HTTPoison, [get: 1], fn _ ->
+        {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
+      end)
+
+      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+
+      %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: "+5511999999999")
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
+
+      assert buyer = Repo.one(BuyerLead)
+      assert buyer.uuid
+      assert buyer.user_uuid == user_uuid
+      assert listing_uuid == buyer.listing_uuid
+      assert buyer.location == "unknown"
+    end
+
+    test "process lead with invalid listing" do
+      mock(HTTPoison, :get, {:ok, %{body: "{\"retailer_item_id\":\"#{2}\"}"}})
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
@@ -133,30 +214,17 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.budget == "$1000 to $10000"
     end
 
-    test "process lead with nil phone" do
-      %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: nil)
-
-      assert {:error, :insert_buyer_lead, _, _} =
-               JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
-
-      refute Repo.one(BuyerLead)
-    end
-
-    test "process lead with no user" do
-      %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: "+5511999999999")
-
-      assert {:ok, _} =
-               JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
-
-      assert buyer = Repo.one(BuyerLead)
-      assert buyer.uuid
-      refute buyer.user_uuid
-    end
-
-    test "process lead with unknown location" do
+    test "process lead without retailer_item_id" do
+      mock(HTTPoison, :get, {:ok, %{body: "{}"}})
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
-      %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: "+5511999999999")
+      %{uuid: uuid} =
+        insert(:facebook_buyer_lead,
+          phone_number: "+5511999999999",
+          location: "SP",
+          budget: "$1000 to $10000",
+          neighborhoods: "downtown"
+        )
 
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
@@ -165,7 +233,31 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
-      assert buyer.location == "unknown"
+      assert buyer.location == "sao-paulo|sp"
+      assert buyer.budget == "$1000 to $10000"
+    end
+
+    test "process lead with http request error" do
+      mock(HTTPoison, :get, {:error, %{error: "some error"}})
+      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+
+      %{uuid: uuid} =
+        insert(:facebook_buyer_lead,
+          phone_number: "+5511999999999",
+          location: "SP",
+          budget: "$1000 to $10000",
+          neighborhoods: "downtown"
+        )
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
+
+      assert buyer = Repo.one(BuyerLead)
+      assert buyer.uuid
+      assert buyer.user_uuid == user_uuid
+      refute buyer.listing_uuid
+      assert buyer.location == "sao-paulo|sp"
+      assert buyer.budget == "$1000 to $10000"
     end
   end
 
@@ -276,6 +368,60 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.phone_number == "011999999999"
       assert buyer.listing_uuid == listing_uuid
       assert buyer.location == "manhattan|ny"
+    end
+  end
+
+  describe "process_budget_buyer_lead" do
+    test "proecss lead" do
+      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+
+      %{uuid: uuid} =
+        insert(:budget_buyer_lead,
+          user_uuid: user_uuid,
+          city: "New York",
+          city_slug: "new-york",
+          state: "NY",
+          state_slug: "ny"
+        )
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_budget_buyer_lead",
+                 "uuid" => uuid
+               })
+
+      assert buyer = Repo.one(BuyerLead)
+      assert buyer.uuid
+      assert buyer.user_uuid == user_uuid
+      assert buyer.location == "new-york|ny"
+    end
+  end
+
+  describe "process_empty_search_buyer_lead" do
+    test "proecss lead" do
+      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+
+      %{uuid: uuid} =
+        insert(:empty_search_buyer_lead,
+          user_uuid: user_uuid,
+          city: "New York",
+          city_slug: "new-york",
+          state: "NY",
+          state_slug: "ny",
+          url: "https://www.emcasa.com/imoveis/ny/new-york"
+        )
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_empty_search_buyer_lead",
+                 "uuid" => uuid
+               })
+
+      assert buyer = Repo.one(BuyerLead)
+      assert buyer.uuid
+      assert buyer.user_uuid == user_uuid
+      assert buyer.location == "new-york|ny"
+      assert buyer.url == "https://www.emcasa.com/imoveis/ny/new-york"
     end
   end
 end
