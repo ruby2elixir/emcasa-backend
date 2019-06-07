@@ -239,7 +239,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
     test "process lead with http request error" do
       mock(HTTPoison, :get, {:error, %{error: "some error"}})
-      insert(:user, phone: "+5511999999999")
+      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
         insert(:facebook_buyer_lead,
@@ -249,11 +249,15 @@ defmodule Re.BuyerLeads.JobQueueTest do
           neighborhoods: "downtown"
         )
 
-      assert_raise RuntimeError, fn ->
-        JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
-      end
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
-      refute Repo.one(BuyerLead)
+      assert buyer = Repo.one(BuyerLead)
+      assert buyer.uuid
+      assert buyer.user_uuid == user_uuid
+      refute buyer.listing_uuid
+      assert buyer.location == "sao-paulo|sp"
+      assert buyer.budget == "$1000 to $10000"
     end
   end
 
