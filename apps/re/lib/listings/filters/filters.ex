@@ -18,6 +18,8 @@ defmodule Re.Listings.Filters do
     field :min_rooms, :integer
     field :max_suites, :integer
     field :min_suites, :integer
+    field :max_bathrooms, :integer
+    field :min_bathrooms, :integer
     field :min_area, :integer
     field :max_area, :integer
     field :neighborhoods, {:array, :string}
@@ -51,7 +53,7 @@ defmodule Re.Listings.Filters do
     field :max_maintenance_fee, :float
   end
 
-  @filters ~w(max_price min_price max_rooms min_rooms max_suites min_suites min_area max_area
+  @filters ~w(max_price min_price max_rooms min_rooms max_suites min_suites max_bathrooms min_bathrooms min_area max_area
               neighborhoods types max_lat min_lat max_lng min_lng neighborhoods_slugs
               max_garage_spots min_garage_spots garage_types cities cities_slug states_slug
               exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
@@ -102,6 +104,14 @@ defmodule Re.Listings.Filters do
 
   defp attr_filter({:min_suites, min_suites}, query) do
     from(l in query, where: l.suites >= ^min_suites)
+  end
+
+  defp attr_filter({:max_bathrooms, max_bathrooms}, query) do
+    from(l in query, where: l.bathrooms <= ^max_bathrooms)
+  end
+
+  defp attr_filter({:min_bathrooms, min_bathrooms}, query) do
+    from(l in query, where: l.bathrooms >= ^min_bathrooms)
   end
 
   defp attr_filter({:min_area, min_area}, query) do
