@@ -26,7 +26,8 @@ config :re, Re.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true,
-  migration_source: "old_schema_migrations"
+  migration_source: "old_schema_migrations",
+  facebook_access_token: System.get_env("FACEBOOK_ACCESS_TOKEN")
 
 config :re_integrations, ReIntegrations.Repo,
   adapter: Ecto.Adapters.Postgres,

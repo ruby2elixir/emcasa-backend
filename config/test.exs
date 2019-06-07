@@ -51,6 +51,7 @@ config :re_integrations, ReIntegrations.Notifications.Emails.Mailer, adapter: Sw
 config :re,
   visualizations: Re.TestVisualizations,
   account_kit: Re.TestAccountKit,
+  http: Re.TestHTTP,
   vivareal_highlights_size_rio_de_janeiro: 10,
   vivareal_highlights_size_sao_paulo: 10,
   zap_highlights_size_rio_de_janeiro: 10,
@@ -61,7 +62,8 @@ config :re,
   imovelweb_highlights_size_sao_paulo: 5,
   imovelweb_super_highlights_size_rio_de_janeiro: 5,
   imovelweb_super_highlights_size_sao_paulo: 5,
-  imovelweb_identity: "1"
+  imovelweb_identity: "1",
+  facebook_access_token: "testsecret"
 
 config :re_integrations,
   http: ReIntegrations.TestHTTP,
