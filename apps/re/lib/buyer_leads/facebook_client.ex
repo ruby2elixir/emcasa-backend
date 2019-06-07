@@ -1,11 +1,12 @@
 defmodule Re.BuyerLeads.FacebookClient do
-  @http_client Application.get_env(:re, :http_client, HTTPoison)
+  require Mockery.Macro
+
   @token Application.get_env(:re, :facebook_access_token, "")
 
-  def get(lead_id) do
+  def get_lead(lead_id) do
     lead_id
     |> build_url()
-    |> @http_client.get()
+    |> http_client().get()
   end
 
   defp build_url(lead_id) do
@@ -14,4 +15,6 @@ defmodule Re.BuyerLeads.FacebookClient do
     |> URI.merge("/#{lead_id}/")
     |> Map.put(:query, URI.encode_query(%{access_token: @token}))
   end
+
+  defp http_client(), do: Mockery.Macro.mockable(HTTPoison)
 end

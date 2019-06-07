@@ -57,7 +57,8 @@ defmodule Re.Mixfile do
       {:sentry, "~> 7.0"},
       {:jason, "~> 1.1"},
       {:ecto_job, "~> 2.0"},
-      {:prometheus_ecto, "~> 1.4"}
+      {:prometheus_ecto, "~> 1.4"},
+      {:mockery, "~> 2.3"}
     ]
   end
 

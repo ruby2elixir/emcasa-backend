@@ -3,6 +3,8 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
   import Re.Factory
 
+  import Mockery
+
   alias Re.{
     BuyerLead,
     BuyerLeads.JobQueue,
@@ -111,7 +113,10 @@ defmodule Re.BuyerLeads.JobQueueTest do
   end
 
   describe "facebook_buyer_lead" do
+    @tag :dev
     test "process lead with existing user and listing" do
+      %{id: listing_id, uuid: listing_uuid} = insert(:listing)
+      mock(HTTPoison, :get, {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}})
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
@@ -128,12 +133,18 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer = Repo.one(BuyerLead)
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
-      refute buyer.listing_uuid
+      assert listing_uuid == buyer.listing_uuid
       assert buyer.location == "sao-paulo|sp"
       assert buyer.budget == "$1000 to $10000"
     end
 
     test "process lead with nil phone" do
+      %{id: listing_id} = insert(:listing)
+
+      mock(HTTPoison, [get: 1], fn _ ->
+        {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
+      end)
+
       %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: nil)
 
       assert {:error, :insert_buyer_lead, _, _} =
@@ -143,6 +154,12 @@ defmodule Re.BuyerLeads.JobQueueTest do
     end
 
     test "process lead with no user" do
+      %{id: listing_id, uuid: listing_uuid} = insert(:listing)
+
+      mock(HTTPoison, [get: 1], fn _ ->
+        {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
+      end)
+
       %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: "+5511999999999")
 
       assert {:ok, _} =
@@ -151,9 +168,16 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer = Repo.one(BuyerLead)
       assert buyer.uuid
       refute buyer.user_uuid
+      assert listing_uuid == buyer.listing_uuid
     end
 
     test "process lead with unknown location" do
+      %{id: listing_id, uuid: listing_uuid} = insert(:listing)
+
+      mock(HTTPoison, [get: 1], fn _ ->
+        {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
+      end)
+
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: "+5511999999999")
@@ -164,7 +188,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer = Repo.one(BuyerLead)
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
-      refute buyer.listing_uuid
+      assert listing_uuid == buyer.listing_uuid
       assert buyer.location == "unknown"
     end
   end
