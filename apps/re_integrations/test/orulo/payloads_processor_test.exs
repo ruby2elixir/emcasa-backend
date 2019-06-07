@@ -143,7 +143,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
       {:ok, %{insert_tags: _}} = PayloadsProcessor.process_orulo_tags(Multi.new(), building_uuid)
 
       development = Re.Repo.preload(development, :tags)
-      assert 0 == Enum.count(development.tags)
+      assert Enum.empty?(development.tags)
     end
   end
 end
