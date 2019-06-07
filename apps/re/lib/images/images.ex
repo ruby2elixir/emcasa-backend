@@ -23,7 +23,8 @@ defmodule Re.Images do
   def query(query, args), do: DataloaderQueries.build(query, args)
 
   def all(listing_id) do
-    Queries.by_listing(listing_id)
+    listing_id
+    |> Queries.by_listing()
     |> Queries.active()
     |> Queries.order_by_position()
     |> Repo.all()

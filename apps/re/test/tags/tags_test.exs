@@ -16,7 +16,8 @@ defmodule Re.TagsTest do
       %{uuid: uuid_3} = insert(:tag, name: "feature 3", name_slug: "feature-3")
 
       tags_uuids =
-        Tags.all(%User{role: "admin"})
+        %User{role: "admin"}
+        |> Tags.all()
         |> Enum.map(fn tag -> tag.uuid end)
 
       assert Enum.member?(tags_uuids, uuid_1)
@@ -35,7 +36,8 @@ defmodule Re.TagsTest do
         insert(:tag, name: "feature 3", name_slug: "feature-3", visibility: "private")
 
       tags_uuids =
-        Tags.all(%User{role: "user"})
+        %User{role: "user"}
+        |> Tags.all()
         |> Enum.map(fn tag -> tag.uuid end)
 
       assert Enum.member?(tags_uuids, uuid_1)
@@ -329,7 +331,8 @@ defmodule Re.TagsTest do
       %{uuid: uuid_3} = insert(:tag, name: "feature 3", name_slug: "feature-3")
 
       tags_uuids =
-        Tags.list_by_uuids([uuid_1, uuid_2])
+        [uuid_1, uuid_2]
+        |> Tags.list_by_uuids()
         |> Enum.map(fn tag -> tag.uuid end)
 
       assert Enum.member?(tags_uuids, uuid_1)
@@ -345,7 +348,8 @@ defmodule Re.TagsTest do
       %{name_slug: slug_3} = insert(:tag, name: "feature 3", name_slug: "feature-3")
 
       tags_slugs =
-        Tags.list_by_slugs([slug_1, slug_2])
+        [slug_1, slug_2]
+        |> Tags.list_by_slugs()
         |> Enum.map(fn tag -> tag.name_slug end)
 
       assert Enum.member?(tags_slugs, slug_1)
