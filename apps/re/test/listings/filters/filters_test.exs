@@ -28,7 +28,8 @@ defmodule Re.Listings.FiltersTest do
         |> Listings.upsert_tags([tag_2.uuid])
 
       result =
-        Filters.apply(Listing, %{tags_slug: [tag_1.name_slug]})
+        Listing
+        |> Filters.apply(%{tags_slug: [tag_1.name_slug]})
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}], result, &map_id/1)
@@ -49,7 +50,8 @@ defmodule Re.Listings.FiltersTest do
         |> Listings.upsert_tags([tag_2.uuid, tag_3.uuid])
 
       result =
-        Filters.apply(Listing, %{tags_slug: [tag_2.name_slug, tag_3.name_slug]})
+        Listing
+        |> Filters.apply(%{tags_slug: [tag_2.name_slug, tag_3.name_slug]})
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
@@ -64,7 +66,8 @@ defmodule Re.Listings.FiltersTest do
         |> Listings.upsert_tags([tag_1.uuid])
 
       result =
-        Filters.apply(Listing, %{tags_slug: ["non-existent-tag-1"]})
+        Listing
+        |> Filters.apply(%{tags_slug: ["non-existent-tag-1"]})
         |> Repo.all()
 
       assert [] == result
@@ -78,7 +81,8 @@ defmodule Re.Listings.FiltersTest do
         |> Listings.upsert_tags([tag_1.uuid])
 
       result =
-        Filters.apply(Listing, %{tags_slug: []})
+        Listing
+        |> Filters.apply(%{tags_slug: []})
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}], result, &map_id/1)
@@ -100,7 +104,8 @@ defmodule Re.Listings.FiltersTest do
         |> Listings.upsert_tags([tag_2.uuid])
 
       result =
-        Filters.apply(Listing, %{tags_uuid: [tag_1.uuid]})
+        Listing
+        |> Filters.apply(%{tags_uuid: [tag_1.uuid]})
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}], result, &map_id/1)
@@ -121,7 +126,8 @@ defmodule Re.Listings.FiltersTest do
         |> Listings.upsert_tags([tag_2.uuid, tag_3.uuid])
 
       result =
-        Filters.apply(Listing, %{tags_uuid: [tag_2.uuid, tag_3.uuid]})
+        Listing
+        |> Filters.apply(%{tags_uuid: [tag_2.uuid, tag_3.uuid]})
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
@@ -136,7 +142,8 @@ defmodule Re.Listings.FiltersTest do
         |> Listings.upsert_tags([tag_1.uuid])
 
       result =
-        Filters.apply(Listing, %{tags_uuid: [UUID.uuid4()]})
+        Listing
+        |> Filters.apply(%{tags_uuid: [UUID.uuid4()]})
         |> Repo.all()
 
       assert [] == result
@@ -150,7 +157,8 @@ defmodule Re.Listings.FiltersTest do
         |> Listings.upsert_tags([tag_1.uuid])
 
       result =
-        Filters.apply(Listing, %{tags_uuid: []})
+        Listing
+        |> Filters.apply(%{tags_uuid: []})
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}], result, &map_id/1)
@@ -380,6 +388,48 @@ defmodule Re.Listings.FiltersTest do
       result =
         Listing
         |> Filters.apply(%{min_maintenance_fee: 90.0, max_maintenance_fee: 110.0})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+      assert 1 == Enum.count(result)
+    end
+  end
+
+  describe "apply/2: filter by bathrooms" do
+    test "filter by max" do
+      %{id: id} = insert(:listing, bathrooms: 1)
+      insert(:listing, bathrooms: 2)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_bathrooms: 1})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+      assert 1 == Enum.count(result)
+    end
+
+    test "filter by min" do
+      %{id: id} = insert(:listing, bathrooms: 2)
+      insert(:listing, bathrooms: 1)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_bathrooms: 2})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+      assert 1 == Enum.count(result)
+    end
+
+    test "filter by max and min" do
+      insert(:listing, bathrooms: 1)
+      %{id: id} = insert(:listing, bathrooms: 3)
+      insert(:listing, bathrooms: 5)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_bathrooms: 2, max_bathrooms: 4})
         |> Repo.all()
 
       assert_mapper_match([%{id: id}], result, &map_id/1)
