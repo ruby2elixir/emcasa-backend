@@ -18,6 +18,8 @@ defmodule Re.Listings.Filters do
     field :min_rooms, :integer
     field :max_suites, :integer
     field :min_suites, :integer
+    field :max_bathrooms, :integer
+    field :min_bathrooms, :integer
     field :min_area, :integer
     field :max_area, :integer
     field :neighborhoods, {:array, :string}
@@ -56,7 +58,8 @@ defmodule Re.Listings.Filters do
               max_garage_spots min_garage_spots garage_types cities cities_slug states_slug
               exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
               min_unit_per_floor max_unit_per_floor orientations sun_periods min_age max_age
-              min_price_per_area max_price_per_area min_maintenance_fee max_maintenance_fee)a
+              min_price_per_area max_price_per_area min_maintenance_fee max_maintenance_fee
+              max_bathrooms min_bathrooms)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -102,6 +105,14 @@ defmodule Re.Listings.Filters do
 
   defp attr_filter({:min_suites, min_suites}, query) do
     from(l in query, where: l.suites >= ^min_suites)
+  end
+
+  defp attr_filter({:max_bathrooms, max_bathrooms}, query) do
+    from(l in query, where: l.bathrooms <= ^max_bathrooms)
+  end
+
+  defp attr_filter({:min_bathrooms, min_bathrooms}, query) do
+    from(l in query, where: l.bathrooms >= ^min_bathrooms)
   end
 
   defp attr_filter({:min_area, min_area}, query) do
