@@ -21,7 +21,8 @@ defmodule ReWeb.Exporters.Imovelweb.Plug do
     options = get_highlights(filters, query_params)
 
     xml_listings =
-      Exporter.exportable(filters, query_params)
+      filters
+      |> Exporter.exportable(query_params)
       |> Imovelweb.export_listings_xml(options)
 
     conn

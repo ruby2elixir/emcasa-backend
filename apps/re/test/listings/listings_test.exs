@@ -536,7 +536,7 @@ defmodule Re.ListingsTest do
         insert(:listing, user: user)
         |> Repo.preload([:tags])
 
-      assert Enum.count(listing.tags) == 0
+      assert [] == listing.tags
 
       assert {:ok, updated_listing} = Listings.upsert_tags(listing, [tag_1.uuid, tag_2.uuid])
 
@@ -573,7 +573,7 @@ defmodule Re.ListingsTest do
 
       {:ok, updated_listing} = Listings.upsert_tags(listing, [])
 
-      assert Enum.count(updated_listing.tags) == 0
+      assert [] == updated_listing.tags
       refute Enum.member?(updated_listing.tags, tag_1)
       refute Enum.member?(updated_listing.tags, tag_2)
     end
