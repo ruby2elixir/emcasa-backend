@@ -5,7 +5,11 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
 
   alias Ecto.Multi
 
-  alias Re.Developments
+  alias Re.{
+    Developments,
+    DevelopmentTag,
+    Tags
+  }
 
   alias ReIntegrations.{
     Cloudinary,
@@ -13,43 +17,50 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
     Orulo.ImagePayload,
     Orulo.JobQueue,
     Orulo.Mapper,
+    Orulo.TagMapper,
     Repo
   }
 
   def insert_development_from_building_payload(multi, building_uuid) do
-    with building <- Repo.get(BuildingPayload, building_uuid),
-         address_params <- Mapper.building_payload_into_address_params(building),
-         development_params <- Mapper.building_payload_into_development_params(building),
-         {:ok, transaction} <-
-           insert_transaction(multi, address_params, development_params) do
-      {:ok, transaction}
-    else
-      err -> err
-    end
-  end
+    building = Repo.get(BuildingPayload, building_uuid)
 
-  defp insert_transaction(
-         multi,
-         address_params,
-         %{orulo_id: orulo_id} = development_params
-       ) do
     multi
-    |> Multi.run(:insert_address, fn _repo, _changes ->
-      insert_address(address_params)
-    end)
-    |> Multi.run(:insert_development, fn _repo, %{insert_address: new_address} ->
-      insert_development(development_params, new_address)
-    end)
-    |> JobQueue.enqueue(:fetch_images, %{
-      "type" => "fetch_images_from_orulo",
-      "external_id" => orulo_id
-    })
+    |> insert_address(building)
+    |> insert_development(building)
+    |> enqueue_image_job(building)
+    |> enqueue_tag_job(building)
     |> Repo.transaction()
   end
 
-  defp insert_address(params), do: Re.Addresses.insert_or_update(params)
+  defp insert_address(multi, building) do
+    Multi.run(multi, :insert_address, fn _repo, _changes ->
+      building
+      |> Mapper.building_payload_into_address_params()
+      |> Re.Addresses.insert_or_update()
+    end)
+  end
 
-  defp insert_development(params, address), do: Re.Developments.insert(params, address)
+  defp insert_development(multi, building) do
+    Multi.run(multi, :insert_development, fn _repo, %{insert_address: address} ->
+      building
+      |> Mapper.building_payload_into_development_params()
+      |> Re.Developments.insert(address)
+    end)
+  end
+
+  defp enqueue_image_job(multi, building) do
+    JobQueue.enqueue(multi, :fetch_images, %{
+      "type" => "fetch_images_from_orulo",
+      "external_id" => building.external_id
+    })
+  end
+
+  defp enqueue_tag_job(multi, building) do
+    JobQueue.enqueue(multi, :process_tags, %{
+      "type" => "process_orulo_tags",
+      "external_id" => building.uuid
+    })
+  end
 
   def insert_images_from_image_payload(multi, payload_uuid) do
     %{payload: %{"images" => image_payload}, external_id: orulo_id} =
@@ -114,5 +125,28 @@ defmodule ReIntegrations.Orulo.PayloadsProcessor do
       error ->
         error
     end
+  end
+
+  def process_orulo_tags(multi, uuid) do
+    %{payload: %{"id" => external_id}} = building = Repo.get(BuildingPayload, uuid)
+    {:ok, development} = Developments.get_by_orulo_id(external_id)
+    now = DateTime.utc_now() |> DateTime.truncate(:second)
+
+    developments_tags =
+      building
+      |> TagMapper.map_tags()
+      |> Tags.list_by_slugs()
+      |> Enum.map(fn tag ->
+        %{
+          development_uuid: development.uuid,
+          tag_uuid: tag.uuid,
+          inserted_at: now,
+          updated_at: now
+        }
+      end)
+
+    multi
+    |> Multi.insert_all(:insert_tags, DevelopmentTag, developments_tags)
+    |> Re.Repo.transaction()
   end
 end
