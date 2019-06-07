@@ -83,7 +83,12 @@ defmodule Re.BuyerLeads.Facebook do
          {:ok, listing} <- Re.Listings.get(listing_id) do
       {:ok, listing.uuid}
     else
-      _error -> {:ok, nil}
+      error ->
+        Sentry.capture_message("error when processing facebook buyer lead",
+          extra: %{lead_id: lead_id, error: error}
+        )
+
+        {:ok, nil}
     end
   end
 end
