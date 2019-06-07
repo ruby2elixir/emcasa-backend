@@ -77,10 +77,17 @@ defmodule Re.BuyerLeads.Facebook do
   end
 
   defp extract_listing_uuid(lead_id) do
-    with {:ok, %{body: body}} <- Re.BuyerLeads.FacebookClient.get_lead(lead_id),
+    with {:facebook_client_call, {:ok, %{body: body}}} <-
+           {:facebook_client_call, Re.BuyerLeads.FacebookClient.get_lead(lead_id)},
          {:ok, %{"retailer_item_id" => listing_id}} <- Jason.decode(body),
          {:ok, listing} <- Re.Listings.get(listing_id) do
       {:ok, listing.uuid}
+    else
+      {:facebook_client_call, error} ->
+        raise "Error calling FacebookClient. Error: #{Kernel.inspect(error)}"
+
+      _error ->
+        {:ok, nil}
     end
   end
 end
