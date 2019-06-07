@@ -335,6 +335,34 @@ defmodule Re.ListingsTest do
                ]
              } = Listings.paginated(%{order_by: [%{field: :inserted_at, type: :desc}]})
     end
+
+    test "should order by floor asc" do
+      %{id: id1} = insert(:listing, floor: "1")
+      %{id: id2} = insert(:listing, floor: "2")
+      %{id: id3} = insert(:listing, floor: "A")
+
+      assert %{
+               listings: [
+                 %{id: ^id1},
+                 %{id: ^id2},
+                 %{id: ^id3}
+               ]
+             } = Listings.paginated(%{order_by: [%{field: :floor, type: :asc}]})
+    end
+
+    test "should order by floor desc" do
+      %{id: id1} = insert(:listing, floor: "1")
+      %{id: id2} = insert(:listing, floor: "2")
+      %{id: id3} = insert(:listing, floor: "A")
+
+      assert %{
+               listings: [
+                 %{id: ^id3},
+                 %{id: ^id2},
+                 %{id: ^id1}
+               ]
+             } = Listings.paginated(%{order_by: [%{field: :floor, type: :desc}]})
+    end
   end
 
   describe "deactivate/1" do
