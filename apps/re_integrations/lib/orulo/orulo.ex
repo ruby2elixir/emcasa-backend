@@ -60,7 +60,8 @@ defmodule ReIntegrations.Orulo do
   end
 
   def building_payload_synced?(external_id) do
-    from(bp in BuildingPayload, where: bp.external_id == ^external_id)
+    (bp in BuildingPayload)
+    |> from(where: bp.external_id == ^external_id)
     |> Repo.exists?()
   end
 end
