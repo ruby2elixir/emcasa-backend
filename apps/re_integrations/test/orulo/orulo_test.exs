@@ -18,6 +18,12 @@ defmodule ReIntegrations.OruloTest do
       assert {:ok, _} = Orulo.get_building_payload(100)
       assert Repo.one(JobQueue)
     end
+
+    test "doesn't create a job if building payload already exists for orulo id" do
+      insert(:building_payload, external_id: 100)
+      assert {:error, _} = Orulo.get_building_payload(100)
+      assert [] == Repo.all(JobQueue)
+    end
   end
 
   describe "multi_building_payload_insert/2" do

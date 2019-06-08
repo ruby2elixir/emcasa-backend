@@ -6,8 +6,6 @@ defmodule ReWeb.Resolvers.Developments do
     Developments
   }
 
-  alias ReIntegrations.Orulo
-
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
   def index(_params, _context) do
@@ -52,13 +50,9 @@ defmodule ReWeb.Resolvers.Developments do
   end
 
   def import_from_orulo(%{external_id: id}, %{context: %{current_user: current_user}}) do
-    with :ok <- Bodyguard.permit(Developments, :import_development_from_orulo, current_user) do
-      if Orulo.building_payload_synced?(id) do
-        case ReIntegrations.Orulo.get_building_payload(id) do
-          {:ok, _job} -> {:ok, %{message: "Development syncronization scheduled!"}}
-          {:error, error} -> {:error, error}
-        end
-      end
+    with :ok <- Bodyguard.permit(Developments, :import_development_from_orulo, current_user),
+         {:ok, _job} <- ReIntegrations.Orulo.get_building_payload(id) do
+      {:ok, %{message: "Development syncronization scheduled!"}}
     end
   end
 

@@ -18,9 +18,13 @@ defmodule ReIntegrations.Orulo do
   }
 
   def get_building_payload(id) do
-    %{"type" => "import_development_from_orulo", "external_id" => id}
-    |> JobQueue.new()
-    |> Repo.insert()
+    if building_payload_synced?(id) do
+      {:error, "Sync already scheduled!"}
+    else
+      %{"type" => "import_development_from_orulo", "external_id" => id}
+      |> JobQueue.new()
+      |> Repo.insert()
+    end
   end
 
   def multi_building_payload_insert(multi, params) do
