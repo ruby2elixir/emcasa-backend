@@ -2,6 +2,9 @@ defmodule ReIntegrations.Orulo do
   @moduledoc """
   Context module to use importers.
   """
+
+  import Ecto.Query, only: [from: 2]
+
   alias ReIntegrations.{
     Orulo.BuildingPayload,
     Orulo.ImagePayload,
@@ -50,5 +53,10 @@ defmodule ReIntegrations.Orulo do
       "uuid" => uuid
     })
     |> Repo.transaction()
+  end
+
+  def building_payload_synced?(external_id) do
+    from(bp in BuildingPayload, where: bp.external_id == ^external_id)
+    |> Repo.exists?()
   end
 end

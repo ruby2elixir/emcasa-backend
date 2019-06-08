@@ -1,6 +1,8 @@
 defmodule ReIntegrations.OruloTest do
   @moduledoc false
 
+  import ReIntegrations.Factory
+
   use ReIntegrations.ModelCase
 
   alias ReIntegrations.{
@@ -54,6 +56,18 @@ defmodule ReIntegrations.OruloTest do
       assert {:ok, _} = Orulo.multi_images_payload_insert(Multi.new(), params)
 
       assert Repo.one(JobQueue)
+    end
+  end
+
+  describe "building_already_synced?/2" do
+    test "return false when payload does not exists" do
+      insert(:building_payload, external_id: 1)
+      refute Orulo.building_payload_synced?(2)
+    end
+
+    test "return true when payload does exists" do
+      insert(:building_payload, external_id: 1)
+      assert Orulo.building_payload_synced?(1)
     end
   end
 end
