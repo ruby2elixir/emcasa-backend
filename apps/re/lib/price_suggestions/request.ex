@@ -15,6 +15,8 @@ defmodule Re.PriceSuggestions.Request do
     field :bathrooms, :integer
     field :garage_spots, :integer
     field :suites, :integer
+    field :maintenance_fee, :float
+    field :type, :string
     field :is_covered, :boolean
     field :suggested_price, :float
 
@@ -25,7 +27,7 @@ defmodule Re.PriceSuggestions.Request do
   end
 
   @required ~w(address_id area rooms bathrooms garage_spots is_covered)a
-  @optional ~w(name email user_id suggested_price suites)a
+  @optional ~w(name email user_id suggested_price suites type maintenance_fee)a
 
   def changeset(struct, params \\ %{}) do
     struct
