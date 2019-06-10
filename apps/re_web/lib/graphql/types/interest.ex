@@ -130,7 +130,7 @@ defmodule ReWeb.Types.Interest do
       arg :rooms, non_null(:integer)
       arg :bathrooms, non_null(:integer)
       arg :garage_spots, non_null(:integer)
-      arg :suites, non_null(:integer)
+      arg :suites, :integer
       arg :is_covered, non_null(:boolean)
 
       arg :address, non_null(:address_input)

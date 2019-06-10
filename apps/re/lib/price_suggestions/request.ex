@@ -24,8 +24,8 @@ defmodule Re.PriceSuggestions.Request do
     timestamps()
   end
 
-  @required ~w(address_id area rooms bathrooms garage_spots is_covered suites)a
-  @optional ~w(name email user_id suggested_price)a
+  @required ~w(address_id area rooms bathrooms garage_spots is_covered)a
+  @optional ~w(name email user_id suggested_price suites)a
 
   def changeset(struct, params \\ %{}) do
     struct
