@@ -329,7 +329,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_type: "contract",
         tags: [tag_1],
         price_per_area: 12_222.22,
-        maintenance_fee: 120.0
+        maintenance_fee: 120.0,
+        is_release: false
       )
 
       insert(
@@ -666,7 +667,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           garage_type: "contract",
           tags: [tag_1, tag_2],
           price_per_area: 10_000.00,
-          maintenance_fee: 100.0
+          maintenance_fee: 100.0,
+          is_release: true
         )
 
       variables = %{
@@ -697,7 +699,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "citiesSlug" => ["rio-de-janeiro"],
           "tagsSlug" => ["tag-1", "tag-2"],
           "minMaintenanceFee" => 90.0,
-          "maxMaintenanceFee" => 110.0
+          "maxMaintenanceFee" => 110.0,
+          "isRelease" => true
         }
       }
 
