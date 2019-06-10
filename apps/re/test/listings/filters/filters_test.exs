@@ -351,6 +351,389 @@ defmodule Re.Listings.FiltersTest do
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
       assert 2 == Enum.count(result)
     end
+
+    test "filter by max_price" do
+      %{id: id} = insert(:listing, price: 1_000_000)
+      insert(:listing, price: 2_000_000)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_price: 1_500_000})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by min_price" do
+      %{id: id} = insert(:listing, price: 2_000_000)
+      insert(:listing, price: 1_000_000)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_price: 1_500_000})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by max_rooms" do
+      %{id: id} = insert(:listing, rooms: 1)
+      insert(:listing, rooms: 5)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_rooms: 3})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by min_rooms" do
+      %{id: id} = insert(:listing, rooms: 5)
+      insert(:listing, rooms: 1)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_rooms: 3})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by max_suites" do
+      %{id: id} = insert(:listing, suites: 1)
+      insert(:listing, suites: 5)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_suites: 3})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by min_suites" do
+      %{id: id} = insert(:listing, suites: 5)
+      insert(:listing, suites: 1)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_suites: 3})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by max_area" do
+      %{id: id} = insert(:listing, area: 50)
+      insert(:listing, area: 100)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_area: 75})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by min_area" do
+      %{id: id} = insert(:listing, area: 100)
+      insert(:listing, area: 50)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_area: 75})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by max_garage_spots" do
+      %{id: id} = insert(:listing, garage_spots: 5)
+      insert(:listing, garage_spots: 10)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_garage_spots: 7})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by min_garage_spots" do
+      %{id: id} = insert(:listing, garage_spots: 10)
+      insert(:listing, garage_spots: 5)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_garage_spots: 7})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by neighborhoods" do
+      %{id: id} =
+        insert(:listing,
+          address: build(:address, neighborhood: "Copacabana")
+        )
+
+      insert(:listing,
+        address: build(:address, neighborhood: "Perdizes")
+      )
+
+      result =
+        Listing
+        |> Filters.apply(%{neighborhoods: ["Copacabana"]})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by neighborhood_slugs" do
+      %{id: id} =
+        insert(:listing,
+          address: build(:address, neighborhood_slug: "copacabana")
+        )
+
+      insert(:listing,
+        address: build(:address, neighborhood_slug: "perdizes")
+      )
+
+      result =
+        Listing
+        |> Filters.apply(%{neighborhoods_slugs: ["copacabana"]})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by cities" do
+      %{id: id} =
+        insert(:listing,
+          address: build(:address, city: "Rio de Janeiro")
+        )
+
+      insert(:listing,
+        address: build(:address, city: "São Paulo")
+      )
+
+      result =
+        Listing
+        |> Filters.apply(%{cities: ["Rio de Janeiro"]})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by cities_slug" do
+      %{id: id} =
+        insert(:listing,
+          address: build(:address, city_slug: "rio-de-janeiro")
+        )
+
+      insert(:listing,
+        address: build(:address, city_slug: "sao-paulo")
+      )
+
+      result =
+        Listing
+        |> Filters.apply(%{cities_slug: ["rio-de-janeiro"]})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by types" do
+      %{id: id} = insert(:listing, type: "Apartamento")
+
+      insert(:listing, type: "Casa")
+
+      result =
+        Listing
+        |> Filters.apply(%{types: ["Apartamento"]})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by garage_types" do
+      %{id: id} = insert(:listing, garage_type: "contract")
+
+      insert(:listing, garage_type: "condominium")
+
+      result =
+        Listing
+        |> Filters.apply(%{garage_types: ["contract"]})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by max_lat" do
+      %{id: id} =
+        insert(:listing,
+          address: build(:address, lat: 50)
+        )
+
+      insert(:listing,
+        address: build(:address, lat: 100)
+      )
+
+      result =
+        Listing
+        |> Filters.apply(%{max_lat: 75})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by min_lat" do
+      %{id: id} =
+        insert(:listing,
+          address: build(:address, lat: 100)
+        )
+
+      insert(:listing,
+        address: build(:address, lat: 50)
+      )
+
+      result =
+        Listing
+        |> Filters.apply(%{min_lat: 75})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by max_lng" do
+      %{id: id} =
+        insert(:listing,
+          address: build(:address, lng: 50)
+        )
+
+      insert(:listing,
+        address: build(:address, lng: 100)
+      )
+
+      result =
+        Listing
+        |> Filters.apply(%{max_lng: 75})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by min_lng" do
+      %{id: id} =
+        insert(:listing,
+          address: build(:address, lng: 100)
+        )
+
+      insert(:listing,
+        address: build(:address, lng: 50)
+      )
+
+      result =
+        Listing
+        |> Filters.apply(%{min_lng: 75})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    @tag dev: true
+    test "filter all possibilies at once" do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+      tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
+
+      insert(
+        :listing,
+        price: 1_100_000,
+        rooms: 3,
+        suites: 3,
+        area: 90,
+        type: "Apartamento",
+        address:
+          build(
+            :address,
+            neighborhood: "Copacabana",
+            neighborhood_slug: "copacabana",
+            lat: 50.0,
+            lng: 50.0
+          ),
+        garage_spots: 2,
+        garage_type: "condominium",
+        tags: [tag_1],
+        price_per_area: 12_222.22,
+        maintenance_fee: 120.0
+      )
+
+      %{id: id} =
+        insert(
+          :listing,
+          price: 900_000,
+          rooms: 3,
+          suites: 1,
+          bathrooms: 1,
+          area: 90,
+          type: "Apartamento",
+          address:
+            build(
+              :address,
+              neighborhood: "Copacabana",
+              neighborhood_slug: "copacabana",
+              state: "RJ",
+              city: "Rio de Janeiro",
+              state_slug: "rj",
+              city_slug: "rio-de-janeiro",
+              lat: 50.0,
+              lng: 50.0
+            ),
+          garage_spots: 2,
+          garage_type: "contract",
+          tags: [tag_2],
+          price_per_area: 10_000.00,
+          maintenance_fee: 100.0
+        )
+
+      filters = %{
+        max_price: 1_000_000,
+        min_price: 800_000,
+        max_pricePerArea: 10_500,
+        min_pricePerArea: 9_500,
+        max_rooms: 4,
+        min_rooms: 2,
+        max_suites: 2,
+        min_suites: 1,
+        max_bathrooms: 2,
+        min_bathrooms: 1,
+        min_area: 80,
+        max_area: 100,
+        neighborhoods: ["Copacabana", "Leblon"],
+        types: ["Apartamento"],
+        max_lat: 60.0,
+        min_lat: 40.0,
+        max_lng: 60.0,
+        min_lng: 40.0,
+        neighborhoods_slugs: ["copacabana", "leblon"],
+        max_garage_spots: 3,
+        min_garage_spots: 1,
+        garage_types: ["contract"],
+        cities: ["Rio de Janeiro"],
+        cities_slug: ["rio-de-janeiro"],
+        tags_slug: ["tag-2"],
+        minMaintenanceFee: 90.0,
+        maxMaintenanceFee: 110.0
+      }
+
+      result =
+        Listing
+        |> Filters.apply(filters)
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
   end
 
   describe "apply/2: filter by maintenance_fee" do
