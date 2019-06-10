@@ -87,7 +87,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
 
     conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
 
-    assert %{"suggestedPrice" => 26279.0} ==
+    assert %{"suggestedPrice" => 26_279.0} ==
              json_response(conn, 200)["data"]["requestPriceSuggestion"]
 
     assert Repo.get_by(Request, name: "Mah Name")
