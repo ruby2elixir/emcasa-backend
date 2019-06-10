@@ -269,6 +269,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Quartos: #{request.rooms}<br>
                   Banheiros: #{request.bathrooms}<br>
                   Vagas: #{request.garage_spots}<br>
+                  Suítes: #{request.suites}<br>
                   Rua: #{request.address.street}<br>
                   Número: #{request.address.street_number}<br>
                   #{unless request.is_covered, do: "Área fora de cobertura"}<br>
@@ -279,6 +280,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
                   Quartos: #{request.rooms}
                   Banheiros: #{request.bathrooms}
                   Vagas: #{request.garage_spots}
+                  Suítes: #{request.suites}
                   Rua: #{request.address.street}
                   Número: #{request.address.street_number}
                   #{unless request.is_covered, do: "Área fora de cobertura"}

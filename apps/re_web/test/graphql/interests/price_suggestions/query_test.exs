@@ -24,6 +24,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
     "rooms" => 2,
     "bathrooms" => 2,
     "garageSpots" => 2,
+    "suites" => 1,
     "isCovered" => true,
     "addressInput" => %{
       "street" => "street",
@@ -58,6 +59,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
         $rooms: Int!,
         $bathrooms: Int!,
         $garageSpots: Int!,
+        $suites: Int!,
         $isCovered: Boolean!,
         $addressInput: AddressInput!
         ) {
@@ -68,6 +70,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
           rooms: $rooms
           bathrooms: $bathrooms
           garageSpots: $garageSpots
+          suites: $suites
           isCovered: $isCovered
           address: $addressInput
         ) {
@@ -105,6 +108,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
         $rooms: Int!,
         $bathrooms: Int!,
         $garageSpots: Int!,
+        $suites: Int!,
         $isCovered: Boolean!,
         $addressInput: AddressInput!
         ) {
@@ -115,6 +119,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
           rooms: $rooms
           bathrooms: $bathrooms
           garageSpots: $garageSpots
+          suites: $suites
           isCovered: $isCovered
           address: $addressInput
         ) {
@@ -143,6 +148,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
         $rooms: Int!,
         $bathrooms: Int!,
         $garageSpots: Int!,
+        $suites: Int!,
         $isCovered: Boolean!,
         $addressInput: AddressInput!
         ) {
@@ -153,6 +159,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
           rooms: $rooms
           bathrooms: $bathrooms
           garageSpots: $garageSpots
+          suites: $suites
           isCovered: $isCovered
           address: $addressInput
         ) {
@@ -181,6 +188,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
         $rooms: Int!,
         $bathrooms: Int!,
         $garageSpots: Int!,
+        $suites: Int!,
         $isCovered: Boolean!,
         $addressInput: AddressInput!
         ) {
@@ -191,6 +199,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
           rooms: $rooms
           bathrooms: $bathrooms
           garageSpots: $garageSpots
+          suites: $suites
           isCovered: $isCovered
           address: $addressInput
         ) {
@@ -228,6 +237,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
         $rooms: Int!,
         $bathrooms: Int!,
         $garageSpots: Int!,
+        $suites: Int!,
         $isCovered: Boolean!,
         $addressInput: AddressInput!
         ) {
@@ -237,6 +247,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
           rooms: $rooms
           bathrooms: $bathrooms
           garageSpots: $garageSpots
+          suites: $suites
           isCovered: $isCovered
           address: $addressInput
         ) {

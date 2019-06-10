@@ -175,6 +175,7 @@ defmodule Re.Factory do
       rooms: Enum.random(1..10),
       bathrooms: Enum.random(1..10),
       garage_spots: Enum.random(0..10),
+      suites: Enum.random(0..10),
       area: Enum.random(1..500),
       is_covered: Enum.random([true, false])
     }

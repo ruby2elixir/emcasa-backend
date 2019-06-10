@@ -44,6 +44,7 @@ defmodule Re.InterestsTest do
         bathrooms: 2,
         area: 2,
         garage_spots: 2,
+        suites: 1,
         is_covered: true
       }
 
@@ -88,6 +89,7 @@ defmodule Re.InterestsTest do
         bathrooms: 2,
         area: 2,
         garage_spots: 2,
+        suites: 1,
         is_covered: true
       }
 
@@ -129,6 +131,7 @@ defmodule Re.InterestsTest do
         bathrooms: 2,
         area: 2,
         garage_spots: 2,
+        suites: 1,
         is_covered: false
       }
 
