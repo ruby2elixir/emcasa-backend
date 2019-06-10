@@ -427,6 +427,24 @@ defmodule Re.ListingsTest do
       "construction_year" => 2005
     }
 
+    test "should insert listing with defaults when has no values" do
+      address = insert(:address)
+      user = insert(:user, role: "user")
+      owner_contact = insert(:owner_contact)
+
+      assert {:ok, inserted_listing} =
+               Listings.insert(@insert_listing_params,
+                 address: address,
+                 user: user,
+                 owner_contact: owner_contact
+               )
+
+      assert retrieved_listing = Repo.get(Listing, inserted_listing.id)
+      assert retrieved_listing.uuid
+      assert retrieved_listing.is_release == false
+      assert retrieved_listing.is_exportable == true
+    end
+
     test "should insert with description size bigger than 255" do
       address = insert(:address)
       user = insert(:user, role: "user")

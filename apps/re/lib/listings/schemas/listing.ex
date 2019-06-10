@@ -30,7 +30,7 @@ defmodule Re.Listing do
     field :is_active, :boolean, default: false
     field :status, :string, default: "inactive"
     field :is_exclusive, :boolean, default: false
-    field :is_release, :boolean
+    field :is_release, :boolean, default: false
     field :is_exportable, :boolean, default: true
     field :orientation, :string
     field :floor_count, :integer
