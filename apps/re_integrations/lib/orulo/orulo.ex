@@ -60,6 +60,7 @@ defmodule ReIntegrations.Orulo do
   end
 
   def building_payload_synced?(external_id) do
+    # credo:disable-for-lines:3
     (bp in BuildingPayload)
     |> from(where: bp.external_id == ^external_id)
     |> Repo.exists?()
