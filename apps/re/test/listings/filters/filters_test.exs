@@ -33,7 +33,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}], result, &map_id/1)
-      assert 1 == Enum.count(result)
     end
 
     test "filter by multiple tags slug names" do
@@ -55,7 +54,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
-      assert 2 == Enum.count(result)
     end
 
     test "filter by non-existent tag slug name" do
@@ -86,7 +84,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}], result, &map_id/1)
-      assert 1 == Enum.count(result)
     end
   end
 
@@ -109,7 +106,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}], result, &map_id/1)
-      assert 1 == Enum.count(result)
     end
 
     test "filter by multiple tags uuids" do
@@ -131,7 +127,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
-      assert 2 == Enum.count(result)
     end
 
     test "filter by non-existent tag uuid" do
@@ -162,7 +157,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}], result, &map_id/1)
-      assert 1 == Enum.count(result)
     end
   end
 
@@ -201,7 +195,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
-      assert 2 == Enum.count(result)
     end
 
     test "filter listing with empty orientation fetch all instances" do
@@ -217,7 +210,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}, %{id: id3}, %{id: id4}], result, &map_id/1)
-      assert 4 == Enum.count(result)
     end
 
     test "filter listing by orientation" do
@@ -245,7 +237,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
-      assert 2 == Enum.count(result)
     end
 
     test "filter listing by sun period" do
@@ -272,7 +263,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id3}, %{id: id4}], result, &map_id/1)
-      assert 2 == Enum.count(result)
 
       result =
         Listing
@@ -280,7 +270,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
-      assert 2 == Enum.count(result)
     end
 
     test "filter listing by unit per floor" do
@@ -295,7 +284,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id3}, %{id: id4}], result, &map_id/1)
-      assert 2 == Enum.count(result)
 
       result =
         Listing
@@ -303,7 +291,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
-      assert 2 == Enum.count(result)
     end
 
     test "filter listing by age" do
@@ -319,7 +306,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
-      assert 2 == Enum.count(result)
 
       result =
         Listing
@@ -327,7 +313,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id3}, %{id: id4}], result, &map_id/1)
-      assert 2 == Enum.count(result)
     end
 
     test "filter listing by price per area" do
@@ -349,7 +334,6 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
-      assert 2 == Enum.count(result)
     end
 
     test "filter by max_price" do
@@ -642,32 +626,104 @@ defmodule Re.Listings.FiltersTest do
       assert_mapper_match([%{id: id}], result, &map_id/1)
     end
 
-    @tag dev: true
-    test "filter all possibilies at once" do
+    test "filter by max_maintenance_fee" do
+      %{id: id} = insert(:listing, maintenance_fee: 100.0)
+      insert(:listing, maintenance_fee: 120.0)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_maintenance_fee: 110.0})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by min_maintenance_fee" do
+      %{id: id} = insert(:listing, maintenance_fee: 100.0)
+      insert(:listing, maintenance_fee: 80.0)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_maintenance_fee: 90.0})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by max_bathrooms" do
+      %{id: id} = insert(:listing, bathrooms: 1)
+      insert(:listing, bathrooms: 2)
+
+      result =
+        Listing
+        |> Filters.apply(%{max_bathrooms: 1})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by min_bathrooms" do
+      %{id: id} = insert(:listing, bathrooms: 2)
+      insert(:listing, bathrooms: 1)
+
+      result =
+        Listing
+        |> Filters.apply(%{min_bathrooms: 2})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by is_release when is true" do
+      %{id: id} = insert(:listing, is_release: true)
+      insert(:listing, is_release: false)
+
+      result =
+        Listing
+        |> Filters.apply(%{is_release: true})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by is_release when is false" do
+      %{id: id} = insert(:listing, is_release: false)
+      insert(:listing, is_release: true)
+
+      result =
+        Listing
+        |> Filters.apply(%{is_release: false})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "apply all filters at once" do
       tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
       tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
 
-      insert(
-        :listing,
-        price: 1_100_000,
-        rooms: 3,
-        suites: 3,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_1],
-        price_per_area: 12_222.22,
-        maintenance_fee: 120.0
-      )
+      _out_of_filters_result =
+        insert(
+          :listing,
+          price: 1_100_000,
+          rooms: 3,
+          suites: 3,
+          area: 90,
+          type: "Apartamento",
+          address:
+            build(
+              :address,
+              neighborhood: "Copacabana",
+              neighborhood_slug: "copacabana",
+              lat: 50.0,
+              lng: 50.0
+            ),
+          garage_spots: 2,
+          garage_type: "condominium",
+          tags: [tag_1],
+          price_per_area: 12_222.22,
+          maintenance_fee: 120.0
+        )
 
       %{id: id} =
         insert(
@@ -675,7 +731,7 @@ defmodule Re.Listings.FiltersTest do
           price: 900_000,
           rooms: 3,
           suites: 1,
-          bathrooms: 1,
+          bathrooms: 7,
           area: 90,
           type: "Apartamento",
           address:
@@ -706,8 +762,8 @@ defmodule Re.Listings.FiltersTest do
         min_rooms: 2,
         max_suites: 2,
         min_suites: 1,
-        max_bathrooms: 2,
-        min_bathrooms: 1,
+        max_bathrooms: 10,
+        min_bathrooms: 5,
         min_area: 80,
         max_area: 100,
         neighborhoods: ["Copacabana", "Leblon"],
@@ -723,123 +779,13 @@ defmodule Re.Listings.FiltersTest do
         cities: ["Rio de Janeiro"],
         cities_slug: ["rio-de-janeiro"],
         tags_slug: ["tag-2"],
-        minMaintenanceFee: 90.0,
-        maxMaintenanceFee: 110.0
+        max_maintenance_fee: 110.0,
+        min_maintenance_fee: 90.0
       }
 
       result =
         Listing
         |> Filters.apply(filters)
-        |> Repo.all()
-
-      assert_mapper_match([%{id: id}], result, &map_id/1)
-    end
-  end
-
-  describe "apply/2: filter by maintenance_fee" do
-    test "filter by max" do
-      %{id: id} = insert(:listing, maintenance_fee: 100.0)
-      insert(:listing, maintenance_fee: 120.0)
-
-      result =
-        Listing
-        |> Filters.apply(%{max_maintenance_fee: 110.0})
-        |> Repo.all()
-
-      assert_mapper_match([%{id: id}], result, &map_id/1)
-      assert 1 == Enum.count(result)
-    end
-
-    test "filter by min" do
-      %{id: id} = insert(:listing, maintenance_fee: 100.0)
-      insert(:listing, maintenance_fee: 80.0)
-
-      result =
-        Listing
-        |> Filters.apply(%{min_maintenance_fee: 90.0})
-        |> Repo.all()
-
-      assert_mapper_match([%{id: id}], result, &map_id/1)
-      assert 1 == Enum.count(result)
-    end
-
-    test "filter by max and min" do
-      insert(:listing, maintenance_fee: 120.0)
-      %{id: id} = insert(:listing, maintenance_fee: 100.0)
-      insert(:listing, maintenance_fee: 80.0)
-
-      result =
-        Listing
-        |> Filters.apply(%{min_maintenance_fee: 90.0, max_maintenance_fee: 110.0})
-        |> Repo.all()
-
-      assert_mapper_match([%{id: id}], result, &map_id/1)
-      assert 1 == Enum.count(result)
-    end
-  end
-
-  describe "apply/2: filter by bathrooms" do
-    test "filter by max" do
-      %{id: id} = insert(:listing, bathrooms: 1)
-      insert(:listing, bathrooms: 2)
-
-      result =
-        Listing
-        |> Filters.apply(%{max_bathrooms: 1})
-        |> Repo.all()
-
-      assert_mapper_match([%{id: id}], result, &map_id/1)
-      assert 1 == Enum.count(result)
-    end
-
-    test "filter by min" do
-      %{id: id} = insert(:listing, bathrooms: 2)
-      insert(:listing, bathrooms: 1)
-
-      result =
-        Listing
-        |> Filters.apply(%{min_bathrooms: 2})
-        |> Repo.all()
-
-      assert_mapper_match([%{id: id}], result, &map_id/1)
-      assert 1 == Enum.count(result)
-    end
-
-    test "filter by max and min" do
-      insert(:listing, bathrooms: 1)
-      %{id: id} = insert(:listing, bathrooms: 3)
-      insert(:listing, bathrooms: 5)
-
-      result =
-        Listing
-        |> Filters.apply(%{min_bathrooms: 2, max_bathrooms: 4})
-        |> Repo.all()
-
-      assert_mapper_match([%{id: id}], result, &map_id/1)
-      assert 1 == Enum.count(result)
-    end
-  end
-
-  describe "apply/2: filter by releases" do
-    test "filter listings which are releases" do
-      %{id: id} = insert(:listing, is_release: true)
-      insert(:listing, is_release: false)
-
-      result =
-        Listing
-        |> Filters.apply(%{is_release: true})
-        |> Repo.all()
-
-      assert_mapper_match([%{id: id}], result, &map_id/1)
-    end
-
-    test "filter listings which aren't releases" do
-      %{id: id} = insert(:listing, is_release: false)
-      insert(:listing, is_release: true)
-
-      result =
-        Listing
-        |> Filters.apply(%{is_release: false})
         |> Repo.all()
 
       assert_mapper_match([%{id: id}], result, &map_id/1)
