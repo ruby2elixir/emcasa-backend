@@ -49,6 +49,8 @@ defmodule ReWeb.Types.Interest do
     field :area, :integer
     field :rooms, :integer
     field :suites, :integer
+    field :type, :string
+    field :maintenance_fee, :float
     field :bathrooms, :integer
     field :garage_spots, :integer
     field :is_covered, :boolean
@@ -131,6 +133,8 @@ defmodule ReWeb.Types.Interest do
       arg :bathrooms, non_null(:integer)
       arg :garage_spots, non_null(:integer)
       arg :suites, :integer
+      arg :type, :string
+      arg :maintenance_fee, :float
       arg :is_covered, non_null(:boolean)
 
       arg :address, non_null(:address_input)

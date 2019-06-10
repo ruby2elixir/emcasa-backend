@@ -12,15 +12,16 @@ defmodule Re.PriceSuggestions do
     User
   }
 
+  alias ReIntegrations.PriceTeller
+
   import Ecto.Query
 
   alias Ecto.Changeset
 
   def suggest_price(%Request{} = request) do
     request
-    |> preload_if_struct()
-    |> get_factor_by_address()
-    |> do_suggest_price(request)
+    |> preload_address()
+    |> do_suggest_price()
     |> case do
       {:ok, suggested_price} ->
         request
@@ -34,28 +35,57 @@ defmodule Re.PriceSuggestions do
     end
   end
 
-  def suggest_price(listing) do
-    listing
-    |> preload_if_struct()
-    |> get_factor_by_address()
-    |> do_suggest_price(listing)
+  def suggest_price(params) do
+    params
+    |> preload_address()
+    |> do_suggest_price()
   end
 
-  defp get_factor_by_address(%{address: %{state: state, city: city, street: street}}),
-    do: Repo.get_by(Factors, state: state, city: city, street: street)
-
-  defp do_suggest_price(nil, _), do: {:error, :street_not_covered}
-
-  defp do_suggest_price(factors, listing) do
-    {:ok,
-     factors.intercept + (listing.area || 0) * factors.area +
-       (listing.bathrooms || 0) * factors.bathrooms + (listing.rooms || 0) * factors.rooms +
-       (listing.garage_spots || 0) * factors.garage_spots}
+  defp do_suggest_price(params) do
+    params
+    |> map_params()
+    |> PriceTeller.ask()
+    |> format_output()
   end
 
-  defp preload_if_struct(%Listing{} = listing), do: Repo.preload(listing, :address)
+  defp map_params(params) do
+    %{
+      type: map_type(params.type),
+      zip_code: String.replace(params.address.postal_code, "-", ""),
+      street_number: params.address.street_number,
+      area: params.area,
+      bathrooms: params.bathrooms,
+      bedrooms: params.rooms,
+      suites: params.suites,
+      parking: params.garage_spots,
+      condo_fee: round_if_not_nil(params.maintenance_fee),
+      lat: params.address.lat,
+      lng: params.address.lng
+    }
+  end
 
-  defp preload_if_struct(listing), do: listing
+  defp map_type("Apartamento"), do: "APARTMENT"
+  defp map_type("Casa"), do: "HOME"
+  defp map_type("Cobertura"), do: "PENTHOUSE"
+  defp map_type(type), do: type
+
+  defp round_if_not_nil(nil), do: nil
+  defp round_if_not_nil(maintenance_fee), do: round(maintenance_fee)
+
+  defp format_output({:ok, %{listing_price_rounded: listing_price_rounded}}),
+    do: {:ok, listing_price_rounded}
+
+  defp format_output(response) do
+    Sentry.capture_message("Error on priceteller response",
+      extra: %{response: Kernel.inspect(response)}
+    )
+
+    {:error, :bad_request}
+  end
+
+  defp preload_address(%Listing{} = listing), do: Repo.preload(listing, :address)
+
+  defp preload_address(params), do: params
 
   def save_factors(file) do
     file
