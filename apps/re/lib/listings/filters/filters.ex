@@ -51,6 +51,7 @@ defmodule Re.Listings.Filters do
     field :max_price_per_area, :float
     field :min_maintenance_fee, :float
     field :max_maintenance_fee, :float
+    field :is_release, :boolean
   end
 
   @filters ~w(max_price min_price max_rooms min_rooms max_suites min_suites min_area max_area
@@ -59,7 +60,7 @@ defmodule Re.Listings.Filters do
               exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
               min_unit_per_floor max_unit_per_floor orientations sun_periods min_age max_age
               min_price_per_area max_price_per_area min_maintenance_fee max_maintenance_fee
-              max_bathrooms min_bathrooms)a
+              max_bathrooms min_bathrooms is_release)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -347,6 +348,13 @@ defmodule Re.Listings.Filters do
     from(
       l in query,
       where: l.maintenance_fee <= ^maintenance_fee
+    )
+  end
+
+  defp attr_filter({:is_release, is_release}, query) do
+    from(
+      l in query,
+      where: l.is_release == ^is_release
     )
   end
 

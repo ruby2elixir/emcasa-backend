@@ -437,5 +437,31 @@ defmodule Re.Listings.FiltersTest do
     end
   end
 
+  describe "apply/2: filter by releases" do
+    test "filter listings which are releases" do
+      %{id: id} = insert(:listing, is_release: true)
+      insert(:listing, is_release: false)
+
+      result =
+        Listing
+        |> Filters.apply(%{is_release: true})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter listings which aren't releases" do
+      %{id: id} = insert(:listing, is_release: false)
+      insert(:listing, is_release: true)
+
+      result =
+        Listing
+        |> Filters.apply(%{is_release: false})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+  end
+
   defp map_id(items), do: Enum.map(items, & &1.id)
 end
