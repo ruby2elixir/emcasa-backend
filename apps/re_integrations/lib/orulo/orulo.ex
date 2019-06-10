@@ -2,6 +2,9 @@ defmodule ReIntegrations.Orulo do
   @moduledoc """
   Context module to use importers.
   """
+
+  import Ecto.Query, only: [from: 2]
+
   alias ReIntegrations.{
     Orulo.BuildingPayload,
     Orulo.ImagePayload,
@@ -15,9 +18,13 @@ defmodule ReIntegrations.Orulo do
   }
 
   def get_building_payload(id) do
-    %{"type" => "import_development_from_orulo", "external_id" => id}
-    |> JobQueue.new()
-    |> Repo.insert()
+    if building_payload_synced?(id) do
+      {:error, "Sync already scheduled!"}
+    else
+      %{"type" => "import_development_from_orulo", "external_id" => id}
+      |> JobQueue.new()
+      |> Repo.insert()
+    end
   end
 
   def multi_building_payload_insert(multi, params) do
@@ -50,5 +57,12 @@ defmodule ReIntegrations.Orulo do
       "uuid" => uuid
     })
     |> Repo.transaction()
+  end
+
+  def building_payload_synced?(external_id) do
+    # credo:disable-for-lines:3
+    (bp in BuildingPayload)
+    |> from(where: bp.external_id == ^external_id)
+    |> Repo.exists?()
   end
 end
