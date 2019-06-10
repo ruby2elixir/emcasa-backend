@@ -5,6 +5,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
   import Re.Factory
 
+  import Mockery
+
   alias ReWeb.AbsintheHelpers
 
   setup %{conn: conn} do
@@ -783,8 +785,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       %{filename: inactive_image_filename2} =
         image5 = insert(:image, is_active: false, position: 5)
 
-      %{state: state, city: city, street: street, street_number: street_number} =
-        address = insert(:address)
+      %{street: street, street_number: street_number} = address = insert(:address)
 
       district = district_from_address(address)
 
@@ -799,18 +800,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
-
-      insert(
-        :factors,
-        state: state,
-        city: city,
-        street: street,
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
-      )
 
       %{id: listing_id} =
         insert(
@@ -894,6 +883,16 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915}"
+         }}
+      )
+
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
@@ -922,7 +921,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  %{"price" => price2},
                  %{"price" => price3}
                ],
-               "suggestedPrice" => 26_279.915,
+               "suggestedPrice" => 26_279.0,
                "related" => %{
                  "listings" => [
                    %{"id" => to_string(related_id1)},

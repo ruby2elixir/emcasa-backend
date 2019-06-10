@@ -4,6 +4,8 @@ defmodule Re.PriceSuggestionsTest do
   doctest Re.PriceSuggestions
 
   import Re.Factory
+  import Mockery
+  import ExUnit.CaptureLog
 
   alias Re.{
     PriceSuggestions,
@@ -168,44 +170,47 @@ defmodule Re.PriceSuggestionsTest do
           bathrooms: 1
         )
 
-      insert(
-        :factors,
-        state: "MS",
-        city: "Mah City",
-        street: "Mah Street",
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915}"
+         }}
       )
 
-      assert {:ok, 26_279.915} == PriceSuggestions.suggest_price(listing)
+      assert {:ok, 26_279.0} == PriceSuggestions.suggest_price(listing)
     end
   end
 
   describe "suggest_price/1" do
-    test "should suggest for nil values" do
-      insert(
-        :factors,
-        state: "MS",
-        city: "Mah City",
-        street: "Mah Street",
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
+    test "should not suggest for nil values" do
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":8.0,\"sale_price\":8.8,\"listing_price_rounded\":10.0,\"listing_price\":10.10}"
+         }}
       )
 
-      assert {:ok, 10.10} ==
-               PriceSuggestions.suggest_price(%{
-                 address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
-                 rooms: nil,
-                 area: nil,
-                 bathrooms: nil,
-                 garage_spots: nil
-               })
+      assert capture_log(fn ->
+               assert {:error, :bad_request} ==
+                        PriceSuggestions.suggest_price(%{
+                          address:
+                            build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+                          rooms: nil,
+                          area: nil,
+                          bathrooms: nil,
+                          garage_spots: nil,
+                          type: "invalid",
+                          maintenance_fee: nil,
+                          suites: nil
+                        })
+             end) =~
+               ":invalid_input in priceteller"
     end
   end
 end

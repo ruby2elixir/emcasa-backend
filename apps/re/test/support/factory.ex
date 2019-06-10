@@ -27,7 +27,7 @@ defmodule Re.Factory do
 
   def listing_factory do
     price = random(:price)
-    area = Enum.random(1..500)
+    area = Enum.random(25..500)
     floor = random(:floor)
     floor_count = random(:floor_count, floor)
 
@@ -38,7 +38,7 @@ defmodule Re.Factory do
       description: Shakespeare.hamlet(),
       price: price,
       property_tax: random(:price_float),
-      maintenance_fee: random(:price_float),
+      maintenance_fee: random(:maintenance_fee_float),
       floor: floor,
       rooms: Enum.random(1..10),
       bathrooms: Enum.random(1..10),
@@ -175,6 +175,9 @@ defmodule Re.Factory do
       rooms: Enum.random(1..10),
       bathrooms: Enum.random(1..10),
       garage_spots: Enum.random(0..10),
+      suites: Enum.random(0..10),
+      type: random(:listing_type),
+      maintenance_fee: random(:maintenance_fee_float),
       area: Enum.random(1..500),
       is_covered: Enum.random([true, false])
     }
@@ -315,7 +318,7 @@ defmodule Re.Factory do
       uuid: UUID.uuid4(),
       complement: Address.secondary_address(),
       type: random(:listing_type),
-      maintenance_fee: random(:price_float),
+      maintenance_fee: random(:maintenance_fee_float),
       suites: Enum.random(0..10),
       price: random(:price)
     }
@@ -340,6 +343,7 @@ defmodule Re.Factory do
   defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura))
   defp random(:price), do: Enum.random(550_000..99_999_999)
   defp random(:price_float), do: Enum.random(1..999_999_999) / 100
+  defp random(:maintenance_fee_float), do: Enum.random(1..1_000_000) / 100
 
   defp random(:floor) do
     1..50
