@@ -4,15 +4,8 @@ defmodule Re.Repo.Migrations.UpdateIsReleaseOnListings do
   require Ecto.Query
 
   def up do
-    listing_ids =
-      "listings"
-      |> Ecto.Query.from([l], select: l.id, where: is_nil(l.is_release))
-      |> Re.Repo.all()
-
     "listings"
-    |> Ecto.Query.from([l],
-      where: l.id in ^listing_ids
-    )
+    |> Ecto.Query.where([l], is_nil(l.is_release))
     |> Re.Repo.update_all(set: [is_release: false])
   end
 
