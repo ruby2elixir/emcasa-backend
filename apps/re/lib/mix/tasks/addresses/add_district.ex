@@ -19,15 +19,6 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
       })
       |> Re.Repo.insert()
 
-    Logger.info("Inserted district named #{district.name}")
-  end
-
-  def insert(params) do
-    {:ok, tag} =
-      %Re.Tag{}
-      |> Re.Tag.changeset(params)
-      |> Re.Repo.insert(on_conflict: :nothing)
-
-    Logger.info("insert : tag name #{tag.name_slug}")
+    Mix.shell().info("Inserted district: #{district.name}, id: #{district.id}")
   end
 end
