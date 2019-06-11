@@ -6,11 +6,13 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
 
   require Logger
 
+  alias Re.Addresses.District
+
   def run(_) do
     Mix.EctoSQL.ensure_started(Re.Repo, [])
 
     {:ok, district} =
-      %Re.Addresses.District{}
+      %District{}
       |> Re.Addresses.District.changeset(%{
         name: "Vila Mariana",
         state: "SP",
