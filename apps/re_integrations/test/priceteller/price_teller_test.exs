@@ -1,6 +1,8 @@
 defmodule ReIntegrations.PriceTellerTest do
   use Re.ModelCase
 
+  import Mockery
+
   alias ReIntegrations.PriceTeller
 
   @valid_payload %{
@@ -33,6 +35,16 @@ defmodule ReIntegrations.PriceTellerTest do
 
   describe "ask/1" do
     test "with valid params" do
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":575000.0,\"sale_price\":575910.45,\"listing_price_rounded\":635000.0,\"listing_price\":632868.63}"
+         }}
+      )
+
       assert {:ok,
               %{
                 listing_price: 632_868.63,

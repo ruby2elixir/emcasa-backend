@@ -18,7 +18,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
   describe "insert_development_from_building_payload/1" do
     test "create new address from building" do
       %{uuid: uuid} =
-        build(:building)
+        build(:building_payload)
         |> BuildingPayload.changeset()
         |> Repo.insert!()
 
@@ -36,7 +36,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
     end
 
     test "create new development from building" do
-      %{payload: payload = %{"developer" => developer}} = building = build(:building)
+      %{payload: payload = %{"developer" => developer}} = building = build(:building_payload)
 
       %{uuid: uuid} =
         building
@@ -57,7 +57,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
     end
 
     test "enqueue fetch images and process tag jobs" do
-      building = build(:building)
+      building = build(:building_payload)
 
       %{uuid: uuid} =
         building
@@ -94,7 +94,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
     test "create new tags from building payload" do
       Re.Factory.insert(:tag, name: "Academia", name_slug: "academia")
       Re.Factory.insert(:tag, name: "Portaria Eletrônica", name_slug: "portaria-eletronica")
-      %{uuid: building_uuid} = insert(:building)
+      %{uuid: building_uuid} = insert(:building_payload)
 
       development = Re.Factory.insert(:development, orulo_id: "999")
 
@@ -106,7 +106,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
 
     test "do not create new tags when there's no feature on payload" do
       %{uuid: building_uuid} =
-        insert(:building,
+        insert(:building_payload,
           payload: %{
             "id" => "999",
             "name" => "EmCasa 01",

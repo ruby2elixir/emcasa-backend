@@ -11,18 +11,18 @@ defmodule Re.InterestsTest do
 
   import Re.Factory
 
+  import Mockery
+
   describe "request_price_suggestion/2" do
     test "should store price suggestion request" do
-      insert(
-        :factors,
-        state: "ST",
-        city: "city",
-        street: "street",
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":1342.0,\"sale_price\":1342.213,\"listing_price_rounded\":1565.0,\"listing_price\":1565.654}"
+         }}
       )
 
       address_params = %{
@@ -31,7 +31,7 @@ defmodule Re.InterestsTest do
         neighborhood: "neighborhood",
         city: "city",
         state: "ST",
-        postal_code: "postal_code",
+        postal_code: "12345-123",
         lat: 10.10,
         lng: 10.10
       }
@@ -42,29 +42,30 @@ defmodule Re.InterestsTest do
         email: "email@emcasa.com",
         rooms: 2,
         bathrooms: 2,
-        area: 2,
+        area: 30,
         garage_spots: 2,
+        suites: 1,
+        type: "Apartamento",
+        maintenance_fee: 100.00,
         is_covered: true
       }
 
-      assert {:ok, %{id: request_id}, {:ok, 1565.654}} =
+      assert {:ok, %{id: request_id}, {:ok, 1565.0}} =
                Interests.request_price_suggestion(params, nil)
 
       assert request = Repo.get(Request, request_id)
-      assert request.suggested_price == 1565.654
+      assert request.suggested_price == 1565.0
     end
 
     test "should store price suggestion request with user attached" do
-      insert(
-        :factors,
-        state: "ST",
-        city: "city",
-        street: "street",
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":1342.0,\"sale_price\":1342.213,\"listing_price_rounded\":1565.0,\"listing_price\":1565.654}"
+         }}
       )
 
       user = insert(:user)
@@ -75,7 +76,7 @@ defmodule Re.InterestsTest do
         neighborhood: "neighborhood",
         city: "city",
         state: "ST",
-        postal_code: "postal_code",
+        postal_code: "12345-123",
         lat: 10.10,
         lng: 10.10
       }
@@ -86,28 +87,31 @@ defmodule Re.InterestsTest do
         email: "email@emcasa.com",
         rooms: 2,
         bathrooms: 2,
-        area: 2,
+        area: 30,
         garage_spots: 2,
+        suites: 1,
+        type: "Apartamento",
+        maintenance_fee: 100.00,
         is_covered: true
       }
 
-      assert {:ok, %{id: request_id}, {:ok, 1565.654}} =
+      assert {:ok, %{id: request_id}, {:ok, 1565.0}} =
                Interests.request_price_suggestion(params, user)
 
       assert request = Repo.get(Request, request_id)
       assert request.user_id == user.id
-      assert request.suggested_price == 1565.654
+      assert request.suggested_price == 1565.0
     end
 
     test "should store price suggestion request when street is not covered" do
-      insert(
-        :factors,
-        street: "street",
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":1342.0,\"sale_price\":1342.213,\"listing_price_rounded\":1565.0,\"listing_price\":1565.654}"
+         }}
       )
 
       address_params = %{
@@ -116,7 +120,7 @@ defmodule Re.InterestsTest do
         neighborhood: "neighborhood",
         city: "city",
         state: "ST",
-        postal_code: "postal_code",
+        postal_code: "12345-123",
         lat: 10.10,
         lng: 10.10
       }
@@ -127,16 +131,19 @@ defmodule Re.InterestsTest do
         email: "email@emcasa.com",
         rooms: 2,
         bathrooms: 2,
-        area: 2,
+        area: 30,
         garage_spots: 2,
+        suites: 1,
+        type: "Apartamento",
+        maintenance_fee: 100.00,
         is_covered: false
       }
 
-      assert {:ok, %{id: request_id}, {:error, :street_not_covered}} =
+      assert {:ok, %{id: request_id}, {:ok, 1565.0}} =
                Interests.request_price_suggestion(params, nil)
 
       assert request = Repo.get(Request, request_id)
-      refute request.suggested_price
+      assert request.suggested_price == 1565.0
     end
   end
 

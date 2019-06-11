@@ -2,8 +2,8 @@ defmodule ReIntegrations.PriceTeller.Client do
   @moduledoc """
   Module to wrap priceteller API logic
   """
+  require Mockery.Macro
 
-  @http_client Application.get_env(:re_integrations, :http, HTTPoison)
   @url Application.get_env(:re_integrations, :priceteller_url, "")
   @token Application.get_env(:re_integrations, :priceteller_token, "")
 
@@ -17,6 +17,8 @@ defmodule ReIntegrations.PriceTeller.Client do
 
     @url
     |> URI.parse()
-    |> @http_client.post(payload, headers)
+    |> http_client().post(payload, headers)
   end
+
+  defp http_client, do: Mockery.Macro.mockable(HTTPoison)
 end

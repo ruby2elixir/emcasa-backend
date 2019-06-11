@@ -11,7 +11,7 @@ defmodule ReIntegrations.Orulo.MapperTest do
 
   describe "building_payload_into_development_params" do
     test "parse building payload into development" do
-      %{payload: %{"developer" => developer} = payload} = building = build(:building)
+      %{payload: %{"developer" => developer} = payload} = building = build(:building_payload)
       params = Mapper.building_payload_into_development_params(building)
 
       assert params == %{
@@ -28,7 +28,7 @@ defmodule ReIntegrations.Orulo.MapperTest do
 
   describe "building_payload_into_address_params" do
     test "parse building payload into address params" do
-      %{payload: %{"address" => address}} = building = build(:building)
+      %{payload: %{"address" => address}} = building = build(:building_payload)
       params = Mapper.building_payload_into_address_params(building)
 
       assert params == %{

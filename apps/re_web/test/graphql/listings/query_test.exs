@@ -5,6 +5,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
   import Re.Factory
 
+  import Mockery
+
   alias ReWeb.AbsintheHelpers
 
   setup %{conn: conn} do
@@ -306,7 +308,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
              } == json_response(conn, 200)["data"]["listings"]
     end
 
-    test "should query listing index with filtering", %{user_conn: conn} do
+    test "should query listing index with filters", %{user_conn: conn} do
       tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
       tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
 
@@ -329,316 +331,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_type: "contract",
         tags: [tag_1],
         price_per_area: 12_222.22,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 790_000,
-        rooms: 3,
-        suites: 0,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_1],
-        price_per_area: 8_777.78,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 5,
-        suites: 3,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_1],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 1,
-        suites: 0,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_1],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 3,
-        area: 110,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_1],
-        price_per_area: 8181.82,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 0,
-        area: 70,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_2],
-        price_per_area: 12_857.14,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 3,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Botafogo",
-            neighborhood_slug: "botafogo",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 0,
-        area: 90,
-        type: "Casa",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 70.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 2,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 30.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 0,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 70.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_1, tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 80.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 30.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_1, tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 80.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 0,
-        tags: [tag_1, tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 80.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 4,
-        garage_type: "condominium",
-        price_per_area: 10_000.00,
-        maintenance_fee: 80.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Perdizes",
-            neighborhood_slug: "perdizes",
-            state: "SP",
-            city: "São Paulo",
-            state_slug: "sp",
-            city_slug: "sao-paulo",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 4,
-        garage_type: "condominium",
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
+        maintenance_fee: 120.0,
+        is_release: false
       )
 
       listing1 =
@@ -666,7 +360,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           garage_type: "contract",
           tags: [tag_1, tag_2],
           price_per_area: 10_000.00,
-          maintenance_fee: 100.0
+          maintenance_fee: 100.0,
+          is_release: true
         )
 
       variables = %{
@@ -697,7 +392,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "citiesSlug" => ["rio-de-janeiro"],
           "tagsSlug" => ["tag-1", "tag-2"],
           "minMaintenanceFee" => 90.0,
-          "maxMaintenanceFee" => 110.0
+          "maxMaintenanceFee" => 110.0,
+          "isRelease" => true
         }
       }
 
@@ -724,43 +420,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                ],
                "filters" => %{
                  "maxPrice" => 1_000_000
-               }
-             } == json_response(conn, 200)["data"]["listings"]
-    end
-
-    test "should query listing index filtering by status", %{user_conn: conn} do
-      listing_1 = insert(:listing, status: "active")
-      insert(:listing, status: "inactive")
-
-      variables = %{
-        "filters" => %{
-          "statuses" => ["active"]
-        }
-      }
-
-      query = """
-        query Listings($filters: ListingFilterInput) {
-          listings (filters: $filters) {
-            listings {
-              id
-            }
-            filters {
-              statuses
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
-
-      assert %{
-               "listings" => [
-                 %{
-                   "id" => to_string(listing_1.id)
-                 }
-               ],
-               "filters" => %{
-                 "statuses" => ["active"]
                }
              } == json_response(conn, 200)["data"]["listings"]
     end
@@ -1126,8 +785,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       %{filename: inactive_image_filename2} =
         image5 = insert(:image, is_active: false, position: 5)
 
-      %{state: state, city: city, street: street, street_number: street_number} =
-        address = insert(:address)
+      %{street: street, street_number: street_number} = address = insert(:address)
 
       district = district_from_address(address)
 
@@ -1139,18 +797,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
-
-      insert(
-        :factors,
-        state: state,
-        city: city,
-        street: street,
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
-      )
 
       %{id: listing_id} =
         insert(
@@ -1231,6 +877,16 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915}"
+         }}
+      )
+
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
@@ -1259,7 +915,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  %{"price" => price2},
                  %{"price" => price3}
                ],
-               "suggestedPrice" => 26_279.915,
+               "suggestedPrice" => 26_279.0,
                "related" => %{
                  "listings" => [
                    %{"id" => to_string(related_id1)},

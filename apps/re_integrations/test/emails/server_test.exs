@@ -175,6 +175,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
             rooms: request.rooms,
             bathrooms: request.bathrooms,
             garage_spots: request.garage_spots,
+            suites: request.suites,
+            type: request.type,
+            maintenance_fee: request.maintenance_fee,
             address: %{
               street: address.street,
               street_number: address.street_number
@@ -212,6 +215,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
             rooms: request.rooms,
             bathrooms: request.bathrooms,
             garage_spots: request.garage_spots,
+            suites: request.suites,
+            type: request.type,
+            maintenance_fee: request.maintenance_fee,
             address: %{
               street: address.street,
               street_number: address.street_number
@@ -249,6 +255,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
             rooms: request.rooms,
             bathrooms: request.bathrooms,
             garage_spots: request.garage_spots,
+            suites: request.suites,
+            type: request.type,
+            maintenance_fee: request.maintenance_fee,
             address: %{
               street: address.street,
               street_number: address.street_number
