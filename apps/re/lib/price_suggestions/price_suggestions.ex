@@ -28,8 +28,6 @@ defmodule Re.PriceSuggestions do
         |> Request.changeset(%{suggested_price: suggested_price})
         |> Repo.update()
 
-        {:ok, suggested_price}
-
       error ->
         error
     end
@@ -80,7 +78,7 @@ defmodule Re.PriceSuggestions do
       extra: %{response: Kernel.inspect(response)}
     )
 
-    {:error, :bad_request}
+    response
   end
 
   defp preload_address(%Listing{} = listing), do: Repo.preload(listing, :address)

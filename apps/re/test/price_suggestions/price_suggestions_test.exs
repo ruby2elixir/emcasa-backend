@@ -197,7 +197,7 @@ defmodule Re.PriceSuggestionsTest do
       )
 
       assert capture_log(fn ->
-               assert {:error, :bad_request} ==
+               assert {:error, changeset} =
                         PriceSuggestions.suggest_price(%{
                           address:
                             build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
@@ -209,6 +209,28 @@ defmodule Re.PriceSuggestionsTest do
                           maintenance_fee: nil,
                           suites: nil
                         })
+
+               assert Keyword.get(changeset.errors, :type) ==
+                        {"should be one of: [APARTMENT CONDOMINIUM KITNET HOME TWO_STORY_HOUSE FLAT PENTHOUSE]",
+                         [validation: :inclusion]}
+
+               assert Keyword.get(changeset.errors, :area) ==
+                        {"can't be blank", [validation: :required]}
+
+               assert Keyword.get(changeset.errors, :bathrooms) ==
+                        {"can't be blank", [validation: :required]}
+
+               assert Keyword.get(changeset.errors, :bedrooms) ==
+                        {"can't be blank", [validation: :required]}
+
+               assert Keyword.get(changeset.errors, :suites) ==
+                        {"can't be blank", [validation: :required]}
+
+               assert Keyword.get(changeset.errors, :parking) ==
+                        {"can't be blank", [validation: :required]}
+
+               assert Keyword.get(changeset.errors, :condo_fee) ==
+                        {"can't be blank", [validation: :required]}
              end) =~
                ":invalid_input in priceteller"
     end

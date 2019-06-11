@@ -50,15 +50,11 @@ defmodule Re.Interests do
 
   def request_price_suggestion(params, user) do
     with {:ok, address} <- Addresses.insert_or_update(params.address),
-         {:ok, request} <- PriceSuggestions.create_request(params, address, user),
-         request <- Repo.preload(request, :address),
-         suggested_price <- PriceSuggestions.suggest_price(request) do
-      PubSub.publish_new(
-        {:ok, %{req: request, price: suggested_price}},
-        "new_price_suggestion_request"
-      )
-
-      {:ok, request, suggested_price}
+         {:ok, request} <- PriceSuggestions.create_request(params, address, user) do
+      request
+      |> Repo.preload(:address)
+      |> PriceSuggestions.suggest_price()
+      |> PubSub.publish_new("new_price_suggestion_request")
     end
   end
 

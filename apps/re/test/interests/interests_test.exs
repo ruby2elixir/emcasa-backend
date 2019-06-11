@@ -50,7 +50,7 @@ defmodule Re.InterestsTest do
         is_covered: true
       }
 
-      assert {:ok, %{id: request_id}, {:ok, 1565.0}} =
+      assert {:ok, %{id: request_id, suggested_price: 1565.0}} =
                Interests.request_price_suggestion(params, nil)
 
       assert request = Repo.get(Request, request_id)
@@ -95,7 +95,7 @@ defmodule Re.InterestsTest do
         is_covered: true
       }
 
-      assert {:ok, %{id: request_id}, {:ok, 1565.0}} =
+      assert {:ok, %{id: request_id, suggested_price: 1565.0}} =
                Interests.request_price_suggestion(params, user)
 
       assert request = Repo.get(Request, request_id)
@@ -139,7 +139,7 @@ defmodule Re.InterestsTest do
         is_covered: false
       }
 
-      assert {:ok, %{id: request_id}, {:ok, 1565.0}} =
+      assert {:ok, %{id: request_id, suggested_price: 1565.0}} =
                Interests.request_price_suggestion(params, nil)
 
       assert request = Repo.get(Request, request_id)
