@@ -15,7 +15,7 @@ defmodule Re.Addresses.District do
     field :state_slug, :string
     field :city_slug, :string
     field :name_slug, :string
-    field :description, :string
+    field :description, :string, default: ""
     field :status, :string, default: "inactive"
 
     timestamps()
