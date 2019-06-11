@@ -1,4 +1,4 @@
-defmodule ReIntegrations.Orulo.PayloadProcessors.Buildings do
+defmodule ReIntegrations.Orulo.PayloadProcessor.Buildings do
   @moduledoc """
   Module to process building payloads into developments and adrresses.
   """

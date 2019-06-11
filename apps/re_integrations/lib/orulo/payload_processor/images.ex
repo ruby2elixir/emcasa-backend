@@ -1,4 +1,4 @@
-defmodule ReIntegrations.Orulo.PayloadProcessors.Images do
+defmodule ReIntegrations.Orulo.PayloadProcessor.Images do
   @moduledoc """
   Module to process orulo image links into images.
   """

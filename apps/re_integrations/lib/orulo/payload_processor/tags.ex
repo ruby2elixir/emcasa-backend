@@ -1,4 +1,4 @@
-defmodule ReIntegrations.Orulo.PayloadProcessors.Tags do
+defmodule ReIntegrations.Orulo.PayloadProcessor.Tags do
   @moduledoc """
   Module to process orulo features into tags.
   """
