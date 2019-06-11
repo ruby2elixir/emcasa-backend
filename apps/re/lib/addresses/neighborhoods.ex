@@ -76,7 +76,7 @@ defmodule Re.Addresses.Neighborhoods do
   def is_covered(neighborhood) do
     neighborhood
     |> sluggify_attributes()
-    |> normalize()
+    |> remap_neighborhood()
     |> do_is_covered()
   end
 
@@ -87,45 +87,45 @@ defmodule Re.Addresses.Neighborhoods do
     |> Map.put(:state_slug, Slugs.sluggify(neighborhood.state))
   end
 
-  defp normalize(
+  defp remap_neighborhood(
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "pompeia"} = neighborhood
        ),
        do: %{neighborhood | neighborhood_slug: "vila-pompeia", neighborhood: "Vila Pompeia"}
 
-  defp normalize(
+  defp remap_neighborhood(
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "vila-clementino"} =
            neighborhood
        ),
        do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "vila-mariana"}
 
-  defp normalize(
+  defp remap_neighborhood(
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-da-gloria"} =
            neighborhood
        ),
        do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
 
-  defp normalize(
+  defp remap_neighborhood(
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "chacara-klabin"} =
            neighborhood
        ),
        do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
 
-  defp normalize(
+  defp remap_neighborhood(
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "paraiso"} = neighborhood
        ),
        do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
 
-  defp normalize(
+  defp remap_neighborhood(
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-luzitania"} =
            neighborhood
        ),
        do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
 
-  defp normalize(
+  defp remap_neighborhood(
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-vila-mariana"} =
            neighborhood
        ),
        do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
 
-  defp normalize(neighborhood), do: neighborhood
+  defp remap_neighborhood(neighborhood), do: neighborhood
 end
