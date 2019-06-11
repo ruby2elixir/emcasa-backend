@@ -1,4 +1,4 @@
-defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
+defmodule ReIntegrations.Orulo.PayloadProcessorTest do
   @moduledoc false
 
   use ReIntegrations.ModelCase
@@ -7,7 +7,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
     Orulo.BuildingPayload,
     Orulo.ImagePayload,
     Orulo.JobQueue,
-    Orulo.PayloadsProcessor,
+    Orulo.PayloadProcessor,
     Repo
   }
 
@@ -23,7 +23,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
         |> Repo.insert!()
 
       assert {:ok, %{insert_address: new_address}} =
-               PayloadsProcessor.insert_development_from_building_payload(Multi.new(), uuid)
+               PayloadProcessor.insert_development_from_building_payload(Multi.new(), uuid)
 
       assert new_address.street == "Copacabana"
       assert new_address.street_number == "926"
@@ -44,7 +44,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
         |> Repo.insert!()
 
       assert {:ok, %{insert_development: development}} =
-               PayloadsProcessor.insert_development_from_building_payload(Multi.new(), uuid)
+               PayloadProcessor.insert_development_from_building_payload(Multi.new(), uuid)
 
       assert development.uuid
       assert development.name == Map.get(payload, "name")
@@ -65,7 +65,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
         |> Repo.insert!()
 
       assert {:ok, _} =
-               PayloadsProcessor.insert_development_from_building_payload(Multi.new(), uuid)
+               PayloadProcessor.insert_development_from_building_payload(Multi.new(), uuid)
 
       assert 2 == Enum.count(Repo.all(JobQueue))
     end
@@ -81,7 +81,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
       Re.Factory.insert(:development, orulo_id: "999")
 
       {:ok, %{insert_images: [ok: inserted_image]}} =
-        PayloadsProcessor.insert_images_from_image_payload(
+        PayloadProcessor.insert_images_from_image_payload(
           Multi.new(),
           payload_uuid
         )
@@ -98,7 +98,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
 
       development = Re.Factory.insert(:development, orulo_id: "999")
 
-      {:ok, %{insert_tags: _}} = PayloadsProcessor.process_orulo_tags(Multi.new(), building_uuid)
+      {:ok, %{insert_tags: _}} = PayloadProcessor.process_orulo_tags(Multi.new(), building_uuid)
 
       development = Re.Repo.preload(development, :tags)
       assert 2 == Enum.count(development.tags)
@@ -140,7 +140,7 @@ defmodule ReIntegrations.Orulo.PayloadsProcessorTest do
 
       development = Re.Factory.insert(:development, orulo_id: "999")
 
-      {:ok, %{insert_tags: _}} = PayloadsProcessor.process_orulo_tags(Multi.new(), building_uuid)
+      {:ok, %{insert_tags: _}} = PayloadProcessor.process_orulo_tags(Multi.new(), building_uuid)
 
       development = Re.Repo.preload(development, :tags)
       assert Enum.empty?(development.tags)
