@@ -21,8 +21,8 @@ defmodule Re.Addresses.District do
     timestamps()
   end
 
-  @required ~w(state city name description)a
-  @optional ~w(status)a
+  @required ~w(state city name)a
+  @optional ~w(status description)a
   @params @required ++ @optional
 
   @sluggified_attr ~w(state city name)a
