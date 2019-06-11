@@ -144,7 +144,7 @@ defmodule ReIntegrations.Notifications.Emails.Server do
         %{
           topic: "new_price_suggestion_request",
           type: :new,
-          new: %{req: request, price: {_, price}}
+          new: request = %{suggested_price: price}
         },
         state
       ) do
