@@ -8,6 +8,7 @@ defmodule ReIntegrations.Orulo do
   alias ReIntegrations.{
     Orulo.BuildingPayload,
     Orulo.ImagePayload,
+    Orulo.TypologyPayload,
     Orulo.JobQueue,
     Repo
   }
@@ -54,6 +55,22 @@ defmodule ReIntegrations.Orulo do
     |> Multi.insert(:insert_images_payload, changeset)
     |> JobQueue.enqueue(:parse_images_job, %{
       "type" => "parse_images_payloads_into_images",
+      "uuid" => uuid
+    })
+    |> Repo.transaction()
+  end
+
+  def insert_typology_payload(multi, params) do
+    changeset =
+      %TypologyPayload{}
+      |> TypologyPayload.changeset(params)
+
+    uuid = Changeset.get_field(changeset, :uuid)
+
+    multi
+    |> Multi.insert(:insert_typologies_payload, changeset)
+    |> JobQueue.enqueue(:fetch_units_job, %{
+      "type" => "fetch_units",
       "uuid" => uuid
     })
     |> Repo.transaction()
