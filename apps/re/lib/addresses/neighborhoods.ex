@@ -89,9 +89,43 @@ defmodule Re.Addresses.Neighborhoods do
 
   defp normalize(
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "pompeia"} = neighborhood
-       ) do
-    %{neighborhood | neighborhood_slug: "vila-pompeia", neighborhood: "Vila Pompeia"}
-  end
+       ),
+       do: %{neighborhood | neighborhood_slug: "vila-pompeia", neighborhood: "Vila Pompeia"}
+
+  defp normalize(
+         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "vila-clementino"} =
+           neighborhood
+       ),
+       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "vila-mariana"}
+
+  defp normalize(
+         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-da-gloria"} =
+           neighborhood
+       ),
+       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
+
+  defp normalize(
+         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "chacara-klabin"} =
+           neighborhood
+       ),
+       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
+
+  defp normalize(
+         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "paraiso"} = neighborhood
+       ),
+       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
+
+  defp normalize(
+         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-luzitania"} =
+           neighborhood
+       ),
+       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
+
+  defp normalize(
+         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-vila-mariana"} =
+           neighborhood
+       ),
+       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
 
   defp normalize(neighborhood), do: neighborhood
 end
