@@ -6,20 +6,23 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
 
   require Logger
 
-  alias Re.Addresses.District
+  alias Re.{
+    Addresses.District,
+    Repo
+  }
 
   def run(_) do
     Mix.EctoSQL.ensure_started(Re.Repo, [])
 
     {:ok, district} =
       %District{}
-      |> Re.Addresses.District.changeset(%{
+      |> District.changeset(%{
         name: "Vila Mariana",
         state: "SP",
         city: "São Paulo",
         status: "active"
       })
-      |> Re.Repo.insert()
+      |> Repo.insert()
 
     Mix.shell().info("Inserted district: #{district.name}, id: #{district.id}")
   end
