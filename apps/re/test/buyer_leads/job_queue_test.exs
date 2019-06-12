@@ -428,11 +428,11 @@ defmodule Re.BuyerLeads.JobQueueTest do
   describe "requeue_all/1" do
     test "requeue all failed jobs" do
       {:ok, %{id: id}} =
-        JobQueue.new(%{}) |> Ecto.Changeset.change(%{state: "FAILED"}) |> Repo.insert()
+        %{} |> JobQueue.new() |> Ecto.Changeset.change(%{state: "FAILED"}) |> Repo.insert()
 
-      JobQueue.new(%{}) |> Ecto.Changeset.change(%{state: "SCHEDULED"}) |> Repo.insert()
-      JobQueue.new(%{}) |> Ecto.Changeset.change(%{state: "AVAILABLE"}) |> Repo.insert()
-      JobQueue.new(%{}) |> Ecto.Changeset.change(%{state: "IN_PROGRESS"}) |> Repo.insert()
+      %{} |> JobQueue.new() |> Ecto.Changeset.change(%{state: "SCHEDULED"}) |> Repo.insert()
+      %{} |> JobQueue.new() |> Ecto.Changeset.change(%{state: "AVAILABLE"}) |> Repo.insert()
+      %{} |> JobQueue.new() |> Ecto.Changeset.change(%{state: "IN_PROGRESS"}) |> Repo.insert()
 
       JobQueue.requeue_all(Multi.new())
 
