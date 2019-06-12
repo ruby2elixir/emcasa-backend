@@ -211,7 +211,7 @@ defmodule Re.PriceSuggestionsTest do
                         })
 
                assert Keyword.get(changeset.errors, :type) ==
-                        {"invalid value",
+                        {"is invalid",
                          [
                            validation: :inclusion,
                            enum:

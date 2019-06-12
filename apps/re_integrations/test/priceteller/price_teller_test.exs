@@ -59,7 +59,7 @@ defmodule ReIntegrations.PriceTellerTest do
       assert {:error, changeset} = PriceTeller.ask(@invalid_payload)
 
       assert Keyword.get(changeset.errors, :type) ==
-               {"invalid value",
+               {"is invalid",
                 [
                   validation: :inclusion,
                   enum: ~w(APARTMENT CONDOMINIUM KITNET HOME TWO_STORY_HOUSE FLAT PENTHOUSE)

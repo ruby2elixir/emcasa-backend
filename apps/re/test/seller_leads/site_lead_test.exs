@@ -35,7 +35,7 @@ defmodule Re.SellerLeads.SiteTest do
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :type) ==
-               {"invalid value", [validation: :inclusion, enum: ~w(Apartamento Casa Cobertura)]}
+               {"is invalid", [validation: :inclusion, enum: ~w(Apartamento Casa Cobertura)]}
 
       assert Keyword.get(changeset.errors, :maintenance_fee) ==
                {"must be greater than or equal to %{number}",

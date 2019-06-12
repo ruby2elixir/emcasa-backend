@@ -21,7 +21,7 @@ defmodule Re.TagTest do
     refute changeset.valid?
 
     assert Keyword.get(changeset.errors, :category) ==
-             {"invalid value",
+             {"is invalid",
               [validation: :inclusion, enum: ~w(infrastructure location realty view concierge)]}
   end
 

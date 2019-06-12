@@ -45,8 +45,8 @@ defmodule Re.Tag do
     |> cast(params, @required)
     |> validate_required(@required)
     |> unique_constraint(:name_slug)
-    |> validate_inclusion(:category, @categories, message: "invalid value")
-    |> validate_inclusion(:visibility, @visibilities, message: "invalid value")
+    |> validate_inclusion(:category, @categories)
+    |> validate_inclusion(:visibility, @visibilities)
     |> generate_slugs()
     |> ChangesetHelper.generate_uuid()
   end

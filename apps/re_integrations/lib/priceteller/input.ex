@@ -38,7 +38,7 @@ defmodule ReIntegrations.PriceTeller.Input do
     struct
     |> cast(params, @params)
     |> validate_required(@params)
-    |> validate_inclusion(:type, @types, message: "invalid value")
+    |> validate_inclusion(:type, @types)
     |> validate_length(:zip_code, is: 8)
     |> validate_number(:area, greater_than: 15, less_than: 600)
     |> validate_number(:bathrooms, greater_than_or_equal_to: 0, less_than: 20)

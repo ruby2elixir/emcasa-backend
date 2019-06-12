@@ -30,7 +30,7 @@ defmodule Re.SellerLeads.Site do
     struct
     |> cast(params, @params)
     |> validate_required(@required)
-    |> validate_inclusion(:type, @types, message: "invalid value")
+    |> validate_inclusion(:type, @types)
     |> generate_uuid()
     |> validate_attributes()
   end

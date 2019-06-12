@@ -55,8 +55,8 @@ defmodule Re.Unit do
       greater_than_or_equal_to: 250_000,
       less_than_or_equal_to: 100_000_000
     )
-    |> validate_inclusion(:garage_type, @garage_types, message: "invalid value")
-    |> validate_inclusion(:status, @statuses, message: "invalid value")
+    |> validate_inclusion(:garage_type, @garage_types)
+    |> validate_inclusion(:status, @statuses)
     |> Re.ChangesetHelper.generate_uuid()
   end
 
