@@ -60,7 +60,7 @@ defmodule ReIntegrations.Orulo do
     |> Repo.transaction()
   end
 
-  def insert_typology_payload(multi, params) do
+  def insert_typologies_payload(multi, params) do
     changeset =
       %TypologyPayload{}
       |> TypologyPayload.changeset(params)
