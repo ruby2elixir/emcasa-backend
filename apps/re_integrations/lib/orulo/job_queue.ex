@@ -21,8 +21,7 @@ defmodule ReIntegrations.Orulo.JobQueue do
          {:ok, _} <-
            Orulo.multi_building_payload_insert(multi, %{external_id: id, payload: payload}) do
     else
-      {:error, error} -> Logger.error(error)
-      error -> Logger.error(error)
+      error -> Logger.error("Error on building request: #{Kernel.inspect(error)}")
     end
   end
 
@@ -32,22 +31,21 @@ defmodule ReIntegrations.Orulo.JobQueue do
          {:ok, _} <-
            Orulo.multi_images_payload_insert(multi, %{external_id: id, payload: payload}) do
     else
-      {:error, error} -> Logger.error(error)
-      error -> Logger.error(error)
+      error -> Logger.error("Error on image request: #{Kernel.inspect(error)}")
     end
   end
 
   def perform(%Multi{} = multi, %{"type" => "fetch_typology", "building_id" => id}) do
     with {:ok, %{body: body}} <- Client.get_typologies(id),
          {:ok, payload} <- Jason.decode(body),
-         {:ok, _} <-
+         {:ok, new_typology_payload} <-
            Orulo.insert_typologies_payload(multi, %{
              building_id: Integer.to_string(id),
              payload: payload
            }) do
+      {:ok, new_typology_payload}
     else
-      {:error, error} -> Logger.error(error)
-      error -> Logger.error(error)
+      error -> Logger.error("Error on typology request:  #{Kernel.inspect(error)}")
     end
   end
 
