@@ -13,6 +13,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
 
   alias Ecto.Multi
 
+  import Re.CustomAssertion
   import ReIntegrations.Factory
 
   describe "insert_development_from_building_payload/1" do
@@ -56,7 +57,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
       assert development.builder == Map.get(developer, "name")
     end
 
-    test "enqueue fetch images and process tag jobs" do
+    test "enqueue fetch images, fetch typologies and process tag jobs" do
       building = build(:building_payload)
 
       %{uuid: uuid} =
@@ -67,7 +68,11 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
       assert {:ok, _} =
                PayloadProcessor.insert_development_from_building_payload(Multi.new(), uuid)
 
-      assert 2 == Enum.count(Repo.all(JobQueue))
+      enqueued_jobs = Repo.all(JobQueue)
+
+      assert_enqueued_job(enqueued_jobs, "fetch_images_from_orulo")
+      assert_enqueued_job(enqueued_jobs, "process_orulo_tags")
+      assert_enqueued_job(enqueued_jobs, "fetch_typologies")
     end
   end
 

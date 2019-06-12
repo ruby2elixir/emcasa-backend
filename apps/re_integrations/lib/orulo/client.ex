@@ -23,6 +23,12 @@ defmodule ReIntegrations.Orulo.Client do
     |> @http_client.get(@api_headers)
   end
 
+  def get_typologies(id) do
+    @base_url
+    |> build_uri("buildings/#{id}/typologies")
+    |> @http_client.get(@api_headers)
+  end
+
   def build_uri(url, type) do
     url
     |> URI.parse()
