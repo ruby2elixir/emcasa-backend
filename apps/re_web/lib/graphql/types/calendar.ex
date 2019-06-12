@@ -21,8 +21,15 @@ defmodule ReWeb.Types.Calendar do
 
   input_object :tour_schedule_input do
     field :options, non_null(list_of(:datetime_option_input))
-    field :wants_pictures, non_null(:boolean)
-    field :wants_tour, non_null(:boolean)
+
+    field :wants_pictures, non_null(:boolean) do
+      deprecate("not used anymore")
+    end
+
+    field :wants_tour, non_null(:boolean) do
+      deprecate("not used anymore")
+    end
+
     field :listing_id, :id
     field :site_seller_lead_uuid, :uuid
   end
