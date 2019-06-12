@@ -37,11 +37,14 @@ defmodule ReIntegrations.Orulo.JobQueue do
     end
   end
 
-  def perform(%Multi{} = multi, %{"type" => "fetch_typology", "external_id" => id}) do
+  def perform(%Multi{} = multi, %{"type" => "fetch_typology", "building_id" => id}) do
     with {:ok, %{body: body}} <- Client.get_typologies(id),
          {:ok, payload} <- Jason.decode(body),
          {:ok, _} <-
-           Orulo.insert_typologies_payload(multi, %{external_id: id, payload: payload}) do
+           Orulo.insert_typologies_payload(multi, %{
+             building_id: Integer.to_string(id),
+             payload: payload
+           }) do
     else
       {:error, error} -> Logger.error(error)
       error -> Logger.error(error)

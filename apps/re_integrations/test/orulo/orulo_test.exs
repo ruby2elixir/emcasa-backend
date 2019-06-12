@@ -68,18 +68,18 @@ defmodule ReIntegrations.OruloTest do
 
   describe "insert_typology_payload/2" do
     test "create new typology payload" do
-      params = %{external_id: 666, payload: %{test: "typology_payload"}}
+      params = %{building_id: "666", payload: %{test: "typology_payload"}}
 
       assert {:ok, %{insert_typologies_payload: payload}} =
                Orulo.insert_typologies_payload(Multi.new(), params)
 
       assert payload.uuid
-      assert payload.external_id == 666
+      assert payload.building_id == "666"
       assert payload.payload == %{test: "typology_payload"}
     end
 
     test "enqueue a new fetch_units job" do
-      params = %{external_id: 666, payload: %{test: "images_payload"}}
+      params = %{building_id: "666", payload: %{test: "images_payload"}}
       assert {:ok, _} = Orulo.insert_typologies_payload(Multi.new(), params)
 
       enqueued_jobs = Repo.all(JobQueue)

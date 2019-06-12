@@ -10,13 +10,13 @@ defmodule ReIntegrations.Orulo.TypologyPayload do
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "orulo_typology_payloads" do
-    field :external_id, :integer
+    field :building_id, :string
     field :payload, :map
 
     timestamps()
   end
 
-  @required ~w(external_id payload)a
+  @required ~w(building_id payload)a
 
   def changeset(struct, params \\ %{}) do
     struct

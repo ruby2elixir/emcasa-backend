@@ -54,9 +54,9 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Buildings do
   end
 
   defp enqueue_units_job(multi, building) do
-    JobQueue.enqueue(multi, :fetch_units, %{
+    JobQueue.enqueue(multi, :fetch_typologies, %{
       "type" => "fetch_typologies",
-      "external_id" => building.uuid
+      "external_id" => building.external_id
     })
   end
 end
