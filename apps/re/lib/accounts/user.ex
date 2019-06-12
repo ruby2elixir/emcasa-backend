@@ -27,6 +27,12 @@ defmodule Re.User do
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :listing]
 
+    has_many(:listing_visualizations, Re.Statistics.ListingVisualization, on_delete: :delete_all)
+
+    has_many(:tour_visualizations_visualizations, Re.Statistics.TourVisualization,
+      on_delete: :delete_all
+    )
+
     timestamps()
   end
 

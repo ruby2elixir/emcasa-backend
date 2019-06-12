@@ -105,20 +105,10 @@ defmodule Re.Listing do
       less_than_or_equal_to: 100_000_000
     )
     |> validate_number(:score, greater_than: 0, less_than: 5)
-    |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
-    |> validate_inclusion(:garage_type, @garage_types,
-      message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
-    )
-    |> validate_inclusion(
-      :orientation,
-      @orientation_types,
-      message: "should be one of: [#{Enum.join(@orientation_types, " ")}]"
-    )
-    |> validate_inclusion(
-      :sun_period,
-      @sun_period_types,
-      message: "should be one of: [#{Enum.join(@sun_period_types, " ")}]"
-    )
+    |> validate_inclusion(:type, @types)
+    |> validate_inclusion(:garage_type, @garage_types)
+    |> validate_inclusion(:orientation, @orientation_types)
+    |> validate_inclusion(:sun_period, @sun_period_types)
     |> generate_uuid()
     |> calculate_price_per_area()
   end
@@ -139,7 +129,7 @@ defmodule Re.Listing do
     |> cast(params, @development_attributes)
     |> cast_assoc(:development)
     |> validate_required(@development_required)
-    |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
+    |> validate_inclusion(:type, @types)
     |> generate_uuid()
   end
 
