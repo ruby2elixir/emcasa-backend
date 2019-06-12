@@ -43,9 +43,7 @@ defmodule Re.Development do
     struct
     |> cast(params, @required ++ @optional)
     |> validate_required(@required)
-    |> validate_inclusion(:phase, @phases,
-      message: "should be one of: [#{Enum.join(@phases, " ")}]"
-    )
+    |> validate_inclusion(:phase, @phases, message: "invalid value")
     |> Re.ChangesetHelper.generate_uuid()
   end
 end

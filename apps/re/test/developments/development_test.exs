@@ -35,8 +35,8 @@ defmodule Re.DevelopmentTest do
     refute changeset.valid?
 
     assert Keyword.get(changeset.errors, :phase) ==
-             {"should be one of: [pre-launch planning building delivered]",
-              [validation: :inclusion]}
+             {"invalid value",
+              [validation: :inclusion, enum: ~w(pre-launch planning building delivered)]}
 
     assert Keyword.get(changeset.errors, :name) == {"can't be blank", [validation: :required]}
 

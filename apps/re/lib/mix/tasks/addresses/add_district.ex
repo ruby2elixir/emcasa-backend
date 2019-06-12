@@ -12,7 +12,7 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
   }
 
   def run(_) do
-    Mix.EctoSQL.ensure_started(Re.Repo, [])
+    Mix.Ecto.ensure_repo(Re.Repo, [])
 
     {:ok, district} =
       %District{}

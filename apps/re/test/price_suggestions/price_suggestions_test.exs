@@ -211,8 +211,12 @@ defmodule Re.PriceSuggestionsTest do
                         })
 
                assert Keyword.get(changeset.errors, :type) ==
-                        {"should be one of: [APARTMENT CONDOMINIUM KITNET HOME TWO_STORY_HOUSE FLAT PENTHOUSE]",
-                         [validation: :inclusion]}
+                        {"invalid value",
+                         [
+                           validation: :inclusion,
+                           enum:
+                             ~w(APARTMENT CONDOMINIUM KITNET HOME TWO_STORY_HOUSE FLAT PENTHOUSE)
+                         ]}
 
                assert Keyword.get(changeset.errors, :area) ==
                         {"can't be blank", [validation: :required]}

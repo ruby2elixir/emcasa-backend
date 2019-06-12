@@ -39,22 +39,23 @@ defmodule Re.AddressTest do
 
     assert Keyword.get(changeset.errors, :street) ==
              {"should be at most %{count} character(s)",
-              [count: 128, validation: :length, kind: :max]}
+              [count: 128, validation: :length, kind: :max, type: :string]}
 
     assert Keyword.get(changeset.errors, :street_number) ==
              {"should be at most %{count} character(s)",
-              [count: 128, validation: :length, kind: :max]}
+              [count: 128, validation: :length, kind: :max, type: :string]}
 
     assert Keyword.get(changeset.errors, :neighborhood) ==
              {"should be at most %{count} character(s)",
-              [count: 128, validation: :length, kind: :max]}
+              [count: 128, validation: :length, kind: :max, type: :string]}
 
     assert Keyword.get(changeset.errors, :city) ==
              {"should be at most %{count} character(s)",
-              [count: 128, validation: :length, kind: :max]}
+              [count: 128, validation: :length, kind: :max, type: :string]}
 
     assert Keyword.get(changeset.errors, :state) ==
-             {"should be %{count} character(s)", [count: 2, validation: :length, kind: :is]}
+             {"should be %{count} character(s)",
+              [count: 2, validation: :length, kind: :is, type: :string]}
 
     assert Keyword.get(changeset.errors, :lat) ==
              {"must be greater than %{number}",
