@@ -3,11 +3,12 @@ defmodule ReIntegrations.Orulo do
   Context module to use importers.
   """
 
-  import Ecto.Query, only: [from: 2]
+  import Ecto.Query, only: [where: 2]
 
   alias ReIntegrations.{
     Orulo.BuildingPayload,
     Orulo.ImagePayload,
+    Orulo.TypologyPayload,
     Orulo.JobQueue,
     Repo
   }
@@ -59,10 +60,19 @@ defmodule ReIntegrations.Orulo do
     |> Repo.transaction()
   end
 
+  def insert_typologies_payload(multi, params) do
+    changeset =
+      %TypologyPayload{}
+      |> TypologyPayload.changeset(params)
+
+    multi
+    |> Multi.insert(:insert_typologies_payload, changeset)
+    |> Repo.transaction()
+  end
+
   def building_payload_synced?(external_id) do
-    # credo:disable-for-lines:3
-    (bp in BuildingPayload)
-    |> from(where: bp.external_id == ^external_id)
+    BuildingPayload
+    |> where(external_id: ^external_id)
     |> Repo.exists?()
   end
 end

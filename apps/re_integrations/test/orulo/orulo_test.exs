@@ -65,6 +65,19 @@ defmodule ReIntegrations.OruloTest do
     end
   end
 
+  describe "insert_typology_payload/2" do
+    test "create new typology payload" do
+      params = %{building_id: "666", payload: %{test: "typology_payload"}}
+
+      assert {:ok, %{insert_typologies_payload: payload}} =
+               Orulo.insert_typologies_payload(Multi.new(), params)
+
+      assert payload.uuid
+      assert payload.building_id == "666"
+      assert payload.payload == %{test: "typology_payload"}
+    end
+  end
+
   describe "building_already_synced?/2" do
     test "return false when payload does not exists" do
       insert(:building_payload, external_id: 1)
