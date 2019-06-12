@@ -82,6 +82,16 @@ defmodule Re.BuyerLeads.JobQueue do
 
   def perform(_multi, job), do: raise("Job type not handled. Job: #{Kernel.inspect(job)}")
 
+  def requeue_all(multi) do
+    __MODULE__
+    |> Query.where([jq], jq.state == "FAILED")
+    |> Repo.all()
+    |> Enum.reduce(multi, fn job, multi ->
+      __MODULE__.requeue(multi, "retry_job_#{job.id}", job)
+    end)
+    |> Repo.transaction()
+  end
+
   defp log_error({:ok, result}), do: {:ok, result}
 
   defp log_error(error) do
