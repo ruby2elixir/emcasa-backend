@@ -424,4 +424,21 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.url == "https://www.emcasa.com/imoveis/ny/new-york"
     end
   end
+
+  describe "requeue_all/1" do
+    test "requeue all failed jobs" do
+      {:ok, %{id: id}} =
+        JobQueue.new(%{}) |> Ecto.Changeset.change(%{state: "FAILED"}) |> Repo.insert()
+
+      JobQueue.new(%{}) |> Ecto.Changeset.change(%{state: "SCHEDULED"}) |> Repo.insert()
+      JobQueue.new(%{}) |> Ecto.Changeset.change(%{state: "AVAILABLE"}) |> Repo.insert()
+      JobQueue.new(%{}) |> Ecto.Changeset.change(%{state: "IN_PROGRESS"}) |> Repo.insert()
+
+      JobQueue.requeue_all(Multi.new())
+
+      refute Repo.get_by(JobQueue, state: "FAILED")
+      assert job = Repo.get(JobQueue, id)
+      assert job.state == "SCHEDULED"
+    end
+  end
 end
