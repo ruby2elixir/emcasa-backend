@@ -57,7 +57,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
       assert development.builder == Map.get(developer, "name")
     end
 
-    test "enqueue fetch images and process tag and units jobs" do
+    test "enqueue fetch images, fetch typologies and process tag jobs" do
       building = build(:building_payload)
 
       %{uuid: uuid} =

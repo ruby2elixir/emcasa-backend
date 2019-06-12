@@ -1,7 +1,6 @@
 defmodule ReIntegrations.OruloTest do
   @moduledoc false
 
-  import Re.CustomAssertion
   import ReIntegrations.Factory
 
   use ReIntegrations.ModelCase
@@ -76,14 +75,6 @@ defmodule ReIntegrations.OruloTest do
       assert payload.uuid
       assert payload.building_id == "666"
       assert payload.payload == %{test: "typology_payload"}
-    end
-
-    test "enqueue a new fetch_units job" do
-      params = %{building_id: "666", payload: %{test: "images_payload"}}
-      assert {:ok, _} = Orulo.insert_typologies_payload(Multi.new(), params)
-
-      enqueued_jobs = Repo.all(JobQueue)
-      assert_enqueued_job(enqueued_jobs, "fetch_units")
     end
   end
 

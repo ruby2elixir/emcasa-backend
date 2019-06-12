@@ -65,14 +65,8 @@ defmodule ReIntegrations.Orulo do
       %TypologyPayload{}
       |> TypologyPayload.changeset(params)
 
-    uuid = Changeset.get_field(changeset, :uuid)
-
     multi
     |> Multi.insert(:insert_typologies_payload, changeset)
-    |> JobQueue.enqueue(:fetch_units_job, %{
-      "type" => "fetch_units",
-      "uuid" => uuid
-    })
     |> Repo.transaction()
   end
 

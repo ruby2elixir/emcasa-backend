@@ -19,7 +19,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Buildings do
     |> insert_development(building)
     |> enqueue_image_job(building)
     |> enqueue_tag_job(building)
-    |> enqueue_units_job(building)
+    |> enqueue_typology_job(building)
     |> Repo.transaction()
   end
 
@@ -53,7 +53,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Buildings do
     })
   end
 
-  defp enqueue_units_job(multi, building) do
+  defp enqueue_typology_job(multi, building) do
     JobQueue.enqueue(multi, :fetch_typologies, %{
       "type" => "fetch_typologies",
       "external_id" => building.external_id
