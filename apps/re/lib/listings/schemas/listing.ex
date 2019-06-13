@@ -43,6 +43,7 @@ defmodule Re.Listing do
     field :favorite_count, :integer, virtual: true
     field :interest_count, :integer, virtual: true
     field :in_person_visit_count, :integer, virtual: true
+    field :suggested_price, :float
 
     belongs_to :address, Re.Address
 
@@ -92,7 +93,7 @@ defmodule Re.Listing do
   @optional ~w(complement floor matterport_code is_exclusive status property_tax
                      maintenance_fee balconies restrooms is_release is_exportable
                      orientation floor_count unit_per_floor sun_period elevators
-                     construction_year owner_contact_uuid)a
+                     construction_year owner_contact_uuid suggested_price)a
 
   @attributes @required ++ @optional
   def changeset(struct, params) do
