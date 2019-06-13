@@ -50,7 +50,7 @@ defmodule Re.BuyerLeads.EmptySearch do
 
   def buyer_lead_changeset(lead) do
     BuyerLead.changeset(%BuyerLead{}, %{
-      name: lead.user.name,
+      name: lead.user.name || "empty",
       email: lead.user.email,
       phone_number: lead.user.phone,
       origin: "site",
