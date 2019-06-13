@@ -55,13 +55,4 @@ defmodule Re.Accounts.Users do
     |> Repo.preload(favorited: [:images])
     |> Map.get(:favorited)
   end
-
-  @garagem_url Application.get_env(:re, :garagem_url, "localhost")
-
-  def build_user_url(%{id: id}) do
-    @garagem_url
-    |> URI.parse()
-    |> URI.merge("usuarios/#{id}")
-    |> URI.to_string()
-  end
 end
