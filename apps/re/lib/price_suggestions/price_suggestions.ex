@@ -67,7 +67,7 @@ defmodule Re.PriceSuggestions do
   defp map_type("Cobertura"), do: "PENTHOUSE"
   defp map_type(type), do: type
 
-  defp round_if_not_nil(nil), do: nil
+  defp round_if_not_nil(nil), do: 0
   defp round_if_not_nil(maintenance_fee), do: round(maintenance_fee)
 
   defp format_output({:ok, %{listing_price_rounded: listing_price_rounded}}),

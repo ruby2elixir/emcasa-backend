@@ -280,8 +280,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
                  AbsintheHelpers.mutation_wrapper(mutation, @invalid_variables)
                )
 
-             assert [%{"code" => 422}, %{"code" => 422}, %{"code" => 422}] =
-                      json_response(conn, 200)["errors"]
+             assert [%{"code" => 422}, %{"code" => 422}] = json_response(conn, 200)["errors"]
            end) =~ ":invalid_input in priceteller"
 
     assert request = Repo.get_by(Request, name: "Mah Name")

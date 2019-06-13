@@ -232,9 +232,6 @@ defmodule Re.PriceSuggestionsTest do
 
                assert Keyword.get(changeset.errors, :parking) ==
                         {"can't be blank", [validation: :required]}
-
-               assert Keyword.get(changeset.errors, :condo_fee) ==
-                        {"can't be blank", [validation: :required]}
              end) =~
                ":invalid_input in priceteller"
     end
