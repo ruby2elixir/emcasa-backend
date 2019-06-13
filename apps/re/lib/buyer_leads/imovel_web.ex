@@ -41,42 +41,46 @@ defmodule Re.BuyerLeads.ImovelWeb do
   def buyer_lead_changeset(nil), do: raise("Leads.FacebookBuyer not found")
 
   def buyer_lead_changeset(lead) do
-    phone_number = format_phone_number(lead.phone)
-    listing = Listings.get_partial_preloaded(lead.listing_id, [:address])
+    params =
+      %{
+        name: lead.name,
+        email: lead.email,
+        origin: "imovelweb"
+      }
+      |> put_location(lead)
+      |> put_user_info(lead)
 
-    BuyerLead.changeset(%BuyerLead{}, %{
-      name: lead.name,
-      email: lead.email,
-      phone_number: lead.phone,
-      origin: "imovelweb",
-      location: get_location(listing),
-      user_uuid: extract_user_uuid(phone_number),
-      listing_uuid: get_listing_uuid(listing),
-      neighborhood: get_neighborhood(listing)
-    })
+    BuyerLead.changeset(%BuyerLead{}, params)
   end
 
-  defp get_location({:ok, %{address: address}}), do: "#{address.city_slug}|#{address.state_slug}"
-  defp get_location(_), do: "unknown"
+  defp put_location(params, lead) do
+    case Listings.get_partial_preloaded(lead.listing_id, [:address]) do
+      {:ok, %{address: address} = listing} ->
+        params
+        |> Map.put(:location, "#{address.city_slug}|#{address.state_slug}")
+        |> Map.put(:listing_uuid, listing.uuid)
+        |> Map.put(:neighborhood, address.neighborhood)
 
-  defp format_phone_number(nil), do: nil
+      {:error, :not_found} ->
+        Map.put(params, :location, "unknown")
+    end
+  end
+
+  defp put_user_info(params, %{phone: nil}), do: params
+
+  defp put_user_info(params, lead) do
+    phone_number = format_phone_number(lead.phone)
+
+    phone_number
+    |> Users.get_by_phone()
+    |> case do
+      {:ok, user} -> Map.put(params, :user_uuid, user.uuid)
+      {:error, :not_found} -> params
+    end
+    |> Map.put(:phone_number, phone_number)
+  end
 
   defp format_phone_number("0" <> phone_number), do: "+55" <> phone_number
 
   defp format_phone_number(phone_number), do: phone_number
-
-  defp extract_user_uuid(nil), do: nil
-
-  defp extract_user_uuid(phone_number) do
-    case Users.get_by_phone(phone_number) do
-      {:ok, user} -> user.uuid
-      _error -> nil
-    end
-  end
-
-  defp get_listing_uuid({:ok, listing}), do: listing.uuid
-  defp get_listing_uuid(_), do: nil
-
-  defp get_neighborhood({:ok, %{address: address}}), do: address.neighborhood
-  defp get_neighborhood(_), do: nil
 end
