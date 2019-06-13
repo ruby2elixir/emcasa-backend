@@ -7,6 +7,7 @@ defmodule Re.ListingsTest do
     Listings.History.Server,
     Listing,
     Listings,
+    Listings.JobQueue,
     Repo
   }
 
@@ -392,6 +393,7 @@ defmodule Re.ListingsTest do
       assert listing.status == "active"
       status_history = Repo.one(Re.Listings.StatusHistory)
       assert "inactive" == status_history.status
+      assert Repo.one(JobQueue)
     end
   end
 
