@@ -5,8 +5,6 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
 
   alias ReIntegrations.{
     Orulo.BuildingPayload,
-    Orulo.ImagePayload,
-    Orulo.TypologyPayload,
     Orulo.JobQueue,
     Orulo.PayloadProcessor,
     Repo
@@ -38,12 +36,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
     end
 
     test "create new development from building" do
-      %{payload: payload = %{"developer" => developer}} = building = build(:building_payload)
-
-      %{uuid: uuid} =
-        building
-        |> BuildingPayload.changeset()
-        |> Repo.insert!()
+      %{uuid: uuid, payload: payload = %{"developer" => developer}} = insert(:building_payload)
 
       assert {:ok, %{insert_development: development}} =
                PayloadProcessor.insert_development_from_building_payload(Multi.new(), uuid)
@@ -59,12 +52,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
     end
 
     test "enqueue fetch images, fetch typologies and process tag jobs" do
-      building = build(:building_payload)
-
-      %{uuid: uuid} =
-        building
-        |> BuildingPayload.changeset()
-        |> Repo.insert!()
+      %{uuid: uuid} = insert(:building_payload)
 
       assert {:ok, _} =
                PayloadProcessor.insert_development_from_building_payload(Multi.new(), uuid)
@@ -79,10 +67,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
 
   describe "insert_images_from_image_payload/3" do
     test "create new images from image payload" do
-      %{uuid: payload_uuid} =
-        build(:images_payload)
-        |> ImagePayload.changeset()
-        |> Repo.insert!()
+      %{uuid: payload_uuid} = insert(:images_payload)
 
       Re.Factory.insert(:development, orulo_id: "999")
 
@@ -99,10 +84,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
   describe "process_typologies/2" do
     @tag dev: true
     test "create new units from typology_payload" do
-      %{uuid: payload_uuid} =
-        build(:typology_payload)
-        |> TypologyPayload.changeset()
-        |> Repo.insert!()
+      %{uuid: payload_uuid} = insert(:typology_payload)
 
       Re.Factory.insert(:development, orulo_id: "999")
 

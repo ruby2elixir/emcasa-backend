@@ -46,6 +46,7 @@ defmodule ReIntegrations.Factory do
 
   def images_payload_factory do
     %ReIntegrations.Orulo.ImagePayload{
+      uuid: UUID.uuid4(),
       external_id: 999,
       payload: %{
         "images" => [
@@ -68,6 +69,7 @@ defmodule ReIntegrations.Factory do
 
   def typology_payload_factory do
     %ReIntegrations.Orulo.TypologyPayload{
+      uuid: UUID.uuid4(),
       building_id: "999",
       payload: %{
         "typologies" => [
