@@ -18,7 +18,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       %{id: id, uuid: listing_uuid} =
         insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
 
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
         insert(:grupozap_buyer_lead, ddd: "11", phone: "999999999", client_listing_id: "#{id}")
@@ -31,6 +31,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_uuid == user_uuid
       assert buyer.listing_uuid == listing_uuid
       assert buyer.location == "manhattan|ny"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
     test "process lead with nil ddd" do
@@ -46,6 +47,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
+      refute buyer.user_url
     end
 
     test "process lead with nil phone" do
@@ -61,6 +63,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
+      refute buyer.user_url
     end
 
     test "process lead with nil ddd and phone" do
@@ -77,6 +80,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       refute buyer.user_uuid
       assert buyer.phone_number == "not informed"
       assert buyer.listing_uuid == listing_uuid
+      refute buyer.user_url
     end
 
     test "process lead with no user" do
@@ -92,12 +96,13 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
+      refute buyer.user_url
     end
 
     test "process lead with no listing" do
       %{id: id} = listing = insert(:listing, address: build(:address))
       Repo.delete(listing)
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
         insert(:grupozap_buyer_lead, ddd: "11", phone: "999999999", client_listing_id: "#{id}")
@@ -109,6 +114,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
   end
 
@@ -116,7 +122,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
     test "process lead with existing user and listing" do
       %{id: listing_id, uuid: listing_uuid} = insert(:listing, address: address = build(:address))
       mock(HTTPoison, :get, {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}})
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
         insert(:facebook_buyer_lead,
@@ -135,6 +141,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert listing_uuid == buyer.listing_uuid
       assert buyer.location == "#{address.city_slug}|#{address.state_slug}"
       assert buyer.budget == "$1000 to $10000"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
     test "process lead with nil phone" do
@@ -168,6 +175,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       refute buyer.user_uuid
       assert listing_uuid == buyer.listing_uuid
+      refute buyer.user_url
     end
 
     test "process lead with unknown location" do
@@ -177,7 +185,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
         {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
       end)
 
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: "+5511999999999")
 
@@ -189,11 +197,12 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_uuid == user_uuid
       assert listing_uuid == buyer.listing_uuid
       assert buyer.location == "#{address.city_slug}|#{address.state_slug}"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
     test "process lead with invalid listing" do
       mock(HTTPoison, :get, {:ok, %{body: "{\"retailer_item_id\":\"#{2}\"}"}})
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
         insert(:facebook_buyer_lead,
@@ -212,11 +221,12 @@ defmodule Re.BuyerLeads.JobQueueTest do
       refute buyer.listing_uuid
       assert buyer.location == "sao-paulo|sp"
       assert buyer.budget == "$1000 to $10000"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
     test "process lead without retailer_item_id" do
       mock(HTTPoison, :get, {:ok, %{body: "{}"}})
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
         insert(:facebook_buyer_lead,
@@ -235,11 +245,12 @@ defmodule Re.BuyerLeads.JobQueueTest do
       refute buyer.listing_uuid
       assert buyer.location == "sao-paulo|sp"
       assert buyer.budget == "$1000 to $10000"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
     test "process lead with http request error" do
       mock(HTTPoison, :get, {:error, %{error: "some error"}})
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
         insert(:facebook_buyer_lead,
@@ -258,6 +269,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       refute buyer.listing_uuid
       assert buyer.location == "sao-paulo|sp"
       assert buyer.budget == "$1000 to $10000"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
   end
 
@@ -266,7 +278,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       %{id: id, uuid: listing_uuid} =
         insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
 
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} = insert(:imovelweb_buyer_lead, phone: "011999999999", listing_id: "#{id}")
 
@@ -278,6 +290,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_uuid == user_uuid
       assert buyer.listing_uuid == listing_uuid
       assert buyer.location == "manhattan|ny"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
     test "process lead with nil phone" do
@@ -303,12 +316,13 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
+      refute buyer.user_url
     end
 
     test "process lead with no listing" do
       %{id: id} = listing = insert(:listing, address: build(:address))
       Repo.delete(listing)
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} = insert(:imovelweb_buyer_lead, phone: "011999999999", listing_id: "#{id}")
 
@@ -320,6 +334,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
       assert buyer.location == "unknown"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
   end
 
@@ -329,7 +344,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
         listing =
         insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
 
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} = insert(:interest, listing: listing, phone: "+5511999999999")
 
@@ -340,6 +355,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_uuid == user_uuid
       assert buyer.listing_uuid == listing_uuid
       assert buyer.location == "manhattan|ny"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
     test "process lead with nil phone" do
@@ -368,12 +384,13 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.phone_number == "011999999999"
       assert buyer.listing_uuid == listing_uuid
       assert buyer.location == "manhattan|ny"
+      refute buyer.user_url
     end
   end
 
   describe "process_budget_buyer_lead" do
     test "proecss lead" do
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
         insert(:budget_buyer_lead,
@@ -394,12 +411,13 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert buyer.location == "new-york|ny"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
   end
 
   describe "process_empty_search_buyer_lead" do
     test "proecss lead" do
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
         insert(:empty_search_buyer_lead,
@@ -422,10 +440,11 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_uuid == user_uuid
       assert buyer.location == "new-york|ny"
       assert buyer.url == "https://www.emcasa.com/imoveis/ny/new-york"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
     test "proecss lead with nil name" do
-      %{uuid: user_uuid} = insert(:user, phone: "+5511999999999", name: nil)
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999", name: nil)
 
       %{uuid: uuid} =
         insert(:empty_search_buyer_lead,
@@ -448,6 +467,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_uuid == user_uuid
       assert buyer.location == "new-york|ny"
       assert buyer.url == "https://www.emcasa.com/imoveis/ny/new-york"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
   end
 

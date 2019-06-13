@@ -84,7 +84,9 @@ defmodule Re.BuyerLeads.Facebook do
   defp put_user_info(params, %{phone_number: phone_number}) do
     case Users.get_by_phone(phone_number) do
       {:ok, user} ->
-        Map.put(params, :user_uuid, user.uuid)
+        params
+        |> Map.put(:user_uuid, user.uuid)
+        |> Map.put(:user_url, Users.build_user_url(user))
 
       {:error, :not_found} ->
         params

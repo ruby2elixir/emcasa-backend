@@ -79,8 +79,13 @@ defmodule Re.BuyerLeads.Grupozap do
     phone_number
     |> Users.get_by_phone()
     |> case do
-      {:ok, user} -> Map.put(params, :user_uuid, user.uuid)
-      {:error, :not_found} -> params
+      {:ok, user} ->
+        params
+        |> Map.put(:user_uuid, user.uuid)
+        |> Map.put(:user_url, Users.build_user_url(user))
+
+      {:error, :not_found} ->
+        params
     end
     |> Map.put(:phone_number, phone_number)
   end
