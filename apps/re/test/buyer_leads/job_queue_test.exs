@@ -114,7 +114,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
   describe "facebook_buyer_lead" do
     test "process lead with existing user and listing" do
-      %{id: listing_id, uuid: listing_uuid} = insert(:listing)
+      %{id: listing_id, uuid: listing_uuid} = insert(:listing, address: address = build(:address))
       mock(HTTPoison, :get, {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}})
       %{uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
@@ -133,12 +133,12 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert listing_uuid == buyer.listing_uuid
-      assert buyer.location == "sao-paulo|sp"
+      assert buyer.location == "#{address.city_slug}|#{address.state_slug}"
       assert buyer.budget == "$1000 to $10000"
     end
 
     test "process lead with nil phone" do
-      %{id: listing_id} = insert(:listing)
+      %{id: listing_id} = insert(:listing, address: build(:address))
 
       mock(HTTPoison, [get: 1], fn _ ->
         {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
@@ -153,7 +153,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
     end
 
     test "process lead with no user" do
-      %{id: listing_id, uuid: listing_uuid} = insert(:listing)
+      %{id: listing_id, uuid: listing_uuid} = insert(:listing, address: build(:address))
 
       mock(HTTPoison, [get: 1], fn _ ->
         {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
@@ -171,7 +171,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
     end
 
     test "process lead with unknown location" do
-      %{id: listing_id, uuid: listing_uuid} = insert(:listing)
+      %{id: listing_id, uuid: listing_uuid} = insert(:listing, address: address = build(:address))
 
       mock(HTTPoison, [get: 1], fn _ ->
         {:ok, %{body: "{\"retailer_item_id\":\"#{listing_id}\"}"}}
@@ -188,7 +188,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert listing_uuid == buyer.listing_uuid
-      assert buyer.location == "unknown"
+      assert buyer.location == "#{address.city_slug}|#{address.state_slug}"
     end
 
     test "process lead with invalid listing" do
