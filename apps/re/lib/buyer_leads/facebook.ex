@@ -82,7 +82,9 @@ defmodule Re.BuyerLeads.Facebook do
   defp put_user_info(params, %{phone_number: nil}), do: params
 
   defp put_user_info(params, %{phone_number: phone_number}) do
-    case Users.get_by_phone(phone_number) do
+    phone_number
+    |> Users.get_by_phone()
+    |> case do
       {:ok, user} ->
         params
         |> Map.put(:user_uuid, user.uuid)
