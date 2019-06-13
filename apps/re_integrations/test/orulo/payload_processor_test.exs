@@ -6,6 +6,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
   alias ReIntegrations.{
     Orulo.BuildingPayload,
     Orulo.ImagePayload,
+    Orulo.TypologyPayload,
     Orulo.JobQueue,
     Orulo.PayloadProcessor,
     Repo
@@ -92,6 +93,33 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
         )
 
       assert inserted_image.filename == "qxo1cimsxmb2vnu5kcxw.jpg"
+    end
+  end
+
+  describe "process_typologies/2" do
+    @tag dev: true
+    test "create new units from typology_payload" do
+      %{uuid: payload_uuid} =
+        build(:typology_payload)
+        |> TypologyPayload.changeset()
+        |> Repo.insert!()
+
+      Re.Factory.insert(:development, orulo_id: "999")
+
+      {:ok,
+       %{
+         insert_units: [
+           ok: %{add_unit: inserted_unit_1},
+           ok: %{add_unit: inserted_unit_2}
+         ]
+       }} =
+        PayloadProcessor.process_typologies(
+          Multi.new(),
+          payload_uuid
+        )
+
+      assert inserted_unit_1.uuid
+      assert inserted_unit_2.uuid
     end
   end
 

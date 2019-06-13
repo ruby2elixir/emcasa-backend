@@ -2,7 +2,6 @@ defmodule ReIntegrations.Orulo.TypologyMapper do
   @moduledoc """
   Module to map orulo's typology into units.
   """
-  alias ReIntegrations.Orulo.TypologyPayload
 
   @typology_attributes ~w(discount_price private_area bedrooms bathrooms suites parking)
 
@@ -13,11 +12,11 @@ defmodule ReIntegrations.Orulo.TypologyMapper do
   end
 
   defp convert_typology_attribute({"discount_price", price}, acc) do
-    Map.put(acc, :price, price)
+    Map.put(acc, :price, round(price))
   end
 
   defp convert_typology_attribute({"private_area", area}, acc) do
-    Map.put(acc, :area, area)
+    Map.put(acc, :area, round(area))
   end
 
   defp convert_typology_attribute({"bedrooms", rooms}, acc) do
