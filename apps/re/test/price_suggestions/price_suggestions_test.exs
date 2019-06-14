@@ -8,6 +8,7 @@ defmodule Re.PriceSuggestionsTest do
   import ExUnit.CaptureLog
 
   alias Re.{
+    Listing,
     PriceSuggestions,
     PriceSuggestions.Factors
   }
@@ -158,16 +159,20 @@ defmodule Re.PriceSuggestionsTest do
                }
              ] = Repo.all(Factors)
     end
+  end
 
-    test "should suggest price for listing" do
-      listing =
+  describe "suggest_price/1" do
+    test "should suggest price for listing and persist it" do
+      %{uuid: uuid} =
+        listing =
         insert(
           :listing,
           rooms: 2,
           area: 80,
           address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
           garage_spots: 1,
-          bathrooms: 1
+          bathrooms: 1,
+          suggested_price: nil
         )
 
       mock(
@@ -181,10 +186,10 @@ defmodule Re.PriceSuggestionsTest do
       )
 
       assert {:ok, 26_279.0} == PriceSuggestions.suggest_price(listing)
+      listing = Repo.get_by(Listing, uuid: uuid)
+      assert listing.suggested_price == 26_279.0
     end
-  end
 
-  describe "suggest_price/1" do
     test "should not suggest for nil values" do
       mock(
         HTTPoison,
