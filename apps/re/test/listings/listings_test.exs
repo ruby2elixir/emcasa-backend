@@ -521,6 +521,7 @@ defmodule Re.ListingsTest do
       Listings.update(listing, %{rooms: 4}, address: address, user: user)
 
       refute Repo.one(Re.Listings.PriceHistory)
+      assert Repo.one(JobQueue)
     end
 
     test "should update owner contact" do
@@ -539,6 +540,7 @@ defmodule Re.ListingsTest do
 
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.owner_contact_uuid == updated_owner_contact.uuid
+      assert Repo.one(JobQueue)
     end
 
     test "should update if owner contact is nil" do
@@ -555,6 +557,7 @@ defmodule Re.ListingsTest do
 
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.owner_contact_uuid == original_owner_contact.uuid
+      assert Repo.one(JobQueue)
     end
 
     test "should not change user who created listing" do
@@ -569,6 +572,7 @@ defmodule Re.ListingsTest do
 
       updated_listing = Repo.get(Listing, listing.id)
       assert updated_listing.user_id == original_user.id
+      assert Repo.one(JobQueue)
     end
   end
 
