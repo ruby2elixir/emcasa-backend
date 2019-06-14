@@ -84,7 +84,35 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
   describe "process_typologies/2" do
     @tag dev: true
     test "create new units from typology_payload" do
-      %{uuid: payload_uuid} = insert(:typology_payload)
+      %{uuid: payload_uuid} =
+        insert(:typology_payload,
+          payload: %{
+            "typologies" => [
+              %{
+                "id" => "1",
+                "type" => "Apartamento",
+                "original_price" => 1_000_00.0,
+                "discount_price" => 950_000.0,
+                "private_area" => 100.0,
+                "bedrooms" => 1,
+                "bathrooms" => 1,
+                "suites" => 1,
+                "parking" => 1
+              },
+              %{
+                "id" => "2",
+                "type" => "Apartamento",
+                "original_price" => 2_000_000.0,
+                "discount_price" => 1_900_000.0,
+                "private_area" => 200.0,
+                "bedrooms" => 2,
+                "bathrooms" => 2,
+                "suites" => 2,
+                "parking" => 2
+              }
+            ]
+          }
+        )
 
       Re.Factory.insert(:development, orulo_id: "999")
 
@@ -101,7 +129,22 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
         )
 
       assert inserted_unit_1.uuid
+      assert inserted_unit_1.price == 950_000
+      assert inserted_unit_1.area == 100
+      assert inserted_unit_1.rooms == 1
+      assert inserted_unit_1.bathrooms == 1
+      assert inserted_unit_1.suites == 1
+      assert inserted_unit_1.garage_spots == 1
+      assert inserted_unit_1.garage_type == "unknown"
+
       assert inserted_unit_2.uuid
+      assert inserted_unit_2.price == 1_900_000
+      assert inserted_unit_2.area == 200
+      assert inserted_unit_2.rooms == 2
+      assert inserted_unit_2.bathrooms == 2
+      assert inserted_unit_2.suites == 2
+      assert inserted_unit_2.garage_spots == 2
+      assert inserted_unit_2.garage_type == "unknown"
     end
   end
 

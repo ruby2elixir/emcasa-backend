@@ -36,7 +36,7 @@ defmodule Re.Unit do
     timestamps()
   end
 
-  @garage_types ~w(contract condominium)
+  @garage_types ~w(contract condominium unknown)
   @statuses ~w(active inactive)
 
   @required ~w(price rooms bathrooms area garage_spots suites development_uuid status)a

@@ -4,7 +4,10 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
   """
   alias Ecto.Multi
 
-  alias Re.Developments
+  alias Re.{
+    Developments,
+    Units
+  }
 
   alias ReIntegrations.{
     Orulo.TypologyPayload,
@@ -16,31 +19,29 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
     typology_payload = Repo.get(TypologyPayload, topology_uuid)
     {:ok, development} = Developments.get_by_orulo_id(typology_payload.building_id)
 
-    %{payload: %{"typologies" => payload}} = typology_payload
+    %{payload: %{"typologies" => typologies}} = typology_payload
 
     multi
-    |> insert_units(payload, development)
+    |> insert_units_from_typologies(typologies, development)
     |> Repo.transaction()
   end
 
-  @static_params %{
-    status: "inactive"
-  }
-
-  defp insert_units(multi, typologies, development) do
+  defp insert_units_from_typologies(multi, typologies, development) do
     Multi.run(multi, :insert_units, fn _repo, _changes ->
-      insertion_results =
-        Enum.map(typologies, fn typology ->
-          params =
-            typology
-            |> TypologyMapper.typology_payload_into_unit_params()
-
-          params
-          |> Map.merge(@static_params)
-          |> Re.Units.insert(development)
-        end)
-
+      insertion_results = Enum.map(typologies, &insert_unit(&1, development))
       {:ok, insertion_results}
     end)
+  end
+
+  @static_params %{
+    status: "inactive",
+    garage_type: "unknown"
+  }
+
+  defp insert_unit(typology, development) do
+    typology
+    |> TypologyMapper.typology_payload_into_unit_params()
+    |> Map.merge(@static_params)
+    |> Units.insert(development)
   end
 end
