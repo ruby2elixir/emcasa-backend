@@ -33,14 +33,12 @@ defmodule Re.PriceSuggestions do
     end
   end
 
-  def suggest_price(%Listing{suggested_price: nil} = listing) do
+  def suggest_price(%Listing{} = listing) do
     listing
     |> preload_address()
     |> do_suggest_price()
     |> persist_suggested_price(listing)
   end
-
-  def suggest_price(%Listing{suggested_price: suggested_price}), do: {:ok, suggested_price}
 
   def suggest_price(params), do: do_suggest_price(params)
 

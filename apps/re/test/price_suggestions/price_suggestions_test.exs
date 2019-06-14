@@ -190,6 +190,34 @@ defmodule Re.PriceSuggestionsTest do
       assert listing.suggested_price == 26_279.0
     end
 
+    test "should update suggest price for listing when there's one" do
+      %{uuid: uuid} =
+        listing =
+        insert(
+          :listing,
+          rooms: 2,
+          area: 80,
+          address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+          garage_spots: 1,
+          bathrooms: 1,
+          suggested_price: 1000.0
+        )
+
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915}"
+         }}
+      )
+
+      assert {:ok, 26_279.0} == PriceSuggestions.suggest_price(listing)
+      listing = Repo.get_by(Listing, uuid: uuid)
+      assert listing.suggested_price == 26_279.0
+    end
+
     test "should not suggest for nil values" do
       mock(
         HTTPoison,
