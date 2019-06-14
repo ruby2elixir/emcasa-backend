@@ -20,12 +20,14 @@ defmodule Re.Listings.JobQueue do
     |> case do
       {:ok, suggested_price} ->
         changeset = Listing.changeset(listing, %{suggested_price: suggested_price})
-        Multi.update(multi, :update_suggested_price, changeset)
 
-      _error ->
         multi
+        |> Multi.update(:update_suggested_price, changeset)
+        |> Repo.transaction()
+
+      error ->
+        error
     end
-    |> Repo.transaction()
     |> log_error()
   end
 
@@ -36,6 +38,6 @@ defmodule Re.Listings.JobQueue do
       extra: %{error: error}
     )
 
-    error
+    raise "Error when performing Listings.JobQueue"
   end
 end

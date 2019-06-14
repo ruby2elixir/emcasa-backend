@@ -37,5 +37,19 @@ defmodule Re.Listings.JobQueueTest do
       assert listing = Repo.get_by(Listing, uuid: listing_uuid)
       assert listing.suggested_price == 635_000
     end
+
+    @tag capture_log: true
+    test "do not run multi when there's a fetch error" do
+      mock(HTTPoison, :post, {:error, %{error: "some error"}})
+
+      %{uuid: listing_uuid} = insert(:listing, address: build(:address))
+
+      assert_raise RuntimeError, fn ->
+        JobQueue.perform(Multi.new(), %{
+          "type" => "save_price_suggestion",
+          "uuid" => listing_uuid
+        })
+      end
+    end
   end
 end
