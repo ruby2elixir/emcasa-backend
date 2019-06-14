@@ -28,12 +28,12 @@ defmodule Re.Listings.JobQueue do
       error ->
         error
     end
-    |> log_error()
+    |> handle_error()
   end
 
-  defp log_error({:ok, result}), do: {:ok, result}
+  defp handle_error({:ok, result}), do: {:ok, result}
 
-  defp log_error(error) do
+  defp handle_error(error) do
     Sentry.capture_message("error when performing Listings.JobQueue",
       extra: %{error: error}
     )
