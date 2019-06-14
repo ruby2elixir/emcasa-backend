@@ -9,6 +9,7 @@ defmodule Re.Listings do
     Listings.Filters,
     Images,
     Listings.DataloaderQueries,
+    Listings.JobQueue,
     Listings.Opts,
     Listings.Queries,
     PubSub,
@@ -16,7 +17,10 @@ defmodule Re.Listings do
     Tags
   }
 
-  alias Ecto.Changeset
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
@@ -98,9 +102,17 @@ defmodule Re.Listings do
       |> changeset_for_opts(opts)
       |> Listing.changeset(params)
 
-    changeset
-    |> Repo.update()
-    |> PubSub.publish_update(changeset, "update_listing")
+    Multi.new()
+    |> Multi.update(:update_listing, changeset)
+    |> JobQueue.enqueue(:listing_job, %{"type" => "save_price_suggestion", "uuid" => listing.uuid})
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{update_listing: listing}} ->
+        PubSub.publish_update({:ok, listing}, changeset, "update_listing")
+
+      error ->
+        error
+    end
   end
 
   defp changeset_for_opts(%{user_id: user_id} = listing, opts) do
@@ -133,9 +145,17 @@ defmodule Re.Listings do
   def activate(listing) do
     changeset = Changeset.change(listing, status: "active")
 
-    changeset
-    |> Repo.update()
-    |> PubSub.publish_update(changeset, "activate_listing")
+    Multi.new()
+    |> Multi.update(:activate_listing, changeset)
+    |> JobQueue.enqueue(:listing_job, %{"type" => "save_price_suggestion", "uuid" => listing.uuid})
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{activate_listing: listing}} ->
+        PubSub.publish_update({:ok, listing}, changeset, "activate_listing")
+
+      error ->
+        error
+    end
   end
 
   def per_user(user) do

@@ -153,8 +153,9 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
       %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: nil)
 
-      assert {:error, :insert_buyer_lead, _, _} =
-               JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
+      assert_raise RuntimeError, fn ->
+        JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
+      end
 
       refute Repo.one(BuyerLead)
     end
@@ -298,8 +299,9 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
       %{uuid: uuid} = insert(:imovelweb_buyer_lead, phone: nil, listing_id: "#{id}")
 
-      assert {:error, :insert_buyer_lead, _, _} =
-               JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
+      assert_raise RuntimeError, fn ->
+        JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
+      end
 
       refute Repo.one(BuyerLead)
     end
@@ -364,8 +366,9 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
       %{uuid: uuid} = insert(:interest, listing: listing, phone: nil)
 
-      assert {:error, :insert_buyer_lead, _, _} =
-               JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
+      assert_raise RuntimeError, fn ->
+        JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
+      end
 
       refute Repo.one(BuyerLead)
     end

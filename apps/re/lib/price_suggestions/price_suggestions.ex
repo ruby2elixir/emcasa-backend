@@ -33,11 +33,24 @@ defmodule Re.PriceSuggestions do
     end
   end
 
-  def suggest_price(params) do
-    params
+  def suggest_price(%Listing{} = listing) do
+    listing
     |> preload_address()
     |> do_suggest_price()
+    |> persist_suggested_price(listing)
   end
+
+  def suggest_price(params), do: do_suggest_price(params)
+
+  defp persist_suggested_price({:ok, suggested_price}, listing) do
+    listing
+    |> Listing.changeset(%{suggested_price: suggested_price})
+    |> Repo.update()
+
+    {:ok, suggested_price}
+  end
+
+  defp persist_suggested_price(response, _), do: response
 
   defp do_suggest_price(params) do
     params

@@ -29,7 +29,7 @@ defmodule Re.BuyerLeads.JobQueue do
     |> Grupozap.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
-    |> log_error()
+    |> handle_error()
   end
 
   def perform(%Multi{} = multi, %{"type" => "facebook_buyer", "uuid" => uuid}) do
@@ -38,7 +38,7 @@ defmodule Re.BuyerLeads.JobQueue do
     |> Facebook.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
-    |> log_error()
+    |> handle_error()
   end
 
   def perform(%Multi{} = multi, %{"type" => "imovelweb_buyer", "uuid" => uuid}) do
@@ -47,7 +47,7 @@ defmodule Re.BuyerLeads.JobQueue do
     |> ImovelWeb.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
-    |> log_error()
+    |> handle_error()
   end
 
   def perform(%Multi{} = multi, %{"type" => "interest", "uuid" => uuid}) do
@@ -57,7 +57,7 @@ defmodule Re.BuyerLeads.JobQueue do
     |> Interest.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
-    |> log_error()
+    |> handle_error()
   end
 
   def perform(%Multi{} = multi, %{"type" => "process_budget_buyer_lead", "uuid" => uuid}) do
@@ -67,7 +67,7 @@ defmodule Re.BuyerLeads.JobQueue do
     |> Budget.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
-    |> log_error()
+    |> handle_error()
   end
 
   def perform(%Multi{} = multi, %{"type" => "process_empty_search_buyer_lead", "uuid" => uuid}) do
@@ -77,7 +77,7 @@ defmodule Re.BuyerLeads.JobQueue do
     |> EmptySearch.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
-    |> log_error()
+    |> handle_error()
   end
 
   def perform(_multi, job), do: raise("Job type not handled. Job: #{Kernel.inspect(job)}")
@@ -92,14 +92,14 @@ defmodule Re.BuyerLeads.JobQueue do
     |> Repo.transaction()
   end
 
-  defp log_error({:ok, result}), do: {:ok, result}
+  defp handle_error({:ok, result}), do: {:ok, result}
 
-  defp log_error(error) do
+  defp handle_error(error) do
     Sentry.capture_message("error when performing BuyerLeads.JobQueue",
       extra: %{error: error}
     )
 
-    error
+    raise "Error when performing BuyerLeads.JobQueue"
   end
 
   defp insert_buyer_lead(changeset, multi), do: Multi.insert(multi, :insert_buyer_lead, changeset)
