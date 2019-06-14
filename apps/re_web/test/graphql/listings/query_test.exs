@@ -819,7 +819,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           area: 80,
           garage_spots: 1,
           bathrooms: 1,
-          inserted_at: ~N[2018-01-01 10:00:00]
+          inserted_at: ~N[2018-01-01 10:00:00],
+          suggested_price: 1000.00
         )
 
       %{id: related_id1} = insert(:listing, address: address, score: 4)
@@ -921,7 +922,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  %{"price" => price2},
                  %{"price" => price3}
                ],
-               "suggestedPrice" => 26_279.0,
+               "suggestedPrice" => 1000.0,
                "related" => %{
                  "listings" => [
                    %{"id" => to_string(related_id1)},
@@ -991,7 +992,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           area: 80,
           garage_spots: 1,
           bathrooms: 1,
-          inserted_at: ~N[2018-01-01 10:00:00]
+          inserted_at: ~N[2018-01-01 10:00:00],
+          suggested_price: nil
         )
 
       %{id: related_id1} = insert(:listing, address: address, score: 4)
