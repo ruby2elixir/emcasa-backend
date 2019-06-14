@@ -54,7 +54,6 @@ defmodule Re.BuyerLeads.Facebook do
       %{
         name: lead.full_name,
         email: lead.email,
-        phone_number: lead.phone_number,
         origin: "facebook",
         budget: lead.budget,
         neighborhood: lead.neighborhoods
@@ -68,33 +67,34 @@ defmodule Re.BuyerLeads.Facebook do
   defp put_location(params, %{lead_id: lead_id, location: location}) do
     lead_id
     |> get_listing()
-    |> case do
-      {:ok, %{address: address} = listing} ->
-        params
-        |> Map.put(:location, "#{address.city_slug}|#{address.state_slug}")
-        |> Map.put(:listing_uuid, listing.uuid)
-
-      {:error, _} ->
-        Map.put(params, :location, get_location(location))
-    end
+    |> do_put_location(params, location)
   end
+
+  defp do_put_location({:ok, listing}, params, _location) do
+    params
+    |> Map.put(:location, "#{listing.address.city_slug}|#{listing.address.state_slug}")
+    |> Map.put(:listing_uuid, listing.uuid)
+  end
+
+  defp do_put_location({:error, _}, params, location),
+    do: Map.put(params, :location, get_location(location))
 
   defp put_user_info(params, %{phone_number: nil}), do: params
 
   defp put_user_info(params, %{phone_number: phone_number}) do
     phone_number
     |> Users.get_by_phone()
-    |> case do
-      {:ok, user} ->
-        params
-        |> Map.put(:user_uuid, user.uuid)
-        |> Map.put(:user_url, Users.build_user_url(user))
-
-      {:error, :not_found} ->
-        params
-    end
+    |> do_put_user_info(params)
     |> Map.put(:phone_number, phone_number)
   end
+
+  defp do_put_user_info({:ok, user}, params) do
+    params
+    |> Map.put(:user_uuid, user.uuid)
+    |> Map.put(:user_url, Users.build_user_url(user))
+  end
+
+  defp do_put_user_info({:error, :not_found}, params), do: params
 
   defp get_location("SP"), do: "sao-paulo|sp"
   defp get_location("RJ"), do: "rio-de-janeiro|rj"
@@ -102,12 +102,12 @@ defmodule Re.BuyerLeads.Facebook do
 
   defp get_listing(lead_id) do
     with {:ok, %{body: body}} <- FacebookClient.get_lead(lead_id),
-         {:ok, listing_id} <- get_retailer_item_id(body) do
+         {:ok, listing_id} <- get_listing_id(body) do
       Listings.get_partial_preloaded(listing_id, [:address])
     end
   end
 
-  defp get_retailer_item_id(body) do
+  defp get_listing_id(body) do
     case Jason.decode(body) do
       {:ok, %{"retailer_item_id" => listing_id}} -> {:ok, listing_id}
       {:ok, _} -> {:error, :not_found}

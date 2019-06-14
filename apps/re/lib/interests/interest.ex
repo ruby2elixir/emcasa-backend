@@ -72,15 +72,15 @@ defmodule Re.Interest do
 
     phone_number
     |> Users.get_by_phone()
-    |> case do
-      {:ok, user} ->
-        params
-        |> Map.put(:user_uuid, user.uuid)
-        |> Map.put(:user_url, Users.build_user_url(user))
-
-      {:error, :not_found} ->
-        params
-    end
+    |> do_put_user_info(params)
     |> Map.put(:phone_number, phone_number)
   end
+
+  defp do_put_user_info({:ok, user}, params) do
+    params
+    |> Map.put(:user_uuid, user.uuid)
+    |> Map.put(:user_url, Users.build_user_url(user))
+  end
+
+  defp do_put_user_info({:error, :not_found}, params), do: params
 end
