@@ -164,8 +164,6 @@ defmodule Re.Factory do
 
   def price_history_factory, do: %Re.Listings.PriceHistory{}
 
-  def factors_factory, do: %Re.PriceSuggestions.Factors{}
-
   def contact_request_factory, do: %Re.Interests.ContactRequest{}
 
   def price_suggestion_request_factory do
