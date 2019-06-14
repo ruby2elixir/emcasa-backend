@@ -47,21 +47,21 @@ defmodule Re.BuyerLeads.Grupozap do
 
   def buyer_lead_changeset(nil), do: raise("Leads.GrupozapBuyer not found")
 
-  def buyer_lead_changeset(gzb) do
+  def buyer_lead_changeset(lead) do
     params =
       %{
-        name: gzb.name,
-        email: gzb.email,
-        origin: gzb.lead_origin
+        name: lead.name,
+        email: lead.email,
+        origin: lead.lead_origin
       }
-      |> put_location(gzb)
-      |> put_user_info(gzb)
+      |> put_location(lead)
+      |> put_user_info(lead)
 
     BuyerLead.changeset(%BuyerLead{}, params)
   end
 
-  defp put_location(params, gzb) do
-    case Listings.get_partial_preloaded(gzb.client_listing_id, [:address]) do
+  defp put_location(params, lead) do
+    case Listings.get_partial_preloaded(lead.client_listing_id, [:address]) do
       {:ok, %{address: address} = listing} ->
         params
         |> Map.put(:location, "#{address.city_slug}|#{address.state_slug}")
@@ -73,8 +73,8 @@ defmodule Re.BuyerLeads.Grupozap do
     end
   end
 
-  defp put_user_info(params, gzb) do
-    phone_number = concat_phone_number(gzb)
+  defp put_user_info(params, lead) do
+    phone_number = concat_phone_number(lead)
 
     phone_number
     |> Users.get_by_phone()
