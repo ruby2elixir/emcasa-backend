@@ -52,7 +52,8 @@ config :re,
   imovelweb_super_highlights_size_rio_de_janeiro: 10,
   imovelweb_super_highlights_size_sao_paulo: 10,
   imovelweb_identity: "1",
-  facebook_access_token: "FACEBOOK_ACCESS_TOKEN"
+  facebook_access_token: "FACEBOOK_ACCESS_TOKEN",
+  garagem_url: "localhost"
 
 config :account_kit,
   app_id: "your_dev_app_id",

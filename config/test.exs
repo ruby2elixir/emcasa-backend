@@ -63,7 +63,8 @@ config :re,
   imovelweb_super_highlights_size_rio_de_janeiro: 5,
   imovelweb_super_highlights_size_sao_paulo: 5,
   imovelweb_identity: "1",
-  facebook_access_token: "testsecret"
+  facebook_access_token: "testsecret",
+  garagem_url: "http://localhost:3000"
 
 config :re_integrations,
   http: ReIntegrations.TestHTTP,
