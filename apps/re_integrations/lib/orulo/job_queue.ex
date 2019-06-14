@@ -35,7 +35,7 @@ defmodule ReIntegrations.Orulo.JobQueue do
     end
   end
 
-  def perform(%Multi{} = multi, %{"type" => "fetch_typology", "building_id" => id}) do
+  def perform(%Multi{} = multi, %{"type" => "fetch_typologies", "building_id" => id}) do
     with {:ok, %{body: body}} <- Client.get_typologies(id),
          {:ok, payload} <- Jason.decode(body),
          {:ok, new_typology_payload} <-
@@ -65,5 +65,12 @@ defmodule ReIntegrations.Orulo.JobQueue do
         "uuid" => uuid
       }) do
     PayloadProcessor.process_orulo_tags(multi, uuid)
+  end
+
+  def perform(%Multi{} = multi, %{
+        "type" => "process_typologies",
+        "uuid" => uuid
+      }) do
+    PayloadProcessor.process_typologies(multi, uuid)
   end
 end

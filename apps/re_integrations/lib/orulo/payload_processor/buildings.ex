@@ -49,14 +49,14 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Buildings do
   defp enqueue_tag_job(multi, building) do
     JobQueue.enqueue(multi, :process_tags, %{
       "type" => "process_orulo_tags",
-      "external_id" => building.uuid
+      "uuid" => building.uuid
     })
   end
 
   defp enqueue_typology_job(multi, building) do
     JobQueue.enqueue(multi, :fetch_typologies, %{
       "type" => "fetch_typologies",
-      "external_id" => building.external_id
+      "building_id" => building.external_id
     })
   end
 end

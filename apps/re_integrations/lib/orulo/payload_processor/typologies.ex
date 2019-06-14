@@ -15,8 +15,8 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
     Repo
   }
 
-  def process_typologies(multi, topology_uuid) do
-    typology_payload = Repo.get(TypologyPayload, topology_uuid)
+  def process_typologies(multi, typology_uuid) do
+    typology_payload = Repo.get(TypologyPayload, typology_uuid)
     {:ok, development} = Developments.get_by_orulo_id(typology_payload.building_id)
 
     %{payload: %{"typologies" => typologies}} = typology_payload
