@@ -965,16 +965,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
 
-      insert(
-        :factors,
-        street: street,
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
-      )
-
       %{id: listing_id} =
         insert(
           :listing,

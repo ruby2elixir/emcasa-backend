@@ -51,6 +51,7 @@ defmodule ReWeb.Types.Dashboard do
   object :dashboard_mutations do
     @desc "Upload file with price suggestion factors"
     field :upload_factors_csv, :string do
+      deprecate("not used anymore")
       arg :factors, non_null(:upload)
 
       resolve &DashboardResolvers.upload_factors_csv/2

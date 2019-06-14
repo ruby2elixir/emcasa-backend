@@ -7,7 +7,6 @@ defmodule ReWeb.Resolvers.Dashboard do
   alias Re.{
     Listing,
     Listings.Admin,
-    PriceSuggestions,
     Repo
   }
 
@@ -77,16 +76,7 @@ defmodule ReWeb.Resolvers.Dashboard do
      )}
   end
 
-  def upload_factors_csv(%{factors: %Plug.Upload{path: path}}, %{
-        context: %{current_user: current_user}
-      }) do
-    with :ok <- is_admin(current_user),
-         {:ok, file_content} <- File.read(path) do
-      PriceSuggestions.save_factors(file_content)
-
-      {:ok, "ok"}
-    end
-  end
+  def upload_factors_csv(_, _), do: {:ok, "ok"}
 
   defp is_admin(nil), do: {:error, :unauthorized}
   defp is_admin(%{role: "admin"}), do: :ok
