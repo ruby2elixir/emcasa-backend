@@ -119,5 +119,26 @@ defmodule Re.PriceSuggestionsTest do
              end) =~
                ":invalid_input in priceteller"
     end
+
+    @tag capture_log: true
+    test "should handle timeout error" do
+      %{uuid: uuid} =
+        listing =
+        insert(
+          :listing,
+          rooms: 2,
+          area: 80,
+          address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+          garage_spots: 1,
+          bathrooms: 1,
+          suggested_price: nil
+        )
+
+      mock(HTTPoison, :post, {:error, %{reason: :timeout}})
+
+      assert {:error, %{reason: :timeout}} == PriceSuggestions.suggest_price(listing)
+      listing = Repo.get_by(Listing, uuid: uuid)
+      refute listing.suggested_price
+    end
   end
 end
