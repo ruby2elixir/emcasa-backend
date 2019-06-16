@@ -4,12 +4,14 @@ defmodule ReIntegrations.Orulo do
   """
 
   import Ecto.Query, only: [where: 2]
+  require Logger
 
   alias ReIntegrations.{
     Orulo.BuildingPayload,
     Orulo.Client,
     Orulo.ImagePayload,
     Orulo.TypologyPayload,
+    Orulo.UnitPayload,
     Orulo.JobQueue,
     Repo
   }
@@ -75,6 +77,48 @@ defmodule ReIntegrations.Orulo do
       "uuid" => uuid
     })
     |> Repo.transaction()
+  end
+
+  def bulk_insert_unit_payload_forking_multi(%Multi{} = multi, responses) do
+    multies =
+      Enum.map(responses, fn response ->
+        #  {:ok, payload} <- Jason.decode(body),
+        with {typology_id, {:ok, %{body: payload}}} <- response do
+          insert_unit_payload(
+            Multi.new(),
+            %{
+              building_id: "1",
+              typology_id: Integer.to_string(typology_id),
+              payload: payload
+            }
+          )
+        else
+          error -> Logger.error("Error on units request:  #{Kernel.inspect(error)}")
+        end
+      end)
+
+    Enum.reduce(multies, multi, fn unit_multi, acc ->
+      Multi.prepend(acc, unit_multi)
+    end)
+    |> ReIntegrations.Repo.transaction()
+  end
+
+  def insert_unit_payload(multi, %{typology_id: typology_id} = params) do
+    insert_key = "insert_units_for_typology_#{typology_id}" |> String.to_atom()
+    process_key = "process_units_for_typology_#{typology_id}" |> String.to_atom()
+
+    changeset =
+      %UnitPayload{}
+      |> UnitPayload.changeset(params)
+
+    uuid = Changeset.get_field(changeset, :uuid)
+
+    multi
+    |> Multi.insert(insert_key, changeset)
+    |> JobQueue.enqueue(process_key, %{
+      "type" => "process_units",
+      "uuid" => uuid
+    })
   end
 
   def building_payload_synced?(external_id) do

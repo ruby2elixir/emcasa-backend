@@ -73,4 +73,19 @@ defmodule ReIntegrations.Orulo.JobQueue do
       }) do
     PayloadProcessor.process_typologies(multi, uuid)
   end
+
+  def perform(%Multi{} = multi, %{
+        "type" => "fetch_units",
+        "uuid" => uuid
+      }) do
+    %{payload: %{"typologies" => typologies}, building_id: building_id} =
+      ReIntegrations.Repo.get(TypologyPayload, uuid)
+
+    typology_ids =
+      typologies
+      |> Enum.map(fn %{"id" => id} -> id end)
+
+    responses = Orulo.get_units(building_id, typology_ids)
+    Orulo.bulk_insert_unit_payload_forking_multi(multi, responses)
+  end
 end

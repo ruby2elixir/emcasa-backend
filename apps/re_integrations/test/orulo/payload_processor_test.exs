@@ -82,7 +82,6 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
   end
 
   describe "process_typologies/2" do
-    @tag dev: true
     test "create new units from typology_payload" do
       %{uuid: payload_uuid} =
         insert(:typology_payload,
