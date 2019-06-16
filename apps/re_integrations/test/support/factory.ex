@@ -99,4 +99,26 @@ defmodule ReIntegrations.Factory do
       }
     }
   end
+
+  def units_payload_factory do
+    %ReIntegrations.Orulo.UnitPayload{
+      uuid: UUID.uuid4(),
+      building_id: "999",
+      typology_id: "1",
+      payload: %{
+        "units" => [
+          %{
+            "reference" => "51",
+            "price" => 1_000_000.0,
+            "private_area" => 84.0
+          },
+          %{
+            "reference" => "72",
+            "price" => 1_100_000.0,
+            "private_area" => 84.0
+          }
+        ]
+      }
+    }
+  end
 end
