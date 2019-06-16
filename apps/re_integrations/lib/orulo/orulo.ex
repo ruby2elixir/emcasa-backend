@@ -7,6 +7,7 @@ defmodule ReIntegrations.Orulo do
 
   alias ReIntegrations.{
     Orulo.BuildingPayload,
+    Orulo.Client,
     Orulo.ImagePayload,
     Orulo.TypologyPayload,
     Orulo.JobQueue,
@@ -69,8 +70,8 @@ defmodule ReIntegrations.Orulo do
 
     multi
     |> Multi.insert(:insert_typologies_payload, changeset)
-    |> JobQueue.enqueue(:parse_typologies, %{
-      "type" => "process_typologies",
+    |> JobQueue.enqueue(:fetch_units, %{
+      "type" => "fetch_units",
       "uuid" => uuid
     })
     |> Repo.transaction()
@@ -80,5 +81,13 @@ defmodule ReIntegrations.Orulo do
     BuildingPayload
     |> where(external_id: ^external_id)
     |> Repo.exists?()
+  end
+
+  def get_units(building_id, typology_ids) do
+    typology_ids
+    |> Enum.reduce(%{}, fn typology_id, responses ->
+      response = Client.get_units(building_id, typology_id)
+      Map.put(responses, typology_id, response)
+    end)
   end
 end
