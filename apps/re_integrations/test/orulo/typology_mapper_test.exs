@@ -13,8 +13,8 @@ defmodule ReIntegrations.Orulo.TypologyMapperTest do
       params = TypologyMapper.typology_payload_into_unit_params(typology)
 
       assert params == %{
-               price: Map.get(typology, "discount_price") |> round(),
-               area: Map.get(typology, "private_area") |> round(),
+               price: typology |> Map.get("discount_price") |> round(),
+               area: typology |> Map.get("private_area") |> round(),
                rooms: Map.get(typology, "bedrooms"),
                bathrooms: Map.get(typology, "bathrooms"),
                suites: Map.get(typology, "suites"),

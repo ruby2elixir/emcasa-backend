@@ -91,8 +91,8 @@ defmodule ReIntegrations.OruloTest do
         payload: %{test: "typology_payload"}
       }
 
-      assert {:ok, %{insert_unit_payload_1: payload}} =
-               Orulo.insert_unit_payload(Multi.new(), params)
+      assert {:ok, %{insert_units_for_typology_1: payload}} =
+               Multi.new() |> Orulo.insert_unit_payload(params) |> Repo.transaction()
 
       assert payload.uuid
       assert payload.building_id == "666"
@@ -139,7 +139,7 @@ defmodule ReIntegrations.OruloTest do
 
       assert unit_payload_2.uuid
       assert unit_payload_2.building_id == "1"
-      assert unit_payload_2.typology_id == "2`"
+      assert unit_payload_2.typology_id == "2"
       assert unit_payload_2.payload == %{"units" => []}
 
       JobQueue

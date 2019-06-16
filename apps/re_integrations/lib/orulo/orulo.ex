@@ -80,10 +80,10 @@ defmodule ReIntegrations.Orulo do
   end
 
   def bulk_insert_unit_payload_forking_multi(%Multi{} = multi, responses) do
-    multies =
+    unit_multies =
       Enum.map(responses, fn response ->
-        #  {:ok, payload} <- Jason.decode(body),
         with {typology_id, {:ok, %{body: payload}}} <- response do
+          #  {:ok, payload} <- Jason.decode(body),
           insert_unit_payload(
             Multi.new(),
             %{
@@ -97,7 +97,8 @@ defmodule ReIntegrations.Orulo do
         end
       end)
 
-    Enum.reduce(multies, multi, fn unit_multi, acc ->
+    unit_multies
+    |> Enum.reduce(multi, fn unit_multi, acc ->
       Multi.prepend(acc, unit_multi)
     end)
     |> ReIntegrations.Repo.transaction()
