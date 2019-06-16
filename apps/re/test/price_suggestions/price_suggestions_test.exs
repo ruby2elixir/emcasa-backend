@@ -20,7 +20,7 @@ defmodule Re.PriceSuggestionsTest do
           :listing,
           rooms: 2,
           area: 80,
-          address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+          address: build(:address),
           garage_spots: 1,
           bathrooms: 1,
           suggested_price: nil
@@ -48,7 +48,7 @@ defmodule Re.PriceSuggestionsTest do
           :listing,
           rooms: 2,
           area: 80,
-          address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+          address: build(:address),
           garage_spots: 1,
           bathrooms: 1,
           suggested_price: 1000.0
@@ -83,8 +83,7 @@ defmodule Re.PriceSuggestionsTest do
       assert capture_log(fn ->
                assert {:error, changeset} =
                         PriceSuggestions.suggest_price(%{
-                          address:
-                            build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+                          address: build(:address),
                           rooms: nil,
                           area: nil,
                           bathrooms: nil,
@@ -128,7 +127,7 @@ defmodule Re.PriceSuggestionsTest do
           :listing,
           rooms: 2,
           area: 80,
-          address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+          address: build(:address),
           garage_spots: 1,
           bathrooms: 1,
           suggested_price: nil
