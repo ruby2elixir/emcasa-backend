@@ -5,11 +5,11 @@ defmodule ReIntegrations.TestHTTP do
     do: {:ok, %{body: filename}}
 
   def get(%URI{path: "/buildings/1/typologies/1/units"}, _) do
-    {:ok, %{body: %{"units" => []}}}
+    {:ok, %{body: "{\"units\": []}"}}
   end
 
   def get(%URI{path: "/buildings/1/typologies/2/units"}, _) do
-    {:ok, %{body: %{"units" => []}}}
+    {:ok, %{body: "{\"units\": []}"}}
   end
 
   def get(%URI{path: "/simulator"}, [], _opts),

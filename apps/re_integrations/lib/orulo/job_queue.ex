@@ -10,7 +10,8 @@ defmodule ReIntegrations.Orulo.JobQueue do
   alias ReIntegrations.{
     Orulo,
     Orulo.Client,
-    Orulo.PayloadProcessor
+    Orulo.PayloadProcessor,
+    Orulo.TypologyPayload
   }
 
   alias Ecto.Multi
@@ -68,7 +69,7 @@ defmodule ReIntegrations.Orulo.JobQueue do
   end
 
   def perform(%Multi{} = multi, %{
-        "type" => "process_typologies",
+        "type" => "process_units",
         "uuid" => uuid
       }) do
     PayloadProcessor.process_typologies(multi, uuid)

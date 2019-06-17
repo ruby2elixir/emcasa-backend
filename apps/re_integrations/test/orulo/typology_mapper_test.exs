@@ -5,8 +5,6 @@ defmodule ReIntegrations.Orulo.TypologyMapperTest do
 
   alias ReIntegrations.Orulo.TypologyMapper
 
-  import ReIntegrations.Factory
-
   describe "typology_into_units_params" do
     test "parse typology payload into units" do
       typology = %{

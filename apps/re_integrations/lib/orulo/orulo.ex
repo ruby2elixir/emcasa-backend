@@ -82,18 +82,19 @@ defmodule ReIntegrations.Orulo do
   def bulk_insert_unit_payload_forking_multi(%Multi{} = multi, building_id, responses) do
     unit_multies =
       Enum.map(responses, fn response ->
-        with {typology_id, {:ok, %{body: payload}}} <- response do
-          #  {:ok, payload} <- Jason.decode(body),
+        with {typology_id, {:ok, %{body: body}}} <- response,
+             {:ok, payload} <- Jason.decode(body) do
           insert_unit_payload(
             Multi.new(),
             %{
               building_id: building_id,
-              typology_id: Integer.to_string(typology_id),
+              typology_id: typology_id,
               payload: payload
             }
           )
         else
-          error -> Logger.error("Error on units request:  #{Kernel.inspect(error)}")
+          error ->
+            Logger.error("Error on units request:  #{Kernel.inspect(error)}")
         end
       end)
 
