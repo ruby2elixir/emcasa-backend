@@ -330,4 +330,10 @@ defmodule ReWeb.Resolvers.Listings do
 
   defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
   defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
+
+  def get_uuid(listing, _, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Listings, :show_uuid, current_user, %{}) do
+      {:ok, listing.uuid}
+    end
+  end
 end
