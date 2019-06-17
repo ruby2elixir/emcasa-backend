@@ -108,14 +108,14 @@ defmodule ReIntegrations.Factory do
       payload: %{
         "units" => [
           %{
-            "reference" => "51",
+            "reference" => "50",
             "price" => 1_000_000.0,
-            "private_area" => 84.0
+            "private_area" => 100.0
           },
           %{
-            "reference" => "72",
-            "price" => 1_100_000.0,
-            "private_area" => 84.0
+            "reference" => "100",
+            "price" => 2_000_000.0,
+            "private_area" => 100.0
           }
         ]
       }

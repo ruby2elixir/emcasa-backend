@@ -11,24 +11,32 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
 
   alias ReIntegrations.{
     Orulo.TypologyPayload,
+    Orulo.UnitPayload,
     Orulo.TypologyMapper,
     Repo
   }
 
-  def process_typologies(multi, typology_uuid) do
-    typology_payload = Repo.get(TypologyPayload, typology_uuid)
-    {:ok, development} = Developments.get_by_orulo_id(typology_payload.building_id)
+  def process_typologies(multi, unit_payload_uuid) do
+    %{
+      building_id: building_id,
+      typology_id: typology_id,
+      payload: units_payload
+    } = Repo.get(UnitPayload, unit_payload_uuid)
 
-    %{payload: %{"typologies" => typologies}} = typology_payload
+    %{payload: typology_payload} = Repo.get_by(TypologyPayload, building_id: building_id)
+    typology_info = extract_typology_info_from_payload(typology_id, typology_payload)
+    {:ok, development} = Developments.get_by_orulo_id(building_id)
+
+    %{"units" => units} = units_payload
 
     multi
-    |> insert_units_from_typologies(typologies, development)
+    |> insert_units_from_typologies(typology_info, development, units)
     |> Repo.transaction()
   end
 
-  defp insert_units_from_typologies(multi, typologies, development) do
+  defp insert_units_from_typologies(multi, typology, development, units) do
     Multi.run(multi, :insert_units, fn _repo, _changes ->
-      insertion_results = Enum.map(typologies, &insert_unit(&1, development))
+      insertion_results = Enum.map(units, &insert_unit(&1, typology, development))
       {:ok, insertion_results}
     end)
   end
@@ -38,10 +46,17 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
     garage_type: "unknown"
   }
 
-  defp insert_unit(typology, development) do
+  defp insert_unit(unit, typology, development) do
     typology
-    |> TypologyMapper.typology_payload_into_unit_params()
+    |> TypologyMapper.typology_payload_into_unit_params(unit)
     |> Map.merge(@static_params)
     |> Units.insert(development)
+  end
+
+  defp extract_typology_info_from_payload(id, %{"typologies" => typologies}) do
+    Enum.filter(typologies, fn typology ->
+      Map.get(typology, "id") == id
+    end)
+    |> List.first()
   end
 end
