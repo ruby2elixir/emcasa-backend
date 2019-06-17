@@ -286,4 +286,49 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
     assert request = Repo.get_by(Request, name: "Mah Name")
     assert request.user_id == user.id
   end
+
+  @tag capture_log: true
+  test "handle priceteller timeout", %{unauthenticated_conn: conn} do
+    mutation = """
+      mutation RequestPriceSuggestion (
+        $name: String!,
+        $email: String!,
+        $area: Int!,
+        $rooms: Int!,
+        $bathrooms: Int!,
+        $garageSpots: Int!,
+        $suites: Int,
+        $type: String,
+        $maintenanceFee: Float,
+        $isCovered: Boolean!,
+        $addressInput: AddressInput!
+        ) {
+        requestPriceSuggestion(
+          name: $name
+          email: $email
+          area: $area
+          rooms: $rooms
+          bathrooms: $bathrooms
+          garageSpots: $garageSpots
+          suites: $suites
+          type: $type
+          maintenanceFee: $maintenanceFee
+          isCovered: $isCovered
+          address: $addressInput
+        ) {
+          suggestedPrice
+        }
+      }
+    """
+
+    mock(HTTPoison, :post, {:error, %{reason: :timeout}})
+
+    conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
+
+    refute json_response(conn, 200)["data"]["requestPriceSuggestion"]
+
+    assert [%{"message" => "Timeout", "code" => 408}] = json_response(conn, 200)["errors"]
+
+    assert Repo.get_by(Request, name: "Mah Name")
+  end
 end

@@ -20,7 +20,7 @@ defmodule Re.PriceSuggestionsTest do
           :listing,
           rooms: 2,
           area: 80,
-          address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+          address: build(:address),
           garage_spots: 1,
           bathrooms: 1,
           suggested_price: nil
@@ -48,7 +48,7 @@ defmodule Re.PriceSuggestionsTest do
           :listing,
           rooms: 2,
           area: 80,
-          address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+          address: build(:address),
           garage_spots: 1,
           bathrooms: 1,
           suggested_price: 1000.0
@@ -83,8 +83,7 @@ defmodule Re.PriceSuggestionsTest do
       assert capture_log(fn ->
                assert {:error, changeset} =
                         PriceSuggestions.suggest_price(%{
-                          address:
-                            build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+                          address: build(:address),
                           rooms: nil,
                           area: nil,
                           bathrooms: nil,
@@ -118,6 +117,27 @@ defmodule Re.PriceSuggestionsTest do
                         {"can't be blank", [validation: :required]}
              end) =~
                ":invalid_input in priceteller"
+    end
+
+    @tag capture_log: true
+    test "should handle timeout error" do
+      %{uuid: uuid} =
+        listing =
+        insert(
+          :listing,
+          rooms: 2,
+          area: 80,
+          address: build(:address),
+          garage_spots: 1,
+          bathrooms: 1,
+          suggested_price: nil
+        )
+
+      mock(HTTPoison, :post, {:error, %{reason: :timeout}})
+
+      assert {:error, %{reason: :timeout}} == PriceSuggestions.suggest_price(listing)
+      listing = Repo.get_by(Listing, uuid: uuid)
+      refute listing.suggested_price
     end
   end
 end

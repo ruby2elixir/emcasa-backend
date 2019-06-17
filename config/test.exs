@@ -77,7 +77,8 @@ config :re_integrations,
   zapier_webhook_pass: "testpass",
   priceteller_url: "http://www.emcasa.com/priceteller",
   priceteller_token: "mahtoken",
-  cloudinary_client: ReIntegrations.TestCloudex
+  cloudinary_client: ReIntegrations.TestCloudex,
+  retry_expiry: 100
 
 config :junit_formatter,
   report_file: "report_file_test.xml",
