@@ -79,7 +79,7 @@ defmodule ReIntegrations.Orulo do
     |> Repo.transaction()
   end
 
-  def bulk_insert_unit_payload_forking_multi(%Multi{} = multi, responses) do
+  def bulk_insert_unit_payload_forking_multi(%Multi{} = multi, building_id, responses) do
     unit_multies =
       Enum.map(responses, fn response ->
         with {typology_id, {:ok, %{body: payload}}} <- response do
@@ -87,7 +87,7 @@ defmodule ReIntegrations.Orulo do
           insert_unit_payload(
             Multi.new(),
             %{
-              building_id: "1",
+              building_id: building_id,
               typology_id: Integer.to_string(typology_id),
               payload: payload
             }

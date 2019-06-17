@@ -3,15 +3,23 @@ defmodule ReIntegrations.Orulo.TypologyMapper do
   Module to map orulo's typology into units.
   """
 
-  @typology_attributes ~w(discount_price private_area bedrooms bathrooms suites parking)
+  @typology_attributes ~w(bedrooms bathrooms suites parking)
+  @unit_attributes ~w(price private_area reference)
 
-  def typology_payload_into_unit_params(typology) do
+  def typology_payload_into_unit_params(typology, unit) do
     typology
-    |> Map.take(@typology_attributes)
+    |> fetch_attributes(unit)
     |> Enum.reduce(%{}, &convert_typology_attribute(&1, &2))
   end
 
-  defp convert_typology_attribute({"discount_price", price}, acc) do
+  defp fetch_attributes(typology, unit) do
+    typology_attributes = Map.take(typology, @typology_attributes)
+    unit_attributes = Map.take(unit, @unit_attributes)
+
+    Map.merge(typology_attributes, unit_attributes)
+  end
+
+  defp convert_typology_attribute({"price", price}, acc) do
     Map.put(acc, :price, round(price))
   end
 
@@ -33,6 +41,10 @@ defmodule ReIntegrations.Orulo.TypologyMapper do
 
   defp convert_typology_attribute({"suites", suites}, acc) do
     Map.put(acc, :suites, suites)
+  end
+
+  defp convert_typology_attribute({"reference", complement}, acc) do
+    Map.put(acc, :complement, complement)
   end
 
   defp convert_typology_attribute(_, acc), do: acc

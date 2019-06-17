@@ -119,18 +119,19 @@ defmodule ReIntegrations.OruloTest do
   end
 
   describe "bulk_insert_unit_payload_forking_multi/2" do
-    @tag dev: true
     test "get units for all typologies" do
-      response = %{
+      responses = %{
         1 => {:ok, %{body: %{"units" => []}}},
         2 => {:ok, %{body: %{"units" => []}}}
       }
+
+      building_id = "1"
 
       {:ok,
        %{
          insert_units_for_typology_1: unit_payload_1,
          insert_units_for_typology_2: unit_payload_2
-       }} = Orulo.bulk_insert_unit_payload_forking_multi(Multi.new(), response)
+       }} = Orulo.bulk_insert_unit_payload_forking_multi(Multi.new(), building_id, responses)
 
       assert unit_payload_1.uuid
       assert unit_payload_1.building_id == "1"
