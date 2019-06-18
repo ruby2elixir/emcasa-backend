@@ -10,9 +10,9 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
   }
 
   alias ReIntegrations.{
+    Orulo.TypologyMapper,
     Orulo.TypologyPayload,
     Orulo.UnitPayload,
-    Orulo.TypologyMapper,
     Repo
   }
 
@@ -54,7 +54,8 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
   end
 
   defp extract_typology_info_from_payload(id, %{"typologies" => typologies}) do
-    Enum.filter(typologies, fn typology ->
+    typologies
+    |> Enum.filter(fn typology ->
       Map.get(typology, "id") == id
     end)
     |> List.first()
