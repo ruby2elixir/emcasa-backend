@@ -78,7 +78,8 @@ config :re_integrations,
   priceteller_url: "http://www.emcasa.com/priceteller",
   priceteller_token: "mahtoken",
   cloudinary_client: ReIntegrations.TestCloudex,
-  retry_expiry: 100
+  retry_expiry: 100,
+  orulo_url: "http://www.emcasa.com/orulo"
 
 config :junit_formatter,
   report_file: "report_file_test.xml",

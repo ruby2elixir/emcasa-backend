@@ -11,6 +11,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
   }
 
   alias Ecto.Multi
+  import ExUnit.CaptureLog
 
   import Re.CustomAssertion
   import ReIntegrations.Factory
@@ -126,6 +127,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
       assert inserted_unit_1.garage_spots == 2
       assert inserted_unit_1.garage_type == "unknown"
       assert inserted_unit_1.complement == "50"
+      assert inserted_unit_1.status == "active"
 
       assert inserted_unit_2.uuid
       assert inserted_unit_2.price == 2_000_000
@@ -136,6 +138,54 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
       assert inserted_unit_2.garage_spots == 2
       assert inserted_unit_2.garage_type == "unknown"
       assert inserted_unit_2.complement == "100"
+      assert inserted_unit_1.status == "active"
+    end
+
+    @tag capture_log: true
+    test "log errors when try to add an unit with invalid attributes" do
+      insert(:typology_payload,
+        payload: %{
+          "typologies" => [
+            %{
+              "id" => "1",
+              "type" => "Apartamento",
+              "original_price" => 1_000_000.0,
+              "discount_price" => 1_000_000.0,
+              "private_area" => 100.0,
+              "bedrooms" => 3,
+              "bathrooms" => 2,
+              "suites" => 1,
+              "parking" => 2
+            }
+          ]
+        }
+      )
+
+      %{uuid: payload_uuid} =
+        insert(:units_payload,
+          building_id: "999",
+          typology_id: "1",
+          payload: %{
+            "units" => [
+              %{
+                "reference" => "50",
+                "price" => 1_000.0,
+                "private_area" => 10.0
+              }
+            ]
+          }
+        )
+
+      Re.Factory.insert(:development, orulo_id: "999")
+
+      assert capture_log(fn ->
+               {:ok, _} =
+                 PayloadProcessor.process_typologies(
+                   Multi.new(),
+                   payload_uuid
+                 )
+             end) =~
+               "Failed to insert Orulo unit, reason"
     end
   end
 

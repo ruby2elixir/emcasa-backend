@@ -16,6 +16,8 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
     Repo
   }
 
+  require Logger
+
   def process_typologies(multi, unit_payload_uuid) do
     %{
       building_id: building_id,
@@ -36,13 +38,19 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
 
   defp insert_units_from_typologies(multi, typology, development, units) do
     Multi.run(multi, :insert_units, fn _repo, _changes ->
-      insertion_results = Enum.map(units, &insert_unit(&1, typology, development))
-      {:ok, insertion_results}
+      {successful_insertions, failed_insertions} =
+        units
+        |> Enum.map(&insert_unit(&1, typology, development))
+        |> Keyword.split([:ok])
+
+      log_failed_insertions(failed_insertions)
+
+      {:ok, successful_insertions}
     end)
   end
 
   @static_params %{
-    status: "inactive",
+    status: "active",
     garage_type: "unknown"
   }
 
@@ -59,5 +67,13 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
       Map.get(typology, "id") == id
     end)
     |> List.first()
+  end
+
+  defp log_failed_insertions([]), do: nil
+
+  defp log_failed_insertions(errors) do
+    errors
+    |> Enum.map(fn {:error, changeset} -> changeset end)
+    |> Enum.map(&Logger.error("Failed to insert Orulo unit, reason: #{Kernel.inspect(&1)}"))
   end
 end

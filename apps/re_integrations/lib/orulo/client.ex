@@ -4,7 +4,7 @@ defmodule ReIntegrations.Orulo.Client do
   """
 
   @http_client Application.get_env(:re_integrations, :http, HTTPoison)
-  @base_url Application.get_env(:re_integrations, :orulo_url, "http://localhost:3000")
+  @base_url Application.get_env(:re_integrations, :orulo_url, "")
   @api_token Application.get_env(:re_integrations, :orulo_api_token, "")
 
   @api_headers [{"Authorization", "Bearer #{@api_token}"}]
