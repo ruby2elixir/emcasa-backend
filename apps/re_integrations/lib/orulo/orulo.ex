@@ -79,33 +79,39 @@ defmodule ReIntegrations.Orulo do
     |> Repo.transaction()
   end
 
-  def bulk_insert_unit_payload_forking_multi(%Multi{} = multi, building_id, responses) do
-    unit_multies =
-      Enum.map(responses, fn response ->
-        with {typology_id, {:ok, %{body: body}}} <- response,
-             {:ok, payload} <- Jason.decode(body) do
-          insert_unit_payload(
-            Multi.new(),
-            %{
-              building_id: building_id,
-              typology_id: typology_id,
-              payload: payload
-            }
-          )
-        else
-          error ->
-            Logger.error("Error on units request:  #{Kernel.inspect(error)}")
-        end
-      end)
-
-    unit_multies
+  def bulk_insert_unit_payloads(%Multi{} = multi, building_id, responses) do
+    building_id
+    |> generate_unit_multies(responses)
     |> Enum.reduce(multi, fn unit_multi, acc ->
       Multi.prepend(acc, unit_multi)
     end)
     |> ReIntegrations.Repo.transaction()
   end
 
-  def insert_unit_payload(multi, %{typology_id: typology_id} = params) do
+  def generate_unit_multies(building_id, responses) do
+    Enum.map(responses, fn response ->
+      case extract_response_attributes(response) do
+        {:ok, typology_id, payload} ->
+          insert_unit_payload(%{
+            building_id: building_id,
+            typology_id: typology_id,
+            payload: payload
+          })
+
+        error ->
+          Logger.error("Error #{Kernel.inspect(error)} on unit response #{response})")
+      end
+    end)
+  end
+
+  defp extract_response_attributes({typology_id, {:ok, %{body: body}}}) do
+    case Jason.decode(body) do
+      {:ok, payload} -> {:ok, typology_id, payload}
+      {:error, error} -> {:error, error}
+    end
+  end
+
+  def insert_unit_payload(%{typology_id: typology_id} = params) do
     insert_key = "insert_units_for_typology_#{typology_id}" |> String.to_atom()
     process_key = "process_units_for_typology_#{typology_id}" |> String.to_atom()
 
@@ -115,7 +121,7 @@ defmodule ReIntegrations.Orulo do
 
     uuid = Changeset.get_field(changeset, :uuid)
 
-    multi
+    Multi.new()
     |> Multi.insert(insert_key, changeset)
     |> JobQueue.enqueue(process_key, %{
       "type" => "process_units",

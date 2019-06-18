@@ -87,6 +87,6 @@ defmodule ReIntegrations.Orulo.JobQueue do
       |> Enum.map(fn %{"id" => id} -> id end)
 
     responses = Orulo.get_units(building_id, typology_ids)
-    Orulo.bulk_insert_unit_payload_forking_multi(multi, building_id, responses)
+    Orulo.bulk_insert_unit_payloads(multi, building_id, responses)
   end
 end

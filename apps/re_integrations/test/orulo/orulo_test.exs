@@ -83,28 +83,6 @@ defmodule ReIntegrations.OruloTest do
     end
   end
 
-  describe "insert_unit_payloads/2" do
-    test "create new unit payloads" do
-      params = %{
-        building_id: "666",
-        typology_id: "1",
-        payload: %{test: "typology_payload"}
-      }
-
-      assert {:ok, %{insert_units_for_typology_1: payload}} =
-               Multi.new() |> Orulo.insert_unit_payload(params) |> Repo.transaction()
-
-      assert payload.uuid
-      assert payload.building_id == "666"
-      assert payload.typology_id == "1"
-      assert payload.payload == %{test: "typology_payload"}
-
-      JobQueue
-      |> Repo.all()
-      |> assert_enqueued_job("process_units")
-    end
-  end
-
   describe "get_units/2" do
     test "get units for all typologies" do
       building_id = "1"
@@ -118,8 +96,7 @@ defmodule ReIntegrations.OruloTest do
     end
   end
 
-  describe "bulk_insert_unit_payload_forking_multi/2" do
-    @tag dev: true
+  describe "bulk_insert_unit_payloads/2" do
     test "get units for all typologies" do
       responses = %{
         "1" => {:ok, %{body: "{\"units\": []}"}},
@@ -132,7 +109,7 @@ defmodule ReIntegrations.OruloTest do
        %{
          insert_units_for_typology_1: unit_payload_1,
          insert_units_for_typology_2: unit_payload_2
-       }} = Orulo.bulk_insert_unit_payload_forking_multi(Multi.new(), building_id, responses)
+       }} = Orulo.bulk_insert_unit_payloads(Multi.new(), building_id, responses)
 
       assert unit_payload_1.uuid
       assert unit_payload_1.building_id == "1"
