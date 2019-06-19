@@ -14,7 +14,7 @@ defmodule ReIntegrations.Orulo.UnitPayload do
     field :typology_id, :string
     field :payload, :map
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @required ~w(building_id typology_id payload)a

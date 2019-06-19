@@ -88,7 +88,7 @@ defmodule ReIntegrations.Orulo do
     |> ReIntegrations.Repo.transaction()
   end
 
-  def generate_unit_multies(building_id, responses) do
+  defp generate_unit_multies(building_id, responses) do
     Enum.map(responses, fn response ->
       case extract_response_attributes(response) do
         {:ok, typology_id, payload} ->
@@ -112,8 +112,8 @@ defmodule ReIntegrations.Orulo do
   end
 
   defp unit_process_multi(%{typology_id: typology_id} = params) do
-    insert_key = "insert_units_for_typology_#{typology_id}" |> String.to_atom()
-    process_key = "process_units_for_typology_#{typology_id}" |> String.to_atom()
+    insert_key = "insert_units_for_typology_#{typology_id}"
+    process_key = "process_units_for_typology_#{typology_id}"
 
     changeset =
       %UnitPayload{}

@@ -107,8 +107,8 @@ defmodule ReIntegrations.OruloTest do
 
       {:ok,
        %{
-         insert_units_for_typology_1: unit_payload_1,
-         insert_units_for_typology_2: unit_payload_2
+         "insert_units_for_typology_1" => unit_payload_1,
+         "insert_units_for_typology_2" => unit_payload_2
        }} = Orulo.bulk_insert_unit_payloads(Multi.new(), building_id, responses)
 
       assert unit_payload_1.uuid

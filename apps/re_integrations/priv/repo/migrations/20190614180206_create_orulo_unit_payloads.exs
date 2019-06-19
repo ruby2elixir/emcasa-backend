@@ -7,7 +7,7 @@ defmodule ReIntegrations.Repo.Migrations.CreateOruloUnitPayloads do
       add :building_id, :string
       add :typology_id, :string
       add :payload, :map, null: false, default: %{}
-      timestamps()
+      timestamps(type: :timestamptz)
     end
   end
 end

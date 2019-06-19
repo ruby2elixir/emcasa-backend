@@ -187,6 +187,71 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
              end) =~
                "Failed to insert Orulo unit, reason"
     end
+
+    @tag capture_log: true
+    test "sucessfully insert new unit when has a valid with and one with invalid attributes" do
+      insert(:typology_payload,
+        payload: %{
+          "typologies" => [
+            %{
+              "id" => "1",
+              "type" => "Apartamento",
+              "original_price" => 1_000_000.0,
+              "discount_price" => 1_000_000.0,
+              "private_area" => 100.0,
+              "bedrooms" => 3,
+              "bathrooms" => 2,
+              "suites" => 1,
+              "parking" => 2
+            }
+          ]
+        }
+      )
+
+      %{uuid: payload_uuid} =
+        insert(:units_payload,
+          building_id: "999",
+          typology_id: "1",
+          payload: %{
+            "units" => [
+              %{
+                "reference" => "50",
+                "price" => 1_000.0,
+                "private_area" => 10.0
+              },
+              %{
+                "reference" => "51",
+                "price" => 1_000_000.0,
+                "private_area" => 100.0
+              }
+            ]
+          }
+        )
+
+      Re.Factory.insert(:development, orulo_id: "999")
+
+      {:ok,
+       %{
+         insert_units: [
+           ok: %{add_unit: inserted_unit_1}
+         ]
+       }} =
+        PayloadProcessor.process_typologies(
+          Multi.new(),
+          payload_uuid
+        )
+
+      assert inserted_unit_1.uuid
+      assert inserted_unit_1.price == 1_000_000
+      assert inserted_unit_1.area == 100
+      assert inserted_unit_1.rooms == 3
+      assert inserted_unit_1.bathrooms == 2
+      assert inserted_unit_1.suites == 1
+      assert inserted_unit_1.garage_spots == 2
+      assert inserted_unit_1.garage_type == "unknown"
+      assert inserted_unit_1.complement == "51"
+      assert inserted_unit_1.status == "active"
+    end
   end
 
   describe "process_orulo_tags/2" do
