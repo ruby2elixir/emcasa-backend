@@ -31,10 +31,6 @@ defmodule ReWeb.Resolvers.Dashboard do
      )}
   end
 
-  def active_listing_count(_params, _res) do
-    {:ok, Repo.one(from(l in Re.Listing, where: l.status == "active", select: count(l.id)))}
-  end
-
   def favorite_count(_params, _res) do
     {:ok, Repo.one(from(f in Re.Favorite, select: count(f.id)))}
   end
