@@ -111,7 +111,7 @@ defmodule Re.UnitTest do
                 [validation: :number, kind: :greater_than_or_equal_to, number: 0]}
 
       assert Keyword.get(changeset.errors, :garage_type) ==
-               {"is invalid", [validation: :inclusion, enum: ~w(contract condominium)]}
+               {"is invalid", [validation: :inclusion, enum: ~w(contract condominium unknown)]}
 
       assert Keyword.get(changeset.errors, :status) ==
                {"is invalid", [validation: :inclusion, enum: ~w(active inactive)]}

@@ -10,7 +10,8 @@ defmodule ReIntegrations.Orulo.JobQueue do
   alias ReIntegrations.{
     Orulo,
     Orulo.Client,
-    Orulo.PayloadProcessor
+    Orulo.PayloadProcessor,
+    Orulo.TypologyPayload
   }
 
   alias Ecto.Multi
@@ -35,7 +36,7 @@ defmodule ReIntegrations.Orulo.JobQueue do
     end
   end
 
-  def perform(%Multi{} = multi, %{"type" => "fetch_typology", "building_id" => id}) do
+  def perform(%Multi{} = multi, %{"type" => "fetch_typologies", "building_id" => id}) do
     with {:ok, %{body: body}} <- Client.get_typologies(id),
          {:ok, payload} <- Jason.decode(body),
          {:ok, new_typology_payload} <-
@@ -65,5 +66,27 @@ defmodule ReIntegrations.Orulo.JobQueue do
         "uuid" => uuid
       }) do
     PayloadProcessor.process_orulo_tags(multi, uuid)
+  end
+
+  def perform(%Multi{} = multi, %{
+        "type" => "process_units",
+        "uuid" => uuid
+      }) do
+    PayloadProcessor.process_typologies(multi, uuid)
+  end
+
+  def perform(%Multi{} = multi, %{
+        "type" => "fetch_units",
+        "uuid" => uuid
+      }) do
+    %{payload: %{"typologies" => typologies}, building_id: building_id} =
+      ReIntegrations.Repo.get(TypologyPayload, uuid)
+
+    typology_ids =
+      typologies
+      |> Enum.map(fn %{"id" => id} -> id end)
+
+    responses = Orulo.get_units(building_id, typology_ids)
+    Orulo.bulk_insert_unit_payloads(multi, building_id, responses)
   end
 end
