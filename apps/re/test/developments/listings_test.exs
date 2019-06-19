@@ -95,6 +95,7 @@ defmodule Re.Developments.ListingsTest do
 
       assert listing.type == "Apartamento"
       assert listing.is_release == true
+      assert listing.is_exportable == false
     end
   end
 end
