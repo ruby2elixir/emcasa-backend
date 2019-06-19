@@ -46,6 +46,7 @@ defmodule ReIntegrations.Factory do
 
   def images_payload_factory do
     %ReIntegrations.Orulo.ImagePayload{
+      uuid: UUID.uuid4(),
       external_id: 999,
       payload: %{
         "images" => [
@@ -60,6 +61,61 @@ defmodule ReIntegrations.Factory do
             "description" => "Hall",
             "1024x1024" =>
               "https://s3.amazonaws.com/uploaded.prod.corretordireto/images/properties/large/180221.jpg?1557215921"
+          }
+        ]
+      }
+    }
+  end
+
+  def typology_payload_factory do
+    %ReIntegrations.Orulo.TypologyPayload{
+      uuid: UUID.uuid4(),
+      building_id: "999",
+      payload: %{
+        "typologies" => [
+          %{
+            "id" => "9544",
+            "type" => "Apartamento",
+            "original_price" => 988_084.0,
+            "discount_price" => 910_000.0,
+            "private_area" => 84.0,
+            "bedrooms" => 3,
+            "bathrooms" => 2,
+            "suites" => 1,
+            "parking" => 2
+          },
+          %{
+            "id" => "9545",
+            "type" => "Apartamento",
+            "original_price" => 1_710_175.0,
+            "discount_price" => 1_710_175.0,
+            "private_area" => 160.0,
+            "bedrooms" => 3,
+            "bathrooms" => 2,
+            "suites" => 1,
+            "parking" => 2
+          }
+        ]
+      }
+    }
+  end
+
+  def units_payload_factory do
+    %ReIntegrations.Orulo.UnitPayload{
+      uuid: UUID.uuid4(),
+      building_id: "999",
+      typology_id: "1",
+      payload: %{
+        "units" => [
+          %{
+            "reference" => "50",
+            "price" => 1_000_000.0,
+            "private_area" => 100.0
+          },
+          %{
+            "reference" => "100",
+            "price" => 2_000_000.0,
+            "private_area" => 100.0
           }
         ]
       }

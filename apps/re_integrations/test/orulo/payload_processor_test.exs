@@ -5,13 +5,13 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
 
   alias ReIntegrations.{
     Orulo.BuildingPayload,
-    Orulo.ImagePayload,
     Orulo.JobQueue,
     Orulo.PayloadProcessor,
     Repo
   }
 
   alias Ecto.Multi
+  import ExUnit.CaptureLog
 
   import Re.CustomAssertion
   import ReIntegrations.Factory
@@ -37,12 +37,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
     end
 
     test "create new development from building" do
-      %{payload: payload = %{"developer" => developer}} = building = build(:building_payload)
-
-      %{uuid: uuid} =
-        building
-        |> BuildingPayload.changeset()
-        |> Repo.insert!()
+      %{uuid: uuid, payload: payload = %{"developer" => developer}} = insert(:building_payload)
 
       assert {:ok, %{insert_development: development}} =
                PayloadProcessor.insert_development_from_building_payload(Multi.new(), uuid)
@@ -58,12 +53,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
     end
 
     test "enqueue fetch images, fetch typologies and process tag jobs" do
-      building = build(:building_payload)
-
-      %{uuid: uuid} =
-        building
-        |> BuildingPayload.changeset()
-        |> Repo.insert!()
+      %{uuid: uuid} = insert(:building_payload)
 
       assert {:ok, _} =
                PayloadProcessor.insert_development_from_building_payload(Multi.new(), uuid)
@@ -78,10 +68,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
 
   describe "insert_images_from_image_payload/3" do
     test "create new images from image payload" do
-      %{uuid: payload_uuid} =
-        build(:images_payload)
-        |> ImagePayload.changeset()
-        |> Repo.insert!()
+      %{uuid: payload_uuid} = insert(:images_payload)
 
       Re.Factory.insert(:development, orulo_id: "999")
 
@@ -92,6 +79,178 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
         )
 
       assert inserted_image.filename == "qxo1cimsxmb2vnu5kcxw.jpg"
+    end
+  end
+
+  describe "process_typologies/2" do
+    test "create new units from both typology and unit payloads merge" do
+      insert(:typology_payload,
+        payload: %{
+          "typologies" => [
+            %{
+              "id" => "1",
+              "type" => "Apartamento",
+              "original_price" => 1_000_000.0,
+              "discount_price" => 1_000_000.0,
+              "private_area" => 100.0,
+              "bedrooms" => 3,
+              "bathrooms" => 2,
+              "suites" => 1,
+              "parking" => 2
+            }
+          ]
+        }
+      )
+
+      %{uuid: payload_uuid} = insert(:units_payload, building_id: "999", typology_id: "1")
+
+      Re.Factory.insert(:development, orulo_id: "999")
+
+      {:ok,
+       %{
+         insert_units: [
+           ok: %{add_unit: inserted_unit_1},
+           ok: %{add_unit: inserted_unit_2}
+         ]
+       }} =
+        PayloadProcessor.process_typologies(
+          Multi.new(),
+          payload_uuid
+        )
+
+      assert inserted_unit_1.uuid
+      assert inserted_unit_1.price == 1_000_000
+      assert inserted_unit_1.area == 100
+      assert inserted_unit_1.rooms == 3
+      assert inserted_unit_1.bathrooms == 2
+      assert inserted_unit_1.suites == 1
+      assert inserted_unit_1.garage_spots == 2
+      assert inserted_unit_1.garage_type == "unknown"
+      assert inserted_unit_1.complement == "50"
+      assert inserted_unit_1.status == "active"
+
+      assert inserted_unit_2.uuid
+      assert inserted_unit_2.price == 2_000_000
+      assert inserted_unit_2.area == 100
+      assert inserted_unit_2.rooms == 3
+      assert inserted_unit_2.bathrooms == 2
+      assert inserted_unit_2.suites == 1
+      assert inserted_unit_2.garage_spots == 2
+      assert inserted_unit_2.garage_type == "unknown"
+      assert inserted_unit_2.complement == "100"
+      assert inserted_unit_1.status == "active"
+    end
+
+    @tag capture_log: true
+    test "log errors when try to add an unit with invalid attributes" do
+      insert(:typology_payload,
+        payload: %{
+          "typologies" => [
+            %{
+              "id" => "1",
+              "type" => "Apartamento",
+              "original_price" => 1_000_000.0,
+              "discount_price" => 1_000_000.0,
+              "private_area" => 100.0,
+              "bedrooms" => 3,
+              "bathrooms" => 2,
+              "suites" => 1,
+              "parking" => 2
+            }
+          ]
+        }
+      )
+
+      %{uuid: payload_uuid} =
+        insert(:units_payload,
+          building_id: "999",
+          typology_id: "1",
+          payload: %{
+            "units" => [
+              %{
+                "reference" => "50",
+                "price" => 1_000.0,
+                "private_area" => 10.0
+              }
+            ]
+          }
+        )
+
+      Re.Factory.insert(:development, orulo_id: "999")
+
+      assert capture_log(fn ->
+               {:ok, _} =
+                 PayloadProcessor.process_typologies(
+                   Multi.new(),
+                   payload_uuid
+                 )
+             end) =~
+               "Failed to insert Orulo unit, reason"
+    end
+
+    @tag capture_log: true
+    test "sucessfully insert new unit when has a valid with and one with invalid attributes" do
+      insert(:typology_payload,
+        payload: %{
+          "typologies" => [
+            %{
+              "id" => "1",
+              "type" => "Apartamento",
+              "original_price" => 1_000_000.0,
+              "discount_price" => 1_000_000.0,
+              "private_area" => 100.0,
+              "bedrooms" => 3,
+              "bathrooms" => 2,
+              "suites" => 1,
+              "parking" => 2
+            }
+          ]
+        }
+      )
+
+      %{uuid: payload_uuid} =
+        insert(:units_payload,
+          building_id: "999",
+          typology_id: "1",
+          payload: %{
+            "units" => [
+              %{
+                "reference" => "50",
+                "price" => 1_000.0,
+                "private_area" => 10.0
+              },
+              %{
+                "reference" => "51",
+                "price" => 1_000_000.0,
+                "private_area" => 100.0
+              }
+            ]
+          }
+        )
+
+      Re.Factory.insert(:development, orulo_id: "999")
+
+      {:ok,
+       %{
+         insert_units: [
+           ok: %{add_unit: inserted_unit_1}
+         ]
+       }} =
+        PayloadProcessor.process_typologies(
+          Multi.new(),
+          payload_uuid
+        )
+
+      assert inserted_unit_1.uuid
+      assert inserted_unit_1.price == 1_000_000
+      assert inserted_unit_1.area == 100
+      assert inserted_unit_1.rooms == 3
+      assert inserted_unit_1.bathrooms == 2
+      assert inserted_unit_1.suites == 1
+      assert inserted_unit_1.garage_spots == 2
+      assert inserted_unit_1.garage_type == "unknown"
+      assert inserted_unit_1.complement == "51"
+      assert inserted_unit_1.status == "active"
     end
   end
 
