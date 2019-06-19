@@ -9,7 +9,12 @@ defmodule ReWeb.Types.Dashboard do
   alias ReWeb.Resolvers.Dashboard, as: DashboardResolvers
 
   object :dashboard do
-    field :active_listing_count, :integer, resolve: &DashboardResolvers.active_listing_count/2
+    field :active_listing_count, :integer do
+      arg :is_release, :boolean
+
+      resolve &DashboardResolvers.active_listing_count/2
+    end
+
     field :favorite_count, :integer, resolve: &DashboardResolvers.favorite_count/2
     field :visualization_count, :integer, resolve: &DashboardResolvers.visualization_count/2
 
