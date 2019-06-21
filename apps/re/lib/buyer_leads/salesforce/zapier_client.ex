@@ -8,7 +8,6 @@ defmodule Re.BuyerLeads.Salesforce.ZapierClient do
 
   def post(payload) do
     @url
-    |> IO.inspect(label: "url")
     |> URI.parse()
     |> http_client().post(payload)
   end
