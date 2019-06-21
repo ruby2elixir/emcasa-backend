@@ -64,7 +64,8 @@ config :re,
   imovelweb_super_highlights_size_sao_paulo: 5,
   imovelweb_identity: "1",
   facebook_access_token: "testsecret",
-  garagem_url: "http://localhost:3000"
+  garagem_url: "http://localhost:3000",
+  zapier_create_salesforce_lead_url: "http://www.emcasa.com/salesforce_zapier"
 
 config :re_integrations,
   http: ReIntegrations.TestHTTP,
