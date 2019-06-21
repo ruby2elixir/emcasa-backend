@@ -63,7 +63,8 @@ config :re,
     String.to_integer(System.get_env("IMOVELWEB_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")),
   imovelweb_identity: System.get_env("IMOVELWEB_IDENTITY"),
   facebook_access_token: System.get_env("FACEBOOK_ACCESS_TOKEN"),
-  garagem_url: System.get_env("GARAGEM_URL")
+  garagem_url: System.get_env("GARAGEM_URL"),
+  zapier_create_salesforce_lead_url: System.get_env("SALESFORCE_ZAPIER_URL")
 
 config :re_integrations,
   to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),
