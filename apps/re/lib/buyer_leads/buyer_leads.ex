@@ -5,6 +5,7 @@ defmodule Re.BuyerLeads do
   require Logger
 
   alias Re.{
+    BuyerLead,
     BuyerLeads.Budget,
     BuyerLeads.EmptySearch,
     BuyerLeads.JobQueue,
@@ -32,6 +33,13 @@ defmodule Re.BuyerLeads do
     %EmptySearch{}
     |> EmptySearch.changeset(params)
     |> insert_with_job("process_empty_search_buyer_lead")
+  end
+
+  def get(uuid) do
+    case Repo.get(BuyerLead, uuid) do
+      nil -> {:error, :not_found}
+      buyer_lead -> {:ok, buyer_lead}
+    end
   end
 
   defp insert_with_job(%{valid?: true} = changeset, type) do

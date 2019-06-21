@@ -9,16 +9,19 @@ defmodule Re.BuyerLeads.JobQueue do
   require Logger
 
   alias Re.{
+    BuyerLeads,
     BuyerLeads.Budget,
     BuyerLeads.EmptySearch,
     BuyerLeads.Facebook,
     BuyerLeads.Grupozap,
     BuyerLeads.ImovelWeb,
+    BuyerLeads.Salesforce.Client,
     Interest,
     Repo
   }
 
   alias Ecto.{
+    Changeset,
     Multi,
     Query
   }
@@ -80,6 +83,17 @@ defmodule Re.BuyerLeads.JobQueue do
     |> handle_error()
   end
 
+  def perform(%Multi{} = multi, %{"type" => "create_lead_salesforce", "uuid" => uuid}) do
+    {:ok, buyer_lead} = BuyerLeads.get(uuid)
+
+    multi
+    |> Multi.run(:create_salesforce_lead, fn _repo, _changes ->
+      Client.create_lead(buyer_lead)
+    end)
+    |> Repo.transaction()
+    |> handle_error()
+  end
+
   def perform(_multi, job), do: raise("Job type not handled. Job: #{Kernel.inspect(job)}")
 
   def requeue_all(multi) do
@@ -102,5 +116,11 @@ defmodule Re.BuyerLeads.JobQueue do
     raise "Error when performing BuyerLeads.JobQueue"
   end
 
-  defp insert_buyer_lead(changeset, multi), do: Multi.insert(multi, :insert_buyer_lead, changeset)
+  defp insert_buyer_lead(changeset, multi) do
+    uuid = Changeset.get_field(changeset, :uuid)
+
+    multi
+    |> Multi.insert(:insert_buyer_lead, changeset)
+    |> __MODULE__.enqueue(:salesforce_job, %{"type" => "create_lead_salesforce", "uuid" => uuid})
+  end
 end
