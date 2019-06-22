@@ -132,7 +132,7 @@ defmodule ReWeb.Types.Listing do
     field :owner_contact, :owner_contact_input
   end
 
-  enum :garage_type, values: ~w(contract condominium)
+  enum :garage_type, values: ~w(contract condominium unknown)
 
   enum :orientation_type, values: ~w(frontside backside lateral inside)
 

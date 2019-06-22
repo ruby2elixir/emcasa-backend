@@ -64,13 +64,15 @@ defmodule Re.Developments.Listings do
 
   @static_attributes %{
     type: "Apartamento",
-    is_release: true
+    is_release: true,
+    is_exportable: false
   }
 
   def listing_params_from_unit(%Re.Unit{} = unit, %Re.Development{} = development) do
-    @static_attributes
+    %{}
     |> merge_with_unit_attributes(unit)
     |> merge_with_development_attributes(development)
+    |> Map.merge(@static_attributes)
   end
 
   defp merge_with_development_attributes(params, development) do
