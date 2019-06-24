@@ -1,4 +1,4 @@
-defmodule Re.BuyerLeads.SalesforceTest do
+defmodule Re.BuyerLeads.Salesforce.ClientTest do
   use Re.ModelCase
   use Mockery
 
