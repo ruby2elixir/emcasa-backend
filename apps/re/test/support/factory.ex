@@ -66,6 +66,14 @@ defmodule Re.Factory do
     }
   end
 
+  def for_primary_market(listing) do
+    %{listing | is_release: true}
+  end
+
+  def for_secondary_market(listing) do
+    %{listing | is_release: false}
+  end
+
   def address_factory do
     street_name = Address.street_name()
     street_slug = Re.Slugs.sluggify(street_name)
