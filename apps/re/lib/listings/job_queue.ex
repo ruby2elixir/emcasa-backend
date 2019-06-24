@@ -35,7 +35,7 @@ defmodule Re.Listings.JobQueue do
 
   defp handle_error(error) do
     Sentry.capture_message("error when performing Listings.JobQueue",
-      extra: %{error: error}
+      extra: %{error: "#{Kernel.inspect(error)}"}
     )
 
     raise "Error when performing Listings.JobQueue"
