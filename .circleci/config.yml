@@ -22,30 +22,30 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
-            - v1-mix-cache-{{ .Branch }}
-            - v1-mix-cache
+            - {{ CACHE_VERSION }}-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+            - {{ CACHE_VERSION }}-mix-cache-{{ .Branch }}
+            - {{ CACHE_VERSION }}-mix-cache
       - restore_cache:
           keys:
-            - v1-build-cache-{{ .Branch }}
-            - v1-build-cache
+            - {{ CACHE_VERSION }}-build-cache-{{ .Branch }}
+            - {{ CACHE_VERSION }}-build-cache
       - run: mix deps.get
       - run: mix compile --warnings-as-errors --force
       - run: mix format --check-formatted --dry-run
       - save_cache:
-          key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: {{ CACHE_VERSION }}-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths: "deps"
       - save_cache:
-          key: v1-mix-cache-{{ .Branch }}
+          key: {{ CACHE_VERSION }}-mix-cache-{{ .Branch }}
           paths: "deps"
       - save_cache:
-          key: v1-mix-cache
+          key: {{ CACHE_VERSION }}-mix-cache
           paths: "deps"
       - save_cache:
-          key: v1-build-cache-{{ .Branch }}
+          key: {{ CACHE_VERSION }}-build-cache-{{ .Branch }}
           paths: "_build"
       - save_cache:
-          key: v1-build-cache
+          key: {{ CACHE_VERSION }}-build-cache
           paths: "_build"
 
       - run:
