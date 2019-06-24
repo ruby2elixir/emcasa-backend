@@ -1,4 +1,4 @@
-defmodule ReIntegrations.PriceTeller.Output do
+defmodule Re.PriceTeller.Output do
   @moduledoc """
   Module for validating priceteller output payload
   """
