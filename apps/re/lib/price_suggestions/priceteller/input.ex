@@ -1,4 +1,4 @@
-defmodule ReIntegrations.PriceTeller.Input do
+defmodule Re.PriceTeller.Input do
   @moduledoc """
   Module for validating priceteller input parameters
   """

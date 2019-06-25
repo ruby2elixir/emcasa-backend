@@ -1,9 +1,6 @@
 defmodule ReIntegrations.TestHTTP do
   @moduledoc false
 
-  def get("https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename),
-    do: {:ok, %{body: filename}}
-
   def get(%URI{path: "/buildings/1/typologies/1/units"}, _) do
     {:ok, %{body: "{\"units\": []}"}}
   end

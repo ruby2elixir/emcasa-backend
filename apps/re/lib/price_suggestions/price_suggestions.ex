@@ -7,11 +7,10 @@ defmodule Re.PriceSuggestions do
   alias Re.{
     Listing,
     PriceSuggestions.Request,
+    PriceTeller,
     Repo,
     User
   }
-
-  alias ReIntegrations.PriceTeller
 
   alias Ecto.Changeset
 
