@@ -1,4 +1,4 @@
-defmodule ReIntegrations.PriceTeller do
+defmodule Re.PriceTeller do
   @moduledoc """
   Context module for price suggestion
   """
@@ -12,7 +12,7 @@ defmodule ReIntegrations.PriceTeller do
     Client
   }
 
-  @retry_expiry Application.get_env(:re_integrations, :retry_expiry, 30_000)
+  @retry_expiry Application.get_env(:re, :retry_expiry, 30_000)
 
   def ask(params) do
     with {:ok, params} <- Input.validate(params),

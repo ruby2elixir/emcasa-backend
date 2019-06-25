@@ -1,9 +1,9 @@
-defmodule ReIntegrations.PriceTellerTest do
+defmodule Re.PriceTellerTest do
   use Re.ModelCase
 
   import Mockery
 
-  alias ReIntegrations.PriceTeller
+  alias Re.PriceTeller
 
   @valid_payload %{
     type: "APARTMENT",
