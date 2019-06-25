@@ -200,16 +200,53 @@ Repo.delete_all(Tag)
     status: "active"
   })
 
-{:ok, tag1} =
-  Repo.insert(%Tag{
-    uuid: UUID.uuid4(),
-    name: "Piscina",
-    name_slug: "piscina"
-  })
+Repo.delete_all(Tag)
 
-[tag1]
-|> Enum.map(fn tag -> %ListingTag{listing_uuid: listing1.uuid, tag_uuid: tag.uuid} end)
-|> Enum.map(&Repo.insert/1)
+[
+  %{category: "concierge", name: "24 Horas", visibility: "public"},
+  %{category: "concierge", name: "Horario Comercial", visibility: "public"},
+  %{category: "concierge", name: "Portaria Eletrônica", visibility: "public"},
+  %{category: "infrastructure", name: "Academia", visibility: "public"},
+  %{category: "infrastructure", name: "Bicicletário", visibility: "public"},
+  %{category: "infrastructure", name: "Brinquedoteca", visibility: "public"},
+  %{category: "infrastructure", name: "Churrasqueira", visibility: "public"},
+  %{category: "infrastructure", name: "Espaço Gourmet", visibility: "public"},
+  %{category: "infrastructure", name: "Espaço Verde", visibility: "public"},
+  %{category: "infrastructure", name: "Parque", visibility: "public"},
+  %{category: "infrastructure", name: "Piscina", visibility: "public"},
+  %{category: "infrastructure", name: "Playground", visibility: "public"},
+  %{category: "infrastructure", name: "Quadra", visibility: "public"},
+  %{category: "infrastructure", name: "Salão De Festas", visibility: "public"},
+  %{category: "infrastructure", name: "Salão De Jogos", visibility: "public"},
+  %{category: "infrastructure", name: "Sauna", visibility: "public"},
+  %{category: "realty", name: "Armários Embutidos", visibility: "public"},
+  %{category: "realty", name: "Banheiro Empregados", visibility: "public"},
+  %{category: "realty", name: "Bom Para Pets", visibility: "public"},
+  %{category: "realty", name: "Dependência Empregados", visibility: "public"},
+  %{category: "realty", name: "Espaço Para Churrasco", visibility: "public"},
+  %{category: "realty", name: "Fogão Embutido", visibility: "public"},
+  %{category: "realty", name: "Lavabo", visibility: "public"},
+  %{category: "realty", name: "Reformado", visibility: "public"},
+  %{category: "realty", name: "Sacada", visibility: "public"},
+  %{category: "realty", name: "Terraço", visibility: "public"},
+  %{category: "realty", name: "Varanda Gourmet", visibility: "public"},
+  %{category: "realty", name: "Varanda", visibility: "public"},
+  %{category: "view", name: "Comunidade", visibility: "private"},
+  %{category: "view", name: "Cristo", visibility: "public"},
+  %{category: "view", name: "Lagoa", visibility: "public"},
+  %{category: "view", name: "Mar", visibility: "public"},
+  %{category: "view", name: "Montanhas", visibility: "public"},
+  %{category: "view", name: "Parcial Comunidade", visibility: "private"},
+  %{category: "view", name: "Parcial Mar", visibility: "public"},
+  %{category: "view", name: "Pedras", visibility: "public"},
+  %{category: "view", name: "Verde", visibility: "public"},
+  %{category: "view", name: "Vizinho", visibility: "private"}
+]
+|> Enum.each(fn params ->
+  %Re.Tag{}
+  |> Re.Tag.changeset(params)
+  |> Re.Repo.insert()
+end)
 
 {:ok, listing2} =
   Repo.insert(%Listing{

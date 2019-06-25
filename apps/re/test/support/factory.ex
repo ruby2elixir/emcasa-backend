@@ -158,8 +158,6 @@ defmodule Re.Factory do
 
   def price_history_factory, do: %Re.Listings.PriceHistory{}
 
-  def factors_factory, do: %Re.PriceSuggestions.Factors{}
-
   def contact_request_factory, do: %Re.Interests.ContactRequest{}
 
   def price_suggestion_request_factory do
@@ -241,6 +239,21 @@ defmodule Re.Factory do
       email: Enum.random([nil, Internet.email()]),
       additional_phones: [Phone.EnUs.phone()],
       additional_emails: [Internet.email()]
+    }
+  end
+
+  def buyer_lead_factory do
+    %Re.BuyerLead{
+      uuid: UUID.uuid4(),
+      name: Name.name(),
+      phone_number: Phone.EnUs.phone(),
+      email: Enum.random([nil, Internet.email()]),
+      origin: Enum.random(~w(vivareal zap facebook imovelweb site)),
+      location: Enum.random(~w(sao-paulo|sp rio-de-janeiro|rj)),
+      budget: "$100 to $1000",
+      neighborhood: Pokemon.location(),
+      url: Internet.url(),
+      user_url: Internet.url()
     }
   end
 

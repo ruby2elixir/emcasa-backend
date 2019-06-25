@@ -77,7 +77,7 @@ defmodule Re.ListingTest do
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :type) ==
-               {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
+               {"is invalid", [validation: :inclusion, enum: ~w(Apartamento Casa Cobertura)]}
 
       assert Keyword.get(changeset.errors, :score) ==
                {"must be less than %{number}", [validation: :number, kind: :less_than, number: 5]}
@@ -128,10 +128,11 @@ defmodule Re.ListingTest do
                {"is invalid", [type: :boolean, validation: :cast]}
 
       assert Keyword.get(changeset.errors, :orientation) ==
-               {"should be one of: [frontside backside lateral inside]", [validation: :inclusion]}
+               {"is invalid",
+                [validation: :inclusion, enum: ~w(frontside backside lateral inside)]}
 
       assert Keyword.get(changeset.errors, :sun_period) ==
-               {"should be one of: [morning evening]", [validation: :inclusion]}
+               {"is invalid", [validation: :inclusion, enum: ~w(morning evening)]}
 
       assert Keyword.get(changeset.errors, :floor_count) ==
                {"is invalid", [type: :integer, validation: :cast]}
@@ -141,6 +142,9 @@ defmodule Re.ListingTest do
 
       assert Keyword.get(changeset.errors, :elevators) ==
                {"is invalid", [type: :integer, validation: :cast]}
+
+      assert Keyword.get(changeset.errors, :garage_type) ==
+               {"is invalid", [validation: :inclusion, enum: ~w(contract condominium unknown)]}
 
       changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000})
       refute changeset.valid?
@@ -201,7 +205,7 @@ defmodule Re.ListingTest do
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :type) ==
-               {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
+               {"is invalid", [validation: :inclusion, enum: ~w(Apartamento Casa Cobertura)]}
 
       assert Keyword.get(changeset.errors, :description) ==
                {"can't be blank", [validation: :required]}

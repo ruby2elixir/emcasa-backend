@@ -36,7 +36,7 @@ defmodule Re.Unit do
     timestamps()
   end
 
-  @garage_types ~w(contract condominium)
+  @garage_types ~w(contract condominium unknown)
   @statuses ~w(active inactive)
 
   @required ~w(price rooms bathrooms area garage_spots suites development_uuid status)a
@@ -55,12 +55,8 @@ defmodule Re.Unit do
       greater_than_or_equal_to: 250_000,
       less_than_or_equal_to: 100_000_000
     )
-    |> validate_inclusion(:garage_type, @garage_types,
-      message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
-    )
-    |> validate_inclusion(:status, @statuses,
-      message: "should be one of: [#{Enum.join(@statuses, " ")}]"
-    )
+    |> validate_inclusion(:garage_type, @garage_types)
+    |> validate_inclusion(:status, @statuses)
     |> Re.ChangesetHelper.generate_uuid()
   end
 

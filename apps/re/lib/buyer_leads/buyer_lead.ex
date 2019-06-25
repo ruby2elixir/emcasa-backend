@@ -8,6 +8,9 @@ defmodule Re.BuyerLead do
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
+  @derive {Jason.Encoder,
+           only:
+             ~w(uuid name phone_number origin email location listing_uuid user_uuid budget neighborhood url user_url)a}
   schema "buyer_leads" do
     field :name, :string
     field :phone_number, :string
@@ -17,6 +20,7 @@ defmodule Re.BuyerLead do
     field :budget, :string
     field :neighborhood, :string
     field :url, :string
+    field :user_url, :string
 
     belongs_to :listing, Re.Listing,
       references: :uuid,
@@ -32,7 +36,7 @@ defmodule Re.BuyerLead do
   end
 
   @required ~w(name phone_number origin)a
-  @optional ~w(email location listing_uuid user_uuid budget neighborhood url)a
+  @optional ~w(email location listing_uuid user_uuid budget neighborhood url user_url)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do

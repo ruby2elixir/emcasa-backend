@@ -1,11 +1,11 @@
-defmodule ReIntegrations.PriceTeller.Client do
+defmodule Re.PriceTeller.Client do
   @moduledoc """
   Module to wrap priceteller API logic
   """
   require Mockery.Macro
 
-  @url Application.get_env(:re_integrations, :priceteller_url, "")
-  @token Application.get_env(:re_integrations, :priceteller_token, "")
+  @url Application.get_env(:re, :priceteller_url, "")
+  @token Application.get_env(:re, :priceteller_token, "")
 
   def post(params) do
     {:ok, payload} = Poison.encode(%{payload: params})

@@ -1,6 +1,7 @@
 defmodule ReIntegrations.OruloTest do
   @moduledoc false
 
+  import Re.CustomAssertion
   import ReIntegrations.Factory
 
   use ReIntegrations.ModelCase
@@ -62,6 +63,67 @@ defmodule ReIntegrations.OruloTest do
       assert {:ok, _} = Orulo.multi_images_payload_insert(Multi.new(), params)
 
       assert Repo.one(JobQueue)
+    end
+  end
+
+  describe "insert_typology_payload/2" do
+    test "create new typology payload" do
+      params = %{building_id: "666", payload: %{test: "typology_payload"}}
+
+      assert {:ok, %{insert_typologies_payload: payload}} =
+               Orulo.insert_typologies_payload(Multi.new(), params)
+
+      assert payload.uuid
+      assert payload.building_id == "666"
+      assert payload.payload == %{test: "typology_payload"}
+
+      JobQueue
+      |> Repo.all()
+      |> assert_enqueued_job("fetch_units")
+    end
+  end
+
+  describe "get_units/2" do
+    test "get units for all typologies" do
+      building_id = "1"
+      typology_ids = ["1", "2"]
+
+      assert %{
+               "1" => {:ok, %{body: "{\"units\": []}"}},
+               "2" => {:ok, %{body: "{\"units\": []}"}}
+             } ==
+               Orulo.get_units(building_id, typology_ids)
+    end
+  end
+
+  describe "bulk_insert_unit_payloads/2" do
+    test "get units for all typologies" do
+      responses = %{
+        "1" => {:ok, %{body: "{\"units\": []}"}},
+        "2" => {:ok, %{body: "{\"units\": []}"}}
+      }
+
+      building_id = "1"
+
+      {:ok,
+       %{
+         "insert_units_for_typology_1" => unit_payload_1,
+         "insert_units_for_typology_2" => unit_payload_2
+       }} = Orulo.bulk_insert_unit_payloads(Multi.new(), building_id, responses)
+
+      assert unit_payload_1.uuid
+      assert unit_payload_1.building_id == "1"
+      assert unit_payload_1.typology_id == "1"
+      assert unit_payload_1.payload == %{"units" => []}
+
+      assert unit_payload_2.uuid
+      assert unit_payload_2.building_id == "1"
+      assert unit_payload_2.typology_id == "2"
+      assert unit_payload_2.payload == %{"units" => []}
+
+      JobQueue
+      |> Repo.all()
+      |> assert_enqueued_job("process_units", 2)
     end
   end
 

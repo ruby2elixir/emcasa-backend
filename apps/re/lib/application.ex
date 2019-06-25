@@ -10,6 +10,7 @@ defmodule Re.Application do
   alias Re.{
     BuyerLeads,
     Developments,
+    Listings,
     Listings.History,
     PubSub,
     Repo
@@ -34,6 +35,7 @@ defmodule Re.Application do
     do: [
       worker(History.Server, []),
       {BuyerLeads.JobQueue, repo: Repo},
-      {Developments.JobQueue, repo: Repo}
+      {Developments.JobQueue, repo: Repo},
+      {Listings.JobQueue, repo: Repo}
     ]
 end

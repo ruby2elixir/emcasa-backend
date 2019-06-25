@@ -6,7 +6,10 @@ defmodule Re.BuyerLeads.EmptySearch do
 
   import Ecto.Changeset
 
-  alias Re.BuyerLead
+  alias Re.{
+    Accounts.Users,
+    BuyerLead
+  }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
@@ -50,13 +53,14 @@ defmodule Re.BuyerLeads.EmptySearch do
 
   def buyer_lead_changeset(lead) do
     BuyerLead.changeset(%BuyerLead{}, %{
-      name: lead.user.name,
+      name: lead.user.name || "empty",
       email: lead.user.email,
       phone_number: lead.user.phone,
       origin: "site",
       location: "#{lead.city_slug}|#{lead.state_slug}",
       user_uuid: lead.user_uuid,
-      url: lead.url
+      url: lead.url,
+      user_url: Users.build_user_url(lead.user)
     })
   end
 end

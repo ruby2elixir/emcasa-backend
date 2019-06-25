@@ -26,8 +26,7 @@ config :re, Re.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true,
-  migration_source: "old_schema_migrations",
-  facebook_access_token: System.get_env("FACEBOOK_ACCESS_TOKEN")
+  migration_source: "old_schema_migrations"
 
 config :re_integrations, ReIntegrations.Repo,
   adapter: Ecto.Adapters.Postgres,
@@ -62,7 +61,12 @@ config :re,
     String.to_integer(System.get_env("IMOVELWEB_SUPER_HIGHLIGHTS_SIZE_RIO_DE_JANEIRO")),
   imovelweb_super_highlights_size_sao_paulo:
     String.to_integer(System.get_env("IMOVELWEB_SUPER_HIGHLIGHTS_SIZE_SAO_PAULO")),
-  imovelweb_identity: System.get_env("IMOVELWEB_IDENTITY")
+  imovelweb_identity: System.get_env("IMOVELWEB_IDENTITY"),
+  facebook_access_token: System.get_env("FACEBOOK_ACCESS_TOKEN"),
+  garagem_url: System.get_env("GARAGEM_URL"),
+  zapier_create_salesforce_lead_url: System.get_env("SALESFORCE_ZAPIER_URL"),
+  priceteller_url: System.get_env("PRICETELLER_URL"),
+  priceteller_token: System.get_env("PRICETELLER_TOKEN")
 
 config :re_integrations,
   to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),
@@ -75,8 +79,6 @@ config :re_integrations,
   grupozap_webhook_secret: System.get_env("GRUPOZAP_WEBHOOK_SECRET"),
   zapier_webhook_user: System.get_env("ZAPIER_WEBHOOK_USER"),
   zapier_webhook_pass: System.get_env("ZAPIER_WEBHOOK_PASS"),
-  priceteller_url: System.get_env("PRICETELLER_URL"),
-  priceteller_token: System.get_env("PRICETELLER_TOKEN"),
   orulo_url: System.get_env("ORULO_URL"),
   orulo_api_token: System.get_env("ORULO_API_TOKEN"),
   orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN")

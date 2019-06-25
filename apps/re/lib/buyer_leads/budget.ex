@@ -8,7 +8,10 @@ defmodule Re.BuyerLeads.Budget do
 
   require Logger
 
-  alias Re.BuyerLead
+  alias Re.{
+    Accounts.Users,
+    BuyerLead
+  }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
@@ -60,7 +63,8 @@ defmodule Re.BuyerLeads.Budget do
       location: "#{lead.city_slug}|#{lead.state_slug}",
       budget: lead.budget,
       user_uuid: lead.user_uuid,
-      neighborhood: lead.neighborhood
+      neighborhood: lead.neighborhood,
+      user_url: Users.build_user_url(lead.user)
     })
   end
 end

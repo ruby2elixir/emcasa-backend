@@ -63,7 +63,12 @@ config :re,
   imovelweb_super_highlights_size_rio_de_janeiro: 5,
   imovelweb_super_highlights_size_sao_paulo: 5,
   imovelweb_identity: "1",
-  facebook_access_token: "testsecret"
+  facebook_access_token: "testsecret",
+  garagem_url: "http://localhost:3000",
+  zapier_create_salesforce_lead_url: "http://www.emcasa.com/salesforce_zapier",
+  priceteller_url: "http://www.emcasa.com/priceteller",
+  priceteller_token: "mahtoken",
+  retry_expiry: 100
 
 config :re_integrations,
   http: ReIntegrations.TestHTTP,
@@ -72,9 +77,8 @@ config :re_integrations,
   grupozap_webhook_secret: "testsecret",
   zapier_webhook_user: "testuser",
   zapier_webhook_pass: "testpass",
-  priceteller_url: "http://www.emcasa.com/priceteller",
-  priceteller_token: "mahtoken",
-  cloudinary_client: ReIntegrations.TestCloudex
+  cloudinary_client: ReIntegrations.TestCloudex,
+  orulo_url: "http://www.emcasa.com/orulo"
 
 config :junit_formatter,
   report_file: "report_file_test.xml",

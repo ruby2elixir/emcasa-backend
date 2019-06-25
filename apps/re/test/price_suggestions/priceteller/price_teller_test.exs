@@ -1,9 +1,9 @@
-defmodule ReIntegrations.PriceTellerTest do
+defmodule Re.PriceTellerTest do
   use Re.ModelCase
 
   import Mockery
 
-  alias ReIntegrations.PriceTeller
+  alias Re.PriceTeller
 
   @valid_payload %{
     type: "APARTMENT",
@@ -59,11 +59,15 @@ defmodule ReIntegrations.PriceTellerTest do
       assert {:error, changeset} = PriceTeller.ask(@invalid_payload)
 
       assert Keyword.get(changeset.errors, :type) ==
-               {"should be one of: [APARTMENT CONDOMINIUM KITNET HOME TWO_STORY_HOUSE FLAT PENTHOUSE]",
-                [validation: :inclusion]}
+               {"is invalid",
+                [
+                  validation: :inclusion,
+                  enum: ~w(APARTMENT CONDOMINIUM KITNET HOME TWO_STORY_HOUSE FLAT PENTHOUSE)
+                ]}
 
       assert Keyword.get(changeset.errors, :zip_code) ==
-               {"should be %{count} character(s)", [count: 8, validation: :length, kind: :is]}
+               {"should be %{count} character(s)",
+                [count: 8, validation: :length, kind: :is, type: :string]}
 
       assert Keyword.get(changeset.errors, :area) ==
                {"must be greater than %{number}",

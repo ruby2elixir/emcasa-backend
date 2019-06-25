@@ -18,7 +18,7 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
 
   describe "dashboard" do
     test "admin should query dashboard", %{admin_conn: conn} do
-      insert(:listing, status: "inactive")
+      insert(:listing, status: "inactive", is_release: false)
 
       insert(
         :listing,
@@ -26,7 +26,8 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
         maintenance_fee: 123.321,
         property_tax: 321.123,
         matterport_code: "asdsa",
-        area: 50
+        area: 50,
+        is_release: false
       )
 
       insert(
@@ -34,13 +35,14 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
         maintenance_fee: nil,
         property_tax: nil,
         matterport_code: nil,
-        area: nil
+        area: nil,
+        is_release: false
       )
 
       query = """
         query Dashboard {
           dashboard {
-            activeListingCount
+            activeListingCount(isRelease: false)
             favoriteCount
             visualizationCount
             tourVisualizationCount
@@ -70,7 +72,7 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       query = """
         query Dashboard {
           dashboard {
-            activeListingCount
+            activeListingCount(isRelease: false)
             favoriteCount
             visualizationCount
             tourVisualizationCount
@@ -91,7 +93,7 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       query = """
         query Dashboard {
           dashboard {
-            activeListingCount
+            activeListingCount(isRelease: false)
             favoriteCount
             visualizationCount
             tourVisualizationCount
@@ -106,6 +108,48 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+    end
+  end
+
+  describe "active_listing_count" do
+    test "should count primary market listings", %{admin_conn: conn} do
+      insert(:listing, is_release: false)
+      insert(:listing, is_release: true)
+      insert(:listing, is_release: true)
+
+      query = """
+        query Dashboard {
+          dashboard {
+            activeListingCount(isRelease: true)
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert %{
+               "activeListingCount" => 2
+             } == json_response(conn, 200)["data"]["dashboard"]
+    end
+
+    test "should count secondary market listings", %{admin_conn: conn} do
+      insert(:listing, is_release: false)
+      insert(:listing, is_release: true)
+      insert(:listing, is_release: true)
+
+      query = """
+        query Dashboard {
+          dashboard {
+            activeListingCount(isRelease: false)
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert %{
+               "activeListingCount" => 1
+             } == json_response(conn, 200)["data"]["dashboard"]
     end
   end
 

@@ -3,7 +3,7 @@ defmodule ReIntegrations.Orulo.Client do
   Module to wripe orulo API logic
   """
 
-  @http_client Application.get_env(:re_integrations, :http_client, HTTPoison)
+  @http_client Application.get_env(:re_integrations, :http, HTTPoison)
   @base_url Application.get_env(:re_integrations, :orulo_url, "")
   @api_token Application.get_env(:re_integrations, :orulo_api_token, "")
 
@@ -15,11 +15,23 @@ defmodule ReIntegrations.Orulo.Client do
     |> @http_client.get(@api_headers)
   end
 
+  def get_units(building_id, typology_id) do
+    @base_url
+    |> build_uri("buildings/#{building_id}/typologies/#{typology_id}/units")
+    |> @http_client.get(@api_headers)
+  end
+
   def get_images(id) do
     dimensions_param = "dimensions[]=1024x1024"
 
     @base_url
     |> build_uri("buildings/#{id}/images?#{dimensions_param}")
+    |> @http_client.get(@api_headers)
+  end
+
+  def get_typologies(id) do
+    @base_url
+    |> build_uri("buildings/#{id}/typologies")
     |> @http_client.get(@api_headers)
   end
 

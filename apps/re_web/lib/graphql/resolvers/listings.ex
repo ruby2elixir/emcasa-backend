@@ -230,12 +230,14 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
-  defp do_suggest_price(listing) do
+  defp do_suggest_price(%{suggested_price: nil} = listing) do
     case PriceSuggestions.suggest_price(listing) do
       {:ok, suggested_price} -> {:ok, suggested_price}
       _error -> {:ok, nil}
     end
   end
+
+  defp do_suggest_price(%{suggested_price: suggested_price}), do: {:ok, suggested_price}
 
   def price_recently_reduced(listing, _, %{context: %{loader: loader}}) do
     params = %{
@@ -328,4 +330,10 @@ defmodule ReWeb.Resolvers.Listings do
 
   defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
   defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
+
+  def get_uuid(listing, _, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Listings, :show_uuid, current_user, %{}) do
+      {:ok, listing.uuid}
+    end
+  end
 end

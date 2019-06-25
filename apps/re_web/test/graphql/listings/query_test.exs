@@ -26,17 +26,18 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     test "admin should query listing index", %{admin_conn: conn} do
       user = insert(:user)
 
-      insert(
-        :listing,
-        address: build(:address, street_number: "12B"),
-        images: [
-          build(:image, filename: "test.jpg", position: 3),
-          build(:image, filename: "test2.jpg", position: 2, is_active: false),
-          build(:image, filename: "test3.jpg", position: 1)
-        ],
-        user: user,
-        score: 4
-      )
+      %{uuid: uuid} =
+        insert(
+          :listing,
+          address: build(:address, street_number: "12B"),
+          images: [
+            build(:image, filename: "test.jpg", position: 3),
+            build(:image, filename: "test2.jpg", position: 2, is_active: false),
+            build(:image, filename: "test3.jpg", position: 1)
+          ],
+          user: user,
+          score: 4
+        )
 
       insert(:image, filename: "not_in_listing_image.jpg")
 
@@ -56,6 +57,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ) {
           listings {
             listings {
+              uuid
               address {
                 street_number
               }
@@ -83,6 +85,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert %{
                "listings" => [
                  %{
+                   "uuid" => uuid,
                    "address" => %{"street_number" => "12B"},
                    "activeImages" => [%{"filename" => "test3.jpg"}],
                    "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
@@ -118,6 +121,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
           listings {
             listings {
+              uuid
               address {
                 street_number
               }
@@ -142,6 +146,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert %{
                "listings" => [
                  %{
+                   "uuid" => nil,
                    "address" => %{"street_number" => "12B"},
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
@@ -178,6 +183,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
           listings {
             listings {
+              uuid
               address {
                 street_number
               }
@@ -202,6 +208,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert %{
                "listings" => [
                  %{
+                   "uuid" => nil,
                    "address" => %{"street_number" => nil},
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
@@ -238,6 +245,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
           listings {
             listings {
+              uuid
               address {
                 street_number
               }
@@ -262,6 +270,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert %{
                "listings" => [
                  %{
+                   "uuid" => nil,
                    "address" => %{"street_number" => nil},
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
@@ -798,7 +807,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
 
-      %{id: listing_id} =
+      %{id: listing_id, uuid: listing_uuid} =
         insert(
           :listing,
           address: address,
@@ -813,7 +822,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           area: 80,
           garage_spots: 1,
           bathrooms: 1,
-          inserted_at: ~N[2018-01-01 10:00:00]
+          inserted_at: ~N[2018-01-01 10:00:00],
+          suggested_price: 1000.00
         )
 
       %{id: related_id1} = insert(:listing, address: address, score: 4)
@@ -838,6 +848,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           $filters: ListingFilterInput
           ) {
           listing (id: $id) {
+            uuid
             address {
               street
               streetNumber
@@ -890,6 +901,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
+               "uuid" => listing_uuid,
                "address" => %{
                  "street" => street,
                  "streetNumber" => street_number,
@@ -915,7 +927,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                  %{"price" => price2},
                  %{"price" => price3}
                ],
-               "suggestedPrice" => 26_279.0,
+               "suggestedPrice" => 1000.0,
                "related" => %{
                  "listings" => [
                    %{"id" => to_string(related_id1)},
@@ -955,16 +967,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
 
-      insert(
-        :factors,
-        street: street,
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
-      )
-
       %{id: listing_id} =
         insert(
           :listing,
@@ -979,7 +981,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           area: 80,
           garage_spots: 1,
           bathrooms: 1,
-          inserted_at: ~N[2018-01-01 10:00:00]
+          inserted_at: ~N[2018-01-01 10:00:00],
+          suggested_price: nil
         )
 
       %{id: related_id1} = insert(:listing, address: address, score: 4)
@@ -1004,6 +1007,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           $filters: ListingFilterInput
           ) {
           listing (id: $id) {
+            uuid
             address {
               street
               streetNumber
@@ -1043,6 +1047,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
+               "uuid" => nil,
                "address" => %{
                  "street" => street,
                  "streetNumber" => street_number,
@@ -1127,6 +1132,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           $filters: ListingFilterInput
           ) {
           listing (id: $id) {
+            uuid
             address {
               street
               streetNumber
@@ -1166,6 +1172,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
+               "uuid" => nil,
                "address" => %{
                  "street" => street,
                  "streetNumber" => nil,
@@ -1247,6 +1254,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           $filters: ListingFilterInput
           ) {
           listing (id: $id) {
+            uuid
             address {
               street
               streetNumber
@@ -1286,6 +1294,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
+               "uuid" => nil,
                "address" => %{
                  "street" => street,
                  "streetNumber" => nil,

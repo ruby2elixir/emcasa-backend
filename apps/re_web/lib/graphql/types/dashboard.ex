@@ -9,7 +9,12 @@ defmodule ReWeb.Types.Dashboard do
   alias ReWeb.Resolvers.Dashboard, as: DashboardResolvers
 
   object :dashboard do
-    field :active_listing_count, :integer, resolve: &DashboardResolvers.active_listing_count/2
+    field :active_listing_count, :integer do
+      arg :is_release, non_null(:boolean)
+
+      resolve &DashboardResolvers.active_listing_count/2
+    end
+
     field :favorite_count, :integer, resolve: &DashboardResolvers.favorite_count/2
     field :visualization_count, :integer, resolve: fn _, _, _ -> {:ok, 0} end
 
@@ -50,6 +55,7 @@ defmodule ReWeb.Types.Dashboard do
   object :dashboard_mutations do
     @desc "Upload file with price suggestion factors"
     field :upload_factors_csv, :string do
+      deprecate("not used anymore")
       arg :factors, non_null(:upload)
 
       resolve &DashboardResolvers.upload_factors_csv/2

@@ -46,35 +46,41 @@ defmodule Re.Interest do
   def buyer_lead_changeset(nil), do: raise("Interest not found")
 
   def buyer_lead_changeset(interest) do
-    phone_number = format(interest.phone)
+    params =
+      %{
+        name: interest.name,
+        email: interest.email,
+        origin: "site"
+      }
+      |> put_location(interest)
+      |> put_user_info(interest)
 
-    BuyerLead.changeset(%BuyerLead{}, %{
-      name: interest.name,
-      phone_number: phone_number,
-      email: interest.email,
-      origin: "site",
-      location: get_location(interest.listing),
-      listing_uuid: interest.listing.uuid,
-      user_uuid: extract_user_uuid(phone_number),
-      neighborhood: get_neighborhood(interest.listing)
-    })
+    BuyerLead.changeset(%BuyerLead{}, params)
   end
 
-  defp get_location(%{address: address}), do: "#{address.city_slug}|#{address.state_slug}"
-
-  defp format(nil), do: nil
-
-  defp format(phone_number), do: String.replace(phone_number, ["(", ")", "-", " "], "")
-
-  defp extract_user_uuid(nil), do: nil
-
-  defp extract_user_uuid(phone_number) do
-    case Users.get_by_phone(phone_number) do
-      {:ok, user} -> user.uuid
-      _error -> nil
-    end
+  defp put_location(params, %{listing: %{address: address} = listing}) do
+    params
+    |> Map.put(:location, "#{address.city_slug}|#{address.state_slug}")
+    |> Map.put(:listing_uuid, listing.uuid)
+    |> Map.put(:neighborhood, address.neighborhood)
   end
 
-  defp get_neighborhood(%{address: address}), do: address.neighborhood
-  defp get_neighborhood(_), do: nil
+  defp put_user_info(params, %{phone: nil}), do: params
+
+  defp put_user_info(params, interest) do
+    phone_number = String.replace(interest.phone, ["(", ")", "-", " "], "")
+
+    phone_number
+    |> Users.get_by_phone()
+    |> do_put_user_info(params)
+    |> Map.put(:phone_number, phone_number)
+  end
+
+  defp do_put_user_info({:ok, user}, params) do
+    params
+    |> Map.put(:user_uuid, user.uuid)
+    |> Map.put(:user_url, Users.build_user_url(user))
+  end
+
+  defp do_put_user_info({:error, :not_found}, params), do: params
 end

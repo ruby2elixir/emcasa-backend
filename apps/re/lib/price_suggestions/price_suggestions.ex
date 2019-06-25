@@ -1,20 +1,16 @@
 defmodule Re.PriceSuggestions do
   @moduledoc """
-  Module for suggesting prices according to stored factors
+  Module for fetching and saving suggested prices from priceteller API
   """
   NimbleCSV.define(PriceSuggestionsParser, separator: ",", escape: "\"")
 
   alias Re.{
     Listing,
-    PriceSuggestions.Factors,
     PriceSuggestions.Request,
+    PriceTeller,
     Repo,
     User
   }
-
-  alias ReIntegrations.PriceTeller
-
-  import Ecto.Query
 
   alias Ecto.Changeset
 
@@ -28,18 +24,29 @@ defmodule Re.PriceSuggestions do
         |> Request.changeset(%{suggested_price: suggested_price})
         |> Repo.update()
 
-        {:ok, suggested_price}
-
       error ->
         error
     end
   end
 
-  def suggest_price(params) do
-    params
+  def suggest_price(%Listing{} = listing) do
+    listing
     |> preload_address()
     |> do_suggest_price()
+    |> persist_suggested_price(listing)
   end
+
+  def suggest_price(params), do: do_suggest_price(params)
+
+  defp persist_suggested_price({:ok, suggested_price}, listing) do
+    listing
+    |> Listing.changeset(%{suggested_price: suggested_price})
+    |> Repo.update()
+
+    {:ok, suggested_price}
+  end
+
+  defp persist_suggested_price(response, _), do: response
 
   defp do_suggest_price(params) do
     params
@@ -69,7 +76,7 @@ defmodule Re.PriceSuggestions do
   defp map_type("Cobertura"), do: "PENTHOUSE"
   defp map_type(type), do: type
 
-  defp round_if_not_nil(nil), do: nil
+  defp round_if_not_nil(nil), do: 0
   defp round_if_not_nil(maintenance_fee), do: round(maintenance_fee)
 
   defp format_output({:ok, %{listing_price_rounded: listing_price_rounded}}),
@@ -80,47 +87,12 @@ defmodule Re.PriceSuggestions do
       extra: %{response: Kernel.inspect(response)}
     )
 
-    {:error, :bad_request}
+    response
   end
 
   defp preload_address(%Listing{} = listing), do: Repo.preload(listing, :address)
 
   defp preload_address(params), do: params
-
-  def save_factors(file) do
-    file
-    |> PriceSuggestionsParser.parse_string()
-    |> Stream.map(&csv_to_map/1)
-    |> Enum.each(&persist/1)
-  end
-
-  defp csv_to_map([state, city, street, intercept, area, bathrooms, rooms, garage_spots, r2]) do
-    %{
-      state: :binary.copy(state),
-      city: :binary.copy(city),
-      street: :binary.copy(street),
-      intercept: intercept |> Float.parse() |> elem(0),
-      area: area |> Float.parse() |> elem(0),
-      bathrooms: bathrooms |> Float.parse() |> elem(0),
-      rooms: rooms |> Float.parse() |> elem(0),
-      garage_spots: garage_spots |> Float.parse() |> elem(0),
-      r2: r2 |> Float.parse() |> elem(0)
-    }
-  end
-
-  defp persist(%{state: state, city: city, street: street} = line) do
-    case Repo.get_by(Factors, state: state, city: city, street: street) do
-      nil ->
-        %Factors{}
-        |> Factors.changeset(line)
-        |> Repo.insert()
-
-      factor ->
-        factor
-        |> Factors.changeset(line)
-        |> Repo.update()
-    end
-  end
 
   def create_request(params, %{id: address_id}, user) do
     %Request{}
@@ -134,39 +106,4 @@ defmodule Re.PriceSuggestions do
     do: Changeset.change(changeset, user_id: id)
 
   defp attach_user(changeset, _), do: changeset
-
-  def generate_price_comparison do
-    to_write =
-      Listing
-      |> where([l], l.status == "active")
-      |> preload(:address)
-      |> Repo.all()
-      |> Enum.map(&compare_prices/1)
-      |> Enum.filter(fn
-        {:error, _} -> false
-        _other -> true
-      end)
-      |> Enum.map(&encode/1)
-      |> Enum.join("\n")
-
-    File.write("export.txt", to_write)
-  end
-
-  defp compare_prices(listing) do
-    case suggest_price(listing) do
-      {:error, :street_not_covered} ->
-        {:error, :street_not_covered}
-
-      suggested_price ->
-        %{listing_id: listing.id, actual_price: listing.price, suggested_price: suggested_price}
-    end
-  end
-
-  defp encode(%{
-         listing_id: listing_id,
-         actual_price: actual_price,
-         suggested_price: suggested_price
-       }) do
-    "ID: #{listing_id}, Preço atual: #{actual_price}, Preço Sugerido: #{suggested_price}"
-  end
 end

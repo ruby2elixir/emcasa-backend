@@ -45,12 +45,8 @@ defmodule Re.Tag do
     |> cast(params, @required)
     |> validate_required(@required)
     |> unique_constraint(:name_slug)
-    |> validate_inclusion(:category, @categories,
-      message: "should be one of: [#{Enum.join(@categories, ", ")}]"
-    )
-    |> validate_inclusion(:visibility, @visibilities,
-      message: "should be one of: [#{Enum.join(@visibilities, ", ")}]"
-    )
+    |> validate_inclusion(:category, @categories)
+    |> validate_inclusion(:visibility, @visibilities)
     |> generate_slugs()
     |> ChangesetHelper.generate_uuid()
   end
