@@ -698,6 +698,29 @@ defmodule Re.Listings.FiltersTest do
       assert_mapper_match([%{id: id}], result, &map_id/1)
     end
 
+    test "filter by exclude_similar_for_primary_market when is true return listings from secondary market or from primary market exportable" do
+      listing_1 =
+        build(:listing)
+        |> for_secondary_market()
+        |> insert()
+
+      listing_2 =
+        build(:listing, is_exportable: true)
+        |> for_primary_market()
+        |> insert()
+
+      build(:listing, is_exportable: false)
+      |> for_primary_market()
+      |> insert()
+
+      result =
+        Listing
+        |> Filters.apply(%{exclude_similar_for_primary_market: true})
+        |> Repo.all()
+
+      assert_mapper_match([listing_1, listing_2], result, &map_id/1)
+    end
+
     test "apply all filters at once" do
       tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
       tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")

@@ -248,6 +248,7 @@ defmodule ReWeb.Types.Listing do
     field :min_maintenance_fee, :float
     field :max_maintenance_fee, :float
     field :is_release, :boolean
+    field :exclude_similar_for_primary_market, :boolean
   end
 
   object :listing_filter do
@@ -287,6 +288,7 @@ defmodule ReWeb.Types.Listing do
     field :min_price_per_area, :float
     field :max_price_per_area, :float
     field :is_release, :boolean
+    field :exclude_similar_for_primary_market, :boolean
   end
 
   object :price_history do
