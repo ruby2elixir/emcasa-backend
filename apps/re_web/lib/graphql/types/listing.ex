@@ -168,6 +168,7 @@ defmodule ReWeb.Types.Listing do
     field :city_slug, :string
     field :name_slug, :string
     field :description, :string
+    field :status, :string
   end
 
   input_object :address_input do
