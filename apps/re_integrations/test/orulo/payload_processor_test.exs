@@ -125,7 +125,6 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
       assert inserted_unit_1.bathrooms == 2
       assert inserted_unit_1.suites == 1
       assert inserted_unit_1.garage_spots == 2
-      assert inserted_unit_1.garage_type == "unknown"
       assert inserted_unit_1.complement == "50"
       assert inserted_unit_1.status == "active"
 
@@ -136,7 +135,6 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
       assert inserted_unit_2.bathrooms == 2
       assert inserted_unit_2.suites == 1
       assert inserted_unit_2.garage_spots == 2
-      assert inserted_unit_2.garage_type == "unknown"
       assert inserted_unit_2.complement == "100"
       assert inserted_unit_1.status == "active"
     end
@@ -248,7 +246,6 @@ defmodule ReIntegrations.Orulo.PayloadProcessorTest do
       assert inserted_unit_1.bathrooms == 2
       assert inserted_unit_1.suites == 1
       assert inserted_unit_1.garage_spots == 2
-      assert inserted_unit_1.garage_type == "unknown"
       assert inserted_unit_1.complement == "51"
       assert inserted_unit_1.status == "active"
     end

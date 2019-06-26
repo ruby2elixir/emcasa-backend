@@ -50,8 +50,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
   end
 
   @static_params %{
-    status: "active",
-    garage_type: "unknown"
+    status: "active"
   }
 
   defp insert_unit(unit, typology, development) do
