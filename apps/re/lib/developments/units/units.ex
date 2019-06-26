@@ -65,26 +65,20 @@ defmodule Re.Units do
     end
   end
 
-  def update(unit, params, development, listing \\ nil)
-
-  def update(unit, params, development, nil) do
+  def update(unit, params, opts) do
     changeset =
       unit
-      |> Changeset.change(development_uuid: development.uuid)
+      |> changeset_for_opts(opts)
       |> Unit.changeset(params)
 
     changeset
     |> Repo.update()
   end
 
-  def update(unit, params, development, listing) do
-    changeset =
-      unit
-      |> Changeset.change(development_uuid: development.uuid)
-      |> Changeset.change(listing_id: listing.id)
-      |> Unit.changeset(params)
-
-    changeset
-    |> Repo.update()
+  defp changeset_for_opts(unit, opts) do
+    Enum.reduce(opts, Changeset.change(unit), fn
+      {:development, development}, changeset ->
+        Changeset.change(changeset, %{development_uuid: development.uuid})
+    end)
   end
 end

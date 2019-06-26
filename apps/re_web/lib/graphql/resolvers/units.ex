@@ -26,7 +26,7 @@ defmodule ReWeb.Resolvers.Units do
     with :ok <- Bodyguard.permit(Units, :update_unit, current_user, params),
          {:ok, unit} <- Units.get(uuid),
          {:ok, development} <- get_development(params),
-         {:ok, new_unit} <- Units.update(unit, params, development) do
+         {:ok, new_unit} <- Units.update(unit, params, development: development) do
       {:ok, new_unit}
     end
   end
