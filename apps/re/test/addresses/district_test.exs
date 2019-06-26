@@ -32,6 +32,6 @@ defmodule Re.Addresses.DistrictTest do
     refute changeset.valid?
 
     assert Keyword.get(changeset.errors, :status) ==
-             {"is invalid", [validation: :inclusion, enum: ~w(active inactive)]}
+             {"is invalid", [validation: :inclusion, enum: ~w(covered partially_covered uncovered)]}
   end
 end

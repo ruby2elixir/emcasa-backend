@@ -121,7 +121,7 @@ defmodule Re.Factory do
       state: state,
       state_slug: state_slug,
       description: Shakespeare.hamlet(),
-      status: "active"
+      status: "covered"
     }
   end
 
@@ -134,7 +134,7 @@ defmodule Re.Factory do
       state: address.state,
       state_slug: address.state_slug,
       description: Shakespeare.hamlet(),
-      status: "active"
+      status: "covered"
     )
   end
 

@@ -20,7 +20,7 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
         name: "Vila Mariana",
         state: "SP",
         city: "São Paulo",
-        status: "active"
+        status: "covered"
       })
       |> Repo.insert()
 

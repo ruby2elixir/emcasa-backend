@@ -34,7 +34,7 @@ defmodule Re.Addresses.Neighborhoods do
     end
   end
 
-  def districts, do: Repo.all(from(d in District, where: d.status == "active"))
+  def districts, do: Repo.all(from(d in District, where: d.status in ["partially_covered", "covered"]))
 
   def get_district(params) do
     case Repo.get_by(District, params) do
@@ -64,7 +64,7 @@ defmodule Re.Addresses.Neighborhoods do
            name_slug: neighborhood.neighborhood_slug,
            city_slug: neighborhood.city_slug,
            state_slug: neighborhood.state_slug,
-           status: "active"
+           status: "covered"
          ) do
       nil -> false
       _district -> true
