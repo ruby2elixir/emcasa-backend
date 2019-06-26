@@ -41,9 +41,9 @@ defmodule Re.Units do
     end
   end
 
-  def insert(params, development) do
+  def insert(params, opts) do
     %Unit{}
-    |> Changeset.change(development_uuid: development.uuid)
+    |> changeset_for_opts(opts)
     |> Unit.changeset(params)
     |> do_new_unit()
   end
@@ -65,7 +65,7 @@ defmodule Re.Units do
     end
   end
 
-  def update(unit, params, opts) do
+  def update(unit, params, opts \\ []) do
     changeset =
       unit
       |> changeset_for_opts(opts)

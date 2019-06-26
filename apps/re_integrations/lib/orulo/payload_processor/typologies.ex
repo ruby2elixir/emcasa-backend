@@ -57,7 +57,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
     typology
     |> TypologyMapper.typology_payload_into_unit_params(unit)
     |> Map.merge(@static_params)
-    |> Units.insert(development)
+    |> Units.insert(development: development)
   end
 
   defp extract_typology_info_from_payload(id, %{"typologies" => typologies}) do
