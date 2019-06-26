@@ -40,9 +40,7 @@ defmodule Re.Addresses.District do
     |> validate_length(:city, max: 128)
     |> validate_length(:state, is: 2)
     |> unique_constraint(:neighborhood, name: :neighborhood)
-    |> validate_inclusion(:status, @statuses,
-      message: "should be one of: [#{Enum.join(@statuses, " ")}]"
-    )
+    |> validate_inclusion(:status, @statuses)
     |> generate_slugs()
   end
 
