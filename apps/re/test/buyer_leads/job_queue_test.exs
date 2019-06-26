@@ -511,41 +511,62 @@ defmodule Re.BuyerLeads.JobQueueTest do
   end
 
   describe "create_lead_salesforce" do
-    test "create lead" do
-      lead = insert(:buyer_lead, listing: build(:listing, address: build(:address)))
+    @uri %URI{
+      authority: "www.emcasa.com",
+      fragment: nil,
+      host: "www.emcasa.com",
+      path: "/salesforce_zapier",
+      port: 80,
+      query: nil,
+      scheme: "http",
+      userinfo: nil
+    }
 
+    setup do
+      buyer_lead = insert(:buyer_lead)
+
+      {:ok, encoded_buyer_lead} =
+        buyer_lead
+        |> Map.take(
+          ~w(uuid name phone_number origin email location listing_uuid user_uuid budget neighborhood url user_url)a
+        )
+        |> Jason.encode()
+
+      {:ok, buyer_lead: buyer_lead, encoded_buyer_lead: encoded_buyer_lead}
+    end
+
+    test "create lead", %{buyer_lead: buyer_lead, encoded_buyer_lead: encoded_buyer_lead} do
       mock(HTTPoison, :post, {:ok, %{status_code: 200, body: ~s({"status":"success"})}})
 
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{
                  "type" => "create_lead_salesforce",
-                 "uuid" => lead.uuid
+                 "uuid" => buyer_lead.uuid
                })
 
       refute Repo.one(JobQueue)
-      {:ok, encoded_lead} = Jason.encode(lead)
-      uri = URI.parse("http://www.emcasa.com/salesforce_zapier")
+      uri = @uri
 
-      assert_called(HTTPoison, :post, [^uri, ^encoded_lead])
+      assert_called(HTTPoison, :post, [^uri, ^encoded_buyer_lead])
     end
 
-    test "raise when there's a timeout" do
-      lead = insert(:buyer_lead, listing: build(:listing, address: build(:address)))
-
+    test "raise when there's a timeout", %{
+      buyer_lead: buyer_lead,
+      encoded_buyer_lead: encoded_buyer_lead
+    } do
       mock(HTTPoison, :post, {:error, %{reason: :timeout}})
 
       assert_raise RuntimeError, fn ->
         assert {:error, _} =
                  JobQueue.perform(Multi.new(), %{
                    "type" => "create_lead_salesforce",
-                   "uuid" => lead.uuid
+                   "uuid" => buyer_lead.uuid
                  })
       end
 
-      {:ok, encoded_lead} = Jason.encode(lead)
-      uri = URI.parse("http://www.emcasa.com/salesforce_zapier")
+      uri = @uri
 
-      assert_called(HTTPoison, :post, [^uri, ^encoded_lead])
+      assert_called(HTTPoison, :post, [^uri, ^encoded_buyer_lead])
     end
   end
 end
