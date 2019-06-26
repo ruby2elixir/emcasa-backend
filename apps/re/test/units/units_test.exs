@@ -31,7 +31,7 @@ defmodule Re.UnitsTest do
       development = insert(:development)
 
       assert {:ok, %{add_unit: inserted_unit, units_job: _}} =
-               Units.insert(@unit_attrs, development)
+               Units.insert(@unit_attrs, development: development)
 
       retrieved_unit = Repo.get(Unit, inserted_unit.uuid)
 
@@ -42,7 +42,7 @@ defmodule Re.UnitsTest do
     test "create new development job" do
       development = insert(:development)
 
-      assert {:ok, _} = Units.insert(@unit_attrs, development)
+      assert {:ok, _} = Units.insert(@unit_attrs, development: development)
 
       assert Repo.one(Re.Developments.JobQueue)
     end
