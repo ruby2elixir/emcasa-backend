@@ -523,14 +523,23 @@ defmodule Re.BuyerLeads.JobQueueTest do
     }
 
     setup do
-      buyer_lead = insert(:buyer_lead)
+      buyer_lead = insert(:buyer_lead, phone_number: "+5511999999999")
 
       {:ok, encoded_buyer_lead} =
-        buyer_lead
-        |> Map.take(
-          ~w(uuid name phone_number origin email location listing_uuid user_uuid budget neighborhood url user_url)a
-        )
-        |> Jason.encode()
+        Jason.encode(%{
+          uuid: buyer_lead.uuid,
+          name: buyer_lead.name,
+          phone_number: "5511999999999",
+          origin: buyer_lead.origin,
+          email: buyer_lead.email,
+          location: buyer_lead.location,
+          listing_uuid: buyer_lead.listing_uuid,
+          user_uuid: buyer_lead.user_uuid,
+          budget: buyer_lead.budget,
+          neighborhood: buyer_lead.neighborhood,
+          url: buyer_lead.url,
+          user_url: buyer_lead.user_url
+        })
 
       {:ok, buyer_lead: buyer_lead, encoded_buyer_lead: encoded_buyer_lead}
     end
