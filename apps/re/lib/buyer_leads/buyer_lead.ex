@@ -8,9 +8,6 @@ defmodule Re.BuyerLead do
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
-  @derive {Jason.Encoder,
-           only:
-             ~w(uuid name phone_number origin email location listing_uuid user_uuid budget neighborhood url user_url)a}
   schema "buyer_leads" do
     field :name, :string
     field :phone_number, :string
