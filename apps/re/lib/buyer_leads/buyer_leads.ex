@@ -3,6 +3,7 @@ defmodule Re.BuyerLeads do
   Context boundary to Buyer Leads
   """
   require Logger
+  require Ecto.Query
 
   alias Re.{
     BuyerLead,
@@ -14,7 +15,8 @@ defmodule Re.BuyerLeads do
 
   alias Ecto.{
     Changeset,
-    Multi
+    Multi,
+    Query
   }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
@@ -35,8 +37,16 @@ defmodule Re.BuyerLeads do
     |> insert_with_job("process_empty_search_buyer_lead")
   end
 
-  def get(uuid) do
-    case Repo.get(BuyerLead, uuid) do
+  def get(uuid), do: do_get(BuyerLead, uuid)
+
+  def get_preloaded(uuid, preloads) do
+    BuyerLead
+    |> Query.preload(^preloads)
+    |> do_get(uuid)
+  end
+
+  defp do_get(query, uuid) do
+    case Repo.get(query, uuid) do
       nil -> {:error, :not_found}
       buyer_lead -> {:ok, buyer_lead}
     end

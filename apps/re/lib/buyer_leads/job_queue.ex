@@ -84,7 +84,7 @@ defmodule Re.BuyerLeads.JobQueue do
   end
 
   def perform(%Multi{} = multi, %{"type" => "create_lead_salesforce", "uuid" => uuid}) do
-    {:ok, buyer_lead} = BuyerLeads.get(uuid)
+    {:ok, buyer_lead} = BuyerLeads.get_preloaded(uuid, listing: :address)
 
     multi
     |> Multi.run(:create_salesforce_lead, fn _repo, _changes ->

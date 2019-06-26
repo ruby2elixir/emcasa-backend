@@ -512,7 +512,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
   describe "create_lead_salesforce" do
     test "create lead" do
-      lead = insert(:buyer_lead)
+      lead = insert(:buyer_lead, listing: build(:listing, address: build(:address)))
 
       mock(HTTPoison, :post, {:ok, %{status_code: 200, body: ~s({"status":"success"})}})
 
@@ -530,7 +530,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
     end
 
     test "raise when there's a timeout" do
-      lead = insert(:buyer_lead)
+      lead = insert(:buyer_lead, listing: build(:listing, address: build(:address)))
 
       mock(HTTPoison, :post, {:error, %{reason: :timeout}})
 
