@@ -10,7 +10,10 @@ defmodule Re.Listings.JobQueue do
     Repo
   }
 
-  alias Ecto.Multi
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
 
   def perform(%Multi{} = multi, %{"type" => "save_price_suggestion", "uuid" => uuid}) do
     listing = Repo.get_by(Listing, uuid: uuid)
@@ -24,6 +27,9 @@ defmodule Re.Listings.JobQueue do
         multi
         |> Multi.update(:update_suggested_price, changeset)
         |> Repo.transaction()
+
+      {:error, %Changeset{}} ->
+        Repo.transaction(multi)
 
       error ->
         error

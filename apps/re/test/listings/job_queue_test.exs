@@ -51,5 +51,20 @@ defmodule Re.Listings.JobQueueTest do
         })
       end
     end
+
+    @tag capture_log: true
+    test "do not raise when parameters are invalid" do
+      mock(HTTPoison, :post, {:error, %{error: "some error"}})
+
+      %{uuid: listing_uuid} = insert(:listing, address: build(:address), area: 0)
+
+      {:ok, _} =
+        JobQueue.perform(Multi.new(), %{
+          "type" => "save_price_suggestion",
+          "uuid" => listing_uuid
+        })
+
+      refute Repo.one(JobQueue)
+    end
   end
 end
