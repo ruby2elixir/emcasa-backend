@@ -25,7 +25,7 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrictTest do
       assert_received {:mix_shell, :info, [message]}
 
       assert message =~ "Inserted district:"
-      assert Repo.get_by(District, name_slug: "vila-mariana")
+      assert Repo.get_by(District, name_slug: "moema")
     end
   end
 end

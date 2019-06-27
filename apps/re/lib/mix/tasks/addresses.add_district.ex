@@ -11,16 +11,18 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
     Repo
   }
 
+  @shortdoc "Create new district"
+
   def run(_) do
-    Mix.Ecto.ensure_repo(Re.Repo, [])
+    Mix.Task.run("app.start")
 
     {:ok, district} =
       %District{}
       |> District.changeset(%{
-        name: "Vila Mariana",
+        name: "Moema",
         state: "SP",
         city: "São Paulo",
-        status: "covered"
+        status: "partially_covered"
       })
       |> Repo.insert()
 
