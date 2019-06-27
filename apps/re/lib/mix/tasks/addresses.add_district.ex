@@ -11,8 +11,10 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
     Repo
   }
 
+  @shortdoc "Create new district"
+
   def run(_) do
-    Mix.Ecto.ensure_repo(Re.Repo, [])
+    Mix.Task.run("app.start")
 
     {:ok, district} =
       %District{}
