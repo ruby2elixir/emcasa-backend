@@ -1,12 +1,7 @@
 defmodule Re.Addresses.DistrictTest do
   use Re.ModelCase
 
-  alias Re.{
-    Addresses.District,
-    Repo
-  }
-
-  import Re.Factory
+  alias Re.Addresses.District
 
   @valid_attrs %{
     state: "RJ",
@@ -32,6 +27,7 @@ defmodule Re.Addresses.DistrictTest do
     refute changeset.valid?
 
     assert Keyword.get(changeset.errors, :status) ==
-             {"is invalid", [validation: :inclusion, enum: ~w(covered partially_covered uncovered)]}
+             {"is invalid",
+              [validation: :inclusion, enum: ~w(covered partially_covered uncovered)]}
   end
 end
