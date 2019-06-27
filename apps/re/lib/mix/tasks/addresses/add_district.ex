@@ -25,5 +25,17 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
       |> Repo.insert()
 
     Mix.shell().info("Inserted district: #{district.name}, id: #{district.id}")
+
+    {:ok, district} =
+      %District{}
+      |> District.changeset(%{
+        name: "Moema",
+        state: "SP",
+        city: "São Paulo",
+        status: "partially_covered"
+      })
+      |> Repo.insert()
+
+    Mix.shell().info("Inserted district: #{district.name}, id: #{district.id}")
   end
 end
