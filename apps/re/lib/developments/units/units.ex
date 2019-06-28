@@ -65,14 +65,17 @@ defmodule Re.Units do
     end
   end
 
-  def update(unit, params, opts \\ []) do
+  def update(%{uuid: uuid} = unit, params, opts \\ []) do
     changeset =
       unit
       |> changeset_for_opts(opts)
       |> Unit.changeset(params)
 
-    changeset
-    |> Repo.update()
+    Multi.new()
+    |> JobQueue.enqueue(:units_job, %{"type" => "mirror_update_unit_to_listing", "uuid" => uuid})
+    |> Multi.update(:update_unit, changeset)
+    |> Repo.transaction()
+    |> extract_transaction()
   end
 
   defp changeset_for_opts(unit, opts) do
@@ -81,4 +84,7 @@ defmodule Re.Units do
         Changeset.change(changeset, %{development_uuid: development.uuid})
     end)
   end
+
+  defp extract_transaction({:ok, %{update_unit: update_unit}}), do: {:ok, update_unit}
+  defp extract_transaction({:error, _, changeset, _}), do: {:error, changeset}
 end
