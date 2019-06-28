@@ -34,6 +34,9 @@ defmodule Re.Units do
 
   def get(uuid), do: do_get(Unit, uuid)
 
+  def get_preloaded(uuid, preload),
+    do: do_get(Queries.preload_relations(Unit, preload), uuid)
+
   defp do_get(query, uuid) do
     case Repo.get(query, uuid) do
       nil -> {:error, :not_found}

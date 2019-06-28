@@ -9,14 +9,14 @@ defmodule Re.Developments.MirrorTest do
     Developments.Mirror
   }
 
-  describe "mirror_update_unit/1" do
+  describe "mirror_unit_update_to_listing/1" do
     test "update associated listing with unit informations" do
       address = insert(:address)
       development = insert(:development, address: address)
       %{uuid: uuid} = unit = insert(:unit, development: development)
       insert(:listing, units: [unit], development: development)
 
-      assert {:ok, %Re.Listing{} = listing} = Mirror.mirror_unit_update(uuid)
+      assert {:ok, %Re.Listing{} = listing} = Mirror.mirror_unit_update_to_listing(uuid)
 
       assert listing.area == unit.area
       assert listing.price == unit.price
@@ -28,7 +28,6 @@ defmodule Re.Developments.MirrorTest do
       assert listing.complement == unit.complement
       assert listing.floor == unit.floor
       assert listing.matterport_code == unit.matterport_code
-      assert listing.status == unit.status
       assert listing.property_tax == unit.property_tax
       assert listing.maintenance_fee == unit.maintenance_fee
       assert listing.balconies == unit.balconies

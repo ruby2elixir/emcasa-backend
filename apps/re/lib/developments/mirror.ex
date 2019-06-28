@@ -5,14 +5,14 @@ defmodule Re.Developments.Mirror do
 
   alias Re.{
     Developments.Listings,
-    Repo
+    Units
   }
 
-  def mirror_unit_update(uuid) do
-    %{listing: listing, development: %{address: address} = development} =
-      unit =
-      Repo.get(Re.Unit, uuid)
-      |> Repo.preload(development: [:address], listing: [])
+  @unit_preload [development: [:address], listing: []]
+
+  def mirror_unit_update_to_listing(uuid) do
+    {:ok, %{listing: listing, development: %{address: address} = development} = unit} =
+      Units.get_preloaded(uuid, @unit_preload)
 
     params =
       unit
@@ -22,7 +22,7 @@ defmodule Re.Developments.Mirror do
   end
 
   @unit_cloned_attributes ~w(area price rooms bathrooms garage_spots garage_type suites complement
-                            floor status property_tax maintenance_fee balconies restrooms
+                            floor property_tax maintenance_fee balconies restrooms
                             matterport_code is_exportable)a
 
   defp to_params(unit) do
