@@ -18,10 +18,6 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
     "Brooklin",
     "Cerqueira César",
     "Chácara Inglesa",
-    "Chácara Klabin",
-    "Paraíso",
-    "Pompeia",
-    "Vila Clementino",
     "Vila Madalena",
     "Vila Olímpia"
   ]
