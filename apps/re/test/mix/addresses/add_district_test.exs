@@ -22,10 +22,23 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrictTest do
     test "inserts district" do
       AddDistrict.run([])
 
-      assert_received {:mix_shell, :info, [message]}
+      partially_covered_districts = [
+        "Aclimação",
+        "Bosque da Saúde",
+        "Brooklin",
+        "Cerqueira César",
+        "Chácara Inglesa",
+        "Chácara Klabin",
+        "Paraíso",
+        "Pompeia",
+        "Vila Clementino",
+        "Vila Madalena",
+        "Vila Olímpia"
+      ]
 
-      assert message =~ "Inserted district:"
-      assert Repo.get_by(District, name_slug: "moema")
+      Enum.each partially_covered_districts, fn district ->
+        assert Repo.get_by(District, name: district)
+      end
     end
   end
 end
