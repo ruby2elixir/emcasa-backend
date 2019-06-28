@@ -43,7 +43,7 @@ defmodule Re.Unit do
 
   @required ~w(price rooms bathrooms area garage_spots suites development_uuid status)a
   @optional ~w(complement floor property_tax maintenance_fee balconies restrooms garage_type
-              dependencies listing_id)a
+              dependencies listing_id matterport_code is_exportable)a
 
   @attributes @required ++ @optional
 
