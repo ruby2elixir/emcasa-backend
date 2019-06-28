@@ -23,6 +23,8 @@ defmodule ReWeb.Types.Unit do
     field :dependencies, :integer
     field :balconies, :integer
     field :status, :string
+    field :matterport_code, :string
+    field :is_exportable, :boolean
   end
 
   input_object :unit_input do
