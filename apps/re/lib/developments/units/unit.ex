@@ -25,6 +25,8 @@ defmodule Re.Unit do
     field :dependencies, :integer
     field :balconies, :integer
     field :status, :string
+    field :matterport_code, :string
+    field :is_exportable, :boolean, default: false
 
     belongs_to :development, Re.Development,
       references: :uuid,
