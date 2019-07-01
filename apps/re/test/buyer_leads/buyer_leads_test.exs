@@ -2,6 +2,7 @@ defmodule Re.BuyerLeadsTest do
   use Re.ModelCase
 
   import Re.Factory
+  import Re.CustomAssertion
 
   alias Re.{
     BuyerLeads,
@@ -19,7 +20,7 @@ defmodule Re.BuyerLeadsTest do
       assert {:ok, _buyer_lead} = BuyerLeads.create_budget(params, user)
 
       assert Repo.one(Budget)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "process_budget_buyer_lead")
     end
   end
 
@@ -31,7 +32,7 @@ defmodule Re.BuyerLeadsTest do
       assert {:ok, _buyer_lead} = BuyerLeads.create_empty_search(params, user)
 
       assert Repo.one(EmptySearch)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "process_empty_search_buyer_lead")
     end
   end
 end
