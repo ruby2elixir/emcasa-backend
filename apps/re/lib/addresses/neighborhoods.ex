@@ -99,7 +99,7 @@ defmodule Re.Addresses.Neighborhoods do
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "vila-clementino"} =
            neighborhood
        ),
-       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "vila-mariana"}
+       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
 
   defp remap_neighborhood(
          %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-da-gloria"} =
