@@ -3,6 +3,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
   use Mockery
 
   import Re.Factory
+  import Re.CustomAssertion
 
   alias Re.{
     BuyerLead,
@@ -26,7 +27,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert buyer.listing_uuid == listing_uuid
@@ -44,7 +45,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
@@ -61,7 +62,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
@@ -78,7 +79,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.phone_number == "not informed"
@@ -96,7 +97,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
@@ -115,7 +116,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "grupozap_buyer_lead", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
@@ -141,7 +142,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert listing_uuid == buyer.listing_uuid
@@ -164,6 +165,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       end
 
       refute Repo.one(BuyerLead)
+      refute Repo.one(JobQueue)
     end
 
     test "process lead with no user" do
@@ -179,7 +181,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       refute buyer.user_uuid
       assert listing_uuid == buyer.listing_uuid
@@ -201,7 +203,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert listing_uuid == buyer.listing_uuid
@@ -225,7 +227,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
@@ -250,7 +252,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
@@ -275,7 +277,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
@@ -298,7 +300,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert buyer.listing_uuid == listing_uuid
@@ -327,7 +329,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.listing_uuid == listing_uuid
@@ -345,7 +347,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       refute buyer.listing_uuid
@@ -367,7 +369,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert {:ok, _} = JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert buyer.listing_uuid == listing_uuid
@@ -397,7 +399,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert {:ok, _} = JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       refute buyer.user_uuid
       assert buyer.phone_number == "011999999999"
@@ -427,7 +429,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                })
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert buyer.location == "new-york|ny"
@@ -456,7 +458,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                })
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert buyer.location == "new-york|ny"
@@ -484,7 +486,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
                })
 
       assert buyer = Repo.one(BuyerLead)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert buyer.location == "new-york|ny"

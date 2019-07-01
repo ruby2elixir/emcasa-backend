@@ -48,7 +48,7 @@ defmodule Re.UnitsTest do
 
       assert {:ok, _} = Units.insert(@unit_attrs, development: development)
 
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Re.Repo.all(JobQueue), "mirror_new_unit_to_listing")
     end
   end
 
@@ -59,9 +59,7 @@ defmodule Re.UnitsTest do
 
       Units.update(unit, @unit_attrs, development: development)
 
-      JobQueue
-      |> Re.Repo.all()
-      |> assert_enqueued_job("mirror_update_unit_to_listing")
+      assert_enqueued_job(Re.Repo.all(JobQueue), "mirror_update_unit_to_listing")
     end
   end
 end

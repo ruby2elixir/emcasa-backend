@@ -10,8 +10,8 @@ defmodule Re.InterestsTest do
   }
 
   import Re.Factory
-
   import Mockery
+  import Re.CustomAssertion
 
   describe "request_price_suggestion/2" do
     test "should store price suggestion request" do
@@ -196,7 +196,7 @@ defmodule Re.InterestsTest do
       assert interest = Repo.get(Interest, interest.id)
       assert interest.uuid
       assert_receive %{new: _, topic: "new_interest", type: :new}
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "interest")
     end
 
     test "should not create interest in invalid listing" do
