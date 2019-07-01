@@ -159,11 +159,9 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
       %{uuid: uuid} = insert(:facebook_buyer_lead, phone_number: nil)
 
-      assert_raise RuntimeError, fn ->
-        JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
-      end
+      JobQueue.perform(Multi.new(), %{"type" => "facebook_buyer", "uuid" => uuid})
 
-      refute Repo.one(BuyerLead)
+      assert Repo.one(BuyerLead)
     end
 
     test "process lead with no user" do
@@ -311,11 +309,9 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
       %{uuid: uuid} = insert(:imovelweb_buyer_lead, phone: nil, listing_id: "#{id}")
 
-      assert_raise RuntimeError, fn ->
-        JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
-      end
+      JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
 
-      refute Repo.one(BuyerLead)
+      assert Repo.one(BuyerLead)
     end
 
     test "process lead with no user" do
@@ -381,11 +377,9 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
       %{uuid: uuid} = insert(:interest, listing: listing, phone: nil)
 
-      assert_raise RuntimeError, fn ->
-        JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
-      end
+      JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
 
-      refute Repo.one(BuyerLead)
+      assert Repo.one(BuyerLead)
     end
 
     test "process lead with no user" do

@@ -110,6 +110,13 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     "source" => "imovelweb_buyer"
   }
 
+  @imovelweb_buyer_no_phone_payload %{
+    "name" => "mah full naem",
+    "email" => "mah@email",
+    "listingId" => "2000",
+    "source" => "imovelweb_buyer"
+  }
+
   describe "imovelweb buyer leads" do
     test "authenticated request", %{authenticated_conn: conn} do
       conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_payload)
@@ -181,6 +188,15 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
     refute Repo.one(BuyerLeads.Facebook)
     refute Repo.one(ImovelWeb)
+  end
+
+  test "authenticated request", %{authenticated_conn: conn} do
+    conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_no_phone_payload)
+
+    assert text_response(conn, 200) == "ok"
+
+    assert fb = Repo.one(ImovelWeb)
+    assert fb.uuid
   end
 
   @facebook_seller_payload %{

@@ -25,8 +25,8 @@ defmodule Re.BuyerLeads.ImovelWeb do
     timestamps()
   end
 
-  @required ~w(name email phone listing_id)a
-  @optional ~w()a
+  @required ~w(name email listing_id)a
+  @optional ~w(phone)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do
