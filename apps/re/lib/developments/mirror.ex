@@ -2,17 +2,30 @@ defmodule Re.Developments.Mirror do
   @moduledoc """
   Mirror developments and unit info on listings.
   """
+  require Ecto.Query
+  require Logger
 
   alias Re.{
     Developments.Listings,
     Units
   }
 
-  @unit_preload [development: [:address], listing: []]
+  @unit_preload_for_insert [development: [:address]]
+
+  def mirror_unit_insert_to_listing(uuid) do
+    {:ok, %{development: %{address: address} = development} = unit} =
+      Units.get_preloaded(uuid, @unit_preload_for_insert)
+
+    unit
+    |> Listings.listing_params_from_unit(development)
+    |> Listings.insert(development: development, address: address, unit: unit)
+  end
+
+  @unit_preload_for_update [development: [:address], listing: []]
 
   def mirror_unit_update_to_listing(uuid) do
     {:ok, %{listing: listing, development: %{address: address} = development} = unit} =
-      Units.get_preloaded(uuid, @unit_preload)
+      Units.get_preloaded(uuid, @unit_preload_for_update)
 
     params =
       unit

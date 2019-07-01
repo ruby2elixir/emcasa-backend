@@ -8,28 +8,13 @@ defmodule Re.Developments.Listings do
     Repo
   }
 
-  alias Ecto.{
-    Changeset,
-    Multi
-  }
+  alias Ecto.Changeset
 
   def insert(params, opts) do
     %Listing{}
     |> changeset_for_opts(opts)
     |> Listing.development_changeset(params)
     |> Repo.insert()
-  end
-
-  def multi_insert(multi, params, opts) do
-    %Listing{}
-    |> changeset_for_opts(opts)
-    |> Listing.development_changeset(params)
-    |> insert_listing_on_multi(multi)
-    |> Repo.transaction()
-  end
-
-  defp insert_listing_on_multi(changeset, multi) do
-    Multi.insert(multi, :listing, changeset)
   end
 
   def update(listing, params, opts) do
