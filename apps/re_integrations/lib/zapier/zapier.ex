@@ -17,31 +17,31 @@ defmodule ReIntegrations.Zapier do
     Multi
   }
 
-  def new_lead(%{"source" => "facebook_buyer"} = payload) do
+  def handle_payload(%{"source" => "facebook_buyer"} = payload) do
     %BuyerLeads.Facebook{}
     |> BuyerLeads.Facebook.changeset(payload)
     |> do_new_buyer_lead("facebook_buyer")
   end
 
-  def new_lead(%{"source" => "imovelweb_buyer"} = payload) do
+  def handle_payload(%{"source" => "imovelweb_buyer"} = payload) do
     %ImovelWeb{}
     |> ImovelWeb.changeset(payload)
     |> do_new_buyer_lead("imovelweb_buyer")
   end
 
-  def new_lead(%{"source" => "facebook_seller"} = payload) do
+  def handle_payload(%{"source" => "facebook_seller"} = payload) do
     %SellerLeads.Facebook{}
     |> SellerLeads.Facebook.changeset(payload)
     |> Repo.insert()
   end
 
-  def new_lead(%{"source" => _source} = payload) do
+  def handle_payload(%{"source" => _source} = payload) do
     Logger.warn("Invalid payload source. Payload: #{Kernel.inspect(payload)}")
 
     {:error, :unexpected_payload, payload}
   end
 
-  def new_lead(payload) do
+  def handle_payload(payload) do
     Logger.warn("No payload source. Payload: #{Kernel.inspect(payload)}")
 
     {:error, :unexpected_payload, payload}
