@@ -36,37 +36,6 @@ defmodule Re.Developments.ListingsTest do
     end
   end
 
-  describe "multi_inserts/2" do
-    @insert_listing_params %{
-      "type" => "Apartamento",
-      "description" => "Awesome new brand building",
-      "is_exportable" => true,
-      "price" => 1_000_000,
-      "area" => 100
-    }
-
-    test "should insert development listing" do
-      address = insert(:address)
-      development = insert(:development, address_id: address.id)
-
-      assert {:ok, %{listing: inserted_listing}} =
-               Listings.multi_insert(
-                 Ecto.Multi.new(),
-                 @insert_listing_params,
-                 address: address,
-                 development: development
-               )
-
-      assert retrieved_listing = Repo.get(Re.Listing, inserted_listing.id)
-      assert retrieved_listing.uuid
-      assert retrieved_listing.development_uuid == development.uuid
-      assert retrieved_listing.address_id == address.id
-      assert retrieved_listing.is_exportable == true
-      assert retrieved_listing.price == 1_000_000
-      assert retrieved_listing.area == 100
-    end
-  end
-
   describe "listing_params_from_unit/2" do
     test "should parse unit and development into listing" do
       development = build(:development)
