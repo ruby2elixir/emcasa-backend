@@ -51,7 +51,6 @@ defmodule Re.DevelopmentsTest do
       assert updated_development.phase == Map.get(new_development_params, :phase)
     end
 
-    @tag dev: true
     test "should enqueue new mirror_update_development_to_listings job" do
       address = insert(:address)
       development = insert(:development, address: address)
