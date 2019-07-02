@@ -26,4 +26,15 @@ defmodule Re.Developments.JobQueue do
     end)
     |> Repo.transaction()
   end
+
+  def perform(%Multi{} = multi, %{
+        "type" => "mirror_update_development_to_listings",
+        "uuid" => uuid
+      }) do
+    multi
+    |> Multi.run(:mirror_unit, fn _repo, _changes ->
+      Mirror.mirror_development_update_to_listings(uuid)
+    end)
+    |> Repo.transaction()
+  end
 end
