@@ -99,20 +99,17 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
   @imovelweb_buyer_payload %{
     "name" => "mah full naem",
-    "email" => "mah@email",
+    "email" => "mah@emcasa.com",
     "phone" => "11999999999",
     "listingId" => "2000",
     "source" => "imovelweb_buyer"
   }
 
-  @imovelweb_buyer_invalid_payload %{
-    "name" => "mah full naem",
+  @imovelweb_buyer_no_listing_payload %{
     "source" => "imovelweb_buyer"
   }
 
-  @imovelweb_buyer_no_phone_payload %{
-    "name" => "mah full naem",
-    "email" => "mah@email",
+  @imovelweb_buyer_no_contact_payload %{
     "listingId" => "2000",
     "source" => "imovelweb_buyer"
   }
@@ -154,7 +151,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
     @tag capture_log: true
     test "missing attributes request", %{authenticated_conn: conn} do
-      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_invalid_payload)
+      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_no_listing_payload)
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
@@ -191,7 +188,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
   end
 
   test "authenticated request", %{authenticated_conn: conn} do
-    conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_no_phone_payload)
+    conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_no_contact_payload)
 
     assert text_response(conn, 200) == "ok"
 
