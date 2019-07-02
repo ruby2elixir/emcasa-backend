@@ -305,14 +305,16 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
-    test "process lead with nil phone" do
+    test "process lead with no contact" do
       %{id: id} = insert(:listing, address: build(:address))
 
-      %{uuid: uuid} = insert(:imovelweb_buyer_lead, phone: nil, listing_id: "#{id}")
+      %{uuid: uuid} =
+        insert(:imovelweb_buyer_lead, phone: nil, name: nil, email: nil, listing_id: "#{id}")
 
       JobQueue.perform(Multi.new(), %{"type" => "imovelweb_buyer", "uuid" => uuid})
 
       assert Repo.one(BuyerLead)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
     end
 
     test "process lead with no user" do
