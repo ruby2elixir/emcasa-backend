@@ -5,8 +5,10 @@ defmodule Re.Developments do
   @behaviour Bodyguard.Policy
 
   require Ecto.Query
+  import Ecto.Query
 
   alias Re.{
+    Listing,
     Development,
     Developments.Queries,
     Repo
@@ -32,6 +34,22 @@ defmodule Re.Developments do
       nil -> {:error, :not_found}
       development -> {:ok, development}
     end
+  end
+
+  def get_typologies(uuid) do
+    from(
+      l in Listing,
+      select: %{
+        area: l.area,
+        rooms: l.rooms,
+        max_price: max(l.price),
+        min_price: min(l.price),
+        unit_count: count(l.id)
+      },
+      where: l.development_uuid == ^uuid,
+      group_by: [l.area, l.rooms]
+    )
+    |> Repo.all
   end
 
   def get_preloaded(uuid, preload),

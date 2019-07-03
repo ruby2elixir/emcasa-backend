@@ -34,6 +34,8 @@ defmodule ReWeb.Types.Development do
 
       resolve &Resolvers.Listings.per_development/3
     end
+
+    field :typologies, list_of(:typology), resolve: &Resolvers.Developments.typologies/3
   end
 
   input_object :development_input do

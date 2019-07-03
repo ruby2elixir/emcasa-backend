@@ -38,6 +38,14 @@ defmodule ReWeb.Resolvers.Developments do
     end)
   end
 
+  def typologies(development, _params, _context) do
+    Developments.get_typologies(development.uuid)
+  rescue
+    _ -> {:error, nil}
+  else
+    result -> {:ok, result}
+  end
+
   def update(%{uuid: uuid, input: development_params}, %{
         context: %{current_user: current_user}
       }) do
