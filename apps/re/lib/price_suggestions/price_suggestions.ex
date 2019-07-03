@@ -20,7 +20,9 @@ defmodule Re.PriceSuggestions do
     |> do_suggest_price()
     |> case do
       {:ok, suggested_price} ->
-        params = Map.merge(%{suggested_price: suggested_price.listing_price_rounded}, suggested_price)
+        params =
+          Map.merge(%{suggested_price: suggested_price.listing_price_rounded}, suggested_price)
+
         request
         |> Request.changeset(params)
         |> Repo.update()
