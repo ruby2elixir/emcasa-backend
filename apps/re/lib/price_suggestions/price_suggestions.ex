@@ -47,7 +47,7 @@ defmodule Re.PriceSuggestions do
 
   defp persist_suggested_price({:ok, suggested_price}, listing) do
     listing
-    |> Listing.changeset(%{suggested_price: suggested_price})
+    |> Listing.changeset(%{suggested_price: suggested_price.listing_price_rounded})
     |> Repo.update()
 
     {:ok, suggested_price}
