@@ -35,7 +35,7 @@ defmodule Re.Listings.JobQueueTest do
                })
 
       assert listing = Repo.get_by(Listing, uuid: listing_uuid)
-      assert listing.suggested_price == 26279
+      assert listing.suggested_price == 26_279
     end
 
     @tag capture_log: true

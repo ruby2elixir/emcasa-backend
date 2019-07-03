@@ -50,11 +50,11 @@ defmodule Re.InterestsTest do
         is_covered: true
       }
 
-      assert {:ok, %{id: request_id, suggested_price: 26279.0}} =
+      assert {:ok, %{id: request_id, suggested_price: 26_279.0}} =
                Interests.request_price_suggestion(params, nil)
 
       assert request = Repo.get(Request, request_id)
-      assert request.suggested_price == 26279.0
+      assert request.suggested_price == 26_279.0
     end
 
     test "should store price suggestion request with user attached" do
@@ -95,12 +95,12 @@ defmodule Re.InterestsTest do
         is_covered: true
       }
 
-      assert {:ok, %{id: request_id, suggested_price: 26279.0}} =
+      assert {:ok, %{id: request_id, suggested_price: 26_279.0}} =
                Interests.request_price_suggestion(params, user)
 
       assert request = Repo.get(Request, request_id)
       assert request.user_id == user.id
-      assert request.suggested_price == 26279.0
+      assert request.suggested_price == 26_279.0
     end
 
     test "should store price suggestion request when street is not covered" do
@@ -139,11 +139,11 @@ defmodule Re.InterestsTest do
         is_covered: false
       }
 
-      assert {:ok, %{id: request_id, suggested_price: 26279.0}} =
+      assert {:ok, %{id: request_id, suggested_price: 26_279.0}} =
                Interests.request_price_suggestion(params, nil)
 
       assert request = Repo.get(Request, request_id)
-      assert request.suggested_price == 26279.0
+      assert request.suggested_price == 26_279.0
     end
   end
 
