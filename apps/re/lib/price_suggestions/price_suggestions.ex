@@ -20,15 +20,9 @@ defmodule Re.PriceSuggestions do
     |> do_suggest_price()
     |> case do
       {:ok, suggested_price} ->
+        params = Map.merge(%{suggested_price: suggested_price.listing_price_rounded}, suggested_price)
         request
-        |> Request.changeset(%{
-          suggested_price: suggested_price.listing_price_rounded,
-          listing_price_rounded: suggested_price.listing_price_rounded,
-          listing_price_error_q90_min: suggested_price.listing_price_error_q90_min,
-          listing_price_error_q90_max: suggested_price.listing_price_error_q90_max,
-          listing_price_per_sqr_meter: suggested_price.listing_price_per_sqr_meter,
-          listing_average_price_per_sqr_meter: suggested_price.listing_average_price_per_sqr_meter
-        })
+        |> Request.changeset(params)
         |> Repo.update()
 
       error ->
