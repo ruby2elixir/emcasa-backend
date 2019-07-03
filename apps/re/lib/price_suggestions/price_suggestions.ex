@@ -21,7 +21,14 @@ defmodule Re.PriceSuggestions do
     |> case do
       {:ok, suggested_price} ->
         request
-        |> Request.changeset(%{suggested_price: suggested_price})
+        |> Request.changeset(%{
+          suggested_price: suggested_price.listing_price_rounded,
+          listing_price_rounded: suggested_price.listing_price_rounded,
+          listing_price_error_q90_min: suggested_price.listing_price_error_q90_min,
+          listing_price_error_q90_max: suggested_price.listing_price_error_q90_max,
+          listing_price_per_sqr_meter: suggested_price.listing_price_per_sqr_meter,
+          listing_average_price_per_sqr_meter: suggested_price.listing_average_price_per_sqr_meter
+        })
         |> Repo.update()
 
       error ->
@@ -79,8 +86,7 @@ defmodule Re.PriceSuggestions do
   defp round_if_not_nil(nil), do: 0
   defp round_if_not_nil(maintenance_fee), do: round(maintenance_fee)
 
-  defp format_output({:ok, %{listing_price_rounded: listing_price_rounded}}),
-    do: {:ok, listing_price_rounded}
+  defp format_output({:ok, suggested_price}), do: {:ok, suggested_price}
 
   defp format_output(response) do
     Sentry.capture_message("Error on priceteller response",
