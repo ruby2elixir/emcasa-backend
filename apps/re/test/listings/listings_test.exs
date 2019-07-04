@@ -399,7 +399,19 @@ defmodule Re.ListingsTest do
       assert listing.inactivation_reason == nil
     end
 
-    test "should save old status on history" do
+    test "should save old inactivation_reason as status on history" do
+      Server.start_link()
+      listing = insert(:listing, status: "inactive", inactivation_reason: "rented")
+
+      {:ok, _listing} = Listings.activate(listing)
+
+      GenServer.call(Server, :inspect)
+
+      status_history = Repo.one(Re.Listings.StatusHistory)
+      assert "rented" == status_history.status
+    end
+
+    test "should save old status on history when has no reason" do
       Server.start_link()
       listing = insert(:listing, status: "inactive")
 
