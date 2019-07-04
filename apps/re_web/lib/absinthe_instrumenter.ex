@@ -72,7 +72,7 @@ defmodule ReWeb.AbsintheInstrumenter do
   def handle_event(
         [:absinthe, :execute, :operation],
         %{duration: duration},
-        %{options: options},
+        _metadata,
         _config
       ) do
     Summary.observe([name: :absinthe_execution_duration_milliseconds], duration)
