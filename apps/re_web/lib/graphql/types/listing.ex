@@ -11,6 +11,16 @@ defmodule ReWeb.Types.Listing do
     Resolvers
   }
 
+  enum :inactivation_reason, values: ~w(duplicity exclusivity give_up left_emcasa
+                          publication_phase publication_error qualification_phase
+                          rented sold sold_by_emcasa temporarely_suspended)
+
+  enum :garage_type, values: ~w(contract condominium)
+
+  enum :orientation_type, values: ~w(frontside backside lateral inside)
+
+  enum :sun_period_type, values: ~w(morning evening)
+
   object :listing do
     field :id, :id
     field :uuid, :uuid, resolve: &Resolvers.Listings.get_uuid/3
@@ -45,6 +55,7 @@ defmodule ReWeb.Types.Listing do
     field :price_per_area, :float
     field :inserted_at, :naive_datetime
     field :score, :integer, resolve: &Resolvers.Listings.score/3
+    field :inactivation_reason, :inactivation_reason
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
@@ -130,13 +141,8 @@ defmodule ReWeb.Types.Listing do
     field :tags, list_of(non_null(:uuid))
 
     field :owner_contact, :owner_contact_input
+    field :inactivation_reason, :inactivation_reason
   end
-
-  enum :garage_type, values: ~w(contract condominium)
-
-  enum :orientation_type, values: ~w(frontside backside lateral inside)
-
-  enum :sun_period_type, values: ~w(morning evening)
 
   object :address do
     field :id, :id
