@@ -58,7 +58,7 @@ defmodule Re.ListingTest do
     elevators: 2.1
   }
 
-  describe "admin" do
+  describe "changeset/2" do
     test "changeset with valid attributes" do
       address = insert(:address)
       user = insert(:user)

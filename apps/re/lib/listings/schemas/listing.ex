@@ -1,4 +1,4 @@
-defmodule Re.Listing do
+ndefmodule Re.Listing do
   @moduledoc """
   Model for listings, that is, each apartment or real estate piece on sale.
   """
@@ -45,6 +45,10 @@ defmodule Re.Listing do
     field :in_person_visit_count, :integer, virtual: true
     field :suggested_price, :float
 
+    field :inactivation_reason, :string
+    # field :sold_date, :utc_datetime
+    # field :sold_price, :integer
+
     belongs_to :address, Re.Address
 
     belongs_to :development, Re.Development,
@@ -88,14 +92,20 @@ defmodule Re.Listing do
 
   @sun_period_types ~w(morning evening)
 
+  @inactivation_reasons ~w(duplicity exclusivity give_up left_emcasa
+                          publication_phase publication_error qualification_phase
+                          rented sold sold_by_emcasa temporarely_suspended)
+
   @required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
   @optional ~w(complement floor matterport_code is_exclusive status property_tax
                      maintenance_fee balconies restrooms is_release is_exportable
                      orientation floor_count unit_per_floor sun_period elevators
-                     construction_year owner_contact_uuid suggested_price)a
+                     construction_year owner_contact_uuid suggested_price
+                     inactivation_reason)a
 
   @attributes @required ++ @optional
+
   def changeset(struct, params) do
     struct
     |> cast(params, @attributes)
@@ -110,6 +120,7 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types)
     |> validate_inclusion(:orientation, @orientation_types)
     |> validate_inclusion(:sun_period, @sun_period_types)
+    |> validate_inclusion(:inactivation_reason, @inactivation_reasons)
     |> generate_uuid()
     |> calculate_price_per_area()
   end
