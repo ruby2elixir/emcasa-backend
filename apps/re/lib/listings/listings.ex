@@ -70,7 +70,6 @@ defmodule Re.Listings do
     |> Queries.remaining_count()
     |> exclude(:select)
     |> select([l], count(coalesce(l.development_uuid, l.uuid), :distinct))
-    |> where([l], l.development_uuid not in ^development_uuids)
     |> Repo.one()
     |> calculate_remaining(params)
   end
