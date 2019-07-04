@@ -148,7 +148,7 @@ defmodule Re.Listings do
   end
 
   def activate(listing) do
-    changeset = Changeset.change(listing, status: "active")
+    changeset = Changeset.change(listing, status: "active", inactivation_reason: nil)
 
     Multi.new()
     |> Multi.update(:activate_listing, changeset)

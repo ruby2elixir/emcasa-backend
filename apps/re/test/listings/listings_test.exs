@@ -380,7 +380,7 @@ defmodule Re.ListingsTest do
       Server.start_link()
       listing = insert(:listing, status: "active")
 
-      {:ok, listing} = Listings.deactivate(listing)
+      {:ok, _listing} = Listings.deactivate(listing)
 
       GenServer.call(Server, :inspect)
 
@@ -390,17 +390,32 @@ defmodule Re.ListingsTest do
   end
 
   describe "activate/1" do
-    test "should set status to active" do
-      Server.start_link()
-      listing = insert(:listing, status: "inactive")
+    test "should set status to active and clean inativation_reason" do
+      listing = insert(:listing, status: "inactive", inactivation_reason: "rented")
 
       {:ok, listing} = Listings.activate(listing)
 
+      assert listing.status == "active"
+      assert listing.inactivation_reason == nil
+    end
+
+    test "should save old status on history" do
+      Server.start_link()
+      listing = insert(:listing, status: "inactive")
+
+      {:ok, _listing} = Listings.activate(listing)
+
       GenServer.call(Server, :inspect)
 
-      assert listing.status == "active"
       status_history = Repo.one(Re.Listings.StatusHistory)
       assert "inactive" == status_history.status
+    end
+
+    test "should enqueue save_price_suggestion" do
+      listing = insert(:listing, status: "inactive")
+
+      {:ok, _listing} = Listings.activate(listing)
+
       assert_enqueued_job(Repo.all(JobQueue), "save_price_suggestion")
     end
   end
