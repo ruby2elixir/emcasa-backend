@@ -1,4 +1,4 @@
-defmodule Re.ListingsTest do
+ defmodule Re.ListingsTest do
   use Re.ModelCase
 
   import Re.CustomAssertion
@@ -285,7 +285,7 @@ defmodule Re.ListingsTest do
     test "should filter excluding duplicate developments" do
       development1 = insert(:development)
       development2 = insert(:development)
-      insert_list(1, :listing)
+      insert_list(1, :listing, is_release: false)
       insert_list(
         2,
         :listing,
@@ -310,7 +310,7 @@ defmodule Re.ListingsTest do
 
     test "should paginate excluding developments already returned" do
       development = insert(:development)
-      insert_list(2, :listing)
+      insert_list(2, :listing, is_release: false)
       insert_list(
         2,
         :listing,
@@ -327,7 +327,7 @@ defmodule Re.ListingsTest do
       assert 2 == length(listings1)
       listings1_ids = listings1 |> Enum.map(&Map.get(&1, :id))
 
-      assert %{remaining_count: 1, listings: listings2} = Listings.paginated(%{
+      assert %{remaining_count: 0, listings: listings2} = Listings.paginated(%{
         page_size: 2,
         exclude_similar_for_primary_market: true,
         excluded_listing_ids: listings1_ids
