@@ -134,8 +134,13 @@ defmodule Re.Listings do
     end)
   end
 
-  def deactivate(listing) do
+  def deactivate(listing, opts \\ []) do
     changeset = Changeset.change(listing, status: "inactive")
+
+    changeset =
+      Enum.reduce(opts, changeset, fn
+        {:reason, reason}, changeset -> Changeset.change(changeset, inactivation_reason: reason)
+      end)
 
     changeset
     |> Repo.update()
