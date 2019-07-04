@@ -8,13 +8,15 @@ defmodule ReWeb.Monitoring do
   alias ReWeb.{
     Endpoint,
     PlugExporter,
-    PlugPipelineInstrumenter
+    PlugPipelineInstrumenter,
+    AbsintheInstrumenter
   }
 
   def setup do
     Endpoint.PhoenixInstrumenter.setup()
     PlugPipelineInstrumenter.setup()
     PlugExporter.setup()
+    AbsintheInstrumenter.setup()
 
     Prometheus.Registry.register_collector(:prometheus_process_collector)
   end
