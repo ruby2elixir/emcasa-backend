@@ -22,6 +22,8 @@ defmodule Re.Listings do
     Multi
   }
 
+  import Ecto.Query
+
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
@@ -37,18 +39,47 @@ defmodule Re.Listings do
 
   def paginated(params \\ %{}) do
     query = build_query(params)
+    listings = Repo.all(query)
 
     %{
-      remaining_count: remaining_count(query, params),
-      listings: Repo.all(query)
+      remaining_count: remaining_count(query, params, listings),
+      listings: listings
     }
   end
+
+  def remaining_count(query, %{"exclude_similar_for_primary_market" => true} = params, listings),
+    do: remaining_count_without_developments(query, params, listings)
+
+  def remaining_count(query, %{exclude_similar_for_primary_market: true} = params, listings),
+    do: remaining_count_without_developments(query, params, listings)
+
+  def remaining_count(query, params, _),
+    do: remaining_count(query, params)
 
   def remaining_count(query, params) do
     query
     |> Queries.remaining_count()
     |> Repo.one()
     |> calculate_remaining(params)
+  end
+
+  defp remaining_count_without_developments(query, params, listings) do
+    development_uuids = get_development_uuids(listings)
+
+    query
+    |> Queries.remaining_count()
+    |> exclude(:select)
+    |> select([l], count(coalesce(l.development_uuid, l.uuid), :distinct))
+    |> where([l], l.development_uuid not in ^development_uuids)
+    |> Repo.one()
+    |> calculate_remaining(params)
+  end
+
+  defp get_development_uuids(listings) do
+    listings
+    |> Enum.map(&Map.get(&1, :development_uuid))
+    |> Enum.uniq()
+    |> Enum.filter(&(not is_nil(&1)))
   end
 
   defp calculate_remaining(count, params) do
