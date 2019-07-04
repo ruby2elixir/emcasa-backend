@@ -327,10 +327,10 @@ defmodule Re.ListingsTest do
       assert 2 == length(listings1)
       listings1_ids = listings1 |> Enum.map(&Map.get(&1, :id))
 
-      assert %{remaining_counnt: 1, listings: listings2} = Listings.paginated(%{
+      assert %{remaining_count: 1, listings: listings2} = Listings.paginated(%{
         page_size: 2,
         exclude_similar_for_primary_market: true,
-        excluded_listing_ids: listings1_ids 
+        excluded_listing_ids: listings1_ids
       })
 
       assert 1 == length(listings2)

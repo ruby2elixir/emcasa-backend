@@ -42,19 +42,16 @@ defmodule Re.Listings do
     listings = Repo.all(query)
 
     %{
-      remaining_count: remaining_count(query, params, listings),
+      remaining_count: remaining_count(query, params),
       listings: listings
     }
   end
 
-  def remaining_count(query, %{"exclude_similar_for_primary_market" => true} = params, listings),
-    do: remaining_count_without_developments(query, params, listings)
+  def remaining_count(query, %{"exclude_similar_for_primary_market" => true} = params),
+    do: remaining_count_without_developments(query, params)
 
-  def remaining_count(query, %{exclude_similar_for_primary_market: true} = params, listings),
-    do: remaining_count_without_developments(query, params, listings)
-
-  def remaining_count(query, params, _),
-    do: remaining_count(query, params)
+  def remaining_count(query, %{exclude_similar_for_primary_market: true} = params),
+    do: remaining_count_without_developments(query, params)
 
   def remaining_count(query, params) do
     query
@@ -63,22 +60,13 @@ defmodule Re.Listings do
     |> calculate_remaining(params)
   end
 
-  defp remaining_count_without_developments(query, params, listings) do
-    development_uuids = get_development_uuids(listings)
-
+  defp remaining_count_without_developments(query, params) do
     query
     |> Queries.remaining_count()
     |> exclude(:select)
     |> select([l], count(coalesce(l.development_uuid, l.uuid), :distinct))
     |> Repo.one()
     |> calculate_remaining(params)
-  end
-
-  defp get_development_uuids(listings) do
-    listings
-    |> Enum.map(&Map.get(&1, :development_uuid))
-    |> Enum.uniq()
-    |> Enum.filter(&(not is_nil(&1)))
   end
 
   defp calculate_remaining(count, params) do
