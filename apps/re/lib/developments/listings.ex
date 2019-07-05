@@ -4,6 +4,7 @@ defmodule Re.Developments.Listings do
   """
   alias Re.{
     Listing,
+    Listings.Queries,
     PubSub,
     Repo
   }
@@ -26,6 +27,12 @@ defmodule Re.Developments.Listings do
     changeset
     |> Repo.update()
     |> PubSub.publish_update(changeset, "update_listing")
+  end
+
+  def batch_update(listings, params, opts) do
+    Repo.transaction(fn ->
+      Enum.map(listings, fn listing -> update(listing, params, opts) end)
+    end)
   end
 
   defp changeset_for_opts(listing, opts) do
@@ -83,5 +90,12 @@ defmodule Re.Developments.Listings do
     changeset
     |> Repo.update()
     |> PubSub.publish_update(changeset, "update_listing")
+  end
+
+  def per_development(%Re.Development{uuid: uuid}, preload \\ []) do
+    Listing
+    |> Queries.per_development(uuid)
+    |> Queries.preload_relations(preload)
+    |> Repo.all()
   end
 end

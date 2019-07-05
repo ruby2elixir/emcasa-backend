@@ -22,7 +22,8 @@ defmodule Re.Listings.JobQueue do
     |> PriceSuggestions.suggest_price()
     |> case do
       {:ok, suggested_price} ->
-        changeset = Listing.changeset(listing, %{suggested_price: suggested_price})
+        changeset =
+          Listing.changeset(listing, %{suggested_price: suggested_price.listing_price_rounded})
 
         multi
         |> Multi.update(:update_suggested_price, changeset)

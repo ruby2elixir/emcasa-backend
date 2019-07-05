@@ -99,14 +99,18 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
   @imovelweb_buyer_payload %{
     "name" => "mah full naem",
-    "email" => "mah@email",
+    "email" => "mah@emcasa.com",
     "phone" => "11999999999",
     "listingId" => "2000",
     "source" => "imovelweb_buyer"
   }
 
-  @imovelweb_buyer_invalid_payload %{
-    "name" => "mah full naem",
+  @imovelweb_buyer_no_listing_payload %{
+    "source" => "imovelweb_buyer"
+  }
+
+  @imovelweb_buyer_no_contact_payload %{
+    "listingId" => "2000",
     "source" => "imovelweb_buyer"
   }
 
@@ -147,7 +151,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
     @tag capture_log: true
     test "missing attributes request", %{authenticated_conn: conn} do
-      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_invalid_payload)
+      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_no_listing_payload)
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
@@ -181,6 +185,15 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
     refute Repo.one(BuyerLeads.Facebook)
     refute Repo.one(ImovelWeb)
+  end
+
+  test "authenticated request", %{authenticated_conn: conn} do
+    conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_no_contact_payload)
+
+    assert text_response(conn, 200) == "ok"
+
+    assert fb = Repo.one(ImovelWeb)
+    assert fb.uuid
   end
 
   @facebook_seller_payload %{

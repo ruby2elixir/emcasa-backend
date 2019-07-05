@@ -123,7 +123,7 @@ defmodule Re.Exporters.Vivareal do
        {"Name", %{}, "EmCasa"},
        {"Email", %{}, "contato@emcasa.com"},
        {"Website", %{}, "https://www.emcasa.com"},
-       {"Logo", %{}, "https://s3.amazonaws.com/emcasa-ui/logo/logo.png"},
+       {"Logo", %{}, "https://emcasa-ui.s3.amazonaws.com/logo/logo_v2.jpg"},
        {"OfficeName", %{}, "EmCasa"},
        {"Telephone", %{}, "(21) 3195-6541"}
      ]}
