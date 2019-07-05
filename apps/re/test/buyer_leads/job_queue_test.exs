@@ -575,4 +575,45 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert_called(HTTPoison, :post, [^uri, ^encoded_buyer_lead])
     end
   end
+
+  describe "walkin_offline_buyer_lead" do
+    test "process lead with existing user" do
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
+
+      %{uuid: uuid} =
+        insert(:walkin_offline_buyer_lead, phone_number: "+11999999999", location: "SP")
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_walking_offline_buyer",
+                 "uuid" => uuid
+               })
+
+      assert buyer = Repo.one(BuyerLead)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
+      assert buyer.uuid
+      assert buyer.user_uuid == user_uuid
+      assert buyer.location == "sao-paulo|sp"
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
+    end
+
+    test "process lead without existing user" do
+      %{uuid: uuid} =
+        insert(:walkin_offline_buyer_lead, phone_number: "+11999999999", location: "SP")
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_walking_offline_buyer",
+                 "uuid" => uuid
+               })
+
+      assert buyer = Repo.one(BuyerLead)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
+      assert buyer.uuid
+      assert buyer.phone_number == "+5511999999999"
+      assert buyer.location == "sao-paulo|sp"
+      refute buyer.user_uuid
+      refute buyer.user_url
+    end
+  end
 end

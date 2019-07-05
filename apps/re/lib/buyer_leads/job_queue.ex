@@ -16,6 +16,7 @@ defmodule Re.BuyerLeads.JobQueue do
     BuyerLeads.Grupozap,
     BuyerLeads.ImovelWeb,
     BuyerLeads.Salesforce.Client,
+    BuyerLeads.WalkinOffline,
     Interest,
     Repo
   }
@@ -78,6 +79,15 @@ defmodule Re.BuyerLeads.JobQueue do
     |> Query.preload(:user)
     |> Repo.get(uuid)
     |> EmptySearch.buyer_lead_changeset()
+    |> insert_buyer_lead(multi)
+    |> Repo.transaction()
+    |> handle_error()
+  end
+
+  def perform(%Multi{} = multi, %{"type" => "process_walking_offline_buyer", "uuid" => uuid}) do
+    WalkinOffline
+    |> Repo.get(uuid)
+    |> WalkinOffline.buyer_lead_changeset()
     |> insert_buyer_lead(multi)
     |> Repo.transaction()
     |> handle_error()

@@ -1,9 +1,12 @@
 defmodule ReWeb.Webhooks.ZapierPlugTest do
   use ReWeb.ConnCase
 
+  import Re.CustomAssertion
+
   alias Re.{
     BuyerLeads,
     BuyerLeads.ImovelWeb,
+    BuyerLeads.JobQueue,
     SellerLeads,
     Repo
   }
@@ -295,6 +298,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
       assert lead = Repo.one(BuyerLeads.WalkinOffline)
       assert lead.uuid
+      assert_enqueued_job(Repo.all(JobQueue), "process_walking_offline_buyer")
     end
 
     @tag capture_log: true
