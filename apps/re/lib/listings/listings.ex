@@ -139,7 +139,11 @@ defmodule Re.Listings do
 
     changeset =
       Enum.reduce(opts, changeset, fn
-        {:reason, reason}, changeset -> Changeset.change(changeset, inactivation_reason: reason)
+        {:reason, reason}, changeset ->
+          Changeset.change(changeset, inactivation_reason: reason)
+
+        {:sold_price, sold_price}, changeset when is_integer(sold_price) ->
+          Changeset.change(changeset, sold_price: sold_price)
       end)
 
     changeset

@@ -367,13 +367,18 @@ defmodule Re.ListingsTest do
   end
 
   describe "deactivate/2" do
-    test "should set status to inactive with reason" do
+    test "should set status to inactive with reason and sold_price" do
       listing = insert(:listing, status: "active")
 
-      {:ok, listing} = Listings.deactivate(listing, reason: "rented")
+      {:ok, listing} =
+        Listings.deactivate(listing,
+          reason: "sold",
+          sold_price: 1_000_000
+        )
 
       assert listing.status == "inactive"
-      assert listing.inactivation_reason == "rented"
+      assert listing.inactivation_reason == "sold"
+      assert listing.sold_price == 1_000_000
     end
 
     test "should save status change to history when set to inactive" do

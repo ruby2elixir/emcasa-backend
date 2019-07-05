@@ -1345,7 +1345,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "admin should see inactive listing", %{admin_conn: conn} do
-      %{id: listing_id} = insert(:listing, status: "inactive", inactivation_reason: "rented")
+      %{id: listing_id} =
+        insert(:listing,
+          status: "inactive",
+          inactivation_reason: "sold",
+          sold_price: 1_000_000
+        )
 
       variables = %{"id" => listing_id}
 
@@ -1354,6 +1359,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           listing (id: $id) {
             id
             inactivation_reason
+            sold_price
           }
         }
       """
@@ -1362,7 +1368,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       assert %{
                "id" => to_string(listing_id),
-               "inactivation_reason" => "RENTED"
+               "inactivation_reason" => "SOLD",
+               "sold_price" => 1_000_000
              } == json_response(conn, 200)["data"]["listing"]
     end
 

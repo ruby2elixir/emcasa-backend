@@ -56,6 +56,7 @@ defmodule ReWeb.Types.Listing do
     field :inserted_at, :naive_datetime
     field :score, :integer, resolve: &Resolvers.Listings.score/3
     field :inactivation_reason, :inactivation_reason
+    field :sold_price, :integer
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
@@ -397,6 +398,8 @@ defmodule ReWeb.Types.Listing do
     @desc "Deactivate listing"
     field :deactivate_listing, type: :listing do
       arg :id, non_null(:id)
+      arg :inactivation_reason, :inactivation_reason
+      arg :sold_price, :integer
 
       resolve &Resolvers.Listings.deactivate/2
     end

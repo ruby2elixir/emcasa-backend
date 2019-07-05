@@ -46,8 +46,7 @@ defmodule Re.Listing do
     field :suggested_price, :float
 
     field :inactivation_reason, :string
-    # field :sold_date, :utc_datetime
-    # field :sold_price, :integer
+    field :sold_price, :integer
 
     belongs_to :address, Re.Address
 
@@ -102,7 +101,7 @@ defmodule Re.Listing do
                      maintenance_fee balconies restrooms is_release is_exportable
                      orientation floor_count unit_per_floor sun_period elevators
                      construction_year owner_contact_uuid suggested_price
-                     inactivation_reason)a
+                     inactivation_reason sold_price)a
 
   @attributes @required ++ @optional
 
