@@ -91,9 +91,9 @@ defmodule Re.Listing do
 
   @sun_period_types ~w(morning evening)
 
-  @inactivation_reasons ~w(duplicity exclusivity give_up left_emcasa
-                          publication_phase publication_error qualification_phase
-                          rented sold sold_by_emcasa temporarely_suspended)
+  @inactivation_reasons ~w(duplicated gave_up left_emcasa publication_mistake rented
+                          sold sold_by_emcasa temporarily_suspended to_be_published
+                          went_exclusive)
 
   @required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
