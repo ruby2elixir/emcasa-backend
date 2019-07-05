@@ -372,7 +372,7 @@ defmodule Re.ListingsTest do
 
       {:ok, listing} =
         Listings.deactivate(listing,
-          reason: "sold",
+          inactivation_reason: "sold",
           sold_price: 1_000_000
         )
 

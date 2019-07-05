@@ -189,6 +189,11 @@ defmodule ReWeb.Types.Listing do
     field :lng, non_null(:float)
   end
 
+  input_object :deactivation_options_input do
+    field :inactivation_reason, non_null(:inactivation_reason)
+    field :sold_price, :integer
+  end
+
   object :listing_user do
     field :listing, :listing
     field :user, :user
@@ -398,8 +403,7 @@ defmodule ReWeb.Types.Listing do
     @desc "Deactivate listing"
     field :deactivate_listing, type: :listing do
       arg :id, non_null(:id)
-      arg :inactivation_reason, :inactivation_reason
-      arg :sold_price, :integer
+      arg :input, :deactivation_options_input
 
       resolve &Resolvers.Listings.deactivate/2
     end
