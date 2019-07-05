@@ -15,7 +15,8 @@ defmodule Re.BuyerLeads do
     EmptySearch,
     Facebook,
     ImovelWeb,
-    JobQueue
+    JobQueue,
+    WalkinOffline
   }
 
   alias Ecto.{
@@ -36,6 +37,12 @@ defmodule Re.BuyerLeads do
     %ImovelWeb{}
     |> ImovelWeb.changeset(payload)
     |> insert_with_job("imovelweb_buyer")
+  end
+
+  def create(%{"source" => "walkin_offline_buyer"} = payload) do
+    %WalkinOffline{}
+    |> WalkinOffline.changeset(payload)
+    |> insert_with_job("walking_offline_buyer")
   end
 
   def create_budget(params, %{uuid: uuid}) do
