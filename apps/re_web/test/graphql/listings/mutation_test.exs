@@ -861,7 +861,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       mutation DeactivateListing ($id: ID!, $input: DeactivationOptionsInput!) {
         deactivateListing(id: $id, input: $input) {
           id
-          inactivation_reason
+          deactivation_reason
           sold_price
         }
       }
@@ -870,7 +870,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       variables = %{
         "id" => listing_id,
         "input" => %{
-          "inactivation_reason" => "SOLD",
+          "deactivation_reason" => "SOLD",
           "sold_price" => 1_000_000
         }
       }
@@ -879,7 +879,7 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       assert %{
                "id" => to_string(listing.id),
-               "inactivation_reason" => "SOLD",
+               "deactivation_reason" => "SOLD",
                "sold_price" => 1_000_000
              } == json_response(conn, 200)["data"]["deactivateListing"]
     end

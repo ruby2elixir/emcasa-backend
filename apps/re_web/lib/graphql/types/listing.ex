@@ -11,7 +11,7 @@ defmodule ReWeb.Types.Listing do
     Resolvers
   }
 
-  enum :inactivation_reason, values: ~w(duplicated gave_up left_emcasa publication_mistake rented
+  enum :deactivation_reason, values: ~w(duplicated gave_up left_emcasa publication_mistake rented
                           sold sold_by_emcasa temporarily_suspended to_be_published
                           went_exclusive)
 
@@ -55,7 +55,7 @@ defmodule ReWeb.Types.Listing do
     field :price_per_area, :float
     field :inserted_at, :naive_datetime
     field :score, :integer, resolve: &Resolvers.Listings.score/3
-    field :inactivation_reason, :inactivation_reason
+    field :deactivation_reason, :deactivation_reason
     field :sold_price, :integer
 
     field :address, :address,
@@ -142,7 +142,7 @@ defmodule ReWeb.Types.Listing do
     field :tags, list_of(non_null(:uuid))
 
     field :owner_contact, :owner_contact_input
-    field :inactivation_reason, :inactivation_reason
+    field :deactivation_reason, :deactivation_reason
   end
 
   object :address do
@@ -190,7 +190,7 @@ defmodule ReWeb.Types.Listing do
   end
 
   input_object :deactivation_options_input do
-    field :inactivation_reason, non_null(:inactivation_reason)
+    field :deactivation_reason, non_null(:deactivation_reason)
     field :sold_price, :integer
   end
 

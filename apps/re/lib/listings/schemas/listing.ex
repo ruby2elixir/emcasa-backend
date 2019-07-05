@@ -45,7 +45,7 @@ defmodule Re.Listing do
     field :in_person_visit_count, :integer, virtual: true
     field :suggested_price, :float
 
-    field :inactivation_reason, :string
+    field :deactivation_reason, :string
     field :sold_price, :integer
 
     belongs_to :address, Re.Address
@@ -91,7 +91,7 @@ defmodule Re.Listing do
 
   @sun_period_types ~w(morning evening)
 
-  @inactivation_reasons ~w(duplicated gave_up left_emcasa publication_mistake rented
+  @deactivation_reasons ~w(duplicated gave_up left_emcasa publication_mistake rented
                           sold sold_by_emcasa temporarily_suspended to_be_published
                           went_exclusive)
 
@@ -101,7 +101,7 @@ defmodule Re.Listing do
                      maintenance_fee balconies restrooms is_release is_exportable
                      orientation floor_count unit_per_floor sun_period elevators
                      construction_year owner_contact_uuid suggested_price
-                     inactivation_reason sold_price)a
+                     deactivation_reason sold_price)a
 
   @attributes @required ++ @optional
 
@@ -119,7 +119,7 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types)
     |> validate_inclusion(:orientation, @orientation_types)
     |> validate_inclusion(:sun_period, @sun_period_types)
-    |> validate_inclusion(:inactivation_reason, @inactivation_reasons)
+    |> validate_inclusion(:deactivation_reason, @deactivation_reasons)
     |> generate_uuid()
     |> calculate_price_per_area()
   end

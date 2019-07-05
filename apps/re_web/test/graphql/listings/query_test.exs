@@ -1348,7 +1348,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       %{id: listing_id} =
         insert(:listing,
           status: "inactive",
-          inactivation_reason: "sold",
+          deactivation_reason: "sold",
           sold_price: 1_000_000
         )
 
@@ -1358,7 +1358,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         query Listing ($id: ID!) {
           listing (id: $id) {
             id
-            inactivation_reason
+            deactivation_reason
             sold_price
           }
         }
@@ -1368,7 +1368,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       assert %{
                "id" => to_string(listing_id),
-               "inactivation_reason" => "SOLD",
+               "deactivation_reason" => "SOLD",
                "sold_price" => 1_000_000
              } == json_response(conn, 200)["data"]["listing"]
     end

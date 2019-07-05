@@ -54,7 +54,7 @@ defmodule Re.Listings.History.Server do
             new: listing,
             changeset: %{
               changes: %{status: _},
-              data: %{status: status, inactivation_reason: reason}
+              data: %{status: status, deactivation_reason: reason}
             }
           }
         },

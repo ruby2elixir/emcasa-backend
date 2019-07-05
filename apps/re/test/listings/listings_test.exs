@@ -372,12 +372,12 @@ defmodule Re.ListingsTest do
 
       {:ok, listing} =
         Listings.deactivate(listing,
-          inactivation_reason: "sold",
+          deactivation_reason: "sold",
           sold_price: 1_000_000
         )
 
       assert listing.status == "inactive"
-      assert listing.inactivation_reason == "sold"
+      assert listing.deactivation_reason == "sold"
       assert listing.sold_price == 1_000_000
     end
 
@@ -396,17 +396,17 @@ defmodule Re.ListingsTest do
 
   describe "activate/1" do
     test "should set status to active and clean inativation_reason" do
-      listing = insert(:listing, status: "inactive", inactivation_reason: "rented")
+      listing = insert(:listing, status: "inactive", deactivation_reason: "rented")
 
       {:ok, listing} = Listings.activate(listing)
 
       assert listing.status == "active"
-      assert listing.inactivation_reason == nil
+      assert listing.deactivation_reason == nil
     end
 
-    test "should save old inactivation_reason as status on history" do
+    test "should save old deactivation_reason as status on history" do
       Server.start_link()
-      listing = insert(:listing, status: "inactive", inactivation_reason: "rented")
+      listing = insert(:listing, status: "inactive", deactivation_reason: "rented")
 
       {:ok, _listing} = Listings.activate(listing)
 
