@@ -11,6 +11,16 @@ defmodule ReWeb.Types.Listing do
     Resolvers
   }
 
+  enum :deactivation_reason, values: ~w(duplicated gave_up left_emcasa publication_mistake rented
+                          sold sold_by_emcasa temporarily_suspended to_be_published
+                          went_exclusive)
+
+  enum :garage_type, values: ~w(contract condominium)
+
+  enum :orientation_type, values: ~w(frontside backside lateral inside)
+
+  enum :sun_period_type, values: ~w(morning evening)
+
   object :listing do
     field :id, :id
     field :uuid, :uuid, resolve: &Resolvers.Listings.get_uuid/3
@@ -45,6 +55,8 @@ defmodule ReWeb.Types.Listing do
     field :price_per_area, :float
     field :inserted_at, :naive_datetime
     field :score, :integer, resolve: &Resolvers.Listings.score/3
+    field :deactivation_reason, :deactivation_reason
+    field :sold_price, :integer
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
@@ -130,13 +142,8 @@ defmodule ReWeb.Types.Listing do
     field :tags, list_of(non_null(:uuid))
 
     field :owner_contact, :owner_contact_input
+    field :deactivation_reason, :deactivation_reason
   end
-
-  enum :garage_type, values: ~w(contract condominium)
-
-  enum :orientation_type, values: ~w(frontside backside lateral inside)
-
-  enum :sun_period_type, values: ~w(morning evening)
 
   object :address do
     field :id, :id
@@ -180,6 +187,11 @@ defmodule ReWeb.Types.Listing do
     field :postal_code, non_null(:string)
     field :lat, non_null(:float)
     field :lng, non_null(:float)
+  end
+
+  input_object :deactivation_options_input do
+    field :deactivation_reason, non_null(:deactivation_reason)
+    field :sold_price, :integer
   end
 
   object :listing_user do
@@ -391,6 +403,7 @@ defmodule ReWeb.Types.Listing do
     @desc "Deactivate listing"
     field :deactivate_listing, type: :listing do
       arg :id, non_null(:id)
+      arg :input, :deactivation_options_input
 
       resolve &Resolvers.Listings.deactivate/2
     end

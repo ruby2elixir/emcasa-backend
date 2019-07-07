@@ -134,8 +134,17 @@ defmodule Re.Listings do
     end)
   end
 
-  def deactivate(listing) do
+  def deactivate(listing, opts \\ []) do
     changeset = Changeset.change(listing, status: "inactive")
+
+    changeset =
+      Enum.reduce(opts, changeset, fn
+        {:deactivation_reason, reason}, changeset ->
+          Changeset.change(changeset, deactivation_reason: reason)
+
+        {:sold_price, sold_price}, changeset when is_integer(sold_price) ->
+          Changeset.change(changeset, sold_price: sold_price)
+      end)
 
     changeset
     |> Repo.update()
@@ -143,7 +152,7 @@ defmodule Re.Listings do
   end
 
   def activate(listing) do
-    changeset = Changeset.change(listing, status: "active")
+    changeset = Changeset.change(listing, status: "active", deactivation_reason: nil)
 
     Multi.new()
     |> Multi.update(:activate_listing, changeset)
