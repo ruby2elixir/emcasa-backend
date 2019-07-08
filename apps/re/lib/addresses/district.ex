@@ -17,6 +17,7 @@ defmodule Re.Addresses.District do
     field :name_slug, :string
     field :description, :string, default: ""
     field :status, :string, default: "uncovered"
+    field :sort_order, :integer
 
     timestamps()
   end
