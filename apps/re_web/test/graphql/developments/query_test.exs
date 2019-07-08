@@ -296,4 +296,41 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
              } == json_response(conn, 200)["data"]["development"]
     end
   end
+
+  describe "typologies" do
+    test "should group typologies by area and rooms count", %{user_conn: conn} do
+      development = insert(:development)
+      typologies = Enum.sort([
+        %{"rooms" => 2, "area" => 100, "unitCount" => 1},
+        %{"rooms" => 3, "area" => 100, "unitCount" => 2},
+        %{"rooms" => 3, "area" => 150, "unitCount" => 3}
+      ])
+      Enum.each(typologies, fn %{
+        "rooms" => rooms,
+        "area" => area,
+        "unitCount" => unitCount
+      } ->
+        insert_list(unitCount, :listing, rooms: rooms, area: area, status: "active", development: development)
+      end)
+      variables = %{uuid: development.uuid}
+
+      query = """
+        query Development(
+          $uuid: UUID!
+        ) {
+          development (uuid: $uuid) {
+            typologies {
+              rooms
+              area
+              unitCount
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert typologies == Enum.sort(json_response(conn, 200)["data"]["development"]["typologies"])
+    end
+  end
 end

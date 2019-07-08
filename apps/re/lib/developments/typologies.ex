@@ -23,7 +23,7 @@ defmodule Re.Developments.Typologies do
       development_uuid: l.development_uuid
     })
     |> group_by([l], [l.area, l.rooms, l.development_uuid])
-    |> where([l], l.development_uuid in ^development_uuids)
+    |> where([l], l.development_uuid in ^development_uuids and l.status == "active")
     |> Repo.all
     |> Enum.reduce(%{}, fn typology, map ->
       Map.update(
