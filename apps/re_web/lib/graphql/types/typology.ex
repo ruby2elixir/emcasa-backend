@@ -4,8 +4,6 @@ defmodule ReWeb.Types.Typology do
   """
   use Absinthe.Schema.Notation
 
-  alias ReWeb.Resolvers
-
   object :typology do
     field :area, :integer
     field :rooms, :integer

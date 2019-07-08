@@ -5,10 +5,8 @@ defmodule Re.Developments do
   @behaviour Bodyguard.Policy
 
   require Ecto.Query
-  import Ecto.Query
 
   alias Re.{
-    Listing,
     Development,
     Developments.Queries,
     Repo

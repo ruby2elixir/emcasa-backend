@@ -2,7 +2,6 @@ defmodule ReWeb.Resolvers.Developments do
   @moduledoc false
 
   alias Re.{
-    Listing,
     Addresses,
     Development,
     Developments,
