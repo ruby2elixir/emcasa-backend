@@ -51,6 +51,9 @@ defmodule ReWeb.Types.Address do
   end
 
   object :address_queries do
+    @desc "Get all neighborhoods"
+    field :neighborhoods, list_of(:string), resolve: &Resolvers.Addresses.neighborhoods/2
+
     @desc "Get all districts"
     field :districts, list_of(:district), resolve: &Resolvers.Addresses.districts/2
 
