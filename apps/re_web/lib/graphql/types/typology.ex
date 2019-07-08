@@ -14,4 +14,3 @@ defmodule ReWeb.Types.Typology do
     field :unit_count, :integer
   end
 end
-

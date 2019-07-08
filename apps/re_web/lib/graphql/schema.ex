@@ -84,6 +84,7 @@ defmodule ReWeb.Schema do
       Re.Accounts,
       Re.Addresses,
       Re.Developments,
+      Re.Developments.Typologies,
       Re.Images,
       Re.Listings,
       Re.Listings.History.Prices,

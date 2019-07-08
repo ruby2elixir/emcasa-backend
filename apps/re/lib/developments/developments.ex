@@ -36,22 +36,6 @@ defmodule Re.Developments do
     end
   end
 
-  def get_typologies(uuid) do
-    from(
-      l in Listing,
-      select: %{
-        area: l.area,
-        rooms: l.rooms,
-        max_price: max(l.price),
-        min_price: min(l.price),
-        unit_count: count(l.id)
-      },
-      where: l.development_uuid == ^uuid,
-      group_by: [l.area, l.rooms]
-    )
-    |> Repo.all
-  end
-
   def get_preloaded(uuid, preload),
     do: do_get(Queries.preload_relations(Development, preload), uuid)
 
