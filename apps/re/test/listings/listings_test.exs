@@ -319,12 +319,11 @@
         development: development
       )
 
-      assert %{remaining_count: 1, listings: listings1} = Listings.paginated(%{
+      %{remaining_count: 1, listings: listings1} = Listings.paginated(%{
         page_size: 2,
         exclude_similar_for_primary_market: true
       })
 
-      assert 2 == length(listings1)
       listings1_ids = listings1 |> Enum.map(&Map.get(&1, :id))
 
       assert %{remaining_count: 0, listings: listings2} = Listings.paginated(%{
