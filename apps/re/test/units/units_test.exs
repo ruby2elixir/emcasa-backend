@@ -1,11 +1,15 @@
 defmodule Re.UnitsTest do
+  @moduledoc false
+
   use Re.ModelCase
 
   alias Re.{
+    Developments.JobQueue,
     Unit,
     Units
   }
 
+  import Re.CustomAssertion
   import Re.Factory
 
   @unit_attrs %{
@@ -31,7 +35,7 @@ defmodule Re.UnitsTest do
       development = insert(:development)
 
       assert {:ok, %{add_unit: inserted_unit, units_job: _}} =
-               Units.insert(@unit_attrs, development)
+               Units.insert(@unit_attrs, development: development)
 
       retrieved_unit = Repo.get(Unit, inserted_unit.uuid)
 
@@ -42,9 +46,20 @@ defmodule Re.UnitsTest do
     test "create new development job" do
       development = insert(:development)
 
-      assert {:ok, _} = Units.insert(@unit_attrs, development)
+      assert {:ok, _} = Units.insert(@unit_attrs, development: development)
 
-      assert Repo.one(Re.Developments.JobQueue)
+      assert_enqueued_job(Re.Repo.all(JobQueue), "mirror_new_unit_to_listing")
+    end
+  end
+
+  describe "update/2" do
+    test "create new mirror_update_unit_to_listing" do
+      development = insert(:development)
+      unit = insert(:unit)
+
+      Units.update(unit, @unit_attrs, development: development)
+
+      assert_enqueued_job(Re.Repo.all(JobQueue), "mirror_update_unit_to_listing")
     end
   end
 end

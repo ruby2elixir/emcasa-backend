@@ -32,11 +32,21 @@ defmodule Re.PriceSuggestionsTest do
         {:ok,
          %{
            body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915}"
+           "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
          }}
       )
 
-      assert {:ok, 26_279.0} == PriceSuggestions.suggest_price(listing)
+      assert {:ok,
+              %{
+                listing_price: 26_279.915,
+                listing_price_rounded: 26_279.0,
+                sale_price: 24_195.791,
+                sale_price_rounded: 24_195.0,
+                listing_price_error_q90_min: 25_200.0,
+                listing_price_error_q90_max: 28_544.0,
+                listing_price_per_sqr_meter: 560.0,
+                listing_average_price_per_sqr_meter: 610.0
+      }} == PriceSuggestions.suggest_price(listing)
       listing = Repo.get_by(Listing, uuid: uuid)
       assert listing.suggested_price == 26_279.0
     end
@@ -60,11 +70,21 @@ defmodule Re.PriceSuggestionsTest do
         {:ok,
          %{
            body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915}"
+           "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
          }}
       )
 
-      assert {:ok, 26_279.0} == PriceSuggestions.suggest_price(listing)
+      assert {:ok,
+              %{
+                listing_price: 26_279.915,
+                listing_price_rounded: 26_279.0,
+                sale_price: 24_195.791,
+                sale_price_rounded: 24_195.0,
+                listing_price_error_q90_min: 25_200.0,
+                listing_price_error_q90_max: 28_544.0,
+                listing_price_per_sqr_meter: 560.0,
+                listing_average_price_per_sqr_meter: 610.0
+      }} == PriceSuggestions.suggest_price(listing)
       listing = Repo.get_by(Listing, uuid: uuid)
       assert listing.suggested_price == 26_279.0
     end

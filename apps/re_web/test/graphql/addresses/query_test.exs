@@ -34,26 +34,28 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
     """
 
     test "admin should get districts", %{admin_conn: conn} do
-      insert(:district, status: "inactive")
-      insert_list(5, :district)
+      insert(:district, status: "uncovered")
+      insert(:district, status: "partially_covered")
+      insert_list(4, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
       assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "user should get districts", %{user_conn: conn} do
-      insert(:district, status: "inactive")
-      insert_list(5, :district)
+      insert(:district, status: "uncovered")
+      insert(:district, status: "partially_covered")
+      insert_list(4, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
       assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "anonymous should get districts", %{unauthenticated_conn: conn} do
-      insert(:district, status: "inactive")
-      insert_list(5, :district)
+      insert(:district, status: "uncovered")
+      insert(:district, status: "partially_covered")
+      insert_list(4, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
-
       assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
   end
@@ -69,6 +71,7 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
           citySlug
           nameSlug
           description
+          status
         }
       }
     """
@@ -99,7 +102,8 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "stateSlug" => "rj",
                "citySlug" => "rio-de-janeiro",
                "nameSlug" => "district-name",
-               "description" => "descr"
+               "description" => "descr",
+               "status" => "covered"
              } == json_response(conn, 200)["data"]["district"]
     end
 
@@ -129,7 +133,8 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "stateSlug" => "rj",
                "citySlug" => "rio-de-janeiro",
                "nameSlug" => "district-name",
-               "description" => "descr"
+               "description" => "descr",
+               "status" => "covered",
              } == json_response(conn, 200)["data"]["district"]
     end
 
@@ -159,7 +164,8 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "stateSlug" => "rj",
                "citySlug" => "rio-de-janeiro",
                "nameSlug" => "district-name",
-               "description" => "descr"
+               "description" => "descr",
+               "status" => "covered"
              } == json_response(conn, 200)["data"]["district"]
     end
   end

@@ -66,6 +66,14 @@ defmodule Re.Factory do
     }
   end
 
+  def for_primary_market(listing) do
+    %{listing | is_release: true}
+  end
+
+  def for_secondary_market(listing) do
+    %{listing | is_release: false}
+  end
+
   def address_factory do
     street_name = Address.street_name()
     street_slug = Re.Slugs.sluggify(street_name)
@@ -113,7 +121,7 @@ defmodule Re.Factory do
       state: state,
       state_slug: state_slug,
       description: Shakespeare.hamlet(),
-      status: "active"
+      status: "covered"
     }
   end
 
@@ -126,7 +134,7 @@ defmodule Re.Factory do
       state: address.state,
       state_slug: address.state_slug,
       description: Shakespeare.hamlet(),
-      status: "active"
+      status: "covered"
     )
   end
 

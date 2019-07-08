@@ -17,7 +17,7 @@ defmodule Re.Developments.JobQueueTest do
       development = insert(:development, address: address)
       %{uuid: uuid} = insert(:unit, development: development)
 
-      assert {:ok, %{listing: %{id: listing_id}}} =
+      assert {:ok, %{mirror_unit: %{id: listing_id}}} =
                JobQueue.perform(Multi.new(), %{
                  "type" => "mirror_new_unit_to_listing",
                  "uuid" => uuid

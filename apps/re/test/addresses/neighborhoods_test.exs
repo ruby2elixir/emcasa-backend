@@ -84,6 +84,16 @@ defmodule Re.NeighborhoodsTest do
         city_slug: "sao-paulo"
       )
 
+      insert(:district,
+        state: "SP",
+        state_slug: "sp",
+        name: "Moema",
+        name_slug: "moema",
+        city: "São Paulo",
+        city_slug: "sao-paulo",
+        status: "partially_covered"
+      )
+
       :ok
     end
 
@@ -150,6 +160,11 @@ defmodule Re.NeighborhoodsTest do
     test "should be true when alternative name Jardim Vila Mariana is provided" do
       neighborhood = %{state: "SP", neighborhood: "Jardim Vila Mariana", city: "São Paulo"}
       assert Neighborhoods.is_covered(neighborhood)
+    end
+
+    test "should be false when the neighborhood is partially covered" do
+      neighborhood = %{state: "SP", neighborhood: "Moema", city: "São Paulo"}
+      refute Neighborhoods.is_covered(neighborhood)
     end
   end
 end

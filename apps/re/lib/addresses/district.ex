@@ -16,7 +16,7 @@ defmodule Re.Addresses.District do
     field :city_slug, :string
     field :name_slug, :string
     field :description, :string, default: ""
-    field :status, :string, default: "inactive"
+    field :status, :string, default: "uncovered"
 
     timestamps()
   end
@@ -27,7 +27,7 @@ defmodule Re.Addresses.District do
 
   @sluggified_attr ~w(state city name)a
 
-  @statuses ~w(active inactive)
+  @statuses ~w(covered partially_covered uncovered)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -40,9 +40,7 @@ defmodule Re.Addresses.District do
     |> validate_length(:city, max: 128)
     |> validate_length(:state, is: 2)
     |> unique_constraint(:neighborhood, name: :neighborhood)
-    |> validate_inclusion(:status, @statuses,
-      message: "should be one of: [#{Enum.join(@statuses, " ")}]"
-    )
+    |> validate_inclusion(:status, @statuses)
     |> generate_slugs()
   end
 

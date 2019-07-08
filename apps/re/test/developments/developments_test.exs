@@ -5,10 +5,14 @@ defmodule Re.DevelopmentsTest do
 
   alias Re.{
     Development,
-    Developments
+    Developments,
+    Developments.JobQueue
   }
 
-  import Re.Factory
+  import Re.{
+    CustomAssertion,
+    Factory
+  }
 
   describe "insert/2" do
     @insert_development_params %{
@@ -45,6 +49,19 @@ defmodule Re.DevelopmentsTest do
       assert updated_development.builder == Map.get(new_development_params, :builder)
       assert updated_development.description == Map.get(new_development_params, :description)
       assert updated_development.phase == Map.get(new_development_params, :phase)
+    end
+
+    test "should enqueue new mirror_update_development_to_listings job" do
+      address = insert(:address)
+      development = insert(:development, address: address)
+
+      new_development_params = params_for(:development)
+
+      Developments.update(development, new_development_params, address)
+
+      JobQueue
+      |> Re.Repo.all()
+      |> assert_enqueued_job("mirror_update_development_to_listings")
     end
   end
 end

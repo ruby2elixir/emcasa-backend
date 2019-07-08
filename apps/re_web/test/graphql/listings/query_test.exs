@@ -1333,7 +1333,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "admin should see inactive listing", %{admin_conn: conn} do
-      %{id: listing_id} = insert(:listing, status: "inactive")
+      %{id: listing_id} =
+        insert(:listing,
+          status: "inactive",
+          deactivation_reason: "sold",
+          sold_price: 1_000_000
+        )
 
       variables = %{"id" => listing_id}
 
@@ -1341,13 +1346,19 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         query Listing ($id: ID!) {
           listing (id: $id) {
             id
+            deactivation_reason
+            sold_price
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
-      assert %{"id" => to_string(listing_id)} == json_response(conn, 200)["data"]["listing"]
+      assert %{
+               "id" => to_string(listing_id),
+               "deactivation_reason" => "SOLD",
+               "sold_price" => 1_000_000
+             } == json_response(conn, 200)["data"]["listing"]
     end
 
     test "owner should see inactive listing", %{user_conn: conn, user_user: user} do

@@ -6,13 +6,17 @@ defmodule Re.Developments do
 
   require Ecto.Query
 
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
+
   alias Re.{
     Development,
+    Developments.JobQueue,
     Developments.Queries,
     Repo
   }
-
-  alias Ecto.Changeset
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
@@ -55,10 +59,24 @@ defmodule Re.Developments do
 
   def preload(development, preload), do: Re.Repo.preload(development, preload)
 
-  def update(development, params, address) do
-    development
-    |> Changeset.change(address_id: address.id)
-    |> Development.changeset(params)
-    |> Repo.update()
+  def update(%{uuid: uuid} = development, params, address) do
+    changeset =
+      development
+      |> Changeset.change(address_id: address.id)
+      |> Development.changeset(params)
+
+    Multi.new()
+    |> JobQueue.enqueue(:mirror_job, %{
+      "type" => "mirror_update_development_to_listings",
+      "uuid" => uuid
+    })
+    |> Multi.update(:update_development, changeset)
+    |> Repo.transaction()
+    |> extract_transaction()
   end
+
+  defp extract_transaction({:ok, %{update_development: update_development}}),
+    do: {:ok, update_development}
+
+  defp extract_transaction({:error, _, changeset, _}), do: {:error, changeset}
 end

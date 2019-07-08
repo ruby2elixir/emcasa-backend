@@ -4,32 +4,18 @@ defmodule Re.Developments.Listings do
   """
   alias Re.{
     Listing,
+    Listings.Queries,
     PubSub,
     Repo
   }
 
-  alias Ecto.{
-    Changeset,
-    Multi
-  }
+  alias Ecto.Changeset
 
   def insert(params, opts) do
     %Listing{}
     |> changeset_for_opts(opts)
     |> Listing.development_changeset(params)
     |> Repo.insert()
-  end
-
-  def multi_insert(multi, params, opts) do
-    %Listing{}
-    |> changeset_for_opts(opts)
-    |> Listing.development_changeset(params)
-    |> insert_listing_on_multi(multi)
-    |> Repo.transaction()
-  end
-
-  defp insert_listing_on_multi(changeset, multi) do
-    Multi.insert(multi, :listing, changeset)
   end
 
   def update(listing, params, opts) do
@@ -41,6 +27,12 @@ defmodule Re.Developments.Listings do
     changeset
     |> Repo.update()
     |> PubSub.publish_update(changeset, "update_listing")
+  end
+
+  def batch_update(listings, params, opts) do
+    Repo.transaction(fn ->
+      Enum.map(listings, fn listing -> update(listing, params, opts) end)
+    end)
   end
 
   defp changeset_for_opts(listing, opts) do
@@ -98,5 +90,12 @@ defmodule Re.Developments.Listings do
     changeset
     |> Repo.update()
     |> PubSub.publish_update(changeset, "update_listing")
+  end
+
+  def per_development(%Re.Development{uuid: uuid}, preload \\ []) do
+    Listing
+    |> Queries.per_development(uuid)
+    |> Queries.preload_relations(preload)
+    |> Repo.all()
   end
 end

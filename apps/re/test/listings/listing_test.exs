@@ -58,7 +58,7 @@ defmodule Re.ListingTest do
     elevators: 2.1
   }
 
-  describe "admin" do
+  describe "changeset/2" do
     test "changeset with valid attributes" do
       address = insert(:address)
       user = insert(:user)
@@ -144,7 +144,7 @@ defmodule Re.ListingTest do
                {"is invalid", [type: :integer, validation: :cast]}
 
       assert Keyword.get(changeset.errors, :garage_type) ==
-               {"is invalid", [validation: :inclusion, enum: ~w(contract condominium unknown)]}
+               {"is invalid", [validation: :inclusion, enum: ~w(contract condominium)]}
 
       changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000})
       refute changeset.valid?

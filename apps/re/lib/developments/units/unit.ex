@@ -25,6 +25,8 @@ defmodule Re.Unit do
     field :dependencies, :integer
     field :balconies, :integer
     field :status, :string
+    field :matterport_code, :string
+    field :is_exportable, :boolean, default: false
 
     belongs_to :development, Re.Development,
       references: :uuid,
@@ -36,12 +38,12 @@ defmodule Re.Unit do
     timestamps()
   end
 
-  @garage_types ~w(contract condominium unknown)
+  @garage_types ~w(contract condominium)
   @statuses ~w(active inactive)
 
   @required ~w(price rooms bathrooms area garage_spots suites development_uuid status)a
   @optional ~w(complement floor property_tax maintenance_fee balconies restrooms garage_type
-              dependencies listing_id)a
+              dependencies listing_id matterport_code is_exportable)a
 
   @attributes @required ++ @optional
 

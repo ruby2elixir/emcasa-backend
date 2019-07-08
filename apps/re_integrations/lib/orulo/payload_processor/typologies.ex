@@ -50,15 +50,14 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Typologies do
   end
 
   @static_params %{
-    status: "active",
-    garage_type: "unknown"
+    status: "active"
   }
 
   defp insert_unit(unit, typology, development) do
     typology
     |> TypologyMapper.typology_payload_into_unit_params(unit)
     |> Map.merge(@static_params)
-    |> Units.insert(development)
+    |> Units.insert(development: development)
   end
 
   defp extract_typology_info_from_payload(id, %{"typologies" => typologies}) do

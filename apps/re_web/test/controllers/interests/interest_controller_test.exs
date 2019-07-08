@@ -2,6 +2,7 @@ defmodule ReWeb.InterestControllerTest do
   use ReWeb.ConnCase
 
   import Re.Factory
+  import Re.CustomAssertion
 
   alias Re.{
     BuyerLeads.JobQueue,
@@ -31,7 +32,7 @@ defmodule ReWeb.InterestControllerTest do
       interest_id = response["data"]["id"]
       assert interest = Repo.get(Interest, interest_id)
       assert interest.uuid
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "interest")
     end
 
     test "show interest in invalid listing", %{conn: conn} do

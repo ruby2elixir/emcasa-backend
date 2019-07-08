@@ -8,9 +8,6 @@ defmodule Re.BuyerLead do
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
-  @derive {Jason.Encoder,
-           only:
-             ~w(uuid name phone_number origin email location listing_uuid user_uuid budget neighborhood url user_url)a}
   schema "buyer_leads" do
     field :name, :string
     field :phone_number, :string
@@ -35,8 +32,8 @@ defmodule Re.BuyerLead do
     timestamps()
   end
 
-  @required ~w(name phone_number origin)a
-  @optional ~w(email location listing_uuid user_uuid budget neighborhood url user_url)a
+  @required ~w(origin)a
+  @optional ~w(name email location listing_uuid user_uuid budget neighborhood url user_url phone_number)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do

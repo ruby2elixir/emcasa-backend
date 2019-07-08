@@ -15,7 +15,7 @@ defmodule ReWeb.Webhooks.ZapierPlug do
 
   def call(%{method: "POST", params: params} = conn, _args) do
     with :ok <- validate_credentials(conn),
-         {:ok, _} <- Zapier.new_lead(params) do
+         {:ok, _} <- Zapier.handle_payload(params) do
       conn
       |> put_resp_content_type("text/plain")
       |> send_resp(200, "ok")
