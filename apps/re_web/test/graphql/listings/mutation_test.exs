@@ -834,6 +834,57 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     end
   end
 
+  describe "deactivateListing" do
+    test "admin should deactivate a listing without options", %{admin_conn: conn} do
+      %{id: listing_id} = listing = insert(:listing)
+
+      mutation = """
+      mutation DeactivateListing ($id: ID!) {
+        deactivateListing(id: $id) {
+          id
+        }
+      }
+      """
+
+      variables = %{"id" => listing_id}
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"id" => to_string(listing.id)} ==
+               json_response(conn, 200)["data"]["deactivateListing"]
+    end
+
+    test "admin should deactivate a listing with options", %{admin_conn: conn} do
+      %{id: listing_id} = listing = insert(:listing)
+
+      mutation = """
+      mutation DeactivateListing ($id: ID!, $input: DeactivationOptionsInput!) {
+        deactivateListing(id: $id, input: $input) {
+          id
+          deactivation_reason
+          sold_price
+        }
+      }
+      """
+
+      variables = %{
+        "id" => listing_id,
+        "input" => %{
+          "deactivation_reason" => "SOLD",
+          "sold_price" => 1_000_000
+        }
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{
+               "id" => to_string(listing.id),
+               "deactivation_reason" => "SOLD",
+               "sold_price" => 1_000_000
+             } == json_response(conn, 200)["data"]["deactivateListing"]
+    end
+  end
+
   def insert_development_listing_variables(listing, address_id, development_uuid) do
     %{
       "input" => development_listing_input(listing, address_id, development_uuid)

@@ -50,12 +50,18 @@ defmodule Re.Listings.History.Server do
         %{
           topic: topic,
           type: :update,
-          content: %{new: listing, changeset: %{changes: %{status: _}, data: %{status: status}}}
+          content: %{
+            new: listing,
+            changeset: %{
+              changes: %{status: _},
+              data: %{status: status, deactivation_reason: reason}
+            }
+          }
         },
         state
       )
       when topic in @status_changes do
-    case Statuses.insert(listing, status) do
+    case Statuses.insert(listing, reason || status) do
       {:ok, _listing} ->
         {:noreply, state}
 
