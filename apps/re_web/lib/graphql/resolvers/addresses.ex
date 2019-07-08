@@ -48,6 +48,8 @@ defmodule ReWeb.Resolvers.Addresses do
 
   def is_covered(address, _, _), do: {:ok, Addresses.is_covered(address)}
 
+  def neighborhoods(_, _), do: {:ok, Neighborhoods.all()}
+
   defp has_admin_rights?(user, %Listing{} = listing) do
     Bodyguard.permit?(Listings, :has_admin_rights, user, listing)
   end

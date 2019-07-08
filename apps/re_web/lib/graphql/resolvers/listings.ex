@@ -6,7 +6,6 @@ defmodule ReWeb.Resolvers.Listings do
 
   alias Re.{
     Addresses,
-    Addresses.Neighborhoods,
     Developments,
     Listings.Filters,
     Listings,
@@ -293,8 +292,6 @@ defmodule ReWeb.Resolvers.Listings do
 
     {:ok, listing_index}
   end
-
-  def neighborhoods(_, _), do: {:ok, Neighborhoods.all()}
 
   def featured(_, _), do: {:ok, Featured.get_graphql()}
 
