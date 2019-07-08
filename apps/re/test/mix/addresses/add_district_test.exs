@@ -23,16 +23,23 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrictTest do
       AddDistrict.run([])
 
       partially_covered_districts = [
-        "Aclimação",
-        "Bosque da Saúde",
-        "Brooklin",
-        "Cerqueira César",
-        "Chácara Inglesa",
-        "Vila Madalena",
-        "Vila Olímpia"
+        "Chácara Klabin"
+      ]
+
+      covered_districts = [
+        "Paraíso",
+        "Pompeia",
+        "Jardim Luzitania",
+        "Vila Clementino",
+        "Jardim Vila Mariana",
+        "Jardim da Gloria"
       ]
 
       Enum.each partially_covered_districts, fn district ->
+        assert Repo.get_by(District, name: district)
+      end
+
+      Enum.each covered_districts, fn district ->
         assert Repo.get_by(District, name: district)
       end
     end

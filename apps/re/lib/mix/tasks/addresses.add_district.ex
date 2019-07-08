@@ -13,13 +13,15 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
 
   @shortdoc "Create new district"
   @partially_covered_districts [
-    "Aclimação",
-    "Bosque da Saúde",
-    "Brooklin",
-    "Cerqueira César",
-    "Chácara Inglesa",
-    "Vila Madalena",
-    "Vila Olímpia"
+    "Chácara Klabin"
+  ]
+
+  @covered_districts [
+    "Paraíso",
+    "Jardim Luzitania",
+    "Vila Clementino",
+    "Jardim Vila Mariana",
+    "Jardim da Gloria"
   ]
 
   def run(_) do
@@ -33,6 +35,20 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
           state: "SP",
           city: "São Paulo",
           status: "partially_covered"
+        })
+        |> Repo.insert()
+
+      Mix.shell().info("Inserted district: #{district.name}, id: #{district.id}")
+    end)
+
+    Enum.each(@covered_districts, fn district_to_insert ->
+      {:ok, district} =
+        %District{}
+        |> District.changeset(%{
+          name: district_to_insert,
+          state: "SP",
+          city: "São Paulo",
+          status: "covered"
         })
         |> Repo.insert()
 
