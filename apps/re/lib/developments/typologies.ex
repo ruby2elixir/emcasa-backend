@@ -2,7 +2,6 @@ defmodule Re.Developments.Typologies do
   @moduledoc """
   Context for handling development typologies
   """
-  import Ecto.Query
 
   alias Re.{
     Listing,
@@ -10,7 +9,10 @@ defmodule Re.Developments.Typologies do
     Repo
   }
 
-  def data(params), do: Dataloader.Ecto.new(Re.Repo, run_batch: &run_batch/5, default_params: params)
+  import Ecto.Query
+
+  def data(params),
+    do: Dataloader.Ecto.new(Re.Repo, run_batch: &run_batch/5, default_params: params)
 
   def run_batch(Development, _query, col, development_uuids, _repo_opts) do
     Listing
@@ -24,7 +26,7 @@ defmodule Re.Developments.Typologies do
     })
     |> group_by([l], [l.area, l.rooms, l.development_uuid])
     |> where([l], l.development_uuid in ^development_uuids and l.status == "active")
-    |> Repo.all
+    |> Repo.all()
     |> Enum.reduce(%{}, fn typology, map ->
       Map.update(
         map,
