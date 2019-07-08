@@ -4,6 +4,7 @@ defmodule ReWeb.Schema do
   """
   use Absinthe.Schema
 
+  import_types ReWeb.Types.Address
   import_types ReWeb.Types.Listing
   import_types ReWeb.Types.Image
   import_types ReWeb.Types.User
@@ -36,6 +37,7 @@ defmodule ReWeb.Schema do
   end
 
   query do
+    import_fields(:address_queries)
     import_fields(:listing_queries)
     import_fields(:user_queries)
     import_fields(:dashboard_queries)
@@ -46,6 +48,7 @@ defmodule ReWeb.Schema do
   end
 
   mutation do
+    import_fields(:address_mutations)
     import_fields(:listing_mutations)
     import_fields(:image_mutations)
     import_fields(:user_mutations)

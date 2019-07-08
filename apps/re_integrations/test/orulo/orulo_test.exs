@@ -17,7 +17,7 @@ defmodule ReIntegrations.OruloTest do
   describe "get_building_payload/2" do
     test "create o new job with to sync development" do
       assert {:ok, _} = Orulo.get_building_payload(100)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "import_development_from_orulo")
     end
 
     test "doesn't create a job if building payload already exists for orulo id" do
@@ -42,7 +42,7 @@ defmodule ReIntegrations.OruloTest do
     test "enqueue a new parse job" do
       params = %{external_id: 666, payload: %{test: "building_payload"}}
       assert {:ok, _} = Orulo.multi_building_payload_insert(Multi.new(), params)
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "parse_building_into_development")
     end
   end
 
@@ -62,7 +62,7 @@ defmodule ReIntegrations.OruloTest do
       params = %{external_id: 666, payload: %{test: "images_payload"}}
       assert {:ok, _} = Orulo.multi_images_payload_insert(Multi.new(), params)
 
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "parse_images_payloads_into_images")
     end
   end
 

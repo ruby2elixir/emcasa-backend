@@ -1,6 +1,8 @@
 defmodule ReWeb.Webhooks.GrupozapPlugTest do
   use ReWeb.ConnCase
 
+  import Re.CustomAssertion
+
   alias Re.{
     BuyerLeads.JobQueue,
     BuyerLeads.Grupozap,
@@ -55,7 +57,7 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
       assert gb.origin_lead_id
       assert gb.origin_listing_id
       assert gb.client_listing_id
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "grupozap_buyer_lead")
     end
 
     @long_message_payload %{
@@ -78,7 +80,7 @@ defmodule ReWeb.Webhooks.GrupozapPlugTest do
 
       assert gb = Repo.one(Grupozap)
       assert gb.message
-      assert Repo.one(JobQueue)
+      assert_enqueued_job(Repo.all(JobQueue), "grupozap_buyer_lead")
     end
 
     @tag capture_log: true

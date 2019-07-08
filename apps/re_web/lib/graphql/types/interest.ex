@@ -55,6 +55,11 @@ defmodule ReWeb.Types.Interest do
     field :garage_spots, :integer
     field :is_covered, :boolean
     field :suggested_price, :float
+    field :listing_price_rounded, :float
+    field :listing_price_error_q90_min, :float
+    field :listing_price_error_q90_max, :float
+    field :listing_price_per_sqr_meter, :float
+    field :listing_average_price_per_sqr_meter, :float
 
     field :address, :address, resolve: dataloader(Re.Addresses)
     field :user, :user, resolve: dataloader(Re.Accounts)

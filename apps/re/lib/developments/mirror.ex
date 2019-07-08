@@ -6,6 +6,7 @@ defmodule Re.Developments.Mirror do
   require Logger
 
   alias Re.{
+    Developments,
     Developments.Listings,
     Units
   }
@@ -34,11 +35,35 @@ defmodule Re.Developments.Mirror do
     Listings.update(listing, params, development: development, address: address)
   end
 
+  def mirror_development_update_to_listings(uuid) do
+    {:ok, development = %{address: address}} =
+      Developments.get_preloaded(uuid, [:address, :units])
+
+    listings = Listings.per_development(development, [:units])
+
+    params =
+      development
+      |> to_params()
+
+    Listings.batch_update(listings, params,
+      address: address,
+      development: development
+    )
+  end
+
   @unit_cloned_attributes ~w(area price rooms bathrooms garage_spots garage_type suites complement
                             floor property_tax maintenance_fee balconies restrooms
                             matterport_code is_exportable)a
 
-  defp to_params(unit) do
+  defp to_params(%Re.Unit{} = unit) do
     Map.take(unit, @unit_cloned_attributes)
+  end
+
+  @development_cloned_attributes ~w(description floor_count elevators)a
+
+  defp to_params(%Re.Development{} = development) do
+    development
+    |> Map.take(@development_cloned_attributes)
+    |> Map.put(:unit_per_floor, Map.get(development, :units_per_floor))
   end
 end

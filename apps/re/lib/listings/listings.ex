@@ -22,6 +22,8 @@ defmodule Re.Listings do
     Multi
   }
 
+  import Ecto.Query
+
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
@@ -37,16 +39,32 @@ defmodule Re.Listings do
 
   def paginated(params \\ %{}) do
     query = build_query(params)
+    listings = Repo.all(query)
 
     %{
       remaining_count: remaining_count(query, params),
-      listings: Repo.all(query)
+      listings: listings
     }
   end
+
+  def remaining_count(query, %{"exclude_similar_for_primary_market" => true} = params),
+    do: remaining_count_without_developments(query, params)
+
+  def remaining_count(query, %{exclude_similar_for_primary_market: true} = params),
+    do: remaining_count_without_developments(query, params)
 
   def remaining_count(query, params) do
     query
     |> Queries.remaining_count()
+    |> Repo.one()
+    |> calculate_remaining(params)
+  end
+
+  defp remaining_count_without_developments(query, params) do
+    query
+    |> Queries.remaining_count()
+    |> exclude(:select)
+    |> select([l], count(coalesce(l.development_uuid, l.uuid), :distinct))
     |> Repo.one()
     |> calculate_remaining(params)
   end
@@ -134,8 +152,17 @@ defmodule Re.Listings do
     end)
   end
 
-  def deactivate(listing) do
+  def deactivate(listing, opts \\ []) do
     changeset = Changeset.change(listing, status: "inactive")
+
+    changeset =
+      Enum.reduce(opts, changeset, fn
+        {:deactivation_reason, reason}, changeset ->
+          Changeset.change(changeset, deactivation_reason: reason)
+
+        {:sold_price, sold_price}, changeset when is_integer(sold_price) ->
+          Changeset.change(changeset, sold_price: sold_price)
+      end)
 
     changeset
     |> Repo.update()
@@ -143,7 +170,7 @@ defmodule Re.Listings do
   end
 
   def activate(listing) do
-    changeset = Changeset.change(listing, status: "active")
+    changeset = Changeset.change(listing, status: "active", deactivation_reason: nil)
 
     Multi.new()
     |> Multi.update(:activate_listing, changeset)

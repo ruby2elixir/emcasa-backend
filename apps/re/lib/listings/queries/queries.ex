@@ -65,6 +65,30 @@ defmodule Re.Listings.Queries do
     %{result | entries: randomized_entries}
   end
 
+  def excluding(query, %{
+        "excluded_listing_ids" => excluded_listing_ids,
+        "exclude_similar_for_primary_market" => true
+      }),
+      do:
+        excluding(query, %{
+          excluded_listing_ids: excluded_listing_ids,
+          exclude_similar_for_primary_market: true
+        })
+
+  def excluding(query, %{
+        excluded_listing_ids: excluded_listing_ids,
+        exclude_similar_for_primary_market: true
+      }) do
+    from(
+      l in query,
+      left_join: d in Listing,
+      on:
+        d.id in ^excluded_listing_ids and not is_nil(d.development_uuid) and
+          l.development_uuid == d.development_uuid,
+      where: is_nil(d.id) and l.id not in ^excluded_listing_ids
+    )
+  end
+
   def excluding(query, %{"excluded_listing_ids" => excluded_listing_ids}),
     do: from(l in query, where: l.id not in ^excluded_listing_ids)
 
@@ -97,6 +121,9 @@ defmodule Re.Listings.Queries do
   end
 
   def count(query \\ Listing), do: from(l in query, select: count(l.id, :distinct))
+
+  def per_development(query \\ Listing, development_uuid),
+    do: from(l in query, where: l.development_uuid == ^development_uuid)
 
   def per_user(query \\ Listing, user_id), do: from(l in query, where: l.user_id == ^user_id)
 
