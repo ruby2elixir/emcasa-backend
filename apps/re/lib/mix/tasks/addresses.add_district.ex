@@ -18,6 +18,7 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
 
   @covered_districts [
     "Paraíso",
+    "Pompe",
     "Jardim Luzitania",
     "Vila Clementino",
     "Jardim Vila Mariana",
