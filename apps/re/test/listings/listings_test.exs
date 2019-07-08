@@ -366,33 +366,73 @@ defmodule Re.ListingsTest do
     end
   end
 
-  describe "deactivate/1" do
-    test "should set status to inactive" do
+  describe "deactivate/2" do
+    test "should set status to inactive with reason and sold_price" do
+      listing = insert(:listing, status: "active")
+
+      {:ok, listing} =
+        Listings.deactivate(listing,
+          deactivation_reason: "sold",
+          sold_price: 1_000_000
+        )
+
+      assert listing.status == "inactive"
+      assert listing.deactivation_reason == "sold"
+      assert listing.sold_price == 1_000_000
+    end
+
+    test "should save status change to history when set to inactive" do
       Server.start_link()
       listing = insert(:listing, status: "active")
 
-      {:ok, listing} = Listings.deactivate(listing)
+      {:ok, _listing} = Listings.deactivate(listing)
 
       GenServer.call(Server, :inspect)
 
-      assert listing.status == "inactive"
       status_history = Repo.one(Re.Listings.StatusHistory)
       assert "active" == status_history.status
     end
   end
 
   describe "activate/1" do
-    test "should set status to active" do
-      Server.start_link()
-      listing = insert(:listing, status: "inactive")
+    test "should set status to active and clean inativation_reason" do
+      listing = insert(:listing, status: "inactive", deactivation_reason: "rented")
 
       {:ok, listing} = Listings.activate(listing)
 
+      assert listing.status == "active"
+      assert listing.deactivation_reason == nil
+    end
+
+    test "should save old deactivation_reason as status on history" do
+      Server.start_link()
+      listing = insert(:listing, status: "inactive", deactivation_reason: "rented")
+
+      {:ok, _listing} = Listings.activate(listing)
+
       GenServer.call(Server, :inspect)
 
-      assert listing.status == "active"
+      status_history = Repo.one(Re.Listings.StatusHistory)
+      assert "rented" == status_history.status
+    end
+
+    test "should save old status on history when has no reason" do
+      Server.start_link()
+      listing = insert(:listing, status: "inactive")
+
+      {:ok, _listing} = Listings.activate(listing)
+
+      GenServer.call(Server, :inspect)
+
       status_history = Repo.one(Re.Listings.StatusHistory)
       assert "inactive" == status_history.status
+    end
+
+    test "should enqueue save_price_suggestion" do
+      listing = insert(:listing, status: "inactive")
+
+      {:ok, _listing} = Listings.activate(listing)
+
       assert_enqueued_job(Repo.all(JobQueue), "save_price_suggestion")
     end
   end

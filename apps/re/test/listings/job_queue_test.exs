@@ -22,7 +22,7 @@ defmodule Re.Listings.JobQueueTest do
         {:ok,
          %{
            body:
-             "{\"sale_price_rounded\":575000.0,\"sale_price\":575910.45,\"listing_price_rounded\":635000.0,\"listing_price\":632868.63}"
+            "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
          }}
       )
 
@@ -35,7 +35,7 @@ defmodule Re.Listings.JobQueueTest do
                })
 
       assert listing = Repo.get_by(Listing, uuid: listing_uuid)
-      assert listing.suggested_price == 635_000
+      assert listing.suggested_price == 26_279
     end
 
     @tag capture_log: true

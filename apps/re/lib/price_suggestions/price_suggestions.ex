@@ -20,8 +20,11 @@ defmodule Re.PriceSuggestions do
     |> do_suggest_price()
     |> case do
       {:ok, suggested_price} ->
+        params =
+          Map.merge(%{suggested_price: suggested_price.listing_price_rounded}, suggested_price)
+
         request
-        |> Request.changeset(%{suggested_price: suggested_price})
+        |> Request.changeset(params)
         |> Repo.update()
 
       error ->
@@ -40,7 +43,7 @@ defmodule Re.PriceSuggestions do
 
   defp persist_suggested_price({:ok, suggested_price}, listing) do
     listing
-    |> Listing.changeset(%{suggested_price: suggested_price})
+    |> Listing.changeset(%{suggested_price: suggested_price.listing_price_rounded})
     |> Repo.update()
 
     {:ok, suggested_price}
@@ -79,8 +82,7 @@ defmodule Re.PriceSuggestions do
   defp round_if_not_nil(nil), do: 0
   defp round_if_not_nil(maintenance_fee), do: round(maintenance_fee)
 
-  defp format_output({:ok, %{listing_price_rounded: listing_price_rounded}}),
-    do: {:ok, listing_price_rounded}
+  defp format_output({:ok, suggested_price}), do: {:ok, suggested_price}
 
   defp format_output(response) do
     Sentry.capture_message("Error on priceteller response",
