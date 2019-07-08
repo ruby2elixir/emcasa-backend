@@ -9,14 +9,14 @@ defmodule ReWeb.Monitoring do
     Endpoint,
     PlugExporter,
     PlugPipelineInstrumenter,
-    AbsintheInstrumenter
+    AbsintheCollector
   }
 
   def setup do
     Endpoint.PhoenixInstrumenter.setup()
     PlugPipelineInstrumenter.setup()
     PlugExporter.setup()
-    AbsintheInstrumenter.setup()
+    AbsintheCollector.setup()
 
     Prometheus.Registry.register_collector(:prometheus_process_collector)
   end

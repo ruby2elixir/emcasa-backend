@@ -1,4 +1,7 @@
-defmodule ReWeb.AbsintheInstrumenter do
+defmodule ReWeb.AbsintheCollector do
+  @moduledoc """
+  Module to collect absinthe telemetry events
+  """
   use Prometheus.Metric
   require Prometheus.Contrib.HTTP
 
