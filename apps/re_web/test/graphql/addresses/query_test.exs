@@ -58,6 +58,20 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
       assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
+
+    test "districts should be returned with the ascending sort order", %{user_conn: conn} do
+      districts = [
+        %{sort: 3, name: "District 3"},
+        %{sort: 1, name: "District 1"},
+        %{sort: 2, name: "District 2"}
+      ]
+
+      Enum.each(districts, fn d -> insert(:district, sort_order: d.sort, name: d.name) end)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
+      expected_sorted_districts = ["District 1", "District 2", "District 3"]
+      result_list = Enum.map(json_response(conn, 200)["data"]["districts"], fn d -> d["name"] end)
+      assert result_list  == expected_sorted_districts
+    end
   end
 
   describe "district" do
