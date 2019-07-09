@@ -37,7 +37,8 @@ defmodule Re.Addresses.Neighborhoods do
   end
 
   def districts,
-    do: Repo.all(from(d in District, where: d.status in @covered_for_show, order_by: d.sort_order))
+    do:
+      Repo.all(from(d in District, where: d.status in @covered_for_show, order_by: d.sort_order))
 
   def get_district(params) do
     case Repo.get_by(District, params) do
