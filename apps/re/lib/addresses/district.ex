@@ -23,7 +23,7 @@ defmodule Re.Addresses.District do
   end
 
   @required ~w(state city name)a
-  @optional ~w(status description)a
+  @optional ~w(status description sort_order)a
   @params @required ++ @optional
 
   @sluggified_attr ~w(state city name)a
