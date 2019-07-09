@@ -362,6 +362,7 @@ defmodule Re.Listings.Filters do
   defp attr_filter({:exclude_similar_for_primary_market, true}, query) do
     from(
       l in query,
+      distinct: coalesce(l.development_uuid, l.uuid),
       where: not (l.is_release == true and l.is_exportable == false)
     )
   end
