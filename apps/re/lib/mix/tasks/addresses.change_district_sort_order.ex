@@ -41,14 +41,19 @@ defmodule Mix.Tasks.Re.Addresses.ChangeDistrictSortOrder do
     Mix.Task.run("app.start")
 
     Enum.each(@districts_sort_order, fn %{name_slug: name_slug, sort_order: sort_order} ->
-      district = District
-        |>Repo.get_by(name_slug: name_slug)
+      district =
+        District
+        |> Repo.get_by(name_slug: name_slug)
         |> District.changeset(%{
           sort_order: sort_order
         })
         |> Repo.update!(force: true)
 
-      Mix.shell().info("Updated district: #{district.name}, id: #{district.id}, sort_order: #{district.sort_order}")
+      Mix.shell().info(
+        "Updated district: #{district.name}, id: #{district.id}, sort_order: #{
+          district.sort_order
+        }"
+      )
     end)
   end
 end
