@@ -99,7 +99,7 @@ defmodule Re.Developments.Listings do
     |> Queries.per_development(uuid)
     |> Queries.preload_relations(preload)
     |> Repo.all()
- end
+  end
 
   def typologies(development_uuids) when is_list(development_uuids) do
     Listing
@@ -113,6 +113,6 @@ defmodule Re.Developments.Listings do
     })
     |> group_by([l], [l.area, l.rooms, l.development_uuid])
     |> where([l], l.development_uuid in ^development_uuids and l.status == "active")
-    |> Repo.all
+    |> Repo.all()
   end
 end

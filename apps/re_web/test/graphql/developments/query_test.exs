@@ -342,5 +342,37 @@ defmodule ReWeb.GraphQL.Developments.QueryTest do
       assert typologies ==
                Enum.sort(json_response(conn, 200)["data"]["development"]["typologies"])
     end
+
+    test "should return an empty list when there are no valid typologies", %{user_conn: conn} do
+      development = insert(:development)
+
+      insert(
+        :listing,
+        rooms: 2,
+        area: 100,
+        status: "inactive",
+        development: development
+      )
+
+      variables = %{uuid: development.uuid}
+
+      query = """
+        query Development(
+          $uuid: UUID!
+        ) {
+          development (uuid: $uuid) {
+            typologies {
+              rooms
+              area
+              unitCount
+            }
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
+      assert [] == json_response(conn, 200)["data"]["development"]["typologies"]
+    end
   end
 end

@@ -44,10 +44,10 @@ defmodule ReWeb.Resolvers.Developments do
     loader
     |> Dataloader.load(Typologies, Development, development.uuid)
     |> on_load(fn loader ->
-      case Dataloader.get(loader, Typologies, Development, development.uuid) do
-        %{typologies: typologies} -> {:ok, typologies}
-        _ -> {:ok, []}
-      end
+      %{typologies: typologies} =
+        Dataloader.get(loader, Typologies, Development, development.uuid)
+
+      {:ok, typologies}
     end)
   end
 
