@@ -1,4 +1,4 @@
-defmodule Re.ListingsTest do
+ defmodule Re.ListingsTest do
   use Re.ModelCase
 
   import Re.CustomAssertion
@@ -280,6 +280,59 @@ defmodule Re.ListingsTest do
 
       assert %{remaining_count: 1, listings: [%{id: ^id}]} =
                Listings.paginated(%{page_size: 1, max_garage_spots: 4})
+    end
+
+    test "should filter excluding duplicate developments" do
+      development1 = insert(:development)
+      development2 = insert(:development)
+      insert_list(1, :listing, is_release: false)
+      insert_list(
+        2,
+        :listing,
+        is_exportable: true,
+        is_release: true,
+        development: development1
+      )
+      insert_list(
+        2,
+        :listing,
+        is_exportable: true,
+        is_release: true,
+        development: development2
+      )
+
+      assert %{remaining_count: 0, listings: listings1} = Listings.paginated(%{
+        page_size: 3,
+        exclude_similar_for_primary_market: true
+      })
+      assert 3 == length(listings1)
+    end
+
+    test "should paginate excluding developments already returned" do
+      development = insert(:development)
+      insert_list(2, :listing, is_release: false)
+      insert_list(
+        2,
+        :listing,
+        is_exportable: true,
+        is_release: true,
+        development: development
+      )
+
+      %{remaining_count: 1, listings: listings1} = Listings.paginated(%{
+        page_size: 2,
+        exclude_similar_for_primary_market: true
+      })
+
+      listings1_ids = listings1 |> Enum.map(&Map.get(&1, :id))
+
+      assert %{remaining_count: 0, listings: listings2} = Listings.paginated(%{
+        page_size: 2,
+        exclude_similar_for_primary_market: true,
+        excluded_listing_ids: listings1_ids
+      })
+
+      assert 1 == length(listings2)
     end
 
     test "should order by attributes" do
