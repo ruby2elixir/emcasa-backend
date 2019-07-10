@@ -17,6 +17,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.OwnerContact
   import_types ReWeb.Types.SellerLead
   import_types ReWeb.Types.BuyerLead
+  import_types ReWeb.Types.Typology
   import_types ReWeb.Types.Custom.UUID
   import_types Absinthe.Type.Custom
 
@@ -86,6 +87,7 @@ defmodule ReWeb.Schema do
       Re.Accounts,
       Re.Addresses,
       Re.Developments,
+      Re.Developments.Typologies,
       Re.Images,
       Re.Listings,
       Re.Listings.History.Prices,

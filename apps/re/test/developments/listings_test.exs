@@ -67,4 +67,25 @@ defmodule Re.Developments.ListingsTest do
       assert listing.is_exportable == false
     end
   end
+
+  describe "typologies/1" do
+    test "should list all valid typologies" do
+      development = insert(:development)
+      typology_params = %{rooms: 2, area: 100, development: development}
+      insert(:listing, Map.merge(%{status: "active", price: 500_000}, typology_params))
+      insert(:listing, Map.merge(%{status: "active", price: 550_000}, typology_params))
+      insert(:listing, Map.merge(%{status: "inactive", price: 600_000}, typology_params))
+
+      assert [
+               %{
+                 rooms: 2,
+                 area: 100,
+                 min_price: 500_000,
+                 max_price: 550_000,
+                 unit_count: 2,
+                 development_uuid: development.uuid
+               }
+             ] == Listings.typologies([development.uuid])
+    end
+  end
 end
