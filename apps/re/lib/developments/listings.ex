@@ -11,6 +11,8 @@ defmodule Re.Developments.Listings do
 
   alias Ecto.Changeset
 
+  import Ecto.Query, only: [select: 3, where: 3, group_by: 3]
+
   def insert(params, opts) do
     %Listing{}
     |> changeset_for_opts(opts)
@@ -96,6 +98,21 @@ defmodule Re.Developments.Listings do
     Listing
     |> Queries.per_development(uuid)
     |> Queries.preload_relations(preload)
+    |> Repo.all()
+  end
+
+  def typologies(development_uuids) when is_list(development_uuids) do
+    Listing
+    |> select([l], %{
+      area: l.area,
+      rooms: l.rooms,
+      max_price: max(l.price),
+      min_price: min(l.price),
+      unit_count: count(l.id),
+      development_uuid: l.development_uuid
+    })
+    |> group_by([l], [l.area, l.rooms, l.development_uuid])
+    |> where([l], l.development_uuid in ^development_uuids and l.status == "active")
     |> Repo.all()
   end
 end
