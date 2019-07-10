@@ -31,52 +31,88 @@ defmodule ReIntegrations.Orulo do
     end
   end
 
-  def multi_building_payload_insert(multi, params) do
-    changeset =
-      %BuildingPayload{}
-      |> BuildingPayload.changeset(params)
-
-    uuid = Changeset.get_field(changeset, :uuid)
-
+  def import_development(multi, external_id) do
     multi
-    |> Multi.insert(:building, changeset)
-    |> JobQueue.enqueue(:building_parse, %{
-      "type" => "parse_building_into_development",
-      "uuid" => uuid
-    })
+    |> Multi.run(:fetch_building, fn _repo, _changes ->
+      fetch_building(external_id)
+    end)
+    |> Multi.run(:insert_building_payload, fn _repo, %{fetch_building: payload} ->
+      insert_building_payload(%{external_id: external_id, payload: payload})
+    end)
+    |> Multi.run(:enqueue_job, fn _repo, %{insert_building_payload: %{uuid: uuid}} ->
+      new_job("parse_building_into_development", uuid)
+    end)
     |> Repo.transaction()
   end
 
-  def multi_images_payload_insert(multi, params) do
-    changeset =
-      %ImagePayload{}
-      |> ImagePayload.changeset(params)
+  defp new_job(type, uuid) do
+    %{"type" => type, "uuid" => uuid}
+    |> JobQueue.new()
+    |> Repo.insert()
+  end
 
-    uuid = Changeset.get_field(changeset, :uuid)
-
+  def import_images(multi, external_id) do
     multi
-    |> Multi.insert(:insert_images_payload, changeset)
-    |> JobQueue.enqueue(:parse_images_job, %{
-      "type" => "parse_images_payloads_into_images",
-      "uuid" => uuid
-    })
+    |> Multi.run(:fetch_images, fn _repo, _changes ->
+      fetch_images(external_id)
+    end)
+    |> Multi.run(:insert_images_payload, fn _repo, %{fetch_images: payload} ->
+      insert_images_payload(%{external_id: external_id, payload: payload})
+    end)
+    |> Multi.run(:enqueue_job, fn _repo, %{insert_images_payload: %{uuid: uuid}} ->
+      new_job("parse_images_payloads_into_images", uuid)
+    end)
     |> Repo.transaction()
   end
 
-  def insert_typologies_payload(multi, params) do
-    changeset =
-      %TypologyPayload{}
-      |> TypologyPayload.changeset(params)
-
-    uuid = Changeset.get_field(changeset, :uuid)
-
+  def import_typologies(multi, id) do
     multi
-    |> Multi.insert(:insert_typologies_payload, changeset)
-    |> JobQueue.enqueue(:fetch_units, %{
-      "type" => "fetch_units",
-      "uuid" => uuid
-    })
+    |> Multi.run(:fetch_typologies, fn _repo, _changes ->
+      fetch_typologies(id)
+    end)
+    |> Multi.run(:insert_typologies_payload, fn _repo, %{fetch_typologies: payload} ->
+      insert_typologies_payload(%{building_id: id, payload: payload})
+    end)
+    |> Multi.run(:enqueue_job, fn _repo, %{insert_typologies_payload: %{uuid: uuid}} ->
+      new_job("fetch_units", uuid)
+    end)
     |> Repo.transaction()
+  end
+
+  defp fetch_building(external_id) do
+    with {:ok, %{body: body}} <- Client.get_building(external_id) do
+      Jason.decode(body)
+    end
+  end
+
+  defp fetch_images(external_id) do
+    with {:ok, %{body: body}} <- Client.get_images(external_id) do
+      Jason.decode(body)
+    end
+  end
+
+  defp fetch_typologies(external_id) do
+    with {:ok, %{body: body}} <- Client.get_typologies(external_id) do
+      Jason.decode(body)
+    end
+  end
+
+  defp insert_building_payload(params) do
+    %BuildingPayload{}
+    |> BuildingPayload.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp insert_images_payload(params) do
+    %ImagePayload{}
+    |> ImagePayload.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp insert_typologies_payload(params) do
+    %TypologyPayload{}
+    |> TypologyPayload.changeset(params)
+    |> Repo.insert()
   end
 
   def bulk_insert_unit_payloads(%Multi{} = multi, building_id, responses) do
