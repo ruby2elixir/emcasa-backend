@@ -17,12 +17,13 @@ defmodule Re.Addresses.District do
     field :name_slug, :string
     field :description, :string, default: ""
     field :status, :string, default: "uncovered"
+    field :sort_order, :integer
 
     timestamps()
   end
 
   @required ~w(state city name)a
-  @optional ~w(status description)a
+  @optional ~w(status description sort_order)a
   @params @required ++ @optional
 
   @sluggified_attr ~w(state city name)a

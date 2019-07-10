@@ -37,7 +37,8 @@ defmodule Re.Addresses.Neighborhoods do
   end
 
   def districts,
-    do: Repo.all(from(d in District, where: d.status in @covered_for_show))
+    do:
+      Repo.all(from(d in District, where: d.status in @covered_for_show, order_by: d.sort_order))
 
   def get_district(params) do
     case Repo.get_by(District, params) do
@@ -79,7 +80,6 @@ defmodule Re.Addresses.Neighborhoods do
   def is_covered(neighborhood) do
     neighborhood
     |> sluggify_attributes()
-    |> remap_neighborhood()
     |> do_is_covered()
   end
 
@@ -89,46 +89,4 @@ defmodule Re.Addresses.Neighborhoods do
     |> Map.put(:neighborhood_slug, Slugs.sluggify(neighborhood.neighborhood))
     |> Map.put(:state_slug, Slugs.sluggify(neighborhood.state))
   end
-
-  defp remap_neighborhood(
-         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "pompeia"} = neighborhood
-       ),
-       do: %{neighborhood | neighborhood_slug: "vila-pompeia", neighborhood: "Vila Pompeia"}
-
-  defp remap_neighborhood(
-         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "vila-clementino"} =
-           neighborhood
-       ),
-       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
-
-  defp remap_neighborhood(
-         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-da-gloria"} =
-           neighborhood
-       ),
-       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
-
-  defp remap_neighborhood(
-         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "chacara-klabin"} =
-           neighborhood
-       ),
-       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
-
-  defp remap_neighborhood(
-         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "paraiso"} = neighborhood
-       ),
-       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
-
-  defp remap_neighborhood(
-         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-luzitania"} =
-           neighborhood
-       ),
-       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
-
-  defp remap_neighborhood(
-         %{city_slug: "sao-paulo", state_slug: "sp", neighborhood_slug: "jardim-vila-mariana"} =
-           neighborhood
-       ),
-       do: %{neighborhood | neighborhood_slug: "vila-mariana", neighborhood: "Vila Mariana"}
-
-  defp remap_neighborhood(neighborhood), do: neighborhood
 end
