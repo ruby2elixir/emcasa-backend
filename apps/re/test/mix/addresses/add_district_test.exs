@@ -31,10 +31,6 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrictTest do
         "Chácara Klabin"
       ]
 
-      Enum.each partially_covered_districts, fn district ->
-        assert Repo.get_by(District, name: district)
-      end
-
       Enum.each covered_districts, fn district ->
         assert Repo.get_by(District, name: district)
       end

@@ -24,6 +24,7 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
 
   def run(_) do
     Mix.Task.run("app.start")
+
     Enum.each(@covered_districts, fn district_to_insert ->
       {:ok, district} =
         %District{}
