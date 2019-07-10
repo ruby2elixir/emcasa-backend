@@ -1,4 +1,4 @@
- defmodule Re.ListingsTest do
+defmodule Re.ListingsTest do
   use Re.ModelCase
 
   import Re.CustomAssertion
@@ -25,6 +25,7 @@
   end
 
   describe "paginated/1" do
+    @tag dev: true
     test "should filter by attributes" do
       tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
       tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
@@ -197,9 +198,9 @@
       assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
       assert 0 == result.remaining_count
 
-      result = Listings.paginated(%{"tags_slug" => ["tag-1", "tag-2"], "page_size" => 1})
-      assert_mapper_match([%{id: id1}], result.listings, &map_id/1)
-      assert 1 == result.remaining_count
+      result = Listings.paginated(%{"tags_slug" => ["tag-1", "tag-2"], "page_size" => 2})
+      assert_mapper_match([%{id: id1}, %{id: id2}], result.listings, &map_id/1)
+      assert 0 == result.remaining_count
     end
 
     test "should not filter for empty array" do
@@ -286,6 +287,7 @@
       development1 = insert(:development)
       development2 = insert(:development)
       insert_list(1, :listing, is_release: false)
+
       insert_list(
         2,
         :listing,
@@ -293,6 +295,7 @@
         is_release: true,
         development: development1
       )
+
       insert_list(
         2,
         :listing,
@@ -301,16 +304,19 @@
         development: development2
       )
 
-      assert %{remaining_count: 0, listings: listings1} = Listings.paginated(%{
-        page_size: 3,
-        exclude_similar_for_primary_market: true
-      })
+      assert %{remaining_count: 0, listings: listings1} =
+               Listings.paginated(%{
+                 page_size: 3,
+                 exclude_similar_for_primary_market: true
+               })
+
       assert 3 == length(listings1)
     end
 
     test "should paginate excluding developments already returned" do
       development = insert(:development)
       insert_list(2, :listing, is_release: false)
+
       insert_list(
         2,
         :listing,
@@ -319,18 +325,20 @@
         development: development
       )
 
-      %{remaining_count: 1, listings: listings1} = Listings.paginated(%{
-        page_size: 2,
-        exclude_similar_for_primary_market: true
-      })
+      %{remaining_count: 1, listings: listings1} =
+        Listings.paginated(%{
+          page_size: 2,
+          exclude_similar_for_primary_market: true
+        })
 
       listings1_ids = listings1 |> Enum.map(&Map.get(&1, :id))
 
-      assert %{remaining_count: 0, listings: listings2} = Listings.paginated(%{
-        page_size: 2,
-        exclude_similar_for_primary_market: true,
-        excluded_listing_ids: listings1_ids
-      })
+      assert %{remaining_count: 0, listings: listings2} =
+               Listings.paginated(%{
+                 page_size: 2,
+                 exclude_similar_for_primary_market: true,
+                 excluded_listing_ids: listings1_ids
+               })
 
       assert 1 == length(listings2)
     end
