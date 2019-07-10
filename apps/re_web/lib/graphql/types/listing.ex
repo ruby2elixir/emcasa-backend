@@ -12,8 +12,8 @@ defmodule ReWeb.Types.Listing do
   }
 
   enum :deactivation_reason, values: ~w(duplicated gave_up left_emcasa publication_mistake rented
-                          sold sold_by_emcasa temporarily_suspended to_be_published
-                          went_exclusive)
+                                        rejected sold sold_by_emcasa temporarily_suspended to_be_published
+                                        went_exclusive)
 
   enum :garage_type, values: ~w(contract condominium)
 
