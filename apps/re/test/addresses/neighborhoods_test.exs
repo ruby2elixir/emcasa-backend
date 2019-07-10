@@ -117,49 +117,14 @@ defmodule Re.NeighborhoodsTest do
       refute Neighborhoods.is_covered(neighborhood)
     end
 
-    test "should be false when city does not exists" do
+    test "should be false when state does not exists" do
       neighborhood = %{state: "RS", neighborhood: "Humaitá", city: "Rio de Janeiro"}
       refute Neighborhoods.is_covered(neighborhood)
     end
 
-    test "should be false when state does not exists" do
+    test "should be false when city does not exists" do
       neighborhood = %{state: "RJ", neighborhood: "Humaitá", city: "Porto Alegre"}
       refute Neighborhoods.is_covered(neighborhood)
-    end
-
-    test "should be true when alternative name Pompeia is provided" do
-      neighborhood = %{state: "SP", neighborhood: "Pompeia", city: "São Paulo"}
-      assert Neighborhoods.is_covered(neighborhood)
-    end
-
-    test "should be true when alternative name Vila Clementino is provided" do
-      neighborhood = %{state: "SP", neighborhood: "Vila Clementino", city: "São Paulo"}
-      assert Neighborhoods.is_covered(neighborhood)
-    end
-
-    test "should be true when alternative name Jardim da Glória is provided" do
-      neighborhood = %{state: "SP", neighborhood: "Jardim da Glória", city: "São Paulo"}
-      assert Neighborhoods.is_covered(neighborhood)
-    end
-
-    test "should be true when alternative name Chácara Klabin is provided" do
-      neighborhood = %{state: "SP", neighborhood: "Chácara Klabin", city: "São Paulo"}
-      assert Neighborhoods.is_covered(neighborhood)
-    end
-
-    test "should be true when alternative name Paraíso is provided" do
-      neighborhood = %{state: "SP", neighborhood: "Paraíso", city: "São Paulo"}
-      assert Neighborhoods.is_covered(neighborhood)
-    end
-
-    test "should be true when alternative name Jardim Luzitania is provided" do
-      neighborhood = %{state: "SP", neighborhood: "Jardim Luzitania", city: "São Paulo"}
-      assert Neighborhoods.is_covered(neighborhood)
-    end
-
-    test "should be true when alternative name Jardim Vila Mariana is provided" do
-      neighborhood = %{state: "SP", neighborhood: "Jardim Vila Mariana", city: "São Paulo"}
-      assert Neighborhoods.is_covered(neighborhood)
     end
 
     test "should be false when the neighborhood is partially covered" do
