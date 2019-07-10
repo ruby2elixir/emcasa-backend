@@ -29,7 +29,8 @@ defmodule Re.BuyerLeads.WalkInOffline do
   end
 
   @required ~w()a
-  @optional ~w(full_name email phone_number neighborhoods timestamp location cpf where_did_you_find_about)a
+  @optional ~w(full_name email phone_number neighborhoods timestamp location cpf
+               where_did_you_find_about)a
   @params @required ++ @optional
   @locations ~w(RJ SP)
 
@@ -52,7 +53,9 @@ defmodule Re.BuyerLeads.WalkInOffline do
       %{
         name: lead.full_name,
         email: lead.email,
-        origin: "walk_in_offline"
+        origin: "walk_in_offline",
+        cpf: lead.cpf,
+        where_did_you_find_about: lead.where_did_you_find_about
       }
       |> put_location(lead)
       |> put_user_info(lead)

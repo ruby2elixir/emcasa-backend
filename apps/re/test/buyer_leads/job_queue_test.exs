@@ -535,7 +535,9 @@ defmodule Re.BuyerLeads.JobQueueTest do
           budget: buyer_lead.budget,
           neighborhood: buyer_lead.neighborhood,
           url: buyer_lead.url,
-          user_url: buyer_lead.user_url
+          user_url: buyer_lead.user_url,
+          cpf: "999.999.999-99",
+          where_did_you_find_about: "tv"
         })
 
       {:ok, buyer_lead: buyer_lead, encoded_buyer_lead: encoded_buyer_lead}
@@ -594,6 +596,8 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       assert buyer.user_uuid == user_uuid
       assert buyer.location == "sao-paulo|sp"
+      assert buyer.cpf == "999.999.999-99"
+      assert buyer.where_did_you_find_about == "tv"
       assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
@@ -612,6 +616,8 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.uuid
       assert buyer.phone_number == "+5511999999999"
       assert buyer.location == "sao-paulo|sp"
+      assert buyer.cpf == "999.999.999-99"
+      assert buyer.where_did_you_find_about == "tv"
       refute buyer.user_uuid
       refute buyer.user_url
     end
