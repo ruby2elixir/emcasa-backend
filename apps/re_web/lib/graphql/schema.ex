@@ -4,6 +4,7 @@ defmodule ReWeb.Schema do
   """
   use Absinthe.Schema
 
+  import_types ReWeb.Types.Address
   import_types ReWeb.Types.Listing
   import_types ReWeb.Types.Image
   import_types ReWeb.Types.User
@@ -16,6 +17,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.OwnerContact
   import_types ReWeb.Types.SellerLead
   import_types ReWeb.Types.BuyerLead
+  import_types ReWeb.Types.Typology
   import_types ReWeb.Types.Custom.UUID
   import_types Absinthe.Type.Custom
 
@@ -35,6 +37,7 @@ defmodule ReWeb.Schema do
   end
 
   query do
+    import_fields(:address_queries)
     import_fields(:listing_queries)
     import_fields(:user_queries)
     import_fields(:dashboard_queries)
@@ -45,6 +48,7 @@ defmodule ReWeb.Schema do
   end
 
   mutation do
+    import_fields(:address_mutations)
     import_fields(:listing_mutations)
     import_fields(:image_mutations)
     import_fields(:user_mutations)
@@ -83,6 +87,7 @@ defmodule ReWeb.Schema do
       Re.Accounts,
       Re.Addresses,
       Re.Developments,
+      Re.Developments.Typologies,
       Re.Images,
       Re.Listings,
       Re.Listings.History.Prices,

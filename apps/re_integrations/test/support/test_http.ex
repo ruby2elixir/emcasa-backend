@@ -1,6 +1,18 @@
 defmodule ReIntegrations.TestHTTP do
   @moduledoc false
 
+  def get(%URI{path: "/buildings/666"}, _) do
+    {:ok, %{body: "{\"test\": \"building_payload\"}"}}
+  end
+
+  def get(%URI{path: "/buildings/666/images"}, _) do
+    {:ok, %{body: "{\"test\": \"images_payload\"}"}}
+  end
+
+  def get(%URI{path: "/buildings/666/typologies"}, _) do
+    {:ok, %{body: "{\"test\": \"typologies_payload\"}"}}
+  end
+
   def get(%URI{path: "/buildings/1/typologies/1/units"}, _) do
     {:ok, %{body: "{\"units\": []}"}}
   end

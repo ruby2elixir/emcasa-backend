@@ -9,7 +9,6 @@ defmodule ReIntegrations.Orulo.JobQueue do
 
   alias ReIntegrations.{
     Orulo,
-    Orulo.Client,
     Orulo.PayloadProcessor,
     Orulo.TypologyPayload
   }
@@ -17,37 +16,15 @@ defmodule ReIntegrations.Orulo.JobQueue do
   alias Ecto.Multi
 
   def perform(%Multi{} = multi, %{"type" => "import_development_from_orulo", "external_id" => id}) do
-    with {:ok, %{body: body}} <- Client.get_building(id),
-         {:ok, payload} <- Jason.decode(body),
-         {:ok, _} <-
-           Orulo.multi_building_payload_insert(multi, %{external_id: id, payload: payload}) do
-    else
-      error -> Logger.error("Error on building request: #{Kernel.inspect(error)}")
-    end
+    Orulo.import_development(multi, id)
   end
 
   def perform(%Multi{} = multi, %{"type" => "fetch_images_from_orulo", "external_id" => id}) do
-    with {:ok, %{body: body}} <- Client.get_images(id),
-         {:ok, payload} <- Jason.decode(body),
-         {:ok, _} <-
-           Orulo.multi_images_payload_insert(multi, %{external_id: id, payload: payload}) do
-    else
-      error -> Logger.error("Error on image request: #{Kernel.inspect(error)}")
-    end
+    Orulo.import_images(multi, id)
   end
 
   def perform(%Multi{} = multi, %{"type" => "fetch_typologies", "building_id" => id}) do
-    with {:ok, %{body: body}} <- Client.get_typologies(id),
-         {:ok, payload} <- Jason.decode(body),
-         {:ok, new_typology_payload} <-
-           Orulo.insert_typologies_payload(multi, %{
-             building_id: Integer.to_string(id),
-             payload: payload
-           }) do
-      {:ok, new_typology_payload}
-    else
-      error -> Logger.error("Error on typology request:  #{Kernel.inspect(error)}")
-    end
+    Orulo.import_typologies(multi, id)
   end
 
   def perform(%Multi{} = multi, %{"type" => "parse_building_into_development", "uuid" => uuid}) do

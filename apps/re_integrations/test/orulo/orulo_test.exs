@@ -27,59 +27,39 @@ defmodule ReIntegrations.OruloTest do
     end
   end
 
-  describe "multi_building_payload_insert/2" do
+  describe "insert_building_payload/2" do
     test "create new building" do
-      params = %{external_id: 666, payload: %{test: "building_payload"}}
-
-      assert {:ok, %{building: inserted_building}} =
-               Orulo.multi_building_payload_insert(Multi.new(), params)
+      assert {:ok, %{insert_building_payload: inserted_building}} =
+               Orulo.import_development(Multi.new(), 666)
 
       assert inserted_building.uuid
       assert inserted_building.external_id == 666
-      assert inserted_building.payload == %{test: "building_payload"}
-    end
-
-    test "enqueue a new parse job" do
-      params = %{external_id: 666, payload: %{test: "building_payload"}}
-      assert {:ok, _} = Orulo.multi_building_payload_insert(Multi.new(), params)
+      assert inserted_building.payload == %{"test" => "building_payload"}
       assert_enqueued_job(Repo.all(JobQueue), "parse_building_into_development")
     end
   end
 
-  describe "multi_images_payload_insert/2" do
+  describe "import_images/2" do
     test "create new image payload" do
-      params = %{external_id: 666, payload: %{test: "images_payload"}}
-
       assert {:ok, %{insert_images_payload: images_payload}} =
-               Orulo.multi_images_payload_insert(Multi.new(), params)
+               Orulo.import_images(Multi.new(), 666)
 
       assert images_payload.uuid
       assert images_payload.external_id == 666
-      assert images_payload.payload == %{test: "images_payload"}
-    end
-
-    test "enqueue a new parse images job" do
-      params = %{external_id: 666, payload: %{test: "images_payload"}}
-      assert {:ok, _} = Orulo.multi_images_payload_insert(Multi.new(), params)
-
+      assert images_payload.payload == %{"test" => "images_payload"}
       assert_enqueued_job(Repo.all(JobQueue), "parse_images_payloads_into_images")
     end
   end
 
-  describe "insert_typology_payload/2" do
+  describe "import_typologies/2" do
     test "create new typology payload" do
-      params = %{building_id: "666", payload: %{test: "typology_payload"}}
-
       assert {:ok, %{insert_typologies_payload: payload}} =
-               Orulo.insert_typologies_payload(Multi.new(), params)
+               Orulo.import_typologies(Multi.new(), "666")
 
       assert payload.uuid
       assert payload.building_id == "666"
-      assert payload.payload == %{test: "typology_payload"}
-
-      JobQueue
-      |> Repo.all()
-      |> assert_enqueued_job("fetch_units")
+      assert payload.payload == %{"test" => "typologies_payload"}
+      assert_enqueued_job(Repo.all(JobQueue), "fetch_units")
     end
   end
 

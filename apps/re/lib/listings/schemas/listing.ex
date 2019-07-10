@@ -45,6 +45,9 @@ defmodule Re.Listing do
     field :in_person_visit_count, :integer, virtual: true
     field :suggested_price, :float
 
+    field :deactivation_reason, :string
+    field :sold_price, :integer
+
     belongs_to :address, Re.Address
 
     belongs_to :development, Re.Development,
@@ -88,14 +91,20 @@ defmodule Re.Listing do
 
   @sun_period_types ~w(morning evening)
 
+  @deactivation_reasons ~w(duplicated gave_up left_emcasa publication_mistake rented
+                           rejected sold sold_by_emcasa temporarily_suspended to_be_published
+                           went_exclusive)
+
   @required ~w(type description price rooms bathrooms area garage_spots garage_type
                      score address_id user_id suites dependencies has_elevator)a
   @optional ~w(complement floor matterport_code is_exclusive status property_tax
                      maintenance_fee balconies restrooms is_release is_exportable
                      orientation floor_count unit_per_floor sun_period elevators
-                     construction_year owner_contact_uuid suggested_price)a
+                     construction_year owner_contact_uuid suggested_price
+                     deactivation_reason sold_price)a
 
   @attributes @required ++ @optional
+
   def changeset(struct, params) do
     struct
     |> cast(params, @attributes)
@@ -110,6 +119,7 @@ defmodule Re.Listing do
     |> validate_inclusion(:garage_type, @garage_types)
     |> validate_inclusion(:orientation, @orientation_types)
     |> validate_inclusion(:sun_period, @sun_period_types)
+    |> validate_inclusion(:deactivation_reason, @deactivation_reasons)
     |> generate_uuid()
     |> calculate_price_per_area()
   end
