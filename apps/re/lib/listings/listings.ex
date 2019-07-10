@@ -160,6 +160,9 @@ defmodule Re.Listings do
         {:deactivation_reason, reason}, changeset ->
           Changeset.change(changeset, deactivation_reason: reason)
 
+        {:sold_price, nil}, changeset ->
+          changeset
+
         {:sold_price, sold_price}, changeset when is_integer(sold_price) ->
           Changeset.change(changeset, sold_price: sold_price)
       end)
