@@ -84,30 +84,17 @@ defmodule Re.Listings.Filters do
   end
 
   defp build_query(params, query) do
-    Enum.reduce(params, query, &attr_filter/2)
+    params
+    |> Enum.reduce(query, &attr_filter/2)
     |> apply_distinct(params)
   end
 
-  defp apply_distinct(query, %{exclude_similar_for_primary_market: true}) do
-    from(
-      l in query,
-      distinct: coalesce(l.development_uuid, l.uuid)
-    )
-  end
+  defp apply_distinct(query, %{exclude_similar_for_primary_market: true}),
+    do: distinct(query, [l], coalesce(l.development_uuid, l.uuid))
 
-  defp apply_distinct(query, %{tags_slug: _}) do
-    from(
-      l in query,
-      distinct: l.uuid
-    )
-  end
+  defp apply_distinct(query, %{tags_slug: _}), do: distinct(query, [l], l.uuid)
 
-  defp apply_distinct(query, %{tags_uuid: _}) do
-    from(
-      l in query,
-      distinct: l.uuid
-    )
-  end
+  defp apply_distinct(query, %{tags_uuid: _}), do: distinct(query, [l], l.uuid)
 
   defp apply_distinct(query, _), do: query
 
