@@ -13,7 +13,8 @@ defmodule Re.Developments.Typologies do
 
   def run_batch(Development, _query, col, development_uuids, _repo_opts) do
     typologies =
-      Developments.Listings.typologies(development_uuids)
+      development_uuids
+      |> Developments.Listings.typologies()
       |> Enum.reduce(%{}, fn typology, map ->
         Map.update(
           map,
