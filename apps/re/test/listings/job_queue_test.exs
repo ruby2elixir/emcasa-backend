@@ -2,10 +2,7 @@ defmodule Re.Listings.JobQueueTest do
   @moduledoc false
   use Re.ModelCase
 
-  import Re.{
-    CustomAssertion,
-    Factory
-  }
+  import Re.Factory
 
   import Mockery
 

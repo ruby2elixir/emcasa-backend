@@ -4,13 +4,13 @@ defmodule Re.Listings.Liquidity do
   listing price with price_suggestion.
   """
 
-  @default_liquidity -1
+  @default_liquidity_radio nil
 
-  def calculate(0, _), do: @default_liquidity
+  def calculate(0, _), do: @default_liquidity_radio
 
-  def calculate(_, 0), do: @default_liquidity
+  def calculate(_, 0), do: @default_liquidity_radio
 
-  def calculate(_, nil), do: @default_liquidity
+  def calculate(_, nil), do: @default_liquidity_radio
 
   def calculate(price, suggested_price)
       when is_number(price) and

@@ -6,6 +6,8 @@ defmodule Re.Listing do
 
   import Ecto.Changeset
 
+  alias Re.Listings.Liquidity
+
   schema "listings" do
     field :uuid, Ecto.UUID
     field :type, :string
@@ -47,6 +49,7 @@ defmodule Re.Listing do
 
     field :deactivation_reason, :string
     field :sold_price, :integer
+    field :liquidity_ratio, :float
 
     belongs_to :address, Re.Address
 
@@ -122,6 +125,7 @@ defmodule Re.Listing do
     |> validate_inclusion(:deactivation_reason, @deactivation_reasons)
     |> generate_uuid()
     |> calculate_price_per_area()
+    |> calculate_liquidity()
   end
 
   @development_required ~w(type description price area address_id development_uuid)a
@@ -199,5 +203,11 @@ defmodule Re.Listing do
 
   defp set_price_per_area(price, area, changeset) do
     put_change(changeset, :price_per_area, price / area)
+  end
+
+  defp calculate_liquidity(changeset) do
+    price = get_field(changeset, :price, 0)
+    suggested_price = get_field(changeset, :suggested_price, 0)
+    put_change(changeset, :liquidity_ratio, Liquidity.calculate(price, suggested_price))
   end
 end
