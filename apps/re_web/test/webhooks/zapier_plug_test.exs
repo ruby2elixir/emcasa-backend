@@ -276,38 +276,38 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     end
   end
 
-  @walkin_offline_buyer_payload %{
+  @walk_in_offline_buyer_payload %{
     "full_name" => "mah full naem",
     "timestamp" => "2019-01-01T00:00:00.000Z",
     "email" => "mah@email",
     "phone_number" => "11999999999",
     "neighborhoods" => "manhattan brooklyn harlem",
     "location" => "RJ",
-    "source" => "walkin_offline_buyer"
+    "source" => "walk_in_offline_buyer"
   }
 
-  @walkin_offline_buyer_invalid_payload %{
+  @walk_in_offline_buyer_invalid_payload %{
     "location" => "asdasda"
   }
 
-  describe "walkin offline buyer leads" do
+  describe "walk-in offline buyer leads" do
     test "authenticated request", %{authenticated_conn: conn} do
-      conn = post(conn, "/webhooks/zapier", @walkin_offline_buyer_payload)
+      conn = post(conn, "/webhooks/zapier", @walk_in_offline_buyer_payload)
 
       assert text_response(conn, 200) == "ok"
 
-      assert lead = Repo.one(BuyerLeads.WalkinOffline)
+      assert lead = Repo.one(BuyerLeads.WalkInOffline)
       assert lead.uuid
-      assert_enqueued_job(Repo.all(JobQueue), "process_walking_offline_buyer")
+      assert_enqueued_job(Repo.all(JobQueue), "process_walk_in_offline_buyer")
     end
 
     @tag capture_log: true
     test "invalid location request", %{authenticated_conn: conn} do
-      conn = post(conn, "/webhooks/zapier", @walkin_offline_buyer_invalid_payload)
+      conn = post(conn, "/webhooks/zapier", @walk_in_offline_buyer_invalid_payload)
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
-      refute Repo.one(BuyerLeads.WalkinOffline)
+      refute Repo.one(BuyerLeads.WalkInOffline)
     end
   end
 end

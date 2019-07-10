@@ -9,7 +9,7 @@ defmodule ReIntegrations.Zapier do
     SellerLeads
   }
 
-  @buyer_lead_sources ~w(facebook_buyer imovelweb_buyer walkin_offline_buyer)
+  @buyer_lead_sources ~w(facebook_buyer imovelweb_buyer walk_in_offline_buyer)
   @seller_lead_sources ~w(facebook_seller)
 
   def handle_payload(%{"source" => source} = payload) when source in @buyer_lead_sources do

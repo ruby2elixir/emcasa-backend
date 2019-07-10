@@ -297,8 +297,8 @@ defmodule Re.Factory do
     }
   end
 
-  def walkin_offline_buyer_lead_factory do
-    %Re.BuyerLeads.WalkinOffline{
+  def walk_in_offline_buyer_lead_factory do
+    %Re.BuyerLeads.WalkInOffline{
       uuid: UUID.uuid4(),
       full_name: Name.name(),
       email: Internet.email()

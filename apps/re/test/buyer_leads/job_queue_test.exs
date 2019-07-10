@@ -576,16 +576,16 @@ defmodule Re.BuyerLeads.JobQueueTest do
     end
   end
 
-  describe "walkin_offline_buyer_lead" do
+  describe "walk_in_offline_buyer_lead" do
     test "process lead with existing user" do
       %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
       %{uuid: uuid} =
-        insert(:walkin_offline_buyer_lead, phone_number: "+11999999999", location: "SP")
+        insert(:walk_in_offline_buyer_lead, phone_number: "+11999999999", location: "SP")
 
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{
-                 "type" => "process_walking_offline_buyer",
+                 "type" => "process_walk_in_offline_buyer",
                  "uuid" => uuid
                })
 
@@ -599,11 +599,11 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
     test "process lead without existing user" do
       %{uuid: uuid} =
-        insert(:walkin_offline_buyer_lead, phone_number: "+11999999999", location: "SP")
+        insert(:walk_in_offline_buyer_lead, phone_number: "+11999999999", location: "SP")
 
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{
-                 "type" => "process_walking_offline_buyer",
+                 "type" => "process_walk_in_offline_buyer",
                  "uuid" => uuid
                })
 

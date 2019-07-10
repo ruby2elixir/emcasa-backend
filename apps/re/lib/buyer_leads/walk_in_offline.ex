@@ -1,6 +1,6 @@
-defmodule Re.BuyerLeads.WalkinOffline do
+defmodule Re.BuyerLeads.WalkInOffline do
   @moduledoc """
-  Schema for offline walkin buyer leads
+  Schema for offline walk-in buyer leads
   """
   use Ecto.Schema
 
@@ -15,7 +15,7 @@ defmodule Re.BuyerLeads.WalkinOffline do
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
-  schema "walking_offline_buyer_leads" do
+  schema "walk_in_offline_buyer_leads" do
     field :full_name, :string
     field :email, :string
     field :phone_number, :string
@@ -45,14 +45,14 @@ defmodule Re.BuyerLeads.WalkinOffline do
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
 
-  def buyer_lead_changeset(nil), do: raise("BuyerLeads.WalkinOffline not found")
+  def buyer_lead_changeset(nil), do: raise("BuyerLeads.WalkInOffline not found")
 
   def buyer_lead_changeset(lead) do
     params =
       %{
         name: lead.full_name,
         email: lead.email,
-        origin: "walkin_offline"
+        origin: "walk_in_offline"
       }
       |> put_location(lead)
       |> put_user_info(lead)

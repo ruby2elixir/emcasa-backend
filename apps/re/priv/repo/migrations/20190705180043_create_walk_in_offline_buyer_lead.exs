@@ -1,8 +1,8 @@
-defmodule Re.Repo.Migrations.CreateWalkinOfflineBuyerLead do
+defmodule Re.Repo.Migrations.CreateWalkInOfflineBuyerLead do
   use Ecto.Migration
 
   def change do
-    create table(:walking_offline_buyer_leads, primary_key: false) do
+    create table(:walk_in_offline_buyer_leads, primary_key: false) do
       add :uuid, :uuid, primary_key: true
       add :full_name, :string
       add :email, :string
