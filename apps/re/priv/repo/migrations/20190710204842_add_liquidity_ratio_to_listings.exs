@@ -1,4 +1,4 @@
-defmodule Re.Repo.Migrations.AddLiquidityToListings do
+defmodule Re.Repo.Migrations.AddLiquidityRatioToListings do
   use Ecto.Migration
 
   def change do

@@ -1,7 +1,7 @@
 defmodule Re.Listings.Liquidity do
   @moduledoc """
-  Module to contain the logic to calculate the liquidity camparing
-  listing price with price_suggestion.
+  Module to contain the logic to calculate the liquidity ration
+  unding listings details.
   """
 
   @default_liquidity_radio nil
