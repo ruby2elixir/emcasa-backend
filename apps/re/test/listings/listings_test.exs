@@ -25,7 +25,6 @@ defmodule Re.ListingsTest do
   end
 
   describe "paginated/1" do
-    @tag dev: true
     test "should filter by attributes" do
       tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
       tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
