@@ -829,7 +829,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           garage_spots: 1,
           bathrooms: 1,
           inserted_at: ~N[2018-01-01 10:00:00],
-          suggested_price: 1000.00
+          suggested_price: 1000.00,
+          liquidity_ratio: 1.0
         )
 
       %{id: related_id1} = insert(:listing, address: address, score: 4)
@@ -874,6 +875,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             listingFavoriteCount
             tourVisualisationCount
             listingVisualisationCount
+            normalizedLiquidityRatio
             previousPrices {
               price
             }
@@ -928,6 +930,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                "listingFavoriteCount" => 3,
                "tourVisualisationCount" => 3,
                "listingVisualisationCount" => 3,
+               "normalizedLiquidityRatio" => 10,
                "previousPrices" => [
                  %{"price" => price1},
                  %{"price" => price2},
@@ -1164,6 +1167,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             listingFavoriteCount
             tourVisualisationCount
             listingVisualisationCount
+            normalizedLiquidityRatio
             previousPrices {
               price
             }
@@ -1208,6 +1212,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                "listingVisualisationCount" => nil,
                "previousPrices" => nil,
                "suggestedPrice" => nil,
+               "normalizedLiquidityRatio" => nil,
                "related" => %{
                  "listings" => [
                    %{"id" => to_string(related_id1)},
