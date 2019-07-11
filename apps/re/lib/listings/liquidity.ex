@@ -5,6 +5,7 @@ defmodule Re.Listings.Liquidity do
   """
 
   @default_liquidity_radio nil
+  @decimal_precision 3
 
   def calculate(0, _), do: @default_liquidity_radio
 
@@ -15,6 +16,7 @@ defmodule Re.Listings.Liquidity do
   def calculate(price, suggested_price)
       when is_number(price) and
              is_number(suggested_price) do
-    (suggested_price - price) / suggested_price
+    ((suggested_price - price) / suggested_price)
+    |> Float.round(@decimal_precision)
   end
 end
