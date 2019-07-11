@@ -3,7 +3,9 @@ defmodule ReWeb.Resolvers.Developments do
 
   alias Re.{
     Addresses,
-    Developments
+    Development,
+    Developments,
+    Developments.Typologies
   }
 
   import Absinthe.Resolution.Helpers, only: [on_load: 2]
@@ -35,6 +37,17 @@ defmodule ReWeb.Resolvers.Developments do
     |> Dataloader.load(Developments, :development, listing)
     |> on_load(fn loader ->
       {:ok, Dataloader.get(loader, Developments, :development, listing)}
+    end)
+  end
+
+  def typologies(development, _params, %{context: %{loader: loader}}) do
+    loader
+    |> Dataloader.load(Typologies, Development, development.uuid)
+    |> on_load(fn loader ->
+      %{typologies: typologies} =
+        Dataloader.get(loader, Typologies, Development, development.uuid)
+
+      {:ok, typologies}
     end)
   end
 

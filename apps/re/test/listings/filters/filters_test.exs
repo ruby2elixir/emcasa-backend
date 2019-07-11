@@ -813,6 +813,32 @@ defmodule Re.Listings.FiltersTest do
 
       assert_mapper_match([%{id: id}], result, &map_id/1)
     end
+
+    test "filter with multiple distincts at once" do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      {:ok, listing_1} =
+        build(:listing)
+        |> for_secondary_market()
+        |> insert()
+        |> Listings.upsert_tags([tag_1.uuid])
+
+      build(:listing, is_exportable: true)
+      |> for_primary_market()
+      |> insert()
+
+      filters = %{
+        exclude_similar_for_primary_market: true,
+        tags_slug: ["tag-1"]
+      }
+
+      result =
+        Listing
+        |> Filters.apply(filters)
+        |> Repo.all()
+
+      assert_mapper_match([%{id: listing_1.id}], result, &map_id/1)
+    end
   end
 
   defp map_id(items), do: Enum.map(items, & &1.id)

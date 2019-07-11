@@ -9,8 +9,8 @@ defmodule ReWeb.Types.Listing do
   alias ReWeb.Resolvers
 
   enum :deactivation_reason, values: ~w(duplicated gave_up left_emcasa publication_mistake rented
-                          sold sold_by_emcasa temporarily_suspended to_be_published
-                          went_exclusive)
+                                        rejected sold sold_by_emcasa temporarily_suspended to_be_published
+                                        went_exclusive)
 
   enum :garage_type, values: ~w(contract condominium)
 
@@ -54,6 +54,7 @@ defmodule ReWeb.Types.Listing do
     field :score, :integer, resolve: &Resolvers.Listings.score/3
     field :deactivation_reason, :deactivation_reason
     field :sold_price, :integer
+    field :liquidity_ratio, :float
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)

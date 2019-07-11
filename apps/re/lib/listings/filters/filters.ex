@@ -83,7 +83,20 @@ defmodule Re.Listings.Filters do
     |> Relax.apply()
   end
 
-  defp build_query(params, query), do: Enum.reduce(params, query, &attr_filter/2)
+  defp build_query(params, query) do
+    params
+    |> Enum.reduce(query, &attr_filter/2)
+    |> apply_distinct(params)
+  end
+
+  defp apply_distinct(query, %{exclude_similar_for_primary_market: true}),
+    do: distinct(query, [l], coalesce(l.development_uuid, l.uuid))
+
+  defp apply_distinct(query, %{tags_slug: _}), do: distinct(query, [l], l.uuid)
+
+  defp apply_distinct(query, %{tags_uuid: _}), do: distinct(query, [l], l.uuid)
+
+  defp apply_distinct(query, _), do: query
 
   defp attr_filter({:max_price, max_price}, query) do
     from(l in query, where: l.price <= ^max_price)
@@ -248,8 +261,7 @@ defmodule Re.Listings.Filters do
     from(
       l in query,
       join: t in assoc(l, :tags),
-      where: t.name_slug in ^slugs,
-      distinct: l.id
+      where: t.name_slug in ^slugs
     )
   end
 
@@ -259,8 +271,7 @@ defmodule Re.Listings.Filters do
     from(
       l in query,
       join: t in assoc(l, :tags),
-      where: t.uuid in ^uuids,
-      distinct: l.id
+      where: t.uuid in ^uuids
     )
   end
 
