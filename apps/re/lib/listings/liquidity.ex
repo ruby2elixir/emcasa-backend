@@ -16,6 +16,7 @@ defmodule Re.Listings.Liquidity do
   def calculate(price, suggested_price)
       when is_number(price) and
              is_number(suggested_price) do
+    # credo:disable-for-lines:2
     ((suggested_price - price) / suggested_price)
     |> Float.round(@decimal_precision)
   end

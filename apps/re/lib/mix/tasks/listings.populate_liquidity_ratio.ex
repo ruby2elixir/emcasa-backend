@@ -20,9 +20,7 @@ defmodule Mix.Tasks.Re.Listings.PopulateLiquidityRatio do
   def run(_) do
     Mix.Task.run("app.start")
 
-    listings =
-      from(l in Listing, where: l.status == ^"active")
-      |> Re.Repo.all()
+    listings = Repo.all(from(l in Listing, where: l.status == ^"active"))
 
     Enum.each(listings, fn listing ->
       listing
