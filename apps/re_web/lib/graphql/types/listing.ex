@@ -59,6 +59,9 @@ defmodule ReWeb.Types.Listing do
     field :sold_price, :integer
     field :liquidity_ratio, :float
 
+    field :normalized_liquidity_ratio, :integer,
+      resolve: &Resolvers.Listings.normalized_liquidity_ratio/3
+
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
 
