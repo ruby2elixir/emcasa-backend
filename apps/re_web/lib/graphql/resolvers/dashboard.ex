@@ -7,6 +7,7 @@ defmodule ReWeb.Resolvers.Dashboard do
   alias Re.{
     Listing,
     Listings.Admin,
+    Listings.Filters,
     Repo
   }
 
@@ -20,15 +21,14 @@ defmodule ReWeb.Resolvers.Dashboard do
     {:ok, Admin.listings(params)}
   end
 
-  def active_listing_count(%{is_release: is_release}, _res) do
-    {:ok,
-     Repo.one(
-       from(
-         l in Re.Listing,
-         where: l.status == "active" and l.is_release == ^is_release,
-         select: count(l.id)
-       )
-     )}
+  def active_listing_count(params, _res) do
+    count =
+      Re.Listing
+      |> Filters.apply(Map.drop(params, ["status", :status]))
+      |> where([l], l.status == "active")
+      |> select([l], count(l.id))
+      |> Repo.one
+    {:ok, count}
   end
 
   def favorite_count(_params, _res) do
