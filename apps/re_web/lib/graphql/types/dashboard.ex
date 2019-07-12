@@ -10,8 +10,7 @@ defmodule ReWeb.Types.Dashboard do
 
   object :dashboard do
     field :active_listing_count, :integer do
-      arg :is_release, :boolean
-      arg :is_exportable, :boolean
+      arg :filters, :listing_filter_input
 
       resolve &DashboardResolvers.active_listing_count/2
     end
