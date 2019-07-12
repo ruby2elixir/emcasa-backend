@@ -34,7 +34,9 @@ defmodule Re.BuyerLeads.Salesforce.ClientTest do
           budget: buyer_lead.budget,
           neighborhood: buyer_lead.neighborhood,
           url: buyer_lead.url,
-          user_url: buyer_lead.user_url
+          user_url: buyer_lead.user_url,
+          cpf: buyer_lead.cpf,
+          where_did_you_find_about: buyer_lead.where_did_you_find_about
         })
 
       {:ok, buyer_lead: buyer_lead, encoded_buyer_lead: encoded_buyer_lead}
