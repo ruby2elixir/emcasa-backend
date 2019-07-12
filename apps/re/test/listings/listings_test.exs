@@ -342,6 +342,20 @@ defmodule Re.ListingsTest do
       assert 1 == length(listings2)
     end
 
+    test "should order by liquidity as default" do
+      %{id: id1} = insert(:listing, liquidity_ratio: 1.0)
+      %{id: id2} = insert(:listing, liquidity_ratio: -1.0)
+      %{id: id3} = insert(:listing, liquidity_ratio: nil)
+
+      assert %{
+               listings: [
+                 %{id: ^id1},
+                 %{id: ^id2},
+                 %{id: ^id3}
+               ]
+             } = Listings.paginated()
+    end
+
     test "should order by attributes" do
       %{id: id1} = insert(:listing, garage_spots: 1, price: 1_000_000, rooms: 2)
       %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 4)

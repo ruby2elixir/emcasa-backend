@@ -283,9 +283,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "should query listing index with pagination", %{unauthenticated_conn: conn} do
-      listing1 = insert(:listing, score: 4, price: 950_000, rooms: 3, area: 90)
-      [%{id: listing2_id}, %{id: listing3_id}] = insert_list(2, :listing, score: 4)
-      insert_list(3, :listing, score: 3)
+      listing1 = insert(:listing, liquidity_ratio: 4.0, price: 950_000, rooms: 3, area: 90)
+      [%{id: listing2_id}, %{id: listing3_id}] = insert_list(2, :listing, liquidity_ratio: 4.0)
+      insert_list(3, :listing, liquidity_ratio: 3.0)
 
       variables = %{
         "pagination" => %{
@@ -833,8 +833,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           liquidity_ratio: 1.0
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1000,8 +1000,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           suggested_price: nil
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1125,8 +1125,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           inserted_at: ~N[2018-01-01 10:00:00]
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1249,8 +1249,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           inserted_at: ~N[2018-01-01 10:00:00]
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,

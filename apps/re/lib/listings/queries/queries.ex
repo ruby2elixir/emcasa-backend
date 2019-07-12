@@ -44,9 +44,7 @@ defmodule Re.Listings.Queries do
 
   def order_by(query \\ Listing) do
     query
-    |> order_by([l], desc: l.score)
-    |> order_by([l], fragment("RANDOM()"))
-    |> order_by([l], asc: l.matterport_code)
+    |> order_by([l], desc: l.liquidity_ratio)
   end
 
   def order_by_id(query \\ Listing), do: order_by(query, [l], asc: l.id)
