@@ -25,6 +25,7 @@ defmodule ReWeb.Resolvers.Dashboard do
     count =
       Re.Listing
       |> Filters.apply(Map.drop(filters, ["status", :status]))
+      |> exclude(:distinct)
       |> where([l], l.status == "active")
       |> select([l], count(l.id))
       |> Repo.one()
