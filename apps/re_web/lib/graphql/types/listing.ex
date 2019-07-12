@@ -180,7 +180,7 @@ defmodule ReWeb.Types.Listing do
       ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies
       price_per_area inserted_at floor)a
 
-  enum :order_type, values: ~w(desc asc)a
+  enum :order_type, values: ~w(desc asc desc_nulls_last asc_nulls_last)a
 
   input_object :listing_filter_input do
     field :max_price, :integer
