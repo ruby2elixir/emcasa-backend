@@ -122,7 +122,7 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       query = """
         query Dashboard {
           dashboard {
-            activeListingCount(isRelease: false, isExportable: true)
+            activeListingCount(isRelease: true, isExportable: true)
           }
         }
       """
