@@ -35,7 +35,7 @@ defmodule Re.Listings.Filters do
     field :cities, {:array, :string}
     field :cities_slug, {:array, :string}
     field :states_slug, {:array, :string}
-    field :exportable, :boolean
+    field :is_exportable, :boolean
     field :tags_slug, {:array, :string}
     field :tags_uuid, {:array, :string}
     field :statuses, {:array, :string}
@@ -58,7 +58,7 @@ defmodule Re.Listings.Filters do
   @filters ~w(max_price min_price max_rooms min_rooms max_suites min_suites min_area max_area
               neighborhoods types max_lat min_lat max_lng min_lng neighborhoods_slugs
               max_garage_spots min_garage_spots garage_types cities cities_slug states_slug
-              exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
+              is_exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
               min_unit_per_floor max_unit_per_floor orientations sun_periods min_age max_age
               min_price_per_area max_price_per_area min_maintenance_fee max_maintenance_fee
               max_bathrooms min_bathrooms is_release exclude_similar_for_primary_market)a
@@ -251,8 +251,8 @@ defmodule Re.Listings.Filters do
     )
   end
 
-  defp attr_filter({:exportable, exportable}, query) do
-    from(l in query, where: l.is_exportable == ^exportable)
+  defp attr_filter({:is_exportable, is_exportable}, query) do
+    from(l in query, where: l.is_exportable == ^is_exportable)
   end
 
   defp attr_filter({:tags_slug, []}, query), do: query
