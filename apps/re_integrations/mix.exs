@@ -50,7 +50,8 @@ defmodule ReIntegrations.Mixfile do
       {:sentry, "~> 7.0"},
       {:ex_machina, "~> 2.2", only: :test},
       {:ecto_job, "~> 2.0"},
-      {:cloudex, git: "https://github.com/emcasa/cloudex.git"}
+      {:cloudex, git: "https://github.com/emcasa/cloudex.git"},
+      {:geocalc, "~> 0.5"}
     ]
   end
 
