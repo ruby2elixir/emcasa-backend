@@ -1,5 +1,5 @@
 defmodule ReIntegrations.Routific.ClientTest do
-  use Re.ModelCase
+  use ReIntegrations.ModelCase
 
   alias ReIntegrations.{
     Routific,

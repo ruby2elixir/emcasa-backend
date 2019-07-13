@@ -18,21 +18,21 @@ defmodule ReIntegrations.Routific do
     with {:ok, %{body: body}} <- Client.start_job(visits),
          {:ok, %{"job_id" => job_id}} <-
            Jason.decode(body) do
-      %{"type" => "monitor_routific_job", "external_id" => job_id}
+      %{"type" => "monitor_routific_job", "job_id" => job_id}
       |> JobQueue.new()
       |> Repo.insert()
     else
-      {:error, error} -> {:error, error}
+      {_, error} -> {:error, error}
     end
   end
 
   def get_job_status(job_id) do
     with {:ok, %{body: body}} <- Client.fetch_job(job_id),
-         {:ok, data = %{"status" => "finished"}} <-
+         {:ok, %{"status" => "finished", "output" => output}} <-
            Jason.decode(body) do
-      {:ok, data}
+      {:ok, output}
     else
-      {:error, error} -> {:error, error}
+      {_, %{status_code: status_code}} -> {:error, %{"status_code" => status_code}}
       {:ok, %{"status" => status}} -> {:error, %{"status" => status}}
     end
   end

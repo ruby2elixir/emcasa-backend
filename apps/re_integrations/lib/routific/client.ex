@@ -14,10 +14,10 @@ defmodule ReIntegrations.Routific.Client do
   def start_job(visits) do
     visits
     |> build_payload
-    |> post("v1/vrp-long")
+    |> post("/v1/vrp-long")
   end
 
-  def fetch_job(job_id), do: get("jobs/" + job_id)
+  def fetch_job(job_id), do: get("/jobs/" <> job_id)
 
   def build_payload(visits) do
     %{
@@ -69,9 +69,11 @@ defmodule ReIntegrations.Routific.Client do
   defp lat_lng_list(visits),
     do: Enum.map(visits, fn %{"lat" => lat, "lng" => lng} -> [lat, lng] end)
 
+  defp build_uri(path), do: URI.parse(@api_url <> path)
+
   defp post(body, path) when is_map(body),
-    do: @http_client.post(@api_url + path, Poison.encode!(body), @api_headers)
+    do: path |> build_uri |> @http_client.post(Poison.encode!(body), @api_headers)
 
   defp get(path),
-    do: @http_client.get(@api_url + path, @api_headers, [])
+    do: path |> build_uri |> @http_client.get(@api_headers)
 end

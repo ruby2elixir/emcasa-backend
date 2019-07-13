@@ -16,7 +16,7 @@ defmodule ReIntegrations.Routific.JobQueue do
     multi
     |> Multi.run(:get_job_status, fn _repo, _changes ->
       x = Routific.get_job_status(id)
-      IO.puts(x)
+      IO.inspect(x)
       x
     end)
     |> Repo.transaction()
