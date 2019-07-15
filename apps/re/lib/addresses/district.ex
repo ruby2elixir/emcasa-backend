@@ -19,6 +19,11 @@ defmodule Re.Addresses.District do
     field :status, :string, default: "uncovered"
     field :sort_order, :integer
 
+    many_to_many :calendars, Re.GoogleCalendars.Calendar,
+      join_through: Re.GoogleCalendars.CalendarDistrict,
+      join_keys: [district_id: :id, calendar_uuid: :uuid],
+      on_replace: :delete
+
     timestamps()
   end
 
