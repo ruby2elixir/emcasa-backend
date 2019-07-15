@@ -221,6 +221,7 @@ defmodule ReWeb.Types.Listing do
     field :min_maintenance_fee, :float
     field :max_maintenance_fee, :float
     field :is_release, :boolean
+    field :is_exportable, :boolean
     field :exclude_similar_for_primary_market, :boolean
   end
 

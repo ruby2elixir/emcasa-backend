@@ -1,12 +1,27 @@
 defmodule ReWeb.Webhooks.ZapierPlugTest do
   use ReWeb.ConnCase
 
+  import Re.CustomAssertion
+
   alias Re.{
     BuyerLeads,
     BuyerLeads.ImovelWeb,
+    BuyerLeads.JobQueue,
     SellerLeads,
     Repo
   }
+
+  setup %{conn: conn} do
+    conn = put_req_header(conn, "accept", "application/json")
+
+    encoded_secret = Base.encode64("testuser:testpass")
+    wrong_credentials = Base.encode64("testuser:wrongpass")
+
+    {:ok,
+     unauthenticated_conn: conn,
+     authenticated_conn: put_req_header(conn, "authorization", "Basic #{encoded_secret}"),
+     invalid_conn: put_req_header(conn, "authorization", "Basic #{wrong_credentials}")}
+  end
 
   @facebook_buyer_payload %{
     "full_name" => "mah full naem",
@@ -31,18 +46,6 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     "source" => "facebook_buyer",
     "budget" => "$1000 to $10000"
   }
-
-  setup %{conn: conn} do
-    conn = put_req_header(conn, "accept", "application/json")
-
-    encoded_secret = Base.encode64("testuser:testpass")
-    wrong_credentials = Base.encode64("testuser:wrongpass")
-
-    {:ok,
-     unauthenticated_conn: conn,
-     authenticated_conn: put_req_header(conn, "authorization", "Basic #{encoded_secret}"),
-     invalid_conn: put_req_header(conn, "authorization", "Basic #{wrong_credentials}")}
-  end
 
   describe "facebook buyer leads" do
     test "authenticated request", %{authenticated_conn: conn} do
@@ -270,6 +273,41 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
       assert text_response(conn, 405) == "GET not allowed"
 
       refute Repo.one(SellerLeads.Facebook)
+    end
+  end
+
+  @walk_in_offline_buyer_payload %{
+    "full_name" => "mah full naem",
+    "timestamp" => "2019-01-01T00:00:00.000Z",
+    "email" => "mah@email",
+    "phone_number" => "11999999999",
+    "neighborhoods" => "manhattan brooklyn harlem",
+    "location" => "RJ",
+    "source" => "walk_in_offline_buyer"
+  }
+
+  @walk_in_offline_buyer_invalid_payload %{
+    "location" => "asdasda"
+  }
+
+  describe "walk-in offline buyer leads" do
+    test "authenticated request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @walk_in_offline_buyer_payload)
+
+      assert text_response(conn, 200) == "ok"
+
+      assert lead = Repo.one(BuyerLeads.WalkInOffline)
+      assert lead.uuid
+      assert_enqueued_job(Repo.all(JobQueue), "process_walk_in_offline_buyer")
+    end
+
+    @tag capture_log: true
+    test "invalid location request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @walk_in_offline_buyer_invalid_payload)
+
+      assert text_response(conn, 422) == "Unprocessable Entity"
+
+      refute Repo.one(BuyerLeads.WalkInOffline)
     end
   end
 end
