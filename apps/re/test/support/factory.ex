@@ -50,7 +50,7 @@ defmodule Re.Factory do
       balconies: Enum.random(0..10),
       has_elevator: Enum.random([true, false]),
       area: area,
-      score: Enum.random(1..4),
+      liquidity_ratio: Enum.random(1..4) / 1,
       matterport_code: Faker.String.base64(),
       status: "active",
       is_exclusive: Enum.random([true, false]),

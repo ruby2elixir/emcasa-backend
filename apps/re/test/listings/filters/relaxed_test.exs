@@ -14,7 +14,7 @@ defmodule Re.Listings.Filters.RelaxedTest do
           :listing,
           price: 1_000_000,
           area: 100,
-          score: 4,
+          liquidity_ratio: 4.0,
           address: build(:address),
           garage_spots: 4
         )
@@ -24,7 +24,7 @@ defmodule Re.Listings.Filters.RelaxedTest do
           :listing,
           price: 950_000,
           area: 95,
-          score: 3,
+          liquidity_ratio: 3.0,
           address: build(:address),
           garage_spots: 3
         )
@@ -34,7 +34,7 @@ defmodule Re.Listings.Filters.RelaxedTest do
           :listing,
           price: 1_050_000,
           area: 80,
-          score: 2,
+          liquidity_ratio: 2.0,
           address: build(:address),
           garage_spots: 2
         )

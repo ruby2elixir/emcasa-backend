@@ -54,10 +54,14 @@ defmodule ReWeb.Types.Listing do
     field :construction_year, :integer
     field :price_per_area, :float
     field :inserted_at, :naive_datetime
-    field :score, :integer, resolve: &Resolvers.Listings.score/3
     field :deactivation_reason, :deactivation_reason
     field :sold_price, :integer
-    field :liquidity_ratio, :float
+
+    field :score, :integer do
+      deprecate("Use normalized_liquidity_ratio instead")
+
+      resolve &Resolvers.Listings.score/3
+    end
 
     field :normalized_liquidity_ratio, :integer,
       resolve: &Resolvers.Listings.normalized_liquidity_ratio/3
@@ -128,7 +132,6 @@ defmodule ReWeb.Types.Listing do
     field :is_exclusive, :boolean
     field :is_release, :boolean
     field :is_exportable, :boolean
-    field :score, :integer
     field :orientation, :orientation_type
     field :floor_count, :integer
     field :unit_per_floor, :integer

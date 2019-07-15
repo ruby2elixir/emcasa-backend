@@ -15,10 +15,10 @@ defmodule Re.ListingsTest do
 
   describe "all/1" do
     test "should return all listings sorted by id" do
-      %{id: id1} = insert(:listing, score: 4)
-      %{id: id2} = insert(:listing, score: 3)
-      %{id: id3} = insert(:listing, score: 4)
-      %{id: id4} = insert(:listing, score: 3)
+      %{id: id1} = insert(:listing, liquidity_ratio: 4.0)
+      %{id: id2} = insert(:listing, liquidity_ratio: 3.0)
+      %{id: id3} = insert(:listing, liquidity_ratio: 4.0)
+      %{id: id4} = insert(:listing, liquidity_ratio: 3.0)
 
       assert [%{id: ^id1}, %{id: ^id2}, %{id: ^id3}, %{id: ^id4}] = Listings.all()
     end
@@ -71,7 +71,7 @@ defmodule Re.ListingsTest do
           area: 40,
           rooms: 4,
           suites: 1,
-          score: 4,
+          liquidity_ratio: 4.0,
           address_id: sao_conrado.id,
           type: "Apartamento",
           garage_spots: 3,
@@ -86,7 +86,7 @@ defmodule Re.ListingsTest do
           area: 60,
           rooms: 3,
           suites: 2,
-          score: 3,
+          liquidity_ratio: 3.0,
           address_id: leblon.id,
           type: "Apartamento",
           garage_spots: 2,
@@ -101,7 +101,7 @@ defmodule Re.ListingsTest do
           area: 50,
           rooms: 3,
           suites: 3,
-          score: 2,
+          liquidity_ratio: 2.0,
           address_id: botafogo.id,
           type: "Casa",
           garage_spots: 1,
@@ -212,12 +212,23 @@ defmodule Re.ListingsTest do
       botafogo = insert(:address, street: "onemorestreet", neighborhood: "Botafogo")
 
       %{id: id1} =
-        insert(:listing, score: 4, address_id: laranjeiras.id, type: "Apartamento", tags: [tag_1])
+        insert(:listing,
+          liquidity_ratio: 4.0,
+          address_id: laranjeiras.id,
+          type: "Apartamento",
+          tags: [tag_1]
+        )
 
-      %{id: id2} = insert(:listing, score: 3, address_id: leblon.id, type: "Casa", tags: [tag_2])
+      %{id: id2} =
+        insert(:listing, liquidity_ratio: 3.0, address_id: leblon.id, type: "Casa", tags: [tag_2])
 
       %{id: id3} =
-        insert(:listing, score: 2, address_id: botafogo.id, type: "Apartamento", tags: [tag_3])
+        insert(:listing,
+          liquidity_ratio: 2.0,
+          address_id: botafogo.id,
+          type: "Apartamento",
+          tags: [tag_3]
+        )
 
       result = Listings.paginated(%{"neighborhoods" => []})
       assert_mapper_match([%{id: id1}, %{id: id2}, %{id: id3}], result.listings, &map_id/1)
@@ -236,9 +247,9 @@ defmodule Re.ListingsTest do
     end
 
     test "should return paginated result" do
-      insert(:listing, score: 4)
-      insert(:listing, score: 4)
-      %{id: id3} = insert(:listing, score: 3)
+      insert(:listing, liquidity_ratio: 4.0)
+      insert(:listing, liquidity_ratio: 4.0)
+      %{id: id3} = insert(:listing, liquidity_ratio: 3.0)
 
       assert %{remaining_count: 1, listings: [%{id: id1}, %{id: id2}]} =
                Listings.paginated(%{page_size: 2})
@@ -274,9 +285,9 @@ defmodule Re.ListingsTest do
     end
 
     test "should return paginated with filter" do
-      insert(:listing, score: 4, garage_spots: 5)
-      %{id: id} = insert(:listing, score: 3, garage_spots: 3)
-      insert(:listing, score: 2, garage_spots: 3)
+      insert(:listing, liquidity_ratio: 4.0, garage_spots: 5)
+      %{id: id} = insert(:listing, liquidity_ratio: 3.0, garage_spots: 3)
+      insert(:listing, liquidity_ratio: 2.0, garage_spots: 3)
 
       assert %{remaining_count: 1, listings: [%{id: ^id}]} =
                Listings.paginated(%{page_size: 1, max_garage_spots: 4})
@@ -342,12 +353,32 @@ defmodule Re.ListingsTest do
       assert 1 == length(listings2)
     end
 
+    test "should order by liquidity as default" do
+      %{id: id1} = insert(:listing, liquidity_ratio: 1.0)
+      %{id: id2} = insert(:listing, liquidity_ratio: -1.0)
+      %{id: id3} = insert(:listing, liquidity_ratio: nil)
+
+      assert %{
+               listings: [
+                 %{id: ^id1},
+                 %{id: ^id2},
+                 %{id: ^id3}
+               ]
+             } = Listings.paginated()
+    end
+
     test "should order by attributes" do
       %{id: id1} = insert(:listing, garage_spots: 1, price: 1_000_000, rooms: 2)
-      %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 4)
+
+      %{id: id2} =
+        insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, liquidity_ratio: 4.0)
+
       %{id: id3} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 4)
       %{id: id4} = insert(:listing, garage_spots: 2, price: 1_000_000, rooms: 3)
-      %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 3)
+
+      %{id: id5} =
+        insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, liquidity_ratio: 3.0)
+
       %{id: id6} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 5)
 
       assert %{
@@ -520,7 +551,6 @@ defmodule Re.ListingsTest do
       "bathrooms" => 2,
       "garage_spots" => 1,
       "area" => 100,
-      "score" => 3,
       "orientation" => "frontside",
       "sun_period" => "morning",
       "floor_count" => 10,
