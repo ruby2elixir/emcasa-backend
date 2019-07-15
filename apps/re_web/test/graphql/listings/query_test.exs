@@ -36,7 +36,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             build(:image, filename: "test3.jpg", position: 1)
           ],
           user: user,
-          score: 4
+          liquidity_ratio: 4.0
         )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -73,7 +73,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              score
+              normalizedLiquidityRatio
             }
             remaining_count
           }
@@ -91,7 +91,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "score" => 4
+                   "normalizedLiquidityRatio" => 10
                  }
                ],
                "remaining_count" => 0
@@ -107,7 +107,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        score: 4
+        liquidity_ratio: 4.0
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -134,7 +134,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              score
+              normalizedLiquidityRatio
             }
             remaining_count
           }
@@ -151,7 +151,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "score" => nil
+                   "normalizedLiquidityRatio" => nil
                  }
                ],
                "remaining_count" => 0
@@ -169,7 +169,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        score: 4
+        liquidity_ratio: 4.0
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -196,7 +196,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              score
+              normalizedLiquidityRatio
             }
             remaining_count
           }
@@ -213,7 +213,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
-                   "score" => nil
+                   "normalizedLiquidityRatio" => nil
                  }
                ],
                "remaining_count" => 0
@@ -231,7 +231,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        score: 4
+        liquidity_ratio: 4.0
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -258,7 +258,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              score
+              normalizedLiquidityRatio
             }
             remaining_count
           }
@@ -275,7 +275,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
-                   "score" => nil
+                   "normalizedLiquidityRatio" => nil
                  }
                ],
                "remaining_count" => 0
@@ -435,10 +435,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
     test "should query listing index with order by", %{user_conn: conn} do
       %{id: id1} = insert(:listing, garage_spots: 1, price: 1_000_000, rooms: 2)
-      %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 4)
+      %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, liquidity_ratio: 4)
       %{id: id3} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 4)
       %{id: id4} = insert(:listing, garage_spots: 2, price: 1_000_000, rooms: 3)
-      %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 3)
+      %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, liquidity_ratio: 3)
       %{id: id6} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 5)
 
       variables = %{
@@ -511,12 +511,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       unauthenticated_conn: conn
     } do
       now = Timex.now()
-      insert(:listing, score: 4, price_history: [])
+      insert(:listing, liquidity_ratio: 4.0, price_history: [])
 
       insert(
         :listing,
         price: 1_000_000,
-        score: 3,
+        liquidity_ratio: 3,
         price_history: [
           build(:price_history, price: 1_100_000, inserted_at: Timex.shift(now, weeks: -1))
         ]
@@ -524,14 +524,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       insert(
         :listing,
-        score: 2,
+        liquidity_ratio: 2,
         price_history: [build(:price_history, inserted_at: Timex.shift(now, weeks: -3))]
       )
 
       insert(
         :listing,
         price: 1_000_000,
-        score: 1,
+        liquidity_ratio: 1,
         price_history: [
           build(:price_history, price: 900_000, inserted_at: Timex.shift(now, weeks: -1))
         ]

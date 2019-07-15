@@ -23,7 +23,6 @@ defmodule Re.ListingTest do
     area: 150,
     garage_spots: 2,
     garage_type: "contract",
-    score: 4,
     matterport_code: "",
     is_exclusive: false,
     is_release: false,
@@ -47,7 +46,6 @@ defmodule Re.ListingTest do
     balconies: -1,
     garage_spots: -1,
     garage_type: "mine",
-    score: 5,
     is_exclusive: "banana",
     is_release: "banana",
     is_exportable: "banana",
@@ -78,9 +76,6 @@ defmodule Re.ListingTest do
 
       assert Keyword.get(changeset.errors, :type) ==
                {"is invalid", [validation: :inclusion, enum: ~w(Apartamento Casa Cobertura)]}
-
-      assert Keyword.get(changeset.errors, :score) ==
-               {"must be less than %{number}", [validation: :number, kind: :less_than, number: 5]}
 
       assert Keyword.get(changeset.errors, :price) ==
                {"must be greater than or equal to %{number}",
@@ -146,12 +141,8 @@ defmodule Re.ListingTest do
       assert Keyword.get(changeset.errors, :garage_type) ==
                {"is invalid", [validation: :inclusion, enum: ~w(contract condominium)]}
 
-      changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000})
+      changeset = Listing.changeset(%Listing{}, %{price: 110_000_000})
       refute changeset.valid?
-
-      assert Keyword.get(changeset.errors, :score) ==
-               {"must be greater than %{number}",
-                [validation: :number, kind: :greater_than, number: 0]}
 
       assert Keyword.get(changeset.errors, :price) ==
                {"must be less than or equal to %{number}",
