@@ -90,3 +90,6 @@ config :cloudex,
   api_key: "api_key",
   secret: "secret",
   cloud_name: "cloud"
+
+config :goth,
+  disabled: true
