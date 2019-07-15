@@ -267,7 +267,9 @@ defmodule Re.Factory do
       budget: "$100 to $1000",
       neighborhood: Pokemon.location(),
       url: Internet.url(),
-      user_url: Internet.url()
+      user_url: Internet.url(),
+      cpf: "999.999.999-99",
+      where_did_you_find_about: "tv"
     }
   end
 
@@ -294,6 +296,16 @@ defmodule Re.Factory do
       uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email()
+    }
+  end
+
+  def walk_in_offline_buyer_lead_factory do
+    %Re.BuyerLeads.WalkInOffline{
+      uuid: UUID.uuid4(),
+      full_name: Name.name(),
+      email: Internet.email(),
+      cpf: "999.999.999-99",
+      where_did_you_find_about: "tv"
     }
   end
 

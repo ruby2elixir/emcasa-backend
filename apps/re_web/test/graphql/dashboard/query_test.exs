@@ -44,7 +44,7 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       query = """
         query Dashboard {
           dashboard {
-            activeListingCount(isRelease: false)
+            activeListingCount
             favoriteCount
             visualizationCount
             tourVisualizationCount
@@ -74,7 +74,7 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       query = """
         query Dashboard {
           dashboard {
-            activeListingCount(isRelease: false)
+            activeListingCount
             favoriteCount
             visualizationCount
             tourVisualizationCount
@@ -95,7 +95,7 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       query = """
         query Dashboard {
           dashboard {
-            activeListingCount(isRelease: false)
+            activeListingCount
             favoriteCount
             visualizationCount
             tourVisualizationCount
@@ -114,35 +114,15 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
   end
 
   describe "active_listing_count" do
-    test "should count primary market listings", %{admin_conn: conn} do
-      insert(:listing, is_release: false)
-      insert(:listing, is_release: true)
-      insert(:listing, is_release: true)
+    test "should apply listing filters to active listings count", %{admin_conn: conn} do
+      insert(:listing, status: "active", is_release: false, is_exportable: true)
+      insert(:listing, status: "active", is_release: true, is_exportable: false)
+      insert(:listing, status: "active", is_release: true, is_exportable: true)
 
       query = """
         query Dashboard {
           dashboard {
-            activeListingCount(isRelease: true)
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
-
-      assert %{
-        "activeListingCount" => 2
-      } == json_response(conn, 200)["data"]["dashboard"]
-    end
-
-    test "should count secondary market listings", %{admin_conn: conn} do
-      insert(:listing, is_release: false)
-      insert(:listing, is_release: true)
-      insert(:listing, is_release: true)
-
-      query = """
-        query Dashboard {
-          dashboard {
-            activeListingCount(isRelease: false)
+            activeListingCount(isRelease: true, isExportable: true)
           }
         }
       """

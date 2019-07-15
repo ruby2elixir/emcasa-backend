@@ -19,7 +19,7 @@ defmodule Re.Listings.Exporter do
   ]
 
   def exportable(filters, _params) do
-    filters = Map.put(filters, :exportable, true)
+    filters = Map.put(filters, :is_exportable, true)
 
     Queries.active()
     |> Filters.apply(filters)
