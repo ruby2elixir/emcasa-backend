@@ -23,7 +23,7 @@ defmodule ReWeb.RelaxedControllerTest do
           :listing,
           address: build(:address, neighborhood: "Ipanema"),
           price: 105_000,
-          score: 4
+          liquidity_ratio: 4.0
         )
 
       %{id: id2} =
@@ -31,7 +31,7 @@ defmodule ReWeb.RelaxedControllerTest do
           :listing,
           address: build(:address, neighborhood: "Copacabana"),
           price: 105_000,
-          score: 3
+          liquidity_ratio: 3.0
         )
 
       conn = get(conn, relaxed_path(conn, :index), max_price: 1_000_000)
@@ -47,7 +47,7 @@ defmodule ReWeb.RelaxedControllerTest do
           :listing,
           address: build(:address, neighborhood: "Ipanema"),
           price: 105_000,
-          score: 4
+          liquidity_ratio: 4.0
         )
 
       %{id: id2} =
@@ -55,7 +55,7 @@ defmodule ReWeb.RelaxedControllerTest do
           :listing,
           address: build(:address, neighborhood: "Copacabana"),
           price: 105_000,
-          score: 3
+          liquidity_ratio: 3.0
         )
 
       conn = get(conn, relaxed_path(conn, :index), max_price: 1_000_000)
@@ -71,7 +71,7 @@ defmodule ReWeb.RelaxedControllerTest do
           :listing,
           address: build(:address, neighborhood: "Ipanema"),
           price: 105_000,
-          score: 4
+          liquidity_ratio: 4.0
         )
 
       %{id: id2} =
@@ -79,11 +79,10 @@ defmodule ReWeb.RelaxedControllerTest do
           :listing,
           address: build(:address, neighborhood: "Copacabana"),
           price: 105_000,
-          score: 3
+          liquidity_ratio: 3.0
         )
 
       conn = get(conn, relaxed_path(conn, :index), max_price: 1_000_000)
-
       response = json_response(conn, 200)
       assert [%{"id" => ^id1}, %{"id" => ^id2}] = response["listings"]
       assert %{"max_price" => 1_100_000} = response["filters"]

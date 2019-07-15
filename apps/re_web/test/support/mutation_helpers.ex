@@ -37,7 +37,6 @@ defmodule ReWeb.Listing.MutationHelpers do
         "isExclusive" => listing.is_exclusive,
         "isRelease" => listing.is_release,
         "isExportable" => listing.is_exportable,
-        "score" => listing.score,
         "orientation" => String.upcase(listing.orientation),
         "sunPeriod" => String.upcase(listing.sun_period),
         "floorCount" => listing.floor_count,
@@ -82,7 +81,6 @@ defmodule ReWeb.Listing.MutationHelpers do
         "isExclusive" => listing.is_exclusive,
         "isRelease" => listing.is_release,
         "isExportable" => listing.is_exportable,
-        "score" => listing.score,
         "orientation" => String.upcase(listing.orientation),
         "sunPeriod" => String.upcase(listing.sun_period),
         "floorCount" => listing.floor_count,
@@ -132,7 +130,6 @@ defmodule ReWeb.Listing.MutationHelpers do
           isExclusive
           isRelease
           isExportable
-          score
           orientation
           sunPeriod
           floorCount
@@ -183,7 +180,6 @@ defmodule ReWeb.Listing.MutationHelpers do
           isExclusive
           isRelease
           isExportable
-          score
           orientation
           sunPeriod
           floorCount
