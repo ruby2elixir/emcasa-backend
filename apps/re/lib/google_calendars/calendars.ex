@@ -6,13 +6,9 @@ defmodule Re.GoogleCalendars.Calendars do
 
   require Ecto.Query
 
-  alias Ecto.{
-    Changeset,
-    Multi
-  }
-
   alias Re.{
     GoogleCalendars.Calendar,
+    GoogleCalendars.Calendar.Queries,
     Repo
   }
 
@@ -22,12 +18,11 @@ defmodule Re.GoogleCalendars.Calendars do
 
   def query(_query, _args), do: Calendar
 
-  def all do
-    Calendar
-    |> Re.Repo.all()
-  end
+  def all, do: Calendar |> Re.Repo.all()
 
   def get(uuid), do: do_get(Calendar, uuid)
+
+  def get_preloaded(uuid), do: Calendar |> Queries.preload_relations() |> do_get(uuid)
 
   defp do_get(query, uuid) do
     case Repo.get(query, uuid) do
@@ -44,7 +39,7 @@ defmodule Re.GoogleCalendars.Calendars do
 
   def upsert_districts(calendar, districts) do
     calendar
-    |> Repo.preload(:districts)
+    |> Repo.preload([:districts])
     |> Calendar.changeset_update_districts(districts)
     |> Repo.update()
   end
