@@ -287,6 +287,8 @@ defmodule ReWeb.Resolvers.Listings do
     {:ok, listing_index}
   end
 
+  def score(_, _, _), do: {:ok, nil}
+
   def normalized_liquidity_ratio(%{liquidity_ratio: liquidity_ratio}, _, %{
         context: %{current_user: current_user}
       }) do

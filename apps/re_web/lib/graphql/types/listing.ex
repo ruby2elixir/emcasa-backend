@@ -57,6 +57,12 @@ defmodule ReWeb.Types.Listing do
     field :deactivation_reason, :deactivation_reason
     field :sold_price, :integer
 
+    field :score, :integer do
+      deprecate("Use normalized_liquidity_ratio instead")
+
+      resolve &Resolvers.Listings.score/3
+    end
+
     field :normalized_liquidity_ratio, :integer,
       resolve: &Resolvers.Listings.normalized_liquidity_ratio/3
 

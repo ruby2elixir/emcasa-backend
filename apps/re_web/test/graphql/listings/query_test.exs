@@ -74,6 +74,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 name
               }
               normalizedLiquidityRatio
+              score
             }
             remaining_count
           }
@@ -91,7 +92,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "normalizedLiquidityRatio" => 10
+                   "normalizedLiquidityRatio" => 10,
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
@@ -135,6 +137,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 name
               }
               normalizedLiquidityRatio
+              score
             }
             remaining_count
           }
@@ -151,7 +154,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "normalizedLiquidityRatio" => nil
+                   "normalizedLiquidityRatio" => nil,
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
@@ -259,6 +263,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                 name
               }
               normalizedLiquidityRatio
+              score
             }
             remaining_count
           }
@@ -275,7 +280,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
-                   "normalizedLiquidityRatio" => nil
+                   "normalizedLiquidityRatio" => nil,
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
