@@ -22,7 +22,7 @@ defmodule Re.GoogleCalendars.CalendarDistrict do
       primary_key: true
   end
 
-  @required ~w(listing_uuid tag_uuid)a
+  @required ~w(calendar_uuid district_id)a
 
   def changeset(struct, params \\ %{}) do
     struct

@@ -23,7 +23,7 @@ defmodule Re.GoogleCalendars.Calendar.Queries do
       c in query,
       join: d in assoc(c, :districts),
       where: d.name_slug in ^district_slugs,
-      distinct: c.id
+      distinct: c.uuid
     )
   end
 end

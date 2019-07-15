@@ -1,8 +1,7 @@
-defmodule Re.GoogleCalendars.Calendars do
+defmodule Re.GoogleCalendars do
   @moduledoc """
-  Context for developments.
+  Context for google calendars.
   """
-  @behaviour Bodyguard.Policy
 
   require Ecto.Query
 
@@ -11,12 +10,6 @@ defmodule Re.GoogleCalendars.Calendars do
     GoogleCalendars.Calendar.Queries,
     Repo
   }
-
-  defdelegate authorize(action, user, params), to: Re.GoogleCalendars.Policy
-
-  def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
-
-  def query(_query, _args), do: Calendar
 
   def all, do: Calendar |> Re.Repo.all()
 

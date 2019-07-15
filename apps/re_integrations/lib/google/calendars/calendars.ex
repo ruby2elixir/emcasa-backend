@@ -1,7 +1,7 @@
 defmodule ReIntegrations.Google.Calendars do
   alias Re.{
-    GoogleCalendars.Calendar,
-    GoogleCalendars.Calendars
+    GoogleCalendars,
+    GoogleCalendars.Calendar
   }
 
   alias GoogleApi.Calendar.V3.{
@@ -50,7 +50,7 @@ defmodule ReIntegrations.Google.Calendars do
            ) do
       params
       |> Map.put(:external_id, calendar.id)
-      |> Calendars.insert()
+      |> GoogleCalendars.insert()
     end
   end
 end

@@ -357,6 +357,13 @@ defmodule Re.Factory do
     }
   end
 
+  def calendar_factory do
+    %Re.GoogleCalendars.Calendar{
+      uuid: UUID.uuid4(),
+      external_id: UUID.uuid4()
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
