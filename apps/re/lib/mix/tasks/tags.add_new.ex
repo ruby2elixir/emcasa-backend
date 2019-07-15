@@ -9,8 +9,8 @@ defmodule Mix.Tasks.Re.Tags.AddNew do
   ]
 
   alias Re.{
-    Tag,
-    Repo
+    Repo,
+    Tag
   }
 
   @shortdoc "Create new tags"
@@ -18,15 +18,19 @@ defmodule Mix.Tasks.Re.Tags.AddNew do
   def run(_) do
     Mix.Task.run("app.start")
 
-    Enum.map(@tags, &insert/1)
+    Enum.each(@tags, &insert/1)
   end
 
   def insert(params) do
-    {:ok, tag} =
-      %Re.Tag{}
-      |> Tag.changeset(params)
-      |> Repo.insert(on_conflict: :nothing)
+    %Re.Tag{}
+    |> Tag.changeset(params)
+    |> Repo.insert(on_conflict: :nothing)
+    |> case do
+      {:ok, tag} ->
+        Mix.shell().info("Successfully inserted tag #{tag.name_slug}")
 
-    Mix.shell().info("insert : tag name #{tag.name_slug}")
+      {:error, error} ->
+        Mix.shell().info("Failed to insert new tag, error: #{error}")
+    end
   end
 end
