@@ -86,17 +86,7 @@ defmodule Re.Listings.Filters do
   defp build_query(params, query) do
     params
     |> Enum.reduce(query, &attr_filter/2)
-    |> apply_distinct(params)
   end
-
-  defp apply_distinct(query, %{exclude_similar_for_primary_market: true}),
-    do: distinct(query, [l], coalesce(l.development_uuid, l.uuid))
-
-  defp apply_distinct(query, %{tags_slug: _}), do: distinct(query, [l], l.uuid)
-
-  defp apply_distinct(query, %{tags_uuid: _}), do: distinct(query, [l], l.uuid)
-
-  defp apply_distinct(query, _), do: query
 
   defp attr_filter({:max_price, max_price}, query) do
     from(l in query, where: l.price <= ^max_price)
@@ -258,21 +248,31 @@ defmodule Re.Listings.Filters do
   defp attr_filter({:tags_slug, []}, query), do: query
 
   defp attr_filter({:tags_slug, slugs}, query) do
-    from(
-      l in query,
-      join: t in assoc(l, :tags),
-      where: t.name_slug in ^slugs
-    )
+    listings_tags =
+      from(
+        l in query,
+        join: t in assoc(l, :tags),
+        where: t.name_slug in ^slugs,
+        distinct: l.uuid
+      )
+      |> exclude(:preload)
+
+    from(l in query, join: s in subquery(listings_tags), on: s.uuid == l.uuid)
   end
 
   defp attr_filter({:tags_uuid, []}, query), do: query
 
   defp attr_filter({:tags_uuid, uuids}, query) do
-    from(
-      l in query,
-      join: t in assoc(l, :tags),
-      where: t.uuid in ^uuids
-    )
+    listings_tags =
+      from(
+        l in query,
+        join: t in assoc(l, :tags),
+        where: t.uuid in ^uuids,
+        distinct: l.uuid
+      )
+      |> exclude(:preload)
+
+    from(l in query, join: s in subquery(listings_tags), on: s.uuid == l.uuid)
   end
 
   defp attr_filter({:min_floor_count, floor_count}, query) do
@@ -371,10 +371,15 @@ defmodule Re.Listings.Filters do
   end
 
   defp attr_filter({:exclude_similar_for_primary_market, true}, query) do
-    from(
-      l in query,
-      where: not (l.is_release == true and l.is_exportable == false)
-    )
+    subquery =
+      from(
+        l in query,
+        where: not (l.is_release == true and l.is_exportable == false),
+        distinct: l.uuid
+      )
+      |> exclude(:preload)
+
+    from(l in query, join: s in subquery(subquery), on: s.uuid == l.uuid)
   end
 
   defp attr_filter(_, query), do: query
