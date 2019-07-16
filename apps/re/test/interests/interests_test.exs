@@ -2,10 +2,11 @@ defmodule Re.InterestsTest do
   use Re.ModelCase
 
   alias Re.{
-    BuyerLeads.JobQueue,
+    BuyerLeads,
     PriceSuggestions.Request,
     Interest,
     Interests,
+    SellerLeads,
     Repo
   }
 
@@ -21,7 +22,7 @@ defmodule Re.InterestsTest do
         {:ok,
          %{
            body:
-           "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
          }}
       )
 
@@ -50,11 +51,11 @@ defmodule Re.InterestsTest do
         is_covered: true
       }
 
-      assert {:ok, %{id: request_id, suggested_price: 26_279.0}} =
-               Interests.request_price_suggestion(params, nil)
+      assert {:ok, %{suggested_price: 26_279.0}} = Interests.request_price_suggestion(params, nil)
 
-      assert request = Repo.get(Request, request_id)
+      assert request = Repo.one(Request)
       assert request.suggested_price == 26_279.0
+      assert Repo.one(SellerLeads.JobQueue)
     end
 
     test "should store price suggestion request with user attached" do
@@ -64,7 +65,7 @@ defmodule Re.InterestsTest do
         {:ok,
          %{
            body:
-            "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
          }}
       )
 
@@ -95,12 +96,13 @@ defmodule Re.InterestsTest do
         is_covered: true
       }
 
-      assert {:ok, %{id: request_id, suggested_price: 26_279.0}} =
+      assert {:ok, %{suggested_price: 26_279.0}} =
                Interests.request_price_suggestion(params, user)
 
-      assert request = Repo.get(Request, request_id)
+      assert request = Repo.one(Request)
       assert request.user_id == user.id
       assert request.suggested_price == 26_279.0
+      assert Repo.one(SellerLeads.JobQueue)
     end
 
     test "should store price suggestion request when street is not covered" do
@@ -110,7 +112,7 @@ defmodule Re.InterestsTest do
         {:ok,
          %{
            body:
-            "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
          }}
       )
 
@@ -139,11 +141,11 @@ defmodule Re.InterestsTest do
         is_covered: false
       }
 
-      assert {:ok, %{id: request_id, suggested_price: 26_279.0}} =
-               Interests.request_price_suggestion(params, nil)
+      assert {:ok, %{suggested_price: 26_279.0}} = Interests.request_price_suggestion(params, nil)
 
-      assert request = Repo.get(Request, request_id)
+      assert request = Repo.one(Request)
       assert request.suggested_price == 26_279.0
+      assert Repo.one(SellerLeads.JobQueue)
     end
   end
 
@@ -196,7 +198,7 @@ defmodule Re.InterestsTest do
       assert interest = Repo.get(Interest, interest.id)
       assert interest.uuid
       assert_receive %{new: _, topic: "new_interest", type: :new}
-      assert_enqueued_job(Repo.all(JobQueue), "interest")
+      assert_enqueued_job(Repo.all(BuyerLeads.JobQueue), "interest")
     end
 
     test "should not create interest in invalid listing" do
