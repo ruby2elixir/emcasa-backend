@@ -29,6 +29,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
         "email" => "testemail@emcasa.com",
         "phone" => "123321123",
         "message" => "this website is cool",
+        "campaign" => "utm campaign",
+        "medium" => "utm medium",
+        "source" => "utm source",
+        "initial_campaign" => "utm initial_campaign",
+        "initial_medium" => "utm initial_medium",
+        "initial_source" => "utm initial_source",
         "interestTypeId" => interest_type_id,
         "listingId" => listing_id
       }
@@ -41,6 +47,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
           email
           phone
           message
+          campaign
+          medium
+          source
+          initial_campaign
+          initial_medium
+          initial_source
           listing {
             id
           }
@@ -59,6 +71,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              "email" => "testemail@emcasa.com",
              "phone" => "123321123",
              "message" => "this website is cool",
+             "campaign" => "utm campaign",
+             "medium" => "utm medium",
+             "source" => "utm source",
+             "initial_campaign" => "utm initial_campaign",
+             "initial_medium" => "utm initial_medium",
+             "initial_source" => "utm initial_source",
              "interestType" => %{
                "id" => to_string(interest_type_id),
                "name" => interest_type_name
@@ -83,6 +101,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
         "email" => "testemail@emcasa.com",
         "phone" => "123321123",
         "message" => "this website is cool",
+        "campaign" => "utm campaign",
+        "medium" => "utm medium",
+        "source" => "utm source",
+        "initial_campaign" => "utm initial_campaign",
+        "initial_medium" => "utm initial_medium",
+        "initial_source" => "utm initial_source",
         "interestTypeId" => interest_type_id,
         "listingId" => listing_id
       }
@@ -95,6 +119,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
           email
           phone
           message
+          campaign
+          medium
+          source
+          initial_campaign
+          initial_medium
+          initial_source
           listing {
             id
           }
@@ -113,6 +143,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              "email" => "testemail@emcasa.com",
              "phone" => "123321123",
              "message" => "this website is cool",
+             "campaign" => "utm campaign",
+             "medium" => "utm medium",
+             "source" => "utm source",
+             "initial_campaign" => "utm initial_campaign",
+             "initial_medium" => "utm initial_medium",
+             "initial_source" => "utm initial_source",
              "interestType" => %{
                "id" => to_string(interest_type_id),
                "name" => interest_type_name
