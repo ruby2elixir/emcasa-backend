@@ -18,7 +18,7 @@ defmodule Re.SellerLead do
     field :bathrooms, :integer
     field :suites, :integer
     field :garage_spots, :integer
-    field :value, :string
+    field :price, :float
     field :tour_option, :utc_datetime
 
     belongs_to :address, Re.Address,

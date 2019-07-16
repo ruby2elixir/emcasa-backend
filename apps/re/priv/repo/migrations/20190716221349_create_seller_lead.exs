@@ -13,7 +13,7 @@ defmodule Re.Repo.Migrations.CreateSellerLead do
       add :bathrooms, :integer
       add :suites, :integer
       add :garage_spots, :integer
-      add :value, :string
+      add :price, :float
       add :tour_option, :utc_datetime
 
       add :address_uuid, references(:addresses, column: :uuid, type: :uuid)
