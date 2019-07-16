@@ -177,6 +177,7 @@ defmodule Re.Factory do
 
   def price_suggestion_request_factory do
     %Re.PriceSuggestions.Request{
+      uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email(),
       rooms: Enum.random(1..10),
