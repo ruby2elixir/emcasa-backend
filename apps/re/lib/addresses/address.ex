@@ -9,6 +9,7 @@ defmodule Re.Address do
   alias Re.Slugs
 
   schema "addresses" do
+    field :uuid, Ecto.UUID
     field :street, :string
     field :street_number, :string
     field :neighborhood, :string
@@ -49,6 +50,7 @@ defmodule Re.Address do
     |> validate_number(:lat, greater_than: -90, less_than: 90)
     |> validate_number(:lng, greater_than: -180, less_than: 180)
     |> generate_slugs()
+    |> generate_uuid()
   end
 
   def generate_slugs(%{valid?: false} = changeset), do: changeset
@@ -56,4 +58,6 @@ defmodule Re.Address do
   def generate_slugs(changeset) do
     Enum.reduce(@sluggified_attr, changeset, &Slugs.generate_slug(&1, &2))
   end
+
+  defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
 end

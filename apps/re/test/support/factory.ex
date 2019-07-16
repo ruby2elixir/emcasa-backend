@@ -88,6 +88,7 @@ defmodule Re.Factory do
     state_slug = Re.Slugs.sluggify(state_name)
 
     %Re.Address{
+      uuid: UUID.uuid4(),
       street_number: Address.building_number(),
       street: street_name,
       street_slug: street_slug,
