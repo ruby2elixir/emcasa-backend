@@ -6,10 +6,12 @@ defmodule Re.Repo.Migrations.GenerateAddressUuid do
     Repo
   }
 
-  def change do
+  def up do
     alter table(:addresses) do
       add :uuid, :uuid
     end
+
+    create unique_index(:addresses, [:uuid])
 
     flush()
 
@@ -20,5 +22,11 @@ defmodule Re.Repo.Migrations.GenerateAddressUuid do
       |> Address.changeset()
       |> Repo.update()
     end)
+  end
+
+  def down do
+    alter table(:addresses) do
+      remove :uuid
+    end
   end
 end

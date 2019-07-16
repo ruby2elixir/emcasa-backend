@@ -12,6 +12,8 @@ defmodule Re.Repo.Migrations.AddPriceSuggestionRequestUuid do
       add :seller_lead_uuid, references(:seller_leads, column: :uuid, type: :uuid)
     end
 
+    create unique_index(:price_suggestion_requests, [:uuid])
+
     flush()
 
     Request
