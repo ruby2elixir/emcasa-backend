@@ -73,7 +73,7 @@ defmodule Re.User do
   defp base_changeset(changeset) do
     changeset
     |> validate_email()
-    |> validate_inclusion(:role, @roles, message: "should be one of: [#{Enum.join(@roles, " ")}]")
+    |> validate_inclusion(:role, @roles)
   end
 
   defp validate_email(changeset) do
