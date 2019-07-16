@@ -8,6 +8,6 @@ defmodule Re.Repo.Migrations.CreateSellerLeadJobQueue do
   end
 
   def down do
-    CreateJobTable.up("seller_lead_jobs")
+    CreateJobTable.down("seller_lead_jobs")
   end
 end

@@ -4,15 +4,6 @@ defmodule Re.Repo.Migrations.CreateSellerLead do
   def change do
     create table(:seller_leads, primary_key: false) do
       add :uuid, :uuid, primary_key: true
-      add :street, :string
-      add :street_number, :string
-      add :city, :string
-      add :state, :string
-      add :neighborhood, :string
-      add :postal_code, :string
-      add :name, :string
-      add :phone, :string
-      add :email, :string
       add :source, :string
       add :complement, :string
       add :type, :string
@@ -24,6 +15,9 @@ defmodule Re.Repo.Migrations.CreateSellerLead do
       add :garage_spots, :integer
       add :value, :string
       add :tour_option, :utc_datetime
+
+      add :address_uuid, references(:addresses, column: :uuid, type: :uuid)
+      add :user_uuid, references(:seller_leads, column: :uuid, type: :uuid)
 
       timestamps(type: :timestamptz)
     end

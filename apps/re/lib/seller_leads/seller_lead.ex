@@ -9,15 +9,6 @@ defmodule Re.SellerLead do
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "seller_leads" do
-    field :street, :string
-    field :street_number, :string
-    field :city, :string
-    field :state, :string
-    field :neighborhood, :string
-    field :postal_code, :string
-    field :name, :string
-    field :phone, :string
-    field :email, :string
     field :source, :string
     field :complement, :string
     field :type, :string
@@ -29,6 +20,16 @@ defmodule Re.SellerLead do
     field :garage_spots, :integer
     field :value, :string
     field :tour_option, :utc_datetime
+
+    belongs_to :address, Re.Address,
+      references: :uuid,
+      foreign_key: :address_uuid,
+      type: Ecto.UUID
+
+    belongs_to :user, Re.User,
+      references: :uuid,
+      foreign_key: :user_uuid,
+      type: Ecto.UUID
 
     timestamps(type: :utc_datetime)
   end
