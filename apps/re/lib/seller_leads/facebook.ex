@@ -30,9 +30,7 @@ defmodule Re.SellerLeads.Facebook do
     struct
     |> cast(params, @params)
     |> validate_required(@required)
-    |> validate_inclusion(:location, @locations,
-      message: "should be one of: [#{Enum.join(@locations, " ")}]"
-    )
+    |> validate_inclusion(:location, @locations)
     |> generate_uuid()
   end
 
