@@ -21,7 +21,8 @@ defmodule Re.GoogleCalendars.Calendar.QueriesTest do
         ])
 
       assert calendars ==
-               Queries.by_districts([district2.name])
+               [district2.name]
+               |> Queries.by_districts()
                |> Queries.preload_relations()
                |> Repo.all()
                |> Enum.sort()

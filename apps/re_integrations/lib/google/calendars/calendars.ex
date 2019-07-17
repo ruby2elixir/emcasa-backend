@@ -1,13 +1,16 @@
 defmodule ReIntegrations.Google.Calendars do
-  alias Re.{
-    GoogleCalendars,
-    GoogleCalendars.Calendar
-  }
-
+  @moduledoc """
+  Module for handling requests on google calendars throught google's api
+  """
   alias GoogleApi.Calendar.V3.{
     Api,
     Connection,
     Model
+  }
+
+  alias Re.{
+    GoogleCalendars,
+    GoogleCalendars.Calendar
   }
 
   @timezone Application.get_env(:re_integrations, :google_api_timezone, "America/Sao_Paulo")

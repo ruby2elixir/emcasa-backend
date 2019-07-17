@@ -4,8 +4,8 @@ defmodule Re.GoogleCalendars.Calendar.Queries do
   """
 
   alias Re.{
-    Slugs,
-    GoogleCalendars.Calendar
+    GoogleCalendars.Calendar,
+    Slugs
   }
 
   import Ecto.Query
