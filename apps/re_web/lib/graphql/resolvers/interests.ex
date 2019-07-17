@@ -14,9 +14,7 @@ defmodule ReWeb.Resolvers.Interests do
   end
 
   def request_price_suggestion(params, %{context: %{current_user: current_user}}) do
-    with :ok <- Bodyguard.permit(Interests, :request_price_suggestion, current_user) do
-      Interests.request_price_suggestion(params, current_user)
-    end
+    Interests.request_price_suggestion(params, current_user)
   end
 
   def notify_when_covered(params, _), do: Interests.notify_when_covered(params)
