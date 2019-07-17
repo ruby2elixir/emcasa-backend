@@ -249,8 +249,8 @@ defmodule Re.Listings.Filters do
 
   defp attr_filter({:tags_slug, slugs}, query) do
     listings_tags =
-      from(
-        l in query,
+      (l in query)
+      |> from(
         join: t in assoc(l, :tags),
         where: t.name_slug in ^slugs,
         distinct: l.uuid
@@ -264,8 +264,8 @@ defmodule Re.Listings.Filters do
 
   defp attr_filter({:tags_uuid, uuids}, query) do
     listings_tags =
-      from(
-        l in query,
+      (l in query)
+      |> from(
         join: t in assoc(l, :tags),
         where: t.uuid in ^uuids,
         distinct: l.uuid
@@ -372,8 +372,8 @@ defmodule Re.Listings.Filters do
 
   defp attr_filter({:exclude_similar_for_primary_market, true}, query) do
     subquery =
-      from(
-        l in query,
+      (l in query)
+      |> from(
         where: not (l.is_release == true and l.is_exportable == false),
         distinct: l.uuid
       )
