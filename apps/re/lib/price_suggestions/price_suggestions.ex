@@ -9,8 +9,7 @@ defmodule Re.PriceSuggestions do
     PriceSuggestions.Request,
     PriceTeller,
     Repo,
-    SellerLeads.JobQueue,
-    User
+    SellerLeads.JobQueue
   }
 
   alias Ecto.{
@@ -22,18 +21,6 @@ defmodule Re.PriceSuggestions do
     request
     |> preload_address()
     |> do_suggest_price()
-    |> case do
-      {:ok, suggested_price} ->
-        params =
-          Map.merge(%{suggested_price: suggested_price.listing_price_rounded}, suggested_price)
-
-        request
-        |> Request.changeset(params)
-        |> Repo.update()
-
-      error ->
-        error
-    end
   end
 
   def suggest_price(%Listing{} = listing) do
@@ -59,7 +46,6 @@ defmodule Re.PriceSuggestions do
     params
     |> map_params()
     |> PriceTeller.ask()
-    |> format_output()
   end
 
   defp map_params(params) do
@@ -86,45 +72,39 @@ defmodule Re.PriceSuggestions do
   defp round_if_not_nil(nil), do: 0
   defp round_if_not_nil(maintenance_fee), do: round(maintenance_fee)
 
-  defp format_output({:ok, suggested_price}), do: {:ok, suggested_price}
-
-  defp format_output(response) do
-    Sentry.capture_message("Error on priceteller response",
-      extra: %{response: Kernel.inspect(response)}
-    )
-
-    response
-  end
-
   defp preload_address(%Listing{} = listing), do: Repo.preload(listing, :address)
 
   defp preload_address(params), do: params
 
-  def create_request(params, %{id: address_id}, user) do
-    changeset =
-      %Request{}
-      |> Changeset.change(address_id: address_id)
-      |> attach_user(user)
-      |> Request.changeset(params)
+  def create_request(params) do
+    with %{valid?: true} = changeset <- Request.changeset(%Request{}, params),
+         suggested_price <- do_suggest_price(params),
+         %{valid?: true} = changeset <- set_suggested_price(changeset, suggested_price) do
+      uuid = Changeset.get_field(changeset, :uuid)
 
-    uuid = Changeset.get_field(changeset, :uuid)
-
-    Ecto.Multi.new()
-    |> Multi.insert(:insert_price_suggestion_request, changeset)
-    |> JobQueue.enqueue(:seller_lead_job, %{
-      "type" => "process_price_suggestion_request",
-      "uuid" => uuid
-    })
-    |> Repo.transaction()
-    |> return_insertion()
+      Ecto.Multi.new()
+      |> Multi.insert(:insert_price_suggestion_request, changeset)
+      |> JobQueue.enqueue(:seller_lead_job, %{
+        "type" => "process_price_suggestion_request",
+        "uuid" => uuid
+      })
+      |> Repo.transaction()
+      |> return_insertion()
+    else
+      %Changeset{} = changeset -> {:error, changeset}
+      error -> error
+    end
   end
+
+  defp set_suggested_price(changeset, {:ok, suggested_price}) do
+    changeset
+    |> Request.changeset(%{suggested_price: suggested_price.listing_price_rounded})
+    |> Request.changeset(suggested_price)
+  end
+
+  defp set_suggested_price(changeset, _), do: changeset
 
   defp return_insertion({:ok, %{insert_price_suggestion_request: request}}), do: {:ok, request}
 
   defp return_insertion(error), do: error
-
-  defp attach_user(changeset, %User{id: id}),
-    do: Changeset.change(changeset, user_id: id)
-
-  defp attach_user(changeset, _), do: changeset
 end
