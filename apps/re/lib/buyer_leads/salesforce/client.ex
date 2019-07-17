@@ -5,7 +5,8 @@ defmodule Re.BuyerLeads.Salesforce.Client do
 
   alias Re.BuyerLeads.Salesforce.ZapierClient
 
-  @exported ~w(uuid name phone_number origin email location listing_uuid user_uuid budget neighborhood url user_url)a
+  @exported ~w(uuid name phone_number origin email location listing_uuid user_uuid budget
+               neighborhood url user_url cpf where_did_you_find_about)a
 
   def create_lead(%Re.BuyerLead{} = lead) do
     lead

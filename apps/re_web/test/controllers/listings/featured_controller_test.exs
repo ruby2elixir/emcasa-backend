@@ -21,11 +21,16 @@ defmodule ReWeb.FeaturedControllerTest do
       unauthenticated_conn: conn
     } do
       address = insert(:address)
-      insert(:listing, address: address, score: 4, images: [build(:image)])
-      insert(:listing, address: address, score: 4, images: [build(:image)])
-      %{id: id3} = insert(:listing, address: address, score: 3, images: [build(:image)])
-      %{id: id4} = insert(:listing, address: address, score: 2, images: [build(:image)])
-      insert(:listing, address: address, score: 1)
+      insert(:listing, address: address, liquidity_ratio: 4.0, images: [build(:image)])
+      insert(:listing, address: address, liquidity_ratio: 4.0, images: [build(:image)])
+
+      %{id: id3} =
+        insert(:listing, address: address, liquidity_ratio: 3.0, images: [build(:image)])
+
+      %{id: id4} =
+        insert(:listing, address: address, liquidity_ratio: 2.0, images: [build(:image)])
+
+      insert(:listing, address: address, liquidity_ratio: 1)
 
       conn = dispatch(conn, @endpoint, "get", "/featured_listings")
 
@@ -38,12 +43,18 @@ defmodule ReWeb.FeaturedControllerTest do
       unauthenticated_conn: conn
     } do
       address = insert(:address)
-      insert(:listing, address: address, score: 4, images: [build(:image)])
-      insert(:listing, address: address, score: 4, images: [build(:image)])
-      %{id: id3} = insert(:listing, address: address, score: 3, images: [build(:image)])
-      insert(:listing, address: address, score: 4)
-      %{id: id5} = insert(:listing, address: address, score: 2, images: [build(:image)])
-      insert(:listing, address: address, score: 1)
+      insert(:listing, address: address, liquidity_ratio: 4.0, images: [build(:image)])
+      insert(:listing, address: address, liquidity_ratio: 4.0, images: [build(:image)])
+
+      %{id: id3} =
+        insert(:listing, address: address, liquidity_ratio: 3.0, images: [build(:image)])
+
+      insert(:listing, address: address, liquidity_ratio: 4.0)
+
+      %{id: id5} =
+        insert(:listing, address: address, liquidity_ratio: 2.0, images: [build(:image)])
+
+      insert(:listing, address: address, liquidity_ratio: 1.0)
 
       conn = dispatch(conn, @endpoint, "get", "/featured_listings")
 
@@ -55,14 +66,19 @@ defmodule ReWeb.FeaturedControllerTest do
     test "do not show inactive listings", %{
       unauthenticated_conn: conn
     } do
-      %{id: id1} = insert(:listing, address: build(:address), score: 4, images: [build(:image)])
-      %{id: id2} = insert(:listing, address: build(:address), score: 3, images: [build(:image)])
-      %{id: id3} = insert(:listing, address: build(:address), score: 2, images: [build(:image)])
+      %{id: id1} =
+        insert(:listing, address: build(:address), liquidity_ratio: 4.0, images: [build(:image)])
+
+      %{id: id2} =
+        insert(:listing, address: build(:address), liquidity_ratio: 3.0, images: [build(:image)])
+
+      %{id: id3} =
+        insert(:listing, address: build(:address), liquidity_ratio: 2.0, images: [build(:image)])
 
       insert(
         :listing,
         address: build(:address),
-        score: 4,
+        liquidity_ratio: 4.0,
         images: [build(:image)],
         status: "inactive"
       )

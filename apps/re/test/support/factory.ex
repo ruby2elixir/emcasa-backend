@@ -50,7 +50,7 @@ defmodule Re.Factory do
       balconies: Enum.random(0..10),
       has_elevator: Enum.random([true, false]),
       area: area,
-      score: Enum.random(1..4),
+      liquidity_ratio: Enum.random(1..4) / 1,
       matterport_code: Faker.String.base64(),
       status: "active",
       is_exclusive: Enum.random([true, false]),
@@ -267,7 +267,9 @@ defmodule Re.Factory do
       budget: "$100 to $1000",
       neighborhood: Pokemon.location(),
       url: Internet.url(),
-      user_url: Internet.url()
+      user_url: Internet.url(),
+      cpf: "999.999.999-99",
+      where_did_you_find_about: "tv"
     }
   end
 
@@ -294,6 +296,16 @@ defmodule Re.Factory do
       uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email()
+    }
+  end
+
+  def walk_in_offline_buyer_lead_factory do
+    %Re.BuyerLeads.WalkInOffline{
+      uuid: UUID.uuid4(),
+      full_name: Name.name(),
+      email: Internet.email(),
+      cpf: "999.999.999-99",
+      where_did_you_find_about: "tv"
     }
   end
 

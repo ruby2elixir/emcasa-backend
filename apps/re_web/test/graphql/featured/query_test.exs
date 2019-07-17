@@ -22,28 +22,28 @@ defmodule ReWeb.GraphQL.Featured.QueryTest do
     insert(
       :listing,
       address: build(:address, street: "Street A"),
-      score: 4,
+      liquidity_ratio: 4.0,
       images: [build(:image, filename: "test1.jpg")]
     )
 
     insert(
       :listing,
       address: build(:address, street: "Street B"),
-      score: 3,
+      liquidity_ratio: 3.0,
       images: [build(:image, filename: "test2.jpg")]
     )
 
     insert(
       :listing,
       address: build(:address, street: "Street C"),
-      score: 2,
+      liquidity_ratio: 2.0,
       images: [build(:image, filename: "test3.jpg")]
     )
 
     insert(
       :listing,
       address: build(:address, street: "Street D"),
-      score: 1,
+      liquidity_ratio: 1.0,
       images: [build(:image, filename: "test4.jpg")]
     )
 
@@ -86,28 +86,28 @@ defmodule ReWeb.GraphQL.Featured.QueryTest do
     insert(
       :listing,
       address: build(:address, street: "Street A"),
-      score: 4,
+      liquidity_ratio: 4.0,
       images: [build(:image, filename: "test1.jpg")]
     )
 
     insert(
       :listing,
       address: build(:address, street: "Street B"),
-      score: 3,
+      liquidity_ratio: 3.0,
       images: [build(:image, filename: "test2.jpg")]
     )
 
     insert(
       :listing,
       address: build(:address, street: "Street C"),
-      score: 2,
+      liquidity_ratio: 2.0,
       images: [build(:image, filename: "test3.jpg")]
     )
 
     insert(
       :listing,
       address: build(:address, street: "Street D"),
-      score: 1,
+      liquidity_ratio: 1.0,
       images: [build(:image, filename: "test4.jpg")]
     )
 
@@ -150,28 +150,28 @@ defmodule ReWeb.GraphQL.Featured.QueryTest do
     insert(
       :listing,
       address: build(:address, street: "Street A"),
-      score: 4,
+      liquidity_ratio: 4.0,
       images: [build(:image, filename: "test1.jpg")]
     )
 
     insert(
       :listing,
       address: build(:address, street: "Street B"),
-      score: 3,
+      liquidity_ratio: 3.0,
       images: [build(:image, filename: "test2.jpg")]
     )
 
     insert(
       :listing,
       address: build(:address, street: "Street C"),
-      score: 2,
+      liquidity_ratio: 2.0,
       images: [build(:image, filename: "test3.jpg")]
     )
 
     insert(
       :listing,
       address: build(:address, street: "Street D"),
-      score: 1,
+      liquidity_ratio: 1.0,
       images: [build(:image, filename: "test4.jpg")]
     )
 
