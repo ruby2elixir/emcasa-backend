@@ -8,7 +8,7 @@ defmodule ReIntegrations.Routific.Client do
   }
 
   @api_key Application.get_env(:re_integrations, :routific_api_key, "")
-  @api_url Application.get_env(:re_integrations, :routific_url, "https://api.routific.com")
+  @api_url Application.get_env(:re_integrations, :routific_url, "")
   @http_client Application.get_env(:re_integrations, :http, HTTPoison)
 
   @api_headers [{"Authorization", "Bearer #{@api_key}"}, {"Content-Type", "application/json"}]

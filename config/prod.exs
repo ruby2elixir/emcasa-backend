@@ -85,7 +85,9 @@ config :re_integrations,
   zapier_webhook_pass: System.get_env("ZAPIER_WEBHOOK_PASS"),
   orulo_url: System.get_env("ORULO_URL"),
   orulo_api_token: System.get_env("ORULO_API_TOKEN"),
-  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN")
+  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN"),
+  routific_url: System.get_env("ROUTIFIC_URL"),
+  routific_api_key: System.get_env("ROUTIFIC_API_KEY")
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
