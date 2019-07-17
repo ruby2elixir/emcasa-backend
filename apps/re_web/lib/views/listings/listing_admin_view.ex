@@ -95,7 +95,6 @@ defmodule ReWeb.ListingAdminView do
       restrooms: listing.restrooms,
       garage_spots: listing.garage_spots,
       garage_type: listing.garage_type,
-      score: listing.score,
       matterport_code: listing.matterport_code,
       suites: listing.suites,
       dependencies: listing.dependencies,

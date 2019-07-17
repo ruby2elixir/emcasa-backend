@@ -11,6 +11,7 @@ defmodule ReWeb.Resolvers.Listings do
     Listings,
     Listings.Featured,
     Listings.History.Prices,
+    Listings.Liquidity,
     Listings.Related,
     OwnerContacts,
     PriceSuggestions
@@ -154,13 +155,6 @@ defmodule ReWeb.Resolvers.Listings do
   def is_active(%{status: "active"}, _, _), do: {:ok, true}
   def is_active(_, _, _), do: {:ok, false}
 
-  def score(%{score: score}, _, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :show_score, current_user, %{}) do
-      :ok -> {:ok, score}
-      _ -> {:ok, nil}
-    end
-  end
-
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
          {:ok, listing} <- Listings.get_preloaded(id),
@@ -291,6 +285,17 @@ defmodule ReWeb.Resolvers.Listings do
       |> Map.put(:filters, relaxed_filters)
 
     {:ok, listing_index}
+  end
+
+  def score(_, _, _), do: {:ok, nil}
+
+  def normalized_liquidity_ratio(%{liquidity_ratio: liquidity_ratio}, _, %{
+        context: %{current_user: current_user}
+      }) do
+    case Bodyguard.permit(Listings, :show_liquidity_ratio, current_user, %{}) do
+      :ok -> {:ok, Liquidity.normalize_liquidity_ratio(liquidity_ratio)}
+      _ -> {:ok, nil}
+    end
   end
 
   def featured(_, _), do: {:ok, Featured.get_graphql()}

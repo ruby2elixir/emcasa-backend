@@ -11,7 +11,7 @@ defmodule Re.Listings.DataloaderQueries do
     |> active(args)
     |> paginate(args)
     |> filter(args)
-    |> order_by([l], desc: l.score)
+    |> order_by([l], desc: l.liquidity_ratio)
   end
 
   defp active(query, %{has_admin_rights: true}), do: query

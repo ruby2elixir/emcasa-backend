@@ -23,7 +23,6 @@ defmodule Re.Listing do
     field :area, :integer
     field :garage_spots, :integer, default: 0
     field :garage_type, :string
-    field :score, :integer
     field :suites, :integer
     field :dependencies, :integer
     field :balconies, :integer
@@ -92,7 +91,7 @@ defmodule Re.Listing do
                            went_exclusive)
 
   @required ~w(type description price rooms bathrooms area garage_spots garage_type
-                     score address_id user_id suites dependencies has_elevator)a
+                     address_id user_id suites dependencies has_elevator)a
   @optional ~w(complement floor matterport_code is_exclusive status property_tax
                      maintenance_fee balconies restrooms is_release is_exportable
                      orientation floor_count unit_per_floor sun_period elevators
@@ -110,7 +109,6 @@ defmodule Re.Listing do
       greater_than_or_equal_to: 250_000,
       less_than_or_equal_to: 100_000_000
     )
-    |> validate_number(:score, greater_than: 0, less_than: 5)
     |> validate_inclusion(:type, @types)
     |> validate_inclusion(:garage_type, @garage_types)
     |> validate_inclusion(:orientation, @orientation_types)

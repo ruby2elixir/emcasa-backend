@@ -31,7 +31,7 @@ defmodule Re.Listings.Queries do
     |> order_by()
   end
 
-  def order_by(query, _), do: query
+  def order_by(query, _), do: order_by(query)
 
   defp order_by_criterias(%{field: field, type: type}, query) when field in @orderable_fields do
     order_by(query, [l], {^type, ^field})
@@ -41,9 +41,7 @@ defmodule Re.Listings.Queries do
 
   def order_by(query \\ Listing) do
     query
-    |> order_by([l], desc: l.score)
-    |> order_by([l], fragment("RANDOM()"))
-    |> order_by([l], asc: l.matterport_code)
+    |> order_by([l], desc_nulls_last: l.liquidity_ratio)
   end
 
   def order_by_id(query \\ Listing), do: order_by(query, [l], asc: l.id)

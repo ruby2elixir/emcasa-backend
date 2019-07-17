@@ -33,7 +33,6 @@ defmodule ReWeb.ListingControllerTest do
   }
   @valid_attrs_admin %{
     type: "Casa",
-    score: 3,
     floor: "H1",
     complement: "basement",
     bathrooms: 2,
@@ -64,8 +63,6 @@ defmodule ReWeb.ListingControllerTest do
     lng: "25"
   }
   @invalid_attrs %{
-    score: 7,
-    bathrooms: -1,
     restrooms: -1,
     price: -1,
     property_tax: -500.00,
@@ -444,7 +441,6 @@ defmodule ReWeb.ListingControllerTest do
                  "area" => listing.area,
                  "garage_spots" => listing.garage_spots,
                  "garage_type" => listing.garage_type,
-                 "score" => listing.score,
                  "matterport_code" => listing.matterport_code,
                  "suites" => listing.suites,
                  "dependencies" => listing.dependencies,
