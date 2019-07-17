@@ -12,7 +12,7 @@ defmodule Re.SellerLead do
     field :source, :string
     field :complement, :string
     field :type, :string
-    field :area, :string
+    field :area, :integer
     field :maintenance_fee, :float
     field :rooms, :integer
     field :bathrooms, :integer
@@ -37,7 +37,7 @@ defmodule Re.SellerLead do
   @required ~w(origin)a
   @optional ~w(street street_number city state neighborhood postal_code name phone email source
                complement type area maintenance_fee rooms bathrooms suites garage_spots value
-               tour_option)a
+               tour_option address_uuid user_uuid)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do
