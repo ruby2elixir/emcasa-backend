@@ -4,7 +4,6 @@ defmodule ReIntegrations.Routific.Client do
   """
 
   alias ReIntegrations.{
-    Routific,
     Routific.Payload
   }
 
