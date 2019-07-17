@@ -4,9 +4,9 @@ defmodule ReIntegrations.Routific do
   """
 
   alias ReIntegrations.{
+    Repo,
     Routific.Client,
-    Routific.JobQueue,
-    Repo
+    Routific.JobQueue
   }
 
   @shift Application.get_env(:re_integrations, :routific_shift, {"8:00", "16:00"})

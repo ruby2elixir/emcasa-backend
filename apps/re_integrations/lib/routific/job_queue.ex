@@ -6,8 +6,8 @@ defmodule ReIntegrations.Routific.JobQueue do
   use EctoJob.JobQueue, table_name: "routific_jobs", schema_prefix: "re_integrations"
 
   alias ReIntegrations.{
-    Routific,
-    Repo
+    Repo,
+    Routific
   }
 
   alias Ecto.Multi
