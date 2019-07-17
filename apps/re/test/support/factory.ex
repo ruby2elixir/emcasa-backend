@@ -359,6 +359,24 @@ defmodule Re.Factory do
     }
   end
 
+  def seller_lead_factory do
+    %Re.SellerLead{
+      uuid: UUID.uuid4(),
+      type: random(:listing_type),
+      complement: Address.secondary_address(),
+      maintenance_fee: random(:maintenance_fee_float),
+      rooms: Enum.random(1..10),
+      bathrooms: Enum.random(1..10),
+      garage_spots: Enum.random(0..10),
+      suites: Enum.random(0..10),
+      price: random(:price),
+      area: Enum.random(25..500),
+      source: Enum.random(~w(Website Facebook)),
+      tour_option: ~N[2019-07-18 10:00:00.000000],
+      inserted_at: ~N[2019-07-17 10:00:00.000000]
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
