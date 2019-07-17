@@ -50,7 +50,7 @@ defmodule Re.Factory do
       balconies: Enum.random(0..10),
       has_elevator: Enum.random([true, false]),
       area: area,
-      score: Enum.random(1..4),
+      liquidity_ratio: Enum.random(1..4) / 1,
       matterport_code: Faker.String.base64(),
       status: "active",
       is_exclusive: Enum.random([true, false]),
@@ -88,6 +88,7 @@ defmodule Re.Factory do
     state_slug = Re.Slugs.sluggify(state_name)
 
     %Re.Address{
+      uuid: UUID.uuid4(),
       street_number: Address.building_number(),
       street: street_name,
       street_slug: street_slug,
@@ -176,6 +177,7 @@ defmodule Re.Factory do
 
   def price_suggestion_request_factory do
     %Re.PriceSuggestions.Request{
+      uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email(),
       rooms: Enum.random(1..10),

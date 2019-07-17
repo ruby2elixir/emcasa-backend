@@ -113,5 +113,19 @@ defmodule Re.Listings.QueriesTest do
 
       assert [listing_id_3, listing_id_2, listing_id_1] == result
     end
+
+    test "order by score by default with nils on last" do
+      %{id: listing_id_1} = insert(:listing, liquidity_ratio: nil)
+      %{id: listing_id_2} = insert(:listing, liquidity_ratio: -1.0)
+      %{id: listing_id_3} = insert(:listing, liquidity_ratio: 1.0)
+
+      result =
+        Queries.active()
+        |> Queries.order_by()
+        |> Repo.all()
+        |> Enum.map(& &1.id)
+
+      assert [listing_id_3, listing_id_2, listing_id_1] == result
+    end
   end
 end

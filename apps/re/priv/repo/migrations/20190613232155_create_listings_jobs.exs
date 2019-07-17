@@ -8,6 +8,6 @@ defmodule Re.Repo.Migrations.CreateListingsJobs do
   end
 
   def down do
-    CreateJobTable.up("listings_jobs")
+    CreateJobTable.down("listings_jobs")
   end
 end
