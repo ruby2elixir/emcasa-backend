@@ -12,7 +12,7 @@ defmodule Re.SellerLead do
     field :source, :string
     field :complement, :string
     field :type, :string
-    field :area, :string
+    field :area, :integer
     field :maintenance_fee, :float
     field :rooms, :integer
     field :bathrooms, :integer
