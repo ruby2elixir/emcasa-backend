@@ -3,8 +3,6 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
   Builds routific outbound payload.
   """
 
-  alias Re.GoogleCalendars.Calendar
-
   alias ReIntegrations.Routific
 
   defstruct [:visits, :fleet]
@@ -31,11 +29,8 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
     end)
   end
 
-  defp build_fleet(visits) do
+  defp build_fleet(_visits) do
     # TODO build fleet from photographers' google calendars
     %{}
   end
-
-  defp lat_lng_list(visits),
-    do: Enum.map(visits, fn %{"lat" => lat, "lng" => lng} -> [lat, lng] end)
 end

@@ -1,6 +1,6 @@
 defmodule ReIntegrations.Routific.Payload.Inbound do
   @moduledoc """
-  Handle routific outbound payload.
+  Parses routific response.
   """
 
   defstruct [:status, :solution, :unserved]

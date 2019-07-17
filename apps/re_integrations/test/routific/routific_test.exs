@@ -4,9 +4,9 @@ defmodule ReIntegrations.RoutificTest do
   import Re.CustomAssertion
 
   alias ReIntegrations.{
+    Repo,
     Routific,
-    Routific.JobQueue,
-    Repo
+    Routific.JobQueue
   }
 
   @visits [
