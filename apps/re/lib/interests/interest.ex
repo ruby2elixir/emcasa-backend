@@ -17,6 +17,12 @@ defmodule Re.Interest do
     field :email, :string
     field :phone, :string
     field :message, :string
+    field :campaign, :string
+    field :medium, :string
+    field :source, :string
+    field :initial_campaign, :string
+    field :initial_medium, :string
+    field :initial_source, :string
 
     belongs_to :listing, Re.Listing
     belongs_to :interest_type, Re.InterestType
@@ -25,7 +31,8 @@ defmodule Re.Interest do
   end
 
   @required ~w(name phone listing_id)a
-  @optional ~w(email message interest_type_id uuid)a
+  @optional ~w(email message interest_type_id uuid campaign medium
+               source initial_campaign initial_medium initial_source)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
