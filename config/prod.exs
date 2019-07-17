@@ -85,7 +85,13 @@ config :re_integrations,
   zapier_webhook_pass: System.get_env("ZAPIER_WEBHOOK_PASS"),
   orulo_url: System.get_env("ORULO_URL"),
   orulo_api_token: System.get_env("ORULO_API_TOKEN"),
-  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN")
+  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN"),
+  google_calendar_acl_owner:
+    with(
+      acl_type when not is_nil(acl_type) <- System.get_env("GOOGLE_CALENDAR_ACL_OWNER_TYPE"),
+      acl_owner when not is_nil(acl_owner) <- System.get_env("GOOGLE_CALENDAR_ACL_OWNER"),
+      do: [type: acl_type, value: acl_owner]
+    )
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
@@ -112,3 +118,7 @@ config :cloudex,
   api_key: System.get_env("CLOUDINARY_API_KEY"),
   secret: System.get_env("CLOUDINARY_SECRET"),
   cloud_name: System.get_env("CLOUDINARY_CLOUD_NAME")
+
+config :goth,
+  json: {:system, "GCP_CREDENTIALS"},
+  disabled: is_nil(System.get_env("GCP_CREDENTIALS"))
