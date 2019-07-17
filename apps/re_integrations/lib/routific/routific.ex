@@ -15,25 +15,19 @@ defmodule ReIntegrations.Routific do
   def shift_end, do: elem(@shift, 1)
 
   def start_job(visits) do
-    with {:ok, %{body: body}} <- Client.start_job(visits),
-         {:ok, %{"job_id" => job_id}} <-
-           Jason.decode(body) do
+    with {:ok, %{"job_id" => job_id}} <- Client.start_job(visits) do
       %{"type" => "monitor_routific_job", "job_id" => job_id}
       |> JobQueue.new()
       |> Repo.insert()
-    else
-      {_, error} -> {:error, error}
     end
   end
 
   def get_job_status(job_id) do
-    with {:ok, %{body: body}} <- Client.fetch_job(job_id),
-         {:ok, %{"status" => "finished", "output" => output}} <-
-           Jason.decode(body) do
-      {:ok, output}
+    with {:ok, payload = %{status: "finished"}} <- Client.fetch_job(job_id) do
+      {:ok, payload}
     else
-      {_, %{status_code: status_code}} -> {:error, %{"status_code" => status_code}}
-      {:ok, %{"status" => status}} -> {:error, %{"status" => status}}
+      {_, %{status_code: status_code}} -> {:error, %{status_code: status_code}}
+      {_, %{status: status}} -> {:error, %{status: status}}
     end
   end
 end
