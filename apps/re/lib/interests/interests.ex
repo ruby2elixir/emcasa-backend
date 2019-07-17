@@ -2,6 +2,7 @@ defmodule Re.Interests do
   @moduledoc """
   Context to manage operation between users and listings
   """
+  @behaviour Bodyguard.Policy
 
   import Ecto.Query
 
@@ -22,6 +23,8 @@ defmodule Re.Interests do
     Repo,
     User
   }
+
+  defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def data(params), do: Dataloader.Ecto.new(Re.Repo, query: &query/2, default_params: params)
 
@@ -49,11 +52,11 @@ defmodule Re.Interests do
   end
 
   def request_price_suggestion(params, user) do
-    with {:ok, address} <- Addresses.insert_or_update(params.address),
-         {:ok, request} <- PriceSuggestions.create_request(params, address, user) do
-      request
-      |> Repo.preload(:address)
-      |> PriceSuggestions.suggest_price()
+    with {:ok, address} <- Addresses.insert_or_update(params.address) do
+      params
+      |> Map.put(:address_id, address.id)
+      |> Map.put(:user_id, user.id)
+      |> PriceSuggestions.create_request()
       |> PubSub.publish_new("new_price_suggestion_request")
     end
   end
