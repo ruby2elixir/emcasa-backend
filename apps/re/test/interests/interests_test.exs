@@ -6,7 +6,6 @@ defmodule Re.InterestsTest do
     PriceSuggestions.Request,
     Interest,
     Interests,
-    SellerLeads,
     Repo
   }
 
@@ -55,7 +54,6 @@ defmodule Re.InterestsTest do
 
       assert request = Repo.one(Request)
       assert request.suggested_price == 26_279.0
-      assert Repo.one(SellerLeads.JobQueue)
     end
 
     test "should store price suggestion request with user attached" do
@@ -102,7 +100,6 @@ defmodule Re.InterestsTest do
       assert request = Repo.one(Request)
       assert request.user_id == user.id
       assert request.suggested_price == 26_279.0
-      assert Repo.one(SellerLeads.JobQueue)
     end
 
     test "should store price suggestion request when street is not covered" do
@@ -145,7 +142,6 @@ defmodule Re.InterestsTest do
 
       assert request = Repo.one(Request)
       assert request.suggested_price == 26_279.0
-      assert Repo.one(SellerLeads.JobQueue)
     end
   end
 

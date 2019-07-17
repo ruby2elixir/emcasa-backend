@@ -9,14 +9,10 @@ defmodule Re.PriceSuggestions do
     PriceSuggestions.Request,
     PriceTeller,
     Repo,
-    SellerLeads.JobQueue,
     User
   }
 
-  alias Ecto.{
-    Changeset,
-    Multi
-  }
+  alias Ecto.Changeset
 
   def suggest_price(%Request{} = request) do
     request
@@ -101,27 +97,12 @@ defmodule Re.PriceSuggestions do
   defp preload_address(params), do: params
 
   def create_request(params, %{id: address_id}, user) do
-    changeset =
-      %Request{}
-      |> Changeset.change(address_id: address_id)
-      |> attach_user(user)
-      |> Request.changeset(params)
-
-    uuid = Changeset.get_field(changeset, :uuid)
-
-    Ecto.Multi.new()
-    |> Multi.insert(:insert_price_suggestion_request, changeset)
-    |> JobQueue.enqueue(:seller_lead_job, %{
-      "type" => "process_price_suggestion_request",
-      "uuid" => uuid
-    })
-    |> Repo.transaction()
-    |> return_insertion()
+    %Request{}
+    |> Changeset.change(address_id: address_id)
+    |> attach_user(user)
+    |> Request.changeset(params)
+    |> Repo.insert()
   end
-
-  defp return_insertion({:ok, %{insert_price_suggestion_request: request}}), do: {:ok, request}
-
-  defp return_insertion(error), do: error
 
   defp attach_user(changeset, %User{id: id}),
     do: Changeset.change(changeset, user_id: id)
