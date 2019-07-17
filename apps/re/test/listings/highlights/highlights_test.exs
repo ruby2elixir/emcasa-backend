@@ -89,46 +89,6 @@ defmodule Re.Listings.HighlightsTest do
       assert [listing_id_valid] == Highlights.get_highlight_listing_ids()
     end
 
-    test "should only consider listings in selected neighborhoods in rio de janeiro" do
-      %{id: listing_id_valid} = insert(:listing, @valid_attributes_rj)
-
-      invalid_attributes =
-        Map.merge(
-          @valid_attributes_rj,
-          %{
-            address: %Address{
-              neighborhood_slug: "lalaland",
-              city_slug: "rio-de-janeiro",
-              state_slug: "rj"
-            }
-          }
-        )
-
-      insert(:listing, invalid_attributes)
-
-      assert [listing_id_valid] == Highlights.get_highlight_listing_ids()
-    end
-
-    test "should only consider listings in selected neighborhoods in sao paulo" do
-      %{id: listing_id_valid} = insert(:listing, @valid_attributes_sp)
-
-      invalid_attributes =
-        Map.merge(
-          @valid_attributes_sp,
-          %{
-            address: %Address{
-              neighborhood_slug: "lalaland",
-              city_slug: "sao-paulo",
-              state_slug: "sp"
-            }
-          }
-        )
-
-      insert(:listing, invalid_attributes)
-
-      assert [listing_id_valid] == Highlights.get_highlight_listing_ids()
-    end
-
     test "should sort by recents" do
       [%{id: listing_id_1}, %{id: listing_id_2}] = insert_list(2, :listing, @valid_attributes_rj)
 
