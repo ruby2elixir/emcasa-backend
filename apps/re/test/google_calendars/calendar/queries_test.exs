@@ -8,7 +8,7 @@ defmodule Re.GoogleCalendars.Calendar.QueriesTest do
 
   import Re.Factory
 
-  describe "by_districts/1" do
+  describe "by_district_names/1" do
     test "should get all calendars by districts name" do
       district1 = insert(:district)
       district2 = insert(:district)
@@ -22,7 +22,7 @@ defmodule Re.GoogleCalendars.Calendar.QueriesTest do
 
       assert calendars ==
                [district2.name]
-               |> Queries.by_districts()
+               |> Queries.by_district_names()
                |> Queries.preload_relations()
                |> Repo.all()
                |> Enum.sort()

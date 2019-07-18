@@ -16,8 +16,8 @@ defmodule Re.GoogleCalendars.Calendar.Queries do
 
   def preload_relations(query, relations), do: preload(query, ^relations)
 
-  def by_districts(query \\ Calendar, district_names_or_slugs) do
-    district_slugs = district_names_or_slugs |> Enum.map(&Slugs.sluggify/1)
+  def by_district_names(query \\ Calendar, district_names) do
+    district_slugs = district_names |> Enum.map(&Slugs.sluggify/1)
 
     from(
       c in query,
