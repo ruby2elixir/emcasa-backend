@@ -5,8 +5,8 @@ defmodule Re.Repo.Migrations.CreateCalendars do
     create table(:calendars, primary_key: false) do
       add :uuid, :uuid, primary_key: true
       add :external_id, :string, null: false
-      add :shift_start, :string, null: false, default: "8:00"
-      add :shift_end, :string, null: false, default: "18:00"
+      add :shift_start, :string, null: false
+      add :shift_end, :string, null: false
 
       timestamps()
     end

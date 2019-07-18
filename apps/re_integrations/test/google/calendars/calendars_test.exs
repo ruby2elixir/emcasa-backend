@@ -57,12 +57,12 @@ defmodule ReIntegrations.Google.CalendarsTest do
     test "creates a google calendar and inserts it to the database" do
       assert {:ok, calendar = %Re.GoogleCalendars.Calendar{}} =
                Calendars.insert(%{
-                 shift_start: "10:00",
-                 shift_end: "12:00"
+                 shift_start: ~T[10:00:00],
+                 shift_end: ~T[12:00:00]
                })
 
-      assert "10:00" == calendar.shift_start
-      assert "12:00" == calendar.shift_end
+      assert ~T[10:00:00] == calendar.shift_start
+      assert ~T[12:00:00] == calendar.shift_end
     end
   end
 

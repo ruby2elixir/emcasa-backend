@@ -10,8 +10,8 @@ defmodule Re.GoogleCalendars.Calendar do
 
   schema "calendars" do
     field :external_id, :string
-    field :shift_start, :string, default: "8:00"
-    field :shift_end, :string, default: "18:00"
+    field :shift_start, :time, default: ~T[08:00:00]
+    field :shift_end, :time, default: ~T[18:00:00]
 
     many_to_many :districts, Re.Addresses.District,
       join_through: Re.GoogleCalendars.CalendarDistrict,
