@@ -20,7 +20,7 @@ defmodule Re.GoogleCalendars do
   defp do_get(query, uuid) do
     case Repo.get(query, uuid) do
       nil -> {:error, :not_found}
-      development -> {:ok, development}
+      calendar -> {:ok, calendar}
     end
   end
 

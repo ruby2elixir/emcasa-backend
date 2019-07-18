@@ -53,8 +53,6 @@ defmodule ReIntegrations.Google.Calendars do
   defp to_event_date_time(%DateTime{} = date_time),
     do: %Model.EventDateTime{dateTime: date_time, timeZone: @timezone}
 
-  defp to_event_date_time(date_time), do: date_time
-
   def insert(params \\ %{}, calendar_opts \\ []) do
     with {:ok, calendar} <- insert_calendar(calendar_opts),
          {:ok, _acl} <- insert_acl(calendar) do
