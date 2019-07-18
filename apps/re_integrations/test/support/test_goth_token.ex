@@ -1,4 +1,6 @@
 defmodule ReIntegrations.TestGoth.Token do
+  @moduledoc false
+
   def for_scope(scope),
     do:
       {:ok,
