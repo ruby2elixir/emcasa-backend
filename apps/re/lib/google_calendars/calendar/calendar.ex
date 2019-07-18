@@ -15,7 +15,7 @@ defmodule Re.GoogleCalendars.Calendar do
 
     many_to_many :districts, Re.Addresses.District,
       join_through: Re.GoogleCalendars.CalendarDistrict,
-      join_keys: [calendar_uuid: :uuid, district_id: :id],
+      join_keys: [calendar_uuid: :uuid, district_uuid: :uuid],
       on_replace: :delete
 
     timestamps()

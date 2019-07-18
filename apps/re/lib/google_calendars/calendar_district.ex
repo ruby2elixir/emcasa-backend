@@ -16,13 +16,13 @@ defmodule Re.GoogleCalendars.CalendarDistrict do
       primary_key: true
 
     belongs_to :tag, Re.Addresses.District,
-      type: :id,
-      foreign_key: :district_id,
-      references: :id,
+      type: :binary_id,
+      foreign_key: :district_uuid,
+      references: :uuid,
       primary_key: true
   end
 
-  @required ~w(calendar_uuid district_id)a
+  @required ~w(calendar_uuid district_uuid)a
 
   def changeset(struct, params \\ %{}) do
     struct

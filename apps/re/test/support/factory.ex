@@ -114,6 +114,7 @@ defmodule Re.Factory do
     state_slug = Re.Slugs.sluggify(state)
 
     %Re.Addresses.District{
+      uuid: UUID.uuid4(),
       name: name,
       name_slug: name_slug,
       city: city,
