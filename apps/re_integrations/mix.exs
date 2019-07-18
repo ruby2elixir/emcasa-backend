@@ -51,7 +51,7 @@ defmodule ReIntegrations.Mixfile do
       {:ex_machina, "~> 2.2", only: :test},
       {:ecto_job, "~> 2.0"},
       {:cloudex, git: "https://github.com/emcasa/cloudex.git"},
-      {:google_api_calendar, "~> 0.0.1"},
+      {:google_api_calendar, "~> 0.6.1"},
       {:goth, "~> 1.1.0"}
     ]
   end
