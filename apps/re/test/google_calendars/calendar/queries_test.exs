@@ -6,7 +6,12 @@ defmodule Re.GoogleCalendars.Calendar.QueriesTest do
     Repo
   }
 
-  import Re.Factory
+  import Re.{
+    CustomAssertion,
+    Factory
+  }
+
+  defp map_uuid(list), do: Enum.map(list, &Map.get(&1, :uuid))
 
   describe "by_district_names/1" do
     test "should get all calendars by districts name" do
@@ -14,18 +19,17 @@ defmodule Re.GoogleCalendars.Calendar.QueriesTest do
       district2 = insert(:district)
       insert(:calendar, districts: [district1])
 
-      calendars =
-        Enum.sort([
-          insert(:calendar, districts: [district2]),
-          insert(:calendar, districts: [district1, district2])
-        ])
+      inserted_calendars = [
+        insert(:calendar, districts: [district2]),
+        insert(:calendar, districts: [district1, district2])
+      ]
 
-      assert calendars ==
-               [district2.name]
-               |> Queries.by_district_names()
-               |> Queries.preload_relations()
-               |> Repo.all()
-               |> Enum.sort()
+      selected_calendars =
+        [district2.name]
+        |> Queries.by_district_names()
+        |> Repo.all()
+
+      assert assert_mapper_match(inserted_calendars, selected_calendars, &map_uuid/1)
     end
   end
 end
