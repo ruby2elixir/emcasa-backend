@@ -82,7 +82,13 @@ config :re_integrations,
   zapier_webhook_pass: "testpass",
   cloudinary_client: ReIntegrations.TestCloudex,
   orulo_url: "http://www.emcasa.com/orulo",
-  google_calendar_acl_owner: [type: "domain", value: "example.com"]
+  google_calendar_acl: %GoogleApi.Calendar.V3.Model.AclRule{
+    role: "owner",
+    scope: %GoogleApi.Calendar.V3.Model.AclRuleScope{
+        type: "domain",
+        value: "example.com"
+    }
+  }
 
 config :junit_formatter,
   report_file: "report_file_test.xml",

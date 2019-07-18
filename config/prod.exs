@@ -86,12 +86,13 @@ config :re_integrations,
   orulo_url: System.get_env("ORULO_URL"),
   orulo_api_token: System.get_env("ORULO_API_TOKEN"),
   orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN"),
-  google_calendar_acl_owner:
-    with(
-      acl_type when not is_nil(acl_type) <- System.get_env("GOOGLE_CALENDAR_ACL_OWNER_TYPE"),
-      acl_owner when not is_nil(acl_owner) <- System.get_env("GOOGLE_CALENDAR_ACL_OWNER"),
-      do: [type: acl_type, value: acl_owner]
-    )
+  google_calendar_acl: %GoogleApi.Calendar.V3.Model.AclRule{
+    role: "owner",
+    scope: %GoogleApi.Calendar.V3.Model.AclRuleScope{
+        type: System.get_env("GOOGLE_CALENDAR_ACL_OWNER_TYPE"),
+        value: System.get_env("GOOGLE_CALENDAR_ACL_OWNER")
+    }
+  }
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
@@ -120,5 +121,4 @@ config :cloudex,
   cloud_name: System.get_env("CLOUDINARY_CLOUD_NAME")
 
 config :goth,
-  json: {:system, "GCP_CREDENTIALS"},
-  disabled: is_nil(System.get_env("GCP_CREDENTIALS"))
+  json: {:system, "GCP_CREDENTIALS"}

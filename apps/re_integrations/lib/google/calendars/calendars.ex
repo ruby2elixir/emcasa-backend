@@ -15,15 +15,9 @@ defmodule ReIntegrations.Google.Calendars do
 
   @token Application.get_env(:re_integrations, :goth_token, Goth.Token)
   @timezone Application.get_env(:re_integrations, :google_api_timezone, "America/Sao_Paulo")
-  @acl_owner Application.get_env(:re_integrations, :google_calendar_acl_owner, nil)
+  @default_acl Application.get_env(:re_integrations, :google_calendar_acl)
 
   @default_event_opts [timeZone: @timezone]
-  @default_acl if @acl_owner,
-                 do: %Model.AclRule{
-                   role: "owner",
-                   scope: struct(%Model.AclRuleScope{}, @acl_owner)
-                 },
-                 else: nil
 
   defp conn do
     {:ok, token} = @token.for_scope("https://www.googleapis.com/auth/calendar")
@@ -68,9 +62,6 @@ defmodule ReIntegrations.Google.Calendars do
         body: struct(%Model.Calendar{}, calendar_opts)
       )
 
-  defp insert_acl(calendar) do
-    if @default_acl,
-      do: Api.Acl.calendar_acl_insert(conn(), calendar.id, body: @default_acl),
-      else: {:ok, nil}
-  end
+  defp insert_acl(calendar),
+    do: Api.Acl.calendar_acl_insert(conn(), calendar.id, body: @default_acl)
 end
