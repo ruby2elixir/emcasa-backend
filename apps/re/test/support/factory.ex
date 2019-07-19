@@ -115,6 +115,7 @@ defmodule Re.Factory do
     state_slug = Re.Slugs.sluggify(state)
 
     %Re.Addresses.District{
+      uuid: UUID.uuid4(),
       name: name,
       name_slug: name_slug,
       city: city,
@@ -356,6 +357,13 @@ defmodule Re.Factory do
       maintenance_fee: random(:maintenance_fee_float),
       suites: Enum.random(0..10),
       price: random(:price)
+    }
+  end
+
+  def calendar_factory do
+    %Re.GoogleCalendars.Calendar{
+      uuid: UUID.uuid4(),
+      external_id: UUID.uuid4()
     }
   end
 

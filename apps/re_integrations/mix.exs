@@ -42,7 +42,7 @@ defmodule ReIntegrations.Mixfile do
       {:comeonin, "~> 3.2"},
       {:swoosh, "~> 0.23"},
       {:elasticsearch, "~> 1.0.0"},
-      {:pigeon, "~> 1.2.2"},
+      {:pigeon, "~> 1.3.1"},
       {:kadabra, "~> 0.4.2"},
       {:retry, "~> 0.10"},
       {:httpoison, "~> 1.3", override: true},
@@ -50,7 +50,9 @@ defmodule ReIntegrations.Mixfile do
       {:sentry, "~> 7.0"},
       {:ex_machina, "~> 2.2", only: :test},
       {:ecto_job, "~> 2.0"},
-      {:cloudex, git: "https://github.com/emcasa/cloudex.git"}
+      {:cloudex, git: "https://github.com/emcasa/cloudex.git"},
+      {:google_api_calendar, "~> 0.6.1"},
+      {:goth, "~> 1.1.0"}
     ]
   end
 

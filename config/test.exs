@@ -73,6 +73,7 @@ config :re,
 
 config :re_integrations,
   http: ReIntegrations.TestHTTP,
+  goth_token: ReIntegrations.TestGoth.Token,
   credipronto_simulator_url: "http://www.emcasa.com/simulator",
   credipronto_account_id: "test_account_id",
   pipedrive_webhook_user: "testuser",
@@ -81,7 +82,14 @@ config :re_integrations,
   zapier_webhook_user: "testuser",
   zapier_webhook_pass: "testpass",
   cloudinary_client: ReIntegrations.TestCloudex,
-  orulo_url: "http://www.emcasa.com/orulo"
+  orulo_url: "http://www.emcasa.com/orulo",
+  google_calendar_acl: %{
+    role: "owner",
+    scope: %{
+      type: "domain",
+      value: "example.com"
+    }
+  }
 
 config :junit_formatter,
   report_file: "report_file_test.xml",
@@ -91,3 +99,9 @@ config :cloudex,
   api_key: "api_key",
   secret: "secret",
   cloud_name: "cloud"
+
+config :goth,
+  disabled: true
+
+config :tesla,
+  adapter: Tesla.Mock

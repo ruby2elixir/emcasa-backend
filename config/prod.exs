@@ -86,7 +86,15 @@ config :re_integrations,
   zapier_webhook_pass: System.get_env("ZAPIER_WEBHOOK_PASS"),
   orulo_url: System.get_env("ORULO_URL"),
   orulo_api_token: System.get_env("ORULO_API_TOKEN"),
-  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN")
+  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN"),
+  google_calendar_acl: System.get_env("GOOGLE_CALENDAR_TIMEZONE", "Etc/UTC"),
+  google_calendar_acl: %{
+    role: "owner",
+    scope: %{
+      type: System.get_env("GOOGLE_CALENDAR_ACL_OWNER_TYPE"),
+      value: System.get_env("GOOGLE_CALENDAR_ACL_OWNER")
+    }
+  }
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
@@ -113,3 +121,6 @@ config :cloudex,
   api_key: System.get_env("CLOUDINARY_API_KEY"),
   secret: System.get_env("CLOUDINARY_SECRET"),
   cloud_name: System.get_env("CLOUDINARY_CLOUD_NAME")
+
+config :goth,
+  json: {:system, "GCP_CREDENTIALS"}
