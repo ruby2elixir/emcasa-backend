@@ -13,13 +13,8 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
 
   @shortdoc "Create new district"
   @covered_districts [
-    "Paraíso",
-    "Pompeia",
-    "Jardim Luzitania",
-    "Vila Clementino",
-    "Jardim Vila Mariana",
-    "Jardim da Gloria",
-    "Chácara Klabin"
+    "Alto de Pinheiros",
+    "Vila Adalgisa"
   ]
 
   def run(_) do
@@ -32,7 +27,7 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
           name: district_to_insert,
           state: "SP",
           city: "São Paulo",
-          status: "covered"
+          status: "partially_covered"
         })
         |> Repo.insert()
 

@@ -15,6 +15,12 @@ defmodule ReWeb.Types.Interest do
     field :email, :string
     field :phone, :string
     field :message, :string
+    field :campaign, :string
+    field :medium, :string
+    field :source, :string
+    field :initial_campaign, :string
+    field :initial_medium, :string
+    field :initial_source, :string
 
     field :listing, :listing, resolve: dataloader(Re.Listings)
     field :interest_type, :interest_type, resolve: dataloader(Re.Interests.Types)
@@ -25,6 +31,12 @@ defmodule ReWeb.Types.Interest do
     field :phone, :string
     field :email, :string
     field :message, :string
+    field :campaign, :string
+    field :medium, :string
+    field :source, :string
+    field :initial_campaign, :string
+    field :initial_medium, :string
+    field :initial_source, :string
 
     field :interest_type_id, non_null(:id)
     field :listing_id, non_null(:id)
