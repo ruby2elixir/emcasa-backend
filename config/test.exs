@@ -86,8 +86,8 @@ config :re_integrations,
   google_calendar_acl: %{
     role: "owner",
     scope: %{
-        type: "domain",
-        value: "example.com"
+      type: "domain",
+      value: "example.com"
     }
   }
 

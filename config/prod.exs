@@ -91,8 +91,8 @@ config :re_integrations,
   google_calendar_acl: %{
     role: "owner",
     scope: %{
-        type: System.get_env("GOOGLE_CALENDAR_ACL_OWNER_TYPE"),
-        value: System.get_env("GOOGLE_CALENDAR_ACL_OWNER")
+      type: System.get_env("GOOGLE_CALENDAR_ACL_OWNER_TYPE"),
+      value: System.get_env("GOOGLE_CALENDAR_ACL_OWNER")
     }
   }
 
