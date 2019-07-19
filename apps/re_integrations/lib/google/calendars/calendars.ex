@@ -14,7 +14,7 @@ defmodule ReIntegrations.Google.Calendars do
   }
 
   @token Application.get_env(:re_integrations, :goth_token, Goth.Token)
-  @timezone Application.get_env(:re_integrations, :google_api_timezone, "Ect/UTC")
+  @timezone Application.get_env(:re_integrations, :google_calendar_timezone, "Ect/UTC")
   @default_acl Application.get_env(:re_integrations, :google_calendar_acl)
 
   @default_event_opts [timeZone: @timezone]
