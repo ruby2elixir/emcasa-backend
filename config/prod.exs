@@ -87,7 +87,7 @@ config :re_integrations,
   orulo_url: System.get_env("ORULO_URL"),
   orulo_api_token: System.get_env("ORULO_API_TOKEN"),
   orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN"),
-  google_calendar_acl: System.get_env("GOOGLE_CALENDAR_TIMEZONE", "Etc/UTC"),
+  google_calendar_timezone: System.get_env("GOOGLE_CALENDAR_TIMEZONE"),
   google_calendar_acl: %{
     role: "owner",
     scope: %{
