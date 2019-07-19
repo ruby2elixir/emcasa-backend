@@ -1,21 +1,23 @@
 defmodule ReIntegrations.Routific do
   @moduledoc """
-  Context module to use importers.
+  Context module for routific.
   """
 
   alias ReIntegrations.{
     Repo,
     Routific.Client,
-    Routific.JobQueue
+    Routific.JobQueue,
+    Routific.Payload
   }
 
-  @shift Application.get_env(:re_integrations, :routific_shift, {"8:00", "16:00"})
+  @shift Application.get_env(:re_integrations, :routific_shift, {~T[08:00:00Z], ~T[18:00:00Z]})
 
   def shift_start, do: elem(@shift, 0)
   def shift_end, do: elem(@shift, 1)
 
   def start_job(visits) do
-    with {:ok, %{"job_id" => job_id}} <- Client.start_job(visits) do
+    with {:ok, %{body: body}} <- visits |> Payload.Outbound.build() |> Client.start_job(),
+         {:ok, %{"job_id" => job_id}} <- Jason.decode(body) do
       %{"type" => "monitor_routific_job", "job_id" => job_id}
       |> JobQueue.new()
       |> Repo.insert()
@@ -23,11 +25,18 @@ defmodule ReIntegrations.Routific do
   end
 
   def get_job_status(job_id) do
-    with {:ok, payload = %{status: "finished"}} <- Client.fetch_job(job_id) do
-      {:ok, payload}
+    with {:ok, %{body: body}} <- Client.fetch_job(job_id),
+         {:ok, payload = %{"status" => "finished"}} <- Jason.decode(body) do
+      {:ok, Payload.Inbound.build(payload)}
     else
-      {_, %{status_code: status_code}} -> {:error, %{status_code: status_code}}
-      {_, %{status: status}} -> {:error, %{status: status}}
+      {:ok, data = %{status_code: status_code}} when status_code != 200 ->
+        {:error, data}
+
+      {:ok, payload = %{"status" => status}} ->
+        {String.to_atom(status), Payload.Inbound.build(payload)}
+
+      {:error, data} ->
+        {:error, data}
     end
   end
 end

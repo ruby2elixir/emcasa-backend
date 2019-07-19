@@ -13,29 +13,14 @@ defmodule ReIntegrations.Routific.Client do
 
   @api_headers [{"Authorization", "Bearer #{@api_key}"}, {"Content-Type", "application/json"}]
 
-  def start_job(visits) do
-    with {:ok, %{body: body}} <- request_start_job(visits),
-         {:ok, payload} <- Jason.decode(body) do
-      {:ok, payload}
-    end
-  end
+  def start_job(%Payload.Outbound{} = payload),
+    do: payload |> post("/v1/vrp-long")
 
-  defp request_start_job(visits) do
-    visits
-    |> Payload.Outbound.build()
-    |> post("/v1/vrp-long")
-  end
-
-  def fetch_job(job_id) do
-    with {:ok, %{body: body}} <- get("/jobs/" <> job_id),
-         {:ok, payload} <- Jason.decode(body) do
-      {:ok, Payload.Inbound.build(payload)}
-    end
-  end
+  def fetch_job(job_id), do: get("/jobs/" <> job_id)
 
   defp build_uri(path), do: URI.parse(@api_url <> path)
 
-  defp post(body, path) when is_map(body),
+  defp post(body, path),
     do: path |> build_uri |> @http_client.post(Poison.encode!(body), @api_headers)
 
   defp get(path),
