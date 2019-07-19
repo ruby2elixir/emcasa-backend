@@ -29,13 +29,15 @@ defmodule ReIntegrations.TestHTTP do
       {:ok,
        %{
          status_code: 200,
-         body:
-           "{" <>
-             "\"status\": \"finished\"," <>
-             "\"output\": {" <>
-             "\"unserved\": null," <>
-             "\"solution\": {}" <>
-             "}}"
+         body: """
+           {
+             "status": "finished",
+             "output": {
+               "unserved": null,
+               "solution": {}
+             }
+           }
+         """
        }}
 
   def get(%URI{path: "/jobs/PENDING_JOB_ID"}, _opts),

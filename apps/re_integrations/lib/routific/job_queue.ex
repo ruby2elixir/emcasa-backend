@@ -5,12 +5,12 @@ defmodule ReIntegrations.Routific.JobQueue do
 
   use EctoJob.JobQueue, table_name: "routific_jobs", schema_prefix: "re_integrations"
 
+  alias Ecto.Multi
+
   alias ReIntegrations.{
     Repo,
     Routific
   }
-
-  alias Ecto.Multi
 
   def perform(%Multi{} = multi, %{"type" => "monitor_routific_job", "job_id" => id}) do
     multi
