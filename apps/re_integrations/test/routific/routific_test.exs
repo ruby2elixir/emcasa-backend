@@ -31,13 +31,13 @@ defmodule ReIntegrations.RoutificTest do
     test "fetch routific job status" do
       assert {:error, %{status_code: 404}} = Routific.get_job_status("INVALID_JOB_ID")
 
-      assert {:pending, %Routific.Payload.Inbound{status: "pending"}} =
+      assert {:pending, %Routific.Payload.Inbound{status: :pending}} =
                Routific.get_job_status("PENDING_JOB_ID")
 
-      assert {:error, %Routific.Payload.Inbound{status: "error"}} =
+      assert {:error, %Routific.Payload.Inbound{status: :error}} =
                Routific.get_job_status("FAILED_JOB_ID")
 
-      assert {:ok, %Routific.Payload.Inbound{status: "finished"}} =
+      assert {:ok, %Routific.Payload.Inbound{status: :finished}} =
                Routific.get_job_status("FINISHED_JOB_ID")
     end
   end

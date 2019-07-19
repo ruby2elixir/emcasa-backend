@@ -27,17 +27,18 @@ defmodule ReIntegrations.Routific do
 
   def get_job_status(job_id) do
     with {:ok, %{body: body}} <- Client.fetch_job(job_id),
-         {:ok, payload = %{"status" => "finished"}} <- Jason.decode(body) do
-      {:ok, Payload.Inbound.build(payload)}
+         {:ok, response} <- Jason.decode(body),
+         {:ok, payload = %{status: :finished}} <- Payload.Inbound.build(response) do
+      {:ok, payload}
     else
       {:ok, data = %{status_code: status_code}} when status_code != 200 ->
         {:error, data}
 
-      {:ok, payload = %{"status" => status}} ->
-        {String.to_atom(status), Payload.Inbound.build(payload)}
+      {:ok, payload = %Payload.Inbound{status: status}} ->
+        {status, payload}
 
-      {:error, data} ->
-        {:error, data}
+      error ->
+        error
     end
   end
 end
