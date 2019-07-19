@@ -114,20 +114,45 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
   end
 
   describe "active_listing_count" do
+    test "should return the total number of active listings", %{admin_conn: conn} do
+      insert_list(5, :listing, status: "active")
+
+      query = """
+        query Dashboard {
+          dashboard {
+            activeListingCount
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+
+      assert %{
+        "activeListingCount" => 5
+      } == json_response(conn, 200)["data"]["dashboard"]
+    end
+
     test "should apply listing filters to active listings count", %{admin_conn: conn} do
       insert(:listing, status: "active", is_release: false, is_exportable: true)
       insert(:listing, status: "active", is_release: true, is_exportable: false)
       insert(:listing, status: "active", is_release: true, is_exportable: true)
 
       query = """
-        query Dashboard {
+        query Dashboard($filters: ListingFilterInput) {
           dashboard {
-            activeListingCount(isRelease: true, isExportable: true)
+            activeListingCount(filters: $filters)
           }
         }
       """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
+      variables = %{
+        "filters" => %{
+          "isExportable" => true,
+          "isRelease" => true
+        }
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
         "activeListingCount" => 1

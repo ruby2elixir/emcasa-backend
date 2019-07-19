@@ -38,12 +38,10 @@ defmodule Re.Listings.Highlights.Scores do
     |> Repo.one()
   end
 
-  @neighborhoods_slugs ~w(botafogo copacabana flamengo humaita ipanema lagoa laranjeiras leblon perdizes vila-pompeia)
   @profile_score_filters %{
     max_price: 2_000_000,
     max_rooms: 3,
-    min_garage_spots: 1,
-    neighborhoods_slugs: @neighborhoods_slugs
+    min_garage_spots: 1
   }
 
   defp get_average_price_per_area_by_neighborhood() do

@@ -36,7 +36,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             build(:image, filename: "test3.jpg", position: 1)
           ],
           user: user,
-          score: 4
+          liquidity_ratio: 4.0
         )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -73,6 +73,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              normalizedLiquidityRatio
               score
             }
             remaining_count
@@ -91,7 +92,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "score" => 4
+                   "normalizedLiquidityRatio" => 10,
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
@@ -107,7 +109,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        score: 4
+        liquidity_ratio: 4.0
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -134,6 +136,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              normalizedLiquidityRatio
               score
             }
             remaining_count
@@ -151,6 +154,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
+                   "normalizedLiquidityRatio" => nil,
                    "score" => nil
                  }
                ],
@@ -169,7 +173,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        score: 4
+        liquidity_ratio: 4.0
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -196,7 +200,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              score
+              normalizedLiquidityRatio
             }
             remaining_count
           }
@@ -213,7 +217,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
-                   "score" => nil
+                   "normalizedLiquidityRatio" => nil
                  }
                ],
                "remaining_count" => 0
@@ -231,7 +235,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        score: 4
+        liquidity_ratio: 4.0
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -258,6 +262,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              normalizedLiquidityRatio
               score
             }
             remaining_count
@@ -275,6 +280,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
+                   "normalizedLiquidityRatio" => nil,
                    "score" => nil
                  }
                ],
@@ -283,9 +289,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "should query listing index with pagination", %{unauthenticated_conn: conn} do
-      listing1 = insert(:listing, score: 4, price: 950_000, rooms: 3, area: 90)
-      [%{id: listing2_id}, %{id: listing3_id}] = insert_list(2, :listing, score: 4)
-      insert_list(3, :listing, score: 3)
+      listing1 = insert(:listing, liquidity_ratio: 4.0, price: 950_000, rooms: 3, area: 90)
+      [%{id: listing2_id}, %{id: listing3_id}] = insert_list(2, :listing, liquidity_ratio: 4.0)
+      insert_list(3, :listing, liquidity_ratio: 3.0)
 
       variables = %{
         "pagination" => %{
@@ -435,10 +441,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
     test "should query listing index with order by", %{user_conn: conn} do
       %{id: id1} = insert(:listing, garage_spots: 1, price: 1_000_000, rooms: 2)
-      %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 4)
+      %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, liquidity_ratio: 4)
       %{id: id3} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 4)
       %{id: id4} = insert(:listing, garage_spots: 2, price: 1_000_000, rooms: 3)
-      %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 3)
+      %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, liquidity_ratio: 3)
       %{id: id6} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 5)
 
       variables = %{
@@ -511,12 +517,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       unauthenticated_conn: conn
     } do
       now = Timex.now()
-      insert(:listing, score: 4, price_history: [])
+      insert(:listing, liquidity_ratio: 4.0, price_history: [])
 
       insert(
         :listing,
         price: 1_000_000,
-        score: 3,
+        liquidity_ratio: 3,
         price_history: [
           build(:price_history, price: 1_100_000, inserted_at: Timex.shift(now, weeks: -1))
         ]
@@ -524,14 +530,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       insert(
         :listing,
-        score: 2,
+        liquidity_ratio: 2,
         price_history: [build(:price_history, inserted_at: Timex.shift(now, weeks: -3))]
       )
 
       insert(
         :listing,
         price: 1_000_000,
-        score: 1,
+        liquidity_ratio: 1,
         price_history: [
           build(:price_history, price: 900_000, inserted_at: Timex.shift(now, weeks: -1))
         ]
@@ -833,8 +839,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           liquidity_ratio: 1.0
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1000,8 +1006,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           suggested_price: nil
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1125,8 +1131,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           inserted_at: ~N[2018-01-01 10:00:00]
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1249,8 +1255,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           inserted_at: ~N[2018-01-01 10:00:00]
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,

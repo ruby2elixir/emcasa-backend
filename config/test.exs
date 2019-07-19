@@ -66,6 +66,7 @@ config :re,
   facebook_access_token: "testsecret",
   garagem_url: "http://localhost:3000",
   zapier_create_salesforce_lead_url: "http://www.emcasa.com/salesforce_zapier",
+  zapier_create_salesforce_seller_lead_url: "http://www.emcasa.com/salesforce_zapier",
   priceteller_url: "http://www.emcasa.com/priceteller",
   priceteller_token: "mahtoken",
   retry_expiry: 100
