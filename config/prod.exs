@@ -65,6 +65,7 @@ config :re,
   facebook_access_token: System.get_env("FACEBOOK_ACCESS_TOKEN"),
   garagem_url: System.get_env("GARAGEM_URL"),
   zapier_create_salesforce_lead_url: System.get_env("SALESFORCE_ZAPIER_URL"),
+  zapier_create_salesforce_seller_lead_url: System.get_env("SALESFORCE_ZAPIER_SELLER_URL"),
   priceteller_url: System.get_env("PRICETELLER_URL"),
   priceteller_token: System.get_env("PRICETELLER_TOKEN")
 

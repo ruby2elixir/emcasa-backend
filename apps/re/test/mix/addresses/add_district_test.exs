@@ -22,13 +22,8 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrictTest do
     test "inserts district" do
       AddDistrict.run([])
       covered_districts = [
-        "Paraíso",
-        "Pompeia",
-        "Jardim Luzitania",
-        "Vila Clementino",
-        "Jardim Vila Mariana",
-        "Jardim da Gloria",
-        "Chácara Klabin"
+        "Alto de Pinheiros",
+        "Vila Adalgisa"
       ]
 
       Enum.each covered_districts, fn district ->

@@ -64,7 +64,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<Endereco><![CDATA[Rua do Ipiranga]]></Endereco>" <>
           "<Numero>20</Numero>" <>
           "<CEP>04732-192</CEP>" <>
-          "<DivulgarEndereco>APROX</DivulgarEndereco>" <>
+          "<DivulgarEndereco>SIM</DivulgarEndereco>" <>
           "<Latitude>51.496401</Latitude>" <>
           "<Longitude>-0.179</Longitude>" <>
           "<VisualizarMapa>1</VisualizarMapa>" <>
@@ -136,7 +136,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<Endereco><![CDATA[Rua do Ipiranga]]></Endereco>" <>
           "<Numero>20</Numero>" <>
           "<CEP>04732-192</CEP>" <>
-          "<DivulgarEndereco>APROX</DivulgarEndereco>" <>
+          "<DivulgarEndereco>SIM</DivulgarEndereco>" <>
           "<Latitude>51.496401</Latitude>" <>
           "<Longitude>-0.179</Longitude>" <>
           "<VisualizarMapa>1</VisualizarMapa>" <>
@@ -196,7 +196,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<Endereco><![CDATA[Rua do Ipiranga]]></Endereco>" <>
           "<Numero>20</Numero>" <>
           "<CEP>04732-192</CEP>" <>
-          "<DivulgarEndereco>APROX</DivulgarEndereco>" <>
+          "<DivulgarEndereco>SIM</DivulgarEndereco>" <>
           "<Latitude>51.496401</Latitude>" <>
           "<Longitude>-0.179</Longitude>" <>
           "<VisualizarMapa>1</VisualizarMapa>" <>
@@ -268,7 +268,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<Endereco><![CDATA[Rua do Ipiranga]]></Endereco>" <>
           "<Numero>20</Numero>" <>
           "<CEP>04732-192</CEP>" <>
-          "<DivulgarEndereco>APROX</DivulgarEndereco>" <>
+          "<DivulgarEndereco>SIM</DivulgarEndereco>" <>
           "<Latitude>51.496401</Latitude>" <>
           "<Longitude>-0.179</Longitude>" <>
           "<VisualizarMapa>1</VisualizarMapa>" <>
@@ -352,7 +352,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<Endereco><![CDATA[Rua do Ipiranga]]></Endereco>" <>
           "<Numero>20</Numero>" <>
           "<CEP>04732-192</CEP>" <>
-          "<DivulgarEndereco>APROX</DivulgarEndereco>" <>
+          "<DivulgarEndereco>SIM</DivulgarEndereco>" <>
           "<Latitude>51.496401</Latitude>" <>
           "<Longitude>-0.179</Longitude>" <>
           "<VisualizarMapa>1</VisualizarMapa>" <>
@@ -439,7 +439,7 @@ defmodule Re.Exporters.ImovelwebTest do
           "<Endereco><![CDATA[Rua do Ipiranga]]></Endereco>" <>
           "<Numero>20</Numero>" <>
           "<CEP>04732-192</CEP>" <>
-          "<DivulgarEndereco>APROX</DivulgarEndereco>" <>
+          "<DivulgarEndereco>SIM</DivulgarEndereco>" <>
           "<Latitude>51.496401</Latitude>" <>
           "<Longitude>-0.179</Longitude>" <>
           "<VisualizarMapa>1</VisualizarMapa>" <>
