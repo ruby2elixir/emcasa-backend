@@ -1,7 +1,8 @@
 defmodule ReIntegrations.Routific.Payload.Outbound do
   @moduledoc """
-  Builds routific outbound payload.
+  Builds routific payload.
   """
+  @derive Jason.Encoder
 
   alias ReIntegrations.Routific
 

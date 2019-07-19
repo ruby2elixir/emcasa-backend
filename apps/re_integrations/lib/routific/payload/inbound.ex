@@ -2,6 +2,7 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
   @moduledoc """
   Parses routific response.
   """
+  @derive Jason.Encoder
 
   defstruct [:status, :solution, :unserved]
 
@@ -16,15 +17,15 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
   def build(%{"status" => status}), do: %__MODULE__{status: status}
 
   defp build_solution(solution) do
-    Enum.map(solution, fn {calendar_uuid, visits} ->
-      {calendar_uuid, Enum.map(visits, &build_visit/1)}
+    Enum.reduce(solution, %{}, fn {calendar_uuid, visits}, acc ->
+      Map.put(acc, calendar_uuid, Enum.map(visits, &build_visit/1))
     end)
   end
 
-  defp build_visit(visit) do
+  defp build_visit(visit = %{"location_id" => location_id, "location_name" => address}) do
     %{
-      lead_id: visit["location_id"],
-      address: visit["location_name"],
+      id: location_id,
+      address: address,
       start: Map.get(visit, "arrival_time"),
       end: Map.get(visit, "finish_time")
     }
@@ -32,7 +33,5 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
 
   defp build_unserved(nil), do: []
 
-  defp build_unserved(unserved) do
-    Enum.map(unserved, fn {lead_id, reason} -> {lead_id, reason} end)
-  end
+  defp build_unserved(unserved), do: unserved
 end
