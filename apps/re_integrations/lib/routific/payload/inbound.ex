@@ -22,7 +22,7 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
     end)
   end
 
-  defp build_visit(visit = %{"location_id" => location_id, "location_name" => address}) do
+  defp build_visit(%{"location_id" => location_id, "location_name" => address} = visit) do
     %{
       id: location_id,
       address: address,
