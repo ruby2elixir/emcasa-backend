@@ -22,14 +22,13 @@ defmodule Re.GoogleCalendars.Calendar do
   end
 
   @required ~w(external_id shift_start shift_end)a
-  @optional ~w()a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @required ++ @optional)
+    |> cast(params, @required)
     |> validate_required(@required)
     |> Re.ChangesetHelper.generate_uuid()
   end

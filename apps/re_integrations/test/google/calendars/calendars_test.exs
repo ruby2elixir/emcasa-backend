@@ -32,12 +32,6 @@ defmodule ReIntegrations.Google.CalendarsTest do
   }
   """
 
-  @event_list_response """
-  {
-    "items": [{"kind": "calendar#event"}]
-  }
-  """
-
   describe "insert/2" do
     setup do
       mock(fn
@@ -85,25 +79,6 @@ defmodule ReIntegrations.Google.CalendarsTest do
 
       assert {:ok, %Model.Event{}} =
                Calendars.insert_event(calendar, summary: "test", start: start_time)
-    end
-  end
-
-  describe "get_events/2" do
-    setup do
-      mock(fn
-        %{
-          method: :get,
-          url: "https://www.googleapis.com/calendar/v3/calendars/#{@calendar_id}/events"
-        } ->
-          %Tesla.Env{status: 200, body: @event_list_response}
-      end)
-
-      :ok
-    end
-
-    test "inserts an event into a google calendar" do
-      calendar = insert(:calendar, external_id: @calendar_id)
-      assert {:ok, %Model.Events{}} = Calendars.get_events(calendar)
     end
   end
 end

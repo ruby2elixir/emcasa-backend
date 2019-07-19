@@ -24,10 +24,6 @@ defmodule ReIntegrations.Google.Calendars do
     Connection.new(token.token)
   end
 
-  def get_events(%Calendar{} = calendar, opts \\ []) do
-    Api.Events.calendar_events_list(conn(), calendar.external_id, opts)
-  end
-
   def insert_event(%Calendar{} = calendar, event_opts \\ []) do
     Api.Events.calendar_events_insert(
       conn(),
