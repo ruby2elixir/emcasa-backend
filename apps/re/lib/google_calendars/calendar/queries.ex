@@ -10,7 +10,7 @@ defmodule Re.GoogleCalendars.Calendar.Queries do
 
   import Ecto.Query
 
-  @relations [:districts]
+  @relations [:districts, :address]
 
   def preload_relations(query \\ Calendar, relations \\ @relations)
 
