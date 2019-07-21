@@ -9,6 +9,7 @@ defmodule Re.Addresses.District do
   alias Re.Slugs
 
   schema "districts" do
+    field :uuid, Ecto.UUID
     field :state, :string
     field :city, :string
     field :name, :string
@@ -18,6 +19,11 @@ defmodule Re.Addresses.District do
     field :description, :string, default: ""
     field :status, :string, default: "uncovered"
     field :sort_order, :integer
+
+    many_to_many :calendars, Re.GoogleCalendars.Calendar,
+      join_through: Re.GoogleCalendars.CalendarDistrict,
+      join_keys: [district_uuid: :uuid, calendar_uuid: :uuid],
+      on_replace: :delete
 
     timestamps()
   end
@@ -43,6 +49,7 @@ defmodule Re.Addresses.District do
     |> unique_constraint(:neighborhood, name: :neighborhood)
     |> validate_inclusion(:status, @statuses)
     |> generate_slugs()
+    |> Re.ChangesetHelper.generate_uuid()
   end
 
   def generate_slugs(%{valid?: false} = changeset), do: changeset
