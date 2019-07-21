@@ -11,12 +11,12 @@ defmodule ReIntegrations.RoutificTest do
 
   @visits [
     %{
-      "id" => "1",
-      "duration" => 10,
-      "address" => "x",
-      "neighborhood" => "Vila Mariana",
-      "lat" => 1.0,
-      "lng" => 1.0
+      id: "1",
+      duration: 10,
+      address: "x",
+      neighborhood: "Vila Mariana",
+      lat: 1.0,
+      lng: 1.0
     }
   ]
 

@@ -10,14 +10,15 @@ defmodule ReIntegrations.Routific do
     Routific.Payload
   }
 
-  @shift Application.get_env(:re_integrations, :routific_shift, {~T[08:00:00Z], ~T[18:00:00Z]})
+  @shift Application.get_env(:re_integrations, :routific_shift, {"8:00", "18:00"})
   @max_attempts Application.get_env(:re_integrations, :routific_max_attempts, 6)
 
   def shift_start, do: elem(@shift, 0)
   def shift_end, do: elem(@shift, 1)
 
   def start_job(visits) do
-    with {:ok, %{body: body}} <- visits |> Payload.Outbound.build() |> Client.start_job(),
+    with {:ok, payload} <- Payload.Outbound.build(visits),
+         {:ok, %{body: body}} <- Client.start_job(payload),
          {:ok, %{"job_id" => job_id}} <- Jason.decode(body) do
       %{"type" => "monitor_routific_job", "job_id" => job_id}
       |> JobQueue.new(max_attempts: @max_attempts)
