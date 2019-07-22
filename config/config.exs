@@ -72,7 +72,7 @@ config :sentry,
   environment_name: System.get_env("ENV") || "development"
 
 config :geo_postgis,
-  json_library: Poison
+  json_library: Jason
 
 config :prometheus, ReWeb.PlugExporter,
   path: "/metrics",
