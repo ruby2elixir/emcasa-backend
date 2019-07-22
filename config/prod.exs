@@ -73,10 +73,6 @@ config :re_integrations,
   to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),
   from: System.get_env("ADMIN_EMAIL"),
   frontend_url: System.get_env("FRONTEND_URL"),
-  pipedrive_url: System.get_env("PIPEDRIVE_URL"),
-  pipedrive_token: System.get_env("PIPEDRIVE_TOKEN"),
-  pipedrive_webhook_user: System.get_env("PIPEDRIVE_WEBHOOK_USER"),
-  pipedrive_webhook_pass: System.get_env("PIPEDRIVE_WEBHOOK_PASS"),
   env: System.get_env("ENV"),
   reply_to: System.get_env("REPORT_REPLY_EMAIL"),
   credipronto_simulator_url: System.get_env("CREDIPRONTO_SIMULATOR_URL"),
@@ -86,7 +82,15 @@ config :re_integrations,
   zapier_webhook_pass: System.get_env("ZAPIER_WEBHOOK_PASS"),
   orulo_url: System.get_env("ORULO_URL"),
   orulo_api_token: System.get_env("ORULO_API_TOKEN"),
-  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN")
+  orulo_client_token: System.get_env("ORULO_CLIENT_TOKEN"),
+  google_calendar_timezone: System.get_env("GOOGLE_CALENDAR_TIMEZONE"),
+  google_calendar_acl: %{
+    role: "owner",
+    scope: %{
+      type: System.get_env("GOOGLE_CALENDAR_ACL_OWNER_TYPE"),
+      value: System.get_env("GOOGLE_CALENDAR_ACL_OWNER")
+    }
+  }
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),
@@ -113,3 +117,6 @@ config :cloudex,
   api_key: System.get_env("CLOUDINARY_API_KEY"),
   secret: System.get_env("CLOUDINARY_SECRET"),
   cloud_name: System.get_env("CLOUDINARY_CLOUD_NAME")
+
+config :goth,
+  json: {:system, "GCP_CREDENTIALS"}

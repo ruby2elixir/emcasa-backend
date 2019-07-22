@@ -16,10 +16,9 @@ defmodule ReWeb.Types.Dashboard do
     end
 
     field :favorite_count, :integer, resolve: &DashboardResolvers.favorite_count/2
-    field :visualization_count, :integer, resolve: &DashboardResolvers.visualization_count/2
+    field :visualization_count, :integer, resolve: fn _, _, _ -> {:ok, 0} end
 
-    field :tour_visualization_count, :integer,
-      resolve: &DashboardResolvers.tour_visualization_count/2
+    field :tour_visualization_count, :integer, resolve: fn _, _, _ -> {:ok, 0} end
 
     field :maintenance_fee_count, :integer, resolve: &DashboardResolvers.maintenance_fee_count/2
     field :property_tax_count, :integer, resolve: &DashboardResolvers.property_tax_count/2
