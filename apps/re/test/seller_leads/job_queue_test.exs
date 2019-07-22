@@ -6,9 +6,9 @@ defmodule Re.SellerLeads.JobQueueTest do
   import Re.CustomAssertion
 
   alias Re.{
+    Repo,
     SellerLead,
-    SellerLeads.JobQueue,
-    Repo
+    SellerLeads.JobQueue
   }
 
   alias Ecto.Multi
