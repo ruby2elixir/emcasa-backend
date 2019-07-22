@@ -8,10 +8,15 @@ defmodule Re.SellerLeads.JobQueue do
 
   alias Re.{
     PriceSuggestions.Request,
-    Repo
+    Repo,
+    SellerLeads,
+    SellerLeads.Salesforce.Client
   }
 
-  alias Ecto.Multi
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
 
   def perform(%Multi{} = multi, %{"type" => "process_price_suggestion_request", "uuid" => uuid}) do
     Request
@@ -23,10 +28,26 @@ defmodule Re.SellerLeads.JobQueue do
     |> handle_error()
   end
 
+  def perform(%Multi{} = multi, %{"type" => "create_lead_salesforce", "uuid" => uuid}) do
+    {:ok, seller_lead} = SellerLeads.get_preloaded(uuid, [:address, :user])
+
+    multi
+    |> Multi.run(:create_salesforce_lead, fn _repo, _changes ->
+      Client.create_lead(seller_lead)
+    end)
+    |> Repo.transaction()
+    |> handle_error()
+  end
+
   def perform(_multi, job), do: raise("Job type not handled. Job: #{Kernel.inspect(job)}")
 
-  defp insert_seller_lead(changeset, multi),
-    do: Multi.insert(multi, :insert_seller_lead, changeset)
+  defp insert_seller_lead(changeset, multi) do
+    uuid = Changeset.get_field(changeset, :uuid)
+
+    multi
+    |> Multi.insert(:insert_seller_lead, changeset)
+    |> __MODULE__.enqueue(:salesforce_job, %{"type" => "create_lead_salesforce", "uuid" => uuid})
+  end
 
   defp handle_error({:ok, result}), do: {:ok, result}
 
