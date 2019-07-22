@@ -1,6 +1,8 @@
 defmodule Re.Repo.Migrations.CreateUserTypeConcept do
   use Ecto.Migration
 
+  import Ecto.Query
+
   def up do
     alter table(:users) do
       add :type, :string
@@ -11,7 +13,7 @@ defmodule Re.Repo.Migrations.CreateUserTypeConcept do
 
     flush()
 
-    q = from(d in "users")
+    q = from(u in "users")
     Re.Repo.update_all(q, set: [type: "common"])
   end
 
