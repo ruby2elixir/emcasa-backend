@@ -18,7 +18,7 @@ defmodule ReIntegrations.Routific.Payload.OutboundTest do
     end
 
     test "validates presence of visit id" do
-      assert {:error, _} =
+      assert {:error, :invalid_input} =
                Payload.Outbound.build([
                  %{
                    duration: 10,
@@ -30,7 +30,7 @@ defmodule ReIntegrations.Routific.Payload.OutboundTest do
     end
 
     test "validates presence of visit location data" do
-      assert {:error, _} =
+      assert {:error, :invalid_input} =
                Payload.Outbound.build([
                  %{
                    id: "1",

@@ -8,10 +8,6 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
 
   defstruct [:visits, :fleet]
 
-  defmodule InvalidInputError do
-    defexception [:message]
-  end
-
   def build(input) do
     with {:ok, visits} <- build_visits(input),
          {:ok, fleet} <- build_fleet(input) do
@@ -20,20 +16,22 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
   end
 
   defp build_visits(input) do
-    try do
-      {:ok,
-       Enum.reduce(input, %{}, fn visit, acc ->
-         unless Map.has_key?(visit, :id),
-           do: raise(InvalidInputError, message: "visit id is required")
+    visits = build_visits_list(input)
 
-         Map.put(acc, visit.id, build_visit(visit))
-       end)}
-    rescue
-      e in InvalidInputError -> {:error, e.message}
-    end
+    if visits != :error and Enum.all?(visits, fn {_, visit} -> visit != :error end),
+      do: {:ok, visits},
+      else: {:error, :invalid_input}
   end
 
-  defp build_visit(%{duration: duration, address: address, lat: lat, lng: lng} = visit) do
+  defp build_visits_list(input),
+    do:
+      Enum.reduce(input, %{}, fn visit, acc ->
+        if is_map(acc) and Map.has_key?(visit, :id),
+          do: Map.put(acc, visit.id, build_visit(visit)),
+          else: :error
+      end)
+
+  defp build_visit(%{duration: _duration, address: address, lat: lat, lng: lng} = visit) do
     visit
     |> Map.take([:duration, :start, :end])
     |> Map.update(:start, Routific.shift_start(), &to_time_string/1)
@@ -45,14 +43,14 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
     })
   end
 
-  defp build_visit(_visit), do: raise(InvalidInputError, message: "invalid visit input")
+  defp build_visit(_visit), do: :error
 
   defp build_fleet(_visits) do
     # TODO build fleet from photographers' google calendars
     {:ok, %{}}
   end
 
-  defp to_time_string(%Time{} = time), do: Time.to_string(time) |> String.slice(0..4)
+  defp to_time_string(%Time{} = time), do: time |> Time.to_string() |> String.slice(0..4)
 
   defp to_time_string(time), do: time
 end

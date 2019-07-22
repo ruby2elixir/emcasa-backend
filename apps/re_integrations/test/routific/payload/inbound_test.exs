@@ -43,7 +43,7 @@ defmodule ReIntegrations.Routific.Payload.InboundTest do
       assert {:ok, %Payload.Inbound{status: :error}} =
                Payload.Inbound.build(%{"status" => "error"})
 
-      assert {:error, _} = Payload.Inbound.build(%{"status" => "xxx"})
+      assert {:error, :invalid_input} = Payload.Inbound.build(%{"status" => "xxx"})
     end
   end
 end
