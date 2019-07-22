@@ -47,43 +47,52 @@ defmodule Re.BuyerLeads.Grupozap do
 
   def buyer_lead_changeset(nil), do: raise("Leads.GrupozapBuyer not found")
 
-  def buyer_lead_changeset(gzb) do
-    phone_number = concat_phone_number(gzb)
-    listing = Listings.get_partial_preloaded(gzb.client_listing_id, [:address])
+  def buyer_lead_changeset(lead) do
+    params =
+      %{
+        name: lead.name,
+        email: lead.email,
+        origin: lead.lead_origin
+      }
+      |> put_location(lead)
+      |> put_user_info(lead)
 
-    BuyerLead.changeset(%BuyerLead{}, %{
-      name: gzb.name,
-      email: gzb.email,
-      phone_number: phone_number,
-      origin: gzb.lead_origin,
-      location: get_location(listing),
-      user_uuid: extract_user_uuid(phone_number),
-      listing_uuid: get_listing_uuid(listing),
-      neighborhood: get_neighborhood(listing)
-    })
+    BuyerLead.changeset(%BuyerLead{}, params)
   end
 
-  defp get_location({:ok, %{address: address}}), do: "#{address.city_slug}|#{address.state_slug}"
-  defp get_location(_), do: "unknown"
+  defp put_location(params, lead) do
+    case Listings.get_partial_preloaded(lead.client_listing_id, [:address]) do
+      {:ok, %{address: address} = listing} ->
+        params
+        |> Map.put(:location, "#{address.city_slug}|#{address.state_slug}")
+        |> Map.put(:listing_uuid, listing.uuid)
+        |> Map.put(:neighborhood, address.neighborhood)
+
+      {:error, :not_found} ->
+        params
+    end
+  end
+
+  defp put_user_info(params, lead) do
+    phone_number = concat_phone_number(lead)
+
+    phone_number
+    |> Users.get_by_phone()
+    |> case do
+      {:ok, user} ->
+        params
+        |> Map.put(:user_uuid, user.uuid)
+        |> Map.put(:user_url, Users.build_user_url(user))
+
+      {:error, :not_found} ->
+        params
+    end
+    |> Map.put(:phone_number, phone_number)
+  end
 
   defp concat_phone_number(%{ddd: _ddd, phone: nil}), do: "not informed"
 
   defp concat_phone_number(%{ddd: nil, phone: phone}), do: "+55" <> phone
 
   defp concat_phone_number(%{ddd: ddd, phone: phone}), do: "+55" <> ddd <> phone
-
-  defp extract_user_uuid("not informed"), do: nil
-
-  defp extract_user_uuid(phone_number) do
-    case Users.get_by_phone(phone_number) do
-      {:ok, user} -> user.uuid
-      _error -> nil
-    end
-  end
-
-  defp get_listing_uuid({:ok, listing}), do: listing.uuid
-  defp get_listing_uuid(_), do: nil
-
-  defp get_neighborhood({:ok, %{address: address}}), do: address.neighborhood
-  defp get_neighborhood(_), do: nil
 end

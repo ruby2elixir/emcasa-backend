@@ -71,7 +71,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["isExclusive"] == listing.is_exclusive
       assert inserted_listing["isRelease"] == listing.is_release
       assert inserted_listing["isExportable"] == listing.is_exportable
-      assert inserted_listing["score"] == listing.score
       assert inserted_listing["orientation"] == String.upcase(listing.orientation)
       assert inserted_listing["sunPeriod"] == String.upcase(listing.sun_period)
       assert inserted_listing["floorCount"] == listing.floor_count
@@ -428,7 +427,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert inserted_listing["id"]
       assert inserted_listing["type"] == listing.type
       assert inserted_listing["description"] == listing.description
-      assert inserted_listing["hasElevator"] == listing.has_elevator
       assert inserted_listing["matterportCode"] == listing.matterport_code
       assert inserted_listing["isExportable"] == listing.is_exportable
 
@@ -529,7 +527,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
       assert updated_listing["isExclusive"] == new_listing.is_exclusive
       assert updated_listing["isRelease"] == new_listing.is_release
       assert updated_listing["isExportable"] == new_listing.is_exportable
-      assert updated_listing["score"] == new_listing.score
       assert updated_listing["orientation"] == String.upcase(new_listing.orientation)
       assert updated_listing["sunPeriod"] == String.upcase(new_listing.sun_period)
       assert updated_listing["floorCount"] == new_listing.floor_count
@@ -771,7 +768,6 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
 
       assert updated_listing["type"] == new_listing.type
       assert updated_listing["description"] == new_listing.description
-      assert updated_listing["hasElevator"] == new_listing.has_elevator
       assert updated_listing["matterportCode"] == new_listing.matterport_code
       assert updated_listing["isExportable"] == new_listing.is_exportable
 
@@ -836,6 +832,57 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     end
   end
 
+  describe "deactivateListing" do
+    test "admin should deactivate a listing without options", %{admin_conn: conn} do
+      %{id: listing_id} = listing = insert(:listing)
+
+      mutation = """
+      mutation DeactivateListing ($id: ID!) {
+        deactivateListing(id: $id) {
+          id
+        }
+      }
+      """
+
+      variables = %{"id" => listing_id}
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"id" => to_string(listing.id)} ==
+               json_response(conn, 200)["data"]["deactivateListing"]
+    end
+
+    test "admin should deactivate a listing with options", %{admin_conn: conn} do
+      %{id: listing_id} = listing = insert(:listing)
+
+      mutation = """
+      mutation DeactivateListing ($id: ID!, $input: DeactivationOptionsInput!) {
+        deactivateListing(id: $id, input: $input) {
+          id
+          deactivation_reason
+          sold_price
+        }
+      }
+      """
+
+      variables = %{
+        "id" => listing_id,
+        "input" => %{
+          "deactivation_reason" => "SOLD",
+          "sold_price" => 1_000_000
+        }
+      }
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{
+               "id" => to_string(listing.id),
+               "deactivation_reason" => "SOLD",
+               "sold_price" => 1_000_000
+             } == json_response(conn, 200)["data"]["deactivateListing"]
+    end
+  end
+
   def insert_development_listing_variables(listing, address_id, development_uuid) do
     %{
       "input" => development_listing_input(listing, address_id, development_uuid)
@@ -853,11 +900,12 @@ defmodule ReWeb.GraphQL.Listings.MutationTest do
     %{
       "type" => listing.type,
       "description" => listing.description,
-      "hasElevator" => listing.has_elevator,
       "matterportCode" => listing.matterport_code,
       "isExportable" => listing.is_exportable,
       "address_id" => address_id,
-      "development_uuid" => development_uuid
+      "development_uuid" => development_uuid,
+      "price" => 1_000_000,
+      "area" => 100
     }
   end
 end

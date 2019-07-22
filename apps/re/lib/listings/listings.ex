@@ -9,6 +9,7 @@ defmodule Re.Listings do
     Listings.Filters,
     Images,
     Listings.DataloaderQueries,
+    Listings.JobQueue,
     Listings.Opts,
     Listings.Queries,
     PubSub,
@@ -16,7 +17,12 @@ defmodule Re.Listings do
     Tags
   }
 
-  alias Ecto.Changeset
+  alias Ecto.{
+    Changeset,
+    Multi
+  }
+
+  import Ecto.Query
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
@@ -33,16 +39,32 @@ defmodule Re.Listings do
 
   def paginated(params \\ %{}) do
     query = build_query(params)
+    listings = Repo.all(query)
 
     %{
       remaining_count: remaining_count(query, params),
-      listings: Repo.all(query)
+      listings: listings
     }
   end
+
+  def remaining_count(query, %{"exclude_similar_for_primary_market" => true} = params),
+    do: remaining_count_without_developments(query, params)
+
+  def remaining_count(query, %{exclude_similar_for_primary_market: true} = params),
+    do: remaining_count_without_developments(query, params)
 
   def remaining_count(query, params) do
     query
     |> Queries.remaining_count()
+    |> Repo.one()
+    |> calculate_remaining(params)
+  end
+
+  defp remaining_count_without_developments(query, params) do
+    query
+    |> Queries.remaining_count()
+    |> exclude(:select)
+    |> select([l], count(coalesce(l.development_uuid, l.uuid), :distinct))
     |> Repo.one()
     |> calculate_remaining(params)
   end
@@ -98,9 +120,17 @@ defmodule Re.Listings do
       |> changeset_for_opts(opts)
       |> Listing.changeset(params)
 
-    changeset
-    |> Repo.update()
-    |> PubSub.publish_update(changeset, "update_listing")
+    Multi.new()
+    |> Multi.update(:update_listing, changeset)
+    |> JobQueue.enqueue(:listing_job, %{"type" => "save_price_suggestion", "uuid" => listing.uuid})
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{update_listing: listing}} ->
+        PubSub.publish_update({:ok, listing}, changeset, "update_listing")
+
+      error ->
+        error
+    end
   end
 
   defp changeset_for_opts(%{user_id: user_id} = listing, opts) do
@@ -122,8 +152,17 @@ defmodule Re.Listings do
     end)
   end
 
-  def deactivate(listing) do
+  def deactivate(listing, opts \\ []) do
     changeset = Changeset.change(listing, status: "inactive")
+
+    changeset =
+      Enum.reduce(opts, changeset, fn
+        {:deactivation_reason, reason}, changeset ->
+          Changeset.change(changeset, deactivation_reason: reason)
+
+        {:sold_price, sold_price}, changeset ->
+          Changeset.change(changeset, sold_price: sold_price)
+      end)
 
     changeset
     |> Repo.update()
@@ -131,11 +170,19 @@ defmodule Re.Listings do
   end
 
   def activate(listing) do
-    changeset = Changeset.change(listing, status: "active")
+    changeset = Changeset.change(listing, status: "active", deactivation_reason: nil)
 
-    changeset
-    |> Repo.update()
-    |> PubSub.publish_update(changeset, "activate_listing")
+    Multi.new()
+    |> Multi.update(:activate_listing, changeset)
+    |> JobQueue.enqueue(:listing_job, %{"type" => "save_price_suggestion", "uuid" => listing.uuid})
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{activate_listing: listing}} ->
+        PubSub.publish_update({:ok, listing}, changeset, "activate_listing")
+
+      error ->
+        error
+    end
   end
 
   def per_user(user) do

@@ -155,13 +155,20 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
     test "price suggestion requested when price" do
       address = insert(:address)
       user = insert(:user)
-      request = insert(:price_suggestion_request, address: address, user: user, is_covered: false)
+
+      request =
+        insert(:price_suggestion_request,
+          address: address,
+          user: user,
+          is_covered: false,
+          suggested_price: 10.10
+        )
 
       Emails.Server.handle_info(
         %{
           topic: "new_price_suggestion_request",
           type: :new,
-          new: %{req: request, price: {:ok, 10.10}}
+          new: request
         },
         []
       )
@@ -175,6 +182,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
             rooms: request.rooms,
             bathrooms: request.bathrooms,
             garage_spots: request.garage_spots,
+            suites: request.suites,
+            type: request.type,
+            maintenance_fee: request.maintenance_fee,
             address: %{
               street: address.street,
               street_number: address.street_number
@@ -192,13 +202,20 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
     test "price suggestion requested for not covered street" do
       address = insert(:address)
       user = insert(:user)
-      request = insert(:price_suggestion_request, address: address, user: user, is_covered: true)
+
+      request =
+        insert(:price_suggestion_request,
+          address: address,
+          user: user,
+          is_covered: true,
+          suggested_price: nil
+        )
 
       Emails.Server.handle_info(
         %{
           topic: "new_price_suggestion_request",
           type: :new,
-          new: %{req: request, price: {:ok, nil}}
+          new: request
         },
         []
       )
@@ -212,6 +229,9 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
             rooms: request.rooms,
             bathrooms: request.bathrooms,
             garage_spots: request.garage_spots,
+            suites: request.suites,
+            type: request.type,
+            maintenance_fee: request.maintenance_fee,
             address: %{
               street: address.street,
               street_number: address.street_number
@@ -222,6 +242,53 @@ defmodule ReIntegrations.Notifications.Emails.ServerTest do
             is_covered: true
           },
           nil
+        )
+      )
+    end
+
+    test "do not send price suggestion requested when user is admin" do
+      address = insert(:address)
+      user = insert(:user, role: "admin")
+
+      request =
+        insert(:price_suggestion_request,
+          address: address,
+          user: user,
+          is_covered: false,
+          suggested_price: 10.10
+        )
+
+      Emails.Server.handle_info(
+        %{
+          topic: "new_price_suggestion_request",
+          type: :new,
+          new: request
+        },
+        []
+      )
+
+      assert_email_not_sent(
+        Emails.User.price_suggestion_requested(
+          %{
+            name: request.name,
+            email: request.email,
+            area: request.area,
+            rooms: request.rooms,
+            bathrooms: request.bathrooms,
+            garage_spots: request.garage_spots,
+            suites: request.suites,
+            type: request.type,
+            maintenance_fee: request.maintenance_fee,
+            address: %{
+              street: address.street,
+              street_number: address.street_number
+            },
+            user: %{
+              phone: user.phone
+            },
+            is_covered: false
+          },
+          10.10
         )
       )
     end

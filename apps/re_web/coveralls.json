@@ -9,7 +9,6 @@
     "lib/auth/guardian_pipeline.ex",
     "lib/controllers/guarded_controller.ex",
     "lib/graphql/types",
-    "lib/pipedrive/client.ex",
     "lib/views/email/report_view.ex",
     "lib/views/layout_view.ex"
   ]

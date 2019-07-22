@@ -34,27 +34,60 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
     """
 
     test "admin should get districts", %{admin_conn: conn} do
-      insert(:district, status: "inactive")
-      insert_list(5, :district)
+      insert(:district, status: "uncovered")
+      insert(:district, status: "partially_covered")
+      insert_list(4, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
       assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "user should get districts", %{user_conn: conn} do
-      insert(:district, status: "inactive")
-      insert_list(5, :district)
+      insert(:district, status: "uncovered")
+      insert(:district, status: "partially_covered")
+      insert_list(4, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
 
       assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
     end
 
     test "anonymous should get districts", %{unauthenticated_conn: conn} do
-      insert(:district, status: "inactive")
-      insert_list(5, :district)
+      insert(:district, status: "uncovered")
+      insert(:district, status: "partially_covered")
+      insert_list(4, :district)
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
-
       assert 5 == Enum.count(json_response(conn, 200)["data"]["districts"])
+    end
+
+    test "districts should be returned with the ascending sort order", %{user_conn: conn} do
+      districts = [
+        %{sort: 3, name: "District 3"},
+        %{sort: 1, name: "District 1"},
+        %{sort: 2, name: "District 2"}
+      ]
+
+      Enum.each(districts, fn d -> insert(:district, sort_order: d.sort, name: d.name) end)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
+      expected_sorted_districts = ["District 1", "District 2", "District 3"]
+      result_list = Enum.map(json_response(conn, 200)["data"]["districts"], fn d -> d["name"] end)
+      assert result_list == expected_sorted_districts
+    end
+
+    test "should return the districts without sort_order in the last positions", %{
+      user_conn: conn
+    } do
+      districts = [
+        %{sort: 3, name: "District 3"},
+        %{sort: 1, name: "District 1"},
+        %{sort: nil, name: "District 4"},
+        %{sort: 2, name: "District 2"}
+      ]
+
+      Enum.each(districts, fn d -> insert(:district, sort_order: d.sort, name: d.name) end)
+      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
+      expected_sorted_districts = ["District 1", "District 2", "District 3", "District 4"]
+      result_list = Enum.map(json_response(conn, 200)["data"]["districts"], fn d -> d["name"] end)
+      assert result_list == expected_sorted_districts
     end
   end
 
@@ -69,6 +102,7 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
           citySlug
           nameSlug
           description
+          status
         }
       }
     """
@@ -99,7 +133,8 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "stateSlug" => "rj",
                "citySlug" => "rio-de-janeiro",
                "nameSlug" => "district-name",
-               "description" => "descr"
+               "description" => "descr",
+               "status" => "covered"
              } == json_response(conn, 200)["data"]["district"]
     end
 
@@ -129,7 +164,8 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "stateSlug" => "rj",
                "citySlug" => "rio-de-janeiro",
                "nameSlug" => "district-name",
-               "description" => "descr"
+               "description" => "descr",
+               "status" => "covered"
              } == json_response(conn, 200)["data"]["district"]
     end
 
@@ -159,7 +195,8 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "stateSlug" => "rj",
                "citySlug" => "rio-de-janeiro",
                "nameSlug" => "district-name",
-               "description" => "descr"
+               "description" => "descr",
+               "status" => "covered"
              } == json_response(conn, 200)["data"]["district"]
     end
   end

@@ -1,12 +1,27 @@
 defmodule ReWeb.Webhooks.ZapierPlugTest do
   use ReWeb.ConnCase
 
+  import Re.CustomAssertion
+
   alias Re.{
     BuyerLeads,
     BuyerLeads.ImovelWeb,
+    BuyerLeads.JobQueue,
     SellerLeads,
     Repo
   }
+
+  setup %{conn: conn} do
+    conn = put_req_header(conn, "accept", "application/json")
+
+    encoded_secret = Base.encode64("testuser:testpass")
+    wrong_credentials = Base.encode64("testuser:wrongpass")
+
+    {:ok,
+     unauthenticated_conn: conn,
+     authenticated_conn: put_req_header(conn, "authorization", "Basic #{encoded_secret}"),
+     invalid_conn: put_req_header(conn, "authorization", "Basic #{wrong_credentials}")}
+  end
 
   @facebook_buyer_payload %{
     "full_name" => "mah full naem",
@@ -31,18 +46,6 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
     "source" => "facebook_buyer",
     "budget" => "$1000 to $10000"
   }
-
-  setup %{conn: conn} do
-    conn = put_req_header(conn, "accept", "application/json")
-
-    encoded_secret = Base.encode64("testuser:testpass")
-    wrong_credentials = Base.encode64("testuser:wrongpass")
-
-    {:ok,
-     unauthenticated_conn: conn,
-     authenticated_conn: put_req_header(conn, "authorization", "Basic #{encoded_secret}"),
-     invalid_conn: put_req_header(conn, "authorization", "Basic #{wrong_credentials}")}
-  end
 
   describe "facebook buyer leads" do
     test "authenticated request", %{authenticated_conn: conn} do
@@ -99,14 +102,18 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
   @imovelweb_buyer_payload %{
     "name" => "mah full naem",
-    "email" => "mah@email",
+    "email" => "mah@emcasa.com",
     "phone" => "11999999999",
     "listingId" => "2000",
     "source" => "imovelweb_buyer"
   }
 
-  @imovelweb_buyer_invalid_payload %{
-    "name" => "mah full naem",
+  @imovelweb_buyer_no_listing_payload %{
+    "source" => "imovelweb_buyer"
+  }
+
+  @imovelweb_buyer_no_contact_payload %{
+    "listingId" => "2000",
     "source" => "imovelweb_buyer"
   }
 
@@ -147,7 +154,7 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
     @tag capture_log: true
     test "missing attributes request", %{authenticated_conn: conn} do
-      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_invalid_payload)
+      conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_no_listing_payload)
 
       assert text_response(conn, 422) == "Unprocessable Entity"
 
@@ -181,6 +188,15 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
 
     refute Repo.one(BuyerLeads.Facebook)
     refute Repo.one(ImovelWeb)
+  end
+
+  test "authenticated request", %{authenticated_conn: conn} do
+    conn = post(conn, "/webhooks/zapier", @imovelweb_buyer_no_contact_payload)
+
+    assert text_response(conn, 200) == "ok"
+
+    assert fb = Repo.one(ImovelWeb)
+    assert fb.uuid
   end
 
   @facebook_seller_payload %{
@@ -257,6 +273,41 @@ defmodule ReWeb.Webhooks.ZapierPlugTest do
       assert text_response(conn, 405) == "GET not allowed"
 
       refute Repo.one(SellerLeads.Facebook)
+    end
+  end
+
+  @walk_in_offline_buyer_payload %{
+    "full_name" => "mah full naem",
+    "timestamp" => "2019-01-01T00:00:00.000Z",
+    "email" => "mah@email",
+    "phone_number" => "11999999999",
+    "neighborhoods" => "manhattan brooklyn harlem",
+    "location" => "RJ",
+    "source" => "walk_in_offline_buyer"
+  }
+
+  @walk_in_offline_buyer_invalid_payload %{
+    "location" => "asdasda"
+  }
+
+  describe "walk-in offline buyer leads" do
+    test "authenticated request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @walk_in_offline_buyer_payload)
+
+      assert text_response(conn, 200) == "ok"
+
+      assert lead = Repo.one(BuyerLeads.WalkInOffline)
+      assert lead.uuid
+      assert_enqueued_job(Repo.all(JobQueue), "process_walk_in_offline_buyer")
+    end
+
+    @tag capture_log: true
+    test "invalid location request", %{authenticated_conn: conn} do
+      conn = post(conn, "/webhooks/zapier", @walk_in_offline_buyer_invalid_payload)
+
+      assert text_response(conn, 422) == "Unprocessable Entity"
+
+      refute Repo.one(BuyerLeads.WalkInOffline)
     end
   end
 end

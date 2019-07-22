@@ -14,7 +14,7 @@ defmodule Re.Images do
 
   alias Ecto.Changeset
 
-  @http Application.get_env(:re_integrations, :http, HTTPoison)
+  @http Application.get_env(:re, :http, HTTPoison)
 
   defdelegate authorize(action, user, params), to: Re.Images.Policy
 
@@ -23,7 +23,8 @@ defmodule Re.Images do
   def query(query, args), do: DataloaderQueries.build(query, args)
 
   def all(listing_id) do
-    Queries.by_listing(listing_id)
+    listing_id
+    |> Queries.by_listing()
     |> Queries.active()
     |> Queries.order_by_position()
     |> Repo.all()

@@ -15,7 +15,10 @@ defmodule ReWeb.Types.User do
     field :email, :string
     field :phone, :string
     field :role, :string
-    field :notification_preferences, :notification_preferences
+
+    field :notification_preferences, :notification_preferences do
+      deprecate("not used anymore")
+    end
 
     field :favorites, list_of(:listing) do
       arg :pagination, non_null(:listing_pagination)

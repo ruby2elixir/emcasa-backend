@@ -23,7 +23,6 @@ defmodule Re.ListingTest do
     area: 150,
     garage_spots: 2,
     garage_type: "contract",
-    score: 4,
     matterport_code: "",
     is_exclusive: false,
     is_release: false,
@@ -47,7 +46,6 @@ defmodule Re.ListingTest do
     balconies: -1,
     garage_spots: -1,
     garage_type: "mine",
-    score: 5,
     is_exclusive: "banana",
     is_release: "banana",
     is_exportable: "banana",
@@ -58,7 +56,7 @@ defmodule Re.ListingTest do
     elevators: 2.1
   }
 
-  describe "admin" do
+  describe "changeset/2" do
     test "changeset with valid attributes" do
       address = insert(:address)
       user = insert(:user)
@@ -77,10 +75,7 @@ defmodule Re.ListingTest do
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :type) ==
-               {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
-
-      assert Keyword.get(changeset.errors, :score) ==
-               {"must be less than %{number}", [validation: :number, kind: :less_than, number: 5]}
+               {"is invalid", [validation: :inclusion, enum: ~w(Apartamento Casa Cobertura)]}
 
       assert Keyword.get(changeset.errors, :price) ==
                {"must be greater than or equal to %{number}",
@@ -128,10 +123,11 @@ defmodule Re.ListingTest do
                {"is invalid", [type: :boolean, validation: :cast]}
 
       assert Keyword.get(changeset.errors, :orientation) ==
-               {"should be one of: [frontside backside lateral inside]", [validation: :inclusion]}
+               {"is invalid",
+                [validation: :inclusion, enum: ~w(frontside backside lateral inside)]}
 
       assert Keyword.get(changeset.errors, :sun_period) ==
-               {"should be one of: [morning evening]", [validation: :inclusion]}
+               {"is invalid", [validation: :inclusion, enum: ~w(morning evening)]}
 
       assert Keyword.get(changeset.errors, :floor_count) ==
                {"is invalid", [type: :integer, validation: :cast]}
@@ -142,12 +138,11 @@ defmodule Re.ListingTest do
       assert Keyword.get(changeset.errors, :elevators) ==
                {"is invalid", [type: :integer, validation: :cast]}
 
-      changeset = Listing.changeset(%Listing{}, %{score: 0, price: 110_000_000})
-      refute changeset.valid?
+      assert Keyword.get(changeset.errors, :garage_type) ==
+               {"is invalid", [validation: :inclusion, enum: ~w(contract condominium)]}
 
-      assert Keyword.get(changeset.errors, :score) ==
-               {"must be greater than %{number}",
-                [validation: :number, kind: :greater_than, number: 0]}
+      changeset = Listing.changeset(%Listing{}, %{price: 110_000_000})
+      refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :price) ==
                {"must be less than or equal to %{number}",
@@ -169,9 +164,9 @@ defmodule Re.ListingTest do
     @valid_development_attrs %{
       type: "Apartamento",
       description: "some content",
-      has_elevator: true,
       matterport_code: "",
-      is_exclusive: nil,
+      area: 100,
+      price: 100_000_000,
       is_release: nil
     }
 
@@ -201,9 +196,15 @@ defmodule Re.ListingTest do
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :type) ==
-               {"should be one of: [Apartamento Casa Cobertura]", [validation: :inclusion]}
+               {"is invalid", [validation: :inclusion, enum: ~w(Apartamento Casa Cobertura)]}
 
       assert Keyword.get(changeset.errors, :description) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :price) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :area) ==
                {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :address_id) ==
@@ -211,12 +212,6 @@ defmodule Re.ListingTest do
 
       assert Keyword.get(changeset.errors, :development_uuid) ==
                {"can't be blank", [validation: :required]}
-
-      assert Keyword.get(changeset.errors, :has_elevator) ==
-               {"is invalid", [type: :boolean, validation: :cast]}
-
-      assert Keyword.get(changeset.errors, :is_exclusive) ==
-               {"is invalid", [type: :boolean, validation: :cast]}
 
       assert Keyword.get(changeset.errors, :is_release) ==
                {"is invalid", [type: :boolean, validation: :cast]}

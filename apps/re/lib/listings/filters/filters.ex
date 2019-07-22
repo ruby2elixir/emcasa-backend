@@ -18,6 +18,8 @@ defmodule Re.Listings.Filters do
     field :min_rooms, :integer
     field :max_suites, :integer
     field :min_suites, :integer
+    field :max_bathrooms, :integer
+    field :min_bathrooms, :integer
     field :min_area, :integer
     field :max_area, :integer
     field :neighborhoods, {:array, :string}
@@ -33,7 +35,7 @@ defmodule Re.Listings.Filters do
     field :cities, {:array, :string}
     field :cities_slug, {:array, :string}
     field :states_slug, {:array, :string}
-    field :exportable, :boolean
+    field :is_exportable, :boolean
     field :tags_slug, {:array, :string}
     field :tags_uuid, {:array, :string}
     field :statuses, {:array, :string}
@@ -49,14 +51,17 @@ defmodule Re.Listings.Filters do
     field :max_price_per_area, :float
     field :min_maintenance_fee, :float
     field :max_maintenance_fee, :float
+    field :is_release, :boolean
+    field :exclude_similar_for_primary_market, :boolean
   end
 
   @filters ~w(max_price min_price max_rooms min_rooms max_suites min_suites min_area max_area
               neighborhoods types max_lat min_lat max_lng min_lng neighborhoods_slugs
               max_garage_spots min_garage_spots garage_types cities cities_slug states_slug
-              exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
+              is_exportable tags_slug tags_uuid statuses min_floor_count max_floor_count
               min_unit_per_floor max_unit_per_floor orientations sun_periods min_age max_age
-              min_price_per_area max_price_per_area min_maintenance_fee max_maintenance_fee)a
+              min_price_per_area max_price_per_area min_maintenance_fee max_maintenance_fee
+              max_bathrooms min_bathrooms is_release exclude_similar_for_primary_market)a
 
   def changeset(struct, params \\ %{}), do: cast(struct, params, @filters)
 
@@ -78,7 +83,20 @@ defmodule Re.Listings.Filters do
     |> Relax.apply()
   end
 
-  defp build_query(params, query), do: Enum.reduce(params, query, &attr_filter/2)
+  defp build_query(params, query) do
+    params
+    |> Enum.reduce(query, &attr_filter/2)
+    |> apply_distinct(params)
+  end
+
+  defp apply_distinct(query, %{exclude_similar_for_primary_market: true}),
+    do: distinct(query, [l], coalesce(l.development_uuid, l.uuid))
+
+  defp apply_distinct(query, %{tags_slug: _}), do: distinct(query, [l], l.uuid)
+
+  defp apply_distinct(query, %{tags_uuid: _}), do: distinct(query, [l], l.uuid)
+
+  defp apply_distinct(query, _), do: query
 
   defp attr_filter({:max_price, max_price}, query) do
     from(l in query, where: l.price <= ^max_price)
@@ -102,6 +120,14 @@ defmodule Re.Listings.Filters do
 
   defp attr_filter({:min_suites, min_suites}, query) do
     from(l in query, where: l.suites >= ^min_suites)
+  end
+
+  defp attr_filter({:max_bathrooms, max_bathrooms}, query) do
+    from(l in query, where: l.bathrooms <= ^max_bathrooms)
+  end
+
+  defp attr_filter({:min_bathrooms, min_bathrooms}, query) do
+    from(l in query, where: l.bathrooms >= ^min_bathrooms)
   end
 
   defp attr_filter({:min_area, min_area}, query) do
@@ -225,8 +251,8 @@ defmodule Re.Listings.Filters do
     )
   end
 
-  defp attr_filter({:exportable, exportable}, query) do
-    from(l in query, where: l.is_exportable == ^exportable)
+  defp attr_filter({:is_exportable, is_exportable}, query) do
+    from(l in query, where: l.is_exportable == ^is_exportable)
   end
 
   defp attr_filter({:tags_slug, []}, query), do: query
@@ -235,8 +261,7 @@ defmodule Re.Listings.Filters do
     from(
       l in query,
       join: t in assoc(l, :tags),
-      where: t.name_slug in ^slugs,
-      distinct: l.id
+      where: t.name_slug in ^slugs
     )
   end
 
@@ -246,8 +271,7 @@ defmodule Re.Listings.Filters do
     from(
       l in query,
       join: t in assoc(l, :tags),
-      where: t.uuid in ^uuids,
-      distinct: l.id
+      where: t.uuid in ^uuids
     )
   end
 
@@ -336,6 +360,20 @@ defmodule Re.Listings.Filters do
     from(
       l in query,
       where: l.maintenance_fee <= ^maintenance_fee
+    )
+  end
+
+  defp attr_filter({:is_release, is_release}, query) do
+    from(
+      l in query,
+      where: l.is_release == ^is_release
+    )
+  end
+
+  defp attr_filter({:exclude_similar_for_primary_market, true}, query) do
+    from(
+      l in query,
+      where: not (l.is_release == true and l.is_exportable == false)
     )
   end
 

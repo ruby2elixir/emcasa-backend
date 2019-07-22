@@ -8,16 +8,16 @@ defmodule Re.Application do
   import Supervisor.Spec
 
   alias Re.{
-    BuyerLeads.JobQueue,
-    Developments.Units,
+    BuyerLeads,
+    Developments,
+    Listings,
     Listings.History,
     PubSub,
-    Repo,
-    Statistics.Visualizations
+    Repo
   }
 
   def start(_type, _args) do
-    attach_telemetry()
+    Re.Monitoring.setup()
 
     children =
       [
@@ -34,18 +34,8 @@ defmodule Re.Application do
   defp extra_processes(_),
     do: [
       worker(History.Server, []),
-      worker(Units.Server, []),
-      worker(Visualizations, []),
-      {JobQueue, repo: Repo}
+      {BuyerLeads.JobQueue, repo: Repo},
+      {Developments.JobQueue, repo: Repo},
+      {Listings.JobQueue, repo: Repo}
     ]
-
-  defp attach_telemetry do
-    :ok =
-      :telemetry.attach(
-        "timber-ecto-query-handler",
-        [:re, :repo, :query],
-        &Timber.Ecto.handle_event/4,
-        []
-      )
-  end
 end

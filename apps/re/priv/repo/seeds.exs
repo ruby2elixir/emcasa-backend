@@ -13,24 +13,18 @@ alias Re.{
   ListingTag,
   PriceSuggestions.Request,
   Repo,
-  Statistics.InPersonVisit,
-  Statistics.ListingVisualization,
-  Statistics.TourVisualization,
   Tag,
   Unit,
   User
 }
 
 Repo.delete_all(Image)
-Repo.delete_all(InPersonVisit)
 Repo.delete_all(Interest)
 Repo.delete_all(Favorite)
 Repo.delete_all(ListingTag)
-Repo.delete_all(ListingVisualization)
 Repo.delete_all(PriceHistory)
 Repo.delete_all(StatusHistory)
 Repo.delete_all(TourAppointment)
-Repo.delete_all(TourVisualization)
 Repo.delete_all(Unit)
 Repo.delete_all(Listing)
 Repo.delete_all(Request)
@@ -199,23 +193,60 @@ Repo.delete_all(Tag)
     rooms: 2,
     bathrooms: 2,
     garage_spots: 1,
-    score: 3,
+    liquidity_ratio: 3.0,
     images: [image1],
     user: admin1,
     address: address1,
     status: "active"
   })
 
-{:ok, tag1} =
-  Repo.insert(%Tag{
-    uuid: UUID.uuid4(),
-    name: "Piscina",
-    name_slug: "piscina"
-  })
+Repo.delete_all(Tag)
 
-[tag1]
-|> Enum.map(fn tag -> %ListingTag{listing_uuid: listing1.uuid, tag_uuid: tag.uuid} end)
-|> Enum.map(&Repo.insert/1)
+[
+  %{category: "concierge", name: "24 Horas", visibility: "public"},
+  %{category: "concierge", name: "Horario Comercial", visibility: "public"},
+  %{category: "concierge", name: "Portaria Eletrônica", visibility: "public"},
+  %{category: "infrastructure", name: "Academia", visibility: "public"},
+  %{category: "infrastructure", name: "Bicicletário", visibility: "public"},
+  %{category: "infrastructure", name: "Brinquedoteca", visibility: "public"},
+  %{category: "infrastructure", name: "Churrasqueira", visibility: "public"},
+  %{category: "infrastructure", name: "Espaço Gourmet", visibility: "public"},
+  %{category: "infrastructure", name: "Espaço Verde", visibility: "public"},
+  %{category: "infrastructure", name: "Parque", visibility: "public"},
+  %{category: "infrastructure", name: "Piscina", visibility: "public"},
+  %{category: "infrastructure", name: "Playground", visibility: "public"},
+  %{category: "infrastructure", name: "Quadra", visibility: "public"},
+  %{category: "infrastructure", name: "Salão De Festas", visibility: "public"},
+  %{category: "infrastructure", name: "Salão De Jogos", visibility: "public"},
+  %{category: "infrastructure", name: "Sauna", visibility: "public"},
+  %{category: "realty", name: "Armários Embutidos", visibility: "public"},
+  %{category: "realty", name: "Banheiro Empregados", visibility: "public"},
+  %{category: "realty", name: "Bom Para Pets", visibility: "public"},
+  %{category: "realty", name: "Dependência Empregados", visibility: "public"},
+  %{category: "realty", name: "Espaço Para Churrasco", visibility: "public"},
+  %{category: "realty", name: "Fogão Embutido", visibility: "public"},
+  %{category: "realty", name: "Lavabo", visibility: "public"},
+  %{category: "realty", name: "Reformado", visibility: "public"},
+  %{category: "realty", name: "Sacada", visibility: "public"},
+  %{category: "realty", name: "Terraço", visibility: "public"},
+  %{category: "realty", name: "Varanda Gourmet", visibility: "public"},
+  %{category: "realty", name: "Varanda", visibility: "public"},
+  %{category: "view", name: "Comunidade", visibility: "private"},
+  %{category: "view", name: "Cristo", visibility: "public"},
+  %{category: "view", name: "Lagoa", visibility: "public"},
+  %{category: "view", name: "Mar", visibility: "public"},
+  %{category: "view", name: "Montanhas", visibility: "public"},
+  %{category: "view", name: "Parcial Comunidade", visibility: "private"},
+  %{category: "view", name: "Parcial Mar", visibility: "public"},
+  %{category: "view", name: "Pedras", visibility: "public"},
+  %{category: "view", name: "Verde", visibility: "public"},
+  %{category: "view", name: "Vizinho", visibility: "private"}
+]
+|> Enum.each(fn params ->
+  %Re.Tag{}
+  |> Re.Tag.changeset(params)
+  |> Re.Repo.insert()
+end)
 
 {:ok, listing2} =
   Repo.insert(%Listing{
@@ -227,7 +258,7 @@ Repo.delete_all(Tag)
     rooms: 3,
     bathrooms: 3,
     garage_spots: 2,
-    score: 4,
+    liquidity_ratio: 4.0,
     images: [image2],
     user: admin2,
     address: address2,
@@ -244,7 +275,7 @@ Repo.delete_all(Tag)
     rooms: 5,
     bathrooms: 2,
     garage_spots: 1,
-    score: 4,
+    liquidity_ratio: 4.0,
     images: [image3],
     user: user1,
     address: address3,
@@ -261,7 +292,7 @@ Repo.delete_all(Tag)
     rooms: 3,
     bathrooms: 3,
     garage_spots: 2,
-    score: 4,
+    liquidity_ratio: 4.0,
     images: [image4],
     user: user1,
     address: address4,
@@ -278,7 +309,7 @@ Repo.delete_all(Tag)
     rooms: 3,
     bathrooms: 3,
     garage_spots: 2,
-    score: 4,
+    liquidity_ratio: 4.0,
     user: user2,
     address: address5,
     status: "inactive"
@@ -294,7 +325,7 @@ Repo.delete_all(Tag)
     rooms: 3,
     bathrooms: 3,
     garage_spots: 2,
-    score: 4,
+    liquidity_ratio: 4.0,
     user: user2,
     address: address6,
     status: "inactive"
@@ -310,7 +341,7 @@ Repo.delete_all(Tag)
     rooms: 3,
     bathrooms: 3,
     garage_spots: 2,
-    score: 4,
+    liquidity_ratio: 4.0,
     user: user2,
     address: address1,
     status: "active"
@@ -326,7 +357,7 @@ Repo.delete_all(Tag)
     rooms: 3,
     bathrooms: 3,
     garage_spots: 2,
-    score: 4,
+    liquidity_ratio: 4.0,
     user: user2,
     address: address2,
     status: "active"
@@ -351,7 +382,7 @@ Repo.delete_all(Tag)
     rooms: 3,
     bathrooms: 3,
     garage_spots: 2,
-    score: 4,
+    liquidity_ratio: 4.0,
     user: user2,
     address: address2,
     development: development1,

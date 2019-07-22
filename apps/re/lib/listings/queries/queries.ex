@@ -13,10 +13,7 @@ defmodule Re.Listings.Queries do
 
   @full_preload [
     :address,
-    :listings_visualisations,
-    :tour_visualisations,
     :listings_favorites,
-    :in_person_visits,
     :tags,
     interests: Interests.Queries.with_type(),
     images: Images.Queries.listing_preload()
@@ -24,7 +21,7 @@ defmodule Re.Listings.Queries do
 
   @orderable_fields ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area
                        garage_spots suites dependencies balconies updated_at price_per_area
-                       inserted_at)a
+                       inserted_at floor)a
 
   def active(query \\ Listing), do: where(query, [l], l.status == "active")
 
@@ -34,7 +31,7 @@ defmodule Re.Listings.Queries do
     |> order_by()
   end
 
-  def order_by(query, _), do: query
+  def order_by(query, _), do: order_by(query)
 
   defp order_by_criterias(%{field: field, type: type}, query) when field in @orderable_fields do
     order_by(query, [l], {^type, ^field})
@@ -44,9 +41,7 @@ defmodule Re.Listings.Queries do
 
   def order_by(query \\ Listing) do
     query
-    |> order_by([l], desc: l.score)
-    |> order_by([l], fragment("RANDOM()"))
-    |> order_by([l], asc: l.matterport_code)
+    |> order_by([l], desc_nulls_last: l.liquidity_ratio)
   end
 
   def order_by_id(query \\ Listing), do: order_by(query, [l], asc: l.id)
@@ -63,6 +58,30 @@ defmodule Re.Listings.Queries do
       |> List.flatten()
 
     %{result | entries: randomized_entries}
+  end
+
+  def excluding(query, %{
+        "excluded_listing_ids" => excluded_listing_ids,
+        "exclude_similar_for_primary_market" => true
+      }),
+      do:
+        excluding(query, %{
+          excluded_listing_ids: excluded_listing_ids,
+          exclude_similar_for_primary_market: true
+        })
+
+  def excluding(query, %{
+        excluded_listing_ids: excluded_listing_ids,
+        exclude_similar_for_primary_market: true
+      }) do
+    from(
+      l in query,
+      left_join: d in Listing,
+      on:
+        d.id in ^excluded_listing_ids and not is_nil(d.development_uuid) and
+          l.development_uuid == d.development_uuid,
+      where: is_nil(d.id) and l.id not in ^excluded_listing_ids
+    )
   end
 
   def excluding(query, %{"excluded_listing_ids" => excluded_listing_ids}),
@@ -97,6 +116,9 @@ defmodule Re.Listings.Queries do
   end
 
   def count(query \\ Listing), do: from(l in query, select: count(l.id, :distinct))
+
+  def per_development(query \\ Listing, development_uuid),
+    do: from(l in query, where: l.development_uuid == ^development_uuid)
 
   def per_user(query \\ Listing, user_id), do: from(l in query, where: l.user_id == ^user_id)
 

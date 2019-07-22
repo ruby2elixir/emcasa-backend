@@ -14,6 +14,7 @@ defmodule ReWeb.ConnCase do
   """
 
   use ExUnit.CaseTemplate
+  alias Ecto.Adapters.SQL.Sandbox
 
   using do
     quote do
@@ -21,7 +22,6 @@ defmodule ReWeb.ConnCase do
       use Phoenix.ConnTest
 
       alias Re.Repo
-      import Ecto
 
       import Ecto.{
         Changeset,
@@ -44,10 +44,12 @@ defmodule ReWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Re.Repo)
+    :ok = Sandbox.checkout(Re.Repo)
+    :ok = Sandbox.checkout(ReIntegrations.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Re.Repo, {:shared, self()})
+      Sandbox.mode(Re.Repo, {:shared, self()})
+      Sandbox.mode(ReIntegrations.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

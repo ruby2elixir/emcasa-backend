@@ -4,6 +4,7 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
   alias ReWeb.AbsintheHelpers
 
   import Re.Factory
+  import Re.CustomAssertion
 
   alias Re.{
     BuyerLeads.JobQueue,
@@ -28,6 +29,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
         "email" => "testemail@emcasa.com",
         "phone" => "123321123",
         "message" => "this website is cool",
+        "campaign" => "utm campaign",
+        "medium" => "utm medium",
+        "source" => "utm source",
+        "initialCampaign" => "utm initial campaign",
+        "initialMedium" => "utm initial medium",
+        "initialSource" => "utm initial source",
         "interestTypeId" => interest_type_id,
         "listingId" => listing_id
       }
@@ -40,6 +47,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
           email
           phone
           message
+          campaign
+          medium
+          source
+          initialCampaign
+          initialMedium
+          initialSource
           listing {
             id
           }
@@ -58,6 +71,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              "email" => "testemail@emcasa.com",
              "phone" => "123321123",
              "message" => "this website is cool",
+             "campaign" => "utm campaign",
+             "medium" => "utm medium",
+             "source" => "utm source",
+             "initialCampaign" => "utm initial campaign",
+             "initialMedium" => "utm initial medium",
+             "initialSource" => "utm initial source",
              "interestType" => %{
                "id" => to_string(interest_type_id),
                "name" => interest_type_name
@@ -69,7 +88,7 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
 
     assert interest = Repo.get_by(Interest, name: "Mah Name")
     assert interest.uuid
-    assert Repo.one(JobQueue)
+    assert_enqueued_job(Repo.all(JobQueue), "interest")
   end
 
   test "user should request contact", %{user_conn: conn} do
@@ -82,6 +101,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
         "email" => "testemail@emcasa.com",
         "phone" => "123321123",
         "message" => "this website is cool",
+        "campaign" => "utm campaign",
+        "medium" => "utm medium",
+        "source" => "utm source",
+        "initialCampaign" => "utm initial campaign",
+        "initialMedium" => "utm initial medium",
+        "initialSource" => "utm initial source",
         "interestTypeId" => interest_type_id,
         "listingId" => listing_id
       }
@@ -94,6 +119,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
           email
           phone
           message
+          campaign
+          medium
+          source
+          initialCampaign
+          initialMedium
+          initialSource
           listing {
             id
           }
@@ -112,6 +143,12 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              "email" => "testemail@emcasa.com",
              "phone" => "123321123",
              "message" => "this website is cool",
+             "campaign" => "utm campaign",
+             "medium" => "utm medium",
+             "source" => "utm source",
+             "initialCampaign" => "utm initial campaign",
+             "initialMedium" => "utm initial medium",
+             "initialSource" => "utm initial source",
              "interestType" => %{
                "id" => to_string(interest_type_id),
                "name" => interest_type_name

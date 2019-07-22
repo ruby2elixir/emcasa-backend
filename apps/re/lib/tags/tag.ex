@@ -24,6 +24,11 @@ defmodule Re.Tag do
       join_keys: [tag_uuid: :uuid, listing_uuid: :uuid],
       on_replace: :delete
 
+    many_to_many :developments, Re.Development,
+      join_through: Re.DevelopmentTag,
+      join_keys: [tag_uuid: :uuid, development_uuid: :uuid],
+      on_replace: :delete
+
     timestamps()
   end
 
@@ -40,12 +45,8 @@ defmodule Re.Tag do
     |> cast(params, @required)
     |> validate_required(@required)
     |> unique_constraint(:name_slug)
-    |> validate_inclusion(:category, @categories,
-      message: "should be one of: [#{Enum.join(@categories, ", ")}]"
-    )
-    |> validate_inclusion(:visibility, @visibilities,
-      message: "should be one of: [#{Enum.join(@visibilities, ", ")}]"
-    )
+    |> validate_inclusion(:category, @categories)
+    |> validate_inclusion(:visibility, @visibilities)
     |> generate_slugs()
     |> ChangesetHelper.generate_uuid()
   end

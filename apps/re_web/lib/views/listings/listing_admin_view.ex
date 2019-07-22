@@ -71,11 +71,11 @@ defmodule ReWeb.ListingAdminView do
       },
       user_id: listing.user_id,
       images: render_many(listing.images, ReWeb.ImageView, "image.json"),
-      visualisations: count_if_list(listing.listings_visualisations),
-      tour_visualisations: count_if_list(listing.tour_visualisations),
+      visualisations: 0,
+      tour_visualisations: 0,
       favorite_count: count_if_list(listing.listings_favorites),
       interest_count: count_if_list(listing.interests),
-      in_person_visit_count: count_if_list(listing.in_person_visits)
+      in_person_visit_count: 0
     }
   end
 
@@ -95,7 +95,6 @@ defmodule ReWeb.ListingAdminView do
       restrooms: listing.restrooms,
       garage_spots: listing.garage_spots,
       garage_type: listing.garage_type,
-      score: listing.score,
       matterport_code: listing.matterport_code,
       suites: listing.suites,
       dependencies: listing.dependencies,

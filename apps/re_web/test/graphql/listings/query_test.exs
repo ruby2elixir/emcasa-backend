@@ -1,7 +1,11 @@
 defmodule ReWeb.GraphQL.Listings.QueryTest do
   use ReWeb.ConnCase
 
+  import Re.CustomAssertion
+
   import Re.Factory
+
+  import Mockery
 
   alias ReWeb.AbsintheHelpers
 
@@ -22,17 +26,18 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     test "admin should query listing index", %{admin_conn: conn} do
       user = insert(:user)
 
-      insert(
-        :listing,
-        address: build(:address, street_number: "12B"),
-        images: [
-          build(:image, filename: "test.jpg", position: 3),
-          build(:image, filename: "test2.jpg", position: 2, is_active: false),
-          build(:image, filename: "test3.jpg", position: 1)
-        ],
-        user: user,
-        score: 4
-      )
+      %{uuid: uuid} =
+        insert(
+          :listing,
+          address: build(:address, street_number: "12B"),
+          images: [
+            build(:image, filename: "test.jpg", position: 3),
+            build(:image, filename: "test2.jpg", position: 2, is_active: false),
+            build(:image, filename: "test3.jpg", position: 1)
+          ],
+          user: user,
+          liquidity_ratio: 4.0
+        )
 
       insert(:image, filename: "not_in_listing_image.jpg")
 
@@ -52,6 +57,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           ) {
           listings {
             listings {
+              uuid
               address {
                 street_number
               }
@@ -67,6 +73,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              normalizedLiquidityRatio
               score
             }
             remaining_count
@@ -79,12 +86,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert %{
                "listings" => [
                  %{
+                   "uuid" => uuid,
                    "address" => %{"street_number" => "12B"},
                    "activeImages" => [%{"filename" => "test3.jpg"}],
                    "twoImages" => [%{"filename" => "test3.jpg"}, %{"filename" => "test2.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
-                   "score" => 4
+                   "normalizedLiquidityRatio" => 10,
+                   "score" => nil
                  }
                ],
                "remaining_count" => 0
@@ -100,7 +109,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        score: 4
+        liquidity_ratio: 4.0
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -114,6 +123,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
           listings {
             listings {
+              uuid
               address {
                 street_number
               }
@@ -126,6 +136,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              normalizedLiquidityRatio
               score
             }
             remaining_count
@@ -138,10 +149,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert %{
                "listings" => [
                  %{
+                   "uuid" => nil,
                    "address" => %{"street_number" => "12B"},
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test2.jpg"}],
                    "owner" => %{"name" => user.name},
+                   "normalizedLiquidityRatio" => nil,
                    "score" => nil
                  }
                ],
@@ -160,7 +173,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        score: 4
+        liquidity_ratio: 4.0
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -174,6 +187,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
           listings {
             listings {
+              uuid
               address {
                 street_number
               }
@@ -186,7 +200,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
-              score
+              normalizedLiquidityRatio
             }
             remaining_count
           }
@@ -198,11 +212,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert %{
                "listings" => [
                  %{
+                   "uuid" => nil,
                    "address" => %{"street_number" => nil},
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
-                   "score" => nil
+                   "normalizedLiquidityRatio" => nil
                  }
                ],
                "remaining_count" => 0
@@ -220,7 +235,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           build(:image, filename: "test2.jpg", is_active: false)
         ],
         user: user,
-        score: 4
+        liquidity_ratio: 4.0
       )
 
       insert(:image, filename: "not_in_listing_image.jpg")
@@ -234,6 +249,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         query Listings ($activeImagesIsActive: Boolean, $inactiveImagesIsActive: Boolean) {
           listings {
             listings {
+              uuid
               address {
                 street_number
               }
@@ -246,6 +262,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
               owner {
                 name
               }
+              normalizedLiquidityRatio
               score
             }
             remaining_count
@@ -258,10 +275,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert %{
                "listings" => [
                  %{
+                   "uuid" => nil,
                    "address" => %{"street_number" => nil},
                    "activeImages" => [%{"filename" => "test.jpg"}],
                    "inactiveImages" => [%{"filename" => "test.jpg"}],
                    "owner" => nil,
+                   "normalizedLiquidityRatio" => nil,
                    "score" => nil
                  }
                ],
@@ -270,9 +289,9 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "should query listing index with pagination", %{unauthenticated_conn: conn} do
-      listing1 = insert(:listing, score: 4, price: 950_000, rooms: 3, area: 90)
-      [%{id: listing2_id}, %{id: listing3_id}] = insert_list(2, :listing, score: 4)
-      insert_list(3, :listing, score: 3)
+      listing1 = insert(:listing, liquidity_ratio: 4.0, price: 950_000, rooms: 3, area: 90)
+      [%{id: listing2_id}, %{id: listing3_id}] = insert_list(2, :listing, liquidity_ratio: 4.0)
+      insert_list(3, :listing, liquidity_ratio: 3.0)
 
       variables = %{
         "pagination" => %{
@@ -304,7 +323,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
              } == json_response(conn, 200)["data"]["listings"]
     end
 
-    test "should query listing index with filtering", %{user_conn: conn} do
+    test "should query listing index with filters", %{user_conn: conn} do
       tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
       tag_2 = insert(:tag, name: "Tag 2", name_slug: "tag-2")
 
@@ -327,316 +346,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         garage_type: "contract",
         tags: [tag_1],
         price_per_area: 12_222.22,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 790_000,
-        rooms: 3,
-        suites: 0,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_1],
-        price_per_area: 8_777.78,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 5,
-        suites: 3,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_1],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 1,
-        suites: 0,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_1],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 3,
-        area: 110,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_1],
-        price_per_area: 8181.82,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 0,
-        area: 70,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_2],
-        price_per_area: 12_857.14,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 3,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Botafogo",
-            neighborhood_slug: "botafogo",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 0,
-        area: 90,
-        type: "Casa",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 70.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 2,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 30.0,
-            lng: 50.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 0,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 70.0
-          ),
-        garage_spots: 2,
-        garage_type: "contract",
-        tags: [tag_1, tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 80.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 30.0
-          ),
-        garage_spots: 2,
-        garage_type: "condominium",
-        tags: [tag_1, tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 80.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 0,
-        tags: [tag_1, tag_2],
-        price_per_area: 10_000.00,
-        maintenance_fee: 80.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Copacabana",
-            neighborhood_slug: "copacabana",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 4,
-        garage_type: "condominium",
-        price_per_area: 10_000.00,
-        maintenance_fee: 80.0
-      )
-
-      insert(
-        :listing,
-        price: 900_000,
-        rooms: 3,
-        suites: 1,
-        area: 90,
-        type: "Apartamento",
-        address:
-          build(
-            :address,
-            neighborhood: "Perdizes",
-            neighborhood_slug: "perdizes",
-            state: "SP",
-            city: "São Paulo",
-            state_slug: "sp",
-            city_slug: "sao-paulo",
-            lat: 50.0,
-            lng: 50.0
-          ),
-        garage_spots: 4,
-        garage_type: "condominium",
-        price_per_area: 10_000.00,
-        maintenance_fee: 120.0
+        maintenance_fee: 120.0,
+        is_release: false
       )
 
       listing1 =
@@ -645,6 +356,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           price: 900_000,
           rooms: 3,
           suites: 1,
+          bathrooms: 1,
           area: 90,
           type: "Apartamento",
           address:
@@ -663,7 +375,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           garage_type: "contract",
           tags: [tag_1, tag_2],
           price_per_area: 10_000.00,
-          maintenance_fee: 100.0
+          maintenance_fee: 100.0,
+          is_release: true
         )
 
       variables = %{
@@ -676,6 +389,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "minRooms" => 2,
           "maxSuites" => 2,
           "minSuites" => 1,
+          "maxBathrooms" => 2,
+          "minBathrooms" => 1,
           "minArea" => 80,
           "maxArea" => 100,
           "neighborhoods" => ["Copacabana", "Leblon"],
@@ -692,7 +407,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           "citiesSlug" => ["rio-de-janeiro"],
           "tagsSlug" => ["tag-1", "tag-2"],
           "minMaintenanceFee" => 90.0,
-          "maxMaintenanceFee" => 110.0
+          "maxMaintenanceFee" => 110.0,
+          "isRelease" => true
         }
       }
 
@@ -723,49 +439,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
              } == json_response(conn, 200)["data"]["listings"]
     end
 
-    test "should query listing index filtering by status", %{user_conn: conn} do
-      listing_1 = insert(:listing, status: "active")
-      insert(:listing, status: "inactive")
-
-      variables = %{
-        "filters" => %{
-          "statuses" => ["active"]
-        }
-      }
-
-      query = """
-        query Listings($filters: ListingFilterInput) {
-          listings (filters: $filters) {
-            listings {
-              id
-            }
-            filters {
-              statuses
-            }
-          }
-        }
-      """
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
-
-      assert %{
-               "listings" => [
-                 %{
-                   "id" => to_string(listing_1.id)
-                 }
-               ],
-               "filters" => %{
-                 "statuses" => ["active"]
-               }
-             } == json_response(conn, 200)["data"]["listings"]
-    end
-
     test "should query listing index with order by", %{user_conn: conn} do
       %{id: id1} = insert(:listing, garage_spots: 1, price: 1_000_000, rooms: 2)
-      %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 4)
+      %{id: id2} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, liquidity_ratio: 4)
       %{id: id3} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 4)
       %{id: id4} = insert(:listing, garage_spots: 2, price: 1_000_000, rooms: 3)
-      %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, score: 3)
+      %{id: id5} = insert(:listing, garage_spots: 2, price: 900_000, rooms: 3, liquidity_ratio: 3)
       %{id: id6} = insert(:listing, garage_spots: 3, price: 1_100_000, rooms: 5)
 
       variables = %{
@@ -838,12 +517,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       unauthenticated_conn: conn
     } do
       now = Timex.now()
-      insert(:listing, score: 4, price_history: [])
+      insert(:listing, liquidity_ratio: 4.0, price_history: [])
 
       insert(
         :listing,
         price: 1_000_000,
-        score: 3,
+        liquidity_ratio: 3,
         price_history: [
           build(:price_history, price: 1_100_000, inserted_at: Timex.shift(now, weeks: -1))
         ]
@@ -851,14 +530,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       insert(
         :listing,
-        score: 2,
+        liquidity_ratio: 2,
         price_history: [build(:price_history, inserted_at: Timex.shift(now, weeks: -3))]
       )
 
       insert(
         :listing,
         price: 1_000_000,
-        score: 1,
+        liquidity_ratio: 1,
         price_history: [
           build(:price_history, price: 900_000, inserted_at: Timex.shift(now, weeks: -1))
         ]
@@ -876,14 +555,18 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
-      assert %{
-               "listings" => [
-                 %{"priceRecentlyReduced" => false},
-                 %{"priceRecentlyReduced" => true},
-                 %{"priceRecentlyReduced" => false},
-                 %{"priceRecentlyReduced" => false}
-               ]
-             } == json_response(conn, 200)["data"]["listings"]
+      price_recently_reduced = fn items -> Enum.map(items, & &1["priceRecentlyReduced"]) end
+
+      assert_mapper_match(
+        [
+          %{"priceRecentlyReduced" => false},
+          %{"priceRecentlyReduced" => true},
+          %{"priceRecentlyReduced" => false},
+          %{"priceRecentlyReduced" => false}
+        ],
+        json_response(conn, 200)["data"]["listings"]["listings"],
+        price_recently_reduced
+      )
     end
 
     test "admin should query listing with all tags", %{admin_conn: conn} do
@@ -1117,36 +800,20 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       %{filename: inactive_image_filename2} =
         image5 = insert(:image, is_active: false, position: 5)
 
-      %{state: state, city: city, street: street, street_number: street_number} =
-        address = insert(:address)
+      %{street: street, street_number: street_number} = address = insert(:address)
 
       district = district_from_address(address)
 
       user = insert(:user)
       development = insert(:development)
       interests = insert_list(3, :interest)
-      in_person_visits = insert_list(3, :in_person_visit)
       listings_favorites = insert_list(3, :listings_favorites)
-      tour_visualisations = insert_list(3, :tour_visualisation)
-      listings_visualisations = insert_list(3, :listing_visualisation)
       [unit1, unit2] = insert_list(2, :unit)
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
 
-      insert(
-        :factors,
-        state: state,
-        city: city,
-        street: street,
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
-      )
-
-      %{id: listing_id} =
+      %{id: listing_id, uuid: listing_uuid} =
         insert(
           :listing,
           address: address,
@@ -1154,21 +821,20 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           user: user,
           development: development,
           interests: interests,
-          in_person_visits: in_person_visits,
           listings_favorites: listings_favorites,
-          tour_visualisations: tour_visualisations,
-          listings_visualisations: listings_visualisations,
           price_history: price_history,
           units: [unit1, unit2],
           rooms: 2,
           area: 80,
           garage_spots: 1,
           bathrooms: 1,
-          inserted_at: ~N[2018-01-01 10:00:00]
+          inserted_at: ~N[2018-01-01 10:00:00],
+          suggested_price: 1000.00,
+          liquidity_ratio: 1.0
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1189,6 +855,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           $filters: ListingFilterInput
           ) {
           listing (id: $id) {
+            uuid
             address {
               street
               streetNumber
@@ -1208,6 +875,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             listingFavoriteCount
             tourVisualisationCount
             listingVisualisationCount
+            normalizedLiquidityRatio
             previousPrices {
               price
             }
@@ -1228,9 +896,20 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         }
       """
 
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915}"
+         }}
+      )
+
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
+               "uuid" => listing_uuid,
                "address" => %{
                  "street" => street,
                  "streetNumber" => street_number,
@@ -1247,16 +926,17 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                ],
                "owner" => %{"name" => user.name},
                "interestCount" => 3,
-               "inPersonVisitCount" => 3,
+               "inPersonVisitCount" => nil,
                "listingFavoriteCount" => 3,
-               "tourVisualisationCount" => 3,
-               "listingVisualisationCount" => 3,
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil,
+               "normalizedLiquidityRatio" => 10,
                "previousPrices" => [
                  %{"price" => price1},
                  %{"price" => price2},
                  %{"price" => price3}
                ],
-               "suggestedPrice" => 26_279.915,
+               "suggestedPrice" => 1000.0,
                "related" => %{
                  "listings" => [
                    %{"id" => to_string(related_id1)},
@@ -1290,24 +970,11 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       district = district_from_address(address)
 
       interests = insert_list(3, :interest)
-      in_person_visits = insert_list(3, :in_person_visit)
       listings_favorites = insert_list(3, :listings_favorites)
-      tour_visualisations = insert_list(3, :tour_visualisation)
-      listings_visualisations = insert_list(3, :listing_visualisation)
       [unit1, unit2] = insert_list(2, :unit)
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
-
-      insert(
-        :factors,
-        street: street,
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
-      )
 
       %{id: listing_id} =
         insert(
@@ -1316,21 +983,19 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           images: [image1, image2, image3, image4, image5],
           user: user,
           interests: interests,
-          in_person_visits: in_person_visits,
           listings_favorites: listings_favorites,
-          tour_visualisations: tour_visualisations,
-          listings_visualisations: listings_visualisations,
           price_history: price_history,
           units: [unit1, unit2],
           rooms: 2,
           area: 80,
           garage_spots: 1,
           bathrooms: 1,
-          inserted_at: ~N[2018-01-01 10:00:00]
+          inserted_at: ~N[2018-01-01 10:00:00],
+          suggested_price: nil
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1351,6 +1016,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           $filters: ListingFilterInput
           ) {
           listing (id: $id) {
+            uuid
             address {
               street
               streetNumber
@@ -1390,6 +1056,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
+               "uuid" => nil,
                "address" => %{
                  "street" => street,
                  "streetNumber" => street_number,
@@ -1406,10 +1073,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                ],
                "owner" => %{"name" => user.name},
                "interestCount" => 3,
-               "inPersonVisitCount" => 3,
+               "inPersonVisitCount" => nil,
                "listingFavoriteCount" => 3,
-               "tourVisualisationCount" => 3,
-               "listingVisualisationCount" => 3,
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil,
                "previousPrices" => [
                  %{"price" => price1},
                  %{"price" => price2},
@@ -1452,8 +1119,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           inserted_at: ~N[2018-01-01 10:00:00]
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1474,6 +1141,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           $filters: ListingFilterInput
           ) {
           listing (id: $id) {
+            uuid
             address {
               street
               streetNumber
@@ -1493,6 +1161,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
             listingFavoriteCount
             tourVisualisationCount
             listingVisualisationCount
+            normalizedLiquidityRatio
             previousPrices {
               price
             }
@@ -1513,6 +1182,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
+               "uuid" => nil,
                "address" => %{
                  "street" => street,
                  "streetNumber" => nil,
@@ -1536,6 +1206,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                "listingVisualisationCount" => nil,
                "previousPrices" => nil,
                "suggestedPrice" => nil,
+               "normalizedLiquidityRatio" => nil,
                "related" => %{
                  "listings" => [
                    %{"id" => to_string(related_id1)},
@@ -1572,8 +1243,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           inserted_at: ~N[2018-01-01 10:00:00]
         )
 
-      %{id: related_id1} = insert(:listing, address: address, score: 4)
-      %{id: related_id2} = insert(:listing, address: address, score: 3)
+      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
+      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
 
       variables = %{
         "id" => listing_id,
@@ -1594,6 +1265,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           $filters: ListingFilterInput
           ) {
           listing (id: $id) {
+            uuid
             address {
               street
               streetNumber
@@ -1633,6 +1305,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
+               "uuid" => nil,
                "address" => %{
                  "street" => street,
                  "streetNumber" => nil,
@@ -1671,7 +1344,12 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     end
 
     test "admin should see inactive listing", %{admin_conn: conn} do
-      %{id: listing_id} = insert(:listing, status: "inactive")
+      %{id: listing_id} =
+        insert(:listing,
+          status: "inactive",
+          deactivation_reason: "sold",
+          sold_price: 1_000_000
+        )
 
       variables = %{"id" => listing_id}
 
@@ -1679,13 +1357,19 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
         query Listing ($id: ID!) {
           listing (id: $id) {
             id
+            deactivation_reason
+            sold_price
           }
         }
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
-      assert %{"id" => to_string(listing_id)} == json_response(conn, 200)["data"]["listing"]
+      assert %{
+               "id" => to_string(listing_id),
+               "deactivation_reason" => "SOLD",
+               "sold_price" => 1_000_000
+             } == json_response(conn, 200)["data"]["listing"]
     end
 
     test "owner should see inactive listing", %{user_conn: conn, user_user: user} do

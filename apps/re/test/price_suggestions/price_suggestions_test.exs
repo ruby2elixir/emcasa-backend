@@ -4,208 +4,162 @@ defmodule Re.PriceSuggestionsTest do
   doctest Re.PriceSuggestions
 
   import Re.Factory
+  import Mockery
+  import ExUnit.CaptureLog
 
   alias Re.{
-    PriceSuggestions,
-    PriceSuggestions.Factors
+    Listing,
+    PriceSuggestions
   }
 
-  describe "save_factors/1" do
-    test "should save csv into database" do
-      {:ok, file} = File.read("test/support/factors.csv")
-
-      PriceSuggestions.save_factors(file)
-
-      assert [
-               %{
-                 state: "NY",
-                 city: "New York City",
-                 street: "Manhattan Street" <> _,
-                 intercept: -399.23068199,
-                 area: 237.0332,
-                 bathrooms: 83.74290,
-                 rooms: -578.5033,
-                 garage_spots: 962.982,
-                 r2: 0.09128
-               },
-               %{
-                 state: "NY",
-                 city: "New York City",
-                 street: "Manhattan Street" <> _,
-                 intercept: -399.23068199,
-                 area: 237.0332,
-                 bathrooms: 83.74290,
-                 rooms: -578.5033,
-                 garage_spots: 962.982,
-                 r2: 0.09128
-               },
-               %{
-                 state: "NY",
-                 city: "New York City",
-                 street: "Manhattan Street" <> _,
-                 intercept: -399.23068199,
-                 area: 237.0332,
-                 bathrooms: 83.74290,
-                 rooms: -578.5033,
-                 garage_spots: 962.982,
-                 r2: 0.09128
-               },
-               %{
-                 state: "NY",
-                 city: "New York City",
-                 street: "Manhattan Street" <> _,
-                 intercept: -399.23068199,
-                 area: 237.0332,
-                 bathrooms: 83.74290,
-                 rooms: -578.5033,
-                 garage_spots: 962.982,
-                 r2: 0.09128
-               }
-             ] = Repo.all(Factors)
-    end
-
-    test "should replace existing records" do
-      {:ok, file} = File.read("test/support/factors.csv")
-
-      insert(
-        :factors,
-        state: "NY",
-        city: "New York City",
-        street: "Manhattan Street 1",
-        intercept: -39.23068199,
-        area: 23.0332,
-        bathrooms: 8.74290,
-        rooms: -57.5033,
-        garage_spots: 96.982,
-        r2: 0.0928
-      )
-
-      insert(
-        :factors,
-        state: "NY",
-        city: "New York City",
-        street: "Manhattan Street 2",
-        intercept: -39.23068199,
-        area: 23.0332,
-        bathrooms: 8.74290,
-        rooms: -57.5033,
-        garage_spots: 96.982,
-        r2: 0.0928
-      )
-
-      insert(
-        :factors,
-        state: "NY",
-        city: "New York City",
-        street: "Manhattan Street 3",
-        intercept: -39.23068199,
-        area: 23.0332,
-        bathrooms: 8.74290,
-        rooms: -57.5033,
-        garage_spots: 96.982,
-        r2: 0.0928
-      )
-
-      insert(
-        :factors,
-        state: "NY",
-        city: "New York City",
-        street: "Manhattan Street 4",
-        intercept: -39.23068199,
-        area: 23.0332,
-        bathrooms: 8.74290,
-        rooms: -57.5033,
-        garage_spots: 96.982,
-        r2: 0.0928
-      )
-
-      PriceSuggestions.save_factors(file)
-
-      assert [
-               %{
-                 intercept: -399.23068199,
-                 area: 237.0332,
-                 bathrooms: 83.74290,
-                 rooms: -578.5033,
-                 garage_spots: 962.982,
-                 r2: 0.09128
-               },
-               %{
-                 intercept: -399.23068199,
-                 area: 237.0332,
-                 bathrooms: 83.74290,
-                 rooms: -578.5033,
-                 garage_spots: 962.982,
-                 r2: 0.09128
-               },
-               %{
-                 intercept: -399.23068199,
-                 area: 237.0332,
-                 bathrooms: 83.74290,
-                 rooms: -578.5033,
-                 garage_spots: 962.982,
-                 r2: 0.09128
-               },
-               %{
-                 intercept: -399.23068199,
-                 area: 237.0332,
-                 bathrooms: 83.74290,
-                 rooms: -578.5033,
-                 garage_spots: 962.982,
-                 r2: 0.09128
-               }
-             ] = Repo.all(Factors)
-    end
-
-    test "should suggest price for listing" do
-      listing =
+  describe "suggest_price/1" do
+    test "should suggest price for listing and persist it" do
+      %{uuid: uuid} =
+        listing =
         insert(
           :listing,
           rooms: 2,
           area: 80,
-          address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
+          address: build(:address),
           garage_spots: 1,
-          bathrooms: 1
+          bathrooms: 1,
+          suggested_price: nil
         )
 
-      insert(
-        :factors,
-        state: "MS",
-        city: "Mah City",
-        street: "Mah Street",
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
+         }}
       )
 
-      assert {:ok, 26_279.915} == PriceSuggestions.suggest_price(listing)
+      assert {:ok,
+              %{
+                listing_price: 26_279.915,
+                listing_price_rounded: 26_279.0,
+                sale_price: 24_195.791,
+                sale_price_rounded: 24_195.0,
+                listing_price_error_q90_min: 25_200.0,
+                listing_price_error_q90_max: 28_544.0,
+                listing_price_per_sqr_meter: 560.0,
+                listing_average_price_per_sqr_meter: 610.0
+              }} == PriceSuggestions.suggest_price(listing)
+
+      listing = Repo.get_by(Listing, uuid: uuid)
+      assert listing.suggested_price == 26_279.0
     end
-  end
 
-  describe "suggest_price/1" do
-    test "should suggest for nil values" do
-      insert(
-        :factors,
-        state: "MS",
-        city: "Mah City",
-        street: "Mah Street",
-        intercept: 10.10,
-        rooms: 123.321,
-        area: 321.123,
-        bathrooms: 111.222,
-        garage_spots: 222.111
+    test "should update suggest price for listing when there's one" do
+      %{uuid: uuid} =
+        listing =
+        insert(
+          :listing,
+          rooms: 2,
+          area: 80,
+          address: build(:address),
+          garage_spots: 1,
+          bathrooms: 1,
+          suggested_price: 1000.0
+        )
+
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
+         }}
       )
 
-      assert {:ok, 10.10} ==
-               PriceSuggestions.suggest_price(%{
-                 address: build(:address, state: "MS", city: "Mah City", street: "Mah Street"),
-                 rooms: nil,
-                 area: nil,
-                 bathrooms: nil,
-                 garage_spots: nil
-               })
+      assert {:ok,
+              %{
+                listing_price: 26_279.915,
+                listing_price_rounded: 26_279.0,
+                sale_price: 24_195.791,
+                sale_price_rounded: 24_195.0,
+                listing_price_error_q90_min: 25_200.0,
+                listing_price_error_q90_max: 28_544.0,
+                listing_price_per_sqr_meter: 560.0,
+                listing_average_price_per_sqr_meter: 610.0
+              }} == PriceSuggestions.suggest_price(listing)
+
+      listing = Repo.get_by(Listing, uuid: uuid)
+      assert listing.suggested_price == 26_279.0
+    end
+
+    test "should not suggest for nil values" do
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":8.0,\"sale_price\":8.8,\"listing_price_rounded\":10.0,\"listing_price\":10.10}"
+         }}
+      )
+
+      assert capture_log(fn ->
+               assert {:error, changeset} =
+                        PriceSuggestions.suggest_price(%{
+                          address: build(:address),
+                          rooms: nil,
+                          area: nil,
+                          bathrooms: nil,
+                          garage_spots: nil,
+                          type: "invalid",
+                          maintenance_fee: nil,
+                          suites: nil
+                        })
+
+               assert Keyword.get(changeset.errors, :type) ==
+                        {"is invalid",
+                         [
+                           validation: :inclusion,
+                           enum:
+                             ~w(APARTMENT CONDOMINIUM KITNET HOME TWO_STORY_HOUSE FLAT PENTHOUSE)
+                         ]}
+
+               assert Keyword.get(changeset.errors, :area) ==
+                        {"can't be blank", [validation: :required]}
+
+               assert Keyword.get(changeset.errors, :bathrooms) ==
+                        {"can't be blank", [validation: :required]}
+
+               assert Keyword.get(changeset.errors, :bedrooms) ==
+                        {"can't be blank", [validation: :required]}
+
+               assert Keyword.get(changeset.errors, :suites) ==
+                        {"can't be blank", [validation: :required]}
+
+               assert Keyword.get(changeset.errors, :parking) ==
+                        {"can't be blank", [validation: :required]}
+             end) =~
+               ":invalid_input in priceteller"
+    end
+
+    @tag capture_log: true
+    test "should handle timeout error" do
+      %{uuid: uuid} =
+        listing =
+        insert(
+          :listing,
+          rooms: 2,
+          area: 80,
+          address: build(:address),
+          garage_spots: 1,
+          bathrooms: 1,
+          suggested_price: nil
+        )
+
+      mock(HTTPoison, :post, {:error, %{reason: :timeout}})
+
+      assert {:error, %{reason: :timeout}} == PriceSuggestions.suggest_price(listing)
+      listing = Repo.get_by(Listing, uuid: uuid)
+      refute listing.suggested_price
     end
   end
 end

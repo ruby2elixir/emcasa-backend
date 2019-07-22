@@ -27,7 +27,7 @@ defmodule Re.Factory do
 
   def listing_factory do
     price = random(:price)
-    area = Enum.random(1..500)
+    area = Enum.random(25..500)
     floor = random(:floor)
     floor_count = random(:floor_count, floor)
 
@@ -38,7 +38,7 @@ defmodule Re.Factory do
       description: Shakespeare.hamlet(),
       price: price,
       property_tax: random(:price_float),
-      maintenance_fee: random(:price_float),
+      maintenance_fee: random(:maintenance_fee_float),
       floor: floor,
       rooms: Enum.random(1..10),
       bathrooms: Enum.random(1..10),
@@ -50,7 +50,7 @@ defmodule Re.Factory do
       balconies: Enum.random(0..10),
       has_elevator: Enum.random([true, false]),
       area: area,
-      score: Enum.random(1..4),
+      liquidity_ratio: Enum.random(1..4) / 1,
       matterport_code: Faker.String.base64(),
       status: "active",
       is_exclusive: Enum.random([true, false]),
@@ -64,6 +64,14 @@ defmodule Re.Factory do
       construction_year: Enum.random(1950..Date.utc_today().year),
       price_per_area: price / area
     }
+  end
+
+  def for_primary_market(listing) do
+    %{listing | is_release: true}
+  end
+
+  def for_secondary_market(listing) do
+    %{listing | is_release: false}
   end
 
   def address_factory do
@@ -80,6 +88,7 @@ defmodule Re.Factory do
     state_slug = Re.Slugs.sluggify(state_name)
 
     %Re.Address{
+      uuid: UUID.uuid4(),
       street_number: Address.building_number(),
       street: street_name,
       street_slug: street_slug,
@@ -106,6 +115,7 @@ defmodule Re.Factory do
     state_slug = Re.Slugs.sluggify(state)
 
     %Re.Addresses.District{
+      uuid: UUID.uuid4(),
       name: name,
       name_slug: name_slug,
       city: city,
@@ -113,7 +123,7 @@ defmodule Re.Factory do
       state: state,
       state_slug: state_slug,
       description: Shakespeare.hamlet(),
-      status: "active"
+      status: "covered"
     }
   end
 
@@ -126,7 +136,7 @@ defmodule Re.Factory do
       state: address.state,
       state_slug: address.state_slug,
       description: Shakespeare.hamlet(),
-      status: "active"
+      status: "covered"
     )
   end
 
@@ -154,27 +164,23 @@ defmodule Re.Factory do
     }
   end
 
-  def listing_visualisation_factory, do: %Re.Statistics.ListingVisualization{}
-
   def listings_favorites_factory, do: %Re.Favorite{}
 
-  def tour_visualisation_factory, do: %Re.Statistics.TourVisualization{}
-
-  def in_person_visit_factory, do: %Re.Statistics.InPersonVisit{}
-
   def price_history_factory, do: %Re.Listings.PriceHistory{}
-
-  def factors_factory, do: %Re.PriceSuggestions.Factors{}
 
   def contact_request_factory, do: %Re.Interests.ContactRequest{}
 
   def price_suggestion_request_factory do
     %Re.PriceSuggestions.Request{
+      uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email(),
       rooms: Enum.random(1..10),
       bathrooms: Enum.random(1..10),
       garage_spots: Enum.random(0..10),
+      suites: Enum.random(0..10),
+      type: random(:listing_type),
+      maintenance_fee: random(:maintenance_fee_float),
       area: Enum.random(1..500),
       is_covered: Enum.random([true, false])
     }
@@ -247,6 +253,23 @@ defmodule Re.Factory do
     }
   end
 
+  def buyer_lead_factory do
+    %Re.BuyerLead{
+      uuid: UUID.uuid4(),
+      name: Name.name(),
+      phone_number: Phone.EnUs.phone(),
+      email: Enum.random([nil, Internet.email()]),
+      origin: Enum.random(~w(vivareal zap facebook imovelweb site)),
+      location: Enum.random(~w(sao-paulo|sp rio-de-janeiro|rj)),
+      budget: "$100 to $1000",
+      neighborhood: Pokemon.location(),
+      url: Internet.url(),
+      user_url: Internet.url(),
+      cpf: "999.999.999-99",
+      where_did_you_find_about: "tv"
+    }
+  end
+
   def grupozap_buyer_lead_factory do
     %Re.BuyerLeads.Grupozap{
       uuid: UUID.uuid4(),
@@ -273,14 +296,86 @@ defmodule Re.Factory do
     }
   end
 
+  def walk_in_offline_buyer_lead_factory do
+    %Re.BuyerLeads.WalkInOffline{
+      uuid: UUID.uuid4(),
+      full_name: Name.name(),
+      email: Internet.email(),
+      cpf: "999.999.999-99",
+      where_did_you_find_about: "tv"
+    }
+  end
+
+  def budget_buyer_lead_factory do
+    neighborhood = Pokemon.location()
+
+    city = Address.city()
+    city_slug = Re.Slugs.sluggify(city)
+
+    state = Address.state_abbr()
+    state_slug = Re.Slugs.sluggify(state)
+
+    %Re.BuyerLeads.Budget{
+      uuid: UUID.uuid4(),
+      neighborhood: neighborhood,
+      city: city,
+      city_slug: city_slug,
+      state: state,
+      state_slug: state_slug,
+      budget: Shakespeare.hamlet()
+    }
+  end
+
+  def empty_search_buyer_lead_factory do
+    city = Address.city()
+    city_slug = Re.Slugs.sluggify(city)
+
+    state = Address.state_abbr()
+    state_slug = Re.Slugs.sluggify(state)
+
+    %Re.BuyerLeads.EmptySearch{
+      uuid: UUID.uuid4(),
+      city: city,
+      city_slug: city_slug,
+      state: state,
+      state_slug: state_slug,
+      url: Internet.url()
+    }
+  end
+
   def site_seller_lead_factory do
     %Re.SellerLeads.Site{
       uuid: UUID.uuid4(),
       complement: Address.secondary_address(),
       type: random(:listing_type),
-      maintenance_fee: random(:price_float),
+      maintenance_fee: random(:maintenance_fee_float),
       suites: Enum.random(0..10),
       price: random(:price)
+    }
+  end
+
+  def calendar_factory do
+    %Re.GoogleCalendars.Calendar{
+      uuid: UUID.uuid4(),
+      external_id: UUID.uuid4()
+    }
+  end
+
+  def seller_lead_factory do
+    %Re.SellerLead{
+      uuid: UUID.uuid4(),
+      type: random(:listing_type),
+      complement: Address.secondary_address(),
+      maintenance_fee: random(:maintenance_fee_float),
+      rooms: Enum.random(1..10),
+      bathrooms: Enum.random(1..10),
+      garage_spots: Enum.random(0..10),
+      suites: Enum.random(0..10),
+      price: random(:price),
+      area: Enum.random(25..500),
+      source: Enum.random(~w(Website Facebook)),
+      tour_option: ~N[2019-07-18 10:00:00.000000],
+      inserted_at: ~N[2019-07-17 10:00:00.000000]
     }
   end
 
@@ -303,6 +398,7 @@ defmodule Re.Factory do
   defp random(:listing_type), do: Enum.random(~w(Casa Apartamento Cobertura))
   defp random(:price), do: Enum.random(550_000..99_999_999)
   defp random(:price_float), do: Enum.random(1..999_999_999) / 100
+  defp random(:maintenance_fee_float), do: Enum.random(1..1_000_000) / 100
 
   defp random(:floor) do
     1..50

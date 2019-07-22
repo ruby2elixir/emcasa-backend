@@ -362,7 +362,7 @@ defmodule Re.Exporters.VivarealTest do
   end
 
   defp location_tags do
-    "<Location displayAddress=\"Street\">" <>
+    "<Location displayAddress=\"All\">" <>
       "<Country abbreviation=\"BR\">Brasil</Country>" <>
       "<State abbreviation=\"RJ\">Rio de Janeiro</State>" <>
       "<City>Rio de Janeiro</City>" <>
@@ -378,7 +378,7 @@ defmodule Re.Exporters.VivarealTest do
       "<Name>EmCasa</Name>" <>
       "<Email>contato@emcasa.com</Email>" <>
       "<Website>https://www.emcasa.com</Website>" <>
-      "<Logo>https://s3.amazonaws.com/emcasa-ui/logo/logo.png</Logo>" <>
+      "<Logo>https://emcasa-ui.s3.amazonaws.com/logo/logo_v2.jpg</Logo>" <>
       "<OfficeName>EmCasa</OfficeName>" <>
       "<Telephone>(21) 3195-6541</Telephone>" <> "</ContactInfo>"
   end

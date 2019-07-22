@@ -23,6 +23,8 @@ defmodule ReWeb.Types.Unit do
     field :dependencies, :integer
     field :balconies, :integer
     field :status, :string
+    field :matterport_code, :string
+    field :is_exportable, :boolean
   end
 
   input_object :unit_input do
@@ -42,7 +44,8 @@ defmodule ReWeb.Types.Unit do
     field :balconies, :integer
     field :status, :string
     field :development_uuid, non_null(:uuid)
-    field :listing_id, non_null(:id)
+    field :matterport_code, :string
+    field :is_exportable, :boolean
   end
 
   object :unit_mutations do

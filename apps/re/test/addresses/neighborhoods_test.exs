@@ -57,17 +57,44 @@ defmodule Re.NeighborhoodsTest do
 
   describe "is_covered/1" do
     setup do
-      district =
-        insert(:district,
-          state: "RJ",
-          state_slug: "rj",
-          name: "Humaitá",
-          name_slug: "humaita",
-          city: "Rio de Janeiro",
-          city_slug: "rio-de-janeiro"
-        )
+      insert(:district,
+        state: "RJ",
+        state_slug: "rj",
+        name: "Humaitá",
+        name_slug: "humaita",
+        city: "Rio de Janeiro",
+        city_slug: "rio-de-janeiro"
+      )
 
-      {:ok, district: district}
+      insert(:district,
+        state: "SP",
+        state_slug: "sp",
+        name: "Vila Pompeia",
+        name_slug: "vila-pompeia",
+        city: "São Paulo",
+        city_slug: "sao-paulo"
+      )
+
+      insert(:district,
+        state: "SP",
+        state_slug: "sp",
+        name: "Vila Mariana",
+        name_slug: "vila-mariana",
+        city: "São Paulo",
+        city_slug: "sao-paulo"
+      )
+
+      insert(:district,
+        state: "SP",
+        state_slug: "sp",
+        name: "Moema",
+        name_slug: "moema",
+        city: "São Paulo",
+        city_slug: "sao-paulo",
+        status: "partially_covered"
+      )
+
+      :ok
     end
 
     test "should be true when neighborhood exists" do
@@ -90,13 +117,18 @@ defmodule Re.NeighborhoodsTest do
       refute Neighborhoods.is_covered(neighborhood)
     end
 
-    test "should be false when city does not exists" do
+    test "should be false when state does not exists" do
       neighborhood = %{state: "RS", neighborhood: "Humaitá", city: "Rio de Janeiro"}
       refute Neighborhoods.is_covered(neighborhood)
     end
 
-    test "should be false when state does not exists" do
+    test "should be false when city does not exists" do
       neighborhood = %{state: "RJ", neighborhood: "Humaitá", city: "Porto Alegre"}
+      refute Neighborhoods.is_covered(neighborhood)
+    end
+
+    test "should be false when the neighborhood is partially covered" do
+      neighborhood = %{state: "SP", neighborhood: "Moema", city: "São Paulo"}
       refute Neighborhoods.is_covered(neighborhood)
     end
   end

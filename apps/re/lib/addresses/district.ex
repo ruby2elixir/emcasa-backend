@@ -9,25 +9,32 @@ defmodule Re.Addresses.District do
   alias Re.Slugs
 
   schema "districts" do
+    field :uuid, Ecto.UUID
     field :state, :string
     field :city, :string
     field :name, :string
     field :state_slug, :string
     field :city_slug, :string
     field :name_slug, :string
-    field :description, :string
-    field :status, :string, default: "inactive"
+    field :description, :string, default: ""
+    field :status, :string, default: "uncovered"
+    field :sort_order, :integer
+
+    many_to_many :calendars, Re.GoogleCalendars.Calendar,
+      join_through: Re.GoogleCalendars.CalendarDistrict,
+      join_keys: [district_uuid: :uuid, calendar_uuid: :uuid],
+      on_replace: :delete
 
     timestamps()
   end
 
-  @required ~w(state city name description)a
-  @optional ~w(status)a
+  @required ~w(state city name)a
+  @optional ~w(status description sort_order)a
   @params @required ++ @optional
 
   @sluggified_attr ~w(state city name)a
 
-  @statuses ~w(active inactive)
+  @statuses ~w(covered partially_covered uncovered)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -40,10 +47,9 @@ defmodule Re.Addresses.District do
     |> validate_length(:city, max: 128)
     |> validate_length(:state, is: 2)
     |> unique_constraint(:neighborhood, name: :neighborhood)
-    |> validate_inclusion(:status, @statuses,
-      message: "should be one of: [#{Enum.join(@statuses, " ")}]"
-    )
+    |> validate_inclusion(:status, @statuses)
     |> generate_slugs()
+    |> Re.ChangesetHelper.generate_uuid()
   end
 
   def generate_slugs(%{valid?: false} = changeset), do: changeset

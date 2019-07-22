@@ -26,12 +26,12 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
       user =
         insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
 
-      listing1 = insert(:listing, user: user, type: "Casa", score: 4)
-      insert(:listing, user: user, type: "Casa", score: 3)
+      listing1 = insert(:listing, user: user, type: "Casa", liquidity_ratio: 4.0)
+      insert(:listing, user: user, type: "Casa", liquidity_ratio: 3.0)
       insert(:listing, user: user, type: "Apartamento")
 
-      favorited_listing1 = insert(:listing, type: "Casa", score: 4)
-      favorited_listing2 = insert(:listing, type: "Casa", score: 3)
+      favorited_listing1 = insert(:listing, type: "Casa", liquidity_ratio: 4.0)
+      favorited_listing2 = insert(:listing, type: "Casa", liquidity_ratio: 3.0)
       favorited_listing3 = insert(:listing, type: "Apartamento")
 
       insert(:listings_favorites, listing: favorited_listing1, user: user)
@@ -100,12 +100,12 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
     end
 
     test "user should get his own profile", %{user_conn: conn, user_user: user} do
-      listing1 = insert(:listing, user: user, type: "Casa", score: 4)
-      insert(:listing, user: user, type: "Casa", score: 3)
+      listing1 = insert(:listing, user: user, type: "Casa", liquidity_ratio: 4.0)
+      insert(:listing, user: user, type: "Casa", liquidity_ratio: 3.0)
       insert(:listing, user: user, type: "Apartamento")
 
-      favorited_listing1 = insert(:listing, type: "Casa", score: 4)
-      favorited_listing2 = insert(:listing, type: "Casa", score: 3)
+      favorited_listing1 = insert(:listing, type: "Casa", liquidity_ratio: 4.0)
+      favorited_listing2 = insert(:listing, type: "Casa", liquidity_ratio: 3.0)
       favorited_listing3 = insert(:listing, type: "Apartamento")
 
       insert(:listings_favorites, listing: favorited_listing1, user: user)
@@ -237,9 +237,11 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
     end
 
     test "user should see its inactive listings", %{user_conn: conn, user_user: user} do
-      listing1 = insert(:listing, user: user, type: "Casa", score: 4)
-      listing2 = insert(:listing, user: user, type: "Casa", score: 3)
-      listing3 = insert(:listing, user: user, type: "Apartamento", score: 2, status: "inactive")
+      listing1 = insert(:listing, user: user, type: "Casa", liquidity_ratio: 4)
+      listing2 = insert(:listing, user: user, type: "Casa", liquidity_ratio: 3)
+
+      listing3 =
+        insert(:listing, user: user, type: "Apartamento", liquidity_ratio: 2, status: "inactive")
 
       variables = %{
         "id" => user.id,

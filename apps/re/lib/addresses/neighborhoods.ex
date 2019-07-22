@@ -21,6 +21,8 @@ defmodule Re.Addresses.Neighborhoods do
                distinct: a.neighborhood
              )
 
+  @covered_for_show ["partially_covered", "covered"]
+
   def all, do: Repo.all(@all_query)
 
   def get_description(address) do
@@ -34,7 +36,9 @@ defmodule Re.Addresses.Neighborhoods do
     end
   end
 
-  def districts, do: Repo.all(from(d in District, where: d.status == "active"))
+  def districts,
+    do:
+      Repo.all(from(d in District, where: d.status in @covered_for_show, order_by: d.sort_order))
 
   def get_district(params) do
     case Repo.get_by(District, params) do
@@ -64,7 +68,7 @@ defmodule Re.Addresses.Neighborhoods do
            name_slug: neighborhood.neighborhood_slug,
            city_slug: neighborhood.city_slug,
            state_slug: neighborhood.state_slug,
-           status: "active"
+           status: "covered"
          ) do
       nil -> false
       _district -> true

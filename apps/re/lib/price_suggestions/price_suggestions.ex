@@ -1,96 +1,100 @@
 defmodule Re.PriceSuggestions do
   @moduledoc """
-  Module for suggesting prices according to stored factors
+  Module for fetching and saving suggested prices from priceteller API
   """
   NimbleCSV.define(PriceSuggestionsParser, separator: ",", escape: "\"")
 
   alias Re.{
     Listing,
-    PriceSuggestions.Factors,
     PriceSuggestions.Request,
+    PriceTeller,
     Repo,
     User
   }
-
-  import Ecto.Query
 
   alias Ecto.Changeset
 
   def suggest_price(%Request{} = request) do
     request
-    |> preload_if_struct()
-    |> get_factor_by_address()
-    |> do_suggest_price(request)
+    |> preload_address()
+    |> do_suggest_price()
     |> case do
       {:ok, suggested_price} ->
-        request
-        |> Request.changeset(%{suggested_price: suggested_price})
-        |> Repo.update()
+        params =
+          Map.merge(%{suggested_price: suggested_price.listing_price_rounded}, suggested_price)
 
-        {:ok, suggested_price}
+        request
+        |> Request.changeset(params)
+        |> Repo.update()
 
       error ->
         error
     end
   end
 
-  def suggest_price(listing) do
+  def suggest_price(%Listing{} = listing) do
     listing
-    |> preload_if_struct()
-    |> get_factor_by_address()
-    |> do_suggest_price(listing)
+    |> preload_address()
+    |> do_suggest_price()
+    |> persist_suggested_price(listing)
   end
 
-  defp get_factor_by_address(%{address: %{state: state, city: city, street: street}}),
-    do: Repo.get_by(Factors, state: state, city: city, street: street)
+  def suggest_price(params), do: do_suggest_price(params)
 
-  defp do_suggest_price(nil, _), do: {:error, :street_not_covered}
+  defp persist_suggested_price({:ok, suggested_price}, listing) do
+    listing
+    |> Listing.changeset(%{suggested_price: suggested_price.listing_price_rounded})
+    |> Repo.update()
 
-  defp do_suggest_price(factors, listing) do
-    {:ok,
-     factors.intercept + (listing.area || 0) * factors.area +
-       (listing.bathrooms || 0) * factors.bathrooms + (listing.rooms || 0) * factors.rooms +
-       (listing.garage_spots || 0) * factors.garage_spots}
+    {:ok, suggested_price}
   end
 
-  defp preload_if_struct(%Listing{} = listing), do: Repo.preload(listing, :address)
+  defp persist_suggested_price(response, _), do: response
 
-  defp preload_if_struct(listing), do: listing
-
-  def save_factors(file) do
-    file
-    |> PriceSuggestionsParser.parse_string()
-    |> Stream.map(&csv_to_map/1)
-    |> Enum.each(&persist/1)
+  defp do_suggest_price(params) do
+    params
+    |> map_params()
+    |> PriceTeller.ask()
+    |> format_output()
   end
 
-  defp csv_to_map([state, city, street, intercept, area, bathrooms, rooms, garage_spots, r2]) do
+  defp map_params(params) do
     %{
-      state: :binary.copy(state),
-      city: :binary.copy(city),
-      street: :binary.copy(street),
-      intercept: intercept |> Float.parse() |> elem(0),
-      area: area |> Float.parse() |> elem(0),
-      bathrooms: bathrooms |> Float.parse() |> elem(0),
-      rooms: rooms |> Float.parse() |> elem(0),
-      garage_spots: garage_spots |> Float.parse() |> elem(0),
-      r2: r2 |> Float.parse() |> elem(0)
+      type: map_type(params.type),
+      zip_code: String.replace(params.address.postal_code, "-", ""),
+      street_number: params.address.street_number,
+      area: params.area,
+      bathrooms: params.bathrooms,
+      bedrooms: params.rooms,
+      suites: params.suites,
+      parking: params.garage_spots,
+      condo_fee: round_if_not_nil(params.maintenance_fee),
+      lat: params.address.lat,
+      lng: params.address.lng
     }
   end
 
-  defp persist(%{state: state, city: city, street: street} = line) do
-    case Repo.get_by(Factors, state: state, city: city, street: street) do
-      nil ->
-        %Factors{}
-        |> Factors.changeset(line)
-        |> Repo.insert()
+  defp map_type("Apartamento"), do: "APARTMENT"
+  defp map_type("Casa"), do: "HOME"
+  defp map_type("Cobertura"), do: "PENTHOUSE"
+  defp map_type(type), do: type
 
-      factor ->
-        factor
-        |> Factors.changeset(line)
-        |> Repo.update()
-    end
+  defp round_if_not_nil(nil), do: 0
+  defp round_if_not_nil(maintenance_fee), do: round(maintenance_fee)
+
+  defp format_output({:ok, suggested_price}), do: {:ok, suggested_price}
+
+  defp format_output(response) do
+    Sentry.capture_message("Error on priceteller response",
+      extra: %{response: Kernel.inspect(response)}
+    )
+
+    response
   end
+
+  defp preload_address(%Listing{} = listing), do: Repo.preload(listing, :address)
+
+  defp preload_address(params), do: params
 
   def create_request(params, %{id: address_id}, user) do
     %Request{}
@@ -104,39 +108,4 @@ defmodule Re.PriceSuggestions do
     do: Changeset.change(changeset, user_id: id)
 
   defp attach_user(changeset, _), do: changeset
-
-  def generate_price_comparison do
-    to_write =
-      Listing
-      |> where([l], l.status == "active")
-      |> preload(:address)
-      |> Repo.all()
-      |> Enum.map(&compare_prices/1)
-      |> Enum.filter(fn
-        {:error, _} -> false
-        _other -> true
-      end)
-      |> Enum.map(&encode/1)
-      |> Enum.join("\n")
-
-    File.write("export.txt", to_write)
-  end
-
-  defp compare_prices(listing) do
-    case suggest_price(listing) do
-      {:error, :street_not_covered} ->
-        {:error, :street_not_covered}
-
-      suggested_price ->
-        %{listing_id: listing.id, actual_price: listing.price, suggested_price: suggested_price}
-    end
-  end
-
-  defp encode(%{
-         listing_id: listing_id,
-         actual_price: actual_price,
-         suggested_price: suggested_price
-       }) do
-    "ID: #{listing_id}, Preço atual: #{actual_price}, Preço Sugerido: #{suggested_price}"
-  end
 end

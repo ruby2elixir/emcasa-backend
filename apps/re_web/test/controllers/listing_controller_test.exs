@@ -33,7 +33,6 @@ defmodule ReWeb.ListingControllerTest do
   }
   @valid_attrs_admin %{
     type: "Casa",
-    score: 3,
     floor: "H1",
     complement: "basement",
     bathrooms: 2,
@@ -64,8 +63,6 @@ defmodule ReWeb.ListingControllerTest do
     lng: "25"
   }
   @invalid_attrs %{
-    score: 7,
-    bathrooms: -1,
     restrooms: -1,
     price: -1,
     property_tax: -500.00,
@@ -96,12 +93,9 @@ defmodule ReWeb.ListingControllerTest do
     test "resource for admin user", %{admin_conn: conn, admin_user: user} do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
-      insert_list(3, :listing_visualisation, listing_id: listing.id)
-      insert_list(3, :tour_visualisation, listing_id: listing.id)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
       insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
       insert(:interest, listing_id: listing.id)
-      insert_list(2, :in_person_visit, listing_id: listing.id, date: ~N[2018-05-05 10:00:00])
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -152,9 +146,9 @@ defmodule ReWeb.ListingControllerTest do
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
                  },
-                 "visualisations" => 3,
-                 "in_person_visit_count" => 2,
-                 "tour_visualisations" => 3,
+                 "visualisations" => 0,
+                 "in_person_visit_count" => 0,
+                 "tour_visualisations" => 0,
                  "favorite_count" => 1,
                  "interest_count" => 2
                }
@@ -166,12 +160,9 @@ defmodule ReWeb.ListingControllerTest do
     } do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
-      insert_list(3, :listing_visualisation, listing_id: listing.id)
-      insert_list(3, :tour_visualisation, listing_id: listing.id)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
       insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
       insert(:interest, listing_id: listing.id)
-      insert_list(3, :in_person_visit, listing_id: listing.id, date: ~N[2018-05-05 10:00:00])
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -222,9 +213,9 @@ defmodule ReWeb.ListingControllerTest do
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
                  },
-                 "visualisations" => 3,
-                 "in_person_visit_count" => 3,
-                 "tour_visualisations" => 3,
+                 "visualisations" => 0,
+                 "in_person_visit_count" => 0,
+                 "tour_visualisations" => 0,
                  "favorite_count" => 1,
                  "interest_count" => 2
                }
@@ -233,12 +224,9 @@ defmodule ReWeb.ListingControllerTest do
     test "resource for owner user", %{user_conn: conn, user_user: user} do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
-      insert_list(3, :listing_visualisation, listing_id: listing.id)
-      insert_list(3, :tour_visualisation, listing_id: listing.id)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
       insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
       insert(:interest, listing_id: listing.id)
-      insert_list(2, :in_person_visit, listing_id: listing.id, date: ~N[2018-05-05 10:00:00])
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -289,9 +277,9 @@ defmodule ReWeb.ListingControllerTest do
                    "lat" => listing.address.lat,
                    "lng" => listing.address.lng
                  },
-                 "visualisations" => 3,
-                 "in_person_visit_count" => 2,
-                 "tour_visualisations" => 3,
+                 "visualisations" => 0,
+                 "in_person_visit_count" => 0,
+                 "tour_visualisations" => 0,
                  "favorite_count" => 1,
                  "interest_count" => 2
                }
@@ -301,8 +289,6 @@ defmodule ReWeb.ListingControllerTest do
       address = insert(:address)
       image = insert(:image)
       listing = insert(:listing, images: [image], address: address, user: user)
-      insert_list(3, :listing_visualisation, listing_id: listing.id)
-      insert_list(3, :tour_visualisation, listing_id: listing.id)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
       insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
       insert(:interest, listing_id: listing.id)
@@ -455,7 +441,6 @@ defmodule ReWeb.ListingControllerTest do
                  "area" => listing.area,
                  "garage_spots" => listing.garage_spots,
                  "garage_type" => listing.garage_type,
-                 "score" => listing.score,
                  "matterport_code" => listing.matterport_code,
                  "suites" => listing.suites,
                  "dependencies" => listing.dependencies,

@@ -6,12 +6,12 @@ defmodule ReWeb.Resolvers.Listings do
 
   alias Re.{
     Addresses,
-    Addresses.Neighborhoods,
     Developments,
     Listings.Filters,
     Listings,
     Listings.Featured,
     Listings.History.Prices,
+    Listings.Liquidity,
     Listings.Related,
     OwnerContacts,
     PriceSuggestions
@@ -155,23 +155,17 @@ defmodule ReWeb.Resolvers.Listings do
   def is_active(%{status: "active"}, _, _), do: {:ok, true}
   def is_active(_, _, _), do: {:ok, false}
 
-  def score(%{score: score}, _, %{context: %{current_user: current_user}}) do
-    case Bodyguard.permit(Listings, :show_score, current_user, %{}) do
-      :ok -> {:ok, score}
-      _ -> {:ok, nil}
-    end
-  end
-
   def activate(%{id: id}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :activate_listing, current_user, %{}),
          {:ok, listing} <- Listings.get_preloaded(id),
          do: Listings.activate(listing)
   end
 
-  def deactivate(%{id: id}, %{context: %{current_user: current_user}}) do
+  def deactivate(%{id: id} = params, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Listings, :deactivate_listing, current_user, %{}),
          {:ok, listing} <- Listings.get(id),
-         do: Listings.deactivate(listing)
+         opts <- params |> Map.get(:input, %{}) |> Map.to_list(),
+         do: Listings.deactivate(listing, opts)
   end
 
   def per_user(_, %{context: %{current_user: current_user}}) do
@@ -230,12 +224,14 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
-  defp do_suggest_price(listing) do
+  defp do_suggest_price(%{suggested_price: nil} = listing) do
     case PriceSuggestions.suggest_price(listing) do
-      {:error, :street_not_covered} -> {:ok, nil}
-      suggested_price -> suggested_price
+      {:ok, suggested_price} -> {:ok, suggested_price}
+      _error -> {:ok, nil}
     end
   end
+
+  defp do_suggest_price(%{suggested_price: suggested_price}), do: {:ok, suggested_price}
 
   def price_recently_reduced(listing, _, %{context: %{loader: loader}}) do
     params = %{
@@ -291,7 +287,16 @@ defmodule ReWeb.Resolvers.Listings do
     {:ok, listing_index}
   end
 
-  def neighborhoods(_, _), do: {:ok, Neighborhoods.all()}
+  def score(_, _, _), do: {:ok, nil}
+
+  def normalized_liquidity_ratio(%{liquidity_ratio: liquidity_ratio}, _, %{
+        context: %{current_user: current_user}
+      }) do
+    case Bodyguard.permit(Listings, :show_liquidity_ratio, current_user, %{}) do
+      :ok -> {:ok, Liquidity.normalize_liquidity_ratio(liquidity_ratio)}
+      _ -> {:ok, nil}
+    end
+  end
 
   def featured(_, _), do: {:ok, Featured.get_graphql()}
 
@@ -328,4 +333,10 @@ defmodule ReWeb.Resolvers.Listings do
 
   defp config_subscription(_args, %{}, _topic), do: {:error, :unauthorized}
   defp config_subscription(_args, _, _topic), do: {:error, :unauthenticated}
+
+  def get_uuid(listing, _, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(Listings, :show_uuid, current_user, %{}) do
+      {:ok, listing.uuid}
+    end
+  end
 end

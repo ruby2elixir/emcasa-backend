@@ -1,7 +1,6 @@
 [![CircleCI](https://circleci.com/gh/emcasa/backend.svg?style=svg)](https://circleci.com/gh/emcasa/backend)
-[![Ebert](https://ebertapp.io/github/emcasa/backend.svg)](https://ebertapp.io/github/emcasa/backend)
-[![Coverage Status](https://coveralls.io/repos/github/emcasa/backend/badge.svg?branch=master)](https://coveralls.io/github/emcasa/backend?branch=master)
-[![codebeat badge](https://codebeat.co/badges/eaf3bdc4-572b-4c84-8a93-347850ca530c)](https://codebeat.co/projects/github-com-emcasa-backend-master)
+[![codecov](https://codecov.io/gh/emcasa/backend/branch/master/graph/badge.svg)](https://codecov.io/gh/emcasa/backend)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/96ac2f098f0342619ecd90cd3df6c4da)](https://www.codacy.com/app/pmargreff/backend?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=emcasa/backend&amp;utm_campaign=Badge_Grade)
 
 # Re WebService
 
@@ -13,7 +12,8 @@
 ## Install
 
 * Install dependencies with `mix deps.get`
-* Create, migrate and seed your database with `cd apps/re && mix ecto.setup`
+* Create, migrate and seed your core database with `cd apps/re && mix ecto.setup`
+* Create, migrate and seed your integrations database with `cd apps/re_integration && mix ecto.setup`
 * Rename `config/dev.secret-example.exs` to `config/dev.secret.exs` and follow instructions at the top of the file to generate necessary keys.
 * Install git hooks with `mix git.hook`
 

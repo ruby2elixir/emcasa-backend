@@ -15,6 +15,12 @@ defmodule ReWeb.Types.Interest do
     field :email, :string
     field :phone, :string
     field :message, :string
+    field :campaign, :string
+    field :medium, :string
+    field :source, :string
+    field :initial_campaign, :string
+    field :initial_medium, :string
+    field :initial_source, :string
 
     field :listing, :listing, resolve: dataloader(Re.Listings)
     field :interest_type, :interest_type, resolve: dataloader(Re.Interests.Types)
@@ -25,6 +31,12 @@ defmodule ReWeb.Types.Interest do
     field :phone, :string
     field :email, :string
     field :message, :string
+    field :campaign, :string
+    field :medium, :string
+    field :source, :string
+    field :initial_campaign, :string
+    field :initial_medium, :string
+    field :initial_source, :string
 
     field :interest_type_id, non_null(:id)
     field :listing_id, non_null(:id)
@@ -48,10 +60,18 @@ defmodule ReWeb.Types.Interest do
     field :email, :string
     field :area, :integer
     field :rooms, :integer
+    field :suites, :integer
+    field :type, :string
+    field :maintenance_fee, :float
     field :bathrooms, :integer
     field :garage_spots, :integer
     field :is_covered, :boolean
     field :suggested_price, :float
+    field :listing_price_rounded, :float
+    field :listing_price_error_q90_min, :float
+    field :listing_price_error_q90_max, :float
+    field :listing_price_per_sqr_meter, :float
+    field :listing_average_price_per_sqr_meter, :float
 
     field :address, :address, resolve: dataloader(Re.Addresses)
     field :user, :user, resolve: dataloader(Re.Accounts)
@@ -129,6 +149,9 @@ defmodule ReWeb.Types.Interest do
       arg :rooms, non_null(:integer)
       arg :bathrooms, non_null(:integer)
       arg :garage_spots, non_null(:integer)
+      arg :suites, :integer
+      arg :type, :string
+      arg :maintenance_fee, :float
       arg :is_covered, non_null(:boolean)
 
       arg :address, non_null(:address_input)

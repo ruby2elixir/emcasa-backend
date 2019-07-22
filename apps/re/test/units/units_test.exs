@@ -1,13 +1,15 @@
 defmodule Re.UnitsTest do
+  @moduledoc false
+
   use Re.ModelCase
 
   alias Re.{
-    Developments.Units.Server,
-    Listing,
+    Developments.JobQueue,
     Unit,
     Units
   }
 
+  import Re.CustomAssertion
   import Re.Factory
 
   @unit_attrs %{
@@ -31,72 +33,33 @@ defmodule Re.UnitsTest do
   describe "insert/2" do
     test "insert new unit" do
       development = insert(:development)
-      listing = insert(:listing, development_uuid: development.uuid)
 
-      assert {:ok, inserted_unit} = Units.insert(@unit_attrs, development, listing)
+      assert {:ok, %{add_unit: inserted_unit, units_job: _}} =
+               Units.insert(@unit_attrs, development: development)
 
       retrieved_unit = Repo.get(Unit, inserted_unit.uuid)
 
       assert retrieved_unit == inserted_unit
       assert retrieved_unit.development_uuid == development.uuid
-      assert retrieved_unit.listing_id == listing.id
     end
 
-    test "update listing with unit attributes when unit is inserted" do
-      Server.start_link()
+    test "create new development job" do
       development = insert(:development)
 
-      {:ok, listing} =
-        Re.Repo.insert(%Re.Listing{}, development_uuid: development.uuid, price: 1_000_000)
+      assert {:ok, _} = Units.insert(@unit_attrs, development: development)
 
-      assert {:ok, inserted_unit} = Units.insert(@unit_attrs, development, listing)
-
-      GenServer.call(Server, :inspect)
-
-      listing = Repo.get(Listing, listing.id)
-      assert listing.complement
-      assert listing.price
-      assert listing.property_tax
-      assert listing.maintenance_fee
-      assert listing.floor
-      assert listing.rooms
-      assert listing.bathrooms
-      assert listing.restrooms
-      assert listing.area
-      assert listing.garage_spots
-      assert listing.garage_type
-      assert listing.suites
-      assert listing.dependencies
-      assert listing.balconies
+      assert_enqueued_job(Re.Repo.all(JobQueue), "mirror_new_unit_to_listing")
     end
   end
 
   describe "update/2" do
-    test "update listing with unit attributes when unit is updated" do
-      Server.start_link()
+    test "create new mirror_update_unit_to_listing" do
       development = insert(:development)
-      {:ok, listing} = Re.Repo.insert(%Re.Listing{}, development_uuid: development.uuid)
-      unit = insert(:unit, development_uuid: development.uuid)
+      unit = insert(:unit)
 
-      assert {:ok, _updated_unit} = Units.update(unit, @unit_attrs, development, listing)
+      Units.update(unit, @unit_attrs, development: development)
 
-      GenServer.call(Server, :inspect)
-
-      listing = Repo.get(Listing, listing.id)
-      assert listing.complement
-      assert listing.price
-      assert listing.property_tax
-      assert listing.maintenance_fee
-      assert listing.floor
-      assert listing.rooms
-      assert listing.bathrooms
-      assert listing.restrooms
-      assert listing.area
-      assert listing.garage_spots
-      assert listing.garage_type
-      assert listing.suites
-      assert listing.dependencies
-      assert listing.balconies
+      assert_enqueued_job(Re.Repo.all(JobQueue), "mirror_update_unit_to_listing")
     end
   end
 end

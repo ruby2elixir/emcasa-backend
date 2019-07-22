@@ -6,13 +6,21 @@ defmodule ReWeb.Types.Listing do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
-  alias ReWeb.{
-    GraphQL.Middlewares,
-    Resolvers
-  }
+  alias ReWeb.Resolvers
+
+  enum :deactivation_reason, values: ~w(duplicated gave_up left_emcasa publication_mistake rented
+                                        rejected sold sold_by_emcasa temporarily_suspended to_be_published
+                                        went_exclusive)
+
+  enum :garage_type, values: ~w(contract condominium)
+
+  enum :orientation_type, values: ~w(frontside backside lateral inside)
+
+  enum :sun_period_type, values: ~w(morning evening)
 
   object :listing do
     field :id, :id
+    field :uuid, :uuid, resolve: &Resolvers.Listings.get_uuid/3
     field :type, :string
     field :complement, :string
     field :description, :string
@@ -43,7 +51,17 @@ defmodule ReWeb.Types.Listing do
     field :construction_year, :integer
     field :price_per_area, :float
     field :inserted_at, :naive_datetime
-    field :score, :integer, resolve: &Resolvers.Listings.score/3
+    field :deactivation_reason, :deactivation_reason
+    field :sold_price, :integer
+
+    field :score, :integer do
+      deprecate("Use normalized_liquidity_ratio instead")
+
+      resolve &Resolvers.Listings.score/3
+    end
+
+    field :normalized_liquidity_ratio, :integer,
+      resolve: &Resolvers.Listings.normalized_liquidity_ratio/3
 
     field :address, :address,
       resolve: dataloader(Re.Addresses, &Resolvers.Addresses.per_listing/3)
@@ -111,7 +129,6 @@ defmodule ReWeb.Types.Listing do
     field :is_exclusive, :boolean
     field :is_release, :boolean
     field :is_exportable, :boolean
-    field :score, :integer
     field :orientation, :orientation_type
     field :floor_count, :integer
     field :unit_per_floor, :integer
@@ -129,55 +146,12 @@ defmodule ReWeb.Types.Listing do
     field :tags, list_of(non_null(:uuid))
 
     field :owner_contact, :owner_contact_input
+    field :deactivation_reason, :deactivation_reason
   end
 
-  enum :garage_type, values: ~w(contract condominium)
-
-  enum :orientation_type, values: ~w(frontside backside lateral inside)
-
-  enum :sun_period_type, values: ~w(morning evening)
-
-  object :address do
-    field :id, :id
-    field :street, :string
-    field :street_number, :string
-    field :neighborhood, :string
-    field :city, :string
-    field :state, :string
-    field :postal_code, :string
-    field :lat, :float
-    field :lng, :float
-
-    field :street_slug, :string
-    field :neighborhood_slug, :string
-    field :city_slug, :string
-    field :state_slug, :string
-
-    field :neighborhood_description, :string,
-      resolve: &Resolvers.Addresses.neighborhood_description/3
-
-    field :is_covered, :boolean, resolve: &Resolvers.Addresses.is_covered/3
-  end
-
-  object :district do
-    field :state, :string
-    field :city, :string
-    field :name, :string
-    field :state_slug, :string
-    field :city_slug, :string
-    field :name_slug, :string
-    field :description, :string
-  end
-
-  input_object :address_input do
-    field :street, non_null(:string)
-    field :street_number, non_null(:string)
-    field :neighborhood, non_null(:string)
-    field :city, non_null(:string)
-    field :state, non_null(:string)
-    field :postal_code, non_null(:string)
-    field :lat, non_null(:float)
-    field :lng, non_null(:float)
+  input_object :deactivation_options_input do
+    field :deactivation_reason, non_null(:deactivation_reason)
+    field :sold_price, :integer
   end
 
   object :listing_user do
@@ -204,9 +178,9 @@ defmodule ReWeb.Types.Listing do
   enum :orderable_field,
     values:
       ~w(id price property_tax maintenance_fee rooms bathrooms restrooms area garage_spots suites dependencies balconies
-      price_per_area inserted_at)a
+      price_per_area inserted_at floor)a
 
-  enum :order_type, values: ~w(desc asc)a
+  enum :order_type, values: ~w(desc asc desc_nulls_last asc_nulls_last)a
 
   input_object :listing_filter_input do
     field :max_price, :integer
@@ -215,6 +189,8 @@ defmodule ReWeb.Types.Listing do
     field :min_rooms, :integer
     field :max_suites, :integer
     field :min_suites, :integer
+    field :max_bathrooms, :integer
+    field :min_bathrooms, :integer
     field :min_area, :integer
     field :max_area, :integer
     field :neighborhoods, list_of(:string)
@@ -244,6 +220,9 @@ defmodule ReWeb.Types.Listing do
     field :max_price_per_area, :float
     field :min_maintenance_fee, :float
     field :max_maintenance_fee, :float
+    field :is_release, :boolean
+    field :is_exportable, :boolean
+    field :exclude_similar_for_primary_market, :boolean
   end
 
   object :listing_filter do
@@ -253,6 +232,8 @@ defmodule ReWeb.Types.Listing do
     field :min_rooms, :integer
     field :max_suites, :integer
     field :min_suites, :integer
+    field :max_bathrooms, :integer
+    field :min_bathrooms, :integer
     field :min_area, :integer
     field :max_area, :integer
     field :neighborhoods, list_of(:string)
@@ -280,6 +261,8 @@ defmodule ReWeb.Types.Listing do
     field :max_age, :integer
     field :min_price_per_area, :float
     field :max_price_per_area, :float
+    field :is_release, :boolean
+    field :exclude_similar_for_primary_market, :boolean
   end
 
   object :price_history do
@@ -302,7 +285,6 @@ defmodule ReWeb.Types.Listing do
       arg :id, non_null(:id)
 
       resolve &Resolvers.Listings.show/2
-      middleware(Middlewares.Visualizations)
     end
 
     @desc "List user listings"
@@ -310,21 +292,6 @@ defmodule ReWeb.Types.Listing do
 
     @desc "Get favorited listings"
     field :favorited_listings, list_of(:listing), resolve: &Resolvers.Accounts.favorited/2
-
-    @desc "Get all neighborhoods"
-    field :neighborhoods, list_of(:string), resolve: &Resolvers.Listings.neighborhoods/2
-
-    @desc "Get all districts"
-    field :districts, list_of(:district), resolve: &Resolvers.Addresses.districts/2
-
-    @desc "Show district"
-    field :district, :district do
-      arg :state_slug, non_null(:string)
-      arg :city_slug, non_null(:string)
-      arg :name_slug, non_null(:string)
-
-      resolve &Resolvers.Addresses.district/2
-    end
 
     @desc "Featured listings"
     field :featured_listings, list_of(:listing), resolve: &Resolvers.Listings.featured/2
@@ -337,25 +304,9 @@ defmodule ReWeb.Types.Listing do
 
       resolve &Resolvers.Listings.relaxed/2
     end
-
-    @desc "Get address coverage"
-    field :address_is_covered, :boolean do
-      arg :state, non_null(:string)
-      arg :city, non_null(:string)
-      arg :neighborhood, non_null(:string)
-
-      resolve &Resolvers.Addresses.is_covered/2
-    end
   end
 
   object :listing_mutations do
-    @desc "Insert address"
-    field :address_insert, type: :address do
-      arg :input, non_null(:address_input)
-
-      resolve &Resolvers.Addresses.insert/2
-    end
-
     @desc "Insert listing"
     field :insert_listing, type: :listing do
       arg :input, non_null(:listing_input)
@@ -381,6 +332,7 @@ defmodule ReWeb.Types.Listing do
     @desc "Deactivate listing"
     field :deactivate_listing, type: :listing do
       arg :id, non_null(:id)
+      arg :input, :deactivation_options_input
 
       resolve &Resolvers.Listings.deactivate/2
     end
@@ -403,7 +355,7 @@ defmodule ReWeb.Types.Listing do
     field :tour_visualized, type: :listing do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.ListingStats.tour_visualized/2
+      resolve &Resolvers.Listings.show/2
     end
   end
 

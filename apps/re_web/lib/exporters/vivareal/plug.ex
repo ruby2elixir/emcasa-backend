@@ -21,7 +21,8 @@ defmodule ReWeb.Exporters.Vivareal.Plug do
     options = get_highlights(filters, query_params)
 
     xml_listings =
-      Exporter.exportable(filters, query_params)
+      filters
+      |> Exporter.exportable(query_params)
       |> Vivareal.export_listings_xml(options)
 
     conn

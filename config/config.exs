@@ -5,6 +5,7 @@ config :re,
   use_logger: true
 
 config :re_integrations,
+  ecto_repos: [ReIntegrations.Repo],
   frontend_url: "http://localhost:3000",
   to: "dev1@email.com|dev2@email.com",
   from: "admin@email.com",
@@ -16,7 +17,8 @@ config :re_web, ReWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "AFa6xCBxoVrAjCy3YRiSjY9e1TfUn75VT2QhSALdwJ+q/oA693/5mJ0OKptYSIID",
   render_errors: [view: ReWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: ReWeb.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: ReWeb.PubSub, adapter: Phoenix.PubSub.PG2],
+  instrumenters: [ReWeb.PlugPipelineInstrumenter, ReWeb.Endpoint.PhoenixInstrumenter]
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -71,6 +73,12 @@ config :sentry,
 
 config :geo_postgis,
   json_library: Poison
+
+config :prometheus, ReWeb.PlugExporter,
+  path: "/metrics",
+  format: :auto,
+  registry: :default,
+  auth: false
 
 import_config "#{Mix.env()}.exs"
 

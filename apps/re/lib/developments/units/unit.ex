@@ -25,6 +25,8 @@ defmodule Re.Unit do
     field :dependencies, :integer
     field :balconies, :integer
     field :status, :string
+    field :matterport_code, :string
+    field :is_exportable, :boolean, default: false
 
     belongs_to :development, Re.Development,
       references: :uuid,
@@ -39,9 +41,9 @@ defmodule Re.Unit do
   @garage_types ~w(contract condominium)
   @statuses ~w(active inactive)
 
-  @required ~w(price rooms bathrooms area garage_spots suites development_uuid listing_id status)a
+  @required ~w(price rooms bathrooms area garage_spots suites development_uuid status)a
   @optional ~w(complement floor property_tax maintenance_fee balconies restrooms garage_type
-              dependencies)a
+              dependencies listing_id matterport_code is_exportable)a
 
   @attributes @required ++ @optional
 
@@ -55,12 +57,8 @@ defmodule Re.Unit do
       greater_than_or_equal_to: 250_000,
       less_than_or_equal_to: 100_000_000
     )
-    |> validate_inclusion(:garage_type, @garage_types,
-      message: "should be one of: [#{Enum.join(@garage_types, " ")}]"
-    )
-    |> validate_inclusion(:status, @statuses,
-      message: "should be one of: [#{Enum.join(@statuses, " ")}]"
-    )
+    |> validate_inclusion(:garage_type, @garage_types)
+    |> validate_inclusion(:status, @statuses)
     |> Re.ChangesetHelper.generate_uuid()
   end
 

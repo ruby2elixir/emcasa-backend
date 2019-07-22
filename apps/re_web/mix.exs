@@ -43,7 +43,7 @@ defmodule ReWeb.Mixfile do
       {:cors_plug, "~> 1.2"},
       {:guardian, "~> 1.2.1"},
       {:bodyguard, "~> 2.1"},
-      {:absinthe, "~> 1.5.0-alpha.4", override: true},
+      {:absinthe, github: "absinthe-graphql/absinthe", commit: "9ca4d39", override: true},
       {:absinthe_plug, "~> 1.4.6"},
       {:absinthe_phoenix, "~> 1.4"},
       {:dataloader, "~> 1.0.4"},
@@ -57,7 +57,10 @@ defmodule ReWeb.Mixfile do
       {:jason, "~> 1.0"},
       {:sentry, "~> 7.0"},
       {:proper_case, "~> 1.3"},
-      {:plug_checkup, "~> 0.5"}
+      {:plug_checkup, "~> 0.5"},
+      {:prometheus_phoenix, "~> 1.2"},
+      {:prometheus_plugs, "~> 1.1"},
+      {:telemetry, "~> 0.4"}
     ]
   end
 

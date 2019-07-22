@@ -30,7 +30,7 @@ defmodule Re.SellerLeads.Site do
     struct
     |> cast(params, @params)
     |> validate_required(@required)
-    |> validate_inclusion(:type, @types, message: "should be one of: [#{Enum.join(@types, " ")}]")
+    |> validate_inclusion(:type, @types)
     |> generate_uuid()
     |> validate_attributes()
   end
