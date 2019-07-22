@@ -46,8 +46,8 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
     %{
       id: location_id,
       address: address,
-      start: Map.get(visit, "arrival_time"),
-      end: Map.get(visit, "finish_time")
+      start: Map.get(visit, "arrival_time") |> to_time_struct(),
+      end: Map.get(visit, "finish_time") |> to_time_struct()
     }
   end
 
@@ -58,4 +58,14 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
   defp build_unserved(%{} = unserved), do: {:ok, unserved}
 
   defp build_unserved(_unserved), do: {:error, "invalid unserved input"}
+
+  defp to_time_struct(nil), do: nil
+
+  defp to_time_struct(time_string) do
+    with {:ok, time} <- Time.from_iso8601("#{time_string}:00Z") do
+      time
+    else
+      _ -> nil
+    end
+  end
 end

@@ -47,12 +47,12 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
 
   defp build_visit(_visit), do: raise(InvalidInputError, message: "invalid visit input")
 
-  defp to_time_string(%Time{} = time), do: Time.to_string(time) |> String.slice(0..4)
-
-  defp to_time_string(time), do: time
-
   defp build_fleet(_visits) do
     # TODO build fleet from photographers' google calendars
     {:ok, %{}}
   end
+
+  defp to_time_string(%Time{} = time), do: Time.to_string(time) |> String.slice(0..4)
+
+  defp to_time_string(time), do: time
 end
