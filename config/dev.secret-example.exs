@@ -62,3 +62,6 @@ config :cloudex,
   api_key: "api_key",
   secret: "secret",
   cloud_name: "cloud"
+
+config :goth,
+  json: Path.expand("path/to/service_account.json") |> File.read!()
