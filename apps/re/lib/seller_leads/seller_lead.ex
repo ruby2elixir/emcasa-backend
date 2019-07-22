@@ -19,6 +19,7 @@ defmodule Re.SellerLead do
     field :suites, :integer
     field :garage_spots, :integer
     field :price, :float
+    field :suggested_price, :float
     field :tour_option, :utc_datetime
 
     belongs_to :address, Re.Address,
@@ -36,7 +37,7 @@ defmodule Re.SellerLead do
 
   @required ~w(source)a
   @optional ~w(complement type area maintenance_fee rooms bathrooms suites garage_spots price
-               tour_option address_uuid user_uuid)a
+               suggested_price tour_option address_uuid user_uuid)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do

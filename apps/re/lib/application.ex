@@ -36,6 +36,7 @@ defmodule Re.Application do
       worker(History.Server, []),
       {BuyerLeads.JobQueue, repo: Repo},
       {Developments.JobQueue, repo: Repo},
-      {Listings.JobQueue, repo: Repo}
+      {Listings.JobQueue, repo: Repo},
+      {SellerLeads.JobQueue, repo: Repo}
     ]
 end
