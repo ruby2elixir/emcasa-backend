@@ -16,8 +16,8 @@ defmodule Re.Repo.Migrations.CreateUserTypeConcept do
   end
 
   def down do
-
     drop_if_exists unique_index(:users, [:salesforce_id])
+
     alter table(:users) do
       remove :type
       remove :sales_force_id
