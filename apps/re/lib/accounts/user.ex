@@ -16,7 +16,7 @@ defmodule Re.User do
     field :device_token, :string
     field :account_kit_id, :string
 
-    field :type, :string, default: "common"
+    field :type, :string, default: "property_owner"
     field :salesforce_id, :string
 
     embeds_one(
@@ -34,7 +34,7 @@ defmodule Re.User do
   end
 
   @roles ~w(admin user)
-  @types ~w(common partner_broker)
+  @types ~w(property_owner partner_broker)
 
   @update_required ~w()a
   @update_optional ~w(name email role phone device_token type salesforce_id)a

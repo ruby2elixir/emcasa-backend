@@ -14,7 +14,7 @@ defmodule Re.Repo.Migrations.CreateUserTypeConcept do
     flush()
 
     q = from(u in "users")
-    Re.Repo.update_all(q, set: [type: "common"])
+    Re.Repo.update_all(q, set: [type: "property_owner"])
   end
 
   def down do
