@@ -130,4 +130,18 @@ defmodule Re.SellerLeads.JobQueueTest do
       assert_called(HTTPoison, :post, [^uri, ^encoded_seller_lead])
     end
   end
+
+  describe "not handled jobs" do
+    test "raise if not passing a multi" do
+      assert_raise RuntimeError, fn ->
+        JobQueue.perform(:not_multi, %{})
+      end
+    end
+
+    test "raise if job type not handled" do
+      assert_raise RuntimeError, fn ->
+        JobQueue.perform(Multi.new(), %{"type" => "whatever", "uuid" => nil})
+      end
+    end
+  end
 end
