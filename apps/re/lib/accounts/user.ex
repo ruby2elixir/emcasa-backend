@@ -17,7 +17,7 @@ defmodule Re.User do
     field :account_kit_id, :string
 
     field :type, :string, default: "common"
-    field :sales_force_id, :string
+    field :salesforce_id, :string
 
     embeds_one(
       :notification_preferences,
@@ -43,7 +43,7 @@ defmodule Re.User do
   @types ~w(common partner_broker)
 
   @update_required ~w()a
-  @update_optional ~w(name email role phone device_token type sales_force_id)a
+  @update_optional ~w(name email role phone device_token type salesforce_id)a
 
   def update_changeset(struct, params \\ %{}) do
     struct
