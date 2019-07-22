@@ -6,10 +6,7 @@ defmodule ReWeb.Types.Listing do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
-  alias ReWeb.{
-    GraphQL.Middlewares,
-    Resolvers
-  }
+  alias ReWeb.Resolvers
 
   enum :deactivation_reason, values: ~w(duplicated gave_up left_emcasa publication_mistake rented
                                         rejected sold sold_by_emcasa temporarily_suspended to_be_published
@@ -288,7 +285,6 @@ defmodule ReWeb.Types.Listing do
       arg :id, non_null(:id)
 
       resolve &Resolvers.Listings.show/2
-      middleware(Middlewares.Visualizations)
     end
 
     @desc "List user listings"
@@ -359,7 +355,7 @@ defmodule ReWeb.Types.Listing do
     field :tour_visualized, type: :listing do
       arg :id, non_null(:id)
 
-      resolve &Resolvers.ListingStats.tour_visualized/2
+      resolve &Resolvers.Listings.show/2
     end
   end
 

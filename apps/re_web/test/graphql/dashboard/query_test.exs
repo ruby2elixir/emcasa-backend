@@ -22,8 +22,6 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
 
       insert(
         :listing,
-        listings_visualisations: [build(:listing_visualisation)],
-        tour_visualisations: [build(:tour_visualisation)],
         listings_favorites: [build(:listings_favorites)],
         maintenance_fee: 123.321,
         property_tax: 321.123,
@@ -61,8 +59,8 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       assert %{
                "activeListingCount" => 2,
                "favoriteCount" => 1,
-               "visualizationCount" => 1,
-               "tourVisualizationCount" => 1,
+               "visualizationCount" => 0,
+               "tourVisualizationCount" => 0,
                "maintenanceFeeCount" => 1,
                "propertyTaxCount" => 1,
                "tourCount" => 1,
@@ -155,8 +153,8 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
 
       assert %{
-        "activeListingCount" => 1
-      } == json_response(conn, 200)["data"]["dashboard"]
+               "activeListingCount" => 1
+             } == json_response(conn, 200)["data"]["dashboard"]
     end
   end
 

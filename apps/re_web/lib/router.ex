@@ -60,7 +60,6 @@ defmodule ReWeb.Router do
   scope "/webhooks" do
     pipe_through :webhooks
 
-    forward("/pipedrive", ReWeb.Webhooks.PipedrivePlug)
     forward("/grupozap", ReWeb.Webhooks.GrupozapPlug)
     forward("/zapier", ReWeb.Webhooks.ZapierPlug)
   end
