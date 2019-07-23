@@ -5,9 +5,12 @@ defmodule Re.Repo do
 
   use Scrivener, page_size: 20
 
+  alias Ecto.Adapters.Postgres
+  alias Geo.PostGIS.Extension
+
   Postgrex.Types.define(
     Re.PostgresTypes,
-    [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
+    [Extension] ++ Postgres.extensions(),
     json: Jason
   )
 end
