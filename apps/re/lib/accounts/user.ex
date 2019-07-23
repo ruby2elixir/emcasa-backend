@@ -30,6 +30,11 @@ defmodule Re.User do
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :listing]
 
+    many_to_many :users, Re.Addresses.District,
+                 join_through: Re.BrokerDistrict,
+                 join_keys: [user_uuid: :uuid, district_uuid: :uuid],
+                 on_replace: :delete
+
     timestamps()
   end
 
