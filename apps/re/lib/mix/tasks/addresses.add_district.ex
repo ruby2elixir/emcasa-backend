@@ -13,16 +13,6 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
 
   @shortdoc "Create new district"
   @covered_districts [
-    "Água Branca",
-    "Barra Funda",
-    "Pacaembu",
-    "Santa Cecília",
-    "Vila Buarque",
-    "Higienópolis",
-    "Consolação",
-    "Bela Vista",
-    "Liberdade",
-    "Aclimação",
     "Vila Romana"
   ]
 
