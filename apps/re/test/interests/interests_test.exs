@@ -106,6 +106,47 @@ defmodule Re.InterestsTest do
       assert request.user_id == user.id
       assert request.suggested_price == 26_279.0
     end
+
+    test "should not store price suggestion request without user" do
+      mock(
+        HTTPoison,
+        :post,
+        {:ok,
+         %{
+           body:
+             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
+         }}
+      )
+
+      address_params = %{
+        street: "street",
+        street_number: "street_number",
+        neighborhood: "neighborhood",
+        city: "city",
+        state: "ST",
+        postal_code: "12345-123",
+        lat: 10.10,
+        lng: 10.10
+      }
+
+      params = %{
+        address: address_params,
+        name: "name",
+        email: "email@emcasa.com",
+        rooms: 2,
+        bathrooms: 2,
+        area: 30,
+        garage_spots: 2,
+        suites: 1,
+        type: "Apartamento",
+        maintenance_fee: 100.00,
+        is_covered: true
+      }
+
+      assert {:error, :bad_request} = Interests.request_price_suggestion(params, nil)
+
+      refute Repo.one(Request)
+    end
   end
 
   describe "notify_when_covered/1" do

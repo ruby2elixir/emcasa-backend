@@ -51,6 +51,8 @@ defmodule Re.Interests do
     |> PubSub.publish_new("contact_request")
   end
 
+  def request_price_suggestion(_params, nil), do: {:error, :bad_request}
+
   def request_price_suggestion(params, user) do
     with {:ok, address} <- Addresses.insert_or_update(params.address) do
       params
