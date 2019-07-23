@@ -3,7 +3,7 @@ defmodule Re.Repo.Migrations.AddCalendarsDepot do
 
   def change do
     alter table(:calendars) do
-      add :address_id, references(:addresses)
+      add :address_uuid, references(:addresses, column: :uuid, type: :uuid)
     end
   end
 end

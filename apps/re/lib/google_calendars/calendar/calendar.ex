@@ -18,9 +18,12 @@ defmodule Re.GoogleCalendars.Calendar do
       join_keys: [calendar_uuid: :uuid, district_uuid: :uuid],
       on_replace: :delete
 
-    belongs_to :address, Re.Address
+    belongs_to :address, Re.Address,
+      type: Ecto.UUID,
+      foreign_key: :address_uuid,
+      references: :uuid
 
-    timestamps()
+      timestamps()
   end
 
   @required ~w(external_id shift_start shift_end)a
