@@ -7,7 +7,7 @@ defmodule Mix.Tasks.Re.Addresses.ChangeDistrictSortOrderTest do
     Addresses.District,
     Addresses.Neighborhoods,
     Repo
-    }
+  }
 
   setup do
     Mix.shell(Mix.Shell.Process)
@@ -23,8 +23,8 @@ defmodule Mix.Tasks.Re.Addresses.ChangeDistrictSortOrderTest do
     test "update district" do
       insert_districts([])
       ChangeDistrictSortOrder.run([])
-      sort_order = Enum.map(Neighborhoods.districts(), fn district ->  district.sort_order end)
-      expected_order = Enum.to_list 1..21
+      sort_order = Enum.map(Neighborhoods.districts(), fn district -> district.sort_order end)
+      expected_order = Enum.to_list(1..21)
       assert expected_order == sort_order
     end
   end
@@ -53,15 +53,16 @@ defmodule Mix.Tasks.Re.Addresses.ChangeDistrictSortOrderTest do
       "Jardim Vila Mariana",
       "Jardim da Gloria"
     ]
+
     Enum.each(districts_to_insert, fn district_to_insert ->
       %District{}
-        |> District.changeset(%{
-          name: district_to_insert,
-          state: "SP",
-          city: "São Paulo",
-          status: "covered"
-        })
-        |> Repo.insert()
+      |> District.changeset(%{
+        name: district_to_insert,
+        state: "SP",
+        city: "São Paulo",
+        status: "covered"
+      })
+      |> Repo.insert()
     end)
   end
 end
