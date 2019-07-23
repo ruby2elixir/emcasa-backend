@@ -13,7 +13,8 @@ defmodule Re.Application do
     Listings,
     Listings.History,
     PubSub,
-    Repo
+    Repo,
+    SellerLeads
   }
 
   def start(_type, _args) do
