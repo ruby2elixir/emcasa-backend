@@ -8,16 +8,17 @@ defmodule Re.BrokerDistrict do
 
   schema "broker_districts" do
     belongs_to :user, Re.User,
-               primary_key: true,
-               foreign_key: :user_uuid,
-               references: :uuid,
-               type: Ecto.UUID
+      primary_key: true,
+      foreign_key: :user_uuid,
+      references: :uuid,
+      type: Ecto.UUID
 
     belongs_to :district, Re.Addresses.District,
-               primary_key: true,
-               foreign_key: :district_uuid,
-               references: :uuid,
-               type: Ecto.UUID
+      primary_key: true,
+      foreign_key: :district_uuid,
+      references: :uuid,
+      type: Ecto.UUID
+
     timestamps()
   end
 

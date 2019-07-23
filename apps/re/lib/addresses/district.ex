@@ -26,10 +26,9 @@ defmodule Re.Addresses.District do
       on_replace: :delete
 
     many_to_many :users, Re.User,
-                 join_through: Re.BrokerDistrict,
-                 join_keys: [district_uuid: :uuid, user_uuid: :uuid],
-                 on_replace: :delete
-
+      join_through: Re.BrokerDistrict,
+      join_keys: [district_uuid: :uuid, user_uuid: :uuid],
+      on_replace: :delete
 
     timestamps()
   end

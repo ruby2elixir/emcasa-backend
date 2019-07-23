@@ -30,10 +30,10 @@ defmodule Re.User do
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :listing]
 
-    many_to_many :users, Re.Addresses.District,
-                 join_through: Re.BrokerDistrict,
-                 join_keys: [user_uuid: :uuid, district_uuid: :uuid],
-                 on_replace: :delete
+    many_to_many :districts, Re.Addresses.District,
+      join_through: Re.BrokerDistrict,
+      join_keys: [user_uuid: :uuid, district_uuid: :uuid],
+      on_replace: :delete
 
     timestamps()
   end
@@ -93,5 +93,11 @@ defmodule Re.User do
       true -> changeset
       false -> add_error(changeset, :email, "has invalid format", validation: :format)
     end
+  end
+
+  def changeset_update_districts(struct, districts) do
+    struct
+    |> change()
+    |> put_assoc(:districts, districts)
   end
 end
