@@ -19,7 +19,7 @@ defmodule Re.SellerLeads.JobQueueTest do
       %{uuid: user_uuid} = user = insert(:user)
 
       %{uuid: uuid} =
-        lead =
+        price_suggestion_request =
         insert(:price_suggestion_request,
           address: address,
           user: user
@@ -38,15 +38,15 @@ defmodule Re.SellerLeads.JobQueueTest do
       assert seller.address_uuid == address_uuid
       assert seller.source == "WebSite"
       assert seller.complement == nil
-      assert seller.type == lead.type
-      assert seller.area == lead.area
-      assert seller.maintenance_fee == lead.maintenance_fee
-      assert seller.rooms == lead.rooms
-      assert seller.bathrooms == lead.bathrooms
-      assert seller.suites == lead.suites
-      assert seller.garage_spots == lead.garage_spots
+      assert seller.type == price_suggestion_request.type
+      assert seller.area == price_suggestion_request.area
+      assert seller.maintenance_fee == price_suggestion_request.maintenance_fee
+      assert seller.rooms == price_suggestion_request.rooms
+      assert seller.bathrooms == price_suggestion_request.bathrooms
+      assert seller.suites == price_suggestion_request.suites
+      assert seller.garage_spots == price_suggestion_request.garage_spots
       assert seller.price == nil
-      assert seller.suggested_price == lead.suggested_price
+      assert seller.suggested_price == price_suggestion_request.suggested_price
     end
   end
 
