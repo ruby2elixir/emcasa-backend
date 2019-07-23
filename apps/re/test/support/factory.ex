@@ -164,13 +164,7 @@ defmodule Re.Factory do
     }
   end
 
-  def listing_visualisation_factory, do: %Re.Statistics.ListingVisualization{}
-
   def listings_favorites_factory, do: %Re.Favorite{}
-
-  def tour_visualisation_factory, do: %Re.Statistics.TourVisualization{}
-
-  def in_person_visit_factory, do: %Re.Statistics.InPersonVisit{}
 
   def price_history_factory, do: %Re.Listings.PriceHistory{}
 
