@@ -35,7 +35,6 @@ defmodule Re.BuyerLeadsTest do
       assert_enqueued_job(Repo.all(JobQueue), "process_empty_search_buyer_lead")
     end
 
-    @tag dev: true
     test "should create a buyer lead with more than 255 chars" do
       user = insert(:user)
 

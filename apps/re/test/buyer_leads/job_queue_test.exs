@@ -489,7 +489,6 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
 
-    @tag dev: true
     test "proecss lead with huge url" do
       %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999", name: nil)
 
