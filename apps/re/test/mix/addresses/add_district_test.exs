@@ -23,16 +23,6 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrictTest do
       AddDistrict.run([])
 
       covered_districts = [
-        "Água Branca",
-        "Barra Funda",
-        "Pacaembu",
-        "Santa Cecília",
-        "Vila Buarque",
-        "Higienópolis",
-        "Consolação",
-        "Bela Vista",
-        "Liberdade",
-        "Aclimação",
         "Vila Romana"
       ]
 
