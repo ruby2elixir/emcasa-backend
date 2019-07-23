@@ -20,7 +20,7 @@ defmodule Re.Repo.Migrations.CreateUserTypeConcept do
   def down do
     alter table(:users) do
       remove :type
-      remove :sales_force_id
+      remove :salesforce_id
     end
   end
 end
