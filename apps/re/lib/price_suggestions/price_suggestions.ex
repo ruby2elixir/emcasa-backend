@@ -77,22 +77,10 @@ defmodule Re.PriceSuggestions do
   defp preload_address(params), do: params
 
   def create_request(params) do
-    with %{valid?: true} = changeset <- Request.changeset(%Request{}, params),
+    with changeset <- Request.changeset(%Request{}, params),
          suggested_price <- do_suggest_price(params),
-         %{valid?: true} = changeset <- set_suggested_price(changeset, suggested_price) do
-      uuid = Changeset.get_field(changeset, :uuid)
-
-      Ecto.Multi.new()
-      |> Multi.insert(:insert_price_suggestion_request, changeset)
-      |> JobQueue.enqueue(:seller_lead_job, %{
-        "type" => "process_price_suggestion_request",
-        "uuid" => uuid
-      })
-      |> Repo.transaction()
-      |> return_insertion()
-    else
-      %Changeset{} = changeset -> {:error, changeset}
-      error -> error
+         changeset <- set_suggested_price(changeset, suggested_price) do
+      save_price_suggestion(changeset)
     end
   end
 
@@ -103,6 +91,19 @@ defmodule Re.PriceSuggestions do
   end
 
   defp set_suggested_price(changeset, _), do: changeset
+
+  defp save_price_suggestion(changeset) do
+    uuid = Changeset.get_field(changeset, :uuid)
+
+    Ecto.Multi.new()
+    |> Multi.insert(:insert_price_suggestion_request, changeset)
+    |> JobQueue.enqueue(:seller_lead_job, %{
+      "type" => "process_price_suggestion_request",
+      "uuid" => uuid
+    })
+    |> Repo.transaction()
+    |> return_insertion()
+  end
 
   defp return_insertion({:ok, %{insert_price_suggestion_request: request}}), do: {:ok, request}
 
