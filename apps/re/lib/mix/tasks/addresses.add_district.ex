@@ -13,8 +13,7 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
 
   @shortdoc "Create new district"
   @covered_districts [
-    "Alto de Pinheiros",
-    "Vila Adalgisa"
+    "Vila Romana"
   ]
 
   def run(_) do
@@ -27,7 +26,7 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
           name: district_to_insert,
           state: "SP",
           city: "São Paulo",
-          status: "partially_covered"
+          status: "covered"
         })
         |> Repo.insert()
 

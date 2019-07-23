@@ -21,14 +21,14 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrictTest do
   describe "run/1" do
     test "inserts district" do
       AddDistrict.run([])
+
       covered_districts = [
-        "Alto de Pinheiros",
-        "Vila Adalgisa"
+        "Vila Romana"
       ]
 
-      Enum.each covered_districts, fn district ->
+      Enum.each(covered_districts, fn district ->
         assert Repo.get_by(District, name: district)
-      end
+      end)
     end
   end
 end
