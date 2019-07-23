@@ -71,6 +71,9 @@ config :sentry,
   included_environments: ~w(production staging),
   environment_name: System.get_env("ENV") || "development"
 
+config :geo_postgis,
+  json_library: Jason
+
 config :prometheus, ReWeb.PlugExporter,
   path: "/metrics",
   format: :auto,
