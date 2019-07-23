@@ -42,7 +42,7 @@ defmodule Re.SellerLeads.Salesforce.ClientTest do
           rooms: seller_lead.rooms,
           suites: seller_lead.suites,
           maintenance_fee: seller_lead.maintenance_fee,
-          price: seller_lead.price,
+          suggested_price: seller_lead.suggested_price,
           source: seller_lead.source,
           tour_option: seller_lead.tour_option,
           inserted_at: seller_lead.inserted_at,
