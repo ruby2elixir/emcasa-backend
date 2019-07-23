@@ -23,7 +23,7 @@ defmodule Re.GoogleCalendars.Calendar do
       foreign_key: :address_uuid,
       references: :uuid
 
-      timestamps()
+    timestamps()
   end
 
   @required ~w(external_id shift_start shift_end)a
