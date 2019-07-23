@@ -11,6 +11,7 @@ defmodule Re.Application do
     BuyerLeads,
     Developments,
     Listings,
+    AlikeTeller,
     Listings.History,
     PubSub,
     Repo
@@ -34,6 +35,7 @@ defmodule Re.Application do
   defp extra_processes(_),
     do: [
       worker(History.Server, []),
+      worker(AlikeTeller.Server, []),
       {BuyerLeads.JobQueue, repo: Repo},
       {Developments.JobQueue, repo: Repo},
       {Listings.JobQueue, repo: Repo}
