@@ -36,7 +36,7 @@ defmodule Re.Tag do
 
   @sluggified_attr [:name]
 
-  @categories ~w(infrastructure location realty view concierge)
+  @categories ~w(infrastructure location realty view concierge ops)
 
   @visibilities ~w(public private)
 
