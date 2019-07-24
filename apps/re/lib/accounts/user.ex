@@ -94,10 +94,4 @@ defmodule Re.User do
       false -> add_error(changeset, :email, "has invalid format", validation: :format)
     end
   end
-
-  def changeset_update_districts(struct, districts) do
-    struct
-    |> change()
-    |> put_assoc(:districts, districts)
-  end
 end
