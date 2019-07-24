@@ -127,5 +127,17 @@ defmodule ReWeb.Types.User do
 
       resolve &AccountsResolver.change_role/2
     end
+
+    @desc "Edits and user so it became a partner broker"
+    field :edit_partner_broker, type: :user do
+      arg :id, non_null(:id)
+      arg :name, :string
+      arg :phone, :string
+      arg :device_token, :string
+      arg :notification_preferences, :notification_preferences_input
+      arg :districts, non_null(list_of(:string))
+
+      resolve &AccountsResolver.edit_broker_profile/2
+    end
   end
 end

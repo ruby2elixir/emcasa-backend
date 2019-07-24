@@ -11,12 +11,15 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     conn = put_req_header(conn, "accept", "application/json")
     admin_user = insert(:user, email: "admin@email.com", role: "admin")
     user_user = insert(:user, email: "user@email.com", role: "user")
+    partner_user = insert(:user, email: "user@email.com", role: "user", type: "partner")
 
     {:ok,
      unauthenticated_conn: conn,
      admin_user: admin_user,
      user_user: user_user,
+     partner_user: partner_user,
      admin_conn: login_as(conn, admin_user),
+     partner_conn: login_as(conn, partner_user),
      user_conn: login_as(conn, user_user)}
   end
 
@@ -447,6 +450,145 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       assert_unauthorized_response(json_response(conn, 200))
       assert %{"userUpdateRole" => nil} == json_response(conn, 200)["data"]
+    end
+  end
+
+  describe "editPartnerBroker" do
+
+    @tag dev: true
+    test "admin should edit any partner broker", %{admin_conn: conn, partner_user: user} do
+      districts = insert_list(2, :district)
+      districts_slug = Enum.map(districts, fn district -> district.name_slug end)
+      variables = %{
+        "id" => user.id,
+        "name" => "Fixed Name",
+        "phone" => "123321123",
+        "notificationPreferences" => %{
+          "email" => false,
+          "app" => false
+        },
+        "deviceToken" => "asdasdasd",
+        "districts" => districts_slug
+      }
+
+      mutation = """
+        mutation EditPartnerBroker($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String, $districts: [String]!) {
+          editPartnerBroker(
+            id: $id,
+            name: $name,
+            phone: $phone,
+            notificationPreferences: $notificationPreferences,
+            deviceToken: $deviceToken,
+            districts: $districts
+          ){
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editPartnerBroker"]
+
+      assert user = Repo.get(User, user.id) |> Repo.preload(:districts)
+      assert user.name == "Fixed Name"
+      assert user.phone == "123321123"
+      assert user.device_token == "asdasdasd"
+      refute user.notification_preferences.email
+      refute user.notification_preferences.app
+      assert user.districts == districts
+    end
+
+    @tag dev: true
+    test "broker should edit own profile", %{partner_conn: conn, partner_user: user} do
+      districts = insert_list(2, :district)
+      districts_slug = Enum.map(districts, fn district -> district.name_slug end)
+      variables = %{
+        "id" => user.id,
+        "name" => "Fixed Name",
+        "phone" => "123321123",
+        "notificationPreferences" => %{
+          "email" => false,
+          "app" => false
+        },
+        "deviceToken" => "asdasdasd",
+        "districts" => districts_slug
+      }
+
+      mutation = """
+        mutation EditPartnerBroker($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String, $districts: [String]!) {
+          editPartnerBroker(
+            id: $id,
+            name: $name,
+            phone: $phone,
+            notificationPreferences: $notificationPreferences,
+            deviceToken: $deviceToken,
+            districts: $districts
+          ){
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editPartnerBroker"]
+
+      assert user = Repo.get(User, user.id) |> Repo.preload(:districts)
+      assert user.name == "Fixed Name"
+      assert user.phone == "123321123"
+      assert user.device_token == "asdasdasd"
+      refute user.notification_preferences.email
+      refute user.notification_preferences.app
+      assert user.districts == districts
+    end
+
+    @tag dev: true
+    test "partner should not edit other user's  profile", %{partner_conn: conn} do
+      inserted_user = insert(:user)
+      districts = insert_list(2, :district)
+      districts_slug = Enum.map(districts, fn district -> district.name_slug end)
+
+      variables = %{
+        "id" => inserted_user.id,
+        "name" => "Fixed Name",
+        "districts" => districts_slug
+      }
+
+      mutation = """
+        mutation EditPartnerBroker($id: ID!, $name: String, $districts: [String]!) {
+          editPartnerBroker(id: $id, name: $name, districts: $districts) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
+    end
+
+    @tag dev: true
+    test "anonymous should not edit partner profile", %{unauthenticated_conn: conn} do
+      user = insert(:user)
+
+      variables = %{
+        "id" => user.id,
+        "name" => "Fixed Name",
+        "districts" => ["d1"]
+      }
+
+      mutation = """
+        mutation EditPartnerBroker($id: ID!, $name: String, $districts: [String]!) {
+          editPartnerBroker(id: $id, name: $name, districts: $districts) {
+            id
+          }
+        }
+      """
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
+
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
 end

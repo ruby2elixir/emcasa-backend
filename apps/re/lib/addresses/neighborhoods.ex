@@ -40,6 +40,10 @@ defmodule Re.Addresses.Neighborhoods do
     do:
       Repo.all(from(d in District, where: d.status in @covered_for_show, order_by: d.sort_order))
 
+  def districts_by_name_slugs(names \\ []) do
+    Repo.all(from(d in District, where: d.name_slug in ^names))
+  end
+
   def get_district(params) do
     case Repo.get_by(District, params) do
       nil -> {:error, :not_found}
