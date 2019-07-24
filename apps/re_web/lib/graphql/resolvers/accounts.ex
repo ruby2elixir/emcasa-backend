@@ -44,8 +44,11 @@ defmodule ReWeb.Resolvers.Accounts do
          do: Users.update(user, params)
   end
 
-  def edit_broker_profile(%{id: id, districts: districts} = params, %{context: %{current_user: current_user}}) do
+  def edit_broker_profile(%{id: id, districts: districts} = params, %{
+        context: %{current_user: current_user}
+      }) do
     broker_params = Map.merge(params, %{type: "partner_broker"})
+
     with {:ok, user} <- Users.get(id),
          :ok <- Bodyguard.permit(Users, :edit_profile, current_user, user),
          do: Users.update(user, broker_params, districts: districts)
