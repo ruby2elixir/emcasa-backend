@@ -64,4 +64,4 @@ config :cloudex,
   cloud_name: "cloud"
 
 config :goth,
-  json: Path.expand("path/to/service_account.json") |> File.read!()
+  json: Path.expand("dev.service-account-example.json") |> File.read!()

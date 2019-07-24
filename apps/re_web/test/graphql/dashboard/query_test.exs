@@ -126,8 +126,8 @@ defmodule ReWeb.GraphQL.Dashboard.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query))
 
       assert %{
-        "activeListingCount" => 5
-      } == json_response(conn, 200)["data"]["dashboard"]
+               "activeListingCount" => 5
+             } == json_response(conn, 200)["data"]["dashboard"]
     end
 
     test "should apply listing filters to active listings count", %{admin_conn: conn} do
