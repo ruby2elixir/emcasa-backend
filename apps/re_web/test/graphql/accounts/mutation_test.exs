@@ -455,7 +455,6 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
   describe "editPartnerBroker" do
 
-    @tag dev: true
     test "admin should edit any partner broker", %{admin_conn: conn, partner_user: user} do
       districts = insert_list(2, :district)
       districts_slug = Enum.map(districts, fn district -> district.name_slug end)
@@ -499,7 +498,6 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       assert user.districts == districts
     end
 
-    @tag dev: true
     test "broker should edit own profile", %{partner_conn: conn, partner_user: user} do
       districts = insert_list(2, :district)
       districts_slug = Enum.map(districts, fn district -> district.name_slug end)
@@ -543,7 +541,6 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       assert user.districts == districts
     end
 
-    @tag dev: true
     test "partner should not edit other user's  profile", %{partner_conn: conn} do
       inserted_user = insert(:user)
       districts = insert_list(2, :district)
@@ -568,7 +565,6 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
     end
 
-    @tag dev: true
     test "anonymous should not edit partner profile", %{unauthenticated_conn: conn} do
       user = insert(:user)
 
