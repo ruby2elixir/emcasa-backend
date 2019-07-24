@@ -70,10 +70,12 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
       expected_sorted_districts = ["District 1", "District 2", "District 3"]
       result_list = Enum.map(json_response(conn, 200)["data"]["districts"], fn d -> d["name"] end)
-      assert result_list  == expected_sorted_districts
+      assert result_list == expected_sorted_districts
     end
 
-    test "should return the districts without sort_order in the last positions", %{user_conn: conn} do
+    test "should return the districts without sort_order in the last positions", %{
+      user_conn: conn
+    } do
       districts = [
         %{sort: 3, name: "District 3"},
         %{sort: 1, name: "District 1"},
@@ -85,7 +87,7 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@districts_query))
       expected_sorted_districts = ["District 1", "District 2", "District 3", "District 4"]
       result_list = Enum.map(json_response(conn, 200)["data"]["districts"], fn d -> d["name"] end)
-      assert result_list  == expected_sorted_districts
+      assert result_list == expected_sorted_districts
     end
   end
 
@@ -163,7 +165,7 @@ defmodule ReWeb.GraphQL.Addresses.QueryTest do
                "citySlug" => "rio-de-janeiro",
                "nameSlug" => "district-name",
                "description" => "descr",
-               "status" => "covered",
+               "status" => "covered"
              } == json_response(conn, 200)["data"]["district"]
     end
 
