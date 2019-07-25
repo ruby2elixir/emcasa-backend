@@ -14,7 +14,8 @@ defmodule Re.Application do
     AlikeTeller,
     Listings.History,
     PubSub,
-    Repo
+    Repo,
+    SellerLeads
   }
 
   def start(_type, _args) do
@@ -38,6 +39,7 @@ defmodule Re.Application do
       worker(AlikeTeller.Server, []),
       {BuyerLeads.JobQueue, repo: Repo},
       {Developments.JobQueue, repo: Repo},
-      {Listings.JobQueue, repo: Repo}
+      {Listings.JobQueue, repo: Repo},
+      {SellerLeads.JobQueue, repo: Repo}
     ]
 end

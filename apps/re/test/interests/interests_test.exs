@@ -13,8 +13,14 @@ defmodule Re.InterestsTest do
   import Mockery
   import Re.CustomAssertion
 
+  setup do
+    user = insert(:user)
+
+    {:ok, user: user}
+  end
+
   describe "request_price_suggestion/2" do
-    test "should store price suggestion request" do
+    test "should store price suggestion request", %{user: user} do
       mock(
         HTTPoison,
         :post,
@@ -50,13 +56,14 @@ defmodule Re.InterestsTest do
         is_covered: true
       }
 
-      assert {:ok, %{suggested_price: 26_279.0}} = Interests.request_price_suggestion(params, nil)
+      assert {:ok, %{suggested_price: 26_279.0}} =
+               Interests.request_price_suggestion(params, user)
 
       assert request = Repo.one(Request)
       assert request.suggested_price == 26_279.0
     end
 
-    test "should store price suggestion request with user attached" do
+    test "should store price suggestion request with user attached", %{user: user} do
       mock(
         HTTPoison,
         :post,
@@ -66,8 +73,6 @@ defmodule Re.InterestsTest do
              "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
          }}
       )
-
-      user = insert(:user)
 
       address_params = %{
         street: "street",
@@ -102,7 +107,7 @@ defmodule Re.InterestsTest do
       assert request.suggested_price == 26_279.0
     end
 
-    test "should store price suggestion request when street is not covered" do
+    test "should not store price suggestion request without user" do
       mock(
         HTTPoison,
         :post,
@@ -114,7 +119,7 @@ defmodule Re.InterestsTest do
       )
 
       address_params = %{
-        street: "not covered street",
+        street: "street",
         street_number: "street_number",
         neighborhood: "neighborhood",
         city: "city",
@@ -135,13 +140,12 @@ defmodule Re.InterestsTest do
         suites: 1,
         type: "Apartamento",
         maintenance_fee: 100.00,
-        is_covered: false
+        is_covered: true
       }
 
-      assert {:ok, %{suggested_price: 26_279.0}} = Interests.request_price_suggestion(params, nil)
+      assert {:error, :bad_request} = Interests.request_price_suggestion(params, nil)
 
-      assert request = Repo.one(Request)
-      assert request.suggested_price == 26_279.0
+      refute Repo.one(Request)
     end
   end
 
