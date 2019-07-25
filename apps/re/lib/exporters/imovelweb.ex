@@ -83,7 +83,7 @@ defmodule Re.Exporters.Imovelweb do
     do: {"Numero", %{}, listing.address.street_number}
 
   defp convert_attribute(:zipcode, listing, _), do: {"CEP", %{}, listing.address.postal_code}
-  defp convert_attribute(:show_address, _, _), do: {"DivulgarEndereco", %{}, "APROX"}
+  defp convert_attribute(:show_address, _, _), do: {"DivulgarEndereco", %{}, "SIM"}
   defp convert_attribute(:lat, listing, _), do: {"Latitude", %{}, listing.address.lat}
   defp convert_attribute(:lng, listing, _), do: {"Longitude", %{}, listing.address.lng}
   defp convert_attribute(:show_map, _, _), do: {"VisualizarMapa", %{}, 1}

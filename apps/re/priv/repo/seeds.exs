@@ -13,24 +13,18 @@ alias Re.{
   ListingTag,
   PriceSuggestions.Request,
   Repo,
-  Statistics.InPersonVisit,
-  Statistics.ListingVisualization,
-  Statistics.TourVisualization,
   Tag,
   Unit,
   User
 }
 
 Repo.delete_all(Image)
-Repo.delete_all(InPersonVisit)
 Repo.delete_all(Interest)
 Repo.delete_all(Favorite)
 Repo.delete_all(ListingTag)
-Repo.delete_all(ListingVisualization)
 Repo.delete_all(PriceHistory)
 Repo.delete_all(StatusHistory)
 Repo.delete_all(TourAppointment)
-Repo.delete_all(TourVisualization)
 Repo.delete_all(Unit)
 Repo.delete_all(Listing)
 Repo.delete_all(Request)

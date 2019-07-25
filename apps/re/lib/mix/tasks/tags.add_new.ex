@@ -5,7 +5,10 @@ defmodule Mix.Tasks.Re.Tags.AddNew do
   use Mix.Task
 
   @tags [
-    %{category: "realty", name: "Destaque", visibility: "private"}
+    %{category: "ops", name: "Temos Chave", visibility: "private"},
+    %{category: "ops", name: "Desocupado", visibility: "private"},
+    %{category: "ops", name: "Placa De Contato", visibility: "private"},
+    %{category: "ops", name: "Exclusivo", visibility: "private"}
   ]
 
   alias Re.{

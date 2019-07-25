@@ -807,10 +807,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       user = insert(:user)
       development = insert(:development)
       interests = insert_list(3, :interest)
-      in_person_visits = insert_list(3, :in_person_visit)
       listings_favorites = insert_list(3, :listings_favorites)
-      tour_visualisations = insert_list(3, :tour_visualisation)
-      listings_visualisations = insert_list(3, :listing_visualisation)
       [unit1, unit2] = insert_list(2, :unit)
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
@@ -824,10 +821,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           user: user,
           development: development,
           interests: interests,
-          in_person_visits: in_person_visits,
           listings_favorites: listings_favorites,
-          tour_visualisations: tour_visualisations,
-          listings_visualisations: listings_visualisations,
           price_history: price_history,
           units: [unit1, unit2],
           rooms: 2,
@@ -932,10 +926,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                ],
                "owner" => %{"name" => user.name},
                "interestCount" => 3,
-               "inPersonVisitCount" => 3,
+               "inPersonVisitCount" => nil,
                "listingFavoriteCount" => 3,
-               "tourVisualisationCount" => 3,
-               "listingVisualisationCount" => 3,
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil,
                "normalizedLiquidityRatio" => 10,
                "previousPrices" => [
                  %{"price" => price1},
@@ -976,10 +970,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       district = district_from_address(address)
 
       interests = insert_list(3, :interest)
-      in_person_visits = insert_list(3, :in_person_visit)
       listings_favorites = insert_list(3, :listings_favorites)
-      tour_visualisations = insert_list(3, :tour_visualisation)
-      listings_visualisations = insert_list(3, :listing_visualisation)
       [unit1, unit2] = insert_list(2, :unit)
 
       [%{price: price1}, %{price: price2}, %{price: price3}] =
@@ -992,10 +983,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           images: [image1, image2, image3, image4, image5],
           user: user,
           interests: interests,
-          in_person_visits: in_person_visits,
           listings_favorites: listings_favorites,
-          tour_visualisations: tour_visualisations,
-          listings_visualisations: listings_visualisations,
           price_history: price_history,
           units: [unit1, unit2],
           rooms: 2,
@@ -1085,10 +1073,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
                ],
                "owner" => %{"name" => user.name},
                "interestCount" => 3,
-               "inPersonVisitCount" => 3,
+               "inPersonVisitCount" => nil,
                "listingFavoriteCount" => 3,
-               "tourVisualisationCount" => 3,
-               "listingVisualisationCount" => 3,
+               "tourVisualisationCount" => nil,
+               "listingVisualisationCount" => nil,
                "previousPrices" => [
                  %{"price" => price1},
                  %{"price" => price2},

@@ -88,6 +88,7 @@ defmodule Re.Factory do
     state_slug = Re.Slugs.sluggify(state_name)
 
     %Re.Address{
+      uuid: UUID.uuid4(),
       street_number: Address.building_number(),
       street: street_name,
       street_slug: street_slug,
@@ -114,6 +115,7 @@ defmodule Re.Factory do
     state_slug = Re.Slugs.sluggify(state)
 
     %Re.Addresses.District{
+      uuid: UUID.uuid4(),
       name: name,
       name_slug: name_slug,
       city: city,
@@ -162,13 +164,7 @@ defmodule Re.Factory do
     }
   end
 
-  def listing_visualisation_factory, do: %Re.Statistics.ListingVisualization{}
-
   def listings_favorites_factory, do: %Re.Favorite{}
-
-  def tour_visualisation_factory, do: %Re.Statistics.TourVisualization{}
-
-  def in_person_visit_factory, do: %Re.Statistics.InPersonVisit{}
 
   def price_history_factory, do: %Re.Listings.PriceHistory{}
 
@@ -176,6 +172,7 @@ defmodule Re.Factory do
 
   def price_suggestion_request_factory do
     %Re.PriceSuggestions.Request{
+      uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email(),
       rooms: Enum.random(1..10),
@@ -354,6 +351,31 @@ defmodule Re.Factory do
       maintenance_fee: random(:maintenance_fee_float),
       suites: Enum.random(0..10),
       price: random(:price)
+    }
+  end
+
+  def calendar_factory do
+    %Re.GoogleCalendars.Calendar{
+      uuid: UUID.uuid4(),
+      external_id: UUID.uuid4()
+    }
+  end
+
+  def seller_lead_factory do
+    %Re.SellerLead{
+      uuid: UUID.uuid4(),
+      type: random(:listing_type),
+      complement: Address.secondary_address(),
+      maintenance_fee: random(:maintenance_fee_float),
+      rooms: Enum.random(1..10),
+      bathrooms: Enum.random(1..10),
+      garage_spots: Enum.random(0..10),
+      suites: Enum.random(0..10),
+      price: random(:price),
+      area: Enum.random(25..500),
+      source: Enum.random(~w(Website Facebook)),
+      tour_option: ~N[2019-07-18 10:00:00.000000],
+      inserted_at: ~N[2019-07-17 10:00:00.000000]
     }
   end
 

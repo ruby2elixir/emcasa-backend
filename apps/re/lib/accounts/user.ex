@@ -16,6 +16,9 @@ defmodule Re.User do
     field :device_token, :string
     field :account_kit_id, :string
 
+    field :type, :string, default: "property_owner"
+    field :salesforce_id, :string
+
     embeds_one(
       :notification_preferences,
       Re.Accounts.NotificationPreferences,
@@ -27,19 +30,14 @@ defmodule Re.User do
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :listing]
 
-    has_many(:listing_visualizations, Re.Statistics.ListingVisualization, on_delete: :delete_all)
-
-    has_many(:tour_visualizations_visualizations, Re.Statistics.TourVisualization,
-      on_delete: :delete_all
-    )
-
     timestamps()
   end
 
   @roles ~w(admin user)
+  @types ~w(property_owner partner_broker)
 
   @update_required ~w()a
-  @update_optional ~w(name email role phone device_token)a
+  @update_optional ~w(name email role phone device_token type salesforce_id)a
 
   def update_changeset(struct, params \\ %{}) do
     struct
@@ -74,6 +72,7 @@ defmodule Re.User do
     changeset
     |> validate_email()
     |> validate_inclusion(:role, @roles)
+    |> validate_inclusion(:type, @types)
   end
 
   defp validate_email(changeset) do

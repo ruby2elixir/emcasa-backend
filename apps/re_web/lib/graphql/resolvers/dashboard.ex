@@ -21,10 +21,11 @@ defmodule ReWeb.Resolvers.Dashboard do
     {:ok, Admin.listings(params)}
   end
 
-  def active_listing_count(params, _res) do
+  def active_listing_count(%{filters: filters}, _res) do
     count =
       Re.Listing
-      |> Filters.apply(Map.drop(params, ["status", :status]))
+      |> Filters.apply(Map.drop(filters, ["status", :status]))
+      |> exclude(:distinct)
       |> where([l], l.status == "active")
       |> select([l], count(l.id))
       |> Repo.one()
@@ -32,16 +33,19 @@ defmodule ReWeb.Resolvers.Dashboard do
     {:ok, count}
   end
 
+  def active_listing_count(_params, _res) do
+    {:ok,
+     Repo.one(
+       from(
+         l in Re.Listing,
+         select: count(l.id),
+         where: l.status == "active"
+       )
+     )}
+  end
+
   def favorite_count(_params, _res) do
     {:ok, Repo.one(from(f in Re.Favorite, select: count(f.id)))}
-  end
-
-  def visualization_count(_params, _res) do
-    {:ok, Repo.one(from(lv in Re.Statistics.ListingVisualization, select: count(lv.id)))}
-  end
-
-  def tour_visualization_count(_params, _res) do
-    {:ok, Repo.one(from(tv in Re.Statistics.TourVisualization, select: count(tv.id)))}
   end
 
   def maintenance_fee_count(_params, _res) do

@@ -13,8 +13,7 @@ defmodule Re.Application do
     Listings,
     Listings.History,
     PubSub,
-    Repo,
-    Statistics.Visualizations
+    Repo
   }
 
   def start(_type, _args) do
@@ -35,7 +34,6 @@ defmodule Re.Application do
   defp extra_processes(_),
     do: [
       worker(History.Server, []),
-      worker(Visualizations, []),
       {BuyerLeads.JobQueue, repo: Repo},
       {Developments.JobQueue, repo: Repo},
       {Listings.JobQueue, repo: Repo}

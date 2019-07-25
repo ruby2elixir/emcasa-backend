@@ -13,13 +13,7 @@ defmodule Mix.Tasks.Re.Addresses.AddDistrict do
 
   @shortdoc "Create new district"
   @covered_districts [
-    "Paraíso",
-    "Pompeia",
-    "Jardim Luzitania",
-    "Vila Clementino",
-    "Jardim Vila Mariana",
-    "Jardim da Gloria",
-    "Chácara Klabin"
+    "Vila Romana"
   ]
 
   def run(_) do
