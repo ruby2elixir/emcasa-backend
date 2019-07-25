@@ -10,4 +10,6 @@ defmodule Re.AlikeTeller do
       [{_uuid, uuids}] -> {:ok, uuids}
     end
   end
+
+  def load, do: GenServer.cast(__MODULE__.Server, :load_aliketeller)
 end
