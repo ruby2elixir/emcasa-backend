@@ -22,7 +22,10 @@ defmodule Re.TagTest do
 
     assert Keyword.get(changeset.errors, :category) ==
              {"is invalid",
-              [validation: :inclusion, enum: ~w(infrastructure location realty view concierge)]}
+              [
+                validation: :inclusion,
+                enum: ~w(infrastructure location realty view concierge ops)
+              ]}
   end
 
   test "changeset with missing attributes" do

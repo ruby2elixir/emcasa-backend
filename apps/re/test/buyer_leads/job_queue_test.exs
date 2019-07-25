@@ -488,6 +488,34 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.url == "https://www.emcasa.com/imoveis/ny/new-york"
       assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
     end
+
+    test "proecss lead with huge url" do
+      %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999", name: nil)
+
+      %{uuid: uuid} =
+        insert(:empty_search_buyer_lead,
+          user_uuid: user_uuid,
+          city: "New York",
+          city_slug: "new-york",
+          state: "NY",
+          state_slug: "ny",
+          url: String.duplicate("/feature", 256)
+        )
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_empty_search_buyer_lead",
+                 "uuid" => uuid
+               })
+
+      assert buyer = Repo.one(BuyerLead)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
+      assert buyer.uuid
+      assert buyer.user_uuid == user_uuid
+      assert buyer.location == "new-york|ny"
+      assert buyer.url == String.duplicate("/feature", 256)
+      assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
+    end
   end
 
   describe "requeue_all/1" do
