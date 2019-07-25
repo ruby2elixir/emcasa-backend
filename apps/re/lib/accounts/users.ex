@@ -41,20 +41,19 @@ defmodule Re.Accounts.Users do
     end
   end
 
-  def update(user, params, opts \\ []) do
+  def update(user, params) do
     user
-    |> Repo.preload(:districts)
     |> User.update_changeset(params)
-    |> changeset_for_opts(opts)
     |> Repo.update()
   end
 
-  defp changeset_for_opts(user_changeset, opts) do
-    Enum.reduce(opts, user_changeset, fn
-      {:districts, districts}, changeset ->
-        repo_districts = Neighborhoods.districts_by_name_slugs(districts)
-        Changeset.put_assoc(changeset, :districts, repo_districts)
-    end)
+  def update_districts(user, districts) do
+    repo_districts = Neighborhoods.districts_by_uuids(districts)
+    user
+    |> Repo.preload(:districts)
+    |> Changeset.change
+    |> Changeset.put_assoc(:districts, repo_districts)
+    |> Repo.update()
   end
 
   def change_email(user, new_email) do

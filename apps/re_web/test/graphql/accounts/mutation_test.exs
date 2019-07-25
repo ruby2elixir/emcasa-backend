@@ -88,7 +88,8 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
           "email" => false,
           "app" => false
         },
-        "deviceToken" => "asdasdasd"
+        "deviceToken" => "asdasdasd",
+        "type" => "partner_broker"
       }
 
       mutation = """
@@ -113,6 +114,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       assert user.name == "Fixed Name"
       assert user.phone == "123321123"
       assert user.device_token == "asdasdasd"
+      assert user.type == "partner_broker"
       refute user.notification_preferences.email
       refute user.notification_preferences.app
     end
@@ -126,7 +128,8 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
           "email" => false,
           "app" => false
         },
-        "deviceToken" => "asdasdasd"
+        "deviceToken" => "asdasdasd",
+        "type" => "partner_broker"
       }
 
       mutation = """
@@ -151,6 +154,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       assert user.name == "Fixed Name"
       assert user.phone == "123321123"
       assert user.device_token == "asdasdasd"
+      assert user.type == "partner_broker"
       refute user.notification_preferences.email
       refute user.notification_preferences.app
     end
@@ -453,31 +457,20 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     end
   end
 
-  describe "editPartnerBroker" do
+  describe "editBrokerDistricts" do
 
-    test "admin should edit any partner broker", %{admin_conn: conn, partner_user: user} do
+    test "admin should edit any partner broker districts", %{admin_conn: conn, partner_user: user} do
       districts = insert_list(2, :district)
       districts_slug = Enum.map(districts, fn district -> district.name_slug end)
       variables = %{
         "id" => user.id,
-        "name" => "Fixed Name",
-        "phone" => "123321123",
-        "notificationPreferences" => %{
-          "email" => false,
-          "app" => false
-        },
-        "deviceToken" => "asdasdasd",
         "districts" => districts_slug
       }
 
       mutation = """
-        mutation EditPartnerBroker($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String, $districts: [String]!) {
-          editPartnerBroker(
+        mutation EditBrokerDistricts($id: ID!, $districts: [String]!) {
+          editBrokerDistricts(
             id: $id,
-            name: $name,
-            phone: $phone,
-            notificationPreferences: $notificationPreferences,
-            deviceToken: $deviceToken,
             districts: $districts
           ){
             id
@@ -487,40 +480,24 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editPartnerBroker"]
+      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editBrokerDistricts"]
 
       assert user = Repo.get(User, user.id) |> Repo.preload(:districts)
-      assert user.name == "Fixed Name"
-      assert user.phone == "123321123"
-      assert user.device_token == "asdasdasd"
-      refute user.notification_preferences.email
-      refute user.notification_preferences.app
       assert user.districts == districts
     end
 
-    test "broker should edit own profile", %{partner_conn: conn, partner_user: user} do
+    test "broker should edit own districts", %{partner_conn: conn, partner_user: user} do
       districts = insert_list(2, :district)
       districts_slug = Enum.map(districts, fn district -> district.name_slug end)
       variables = %{
         "id" => user.id,
-        "name" => "Fixed Name",
-        "phone" => "123321123",
-        "notificationPreferences" => %{
-          "email" => false,
-          "app" => false
-        },
-        "deviceToken" => "asdasdasd",
         "districts" => districts_slug
       }
 
       mutation = """
-        mutation EditPartnerBroker($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String, $districts: [String]!) {
-          editPartnerBroker(
+        mutation EditBrokerDistricts($id: ID!, $districts: [String]!) {
+          editBrokerDistricts(
             id: $id,
-            name: $name,
-            phone: $phone,
-            notificationPreferences: $notificationPreferences,
-            deviceToken: $deviceToken,
             districts: $districts
           ){
             id
@@ -530,14 +507,9 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editPartnerBroker"]
+      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editBrokerDistricts"]
 
       assert user = Repo.get(User, user.id) |> Repo.preload(:districts)
-      assert user.name == "Fixed Name"
-      assert user.phone == "123321123"
-      assert user.device_token == "asdasdasd"
-      refute user.notification_preferences.email
-      refute user.notification_preferences.app
       assert user.districts == districts
     end
 
@@ -548,13 +520,12 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       variables = %{
         "id" => inserted_user.id,
-        "name" => "Fixed Name",
         "districts" => districts_slug
       }
 
       mutation = """
-        mutation EditPartnerBroker($id: ID!, $name: String, $districts: [String]!) {
-          editPartnerBroker(id: $id, name: $name, districts: $districts) {
+        mutation EditBrokerDistricts($id: ID!, $districts: [String]!) {
+          editBrokerDistricts(id: $id, name: $name, districts: $districts) {
             id
           }
         }
@@ -570,13 +541,12 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       variables = %{
         "id" => user.id,
-        "name" => "Fixed Name",
         "districts" => ["d1"]
       }
 
       mutation = """
-        mutation EditPartnerBroker($id: ID!, $name: String, $districts: [String]!) {
-          editPartnerBroker(id: $id, name: $name, districts: $districts) {
+        mutation EditBrokerDistricts($id: ID!, $districts: [String]!) {
+          editBrokerDistricts(id: $id, districts: $districts) {
             id
           }
         }

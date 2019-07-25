@@ -108,6 +108,7 @@ defmodule ReWeb.Types.User do
       arg :phone, :string
       arg :notification_preferences, :notification_preferences_input
       arg :device_token, :string
+      arg :type, :string
 
       resolve &AccountsResolver.edit_profile/2
     end
@@ -129,15 +130,11 @@ defmodule ReWeb.Types.User do
     end
 
     @desc "Edits and user so it became a partner broker"
-    field :edit_partner_broker, type: :user do
+    field :edit_broker_districts, type: :user do
       arg :id, non_null(:id)
-      arg :name, :string
-      arg :phone, :string
-      arg :device_token, :string
-      arg :notification_preferences, :notification_preferences_input
       arg :districts, non_null(list_of(:string))
 
-      resolve &AccountsResolver.edit_broker_profile/2
+      resolve &AccountsResolver.edit_broker_districts/2
     end
   end
 end

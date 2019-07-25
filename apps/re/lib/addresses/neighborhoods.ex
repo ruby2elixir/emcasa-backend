@@ -40,8 +40,8 @@ defmodule Re.Addresses.Neighborhoods do
     do:
       Repo.all(from(d in District, where: d.status in @covered_for_show, order_by: d.sort_order))
 
-  def districts_by_name_slugs(names \\ []) do
-    Repo.all(from(d in District, where: d.name_slug in ^names))
+  def districts_by_uuids(uuids \\ []) do
+    Repo.all(from(d in District, where: d.uuid in ^uuids))
   end
 
   def get_district(params) do
