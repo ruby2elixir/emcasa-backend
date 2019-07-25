@@ -19,6 +19,7 @@ defmodule Re.SellerLead do
     field :suites, :integer
     field :garage_spots, :integer
     field :price, :float
+    field :suggested_price, :float
     field :tour_option, :utc_datetime
 
     belongs_to :address, Re.Address,
@@ -34,10 +35,9 @@ defmodule Re.SellerLead do
     timestamps(type: :utc_datetime)
   end
 
-  @required ~w(origin)a
-  @optional ~w(street street_number city state neighborhood postal_code name phone email source
-               complement type area maintenance_fee rooms bathrooms suites garage_spots value
-               tour_option address_uuid user_uuid)a
+  @required ~w(source)a
+  @optional ~w(complement type area maintenance_fee rooms bathrooms suites garage_spots price
+               suggested_price tour_option address_uuid user_uuid)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do

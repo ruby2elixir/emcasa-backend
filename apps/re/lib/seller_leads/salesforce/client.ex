@@ -9,7 +9,7 @@ defmodule Re.SellerLeads.Salesforce.Client do
     User
   }
 
-  @exported ~w(uuid source type complement price rooms bathrooms suites garage_spots
+  @exported ~w(uuid source type complement suggested_price rooms bathrooms suites garage_spots
                maintenance_fee area tour_option inserted_at)a
 
   def create_lead(%Re.SellerLead{} = lead) do
