@@ -93,13 +93,14 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       }
 
       mutation = """
-        mutation EditUserProfile($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String) {
+        mutation EditUserProfile($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String, $type: String) {
           editUserProfile(
             id: $id,
             name: $name,
             phone: $phone,
             notificationPreferences: $notificationPreferences,
-            deviceToken: $deviceToken
+            deviceToken: $deviceToken,
+            type: $type
           ){
             id
           }
@@ -133,13 +134,14 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       }
 
       mutation = """
-        mutation EditUserProfile($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String) {
+        mutation EditUserProfile($id: ID!, $name: String, $phone: String, $notificationPreferences: NotificationPreferencesInput, $deviceToken: String, $type: String) {
           editUserProfile(
             id: $id,
             name: $name,
             phone: $phone,
             notificationPreferences: $notificationPreferences,
-            deviceToken: $deviceToken
+            deviceToken: $deviceToken,
+            type: $type
           ){
             id
           }
@@ -461,10 +463,10 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
     test "admin should edit any partner broker districts", %{admin_conn: conn, partner_user: user} do
       districts = insert_list(2, :district)
-      districts_slug = Enum.map(districts, fn district -> district.name_slug end)
+      districts_uuid = Enum.map(districts, fn district -> district.uuid end)
       variables = %{
         "id" => user.id,
-        "districts" => districts_slug
+        "districts" => districts_uuid
       }
 
       mutation = """
@@ -488,10 +490,10 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
     test "broker should edit own districts", %{partner_conn: conn, partner_user: user} do
       districts = insert_list(2, :district)
-      districts_slug = Enum.map(districts, fn district -> district.name_slug end)
+      districts_uuid = Enum.map(districts, fn district -> district.uuid end)
       variables = %{
         "id" => user.id,
-        "districts" => districts_slug
+        "districts" => districts_uuid
       }
 
       mutation = """
@@ -516,16 +518,16 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "partner should not edit other user's  profile", %{partner_conn: conn} do
       inserted_user = insert(:user)
       districts = insert_list(2, :district)
-      districts_slug = Enum.map(districts, fn district -> district.name_slug end)
+      districts_uuid = Enum.map(districts, fn district -> district.uuid end)
 
       variables = %{
         "id" => inserted_user.id,
-        "districts" => districts_slug
+        "districts" => districts_uuid
       }
 
       mutation = """
         mutation EditBrokerDistricts($id: ID!, $districts: [String]!) {
-          editBrokerDistricts(id: $id, name: $name, districts: $districts) {
+          editBrokerDistricts(id: $id, districts: $districts) {
             id
           }
         }
