@@ -49,9 +49,10 @@ defmodule Re.Accounts.Users do
 
   def update_districts(user, districts) do
     repo_districts = Neighborhoods.districts_by_uuids(districts)
+
     user
     |> Repo.preload(:districts)
-    |> Changeset.change
+    |> Changeset.change()
     |> Changeset.put_assoc(:districts, repo_districts)
     |> Repo.update()
   end
