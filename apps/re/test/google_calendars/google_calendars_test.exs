@@ -8,11 +8,27 @@ defmodule Re.GoogleCalendarsTest do
 
   import Re.Factory
 
-  describe "insert/1" do
-    @calendar_params %{external_id: "id"}
+  describe "get_preloaded/1" do
+    test "should retrieve a calendar with preloaded relations" do
+      calendar =
+        insert(:calendar, address: insert(:address), districts: insert_list(2, :district))
 
+      assert {:ok, retrieved_calendar} = GoogleCalendars.get_preloaded(calendar.uuid)
+      assert retrieved_calendar.external_id == calendar.external_id
+      assert retrieved_calendar.address == calendar.address
+      assert retrieved_calendar.districts == calendar.districts
+    end
+  end
+
+  describe "insert/1" do
     test "should insert a calendar" do
-      assert {:ok, inserted_calendar} = GoogleCalendars.insert(@calendar_params)
+      address = insert(:address)
+
+      assert {:ok, inserted_calendar} =
+               GoogleCalendars.insert(%{
+                 address: address,
+                 external_id: "id"
+               })
 
       assert retrieved_calendar = Repo.get(Calendar, inserted_calendar.uuid)
       assert retrieved_calendar.external_id == inserted_calendar.external_id
