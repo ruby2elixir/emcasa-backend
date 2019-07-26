@@ -44,6 +44,14 @@ defmodule ReWeb.Resolvers.Accounts do
          do: Users.update(user, params)
   end
 
+  def edit_broker_districts(%{id: id, districts: districts}, %{
+        context: %{current_user: current_user}
+      }) do
+    with {:ok, user} <- Users.get(id),
+         :ok <- Bodyguard.permit(Users, :edit_profile, current_user, user),
+         do: Users.update_districts(user, districts)
+  end
+
   def change_email(%{id: id, email: email}, %{context: %{current_user: current_user}}) do
     with {:ok, user} <- Users.get(id),
          :ok <- Bodyguard.permit(Users, :edit_profile, current_user, user),
