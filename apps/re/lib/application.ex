@@ -37,6 +37,7 @@ defmodule Re.Application do
     do: [
       worker(History.Server, []),
       worker(AlikeTeller.Server, []),
+      AlikeTeller.Scheduler,
       {BuyerLeads.JobQueue, repo: Repo},
       {Developments.JobQueue, repo: Repo},
       {Listings.JobQueue, repo: Repo},

@@ -60,7 +60,8 @@ defmodule Re.Mixfile do
       {:ecto_job, "~> 2.0"},
       {:prometheus_ecto, "~> 1.4"},
       {:mockery, "~> 2.3", runtime: false},
-      {:retry, "~> 0.10"}
+      {:retry, "~> 0.10"},
+      {:quantum, "~> 2.3"}
     ]
   end
 
