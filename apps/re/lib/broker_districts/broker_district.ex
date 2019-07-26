@@ -8,7 +8,7 @@ defmodule Re.BrokerDistrict do
 
   @primary_key false
 
-  schema "broker_districts" do
+  schema "brokers_districts" do
     belongs_to :user, Re.User,
       primary_key: true,
       foreign_key: :user_uuid,
