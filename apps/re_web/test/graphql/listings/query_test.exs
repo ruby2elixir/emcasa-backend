@@ -14,6 +14,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
     admin_user = insert(:user, email: "admin@email.com", role: "admin")
     user_user = insert(:user, email: "user@email.com", role: "user")
 
+    :ets.new(:aliketeller, [:set, :protected, :named_table, read_concurrency: true])
+
     {:ok,
      unauthenticated_conn: conn,
      admin_user: admin_user,
@@ -833,8 +835,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           liquidity_ratio: 1.0
         )
 
-      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
-      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
+      [%{id: related_id1, uuid: related_uuid1}, %{id: related_id2, uuid: related_uuid2}] =
+        insert_list(2, :listing)
+
+      insert_ets_related(listing_uuid, [related_uuid1, related_uuid2])
 
       variables = %{
         "id" => listing_id,
@@ -976,7 +980,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       [%{price: price1}, %{price: price2}, %{price: price3}] =
         price_history = insert_list(3, :price_history)
 
-      %{id: listing_id} =
+      %{id: listing_id, uuid: listing_uuid} =
         insert(
           :listing,
           address: address,
@@ -994,8 +998,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           suggested_price: nil
         )
 
-      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
-      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
+      [%{id: related_id1, uuid: related_uuid1}, %{id: related_id2, uuid: related_uuid2}] =
+        insert_list(2, :listing)
+
+      insert_ets_related(listing_uuid, [related_uuid1, related_uuid2])
 
       variables = %{
         "id" => listing_id,
@@ -1110,7 +1116,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       user = insert(:user)
       [unit1, unit2] = insert_list(2, :unit)
 
-      %{id: listing_id} =
+      %{id: listing_id, uuid: listing_uuid} =
         insert(:listing,
           address: address,
           images: [image1, image2, image3, image4, image5],
@@ -1119,8 +1125,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           inserted_at: ~N[2018-01-01 10:00:00]
         )
 
-      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
-      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
+      [%{id: related_id1, uuid: related_uuid1}, %{id: related_id2, uuid: related_uuid2}] =
+        insert_list(2, :listing)
+
+      insert_ets_related(listing_uuid, [related_uuid1, related_uuid2])
 
       variables = %{
         "id" => listing_id,
@@ -1234,7 +1242,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       user = insert(:user)
       [unit1, unit2] = insert_list(2, :unit)
 
-      %{id: listing_id} =
+      %{id: listing_id, uuid: listing_uuid} =
         insert(:listing,
           address: address,
           images: [image1, image2, image3, image4, image5],
@@ -1243,8 +1251,10 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
           inserted_at: ~N[2018-01-01 10:00:00]
         )
 
-      %{id: related_id1} = insert(:listing, address: address, liquidity_ratio: 4.0)
-      %{id: related_id2} = insert(:listing, address: address, liquidity_ratio: 3.0)
+      [%{id: related_id1, uuid: related_uuid1}, %{id: related_id2, uuid: related_uuid2}] =
+        insert_list(2, :listing)
+
+      insert_ets_related(listing_uuid, [related_uuid1, related_uuid2])
 
       variables = %{
         "id" => listing_id,
@@ -1537,4 +1547,6 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
+
+  defp insert_ets_related(uuid, uuids), do: :ets.insert(:aliketeller, {uuid, uuids})
 end

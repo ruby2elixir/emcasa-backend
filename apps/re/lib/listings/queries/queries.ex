@@ -142,4 +142,6 @@ defmodule Re.Listings.Queries do
     )
     |> group_by([l, a], a.neighborhood_slug)
   end
+
+  def with_uuids(query, uuids), do: where(query, [l], l.uuid in ^uuids)
 end
