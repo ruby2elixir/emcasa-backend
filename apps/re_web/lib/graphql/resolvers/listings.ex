@@ -252,7 +252,7 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
-  def related(%{uuid: uuid} = listing, params, %{context: %{current_user: current_user}}) do
+  def related(%{uuid: uuid}, params, %{context: %{current_user: current_user}}) do
     pagination = Map.get(params, :pagination, %{})
     filtering = Map.get(params, :filters, %{})
 

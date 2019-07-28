@@ -3,10 +3,8 @@ defmodule Re.Listings.Related do
   Module that contains related listings queries based on a listing
   It takes apart a few common attributes and attempts queries
   """
-  import Ecto.Query
 
   alias Re.{
-    Images,
     Listing,
     Listings,
     Listings.Queries,
