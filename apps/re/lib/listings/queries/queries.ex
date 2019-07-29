@@ -147,7 +147,7 @@ defmodule Re.Listings.Queries do
   To be able to keep the uuids order: https://stackoverflow.com/questions/866465/order-by-the-in-value-list
   """
   def with_uuids(query, uuids) do
-    uuids_formatted = Enum.map(uuids, &(Ecto.UUID.dump(&1) |> elem(1)))
+    uuids_formatted = Enum.map(uuids, &(&1 |> Ecto.UUID.dump() |> elem(1)))
 
     from(
       l in query,
