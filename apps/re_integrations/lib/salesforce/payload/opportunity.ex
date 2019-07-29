@@ -40,7 +40,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     field :owner_id, :string
     field :address, :string
     field :neighborhood, :string
-    field :tour_date, :naive_datetime
+    field :tour_date, :utc_datetime
     field :tour_period, TourPeriod
   end
 
