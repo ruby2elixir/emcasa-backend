@@ -69,12 +69,28 @@ If you prefer, mix has some aliases for the common commands:
 * `mix compose down`: stop all services.
 * `mix compose ps`: check `status` for all services.
 
+#### Load database backup to your docker image:
+
+To start the restoring process, first you need to copy the backup file to the db image, to do so, you have to:
+
+```bash
+docker cp <path-to-backup-file-on-your-machine> <docker-db-image-name>:<path-inside-docker-image>
+
+```
+
+After that you connect to your `db-image` bash console, with this command:
+```bash
+docker exec -it <docker-db-image-name> bash
+```
+
+And then you run the restore command as defined in [Load database backup](#load-database-backup) section
+
 ### Load database backup
 
 To restore a database backup execute the command:
 
 ```bash
-pg_restore -d re_dev --clean --no-owner --no-acl <path-to-backup-file>
+pg_restore -U postgres -d re_dev --clean --no-owner --no-acl <path-to-backup-file>
 ```
 
 ## Production
