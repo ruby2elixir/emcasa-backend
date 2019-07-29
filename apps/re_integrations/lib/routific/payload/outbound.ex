@@ -31,16 +31,15 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
           else: :error
       end)
 
-  defp build_visit(%{duration: _duration, address: address, lat: lat, lng: lng} = visit) do
+  defp build_visit(%{duration: _duration, address: address} = visit) do
     visit
     |> Map.take([:duration, :start, :end])
     |> Map.update(:start, Routific.shift_start(), &to_time_string/1)
     |> Map.update(:end, Routific.shift_end(), &to_time_string/1)
     |> Map.put(:location, %{
-      name: address,
-      lat: lat,
-      lng: lng
+      name: address
     })
+    |> Map.put(:customNotes, Map.get(visit, :custom_notes, %{}))
   end
 
   defp build_visit(_visit), do: :error

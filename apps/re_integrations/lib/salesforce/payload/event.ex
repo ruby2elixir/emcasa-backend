@@ -1,6 +1,6 @@
 defmodule ReIntegrations.Salesforce.Payload.Event do
   @moduledoc """
-  Module for validating priceteller input parameters
+  Module for validating salesforce event entity
   """
   use Ecto.Schema
 
@@ -8,36 +8,52 @@ defmodule ReIntegrations.Salesforce.Payload.Event do
 
   import EctoEnum
 
-  defenum SubjectType,
+  defenum(Field,
+    id: "Id",
+    who_id: "WhoId",
+    what_id: "WhatId",
+    owner_id: "OwnerId",
+    subject: "Subject",
+    type: "Type",
+    location: "Location",
+    description: "Description",
+    start: "StartDateTime",
+    end: "EndDateTime",
+    duration: "DurationInMinutes"
+  )
+
+  defenum(SubjectType,
     tour_session: "Visita para Tour",
     photography_session: "Visita para Fotos"
+  )
 
-  defenum EventType,
+  defenum(EventType,
     visit: "Visita"
+  )
+
+  @primary_key {:id, :string, []}
 
   schema "salesforce_event" do
-    field :WhoId, :string
-    field :WhatId, :string
-    field :OwnerId, :string
-    field :Subject, SubjectType
-    field :Type, EventType
-    field :Location, :string
-    field :Description, :string
-    field :StartDateTime, :naive_datetime
-    field :EndDateTime, :naive_datetime
-    field :DurationInMinutes, :integer
+    field :who_id, :string
+    field :what_id, :string
+    field :owner_id, :string
+    field :subject, SubjectType
+    field :type, EventType
+    field :location, :string
+    field :description, :string
+    field :start, :naive_datetime
+    field :end, :naive_datetime
+    field :duration, :integer
   end
 
-  @params ~w(WhoId WhatId OwnerId Subject Type Location Description
-             StartDateTime EndDateTime DurationInMinutes)a
-  @required_params ~w(Subject StartDateTime EndDateTime)a
-  @enum_fields ~w(Subject Type)a
+  @params ~w(who_id what_id owner_id subject type location description start end duration)a
+  @required_params ~w(subject start end)a
 
   def validate(params) do
     %__MODULE__{}
     |> changeset(params)
     |> case do
-      %{valid?: true} = changeset -> {:ok, changeset.changes}
+      %{valid?: true} = changeset -> {:ok, apply_changes(changeset)}
       changeset -> {:error, :invalid_input, params, changeset}
     end
   end
@@ -46,15 +62,26 @@ defmodule ReIntegrations.Salesforce.Payload.Event do
     struct
     |> cast(params, @params)
     |> validate_required(@required_params)
-    |> update_enums(@enum_fields)
+  end
+end
+
+defimpl Jason.Encoder, for: ReIntegrations.Salesforce.Payload.Event do
+  alias ReIntegrations.Salesforce.Payload.Event
+
+  def encode(value, opts) do
+    value
+    |> Map.take(Event.Fields.__valid_values__())
+    |> Enum.reduce(%{}, &reduce_field/2)
+    |> Jason.Encode.map(opts)
   end
 
-  defp update_enums(struct, fields),
-    do: Enum.reduce(fields, struct, fn field, acc -> update_enum(acc, field) end)
+  defp reduce_field({:subject, enum}, acc) when is_atom(enum),
+    do:
+      with({:ok, value} <- Event.SubjectType.dump(enum), do: reduce_field({:subject, value}, acc))
 
-  defp update_enum(struct, field) do
-    enum = __MODULE__.__schema__(:type, field).__enum_map__()
-    struct
-    |> update_change(field, &Keyword.get(enum, &1))
-  end
+  defp reduce_field({:type, enum}, acc) when is_atom(enum),
+    do: with({:ok, value} <- Event.EventType.dump(enum), do: reduce_field({:type, value}, acc))
+
+  defp reduce_field({key, value}, acc),
+    do: with({:ok, field} <- Event.Field.dump(key), do: Map.put(acc, field, value))
 end
