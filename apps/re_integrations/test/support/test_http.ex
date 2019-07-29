@@ -68,39 +68,37 @@ defmodule ReIntegrations.TestHTTP do
     do: {:ok, %{body: "{\"job_id\": \"100\"}"}}
 
   def post(%URI{path: "/api/v1/query"}, body, _opts) do
-    cond do
-      String.contains?(body, "FROM Opportunity") ->
-        {
-          :ok,
-          %{
-            status_code: 200,
-            body: """
-            {
-              "records": [
-                {
-                  "Id": "0x01",
-                  "AccountId": "0x01",
-                  "OwnerId": "0x01",
-                  "Bairro__c": "Vila Mariana",
-                  "Dados_do_Imovel_para_Venda__c": "address 123",
-                  "Faixa_Hor_ria_Tour__c": "Manhã: 09h - 12h"
-                },
-                {
-                  "Id": "0x02",
-                  "AccountId": "0x01",
-                  "OwnerId": "0x01",
-                  "Bairro__c": "Vila Mariana",
-                  "Dados_do_Imovel_para_Venda__c": "address 123",
-                  "Data_Tour__c": "2019-07-29T20:25:32.000Z"
-                }
-              ]
-            }
-            """
+    if String.contains?(body, "FROM Opportunity") do
+      {
+        :ok,
+        %{
+          status_code: 200,
+          body: """
+          {
+            "records": [
+              {
+                "Id": "0x01",
+                "AccountId": "0x01",
+                "OwnerId": "0x01",
+                "Bairro__c": "Vila Mariana",
+                "Dados_do_Imovel_para_Venda__c": "address 123",
+                "Faixa_Hor_ria_Tour__c": "Manhã: 09h - 12h"
+              },
+              {
+                "Id": "0x02",
+                "AccountId": "0x01",
+                "OwnerId": "0x01",
+                "Bairro__c": "Vila Mariana",
+                "Dados_do_Imovel_para_Venda__c": "address 123",
+                "Data_Tour__c": "2019-07-29T20:25:32.000Z"
+              }
+            ]
           }
+          """
         }
-
-      true ->
-        {:ok, %{status_code: 400}}
+      }
+    else
+      {:ok, %{status_code: 400}}
     end
   end
 end

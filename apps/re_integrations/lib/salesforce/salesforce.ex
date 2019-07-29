@@ -12,7 +12,7 @@ defmodule ReIntegrations.Salesforce do
   @schedule_interval Application.get_env(:re_integrations, :tour_schedule_interval, days: 2)
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 60)
 
-  defp default_schedule_opts(),
+  defp default_schedule_opts,
     do: [date: Timex.now() |> Timex.shift(@schedule_interval)]
 
   def schedule_visits(schedule_opts \\ []) do
@@ -20,7 +20,8 @@ defmodule ReIntegrations.Salesforce do
 
     with {:ok, %{status_code: 200, body: body}} <- fetch_visits(opts),
          {:ok, %{"records" => records}} = Jason.decode(body) do
-      Enum.map(records, &build_visit/1)
+      records
+      |> Enum.map(&build_visit/1)
       |> Routific.start_job()
     end
   end

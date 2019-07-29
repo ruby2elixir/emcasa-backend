@@ -48,8 +48,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
 
   def build(payload) do
     payload
-    |> Enum.map(&build_field/1)
-    |> Enum.into(%{})
+    |> Enum.into(%{}, &build_field/1)
     |> validate()
   end
 
