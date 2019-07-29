@@ -58,11 +58,8 @@ defmodule ReIntegrations.Salesforce.Payload.Event do
     end
   end
 
-  defp changeset(struct, params) do
-    struct
-    |> cast(params, @params)
-    |> validate_required(@required_params)
-  end
+  defp changeset(struct, params),
+    do: struct |> cast(params, @params) |> validate_required(@required_params)
 end
 
 defimpl Jason.Encoder, for: ReIntegrations.Salesforce.Payload.Event do

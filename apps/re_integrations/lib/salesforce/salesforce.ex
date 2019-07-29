@@ -51,24 +51,15 @@ defmodule ReIntegrations.Salesforce do
   end
 
   defp build_visit(record) do
-    payload = record |> Payload.Opportunity.build()
-
-    payload
-    |> Map.take([:address])
-    |> Map.merge(visit_period(payload))
-    |> Map.put(:custom_notes, visit_notes(payload))
-    |> Map.put(:duration, @tour_visit_duration)
+    with {:ok, opportunity} <- Payload.Opportunity.build(record) do
+      opportunity
+      |> Map.take([:id, :address, :neighborhood])
+      |> Map.merge(Payload.Opportunity.visitation_period(opportunity))
+      |> Map.put(:custom_notes, visit_notes(opportunity))
+      |> Map.put(:duration, @tour_visit_duration)
+    end
   end
 
-  defp visit_notes(visit),
-    do: Map.take(visit, [:id, :owner_id, :account_id, :neighborhood])
-
-  defp visit_period(%{tour_date: %DateTime{} = tour_date}),
-    do: %{start: tour_date |> DateTime.to_time(), end: tour_date |> DateTime.to_time()}
-
-  defp visit_period(%{tour_period: :morning}), do: %{start: ~T[09:00:00Z], end: ~T[12:00:00Z]}
-
-  defp visit_period(%{tour_period: :afternoon}), do: %{start: ~T[12:00:00Z], end: ~T[18:00:00Z]}
-
-  defp visit_period(_), do: %{start: ~T[09:00:00Z], end: ~T[18:00:00Z]}
+  defp visit_notes(opportunity),
+    do: Map.take(opportunity, [:owner_id, :account_id, :neighborhood])
 end

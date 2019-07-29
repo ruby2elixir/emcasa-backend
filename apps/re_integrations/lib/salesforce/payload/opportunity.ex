@@ -65,8 +65,15 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     end
   end
 
-  defp changeset(struct, params) do
-    struct
-    |> cast(params, @params)
-  end
+  defp changeset(struct, params), do: struct |> cast(params, @params)
+
+  def visitation_period(%{tour_date: %DateTime{} = tour_date}),
+    do: %{start: tour_date |> DateTime.to_time(), end: tour_date |> DateTime.to_time()}
+
+  def visitation_period(%{tour_period: :morning}), do: %{start: ~T[09:00:00Z], end: ~T[12:00:00Z]}
+
+  def visitation_period(%{tour_period: :afternoon}),
+    do: %{start: ~T[12:00:00Z], end: ~T[18:00:00Z]}
+
+  def visitation_period(_), do: %{start: ~T[09:00:00Z], end: ~T[18:00:00Z]}
 end
