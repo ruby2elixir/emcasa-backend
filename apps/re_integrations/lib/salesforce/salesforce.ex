@@ -1,10 +1,9 @@
 defmodule ReIntegrations.Salesforce do
   @moduledoc """
-  Context module for routific.
+  Context module for salesforce
   """
 
   alias ReIntegrations.{
-    Repo,
     Routific,
     Salesforce.Client,
     Salesforce.Payload
