@@ -12,6 +12,9 @@ defmodule ReIntegrations.Salesforce.Client do
   def insert(payload, :Event),
     do: payload |> post("/api/v1/Event")
 
+  def query(soql),
+    do: %{soql: soql} |> post("/api/v1/query")
+
   defp build_uri(path), do: URI.parse(@api_url <> path)
 
   defp post(body, path),
