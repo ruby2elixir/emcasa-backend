@@ -7,8 +7,8 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
 
   import Mockery
 
-  alias ReWeb.AbsintheHelpers
   alias Re.AlikeTeller
+  alias ReWeb.AbsintheHelpers
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
