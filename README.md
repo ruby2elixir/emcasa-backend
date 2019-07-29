@@ -69,7 +69,7 @@ If you prefer, mix has some aliases for the common commands:
 * `mix compose down`: stop all services.
 * `mix compose ps`: check `status` for all services.
 
-#### Load database backup to your docker image:
+#### Load database backup to your docker image
 
 To start the restoring process, first you need to copy the backup file to the db image, to do so, you have to:
 
