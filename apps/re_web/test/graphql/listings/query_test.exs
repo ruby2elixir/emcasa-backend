@@ -8,13 +8,14 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
   import Mockery
 
   alias ReWeb.AbsintheHelpers
+  alias Re.AlikeTeller
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
     admin_user = insert(:user, email: "admin@email.com", role: "admin")
     user_user = insert(:user, email: "user@email.com", role: "user")
 
-    :ets.new(:aliketeller, [:set, :protected, :named_table, read_concurrency: true])
+    AlikeTeller.create_ets_table()
 
     {:ok,
      unauthenticated_conn: conn,
@@ -838,7 +839,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       [%{id: related_id1, uuid: related_uuid1}, %{id: related_id2, uuid: related_uuid2}] =
         insert_list(2, :listing)
 
-      insert_ets_related(listing_uuid, [related_uuid1, related_uuid2])
+      AlikeTeller.insert(listing_uuid, [related_uuid1, related_uuid2])
 
       variables = %{
         "id" => listing_id,
@@ -1001,7 +1002,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       [%{id: related_id1, uuid: related_uuid1}, %{id: related_id2, uuid: related_uuid2}] =
         insert_list(2, :listing)
 
-      insert_ets_related(listing_uuid, [related_uuid1, related_uuid2])
+      AlikeTeller.insert(listing_uuid, [related_uuid1, related_uuid2])
 
       variables = %{
         "id" => listing_id,
@@ -1128,7 +1129,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       [%{id: related_id1, uuid: related_uuid1}, %{id: related_id2, uuid: related_uuid2}] =
         insert_list(2, :listing)
 
-      insert_ets_related(listing_uuid, [related_uuid1, related_uuid2])
+      AlikeTeller.insert(listing_uuid, [related_uuid1, related_uuid2])
 
       variables = %{
         "id" => listing_id,
@@ -1254,7 +1255,7 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       [%{id: related_id1, uuid: related_uuid1}, %{id: related_id2, uuid: related_uuid2}] =
         insert_list(2, :listing)
 
-      insert_ets_related(listing_uuid, [related_uuid1, related_uuid2])
+      AlikeTeller.insert(listing_uuid, [related_uuid1, related_uuid2])
 
       variables = %{
         "id" => listing_id,
@@ -1547,6 +1548,4 @@ defmodule ReWeb.GraphQL.Listings.QueryTest do
       assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
   end
-
-  defp insert_ets_related(uuid, uuids), do: :ets.insert(:aliketeller, {uuid, uuids})
 end

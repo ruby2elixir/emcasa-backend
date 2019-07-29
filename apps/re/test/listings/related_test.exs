@@ -1,7 +1,10 @@
 defmodule Re.RelatedTest do
   use Re.ModelCase
 
-  alias Re.Listings.Related
+  alias Re.{
+    AlikeTeller,
+    Listings.Related
+  }
 
   import Re.Factory
 
@@ -9,8 +12,8 @@ defmodule Re.RelatedTest do
     setup do
       [listing, related1, related2] = insert_list(3, :listing)
 
-      :ets.new(:aliketeller, [:set, :protected, :named_table, read_concurrency: true])
-      :ets.insert(:aliketeller, {listing.uuid, [related1.uuid, related2.uuid]})
+      AlikeTeller.create_ets_table()
+      AlikeTeller.insert(listing.uuid, [related1.uuid, related2.uuid])
 
       {:ok, listing: listing, related1: related1, related2: related2}
     end
