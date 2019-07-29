@@ -19,18 +19,8 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
   )
 
   defenum(TourPeriod,
-    morning:
-      Application.get_env(
-        :re_integrations,
-        :salesforce_morning_period,
-        "Manhã: 09h - 12h"
-      ),
-    afternoon:
-      Application.get_env(
-        :re_integrations,
-        :salesforce_afternoon_period,
-        "Tarde: 12h - 18h"
-      )
+    morning: "Manhã: 09h - 12h",
+    afternoon: "Tarde: 12h - 18h"
   )
 
   @primary_key {:id, :string, []}
