@@ -21,7 +21,7 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
       assert opportunity.owner_id == @payload["OwnerId"]
       assert opportunity.address == @payload["Dados_do_Imovel_para_Venda__c"]
       assert opportunity.neighborhood == @payload["Bairro__c"]
-      assert opportunity.tour_date == ~U[2019-07-29 20:00:00Z]
+      assert opportunity.tour_date == ~N[2019-07-29 20:00:00Z]
       assert opportunity.tour_period == :morning
     end
   end
@@ -30,7 +30,7 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
     test "returns time range from opportunity's tour_date" do
       assert %{start: ~T[20:00:00Z], end: ~T[20:00:00Z]} =
                Payload.Opportunity.visitation_period(%{
-                 tour_date: ~U[2019-07-29 20:00:00Z],
+                 tour_date: ~N[2019-07-29 20:00:00Z],
                  tour_period: :afternoon
                })
     end

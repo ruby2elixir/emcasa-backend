@@ -40,7 +40,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     field :owner_id, :string
     field :address, :string
     field :neighborhood, :string
-    field :tour_date, :utc_datetime
+    field :tour_date, :naive_datetime
     field :tour_period, TourPeriod
   end
 
@@ -67,8 +67,8 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
 
   defp changeset(struct, params), do: struct |> cast(params, @params)
 
-  def visitation_period(%{tour_date: %DateTime{} = tour_date}),
-    do: %{start: tour_date |> DateTime.to_time(), end: tour_date |> DateTime.to_time()}
+  def visitation_period(%{tour_date: %NaiveDateTime{} = tour_date}),
+    do: %{start: tour_date |> NaiveDateTime.to_time(), end: tour_date |> NaiveDateTime.to_time()}
 
   def visitation_period(%{tour_period: :morning}), do: %{start: ~T[09:00:00Z], end: ~T[12:00:00Z]}
 
