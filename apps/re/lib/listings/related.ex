@@ -13,8 +13,8 @@ defmodule Re.Listings.Related do
 
   def get(uuid, params \\ %{}) do
     case Re.AlikeTeller.get(uuid) do
-      {:ok, uuids} -> build_listing_index(uuids, params)
-      {:error, :not_found} -> {:ok, []}
+      {:ok, uuids} -> {:ok, build_listing_index(uuids, params)}
+      {:error, :not_found} -> {:ok, nil}
     end
   end
 
