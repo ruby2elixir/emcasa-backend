@@ -4,7 +4,7 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
   """
   @derive Jason.Encoder
 
-  defstruct [:status, :solution, :unserved]
+  defstruct [:status, :solution, :unserved, :input]
 
   @status_types ["finished", "pending", "error"]
 
@@ -15,7 +15,8 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
        %__MODULE__{
          status: :finished,
          solution: solution,
-         unserved: unserved
+         unserved: unserved,
+         options: output["input"]["options"]
        }}
     end
   end
