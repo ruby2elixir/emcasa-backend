@@ -9,6 +9,13 @@ defmodule ReIntegrations.SalesforceTest do
     Salesforce
   }
 
+  setup do
+    address = insert(:address)
+    district = insert(:district)
+    insert(:calendar, address: address, districts: [district])
+    :ok
+  end
+
   describe "schedule_tours/1" do
     test "create a new job to monitor routific request" do
       assert {:ok, _} = Salesforce.schedule_visits(date: Timex.now())
