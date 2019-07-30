@@ -3,6 +3,8 @@ defmodule ReIntegrations.RoutificTest do
 
   import Re.CustomAssertion
 
+  import Re.Factory
+
   alias ReIntegrations.{
     Repo,
     Routific,
@@ -19,6 +21,13 @@ defmodule ReIntegrations.RoutificTest do
       lng: 1.0
     }
   ]
+
+  setup do
+    address = insert(:address)
+    district = insert(:district, name: "Vila Mariana", name_slug: "vila-mariana")
+    insert(:calendar, address: address, districts: [district])
+    :ok
+  end
 
   describe "start_job/1" do
     test "create a new job to monitor routific request" do

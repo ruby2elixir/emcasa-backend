@@ -4,6 +4,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
   """
   @derive Jason.Encoder
 
+  alias Re.GoogleCalendars.Calendar
   alias ReIntegrations.Routific
 
   defstruct [:visits, :fleet]
@@ -44,10 +45,46 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
 
   defp build_visit(_visit), do: :error
 
-  defp build_fleet(_visits) do
-    # TODO build fleet from photographers' google calendars
-    {:ok, %{}}
+  defp build_fleet(visits) do
+    visits
+    |> get_neighborhoods()
+    |> get_calendars()
+    |> case do
+      calendars when length(calendars) !== 0 ->
+        {:ok,
+         Enum.reduce(calendars, %{}, fn calendar, acc ->
+           Map.put(acc, calendar.uuid, %{
+             start_location: build_depot(calendar),
+             shift_start: to_time_string(calendar.shift_start),
+             shift_end: to_time_string(calendar.shift_end)
+           })
+         end)}
+
+      _ ->
+        {:error, :no_calendars_found}
+    end
   end
+
+  defp get_neighborhoods(visits) do
+    visits
+    |> Enum.map(&Map.get(&1, :neighborhood))
+    |> Enum.uniq()
+  end
+
+  defp get_calendars(neighborhoods) do
+    Calendar
+    |> Calendar.Queries.by_district_names(neighborhoods)
+    |> Calendar.Queries.preload_relations([:address])
+    |> Re.Repo.all()
+  end
+
+  defp build_depot(%{address: address}),
+    do: %{
+      id: address.id,
+      name: "#{address.street}, #{address.street_number}",
+      lat: address.lat,
+      lng: address.lng
+    }
 
   defp to_time_string(%Time{} = time), do: time |> Time.to_string() |> String.slice(0..4)
 
