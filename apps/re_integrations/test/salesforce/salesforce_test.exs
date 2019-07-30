@@ -13,7 +13,7 @@ defmodule ReIntegrations.SalesforceTest do
 
   setup do
     address = insert(:address)
-    district = insert(:district)
+    district = insert(:district, name: "Vila Mariana", name_slug: "vila-mariana")
     insert(:calendar, address: address, districts: [district])
     :ok
   end

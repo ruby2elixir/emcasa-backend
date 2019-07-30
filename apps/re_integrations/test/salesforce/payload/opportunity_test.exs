@@ -9,8 +9,8 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
     "OwnerId" => "0x02",
     "Dados_do_Imovel_para_Venda__c" => "address string",
     "Bairro__c" => "neighborhood",
-    "Data_Tour__c" => "2019-07-29T20:00:00.000Z",
-    "Faixa_Hor_ria_Tour__c" => "Manhã: 09h - 12h"
+    "Horario_Fixo_para_o_Tour__c" => "20:00:00",
+    "Periodo_Disponibilidade_Tour__c" => "Manhã"
   }
 
   describe "build/1" do
@@ -21,28 +21,34 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
       assert opportunity.owner_id == @payload["OwnerId"]
       assert opportunity.address == @payload["Dados_do_Imovel_para_Venda__c"]
       assert opportunity.neighborhood == @payload["Bairro__c"]
-      assert opportunity.tour_date == ~N[2019-07-29 20:00:00Z]
+      assert opportunity.tour_strict_time == ~T[20:00:00Z]
       assert opportunity.tour_period == :morning
     end
   end
 
-  describe "visitation_period/1" do
-    test "returns exact time when a strict datetime is specified" do
+  describe "visit_start_window/1" do
+    test "returns exact time when tour period is strict" do
       assert %{start: ~T[20:00:00Z], end: ~T[20:00:00Z]} =
-               Payload.Opportunity.visitation_period(%{
-                 tour_date: ~N[2019-07-29 20:00:00Z],
-                 tour_period: :afternoon
+               Payload.Opportunity.visit_start_window(%{
+                 tour_strict_time: ~T[20:00:00Z],
+                 tour_period: :strict
                })
     end
 
-    test "returns time range from opportunity's tour_period" do
+    test "returns time range from tour period" do
+      assert %{start: ~T[09:00:00Z], end: ~T[12:00:00Z]} =
+               Payload.Opportunity.visit_start_window(%{tour_period: :morning})
+
       assert %{start: ~T[12:00:00Z], end: ~T[18:00:00Z]} =
-               Payload.Opportunity.visitation_period(%{tour_period: :afternoon})
+               Payload.Opportunity.visit_start_window(%{tour_period: :afternoon})
+
+      assert %{start: ~T[09:00:00Z], end: ~T[18:00:00Z]} =
+               Payload.Opportunity.visit_start_window(%{tour_period: :flexible})
     end
 
     test "returns default time range when not specified" do
       assert %{start: ~T[09:00:00Z], end: ~T[18:00:00Z]} =
-               Payload.Opportunity.visitation_period(%{})
+               Payload.Opportunity.visit_start_window(%{})
     end
   end
 end

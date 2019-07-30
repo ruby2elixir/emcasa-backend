@@ -82,7 +82,7 @@ defmodule ReIntegrations.TestHTTP do
                 "OwnerId": "0x01",
                 "Bairro__c": "Vila Mariana",
                 "Dados_do_Imovel_para_Venda__c": "address 123",
-                "Faixa_Hor_ria_Tour__c": "Manhã: 09h - 12h"
+                "Periodo_Disponibilidade_Tour__c": "Manhã"
               },
               {
                 "Id": "0x02",
@@ -90,7 +90,9 @@ defmodule ReIntegrations.TestHTTP do
                 "OwnerId": "0x01",
                 "Bairro__c": "Vila Mariana",
                 "Dados_do_Imovel_para_Venda__c": "address 123",
-                "Data_Tour__c": "2019-07-29T20:25:32.000Z"
+                "Data_Fixa_para_o_Tour__c": "2019-07-29",
+                "Horario_Fixo_para_o_Tour__c": "20:25:00",
+                "Periodo_Disponibilidade_Tour__c": "Fixo"
               }
             ]
           }

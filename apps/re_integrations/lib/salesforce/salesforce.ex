@@ -26,20 +26,18 @@ defmodule ReIntegrations.Salesforce do
       |> Keyword.fetch!(:date)
       |> Timex.format!("%Y-%m-%d", :strftime)
 
+    fields =
+      Payload.Opportunity.Schema.__enum_map__()
+      |> Keyword.values()
+      |> Enum.join(", ")
+
     Client.query("""
-    SELECT
-      Id,
-      OwnerId,
-      AccountId,
-      Dados_do_Imovel_para_Venda__c,
-      Bairro__c,
-      Data_Tour__c,
-      Faixa_Hor_ria_Tour__c
+    SELECT #{fields}
     FROM Opportunity
     WHERE
-      StageName = 'Agendamento' AND (
-        Data_Tour__c = NULL OR
-        DAY_ONLY(Data_Tour__c) = #{date_constraint})
+      StageName = 'Confirmação Visita' AND (
+        Data_Fixa_para_o_Tour__c = NULL OR
+        Data_Fixa_para_o_Tour__c = #{date_constraint})
     ORDER BY CreatedDate ASC
     """)
   end
@@ -48,7 +46,7 @@ defmodule ReIntegrations.Salesforce do
     with {:ok, opportunity} <- Payload.Opportunity.build(record) do
       opportunity
       |> Map.take([:id, :address, :neighborhood])
-      |> Map.merge(Payload.Opportunity.visitation_period(opportunity))
+      |> Map.merge(Payload.Opportunity.visit_start_window(opportunity))
       |> Map.put(:custom_notes, visit_notes(opportunity))
       |> Map.put(:duration, @tour_visit_duration)
     end
