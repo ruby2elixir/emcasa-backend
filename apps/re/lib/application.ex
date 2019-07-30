@@ -13,7 +13,8 @@ defmodule Re.Application do
     Listings,
     Listings.History,
     PubSub,
-    Repo
+    Repo,
+    SellerLeads
   }
 
   def start(_type, _args) do
@@ -36,6 +37,7 @@ defmodule Re.Application do
       worker(History.Server, []),
       {BuyerLeads.JobQueue, repo: Repo},
       {Developments.JobQueue, repo: Repo},
-      {Listings.JobQueue, repo: Repo}
+      {Listings.JobQueue, repo: Repo},
+      {SellerLeads.JobQueue, repo: Repo}
     ]
 end

@@ -182,7 +182,8 @@ defmodule Re.Factory do
       type: random(:listing_type),
       maintenance_fee: random(:maintenance_fee_float),
       area: Enum.random(1..500),
-      is_covered: Enum.random([true, false])
+      is_covered: Enum.random([true, false]),
+      suggested_price: random(:price)
     }
   end
 

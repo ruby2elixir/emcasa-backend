@@ -3,9 +3,12 @@ defmodule Re.Accounts.Users do
   Context boundary to User management
   """
 
+  alias Ecto.Changeset
+
   alias Re.{
     Repo,
-    User
+    User,
+    Addresses.Neighborhoods
   }
 
   defdelegate authorize(action, user, params), to: Re.Users.Policy
@@ -41,6 +44,16 @@ defmodule Re.Accounts.Users do
   def update(user, params) do
     user
     |> User.update_changeset(params)
+    |> Repo.update()
+  end
+
+  def update_districts(user, districts) do
+    repo_districts = Neighborhoods.districts_by_uuids(districts)
+
+    user
+    |> Repo.preload(:districts)
+    |> Changeset.change()
+    |> Changeset.put_assoc(:districts, repo_districts)
     |> Repo.update()
   end
 

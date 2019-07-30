@@ -6,6 +6,8 @@ defmodule Re.PriceSuggestions.Request do
 
   import Ecto.Changeset
 
+  alias Re.SellerLead
+
   schema "price_suggestion_requests" do
     field :uuid, Ecto.UUID
     field :name, :string
@@ -50,4 +52,22 @@ defmodule Re.PriceSuggestions.Request do
   end
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
+
+  def seller_lead_changeset(lead) do
+    params = %{
+      source: "WebSite",
+      type: lead.type,
+      area: lead.area,
+      maintenance_fee: lead.maintenance_fee,
+      rooms: lead.rooms,
+      bathrooms: lead.bathrooms,
+      suites: lead.suites,
+      garage_spots: lead.garage_spots,
+      suggested_price: lead.suggested_price,
+      user_uuid: lead.user.uuid,
+      address_uuid: lead.address.uuid
+    }
+
+    SellerLead.changeset(%SellerLead{}, params)
+  end
 end
