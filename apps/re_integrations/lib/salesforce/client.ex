@@ -1,6 +1,6 @@
 defmodule ReIntegrations.Salesforce.Client do
   @moduledoc """
-  Client to handle vehicle routing through routific.
+  Client to handle requests to an emcasa/salesforce api
   """
 
   @api_key Application.get_env(:re_integrations, :salesforce_api_key, "")

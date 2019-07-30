@@ -1,6 +1,6 @@
 defmodule ReIntegrations.Salesforce.Payload.Opportunity do
   @moduledoc """
-  Module for validating salesforce event entity
+  Module for validating salesforce opportunity entity
   """
   use Ecto.Schema
 
@@ -8,7 +8,17 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
 
   import EctoEnum
 
-  defenum(Field,
+  defenum(TourPeriod,
+    morning: "Manhã: 09h - 12h",
+    afternoon: "Tarde: 12h - 18h"
+  )
+
+  @primary_key {:id, :string, []}
+
+  @doc """
+  Maps salesforce fields to atoms for internal use
+  """
+  defenum(Schema,
     id: "Id",
     account_id: "AccountId",
     owner_id: "OwnerId",
@@ -17,13 +27,6 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     tour_date: "Data_Tour__c",
     tour_period: "Faixa_Hor_ria_Tour__c"
   )
-
-  defenum(TourPeriod,
-    morning: "Manhã: 09h - 12h",
-    afternoon: "Tarde: 12h - 18h"
-  )
-
-  @primary_key {:id, :string, []}
 
   schema "salesforce_opportunity" do
     field :account_id, :string
@@ -43,7 +46,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
   end
 
   defp build_field({field, value}),
-    do: with({:ok, key} <- Field.cast(field), do: {key, value})
+    do: with({:ok, key} <- Schema.cast(field), do: {key, value})
 
   def validate(params) do
     %__MODULE__{}
