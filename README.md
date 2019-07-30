@@ -8,6 +8,8 @@
 
 * Elixir
 * PostgreSQL
+* Postgis
+* G++
 
 ## Install
 

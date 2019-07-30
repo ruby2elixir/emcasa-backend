@@ -142,4 +142,17 @@ defmodule Re.Listings.Queries do
     )
     |> group_by([l, a], a.neighborhood_slug)
   end
+
+  @doc """
+  To be able to keep the uuids order: https://stackoverflow.com/questions/866465/order-by-the-in-value-list
+  """
+  def with_uuids(query, uuids) do
+    uuids_formatted = Enum.map(uuids, &(&1 |> Ecto.UUID.dump() |> elem(1)))
+
+    from(
+      l in query,
+      where: l.uuid in ^uuids,
+      order_by: fragment("array_position(?::uuid[], ?::uuid)", ^uuids_formatted, l.uuid)
+    )
+  end
 end
