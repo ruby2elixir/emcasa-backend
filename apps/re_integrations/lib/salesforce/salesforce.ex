@@ -9,16 +9,10 @@ defmodule ReIntegrations.Salesforce do
     Salesforce.Payload
   }
 
-  @schedule_interval Application.get_env(:re_integrations, :tour_schedule_interval, days: 2)
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 60)
 
-  defp default_schedule_opts,
-    do: [date: Timex.now() |> Timex.shift(@schedule_interval)]
-
   def schedule_visits(schedule_opts \\ []) do
-    opts = Keyword.merge(default_schedule_opts(), schedule_opts)
-
-    with {:ok, %{status_code: 200, body: body}} <- fetch_visits(opts),
+    with {:ok, %{status_code: 200, body: body}} <- fetch_visits(schedule_opts),
          {:ok, %{"records" => records}} = Jason.decode(body) do
       records
       |> Enum.map(&build_visit/1)
