@@ -80,6 +80,12 @@ config :prometheus, ReWeb.PlugExporter,
   registry: :default,
   auth: false
 
+config :re, Re.AlikeTeller.Scheduler,
+  debug_logging: false,
+  jobs: [
+    {"@daily", {Re.AlikeTeller, :load, []}}
+  ]
+
 import_config "#{Mix.env()}.exs"
 
 import_config "timber.exs"
