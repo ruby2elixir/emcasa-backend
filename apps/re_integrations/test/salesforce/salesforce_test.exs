@@ -3,6 +3,8 @@ defmodule ReIntegrations.SalesforceTest do
 
   import Re.CustomAssertion
 
+  import Re.Factory
+
   alias ReIntegrations.{
     Repo,
     Routific,
