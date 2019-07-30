@@ -47,16 +47,16 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
   defp build_visit(_visit), do: :error
 
   defp build_fleet(visits) do
-    {:ok, visits
-    |> get_neighborhoods()
-    |> get_calendars()
-    |> Enum.reduce(%{}, fn calendar, acc ->
-      Map.put(acc, calendar.uuid, %{
-        start_location: build_depot(calendar),
-        shift_start: to_time_string(calendar.shift_start),
-        shift_end: to_time_string(calendar.shift_end)
-      })
-    end)}
+    with {:ok, calendars} <- visits |> get_neighborhoods() |> get_calendars() do
+      {:ok,
+       Enum.reduce(calendars, %{}, fn calendar, acc ->
+         Map.put(acc, calendar.uuid, %{
+           start_location: build_depot(calendar),
+           shift_start: to_time_string(calendar.shift_start),
+           shift_end: to_time_string(calendar.shift_end)
+         })
+       end)}
+    end
   end
 
   defp get_neighborhoods(visits) do
@@ -72,12 +72,13 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
     |> Re.Repo.all()
   end
 
-  defp build_depot(%{address: address}), do: %{
-    id: address.id,
-    name: "#{address.street}, #{address.street_number}",
-    lat: address.lat,
-    lng: address.lng
-  }
+  defp build_depot(%{address: address}),
+    do: %{
+      id: address.id,
+      name: "#{address.street}, #{address.street_number}",
+      lat: address.lat,
+      lng: address.lng
+    }
 
   defp to_time_string(%Time{} = time), do: time |> Time.to_string() |> String.slice(0..4)
 
