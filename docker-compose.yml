@@ -2,7 +2,7 @@
 version: '3'
 services:
   db:
-    image: 'postgres:11.2-alpine'
+    image: 'mdillon/postgis:11-alpine'
     hostname: &pg_hostname db
     volumes:
       - './priv/docker/postgres/init-emcasa.sql:/docker-entrypoint-initdb.d/init-emcasa.sql'
@@ -11,6 +11,8 @@ services:
     environment:
       POSTGRES_USER: &pg_username postgres
       POSTGRES_PASSWORD: &pg_password postgres
+    ports:
+      - '5432:5432'
   pgcli:
     image: 'pygmy/pgcli:stable'
     depends_on:
