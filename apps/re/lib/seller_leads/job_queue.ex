@@ -10,7 +10,8 @@ defmodule Re.SellerLeads.JobQueue do
     PriceSuggestions.Request,
     Repo,
     SellerLeads,
-    SellerLeads.Salesforce.Client
+    SellerLeads.Salesforce.Client,
+    User
   }
 
   alias Ecto.{
@@ -19,11 +20,16 @@ defmodule Re.SellerLeads.JobQueue do
   }
 
   def perform(%Multi{} = multi, %{"type" => "process_price_suggestion_request", "uuid" => uuid}) do
-    Request
-    |> Ecto.Query.preload([:address, :user])
-    |> Repo.get_by(uuid: uuid)
+    request =
+      Request
+      |> Ecto.Query.preload([:address, :user])
+      |> Repo.get_by(uuid: uuid)
+
+    request
     |> Request.seller_lead_changeset()
     |> insert_seller_lead(multi)
+    |> update_name(request)
+    |> update_email(request)
     |> Repo.transaction()
     |> handle_error()
   end
@@ -48,6 +54,16 @@ defmodule Re.SellerLeads.JobQueue do
     |> Multi.insert(:insert_seller_lead, changeset)
     |> __MODULE__.enqueue(:salesforce_job, %{"type" => "create_lead_salesforce", "uuid" => uuid})
   end
+
+  defp update_name(multi, %{name: name, user: %{name: nil} = user}),
+    do: Multi.update(multi, :update_user_name, User.update_changeset(user, %{name: name}))
+
+  defp update_name(multi, _), do: multi
+
+  defp update_email(multi, %{email: email, user: %{email: nil} = user}),
+    do: Multi.update(multi, :update_user_email, User.update_changeset(user, %{email: email}))
+
+  defp update_email(multi, _), do: multi
 
   defp handle_error({:ok, result}), do: {:ok, result}
 
