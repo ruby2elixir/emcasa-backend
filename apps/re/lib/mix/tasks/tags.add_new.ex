@@ -5,10 +5,17 @@ defmodule Mix.Tasks.Re.Tags.AddNew do
   use Mix.Task
 
   @tags [
-    %{category: "ops", name: "Temos Chave", visibility: "private"},
-    %{category: "ops", name: "Desocupado", visibility: "private"},
-    %{category: "ops", name: "Placa De Contato", visibility: "private"},
-    %{category: "ops", name: "Exclusivo", visibility: "private"}
+    %{category: "realty", name: "Armário Na Cozinha", visibility: "public"},
+    %{category: "realty", name: "Armário No Quarto", visibility: "public"},
+    %{category: "realty", name: "Área De Serviço", visibility: "public"},
+    %{category: "realty", name: "Primeira Quadra Da Praia", visibility: "public"},
+    %{category: "realty", name: "Mobiliado", visibility: "public"},
+    %{category: "realty", name: "Piso De madeira", visibility: "public"},
+    %{category: "realty", name: "Piso Porcelanato", visibility: "public"},
+    %{category: "realty", name: "Piso De Cerâmica", visibility: "public"},
+    %{category: "realty", name: "Piso De Granito", visibility: "public"},
+    %{category: "realty", name: "Banheiro Com Box", visibility: "public"},
+    %{category: "realty", name: "Cozinha Americana", visibility: "public"}
   ]
 
   alias Re.{
