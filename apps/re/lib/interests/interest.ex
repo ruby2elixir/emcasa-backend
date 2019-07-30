@@ -61,6 +61,7 @@ defmodule Re.Interest do
       }
       |> put_location(interest)
       |> put_user_info(interest)
+      |> put_utm_info(interest)
 
     BuyerLead.changeset(%BuyerLead{}, params)
   end
@@ -90,4 +91,15 @@ defmodule Re.Interest do
   end
 
   defp do_put_user_info({:error, :not_found}, params), do: params
+
+  defp put_utm_info(params, interest) do
+    Map.put(params, :utm, %{
+      campaign: interest.campaign,
+      medium: interest.medium,
+      source: interest.source,
+      initial_campaign: interest.initial_campaign,
+      initial_medium: interest.initial_medium,
+      initial_source: interest.initial_source
+    })
+  end
 end
