@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Re.Tags.AddNew do
     %{category: "realty", name: "Armário Na Cozinha", visibility: "public"},
     %{category: "realty", name: "Armário No Quarto", visibility: "public"},
     %{category: "realty", name: "Área De Serviço", visibility: "public"},
-    %{category: "realty", name: "Primeira Quadra Da Praia", visibility: "public"},
+    %{category: "location", name: "Primeira Quadra Da Praia", visibility: "public"},
     %{category: "realty", name: "Mobiliado", visibility: "public"},
     %{category: "realty", name: "Piso De madeira", visibility: "public"},
     %{category: "realty", name: "Piso Porcelanato", visibility: "public"},
