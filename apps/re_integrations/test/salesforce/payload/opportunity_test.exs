@@ -27,7 +27,7 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
   end
 
   describe "visitation_period/1" do
-    test "returns time range from opportunity's tour_date" do
+    test "returns exact time when a strict datetime is specified" do
       assert %{start: ~T[20:00:00Z], end: ~T[20:00:00Z]} =
                Payload.Opportunity.visitation_period(%{
                  tour_date: ~N[2019-07-29 20:00:00Z],
