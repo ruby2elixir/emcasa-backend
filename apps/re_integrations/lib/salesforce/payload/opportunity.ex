@@ -57,10 +57,10 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     end
   end
 
-  defp changeset(struct, params), do: struct |> cast(params, @params)
+  defp changeset(struct, params), do: cast(struct, params, @params)
 
   def visitation_period(%{tour_date: %NaiveDateTime{} = tour_date}),
-    do: %{start: tour_date |> NaiveDateTime.to_time(), end: tour_date |> NaiveDateTime.to_time()}
+    do: %{start: NaiveDateTime.to_time(tour_date), end: NaiveDateTime.to_time(tour_date)}
 
   def visitation_period(%{tour_period: :morning}), do: %{start: ~T[09:00:00Z], end: ~T[12:00:00Z]}
 
