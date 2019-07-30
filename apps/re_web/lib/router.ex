@@ -25,7 +25,6 @@ defmodule ReWeb.Router do
     resources "/listings", ListingController, except: [:new, :index] do
       resources("/images", ImageController, only: [:index, :create, :delete])
       resources("/interests", InterestController, only: [:create])
-      resources("/related", RelatedController, only: [:index])
 
       put("/images_orders", ImageController, :order)
       get("/download_images", ImageController, :zip)

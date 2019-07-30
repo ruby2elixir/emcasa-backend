@@ -361,7 +361,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
 
       %{id: user_id, uuid: user_uuid} = insert(:user, phone: "+5511999999999")
 
-      %{uuid: uuid} = insert(:interest, listing: listing, phone: "+5511999999999")
+      %{uuid: uuid} = interest = insert(:interest, listing: listing, phone: "+5511999999999")
 
       assert {:ok, _} = JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
 
@@ -372,6 +372,12 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.listing_uuid == listing_uuid
       assert buyer.location == "manhattan|ny"
       assert buyer.user_url == "http://localhost:3000/usuarios/#{user_id}"
+      assert buyer.utm.campaign == interest.campaign
+      assert buyer.utm.medium == interest.medium
+      assert buyer.utm.source == interest.source
+      assert buyer.utm.initial_campaign == interest.initial_campaign
+      assert buyer.utm.initial_medium == interest.initial_medium
+      assert buyer.utm.initial_source == interest.initial_source
     end
 
     test "process lead with nil phone" do
@@ -389,7 +395,7 @@ defmodule Re.BuyerLeads.JobQueueTest do
       %{id: id, uuid: listing_uuid} =
         insert(:listing, address: build(:address, state_slug: "ny", city_slug: "manhattan"))
 
-      %{uuid: uuid} = insert(:interest, phone: "011999999999", listing_id: "#{id}")
+      %{uuid: uuid} = interest = insert(:interest, phone: "011999999999", listing_id: "#{id}")
 
       assert {:ok, _} = JobQueue.perform(Multi.new(), %{"type" => "interest", "uuid" => uuid})
 
@@ -401,6 +407,12 @@ defmodule Re.BuyerLeads.JobQueueTest do
       assert buyer.listing_uuid == listing_uuid
       assert buyer.location == "manhattan|ny"
       refute buyer.user_url
+      assert buyer.utm.campaign == interest.campaign
+      assert buyer.utm.medium == interest.medium
+      assert buyer.utm.source == interest.source
+      assert buyer.utm.initial_campaign == interest.initial_campaign
+      assert buyer.utm.initial_medium == interest.initial_medium
+      assert buyer.utm.initial_source == interest.initial_source
     end
   end
 
