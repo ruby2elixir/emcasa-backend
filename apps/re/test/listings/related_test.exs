@@ -23,8 +23,14 @@ defmodule Re.RelatedTest do
       related1: %{id: id1},
       related2: %{id: id2}
     } do
-      assert %{listings: [%{id: ^id1}, %{id: ^id2}], remaining_count: 0} =
+      assert {:ok, %{listings: [%{id: ^id1}, %{id: ^id2}], remaining_count: 0}} =
                Related.get(listing.uuid)
+    end
+
+    test "should return empty when there's not related" do
+      listing = insert(:listing)
+
+      assert {:ok, nil} = Related.get(listing.uuid)
     end
   end
 end
