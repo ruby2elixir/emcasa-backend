@@ -5,7 +5,6 @@ alias Re.{
   Favorite,
   Image,
   Interest,
-  InterestType,
   Interests.ContactRequest,
   Listing,
   Listings.PriceHistory,
@@ -412,12 +411,6 @@ end)
     price: 1_900_000,
     listing: listing3
   })
-
-{:ok, interest_type1} = Re.Repo.insert(%InterestType{name: "Me ligue dentro de 5 minutos"})
-{:ok, interest_type2} = Re.Repo.insert(%InterestType{name: "Me ligue em um horário específico"})
-{:ok, interest_type3} = Re.Repo.insert(%InterestType{name: "Agendamento por e-mail"})
-{:ok, interest_type4} = Re.Repo.insert(%InterestType{name: "Agendamento por Whatsapp"})
-{:ok, interest_type5} = Re.Repo.insert(%InterestType{name: "Agendamento online"})
 
 {:ok, _} =
   Repo.insert(%Interest{

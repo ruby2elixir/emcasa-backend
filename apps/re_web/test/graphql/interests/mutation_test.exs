@@ -35,7 +35,6 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
         "initialCampaign" => "utm initial campaign",
         "initialMedium" => "utm initial medium",
         "initialSource" => "utm initial source",
-        "interestTypeId" => interest_type_id,
         "listingId" => listing_id
       }
     }
@@ -56,10 +55,6 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
           listing {
             id
           }
-          interestType {
-            id
-            name
-          }
         }
       }
     """
@@ -77,10 +72,6 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              "initialCampaign" => "utm initial campaign",
              "initialMedium" => "utm initial medium",
              "initialSource" => "utm initial source",
-             "interestType" => %{
-               "id" => to_string(interest_type_id),
-               "name" => interest_type_name
-             },
              "listing" => %{
                "id" => to_string(listing_id)
              }
@@ -128,10 +119,6 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
           listing {
             id
           }
-          interestType {
-            id
-            name
-          }
         }
       }
     """
@@ -149,10 +136,6 @@ defmodule ReWeb.GraphQL.Interests.MutationTest do
              "initialCampaign" => "utm initial campaign",
              "initialMedium" => "utm initial medium",
              "initialSource" => "utm initial source",
-             "interestType" => %{
-               "id" => to_string(interest_type_id),
-               "name" => interest_type_name
-             },
              "listing" => %{
                "id" => to_string(listing_id)
              }

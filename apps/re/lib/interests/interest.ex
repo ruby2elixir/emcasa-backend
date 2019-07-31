@@ -25,13 +25,12 @@ defmodule Re.Interest do
     field :initial_source, :string
 
     belongs_to :listing, Re.Listing
-    belongs_to :interest_type, Re.InterestType
 
     timestamps()
   end
 
   @required ~w(name phone listing_id)a
-  @optional ~w(email message interest_type_id uuid campaign medium
+  @optional ~w(email message uuid campaign medium
                source initial_campaign initial_medium initial_source)a
 
   @doc """

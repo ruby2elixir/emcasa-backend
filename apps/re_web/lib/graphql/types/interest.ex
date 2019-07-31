@@ -110,11 +110,6 @@ defmodule ReWeb.Types.Interest do
   end
 
   object :interest_queries do
-    @desc "Interest types"
-    field :interest_types,
-      type: list_of(:interest_type),
-      resolve: &InterestsResolver.interest_types/2
-
     @desc "Request funding simulation"
     field :simulate, type: :simulation do
       arg :input, non_null(:simulation_request)

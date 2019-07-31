@@ -4,8 +4,6 @@ defmodule Re.Interests do
   """
   @behaviour Bodyguard.Policy
 
-  import Ecto.Query
-
   alias Ecto.{
     Changeset,
     Multi
@@ -17,7 +15,6 @@ defmodule Re.Interests do
     Interest,
     Interests.ContactRequest,
     Interests.NotifyWhenCovered,
-    InterestType,
     PriceSuggestions,
     PubSub,
     Repo,
@@ -38,10 +35,6 @@ defmodule Re.Interests do
   end
 
   def preload(interest), do: Repo.preload(interest, :interest_type)
-
-  def get_types do
-    Repo.all(from(it in InterestType, where: it.enabled == true, order_by: {:asc, :id}))
-  end
 
   def request_contact(params, user) do
     %ContactRequest{}
