@@ -57,7 +57,7 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
     end
   end
 
-  defp build_visit(_visit), do: :error
+  defp build_visit(_visit, _input), do: :error
 
   defp build_unserved(nil), do: {:ok, []}
 
