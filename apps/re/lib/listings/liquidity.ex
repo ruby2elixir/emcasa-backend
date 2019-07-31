@@ -13,6 +13,8 @@ defmodule Re.Listings.Liquidity do
 
   def calculate(_, nil), do: @default_liquidity_radio
 
+  def calculate(nil, _), do: @default_liquidity_radio
+
   def calculate(price, suggested_price)
       when is_number(price) and
              is_number(suggested_price) do
