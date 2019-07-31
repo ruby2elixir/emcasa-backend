@@ -21,6 +21,8 @@ defmodule Re.BuyerLead do
     field :cpf, :string
     field :where_did_you_find_about, :string
 
+    embeds_one :utm, Re.BuyerLeads.Utm
+
     belongs_to :listing, Re.Listing,
       references: :uuid,
       foreign_key: :listing_uuid,
@@ -42,6 +44,7 @@ defmodule Re.BuyerLead do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @params)
+    |> cast_embed(:utm, with: &Re.BuyerLeads.Utm.changeset/2)
     |> validate_required(@required)
     |> generate_uuid()
   end

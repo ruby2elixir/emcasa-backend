@@ -69,6 +69,7 @@ config :re,
   zapier_create_salesforce_seller_lead_url: "http://www.emcasa.com/salesforce_zapier",
   priceteller_url: "http://www.emcasa.com/priceteller",
   priceteller_token: "mahtoken",
+  aliketeller_url: "http://www.emcasa.com/aliketeller",
   retry_expiry: 100
 
 config :re_integrations,

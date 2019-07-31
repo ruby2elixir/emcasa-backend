@@ -252,7 +252,7 @@ defmodule ReWeb.Resolvers.Listings do
     end
   end
 
-  def related(listing, params, %{context: %{current_user: current_user}}) do
+  def related(%{uuid: uuid}, params, %{context: %{current_user: current_user}}) do
     pagination = Map.get(params, :pagination, %{})
     filtering = Map.get(params, :filters, %{})
 
@@ -262,7 +262,7 @@ defmodule ReWeb.Resolvers.Listings do
       |> Map.merge(filtering)
       |> Map.merge(%{current_user: current_user})
 
-    {:ok, Related.get(listing, params)}
+    Related.get(uuid, params)
   end
 
   def relaxed(params, %{context: %{current_user: current_user}}) do

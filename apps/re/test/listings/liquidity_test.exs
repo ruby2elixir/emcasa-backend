@@ -29,6 +29,10 @@ defmodule Re.Listings.LiquidityTest do
     test "should return constant value when suggested_price is nil" do
       assert @default_case == Liquidity.calculate(1_000_000, nil)
     end
+
+    test "should return constant value when price is nil" do
+      assert @default_case == Liquidity.calculate(nil, 1_000_000)
+    end
   end
 
   describe "normalize_liquidity_ratio/1" do
