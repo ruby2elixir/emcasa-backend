@@ -365,13 +365,10 @@ defmodule Re.Listings.Filters do
   end
 
   defp attr_filter({:exclude_similar_for_primary_market, true}, query) do
-    subquery =
-      query
-      |> where([l], not (l.is_release == true and l.is_exportable == false))
-      |> distinct([l, _], l.uuid)
-      |> exclude(:preload)
-
-    from(l in query, join: s in subquery(subquery), on: s.uuid == l.uuid)
+    from(
+      l in query,
+      where: l.is_release == false or l.is_exportable == true
+    )
   end
 
   defp attr_filter(_, query), do: query
