@@ -248,25 +248,21 @@ defmodule Re.Listings.Filters do
   defp attr_filter({:tags_slug, []}, query), do: query
 
   defp attr_filter({:tags_slug, slugs}, query) do
-    listings_tags =
-      query
-      |> join(:inner, [l], t in assoc(l, :tags), on: t.name_slug in ^slugs)
-      |> distinct([l, _], l.uuid)
-      |> exclude(:preload)
-
-    from(l in query, join: s in subquery(listings_tags), on: s.uuid == l.uuid)
+    from(l in query,
+      join: t in assoc(l, :tags),
+      where: t.name_slug in ^slugs,
+      group_by: l.id
+    )
   end
 
   defp attr_filter({:tags_uuid, []}, query), do: query
 
   defp attr_filter({:tags_uuid, uuids}, query) do
-    listings_tags =
-      query
-      |> join(:inner, [l], t in assoc(l, :tags), on: t.uuid in ^uuids)
-      |> distinct([l, _], l.uuid)
-      |> exclude(:preload)
-
-    from(l in query, join: s in subquery(listings_tags), on: s.uuid == l.uuid)
+    from(l in query,
+      join: t in assoc(l, :tags),
+      where: t.uuid in ^uuids,
+      group_by: l.id
+    )
   end
 
   defp attr_filter({:min_floor_count, floor_count}, query) do
