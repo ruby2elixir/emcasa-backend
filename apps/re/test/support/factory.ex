@@ -153,7 +153,13 @@ defmodule Re.Factory do
   def interest_factory do
     %Re.Interest{
       name: "John Doe",
-      uuid: UUID.uuid4()
+      uuid: UUID.uuid4(),
+      campaign: Lorem.word(),
+      medium: Lorem.word(),
+      source: Lorem.word(),
+      initial_campaign: Lorem.word(),
+      initial_medium: Lorem.word(),
+      initial_source: Lorem.word()
     }
   end
 

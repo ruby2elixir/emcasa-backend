@@ -8,7 +8,8 @@ defmodule Re.SellerLeads.JobQueueTest do
   alias Re.{
     Repo,
     SellerLead,
-    SellerLeads.JobQueue
+    SellerLeads.JobQueue,
+    User
   }
 
   alias Ecto.Multi
@@ -47,6 +48,52 @@ defmodule Re.SellerLeads.JobQueueTest do
       assert seller.garage_spots == price_suggestion_request.garage_spots
       assert seller.price == nil
       assert seller.suggested_price == price_suggestion_request.suggested_price
+    end
+
+    test "save name in user when nil" do
+      address = insert(:address)
+      %{uuid: user_uuid} = user = insert(:user, name: nil)
+
+      %{uuid: uuid} =
+        insert(:price_suggestion_request,
+          name: "mah name",
+          address: address,
+          user: user
+        )
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_price_suggestion_request",
+                 "uuid" => uuid
+               })
+
+      assert seller = Repo.one(SellerLead)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
+      assert user = Repo.get_by(User, uuid: user_uuid)
+      assert user.name == "mah name"
+    end
+
+    test "save email in user when nil" do
+      address = insert(:address)
+      %{uuid: user_uuid} = user = insert(:user, email: nil)
+
+      %{uuid: uuid} =
+        insert(:price_suggestion_request,
+          email: "mahemail@emcasa.com",
+          address: address,
+          user: user
+        )
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_price_suggestion_request",
+                 "uuid" => uuid
+               })
+
+      assert seller = Repo.one(SellerLead)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
+      assert user = Repo.get_by(User, uuid: user_uuid)
+      assert user.email == "mahemail@emcasa.com"
     end
   end
 
