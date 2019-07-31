@@ -23,7 +23,6 @@ defmodule ReWeb.Types.Interest do
     field :initial_source, :string
 
     field :listing, :listing, resolve: dataloader(Re.Listings)
-    field :interest_type, :interest_type, resolve: dataloader(Re.Interests.Types)
   end
 
   input_object :interest_input do
@@ -38,7 +37,6 @@ defmodule ReWeb.Types.Interest do
     field :initial_medium, :string
     field :initial_source, :string
 
-    field :interest_type_id, non_null(:id)
     field :listing_id, non_null(:id)
   end
 
@@ -75,11 +73,6 @@ defmodule ReWeb.Types.Interest do
 
     field :address, :address, resolve: dataloader(Re.Addresses)
     field :user, :user, resolve: dataloader(Re.Accounts)
-  end
-
-  object :interest_type do
-    field :id, :id
-    field :name, :string
   end
 
   object :simulation do

@@ -24,11 +24,10 @@ defmodule ReIntegrations.Notifications.Emails.User do
         phone: phone,
         message: message,
         listing: listing = %{address: address},
-        interest_type: interest_type,
         inserted_at: inserted_at
       }) do
     new()
-    |> to(get_to_email(interest_type))
+    |> to(@contato_email)
     |> from(@from)
     |> subject("Novo interesse em listagem EmCasa")
     |> html_body("Nome: #{name}<br>
@@ -39,7 +38,6 @@ defmodule ReIntegrations.Notifications.Emails.User do
         Cidade: #{address.city}<br>
         Bairro: #{address.neighborhood}<br>
         Mensagem: #{message} <br>
-        #{interest_type && interest_type.name} <br>
         Inserido em (UTC): #{inserted_at}")
     |> text_body("Nome: #{name}\n
         Email: #{email}\n
@@ -49,7 +47,6 @@ defmodule ReIntegrations.Notifications.Emails.User do
         Cidade: #{address.city}\n
         Bairro: #{address.neighborhood}\n
         Mensagem: #{message} \n
-        #{interest_type && interest_type.name} \n
         Inserido em (UTC): #{inserted_at}")
   end
 
@@ -154,9 +151,6 @@ defmodule ReIntegrations.Notifications.Emails.User do
     {Enum.map(changes, fn {attr, value} -> "Atributo: #{attr}, novo valor: #{value}<br>" end),
      Enum.map(changes, fn {attr, value} -> "Atributo: #{attr}, novo valor: #{value}" end)}
   end
-
-  defp get_to_email(%{name: "Agendamento online"}), do: @contato_email
-  defp get_to_email(_), do: @to
 
   def contact_request(%{name: name, email: email, phone: phone, message: message}) do
     new()

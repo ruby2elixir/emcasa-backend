@@ -17,8 +17,6 @@ defmodule ReWeb.GraphQL.Calendars.QueryTest do
   end
 
   test "admin should query tour options", %{admin_conn: conn} do
-    insert(:interest_type, name: "type2", enabled: false)
-
     query = """
       query TourOptions {
         tourOptions
@@ -31,8 +29,6 @@ defmodule ReWeb.GraphQL.Calendars.QueryTest do
   end
 
   test "user should query tour options", %{user_conn: conn} do
-    insert(:interest_type, name: "type2", enabled: false)
-
     query = """
       query TourOptions {
         tourOptions
@@ -45,8 +41,6 @@ defmodule ReWeb.GraphQL.Calendars.QueryTest do
   end
 
   test "anonymous should not query tour options", %{unauthenticated_conn: conn} do
-    insert(:interest_type, name: "type2", enabled: false)
-
     query = """
       query TourOptions {
         tourOptions

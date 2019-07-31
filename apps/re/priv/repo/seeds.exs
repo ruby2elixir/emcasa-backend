@@ -418,8 +418,7 @@ end)
     email: "interested1@email.com",
     phone: "123212321",
     message: "Looks like an awesome listing",
-    listing: listing2,
-    interest_type: interest_type1
+    listing: listing2
   })
 
 {:ok, _} =
@@ -428,8 +427,7 @@ end)
     email: "interested2@email.com",
     phone: "321232123",
     message: "Looks like an awesome listing",
-    listing: listing2,
-    interest_type: interest_type2
+    listing: listing2
   })
 
 {:ok, _} =
@@ -438,8 +436,7 @@ end)
     email: "interested2@email.com",
     phone: "321232123",
     message: "Looks like an awesome listing",
-    listing: listing3,
-    interest_type: interest_type3
+    listing: listing3
   })
 
 {:ok, _} =
@@ -448,8 +445,7 @@ end)
     email: "interested3@email.com",
     phone: "432112344321",
     message: "Looks like an awesome listing",
-    listing: listing4,
-    interest_type: interest_type4
+    listing: listing4
   })
 
 {:ok, _} =
@@ -458,8 +454,7 @@ end)
     email: "interested3@email.com",
     phone: "432112344321",
     message: "Looks like an awesome listing",
-    listing: listing4,
-    interest_type: interest_type5
+    listing: listing4
   })
 
 {:ok, _} =

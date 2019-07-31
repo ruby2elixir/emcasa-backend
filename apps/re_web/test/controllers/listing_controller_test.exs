@@ -94,8 +94,7 @@ defmodule ReWeb.ListingControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
-      insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
-      insert(:interest, listing_id: listing.id)
+      insert_list(2, :interest, listing_id: listing.id)
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -161,8 +160,7 @@ defmodule ReWeb.ListingControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
-      insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
-      insert(:interest, listing_id: listing.id)
+      insert_list(2, :interest, listing_id: listing.id)
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -225,8 +223,7 @@ defmodule ReWeb.ListingControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: build(:address), user: user)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
-      insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
-      insert(:interest, listing_id: listing.id)
+      insert_list(2, :interest, listing_id: listing.id)
       conn = get(conn, listing_path(conn, :show, listing))
 
       assert json_response(conn, 200)["listing"] ==
@@ -290,7 +287,7 @@ defmodule ReWeb.ListingControllerTest do
       image = insert(:image)
       listing = insert(:listing, images: [image], address: address, user: user)
       insert(:listings_favorites, listing_id: listing.id, user_id: user.id)
-      insert_list(2, :interest, listing_id: listing.id, interest_type: build(:interest_type))
+      insert_list(2, :interest, listing_id: listing.id)
       insert(:interest, listing_id: listing.id)
       conn = get(conn, listing_path(conn, :show, listing))
 

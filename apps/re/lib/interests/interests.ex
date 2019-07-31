@@ -34,8 +34,6 @@ defmodule Re.Interests do
     |> PubSub.publish_new("new_interest")
   end
 
-  def preload(interest), do: Repo.preload(interest, :interest_type)
-
   def request_contact(params, user) do
     %ContactRequest{}
     |> ContactRequest.changeset(params)
