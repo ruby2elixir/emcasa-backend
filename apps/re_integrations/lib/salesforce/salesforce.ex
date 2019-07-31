@@ -6,7 +6,7 @@ defmodule ReIntegrations.Salesforce do
   alias ReIntegrations.{
     Routific,
     Salesforce.Client,
-    Salesforce.Payload
+    Salesforce.Payload.Opportunity
   }
 
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 60)
@@ -27,7 +27,7 @@ defmodule ReIntegrations.Salesforce do
       |> Timex.format!("%Y-%m-%d", :strftime)
 
     fields =
-      Payload.Opportunity.Schema.__enum_map__()
+      Opportunity.Schema.__enum_map__()
       |> Keyword.values()
       |> Enum.join(", ")
 
@@ -43,10 +43,10 @@ defmodule ReIntegrations.Salesforce do
   end
 
   defp build_visit(record) do
-    with {:ok, opportunity} <- Payload.Opportunity.build(record) do
+    with {:ok, opportunity} <- Opportunity.build(record) do
       opportunity
       |> Map.take([:id, :address, :neighborhood])
-      |> Map.merge(Payload.Opportunity.visit_start_window(opportunity))
+      |> Map.merge(Opportunity.visit_start_window(opportunity))
       |> Map.put(:custom_notes, visit_notes(opportunity))
       |> Map.put(:duration, @tour_visit_duration)
     end
