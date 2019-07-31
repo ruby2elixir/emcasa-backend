@@ -9,7 +9,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
 
   defstruct [:visits, :fleet, :options]
 
-  def build(input, opts \\ []) do
+  def build(input, opts) do
     with {:ok, visits} <- build_visits(input),
          {:ok, fleet} <- build_fleet(input) do
       {:ok, %__MODULE__{visits: visits, fleet: fleet, options: build_options(opts)}}
