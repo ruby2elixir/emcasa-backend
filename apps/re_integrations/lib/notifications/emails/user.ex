@@ -15,7 +15,6 @@ defmodule ReIntegrations.Notifications.Emails.User do
   @from Application.get_env(:re_integrations, :from)
   @frontend_url Application.get_env(:re_integrations, :frontend_url)
   @admin_email "admin@emcasa.com"
-  @contato_email "contato@emcasa.com"
   @listing_path "/imoveis/"
 
   def notify_interest(%Interest{
@@ -27,7 +26,7 @@ defmodule ReIntegrations.Notifications.Emails.User do
         inserted_at: inserted_at
       }) do
     new()
-    |> to(@contato_email)
+    |> to(@to)
     |> from(@from)
     |> subject("Novo interesse em listagem EmCasa")
     |> html_body("Nome: #{name}<br>
