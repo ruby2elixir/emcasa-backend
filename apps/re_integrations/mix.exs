@@ -53,7 +53,8 @@ defmodule ReIntegrations.Mixfile do
       {:cloudex, git: "https://github.com/emcasa/cloudex.git"},
       {:geocalc, "~> 0.5"},
       {:google_api_calendar, "~> 0.6.1"},
-      {:goth, "~> 1.1.0"}
+      {:goth, "~> 1.1.0"},
+      {:ecto_enum, "~> 1.3"}
     ]
   end
 
