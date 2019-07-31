@@ -9,7 +9,8 @@ defmodule Re.SellerLeads do
     Repo,
     SellerLead,
     SellerLeads.Facebook,
-    SellerLeads.Site
+    SellerLeads.Site,
+    SellerLeads.Broker,
   }
 
   alias Ecto.Query
@@ -21,6 +22,13 @@ defmodule Re.SellerLeads do
     |> Site.changeset(params)
     |> Repo.insert()
     |> PubSub.publish_new("new_site_seller_lead")
+  end
+
+
+  def create_broker(params) do
+    %Broker{}
+    |> Broker.changeset(params)
+    |> Repo.insert()
   end
 
   def create(%{"source" => "facebook_seller"} = payload) do
