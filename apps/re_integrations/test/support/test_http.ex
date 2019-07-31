@@ -32,6 +32,11 @@ defmodule ReIntegrations.TestHTTP do
          body: """
            {
              "status": "finished",
+             "input": {
+               "visits": {},
+               "fleet": {},
+               "options": {}
+             },
              "output": {
                "unserved": null,
                "solution": {}

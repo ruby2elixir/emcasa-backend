@@ -4,19 +4,19 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
   """
   @derive Jason.Encoder
 
-  defstruct [:status, :solution, :unserved, :input]
+  defstruct [:status, :solution, :unserved, :input, :options]
 
   @status_types ["finished", "pending", "error"]
 
-  def build(%{"status" => "finished", "output" => output}) do
-    with {:ok, solution} <- build_solution(output["solution"], output["input"]["visits"]),
+  def build(%{"status" => "finished", "output" => output, "input" => input}) do
+    with {:ok, solution} <- build_solution(output["solution"], input),
          {:ok, unserved} <- build_unserved(output["unserved"]) do
       {:ok,
        %__MODULE__{
          status: :finished,
          solution: solution,
          unserved: unserved,
-         options: output["input"]["options"]
+         options: input["options"]
        }}
     end
   end
@@ -26,15 +26,15 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
 
   def build(_data), do: {:error, :invalid_input}
 
-  defp build_solution(%{} = solution, %{} = input) do
-    visits = build_visits_list(solution, input)
+  defp build_solution(%{} = solution, %{"visits" => visits_input}) do
+    visits = build_visits_list(solution, visits_input)
 
     if Enum.all?(visits, fn {_, visit} -> visit != :error end),
       do: {:ok, visits},
       else: {:error, :invalid_input}
   end
 
-  defp build_solution(_solution, _iput), do: {:error, :invalid_input}
+  defp build_solution(_solution, _input), do: {:error, :invalid_input}
 
   defp build_visits_list(solution, input),
     do:
