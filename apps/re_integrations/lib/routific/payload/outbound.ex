@@ -7,12 +7,12 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
   alias Re.GoogleCalendars.Calendar
   alias ReIntegrations.Routific
 
-  defstruct [:visits, :fleet]
+  defstruct [:visits, :fleet, :options]
 
-  def build(input) do
+  def build(input, opts) do
     with {:ok, visits} <- build_visits(input),
          {:ok, fleet} <- build_fleet(input) do
-      {:ok, %__MODULE__{visits: visits, fleet: fleet}}
+      {:ok, %__MODULE__{visits: visits, fleet: fleet, options: build_options(opts)}}
     end
   end
 
@@ -37,10 +37,10 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
     |> Map.take([:duration, :start, :end])
     |> Map.update(:start, Routific.shift_start(), &to_time_string/1)
     |> Map.update(:end, Routific.shift_end(), &to_time_string/1)
+    |> Map.put(:customNotes, Map.get(visit, :custom_notes, %{}))
     |> Map.put(:location, %{
       name: address
     })
-    |> Map.put(:customNotes, Map.get(visit, :custom_notes, %{}))
   end
 
   defp build_visit(_visit), do: :error
@@ -85,6 +85,8 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
       lat: address.lat,
       lng: address.lng
     }
+
+  defp build_options(options), do: Enum.into(options, %{})
 
   defp to_time_string(%Time{} = time), do: time |> Time.to_string() |> String.slice(0..4)
 
