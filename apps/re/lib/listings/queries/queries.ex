@@ -88,6 +88,7 @@ defmodule Re.Listings.Queries do
     |> exclude(:order_by)
     |> exclude(:limit)
     |> exclude(:distinct)
+    |> exclude(:group_by)
     |> count()
   end
 
