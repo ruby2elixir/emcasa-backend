@@ -37,6 +37,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
     |> Map.take([:duration, :start, :end])
     |> Map.update(:start, Routific.shift_start(), &to_time_string/1)
     |> Map.update(:end, Routific.shift_end(), &to_time_string/1)
+    |> Map.put(:customNotes, Map.get(visit, :custom_notes, %{}))
     |> Map.put(:location, %{
       name: address,
       lat: lat,
