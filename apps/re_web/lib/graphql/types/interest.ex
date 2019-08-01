@@ -37,6 +37,8 @@ defmodule ReWeb.Types.Interest do
     field :initial_medium, :string
     field :initial_source, :string
 
+    field :interest_type_id, :id
+
     field :listing_id, non_null(:id)
   end
 
