@@ -17,7 +17,7 @@ defmodule ReIntegrations.Salesforce.JobQueue do
   def perform(%Multi{} = multi, %{"type" => "insert_event", "event" => event}) do
     multi
     |> Multi.run(:insert_event, fn _repo, _changes ->
-      Salesforce.insert_event!(event)
+      Salesforce.insert_event(event)
     end)
     |> Repo.transaction()
   end

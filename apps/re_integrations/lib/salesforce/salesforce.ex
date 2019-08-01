@@ -14,13 +14,13 @@ defmodule ReIntegrations.Salesforce do
 
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 60)
 
-  def insert_event(payload) do
+  def enqueue_insert_event(payload) do
     %{"type" => "insert_event", "event" => payload}
     |> JobQueue.new()
     |> Repo.insert()
   end
 
-  def insert_event!(payload) do
+  def insert_event(payload) do
     with {:ok, event} <- Event.validate(payload),
          {:ok, %{status_code: 200, body: body}} <- Client.insert(event, :Event),
          {:ok, data} <- Jason.decode(body) do
