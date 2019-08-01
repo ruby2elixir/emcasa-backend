@@ -4,12 +4,32 @@ defmodule ReIntegrations.Salesforce do
   """
 
   alias ReIntegrations.{
+    Repo,
     Routific,
     Salesforce.Client,
+    Salesforce.JobQueue,
+    Salesforce.Payload.Event,
     Salesforce.Payload.Opportunity
   }
 
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 60)
+
+  def enqueue_insert_event(payload) do
+    %{"type" => "insert_event", "event" => payload}
+    |> JobQueue.new()
+    |> Repo.insert()
+  end
+
+  def insert_event(payload) do
+    with {:ok, event} <- Event.validate(payload),
+         {:ok, %{status_code: 200, body: body}} <- Client.insert_event(event),
+         {:ok, data} <- Jason.decode(body) do
+      {:ok, data}
+    else
+      {:ok, %{status_code: _status_code} = data} -> {:error, data}
+      error -> error
+    end
+  end
 
   def schedule_visits(schedule_opts \\ []) do
     with {:ok, %{status_code: 200, body: body}} <- fetch_visits(schedule_opts),
