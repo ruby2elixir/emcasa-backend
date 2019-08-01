@@ -7,7 +7,6 @@ defmodule ReIntegrations.SalesforceTest do
 
   alias ReIntegrations.{
     Repo,
-    Routific,
     Salesforce
   }
 

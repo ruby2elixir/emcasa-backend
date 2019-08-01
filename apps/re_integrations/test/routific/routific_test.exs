@@ -1,15 +1,9 @@
 defmodule ReIntegrations.RoutificTest do
   use ReIntegrations.ModelCase
 
-  import Re.CustomAssertion
-
   import Re.Factory
 
-  alias ReIntegrations.{
-    Repo,
-    Routific,
-    Routific.JobQueue
-  }
+  alias ReIntegrations.Routific
 
   @visits [
     %{

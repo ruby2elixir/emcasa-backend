@@ -4,7 +4,6 @@ defmodule ReIntegrations.Salesforce.Payload.EventTest do
   alias ReIntegrations.Salesforce.Payload
 
   @payload %{
-    "AccountId" => "0x02",
     "OwnerId" => "0x02",
     "WhoId" => "0x02",
     "WhatId" => "0x02",
@@ -19,7 +18,6 @@ defmodule ReIntegrations.Salesforce.Payload.EventTest do
 
   @event %Payload.Event{
     id: "0x01",
-    account_id: "0x02",
     owner_id: "0x02",
     who_id: "0x02",
     what_id: "0x02",
