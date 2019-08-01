@@ -9,7 +9,7 @@ defmodule ReIntegrations.Salesforce.Client do
 
   @api_headers [{"Authorization", @api_key}, {"Content-Type", "application/json"}]
 
-  def insert(payload, :Event),
+  def insert(payload),
     do: post(payload, "/api/v1/Event")
 
   def query(soql),
