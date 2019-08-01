@@ -13,11 +13,7 @@ defmodule Re.SellerLeads do
     SellerLeads.Broker
   }
 
-  alias Ecto.{
-    Changeset,
-    Multi,
-    Query
-  }
+  alias Ecto.Query
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
@@ -29,22 +25,10 @@ defmodule Re.SellerLeads do
   end
 
   def create_broker(params) do
-    changeset = Broker.changeset(%Broker{}, params)
-    uuid = Changeset.get_field(changeset, :uuid)
-
-    Ecto.Multi.new()
-    |> Multi.insert(:insert_broker_seller_lead, changeset)
-    |> JobQueue.enqueue(:seller_lead_job, %{
-      "type" => "process_broker_seller_lead",
-      "uuid" => uuid
-    })
-    |> Repo.transaction()
-    |> return_insertion()
+    %Broker{}
+    |> Broker.changeset(params)
+    |> Repo.insert()
   end
-
-  defp return_insertion({:ok, %{insert_broker_seller_lead: request}}), do: {:ok, request}
-
-  defp return_insertion(error), do: error
 
   def create(%{"source" => "facebook_seller"} = payload) do
     %Facebook{}
