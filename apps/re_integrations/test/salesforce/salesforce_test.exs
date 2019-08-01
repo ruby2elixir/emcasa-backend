@@ -34,7 +34,7 @@ defmodule ReIntegrations.SalesforceTest do
   end
 
   describe "enqueue_insert_event/1" do
-    test "creates a new job to monitor insert event" do
+    test "creates a new job to insert a salesforce event" do
       assert {:ok, _} = Salesforce.enqueue_insert_event(@event)
       assert_enqueued_job(Repo.all(Salesforce.JobQueue), "insert_event")
     end
