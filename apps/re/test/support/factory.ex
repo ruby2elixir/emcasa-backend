@@ -163,13 +163,6 @@ defmodule Re.Factory do
     }
   end
 
-  def interest_type_factory do
-    %Re.InterestType{
-      name: Shakespeare.hamlet(),
-      enabled: true
-    }
-  end
-
   def listings_favorites_factory, do: %Re.Favorite{}
 
   def price_history_factory, do: %Re.Listings.PriceHistory{}
