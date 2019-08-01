@@ -20,10 +20,12 @@ defmodule Re.SellerLeads.BrokerTest do
       user = insert(:user, type: "partner_broker")
       address = insert(:address)
 
-      attrs = Map.put(@valid_attributes, :address_uuid, address.uuid)
-      attrs = Map.put(attrs, :broker_uuid, user.uuid)
+      attr = @valid_attributes
+              |> Map.merge(%{broker_uuid: user.uuid})
+              |> Map.merge(%{address_uuid: address.uuid})
 
-      changeset = Broker.changeset(%Broker{}, attrs)
+      changeset = Broker.changeset(%Broker{}, attr)
+
       assert changeset.valid?
     end
 

@@ -6,6 +6,8 @@ defmodule Re.SellerLeads.Broker do
 
   import Ecto.Changeset
 
+  alias Re.SellerLead
+
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "broker_seller_leads" do
@@ -41,6 +43,25 @@ defmodule Re.SellerLeads.Broker do
     |> validate_required(@required)
     |> validate_inclusion(:type, @types)
     |> generate_uuid()
+  end
+
+  def seller_lead_changeset(lead, property_owner) do
+    params = %{
+      source: "WebSite",
+      type: lead.type,
+      area: lead.area,
+      maintenance_fee: lead.maintenance_fee,
+      rooms: lead.rooms,
+      bathrooms: lead.bathrooms,
+      suites: lead.suites,
+      garage_spots: lead.garage_spots,
+      suggested_price: lead.suggested_price,
+      user_uuid: property_owner.uuid,
+      address_uuid: lead.address.uuid,
+      account_salesforce_id: lead.user.salesforce_id
+    }
+
+    SellerLead.changeset(%SellerLead{}, params)
   end
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
