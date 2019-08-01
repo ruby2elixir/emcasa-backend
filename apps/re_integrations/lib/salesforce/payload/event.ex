@@ -73,6 +73,7 @@ defimpl Jason.Encoder, for: ReIntegrations.Salesforce.Payload.Event do
 
     value
     |> Map.take(keys)
+    |> Map.drop([:id])
     |> Enum.into(%{}, &dump_field/1)
     |> Jason.Encode.map(opts)
   end

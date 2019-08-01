@@ -9,8 +9,10 @@ defmodule ReIntegrations.Salesforce.Client do
 
   @api_headers [{"Authorization", @api_key}, {"Content-Type", "application/json"}]
 
-  def insert_event(payload),
-    do: post(payload, "/api/v1/Event")
+  def get(id, :Account), do: get("/api/v1/Account/" <> id)
+  def get(id, :User), do: get("/api/v1/User/" <> id)
+
+  def insert_event(payload), do: post(payload, "/api/v1/Event")
 
   def query(soql),
     do: post(%{soql: soql}, "/api/v1/query")
@@ -19,4 +21,7 @@ defmodule ReIntegrations.Salesforce.Client do
 
   defp post(body, path),
     do: path |> build_uri |> @http_client.post(Jason.encode!(body), @api_headers)
+
+  defp get(path),
+    do: path |> build_uri |> @http_client.get(@api_headers)
 end

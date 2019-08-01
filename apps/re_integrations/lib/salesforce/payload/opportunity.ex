@@ -45,7 +45,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
 
   def build(payload) do
     payload
-    |> Map.drop(["attributes"])
+    |> Map.take(Schema.__valid_values__())
     |> Enum.into(%{}, &build_field/1)
     |> validate()
   end

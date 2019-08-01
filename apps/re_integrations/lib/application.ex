@@ -10,7 +10,7 @@ defmodule ReIntegrations.Application do
   alias ReIntegrations.{
     Notifications.Emails,
     Orulo,
-    Routific,
+    Salesforce,
     Repo,
     Search
   }
@@ -32,7 +32,7 @@ defmodule ReIntegrations.Application do
       worker(Emails.Server, []),
       worker(Search.Server, []),
       {Orulo.JobQueue, repo: Repo},
-      {Routific.JobQueue, repo: Repo, reservation_timeout: 60_000, execution_timeout: 30_000},
+      {Salesforce.JobQueue, repo: Repo, reservation_timeout: 60_000, execution_timeout: 30_000},
       Search.Cluster
     ]
 end
