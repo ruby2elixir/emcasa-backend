@@ -3,8 +3,6 @@ defmodule ReIntegrations.Salesforce do
   Context module for salesforce
   """
 
-  alias Ecto.Multi
-
   alias ReIntegrations.{
     Repo,
     Routific,
@@ -56,7 +54,6 @@ defmodule ReIntegrations.Salesforce do
       %{
         owner_id: @event_owner_id,
         what_id: event.id,
-        who_id: event.custom_notes["account_id"],
         type: :visit,
         address: event.address,
         start: update_datetime(event.start, date),
