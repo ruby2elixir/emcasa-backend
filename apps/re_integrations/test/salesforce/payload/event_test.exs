@@ -4,7 +4,6 @@ defmodule ReIntegrations.Salesforce.Payload.EventTest do
   alias ReIntegrations.Salesforce.Payload
 
   @payload %{
-    "Id" => "0x01",
     "AccountId" => "0x02",
     "OwnerId" => "0x02",
     "WhoId" => "0x02",
