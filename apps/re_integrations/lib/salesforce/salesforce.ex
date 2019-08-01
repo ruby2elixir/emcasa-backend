@@ -49,7 +49,7 @@ defmodule ReIntegrations.Salesforce do
     end)
   end
 
-  def build_routific_event(event, _calendar_uuid, payload) do
+  defp build_routific_event(event, _calendar_uuid, payload) do
     with {:ok, date} <- payload.options |> Map.fetch!("date") |> Timex.parse("{ISO:Extended}"),
          {:ok, sdr} <- get_user(event.custom_notes["owner_id"]),
          {:ok, account} <- get_account(event.custom_notes["account_id"]) do

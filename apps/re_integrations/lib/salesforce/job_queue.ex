@@ -19,7 +19,6 @@ defmodule ReIntegrations.Salesforce.JobQueue do
     multi
     |> Multi.run(:get_job_status, fn _repo, _changes ->
       with {:ok, payload} <- Routific.get_job_status(id) do
-        IO.inspect(payload)
         {:ok, payload}
       else
         {:error, error} -> {:error, error}
