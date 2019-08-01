@@ -31,8 +31,8 @@ defmodule ReIntegrations.RoutificTest do
 
   describe "start_job/1" do
     test "create a new job to monitor routific request" do
-      assert {:ok, _} = Routific.start_job(@visits)
-      assert_enqueued_job(Repo.all(JobQueue), "monitor_routific_job")
+      assert {:ok, job_id} = Routific.start_job(@visits)
+      assert is_binary(job_id)
     end
   end
 

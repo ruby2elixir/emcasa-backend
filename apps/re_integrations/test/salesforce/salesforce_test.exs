@@ -29,7 +29,7 @@ defmodule ReIntegrations.SalesforceTest do
   describe "schedule_tours/1" do
     test "creates a new job to monitor routific request" do
       assert {:ok, _} = Salesforce.schedule_visits(date: Timex.now())
-      assert_enqueued_job(Repo.all(Routific.JobQueue), "monitor_routific_job")
+      assert_enqueued_job(Repo.all(Salesforce.JobQueue), "monitor_routific_job")
     end
   end
 
