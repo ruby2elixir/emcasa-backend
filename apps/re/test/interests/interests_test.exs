@@ -191,7 +191,6 @@ defmodule Re.InterestsTest do
         Interests.show_interest(%{
           name: "naem",
           phone: "123",
-          interest_type: 2,
           listing_id: listing.id
         })
 
@@ -205,7 +204,7 @@ defmodule Re.InterestsTest do
       Re.PubSub.subscribe("new_interest")
 
       {:error, :add_interest, _, _} =
-        Interests.show_interest(%{name: "naem", phone: "123", interest_type: 2, listing_id: -1})
+        Interests.show_interest(%{name: "naem", phone: "123", listing_id: -1})
 
       refute_receive %{new: _, topic: "new_interest", type: :new}
     end

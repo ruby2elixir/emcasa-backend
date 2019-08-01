@@ -4,18 +4,19 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
   """
   @derive Jason.Encoder
 
-  defstruct [:status, :solution, :unserved]
+  defstruct [:status, :solution, :unserved, :options]
 
   @status_types ["finished", "pending", "error"]
 
-  def build(%{"status" => "finished", "output" => output}) do
-    with {:ok, solution} <- build_solution(output["solution"]),
+  def build(%{"status" => "finished", "output" => output, "input" => input}) do
+    with {:ok, solution} <- build_solution(output["solution"], input),
          {:ok, unserved} <- build_unserved(output["unserved"]) do
       {:ok,
        %__MODULE__{
          status: :finished,
          solution: solution,
-         unserved: unserved
+         unserved: unserved,
+         options: input["options"]
        }}
     end
   end
@@ -25,37 +26,38 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
 
   def build(_data), do: {:error, :invalid_input}
 
-  defp build_solution(%{} = solution) do
-    visits = build_visits_list(solution)
+  defp build_solution(%{} = solution, %{"visits" => visits_input}) do
+    visits = build_visits_list(solution, visits_input)
 
     if Enum.all?(visits, fn {_, visit} -> visit != :error end),
       do: {:ok, visits},
       else: {:error, :invalid_input}
   end
 
-  defp build_solution(_solution), do: {:error, :invalid_input}
+  defp build_solution(_solution, _input), do: {:error, :invalid_input}
 
-  defp build_visits_list(solution),
+  defp build_visits_list(solution, input),
     do:
       Enum.reduce(solution, %{}, fn {calendar_uuid, visits}, acc ->
-        Map.put(acc, calendar_uuid, Enum.map(visits, &build_visit/1))
+        Map.put(acc, calendar_uuid, Enum.map(visits, &build_visit(&1, input)))
       end)
 
-  defp build_visit(%{"location_id" => location_id, "location_name" => address} = visit) do
+  defp build_visit(%{"location_id" => location_id, "location_name" => address} = visit, input) do
     with {:ok, arrival} <- visit |> Map.get("arrival_time") |> to_time_struct(),
          {:ok, finish} <- visit |> Map.get("finish_time") |> to_time_struct() do
       %{
         id: location_id,
         address: address,
         start: arrival,
-        end: finish
+        end: finish,
+        custom_notes: get_in(input, [location_id, "customNotes"])
       }
     else
       _ -> :error
     end
   end
 
-  defp build_visit(_visit), do: :error
+  defp build_visit(_visit, _input), do: :error
 
   defp build_unserved(nil), do: {:ok, []}
 
