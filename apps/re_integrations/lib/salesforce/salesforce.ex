@@ -22,7 +22,7 @@ defmodule ReIntegrations.Salesforce do
 
   def insert_event(payload) do
     with {:ok, event} <- Event.validate(payload),
-         {:ok, %{status_code: 200, body: body}} <- Client.insert(event),
+         {:ok, %{status_code: 200, body: body}} <- Client.insert_event(event),
          {:ok, data} <- Jason.decode(body) do
       {:ok, data}
     else
