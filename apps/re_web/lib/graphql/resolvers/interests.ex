@@ -21,8 +21,6 @@ defmodule ReWeb.Resolvers.Interests do
 
   def notify_when_covered(params, _), do: Interests.notify_when_covered(params)
 
-  def interest_types(_, _), do: {:ok, Interests.get_types()}
-
   def simulate(%{input: input}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(Simulators, :simulate, current_user) do
       Simulators.simulate(input)

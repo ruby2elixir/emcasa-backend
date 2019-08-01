@@ -92,7 +92,6 @@ defmodule ReWeb.Schema do
       Re.Listings,
       Re.Listings.History.Prices,
       Re.Interests,
-      Re.Interests.Types,
       Re.Favorites,
       Re.OwnerContacts,
       Re.Statistics,

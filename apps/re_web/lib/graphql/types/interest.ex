@@ -23,7 +23,6 @@ defmodule ReWeb.Types.Interest do
     field :initial_source, :string
 
     field :listing, :listing, resolve: dataloader(Re.Listings)
-    field :interest_type, :interest_type, resolve: dataloader(Re.Interests.Types)
   end
 
   input_object :interest_input do
@@ -38,7 +37,8 @@ defmodule ReWeb.Types.Interest do
     field :initial_medium, :string
     field :initial_source, :string
 
-    field :interest_type_id, non_null(:id)
+    field :interest_type_id, :id
+
     field :listing_id, non_null(:id)
   end
 
@@ -77,11 +77,6 @@ defmodule ReWeb.Types.Interest do
     field :user, :user, resolve: dataloader(Re.Accounts)
   end
 
-  object :interest_type do
-    field :id, :id
-    field :name, :string
-  end
-
   object :simulation do
     field :cem, :string
     field :cet, :string
@@ -110,11 +105,6 @@ defmodule ReWeb.Types.Interest do
   end
 
   object :interest_queries do
-    @desc "Interest types"
-    field :interest_types,
-      type: list_of(:interest_type),
-      resolve: &InterestsResolver.interest_types/2
-
     @desc "Request funding simulation"
     field :simulate, type: :simulation do
       arg :input, non_null(:simulation_request)

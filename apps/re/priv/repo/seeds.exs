@@ -5,7 +5,6 @@ alias Re.{
   Favorite,
   Image,
   Interest,
-  InterestType,
   Interests.ContactRequest,
   Listing,
   Listings.PriceHistory,
@@ -413,20 +412,13 @@ end)
     listing: listing3
   })
 
-{:ok, interest_type1} = Re.Repo.insert(%InterestType{name: "Me ligue dentro de 5 minutos"})
-{:ok, interest_type2} = Re.Repo.insert(%InterestType{name: "Me ligue em um horário específico"})
-{:ok, interest_type3} = Re.Repo.insert(%InterestType{name: "Agendamento por e-mail"})
-{:ok, interest_type4} = Re.Repo.insert(%InterestType{name: "Agendamento por Whatsapp"})
-{:ok, interest_type5} = Re.Repo.insert(%InterestType{name: "Agendamento online"})
-
 {:ok, _} =
   Repo.insert(%Interest{
     name: "Interested Person 1",
     email: "interested1@email.com",
     phone: "123212321",
     message: "Looks like an awesome listing",
-    listing: listing2,
-    interest_type: interest_type1
+    listing: listing2
   })
 
 {:ok, _} =
@@ -435,8 +427,7 @@ end)
     email: "interested2@email.com",
     phone: "321232123",
     message: "Looks like an awesome listing",
-    listing: listing2,
-    interest_type: interest_type2
+    listing: listing2
   })
 
 {:ok, _} =
@@ -445,8 +436,7 @@ end)
     email: "interested2@email.com",
     phone: "321232123",
     message: "Looks like an awesome listing",
-    listing: listing3,
-    interest_type: interest_type3
+    listing: listing3
   })
 
 {:ok, _} =
@@ -455,8 +445,7 @@ end)
     email: "interested3@email.com",
     phone: "432112344321",
     message: "Looks like an awesome listing",
-    listing: listing4,
-    interest_type: interest_type4
+    listing: listing4
   })
 
 {:ok, _} =
@@ -465,8 +454,7 @@ end)
     email: "interested3@email.com",
     phone: "432112344321",
     message: "Looks like an awesome listing",
-    listing: listing4,
-    interest_type: interest_type5
+    listing: listing4
   })
 
 {:ok, _} =
