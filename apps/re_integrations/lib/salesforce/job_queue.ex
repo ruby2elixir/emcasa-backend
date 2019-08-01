@@ -1,6 +1,6 @@
 defmodule ReIntegrations.Salesforce.JobQueue do
   @moduledoc """
-  Module for processing jobs related with google api.
+  Module for processing jobs related with emcasa/salesforce's api.
   """
 
   use EctoJob.JobQueue, table_name: "salesforce_jobs", schema_prefix: "re_integrations"
