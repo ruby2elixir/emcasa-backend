@@ -62,7 +62,12 @@ defmodule Re.SellerLeads.JobQueue do
   def perform(_multi, job), do: raise("Job type not handled. Job: #{Kernel.inspect(job)}")
 
   defp check_broker_user(%{uuid: uuid, broker: %{uuid: broker_uuid, salesforce_id: nil}}),
-       do: raise("User:[uuid:#{broker_uuid}] doesn't have a salesforce_id - Failing integration for BrokerLead:[uuid:#{uuid}]")
+    do:
+      raise(
+        "User:[uuid:#{broker_uuid}] doesn't have a salesforce_id - Failing integration for BrokerLead:[uuid:#{
+          uuid
+        }]"
+      )
 
   defp check_broker_user(broker_lead), do: broker_lead
 

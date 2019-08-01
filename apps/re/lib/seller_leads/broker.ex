@@ -11,7 +11,6 @@ defmodule Re.SellerLeads.Broker do
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "broker_seller_leads" do
-
     field :complement, :string
     field :type, :string
     field :additional_information, :string
@@ -20,14 +19,14 @@ defmodule Re.SellerLeads.Broker do
     field :owner_email, :string
 
     belongs_to :address, Re.Address,
-               references: :uuid,
-               foreign_key: :address_uuid,
-               type: Ecto.UUID
+      references: :uuid,
+      foreign_key: :address_uuid,
+      type: Ecto.UUID
 
     belongs_to :broker, Re.User,
-               references: :uuid,
-               foreign_key: :broker_uuid,
-               type: Ecto.UUID
+      references: :uuid,
+      foreign_key: :broker_uuid,
+      type: Ecto.UUID
 
     timestamps()
   end

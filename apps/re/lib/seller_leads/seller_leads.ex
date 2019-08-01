@@ -10,7 +10,7 @@ defmodule Re.SellerLeads do
     SellerLead,
     SellerLeads.Facebook,
     SellerLeads.Site,
-    SellerLeads.Broker,
+    SellerLeads.Broker
   }
 
   alias Ecto.{
@@ -40,7 +40,6 @@ defmodule Re.SellerLeads do
     })
     |> Repo.transaction()
     |> return_insertion()
-
   end
 
   defp return_insertion({:ok, %{insert_broker_seller_lead: request}}), do: {:ok, request}

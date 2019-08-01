@@ -27,7 +27,7 @@ defmodule Re.User do
 
     has_many :listings, Re.Listing
 
-    has_many :broker_leads, Re.SellerLeads.Broker, foreign_key: :broker_uuid, references: :uuid
+    has_many(:broker_leads, Re.SellerLeads.Broker, foreign_key: :broker_uuid, references: :uuid)
 
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :listing]
