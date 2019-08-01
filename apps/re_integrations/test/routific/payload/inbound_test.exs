@@ -7,6 +7,11 @@ defmodule ReIntegrations.Routific.Payload.InboundTest do
 
   @finished_response %{
     "status" => "finished",
+    "input" => %{
+      "visits" => %{},
+      "fleet" => %{},
+      "options" => %{}
+    },
     "output" => %{
       "status" => "success",
       "unserved" => nil,
