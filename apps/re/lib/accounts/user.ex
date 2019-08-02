@@ -80,7 +80,7 @@ defmodule Re.User do
 
   def create_changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @create_required + @create_optional)
+    |> cast(params, @create_required ++ @create_optional)
     |> validate_required(@create_required)
     |> base_changeset()
     |> Re.ChangesetHelper.generate_uuid()
