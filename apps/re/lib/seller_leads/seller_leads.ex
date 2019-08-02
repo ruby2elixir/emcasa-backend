@@ -12,7 +12,7 @@ defmodule Re.SellerLeads do
     SellerLead,
     SellerLeads.Facebook,
     SellerLeads.Site,
-    SellerLeads.Broker,
+    SellerLeads.Broker
   }
 
   alias Ecto.{
@@ -32,6 +32,7 @@ defmodule Re.SellerLeads do
 
   def create_broker(params) do
     changeset = Broker.changeset(%Broker{}, params)
+
     property_owner_param = %{
       name: Map.get(params, "owner_name"),
       phone: Map.get(params, "owner_telephone"),
@@ -46,11 +47,11 @@ defmodule Re.SellerLeads do
     |> handle_property_owner(property_owner)
     |> Repo.transaction()
     |> return_insertion()
-
   end
 
   defp handle_property_owner(multi, property_owner_changeset) do
     phone = Changeset.get_field(property_owner_changeset, :phone)
+
     case Users.get_by_phone(phone) do
       {:error, _} -> Multi.insert(multi, :insert_broker_user_lead, property_owner_changeset)
       _ -> multi
