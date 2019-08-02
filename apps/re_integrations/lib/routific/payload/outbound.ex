@@ -34,7 +34,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
 
   defp build_visit(%{duration: _duration, address: address} = visit) do
     visit
-    |> Map.take([:duration, :start, :end])
+    |> Map.take([:duration, :start, :end, :notes])
     |> Map.update(:start, Routific.shift_start(), &to_time_string/1)
     |> Map.update(:end, Routific.shift_end(), &to_time_string/1)
     |> Map.put(:customNotes, Map.get(visit, :custom_notes, %{}))

@@ -26,6 +26,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     owner_id: "OwnerId",
     address: "Dados_do_Imovel_para_Venda__c",
     neighborhood: "Bairro__c",
+    notes: "Comentarios_do_Agendamento__c",
     tour_strict_date: "Data_Fixa_para_o_Tour__c",
     tour_strict_time: "Horario_Fixo_para_o_Tour__c",
     tour_period: "Periodo_Disponibilidade_Tour__c"
@@ -36,6 +37,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     field :owner_id, :string
     field :address, :string
     field :neighborhood, :string
+    field :notes, :string
     field :tour_strict_date, :date
     field :tour_strict_time, :time
     field :tour_period, TourPeriod

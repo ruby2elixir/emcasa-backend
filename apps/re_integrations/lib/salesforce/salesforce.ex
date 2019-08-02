@@ -61,19 +61,20 @@ defmodule ReIntegrations.Salesforce do
         end: update_datetime(event.end, date),
         duration: @tour_visit_duration,
         subject: "[#{calendar.name}] Visita para tour",
-        description: build_event_description(%{sdr: sdr, account: account})
+        description: build_event_description(event, %{sdr: sdr, account: account})
       }
     end
   end
 
-  defp build_event_description(%{
+  defp build_event_description(event, %{
          sdr: %{"Name" => sdr_name},
          account: %{"Name" => account_name, "PersonMobilePhone" => account_phone}
        }),
        do:
          "SDR: #{sdr_name}\n" <>
            "Cliente: #{account_name}\n" <>
-           "Telefone: #{account_phone}"
+           "Telefone: #{account_phone}\n" <>
+           event.notes
 
   defp update_datetime(%Time{} = time, %DateTime{} = date), do: Timex.set(date, time: time)
 
@@ -132,7 +133,7 @@ defmodule ReIntegrations.Salesforce do
   defp build_visit(record) do
     with {:ok, opportunity} <- Opportunity.build(record) do
       opportunity
-      |> Map.take([:id, :address, :neighborhood])
+      |> Map.take([:id, :address, :neighborhood, :notes])
       |> Map.merge(Opportunity.visit_start_window(opportunity))
       |> Map.put(:custom_notes, visit_notes(opportunity))
       |> Map.put(:duration, @tour_visit_duration)

@@ -34,8 +34,8 @@ defmodule ReIntegrations.TestHTTP do
              "status": "finished",
              "input": {
                "visits": {
-                 "1": {"customNotes": {"account_id":"0x01", "owner_id":"0x01"}},
-                 "2": {"customNotes": {"account_id":"0x01", "owner_id":"0x01"}}
+                 "1": {"notes": "", "customNotes": {"account_id":"0x01", "owner_id":"0x01"}},
+                 "2": {"notes": "", "customNotes": {"account_id":"0x01", "owner_id":"0x01"}}
                },
                "fleet": {},
                "options": {"date": "2019-08-01T20:03:48.347904Z"}
