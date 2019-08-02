@@ -47,8 +47,9 @@ defmodule ReIntegrations.Salesforce do
     end)
   end
 
-  defp build_routific_event(event, _calendar_uuid, payload) do
+  defp build_routific_event(event, calendar_uuid, payload) do
     with {:ok, date} <- payload.options |> Map.fetch!("date") |> Timex.parse("{ISO:Extended}"),
+         {:ok, calendar} <- Re.Calendars.get(calendar_uuid),
          {:ok, sdr} <- get_user(event.custom_notes["owner_id"]),
          {:ok, account} <- get_account(event.custom_notes["account_id"]) do
       %{
@@ -59,7 +60,7 @@ defmodule ReIntegrations.Salesforce do
         start: update_datetime(event.start, date),
         end: update_datetime(event.end, date),
         duration: @tour_visit_duration,
-        subject: "Visita para tour",
+        subject: "[#{calendar.name}] Visita para tour",
         description: build_event_description(%{sdr: sdr, account: account})
       }
     end
