@@ -26,6 +26,8 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
      admin_user: admin_user}
   end
 
+  @mock_response "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
+
   describe "priceSuggestionRequest" do
     @variables %{
       "name" => "Mah Name",
@@ -73,50 +75,72 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
       }
     }
 
-    test "anonymous should not request price suggestion", %{unauthenticated_conn: conn} do
-      mutation = """
-        mutation RequestPriceSuggestion (
-          $name: String!,
-          $email: String!,
-          $area: Int!,
-          $rooms: Int!,
-          $bathrooms: Int!,
-          $garageSpots: Int!,
-          $suites: Int,
-          $type: String,
-          $maintenanceFee: Float,
-          $isCovered: Boolean!,
-          $addressInput: AddressInput!
-          ) {
-          requestPriceSuggestion(
-            name: $name
-            email: $email
-            area: $area
-            rooms: $rooms
-            bathrooms: $bathrooms
-            garageSpots: $garageSpots
-            suites: $suites
-            type: $type
-            maintenanceFee: $maintenanceFee
-            isCovered: $isCovered
-            address: $addressInput
-          ) {
-            suggestedPrice
-          }
+    @mutation """
+      mutation RequestPriceSuggestion (
+        $name: String!,
+        $email: String!,
+        $area: Int!,
+        $rooms: Int!,
+        $bathrooms: Int!,
+        $garageSpots: Int!,
+        $suites: Int,
+        $type: String,
+        $maintenanceFee: Float,
+        $isCovered: Boolean!,
+        $addressInput: AddressInput!
+        ) {
+        requestPriceSuggestion(
+          name: $name
+          email: $email
+          area: $area
+          rooms: $rooms
+          bathrooms: $bathrooms
+          garageSpots: $garageSpots
+          suites: $suites
+          type: $type
+          maintenanceFee: $maintenanceFee
+          isCovered: $isCovered
+          address: $addressInput
+        ) {
+          suggestedPrice
         }
-      """
+      }
+    """
 
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
+    @nameless_mutation """
+      mutation RequestPriceSuggestion (
+        $email: String!,
+        $area: Int!,
+        $rooms: Int!,
+        $bathrooms: Int!,
+        $garageSpots: Int!,
+        $suites: Int,
+        $type: String,
+        $maintenanceFee: Float,
+        $isCovered: Boolean!,
+        $addressInput: AddressInput!
+        ) {
+        requestPriceSuggestion(
+          email: $email
+          area: $area
+          rooms: $rooms
+          bathrooms: $bathrooms
+          garageSpots: $garageSpots
+          suites: $suites
+          type: $type
+          maintenanceFee: $maintenanceFee
+          isCovered: $isCovered
+          address: $addressInput
+        ) {
+          suggestedPrice
+        }
+      }
+    """
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
+    test "anonymous should not request price suggestion", %{unauthenticated_conn: conn} do
+      mock(HTTPoison, :post, {:ok, %{body: @mock_response}})
+
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@mutation, @variables))
 
       assert [%{"code" => 401, "message" => "Unauthorized"}] = json_response(conn, 200)["errors"]
 
@@ -124,49 +148,9 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
     end
 
     test "user should request price suggestion", %{user_conn: conn, user_user: user} do
-      mutation = """
-        mutation RequestPriceSuggestion (
-          $name: String!,
-          $email: String!,
-          $area: Int!,
-          $rooms: Int!,
-          $bathrooms: Int!,
-          $garageSpots: Int!,
-          $suites: Int,
-          $type: String,
-          $maintenanceFee: Float,
-          $isCovered: Boolean!,
-          $addressInput: AddressInput!
-          ) {
-          requestPriceSuggestion(
-            name: $name
-            email: $email
-            area: $area
-            rooms: $rooms
-            bathrooms: $bathrooms
-            garageSpots: $garageSpots
-            suites: $suites
-            type: $type
-            maintenanceFee: $maintenanceFee
-            isCovered: $isCovered
-            address: $addressInput
-          ) {
-            suggestedPrice
-          }
-        }
-      """
+      mock(HTTPoison, :post, {:ok, %{body: @mock_response}})
 
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
-
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@mutation, @variables))
 
       assert %{"suggestedPrice" => 26_279.0} ==
                json_response(conn, 200)["data"]["requestPriceSuggestion"]
@@ -176,52 +160,16 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
     end
 
     test "nameless anonymous should not request price suggestions", %{unauthenticated_conn: conn} do
-      mutation = """
-        mutation RequestPriceSuggestion (
-          $email: String!,
-          $area: Int!,
-          $rooms: Int!,
-          $bathrooms: Int!,
-          $garageSpots: Int!,
-          $suites: Int,
-          $type: String,
-          $maintenanceFee: Float,
-          $isCovered: Boolean!,
-          $addressInput: AddressInput!
-          ) {
-          requestPriceSuggestion(
-            email: $email
-            area: $area
-            rooms: $rooms
-            bathrooms: $bathrooms
-            garageSpots: $garageSpots
-            suites: $suites
-            type: $type
-            maintenanceFee: $maintenanceFee
-            isCovered: $isCovered
-            address: $addressInput
-          ) {
-            id
-            name
-            suggestedPrice
-          }
-        }
-      """
-
       nameless_variables = Map.delete(@variables, "name")
 
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_response}})
 
       conn =
-        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, nameless_variables))
+        post(
+          conn,
+          "/graphql_api",
+          AbsintheHelpers.mutation_wrapper(@nameless_mutation, nameless_variables)
+        )
 
       assert [%{"code" => 401, "message" => "Unauthorized"}] = json_response(conn, 200)["errors"]
 
@@ -232,53 +180,13 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
       user_conn: conn,
       user_user: user
     } do
-      mutation = """
-        mutation RequestPriceSuggestion (
-          $name: String!,
-          $email: String!,
-          $area: Int!,
-          $rooms: Int!,
-          $bathrooms: Int!,
-          $garageSpots: Int!,
-          $suites: Int,
-          $type: String,
-          $maintenanceFee: Float,
-          $isCovered: Boolean!,
-          $addressInput: AddressInput!
-          ) {
-          requestPriceSuggestion(
-            name: $name
-            email: $email
-            area: $area
-            rooms: $rooms
-            bathrooms: $bathrooms
-            garageSpots: $garageSpots
-            suites: $suites
-            type: $type
-            maintenanceFee: $maintenanceFee
-            isCovered: $isCovered
-            address: $addressInput
-          ) {
-            suggestedPrice
-          }
-        }
-      """
-
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_response}})
 
       assert capture_log(fn ->
                post(
                  conn,
                  "/graphql_api",
-                 AbsintheHelpers.mutation_wrapper(mutation, @invalid_variables)
+                 AbsintheHelpers.mutation_wrapper(@mutation, @invalid_variables)
                )
              end) =~ ":invalid_input in priceteller"
 
@@ -289,41 +197,9 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
 
     @tag capture_log: true
     test "handle priceteller timeout", %{user_conn: conn} do
-      mutation = """
-        mutation RequestPriceSuggestion (
-          $name: String!,
-          $email: String!,
-          $area: Int!,
-          $rooms: Int!,
-          $bathrooms: Int!,
-          $garageSpots: Int!,
-          $suites: Int,
-          $type: String,
-          $maintenanceFee: Float,
-          $isCovered: Boolean!,
-          $addressInput: AddressInput!
-          ) {
-          requestPriceSuggestion(
-            name: $name
-            email: $email
-            area: $area
-            rooms: $rooms
-            bathrooms: $bathrooms
-            garageSpots: $garageSpots
-            suites: $suites
-            type: $type
-            maintenanceFee: $maintenanceFee
-            isCovered: $isCovered
-            address: $addressInput
-          ) {
-            suggestedPrice
-          }
-        }
-      """
-
       mock(HTTPoison, :post, {:error, %{reason: :timeout}})
 
-      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, @variables))
+      conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@mutation, @variables))
 
       assert json_response(conn, 200)["data"]["requestPriceSuggestion"]
 
@@ -393,15 +269,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
     """
 
     test "anonymous should not request price suggestion", %{unauthenticated_conn: conn} do
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_response}})
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@query, @variables))
 
@@ -409,15 +277,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
     end
 
     test "user should not request price suggestion", %{user_conn: conn} do
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_response}})
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@query, @variables))
 
@@ -425,15 +285,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
     end
 
     test "admin should request price suggestion", %{admin_conn: conn} do
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\": 26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_response}})
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@query, @variables))
 
@@ -453,15 +305,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
     test "admin should get nil price suggestion when parameters are not completly filled", %{
       admin_conn: conn
     } do
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_response}})
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@query, @invalid_variables))
 
