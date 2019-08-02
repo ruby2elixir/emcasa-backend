@@ -7,13 +7,19 @@ defmodule Re.SellerLeads do
   alias Re.{
     PubSub,
     Repo,
+    User,
+    Accounts.Users,
     SellerLead,
     SellerLeads.Facebook,
     SellerLeads.Site,
-    SellerLeads.Broker
+    SellerLeads.Broker,
   }
 
-  alias Ecto.Query
+  alias Ecto.{
+    Changeset,
+    Multi,
+    Query
+  }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
@@ -25,10 +31,35 @@ defmodule Re.SellerLeads do
   end
 
   def create_broker(params) do
-    %Broker{}
-    |> Broker.changeset(params)
-    |> Repo.insert()
+    changeset = Broker.changeset(%Broker{}, params)
+    property_owner_param = %{
+      name: Map.get(params, "owner_name"),
+      phone: Map.get(params, "owner_telephone"),
+      email: Map.get(params, "owner_email"),
+      role: "user"
+    }
+
+    property_owner = User.create_changeset(%User{}, property_owner_param)
+
+    Ecto.Multi.new()
+    |> Multi.insert(:insert_broker_seller_lead, changeset)
+    |> handle_property_owner(property_owner)
+    |> Repo.transaction()
+    |> return_insertion()
+
   end
+
+  defp handle_property_owner(multi, property_owner_changeset) do
+    phone = Changeset.get_field(property_owner_changeset, :phone)
+    case Users.get_by_phone(phone) do
+      {:error, _} -> Multi.insert(multi, :insert_broker_user_lead, property_owner_changeset)
+      _ -> multi
+    end
+  end
+
+  defp return_insertion({:ok, %{insert_broker_seller_lead: request}}), do: {:ok, request}
+
+  defp return_insertion(error), do: error
 
   def create(%{"source" => "facebook_seller"} = payload) do
     %Facebook{}

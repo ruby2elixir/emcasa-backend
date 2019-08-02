@@ -75,6 +75,17 @@ defmodule Re.User do
     |> Re.ChangesetHelper.generate_uuid()
   end
 
+  @create_required ~w(role phone)a
+  @create_optional ~w(name email device_token type salesforce_id)a
+
+  def create_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, @create_required + @create_optional)
+    |> validate_required(@create_required)
+    |> base_changeset()
+    |> Re.ChangesetHelper.generate_uuid()
+  end
+
   defp base_changeset(changeset) do
     changeset
     |> validate_email()
