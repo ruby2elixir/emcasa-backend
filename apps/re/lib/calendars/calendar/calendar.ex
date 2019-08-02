@@ -30,15 +30,19 @@ defmodule Re.Calendars.Calendar do
     timestamps()
   end
 
-  @required ~w(name speed shift_start shift_end)a
+  @speed_types ["fast", "normal", "slow", "very slow", "bike"]
+
+  @required ~w(name speed address_uuid shift_start shift_end)a
+  @optional ~w(external_id)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @required)
+    |> cast(params, @required ++ @optional)
     |> validate_required(@required)
+    |> validate_inclusion(:speed, @speed_types)
     |> Re.ChangesetHelper.generate_uuid()
   end
 

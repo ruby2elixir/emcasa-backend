@@ -116,8 +116,9 @@ defmodule Re.CalendarsTest do
 
       assert {:ok, inserted_calendar} =
                Calendars.insert(%{
-                 address: address,
-                 external_id: "id"
+                 address_uuid: address.uuid,
+                 name: "x",
+                 speed: "slow"
                })
 
       assert retrieved_calendar = Repo.get(Calendar, inserted_calendar.uuid)
