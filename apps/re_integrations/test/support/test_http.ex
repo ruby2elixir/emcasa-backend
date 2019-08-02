@@ -43,7 +43,7 @@ defmodule ReIntegrations.TestHTTP do
              "output": {
                "unserved": null,
                "solution": {
-                  "fleet_id": [
+                  "affb1f63-399a-4d85-9f65-c127994104f6": [
                     {
                       "location_id": "depot",
                       "location_name": "depot",
