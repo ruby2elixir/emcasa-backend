@@ -9,28 +9,26 @@ defmodule Re.Addresses.District do
   alias Re.Slugs
 
   schema "districts" do
-    field(:uuid, Ecto.UUID)
-    field(:state, :string)
-    field(:city, :string)
-    field(:name, :string)
-    field(:state_slug, :string)
-    field(:city_slug, :string)
-    field(:name_slug, :string)
-    field(:description, :string, default: "")
-    field(:status, :string, default: "uncovered")
-    field(:sort_order, :integer)
+    field :uuid, Ecto.UUID
+    field :state, :string
+    field :city, :string
+    field :name, :string
+    field :state_slug, :string
+    field :city_slug, :string
+    field :name_slug, :string
+    field :description, :string, default: ""
+    field :status, :string, default: "uncovered"
+    field :sort_order, :integer
 
-    many_to_many(:calendars, Re.Calendars.Calendar,
+    many_to_many :calendars, Re.Calendars.Calendar,
       join_through: Re.Calendars.CalendarDistrict,
       join_keys: [district_uuid: :uuid, calendar_uuid: :uuid],
       on_replace: :delete
-    )
 
-    many_to_many(:users, Re.User,
+    many_to_many :users, Re.User,
       join_through: Re.BrokerDistrict,
       join_keys: [district_uuid: :uuid, user_uuid: :uuid],
       on_replace: :delete
-    )
 
     timestamps()
   end
