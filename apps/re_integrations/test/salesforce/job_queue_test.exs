@@ -3,6 +3,8 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
 
   import Re.CustomAssertion
 
+  import Re.Factory
+
   alias ReIntegrations.{
     Repo,
     Routific,
@@ -10,6 +12,12 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
   }
 
   alias Ecto.Multi
+
+  setup do
+    address = insert(:address)
+    insert(:calendar, uuid: "affb1f63-399a-4d85-9f65-c127994104f6", address: address)
+    :ok
+  end
 
   describe "monitor_routific_job" do
     test "enqueues salesforce events for insertion when routific job succeeds" do
