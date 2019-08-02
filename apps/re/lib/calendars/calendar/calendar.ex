@@ -9,9 +9,11 @@ defmodule Re.Calendars.Calendar do
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "calendars" do
-    field(:external_id, :string)
-    field(:shift_start, :time, default: ~T[08:00:00])
-    field(:shift_end, :time, default: ~T[18:00:00])
+    field :external_id, :string
+    field :name, :string
+    field :speed, :string
+    field :shift_start, :time, default: ~T[08:00:00]
+    field :shift_end, :time, default: ~T[18:00:00]
 
     many_to_many(:districts, Re.Addresses.District,
       join_through: Re.Calendars.CalendarDistrict,
@@ -28,7 +30,7 @@ defmodule Re.Calendars.Calendar do
     timestamps()
   end
 
-  @required ~w(external_id shift_start shift_end)a
+  @required ~w(name speed shift_start shift_end)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
