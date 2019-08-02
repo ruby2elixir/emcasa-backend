@@ -55,6 +55,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
         {:ok,
          Enum.reduce(calendars, %{}, fn calendar, acc ->
            Map.put(acc, calendar.uuid, %{
+             speed: calendar.speed,
              start_location: build_depot(calendar),
              shift_start: to_time_string(calendar.shift_start),
              shift_end: to_time_string(calendar.shift_end)
