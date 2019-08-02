@@ -4,7 +4,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
   """
   @derive Jason.Encoder
 
-  alias Re.GoogleCalendars.Calendar
+  alias Re.Calendars.Calendar
   alias ReIntegrations.Routific
 
   defstruct [:visits, :fleet, :options]

@@ -1,4 +1,4 @@
-defmodule Re.GoogleCalendars.Calendar do
+defmodule Re.Calendars.Calendar do
   @moduledoc """
   Schema for storing photographers' calendars
   """
@@ -9,19 +9,21 @@ defmodule Re.GoogleCalendars.Calendar do
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "calendars" do
-    field :external_id, :string
-    field :shift_start, :time, default: ~T[08:00:00]
-    field :shift_end, :time, default: ~T[18:00:00]
+    field(:external_id, :string)
+    field(:shift_start, :time, default: ~T[08:00:00])
+    field(:shift_end, :time, default: ~T[18:00:00])
 
-    many_to_many :districts, Re.Addresses.District,
-      join_through: Re.GoogleCalendars.CalendarDistrict,
+    many_to_many(:districts, Re.Addresses.District,
+      join_through: Re.Calendars.CalendarDistrict,
       join_keys: [calendar_uuid: :uuid, district_uuid: :uuid],
       on_replace: :delete
+    )
 
-    belongs_to :address, Re.Address,
+    belongs_to(:address, Re.Address,
       type: Ecto.UUID,
       foreign_key: :address_uuid,
       references: :uuid
+    )
 
     timestamps()
   end
