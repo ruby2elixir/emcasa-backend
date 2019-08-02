@@ -108,4 +108,27 @@ defmodule ReIntegrations.TestHTTP do
       {:ok, %{status_code: 400}}
     end
   end
+
+  def post(%URI{path: "/api/v1/Event"}, _body, _opts),
+    do:
+      {:ok,
+       %{
+         status_code: 200,
+         body: """
+         {
+           "Id": "0x01",
+           "AccountId": "0x01",
+           "OwnerId": "0x01",
+           "WhoId": "0x01",
+           "WhatId": "0x01",
+           "Type": "Event",
+           "Subject": "some subject",
+           "Description": "some description",
+           "Location": "some location",
+           "DurationInMinutes": 60,
+           "StartDateTime": "2019-08-01T21:00:00.000+0000",
+           "EndDateTime": "2019-08-01T21:00:00.000+0000"
+         }
+         """
+       }}
 end
