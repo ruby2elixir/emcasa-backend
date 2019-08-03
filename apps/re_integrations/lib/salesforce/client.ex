@@ -14,6 +14,8 @@ defmodule ReIntegrations.Salesforce.Client do
 
   def insert_event(payload), do: post(payload, "/api/v1/Event")
 
+  def update_opportunity(uuid, payload), do: put(payload, "/api/v1/Opportunity/" <> uuid)
+
   def query(soql),
     do: post(%{soql: soql}, "/api/v1/query")
 
@@ -21,6 +23,15 @@ defmodule ReIntegrations.Salesforce.Client do
 
   defp post(body, path),
     do: path |> build_uri |> @http_client.post(Jason.encode!(body), @api_headers)
+
+  defp put(body, path),
+    do:
+      path
+      |> build_uri
+      |> @http_client.post(
+        Jason.encode!(body, filter_field: fn {_, value} -> not is_nil(value) end),
+        @api_headers
+      )
 
   defp get(path),
     do: path |> build_uri |> @http_client.get(@api_headers)

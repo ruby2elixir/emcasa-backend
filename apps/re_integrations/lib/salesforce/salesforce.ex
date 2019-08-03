@@ -16,15 +16,20 @@ defmodule ReIntegrations.Salesforce do
   @routific_max_attempts Application.get_env(:re_integrations, :routific_max_attempts, 6)
   @event_owner_id Application.get_env(:re_integrations, :salesforce_event_owner_id)
 
-  def enqueue_insert_event(payload) do
-    %{"type" => "insert_event", "event" => payload}
-    |> JobQueue.new()
-    |> Repo.insert()
-  end
-
   def insert_event(payload) do
     with {:ok, event} <- Event.validate(payload),
          {:ok, %{status_code: 200, body: body}} <- Client.insert_event(event),
+         {:ok, data} <- Jason.decode(body) do
+      {:ok, data}
+    else
+      {:ok, %{status_code: _status_code} = data} -> {:error, data}
+      error -> error
+    end
+  end
+
+  def update_opportunity(id, payload) do
+    with {:ok, opportunity} <- Opportunity.validate(payload),
+         {:ok, %{status_code: 200, body: body}} <- Client.update_opportunity(id, opportunity),
          {:ok, data} <- Jason.decode(body) do
       {:ok, data}
     else
@@ -40,9 +45,15 @@ defmodule ReIntegrations.Salesforce do
         %Routific.Payload.Inbound{} = payload
       ) do
     Enum.reduce(events, multi, fn event, multi ->
-      JobQueue.enqueue(multi, "schedule_#{event.id}", %{
+      multi
+      |> JobQueue.enqueue("schedule_#{event.id}", %{
         "type" => "insert_event",
         "event" => build_routific_event(event, calendar_uuid, payload)
+      })
+      |> JobQueue.enqueue("update_#{event.id}", %{
+        "type" => "update_opportunity",
+        "id" => event.id,
+        "opportunity" => %{stage: :visit_scheduled}
       })
     end)
   end

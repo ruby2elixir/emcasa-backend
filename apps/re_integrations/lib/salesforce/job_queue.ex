@@ -39,6 +39,18 @@ defmodule ReIntegrations.Salesforce.JobQueue do
     |> Repo.transaction()
   end
 
+  def perform(%Multi{} = multi, %{
+        "type" => "update_opportunity",
+        "id" => id,
+        "opportunity" => payload
+      }) do
+    multi
+    |> Multi.run(:insert_event, fn _repo, _changes ->
+      Salesforce.update_opportunity(id, payload)
+    end)
+    |> Repo.transaction()
+  end
+
   defp enqueue_insert_routific_events(multi, {calendar_uuid, [_depot | events]}, payload),
     do: Salesforce.enqueue_insert_routific_events(multi, events, calendar_uuid, payload)
 end
