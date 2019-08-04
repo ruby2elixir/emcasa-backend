@@ -37,4 +37,10 @@ defmodule ReIntegrations.SalesforceTest do
       assert {:ok, %{}} = Salesforce.insert_event(@event)
     end
   end
+
+  describe "update_opportunity/2" do
+    test "updates a salesforce opportunity" do
+      assert {:ok, %{}} = Salesforce.update_opportunity("0x01", %{stage: :visit_scheduled})
+    end
+  end
 end

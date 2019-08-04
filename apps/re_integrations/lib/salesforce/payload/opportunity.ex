@@ -95,7 +95,7 @@ defimpl Jason.Encoder, for: ReIntegrations.Salesforce.Payload.Opportunity do
     value
     |> Map.take(keys())
     |> Map.drop([:id])
-    |> Enum.filter(Keyword.get(opts, :filter_field, fn _ -> true end))
+    |> Enum.filter(&(not is_nil(elem(&1, 1))))
     |> Enum.into(%{}, &dump_field/1)
     |> Jason.Encode.map(opts)
   end
@@ -108,6 +108,9 @@ defimpl Jason.Encoder, for: ReIntegrations.Salesforce.Payload.Opportunity do
         {:ok, value} <- Opportunity.TourPeriod.dump(enum),
         do: dump_field({:tour_period, value})
       )
+
+  defp dump_field({:stage, enum}) when is_atom(enum),
+    do: with({:ok, value} <- Opportunity.Stage.dump(enum), do: dump_field({:stage, value}))
 
   defp dump_field({key, value}),
     do: with({:ok, field} <- Opportunity.Schema.dump(key), do: {field, value})

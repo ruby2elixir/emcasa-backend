@@ -28,6 +28,7 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
                })
 
       assert_enqueued_job(Repo.all(JobQueue), "insert_event", 2)
+      assert_enqueued_job(Repo.all(JobQueue), "update_opportunity", 2)
     end
 
     test "fails when routific job is pending" do
