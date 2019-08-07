@@ -34,9 +34,9 @@ defmodule Re.SellerLeads do
     changeset = Broker.changeset(%Broker{}, params)
 
     property_owner_param = %{
-      name: Map.get(params, "owner_name"),
-      phone: Map.get(params, "owner_telephone"),
-      email: Map.get(params, "owner_email"),
+      name: Map.get(params, :owner_name),
+      phone: Map.get(params, :owner_telephone),
+      email: Map.get(params, :owner_email),
       role: "user"
     }
 

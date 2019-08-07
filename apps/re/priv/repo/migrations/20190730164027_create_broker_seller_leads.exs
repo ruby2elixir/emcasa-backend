@@ -13,6 +13,8 @@ defmodule Re.Repo.Migrations.CreateBrokerSellerLeads do
       add :owner_telephone, :string
       add :owner_email, :string
       add :utm, :jsonb, default: nil
+
+      timestamps()
     end
   end
 end
