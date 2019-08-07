@@ -9,8 +9,8 @@ defmodule ReIntegrations.Google.Calendars do
   }
 
   alias Re.{
-    GoogleCalendars,
-    GoogleCalendars.Calendar
+    Calendars,
+    Calendars.Calendar
   }
 
   @token Application.get_env(:re_integrations, :goth_token, Goth.Token)
@@ -48,7 +48,7 @@ defmodule ReIntegrations.Google.Calendars do
          {:ok, _acl} <- insert_acl(calendar) do
       params
       |> Map.put(:external_id, calendar.id)
-      |> GoogleCalendars.insert()
+      |> Calendars.insert()
     end
   end
 

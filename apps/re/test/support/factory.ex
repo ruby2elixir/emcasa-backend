@@ -355,7 +355,7 @@ defmodule Re.Factory do
   end
 
   def calendar_factory do
-    %Re.GoogleCalendars.Calendar{
+    %Re.Calendars.Calendar{
       uuid: UUID.uuid4(),
       external_id: UUID.uuid4()
     }

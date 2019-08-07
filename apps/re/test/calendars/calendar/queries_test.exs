@@ -1,8 +1,8 @@
-defmodule Re.GoogleCalendars.Calendar.QueriesTest do
+defmodule Re.Calendars.Calendar.QueriesTest do
   use Re.ModelCase
 
   alias Re.{
-    GoogleCalendars.Calendar.Queries,
+    Calendars.Calendar.Queries,
     Repo
   }
 

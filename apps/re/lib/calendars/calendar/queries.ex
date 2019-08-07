@@ -1,10 +1,10 @@
-defmodule Re.GoogleCalendars.Calendar.Queries do
+defmodule Re.Calendars.Calendar.Queries do
   @moduledoc """
   Module for grouping developments queries
   """
 
   alias Re.{
-    GoogleCalendars.Calendar,
+    Calendars.Calendar,
     Slugs
   }
 
