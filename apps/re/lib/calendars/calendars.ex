@@ -3,6 +3,7 @@ defmodule Re.Calendars do
   Context module for calendars
   """
   alias Re.{
+    Calendars.Calendar,
     Calendars.TourAppointment,
     Listing,
     PubSub,
@@ -12,6 +13,35 @@ defmodule Re.Calendars do
   alias Ecto.Changeset
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
+
+  defp get_one_datetime(%{options: [%{datetime: datetime} | _rest]}),
+    do: NaiveDateTime.truncate(datetime, :second)
+
+  defp get_one_datetime(_), do: nil
+
+  def get(uuid), do: do_get(Calendar, uuid)
+
+  def get_preloaded(uuid), do: Calendar |> Calendar.Queries.preload_relations() |> do_get(uuid)
+
+  defp do_get(query, uuid) do
+    case Repo.get(query, uuid) do
+      nil -> {:error, :not_found}
+      calendar -> {:ok, calendar}
+    end
+  end
+
+  def insert(params) do
+    %Calendar{}
+    |> Calendar.changeset(params)
+    |> Repo.insert()
+  end
+
+  def upsert_districts(calendar, districts) do
+    calendar
+    |> Repo.preload([:districts])
+    |> Calendar.changeset_update_districts(districts)
+    |> Repo.update()
+  end
 
   def schedule_tour(params) do
     option = get_one_datetime(params)
@@ -23,11 +53,6 @@ defmodule Re.Calendars do
     |> Repo.insert()
     |> PubSub.publish_new("tour_appointment")
   end
-
-  defp get_one_datetime(%{options: [%{datetime: datetime} | _rest]}),
-    do: NaiveDateTime.truncate(datetime, :second)
-
-  defp get_one_datetime(_), do: nil
 
   defp add_listing_id(changeset, %{listing_id: listing_id}) do
     case Repo.get(Listing, listing_id) do

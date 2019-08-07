@@ -24,7 +24,6 @@ defmodule ReWeb.Router do
 
     resources "/listings", ListingController, except: [:new, :index] do
       resources("/images", ImageController, only: [:index, :create, :delete])
-      resources("/interests", InterestController, only: [:create])
 
       put("/images_orders", ImageController, :order)
       get("/download_images", ImageController, :zip)
@@ -33,7 +32,6 @@ defmodule ReWeb.Router do
     resources("/featured_listings", FeaturedController, only: [:index])
     resources("/relaxed_listings", RelaxedController, only: [:index])
     resources("/search", SearchController, only: [:index])
-    resources("/interest_types", InterestTypeController, only: [:index])
     resources("/sitemap_listings", SitemapController, only: [:index])
   end
 

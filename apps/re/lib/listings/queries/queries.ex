@@ -5,7 +5,6 @@ defmodule Re.Listings.Queries do
 
   alias Re.{
     Images,
-    Interests,
     Listing
   }
 
@@ -15,7 +14,7 @@ defmodule Re.Listings.Queries do
     :address,
     :listings_favorites,
     :tags,
-    interests: Interests.Queries.with_type(),
+    :interests,
     images: Images.Queries.listing_preload()
   ]
 
