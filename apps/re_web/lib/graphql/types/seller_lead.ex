@@ -16,7 +16,7 @@ defmodule ReWeb.Types.SellerLead do
   end
 
   object :broker_seller_lead do
-    field :uuid, :string
+    field :uuid, :uuid
   end
 
   input_object :site_seller_lead_input do
@@ -53,7 +53,7 @@ defmodule ReWeb.Types.SellerLead do
     end
 
     @desc "Insert broker seller lead"
-    field :broker_seller_lead_create, type: :site_seller_lead do
+    field :broker_seller_lead_create, type: :broker_seller_lead do
       arg :input, non_null(:broker_seller_lead_input)
 
       resolve &Resolvers.SellerLeads.create_broker/2
