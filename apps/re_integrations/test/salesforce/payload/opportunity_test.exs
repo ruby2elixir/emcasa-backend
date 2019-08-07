@@ -67,7 +67,12 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
   describe "Jason.Encoder" do
     test "maps schema keys to salesforce columns" do
       assert Map.drop(@payload, ["Id"]) ==
-               Jason.encode!(@opportunity) |> Jason.decode!()
+               @opportunity |> Jason.encode!() |> Jason.decode!()
+    end
+
+    test "filters nil values" do
+      assert Map.drop(@payload, ["Id", "AccountId"]) ==
+               @opportunity |> Map.drop([:account_id]) |> Jason.encode!() |> Jason.decode!()
     end
   end
 end
