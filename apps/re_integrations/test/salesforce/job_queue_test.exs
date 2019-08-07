@@ -28,7 +28,6 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
                })
 
       assert_enqueued_job(Repo.all(JobQueue), "insert_event", 2)
-      assert_enqueued_job(Repo.all(JobQueue), "update_opportunity", 2)
     end
 
     test "fails when routific job is pending" do
@@ -57,10 +56,21 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
       "subject" => "some subject"
     }
 
+    test "enqueues salesforce opportunity update" do
+      JobQueue.perform(Multi.new(), %{
+        "type" => "insert_event",
+        "opportunity_id" => "0x01",
+        "event" => @event
+      })
+
+      assert_enqueued_job(Repo.all(JobQueue), "update_opportunity")
+    end
+
     test "creates a salesforce event" do
       assert {:ok, %{insert_event: %{}}} =
                JobQueue.perform(Multi.new(), %{
                  "type" => "insert_event",
+                 "opportunity_id" => "0x01",
                  "event" => @event
                })
     end

@@ -48,12 +48,8 @@ defmodule ReIntegrations.Salesforce do
       multi
       |> JobQueue.enqueue("schedule_#{event.id}", %{
         "type" => "insert_event",
+        "opportunity_id" => event.id,
         "event" => build_routific_event(event, calendar_uuid, payload)
-      })
-      |> JobQueue.enqueue("update_#{event.id}", %{
-        "type" => "update_opportunity",
-        "id" => event.id,
-        "opportunity" => %{stage: :visit_scheduled}
       })
     end)
   end
