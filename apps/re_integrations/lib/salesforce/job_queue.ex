@@ -54,7 +54,7 @@ defmodule ReIntegrations.Salesforce.JobQueue do
         "opportunity" => payload
       }) do
     multi
-    |> Multi.run(:insert_event, fn _repo, _changes ->
+    |> Multi.run(:update_opportunity, fn _repo, _changes ->
       Salesforce.update_opportunity(id, payload)
     end)
     |> Repo.transaction()

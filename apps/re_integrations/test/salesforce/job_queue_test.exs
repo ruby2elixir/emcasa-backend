@@ -67,11 +67,22 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
     end
 
     test "creates a salesforce event" do
-      assert {:ok, %{insert_event: %{}}} =
+      assert {:ok, %{insert_event: %{"Id" => "0x01"}}} =
                JobQueue.perform(Multi.new(), %{
                  "type" => "insert_event",
                  "opportunity_id" => "0x01",
                  "event" => @event
+               })
+    end
+  end
+
+  describe "update_opportunity" do
+    test "updates a salesforce opportunity" do
+      assert {:ok, %{update_opportunity: %{"Id" => "0x01"}}} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "update_opportunity",
+                 "id" => "0x01",
+                 "opportunity" => %{"eyy" => "lmao"}
                })
     end
   end
