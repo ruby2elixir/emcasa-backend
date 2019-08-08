@@ -18,11 +18,13 @@ defmodule Re.SellerLeads.BrokerTest do
   describe "changeset" do
     test "should be valid" do
       user = insert(:user, type: "partner_broker")
+      owner = insert(:user)
       address = insert(:address)
 
       attr = @valid_attributes
               |> Map.merge(%{broker_uuid: user.uuid})
               |> Map.merge(%{address_uuid: address.uuid})
+              |> Map.merge(%{owner_uuid: owner.uuid})
 
       changeset = Broker.changeset(%Broker{}, attr)
 
@@ -36,10 +38,7 @@ defmodule Re.SellerLeads.BrokerTest do
       assert Keyword.get(changeset.errors, :type) ==
                {"is invalid", [validation: :inclusion, enum: ~w(Apartamento Casa Cobertura)]}
 
-      assert Keyword.get(changeset.errors, :owner_telephone) ==
-               {"can't be blank", [validation: :required]}
-
-      assert Keyword.get(changeset.errors, :owner_name) ==
+      assert Keyword.get(changeset.errors, :owner_uuid) ==
                {"can't be blank", [validation: :required]}
 
       assert Keyword.get(changeset.errors, :address_uuid) ==

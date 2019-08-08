@@ -31,7 +31,6 @@ defmodule Re.SellerLeads do
   end
 
   def create_broker(params) do
-    changeset = Broker.changeset(%Broker{}, params)
 
     property_owner_param = %{
       name: Map.get(params, :owner_name),
@@ -40,27 +39,27 @@ defmodule Re.SellerLeads do
       role: "user"
     }
 
-    property_owner = User.create_changeset(%User{}, property_owner_param)
+    property_owner =
+      %User{}
+      |> User.create_changeset(property_owner_param)
+      |> handle_property_owner()
 
-    Ecto.Multi.new()
-    |> Multi.insert(:insert_broker_seller_lead, changeset)
-    |> handle_property_owner(property_owner)
-    |> Repo.transaction()
-    |> return_insertion()
+    attrs = params
+            |> Map.merge(%{owner_uuid: property_owner.uuid})
+
+    %Broker{}
+    |> Broker.changeset(attrs)
+    |> Repo.insert()
   end
 
-  defp handle_property_owner(multi, property_owner_changeset) do
+  defp handle_property_owner(property_owner_changeset) do
     phone = Changeset.get_field(property_owner_changeset, :phone)
 
     case Users.get_by_phone(phone) do
-      {:error, _} -> Multi.insert(multi, :insert_broker_user_lead, property_owner_changeset)
-      _ -> multi
+      {:error, _} -> Repo.insert!(property_owner_changeset)
+      {_, user} -> user
     end
   end
-
-  defp return_insertion({:ok, %{insert_broker_seller_lead: request}}), do: {:ok, request}
-
-  defp return_insertion(error), do: error
 
   def create(%{"source" => "facebook_seller"} = payload) do
     %Facebook{}

@@ -291,38 +291,5 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
 
       assert json_response(conn, 200)["errors"]
     end
-
-    test "broker lead should add owner as property_owner user when it doesn't exists", %{
-      broker_conn: conn,
-      address: address
-    } do
-      variables = %{
-        "input" => %{
-          "address" => %{
-            "city" => address.city,
-            "state" => address.state,
-            "lat" => address.lat,
-            "lng" => address.lng,
-            "neighborhood" => address.neighborhood,
-            "street" => address.street,
-            "streetNumber" => address.street_number,
-            "postalCode" => address.postal_code
-          },
-          "ownerEmail" => "a@a.com",
-          "ownerTelephone" => "+559999999999",
-          "ownerName" => "Suzana Vieira",
-          "type" => "Apartamento"
-        }
-      }
-
-      assert {:error, :not_found} == Users.get_by_phone("+559999999999")
-
-      conn =
-        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
-
-      assert json_response(conn, 200)
-      assert {:ok, user} = Users.get_by_phone("+559999999999")
-      assert %{name: "Suzana Vieira", email: "a@a.com", phone: "+559999999999"} == Map.take(user, [:name, :email, :phone])
-    end
   end
 end

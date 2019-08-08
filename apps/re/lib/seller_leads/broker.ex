@@ -14,9 +14,6 @@ defmodule Re.SellerLeads.Broker do
     field :complement, :string
     field :type, :string
     field :additional_information, :string
-    field :owner_name, :string
-    field :owner_telephone, :string
-    field :owner_email, :string
 
     belongs_to :address, Re.Address,
       references: :uuid,
@@ -28,7 +25,7 @@ defmodule Re.SellerLeads.Broker do
       foreign_key: :broker_uuid,
       type: Ecto.UUID
 
-    belongs_to :owner, Re.OwnerContact,
+    belongs_to :owner, Re.User,
      references: :uuid,
      foreign_key: :owner_uuid,
      type: Ecto.UUID
@@ -37,7 +34,7 @@ defmodule Re.SellerLeads.Broker do
   end
 
   @types ~w(Apartamento Casa Cobertura)
-  @required ~w(type address_uuid broker_uuid owner_name owner_telephone)a
+  @required ~w(type address_uuid broker_uuid owner_uuid)a
   @optional ~w(complement additional_information)a
   @params @required ++ @optional
 
