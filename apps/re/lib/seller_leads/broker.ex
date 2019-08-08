@@ -26,9 +26,9 @@ defmodule Re.SellerLeads.Broker do
       type: Ecto.UUID
 
     belongs_to :owner, Re.User,
-     references: :uuid,
-     foreign_key: :owner_uuid,
-     type: Ecto.UUID
+      references: :uuid,
+      foreign_key: :owner_uuid,
+      type: Ecto.UUID
 
     timestamps()
   end

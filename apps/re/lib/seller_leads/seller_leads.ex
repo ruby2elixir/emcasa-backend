@@ -31,7 +31,6 @@ defmodule Re.SellerLeads do
   end
 
   def create_broker(params) do
-
     property_owner_param = %{
       name: Map.get(params, :owner_name),
       phone: Map.get(params, :owner_telephone),
@@ -44,8 +43,9 @@ defmodule Re.SellerLeads do
       |> User.create_changeset(property_owner_param)
       |> handle_property_owner()
 
-    attrs = params
-            |> Map.merge(%{owner_uuid: property_owner.uuid})
+    attrs =
+      params
+      |> Map.merge(%{owner_uuid: property_owner.uuid})
 
     %Broker{}
     |> Broker.changeset(attrs)
