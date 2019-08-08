@@ -6,8 +6,6 @@ defmodule Re.SellerLeads.Broker do
 
   import Ecto.Changeset
 
-  alias Re.SellerLead
-
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "broker_seller_leads" do
