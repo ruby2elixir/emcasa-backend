@@ -17,7 +17,6 @@ defmodule Re.SellerLeads do
 
   alias Ecto.{
     Changeset,
-    Multi,
     Query
   }
 
