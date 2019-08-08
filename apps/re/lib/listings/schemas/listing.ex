@@ -100,14 +100,17 @@ defmodule Re.Listing do
 
   @attributes @required ++ @optional
 
+  @price_lower_limit 200_000
+  @price_upper_limit 100_000_000
+
   def changeset(struct, params) do
     struct
     |> cast(params, @attributes)
     |> validate_attributes()
     |> validate_number(
       :price,
-      greater_than_or_equal_to: 250_000,
-      less_than_or_equal_to: 100_000_000
+      greater_than_or_equal_to: @price_lower_limit,
+      less_than_or_equal_to: @price_upper_limit
     )
     |> validate_inclusion(:type, @types)
     |> validate_inclusion(:garage_type, @garage_types)
