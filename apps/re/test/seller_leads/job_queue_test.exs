@@ -118,7 +118,7 @@ defmodule Re.SellerLeads.JobQueueTest do
         Jason.encode(%{
           name: user.name,
           email: user.email,
-          phone: user.phone,
+          phone: String.replace(user.phone, "+", ""),
           city: address.city,
           state: address.state,
           street: address.street,

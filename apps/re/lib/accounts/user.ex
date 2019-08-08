@@ -43,6 +43,7 @@ defmodule Re.User do
   @roles ~w(admin user)
   @types ~w(property_owner partner_broker)
 
+  @phone_regex ~r/^\+55[0-9]{11}$/
   @update_required ~w()a
   @update_optional ~w(name email role phone device_token type salesforce_id)a
 
@@ -89,6 +90,7 @@ defmodule Re.User do
   defp base_changeset(changeset) do
     changeset
     |> validate_email()
+    |> validate_phone()
     |> validate_inclusion(:role, @roles)
     |> validate_inclusion(:type, @types)
   end
@@ -99,6 +101,21 @@ defmodule Re.User do
     |> check_email(changeset)
   end
 
+  defp validate_phone(changeset) do
+    changeset
+    |> get_field(:phone)
+    |> check_phone(changeset)
+  end
+
+  defp check_phone(nil, changeset), do: changeset
+
+  defp check_phone(phone, changeset) do
+    case String.match?(phone, @phone_regex) do
+     true -> changeset
+     false -> add_error(changeset, :phone, "has invalid format: #{phone}", validation: :format)
+    end
+  end
+  
   defp check_email(nil, changeset), do: changeset
 
   defp check_email(email, changeset) do

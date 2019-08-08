@@ -171,7 +171,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "postalCode" => address.postal_code
           },
           "ownerEmail" => "a@a.com",
-          "ownerTelephone" => "+559999999999",
+          "ownerTelephone" => "+5599999999999",
           "ownerName" => "Suzana Vieira",
           "type" => "Apartamento"
         }
@@ -199,7 +199,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "postalCode" => address.postal_code
           },
           "ownerEmail" => "a@a.com",
-          "ownerTelephone" => "+559999999999",
+          "ownerTelephone" => "+5599999999999",
           "ownerName" => "Suzana Vieira",
           "type" => "Apartamento"
         }
@@ -227,7 +227,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "postalCode" => address.postal_code
           },
           "ownerEmail" => "a@a.com",
-          "ownerTelephone" => "+559999999999",
+          "ownerTelephone" => "+5599999999999",
           "ownerName" => "Suzana Vieira",
           "type" => "Apartamento"
         }
@@ -255,7 +255,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "postalCode" => address.postal_code
           },
           "ownerEmail" => "a@a.com",
-          "ownerTelephone" => "+559999999999",
+          "ownerTelephone" => "+5599999999999",
           "ownerName" => "Suzana Vieira",
           "type" => "Apartamento"
         }
@@ -282,7 +282,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "streetNumber" => address.street_number,
             "postalCode" => address.postal_code
           },
-          "ownerTelephone" => "+559999999999",
+          "ownerTelephone" => "+5599999999999",
           "type" => "Apartamento"
         }
       }

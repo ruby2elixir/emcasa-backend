@@ -29,12 +29,12 @@ defmodule Re.SellerLeadsTest do
 
   describe "create_broker" do
     test "should create owner as user when it doesn't exists" do
-      assert {:error, :not_found} == Users.get_by_phone("+559999999999")
+      assert {:error, :not_found} == Users.get_by_phone("+5599999999999")
       user = insert(:user,  type: "partner_broker")
       address = insert(:address)
       params = %{
         owner_email: "a@a.com",
-        owner_telephone: "+559999999999",
+        owner_telephone: "+5599999999999",
         owner_name: "Suzana Vieira",
         type: "Apartamento",
         broker_uuid: user.uuid,
@@ -42,8 +42,8 @@ defmodule Re.SellerLeadsTest do
       }
 
       SellerLeads.create_broker(params)
-      assert {:ok, user} = Users.get_by_phone("+559999999999")
-      assert %{name: "Suzana Vieira", email: "a@a.com", phone: "+559999999999"} == Map.take(user, [:name, :email, :phone])
+      assert {:ok, user} = Users.get_by_phone("+5599999999999")
+      assert %{name: "Suzana Vieira", email: "a@a.com", phone: "+5599999999999"} == Map.take(user, [:name, :email, :phone])
     end
 
     test "should not create owner as user when it exists" do
