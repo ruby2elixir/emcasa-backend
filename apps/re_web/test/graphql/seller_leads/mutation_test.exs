@@ -4,7 +4,6 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
   import Re.Factory
 
   alias ReWeb.AbsintheHelpers
-  alias Re.Accounts.Users
 
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
