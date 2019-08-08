@@ -111,11 +111,11 @@ defmodule Re.User do
 
   defp check_phone(phone, changeset) do
     case String.match?(phone, @phone_regex) do
-     true -> changeset
-     false -> add_error(changeset, :phone, "has invalid format: #{phone}", validation: :format)
+      true -> changeset
+      false -> add_error(changeset, :phone, "has invalid format: #{phone}", validation: :format)
     end
   end
-  
+
   defp check_email(nil, changeset), do: changeset
 
   defp check_email(email, changeset) do
