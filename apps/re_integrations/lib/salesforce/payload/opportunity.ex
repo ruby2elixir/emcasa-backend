@@ -26,6 +26,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     owner_id: "OwnerId",
     address: "Dados_do_Imovel_para_Venda__c",
     neighborhood: "Bairro__c",
+    notes: "Comentarios_do_Agendamento__c",
     tour_strict_date: "Data_Fixa_para_o_Tour__c",
     tour_strict_time: "Horario_Fixo_para_o_Tour__c",
     tour_period: "Periodo_Disponibilidade_Tour__c"
@@ -36,6 +37,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     field :owner_id, :string
     field :address, :string
     field :neighborhood, :string
+    field :notes, :string
     field :tour_strict_date, :date
     field :tour_strict_time, :time
     field :tour_period, TourPeriod
@@ -43,9 +45,19 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
 
   @params ~w(id account_id owner_id address neighborhood tour_strict_date tour_strict_time tour_period)a
 
+  def build_all(list) do
+    results = Enum.map(list, &with({:ok, value} <- build(&1), do: value))
+
+    with nil <- Enum.find(results, nil, &(not is_ok(&1))), do: {:ok, results}
+  end
+
+  defp is_ok({:error, _}), do: false
+  defp is_ok({:error, _, _, _, _}), do: false
+  defp is_ok(_), do: true
+
   def build(payload) do
     payload
-    |> Map.drop(["attributes"])
+    |> Map.take(Schema.__valid_values__())
     |> Enum.into(%{}, &build_field/1)
     |> validate()
   end
