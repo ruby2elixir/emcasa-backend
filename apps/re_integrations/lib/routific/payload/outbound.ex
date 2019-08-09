@@ -34,12 +34,13 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
 
   defp build_visit(%{duration: _duration, address: address} = visit) do
     visit
-    |> Map.take([:duration, :start, :end])
+    |> Map.take([:duration, :start, :end, :notes])
     |> Map.update(:start, Routific.shift_start(), &to_time_string/1)
     |> Map.update(:end, Routific.shift_end(), &to_time_string/1)
     |> Map.put(:customNotes, Map.get(visit, :custom_notes, %{}))
     |> Map.put(:location, %{
-      name: address
+      name: address,
+      address: address
     })
   end
 
@@ -54,6 +55,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
         {:ok,
          Enum.reduce(calendars, %{}, fn calendar, acc ->
            Map.put(acc, calendar.uuid, %{
+             speed: calendar.speed,
              start_location: build_depot(calendar),
              shift_start: to_time_string(calendar.shift_start),
              shift_end: to_time_string(calendar.shift_end)
