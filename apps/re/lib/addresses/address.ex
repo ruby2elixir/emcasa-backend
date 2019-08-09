@@ -26,6 +26,7 @@ defmodule Re.Address do
 
     has_many :listings, Re.Listing
     has_many :developments, Re.Development
+    has_many :seller_leads, Re.SellerLead, foreign_key: :address_uuid, references: :uuid
 
     timestamps()
   end

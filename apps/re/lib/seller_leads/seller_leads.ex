@@ -41,4 +41,26 @@ defmodule Re.SellerLeads do
       seller_lead -> {:ok, seller_lead}
     end
   end
+
+  def duplicated?(address, complement) do
+    address
+    |> Repo.preload(:seller_leads)
+    |> Map.get(:seller_leads)
+    |> Enum.any?(fn seller_lead ->
+      normalize_complement(seller_lead.complement) == normalize_complement(complement)
+    end)
+  end
+
+  @number_group_regex ~r/(\d)*/
+
+  defp normalize_complement(nil), do: nil
+
+  defp normalize_complement(complement) do
+    @number_group_regex
+    |> Regex.scan(complement)
+    |> Enum.map(fn list -> List.first(list) end)
+    |> Enum.filter(fn result -> String.length(result) >= 1 end)
+    |> Enum.sort()
+    |> Enum.join("")
+  end
 end
