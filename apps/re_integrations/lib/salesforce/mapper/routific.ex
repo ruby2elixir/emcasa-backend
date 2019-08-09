@@ -49,7 +49,7 @@ defmodule ReIntegrations.Salesforce.Mapper.Routific do
          "SDR: #{sdr_name}\n" <>
            "Cliente: #{account_name}\n" <>
            "Telefone: #{account_phone}\n" <>
-           event.notes
+           if(is_nil(event.notes), do: "", else: event.notes)
 
   defp update_datetime(%Time{} = time, %DateTime{} = date), do: Timex.set(date, time: time)
 end
