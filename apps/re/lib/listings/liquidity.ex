@@ -19,33 +19,33 @@ defmodule Re.Listings.Liquidity do
       when is_number(price) and
              is_number(suggested_price) do
     # credo:disable-for-lines:2
-    ((suggested_price - price) / suggested_price)
+    ((price / suggested_price - 1) * -1)
     |> Float.round(@decimal_precision)
   end
 
   def normalize_liquidity_ratio(liquidity_ratio)
       when is_nil(liquidity_ratio) or
-             liquidity_ratio <= -1,
+             liquidity_ratio <= -0.75,
       do: 0
 
   def normalize_liquidity_ratio(liquidity_ratio)
-      when liquidity_ratio <= -0.8,
+      when liquidity_ratio <= -0.6,
       do: 1
 
   def normalize_liquidity_ratio(liquidity_ratio)
-      when liquidity_ratio <= -0.6,
+      when liquidity_ratio <= -0.45,
       do: 2
 
   def normalize_liquidity_ratio(liquidity_ratio)
-      when liquidity_ratio <= -0.4,
+      when liquidity_ratio <= -0.3,
       do: 3
 
   def normalize_liquidity_ratio(liquidity_ratio)
-      when liquidity_ratio < -0.2,
+      when liquidity_ratio < -0.15,
       do: 4
 
   def normalize_liquidity_ratio(liquidity_ratio)
-      when liquidity_ratio <= 0.2,
+      when liquidity_ratio <= 0.15,
       do: 5
 
   def normalize_liquidity_ratio(liquidity_ratio)
@@ -53,15 +53,15 @@ defmodule Re.Listings.Liquidity do
       do: 6
 
   def normalize_liquidity_ratio(liquidity_ratio)
-      when liquidity_ratio <= 0.4,
+      when liquidity_ratio <= 0.45,
       do: 7
 
   def normalize_liquidity_ratio(liquidity_ratio)
-      when liquidity_ratio <= 0.5,
+      when liquidity_ratio <= 0.60,
       do: 8
 
   def normalize_liquidity_ratio(liquidity_ratio)
-      when liquidity_ratio <= 0.6,
+      when liquidity_ratio <= 0.75,
       do: 9
 
   def normalize_liquidity_ratio(_liquidity_ratio), do: 10

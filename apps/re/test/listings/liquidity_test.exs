@@ -10,11 +10,11 @@ defmodule Re.Listings.LiquidityTest do
       assert 0 == Liquidity.calculate(1_000_000, 1_000_000)
     end
 
-    test "should return positive value when price is lower price_suggestion" do
+    test "should return positive value when price is lower than price_suggestion" do
       assert 0 < Liquidity.calculate(900_000, 1_000_000)
     end
 
-    test "should return negative value when price is lower price_suggestion" do
+    test "should return negative value when price is higher than price_suggestion" do
       assert 0 > Liquidity.calculate(1_000_000, 900_000)
     end
 
@@ -40,54 +40,59 @@ defmodule Re.Listings.LiquidityTest do
       assert 0 == Liquidity.normalize_liquidity_ratio(nil)
     end
 
-    test "normalize -1 or lower liquidity ratio to 0" do
-      assert 0 == Liquidity.normalize_liquidity_ratio(-1.0)
+    test "normalize -0.75 or lower liquidity ratio to 0" do
+      assert 0 == Liquidity.normalize_liquidity_ratio(-0.75)
       assert 0 == Liquidity.normalize_liquidity_ratio(-2.0)
     end
 
-    test "normalize -0.8 or lower liquidity ratio to 1" do
-      assert 1 == Liquidity.normalize_liquidity_ratio(-0.8)
-      assert 1 == Liquidity.normalize_liquidity_ratio(-0.9)
+    test "normalize -0.6 or lower liquidity ratio to 1" do
+      assert 1 == Liquidity.normalize_liquidity_ratio(-0.6)
+      assert 1 == Liquidity.normalize_liquidity_ratio(-0.7)
     end
 
-    test "normalize -0.6 or lower liquidity ratio to 2" do
-      assert 2 == Liquidity.normalize_liquidity_ratio(-0.6)
-      assert 2 == Liquidity.normalize_liquidity_ratio(-0.7)
+    test "normalize -0.45 or lower liquidity ratio to 2" do
+      assert 2 == Liquidity.normalize_liquidity_ratio(-0.45)
+      assert 2 == Liquidity.normalize_liquidity_ratio(-0.5)
     end
 
-    test "normalize -0.4 or lower liquidity ratio to 3" do
+    test "normalize -0.3 or lower liquidity ratio to 3" do
+      assert 3 == Liquidity.normalize_liquidity_ratio(-0.3)
       assert 3 == Liquidity.normalize_liquidity_ratio(-0.4)
-      assert 3 == Liquidity.normalize_liquidity_ratio(-0.5)
     end
 
-    test "normalize liquidity ratio lower than -0.2 to 3" do
-      assert 4 == Liquidity.normalize_liquidity_ratio(-0.3)
+    test "normalize -0.14 or lower liquidity ratio to " do
+      assert 4 == Liquidity.normalize_liquidity_ratio(-0.16)
+      assert 4 == Liquidity.normalize_liquidity_ratio(-0.2)
     end
 
-    test "normalize liquidity ratio beetween -0.2 and 0.2 to 5" do
-      assert 5 == Liquidity.normalize_liquidity_ratio(-0.2)
+    test "normalize liquidity ratio beetween -0.15 and 0.15 to 5" do
+      assert 5 == Liquidity.normalize_liquidity_ratio(-0.15)
       assert 5 == Liquidity.normalize_liquidity_ratio(0.0)
-      assert 5 == Liquidity.normalize_liquidity_ratio(0.2)
+      assert 5 == Liquidity.normalize_liquidity_ratio(0.15)
     end
 
     test "normalize 0.3 or lower liquidity ratio to 6" do
       assert 6 == Liquidity.normalize_liquidity_ratio(0.3)
+      assert 6 == Liquidity.normalize_liquidity_ratio(0.2)
     end
 
-    test "normalize 0.4 or lower liquidity ratio to 7" do
+    test "normalize 0.45 or lower liquidity ratio to 7" do
+      assert 7 == Liquidity.normalize_liquidity_ratio(0.45)
       assert 7 == Liquidity.normalize_liquidity_ratio(0.4)
     end
 
-    test "normalize 0.5 or lower liquidity ratio to 8" do
+    test "normalize 0.6 or lower liquidity ratio to 8" do
+      assert 8 == Liquidity.normalize_liquidity_ratio(0.6)
       assert 8 == Liquidity.normalize_liquidity_ratio(0.5)
     end
 
-    test "normalize 0.6 or lower liquidity ratio to 9" do
-      assert 9 == Liquidity.normalize_liquidity_ratio(0.6)
+    test "normalize 0.75 or lower liquidity ratio to 9" do
+      assert 9 == Liquidity.normalize_liquidity_ratio(0.75)
+      assert 9 == Liquidity.normalize_liquidity_ratio(0.7)
     end
 
-    test "normalize 0.7 or lower liquidity ratio to 9" do
-      assert 10 == Liquidity.normalize_liquidity_ratio(0.7)
+    test "normalize higher than 0.75 liquidity ratio to 10" do
+      assert 10 == Liquidity.normalize_liquidity_ratio(0.76)
       assert 10 == Liquidity.normalize_liquidity_ratio(1.0)
     end
   end

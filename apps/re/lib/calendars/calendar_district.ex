@@ -1,4 +1,4 @@
-defmodule Re.GoogleCalendars.CalendarDistrict do
+defmodule Re.Calendars.CalendarDistrict do
   @moduledoc """
   Model that resolve relation between calendars and districts.
   """
@@ -9,7 +9,7 @@ defmodule Re.GoogleCalendars.CalendarDistrict do
   @primary_key false
 
   schema "calendar_districts" do
-    belongs_to :listing, Re.GoogleCalendars.Calendar,
+    belongs_to :listing, Re.Calendars.Calendar,
       type: :binary_id,
       foreign_key: :calendar_uuid,
       references: :uuid,
