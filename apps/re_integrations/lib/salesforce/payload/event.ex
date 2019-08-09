@@ -19,7 +19,6 @@ defmodule ReIntegrations.Salesforce.Payload.Event do
   """
   defenum(Schema,
     id: "Id",
-    account_id: "AccountId",
     owner_id: "OwnerId",
     who_id: "WhoId",
     what_id: "WhatId",
@@ -46,7 +45,7 @@ defmodule ReIntegrations.Salesforce.Payload.Event do
     field :end, :naive_datetime
   end
 
-  @params ~w(id account_id owner_id who_id what_id type subject description address duration start end)a
+  @params ~w(id owner_id who_id what_id type subject description address duration start end)a
   @required ~w(type subject duration start end)a
 
   def validate(params) do
@@ -73,6 +72,7 @@ defimpl Jason.Encoder, for: ReIntegrations.Salesforce.Payload.Event do
 
     value
     |> Map.take(keys)
+    |> Map.drop([:id])
     |> Enum.into(%{}, &dump_field/1)
     |> Jason.Encode.map(opts)
   end

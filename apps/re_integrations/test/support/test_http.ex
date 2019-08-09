@@ -33,13 +33,36 @@ defmodule ReIntegrations.TestHTTP do
            {
              "status": "finished",
              "input": {
-               "visits": {},
+               "visits": {
+                 "1": {"notes": "", "customNotes": {"account_id":"0x01", "owner_id":"0x01"}},
+                 "2": {"notes": "", "customNotes": {"account_id":"0x01", "owner_id":"0x01"}}
+               },
                "fleet": {},
-               "options": {}
+               "options": {"date": "2019-08-01T20:03:48.347904Z"}
              },
              "output": {
                "unserved": null,
-               "solution": {}
+               "solution": {
+                  "affb1f63-399a-4d85-9f65-c127994104f6": [
+                    {
+                      "location_id": "depot",
+                      "location_name": "depot",
+                      "arrival_time": "08:00"
+                    },
+                    {
+                      "location_id": "2",
+                      "location_name": "Rua Vergueiro, 3475",
+                      "arrival_time": "08:10",
+                      "finish_time": "08:40"
+                    },
+                    {
+                      "location_id": "1",
+                      "location_name": "R. Francisco Cruz, 345",
+                      "arrival_time": "08:41",
+                      "finish_time": "09:11"
+                    }
+                  ]
+               }
              }
            }
          """
@@ -50,6 +73,33 @@ defmodule ReIntegrations.TestHTTP do
 
   def get(%URI{path: "/jobs/FAILED_JOB_ID"}, _opts),
     do: {:ok, %{status_code: 412, body: "{\"status\": \"error\", \"output\": \"error message\"}"}}
+
+  def get(%URI{path: "/api/v1/User/0x01"}, _opts),
+    do:
+      {:ok,
+       %{
+         status_code: 200,
+         body: """
+         {
+           "Id": "0x01",
+           "Name": "name"
+         }
+         """
+       }}
+
+  def get(%URI{path: "/api/v1/Account/0x01"}, _opts),
+    do:
+      {:ok,
+       %{
+         status_code: 200,
+         body: """
+         {
+           "Id": "0x01",
+           "Name": "name",
+           "PersonMobilePhone": ""
+         }
+         """
+       }}
 
   def get(%URI{path: "/simulator"}, [], _opts),
     do: {:ok, %{body: "{\"cem\":\"10,8%\",\"cet\":\"11,3%\"}"}}
