@@ -1,6 +1,6 @@
 defmodule ReIntegrations.Salesforce.Mapper.Routific do
   @moduledoc """
-  Module for validating salesforce event entity
+  Module for mapping routific inputs to salesforce entities.
   """
   alias ReIntegrations.{
     Routific,
