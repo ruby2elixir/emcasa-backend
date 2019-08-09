@@ -181,4 +181,16 @@ defmodule ReIntegrations.TestHTTP do
          }
          """
        }}
+
+  def put(%URI{path: "/api/v1/Opportunity/0x01"}, _body, _opts),
+    do:
+      {:ok,
+       %{
+         status_code: 200,
+         body: """
+         {
+           "Id": "0x01"
+         }
+         """
+       }}
 end
