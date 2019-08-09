@@ -15,15 +15,20 @@ defmodule ReIntegrations.Salesforce do
 
   @routific_max_attempts Application.get_env(:re_integrations, :routific_max_attempts, 6)
 
-  def enqueue_insert_event(payload) do
-    %{"type" => "insert_event", "event" => payload}
-    |> JobQueue.new()
-    |> Repo.insert()
-  end
-
   def insert_event(payload) do
     with {:ok, event} <- Event.validate(payload),
          {:ok, %{status_code: 200, body: body}} <- Client.insert_event(event),
+         {:ok, data} <- Jason.decode(body) do
+      {:ok, data}
+    else
+      {:ok, %{status_code: _status_code} = data} -> {:error, data}
+      error -> error
+    end
+  end
+
+  def update_opportunity(id, payload) do
+    with {:ok, opportunity} <- Opportunity.validate(payload),
+         {:ok, %{status_code: 200, body: body}} <- Client.update_opportunity(id, opportunity),
          {:ok, data} <- Jason.decode(body) do
       {:ok, data}
     else
