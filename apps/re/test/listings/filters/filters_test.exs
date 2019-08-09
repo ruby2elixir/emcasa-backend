@@ -14,6 +14,8 @@ defmodule Re.Listings.FiltersTest do
     Repo
   }
 
+  import Ecto.Query
+
   describe "apply/2: filter by tags_slug" do
     test "filter by tag slug name" do
       tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
@@ -838,6 +840,33 @@ defmodule Re.Listings.FiltersTest do
         |> Repo.all()
 
       assert_mapper_match([%{id: listing_1.id}], result, &map_id/1)
+    end
+
+    test "allow distinct with order_by" do
+      tag_1 = insert(:tag, name: "Tag 1", name_slug: "tag-1")
+
+      {:ok, listing_1} =
+        insert(:listing)
+        |> Listings.upsert_tags([tag_1.uuid])
+
+      {:ok, listing_2} =
+        insert(:listing)
+        |> Listings.upsert_tags([tag_1.uuid])
+
+      filters = %{
+        tags_slug: ["tag-1"]
+      }
+
+      result =
+        Listing
+        |> order_by([l], desc: l.id)
+        |> Filters.apply(filters)
+        |> Repo.all()
+
+      assert [
+               listing_2.id,
+               listing_1.id
+             ] == map_id(result)
     end
   end
 

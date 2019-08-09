@@ -52,6 +52,16 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
 
   @params ~w(id account_id owner_id address neighborhood tour_strict_date tour_strict_time tour_period)a
 
+  def build_all(list) do
+    results = Enum.map(list, &with({:ok, value} <- build(&1), do: value))
+
+    with nil <- Enum.find(results, nil, &(not is_ok(&1))), do: {:ok, results}
+  end
+
+  defp is_ok({:error, _}), do: false
+  defp is_ok({:error, _, _, _, _}), do: false
+  defp is_ok(_), do: true
+
   def build(payload) do
     payload
     |> Map.take(Schema.__valid_values__())

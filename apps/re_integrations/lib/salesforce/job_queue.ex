@@ -12,23 +12,15 @@ defmodule ReIntegrations.Salesforce.JobQueue do
   alias ReIntegrations.{
     Repo,
     Routific,
-    Salesforce
+    Salesforce,
+    Salesforce.Mapper
   }
 
   def perform(%Multi{} = multi, %{"type" => "monitor_routific_job", "job_id" => id}) do
     multi
-    |> Multi.run(:get_job_status, fn _repo, _changes ->
-      with {:ok, payload} <- Routific.get_job_status(id) do
-        {:ok, payload}
-      else
-        {:error, error} -> {:error, error}
-        {status, _data} -> {:error, status}
-      end
-    end)
+    |> Multi.run(:get_job_status, fn _repo, _changes -> get_routific_job(id) end)
     |> Multi.merge(fn %{get_job_status: payload} ->
-      Enum.reduce(payload.solution, Ecto.Multi.new(), fn route, multi ->
-        enqueue_insert_routific_events(multi, route, payload)
-      end)
+      enqueue_routific_insert_events(Ecto.Multi.new(), payload)
     end)
     |> Repo.transaction()
   end
@@ -60,6 +52,27 @@ defmodule ReIntegrations.Salesforce.JobQueue do
     |> Repo.transaction()
   end
 
-  defp enqueue_insert_routific_events(multi, {calendar_uuid, [_depot | events]}, payload),
-    do: Salesforce.enqueue_insert_routific_events(multi, events, calendar_uuid, payload)
+  defp get_routific_job(job_id) do
+    with {:ok, payload} <- Routific.get_job_status(job_id) do
+      {:ok, payload}
+    else
+      {:error, error} -> {:error, error}
+      {status, _data} -> {:error, status}
+    end
+  end
+
+  defp enqueue_routific_insert_events(multi, payload),
+    do:
+      Enum.reduce(payload.solution, multi, fn route, multi ->
+        enqueue_calendar_insert_events(multi, route, payload)
+      end)
+
+  defp enqueue_calendar_insert_events(multi, {calendar_uuid, [_depot | events]}, payload),
+    do:
+      Enum.reduce(events, multi, fn event, multi ->
+        __MODULE__.enqueue(multi, "schedule_#{event.id}", %{
+          "type" => "insert_event",
+          "event" => Mapper.Routific.build_event(event, calendar_uuid, payload)
+        })
+      end)
 end
