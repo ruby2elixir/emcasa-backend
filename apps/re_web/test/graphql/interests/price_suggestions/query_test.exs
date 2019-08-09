@@ -290,12 +290,12 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(@query, @variables))
 
       assert %{
-               "listingPrice" => 26279.915,
-               "listingPriceRounded" => 26279.0,
-               "salePrice" => 24195.791,
-               "salePriceRounded" => 24195.0,
-               "listingPriceErrorQ90Max" => 28544.0,
-               "listingPriceErrorQ90Min" => 25200.0,
+               "listingPrice" => 26_279.915,
+               "listingPriceRounded" => 26_279.0,
+               "salePrice" => 24_195.791,
+               "salePriceRounded" => 24_195.0,
+               "listingPriceErrorQ90Max" => 28_544.0,
+               "listingPriceErrorQ90Min" => 25_200.0,
                "listingPricePerSqrMeter" => 560.0,
                "listingAveragePricePerSqrMeter" => 610.0
              } == json_response(conn, 200)["data"]["priceSuggestion"]
