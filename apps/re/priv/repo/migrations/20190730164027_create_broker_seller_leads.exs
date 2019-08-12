@@ -6,7 +6,7 @@ defmodule Re.Repo.Migrations.CreateBrokerSellerLeads do
       add :uuid, :uuid, primary_key: true
       add :broker_uuid, references(:users, column: :uuid, type: :uuid)
       add :address_uuid, references(:addresses, column: :uuid, type: :uuid)
-      add :owner_uuid, references(:users, column: :uuid, type: :uuid)
+      add :owner_uuid, references(:owner_contacts, column: :uuid, type: :uuid)
       add :complement, :string
       add :type, :string
       add :additional_information, :string

@@ -13,6 +13,8 @@ defmodule Re.SellerLeads.Broker do
     field :type, :string
     field :additional_information, :string
 
+    embeds_one :utm, Re.SellerLeads.Utm
+
     belongs_to :address, Re.Address,
       references: :uuid,
       foreign_key: :address_uuid,
@@ -23,7 +25,7 @@ defmodule Re.SellerLeads.Broker do
       foreign_key: :broker_uuid,
       type: Ecto.UUID
 
-    belongs_to :owner, Re.User,
+    belongs_to :owner, Re.OwnerContact,
       references: :uuid,
       foreign_key: :owner_uuid,
       type: Ecto.UUID
@@ -39,6 +41,7 @@ defmodule Re.SellerLeads.Broker do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @params)
+    |> cast_embed(:utm, with: &Re.SellerLeads.Utm.changeset/2)
     |> validate_required(@required)
     |> validate_inclusion(:type, @types)
     |> generate_uuid()

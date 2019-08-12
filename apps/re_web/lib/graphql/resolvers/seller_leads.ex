@@ -16,7 +16,7 @@ defmodule ReWeb.Resolvers.SellerLeads do
 
   def create_broker(%{input: params}, %{context: %{current_user: current_user}}) do
     with :ok <- Bodyguard.permit(SellerLeads, :create_broker_seller_lead, current_user, params),
-         {:ok, address} <- get_address(params) do
+         {:ok, address} <- Addresses.insert_or_update(params.address) do
       attr =
         params
         |> Map.merge(%{broker_uuid: current_user.uuid})
@@ -25,7 +25,4 @@ defmodule ReWeb.Resolvers.SellerLeads do
       SellerLeads.create_broker(attr)
     end
   end
-
-  defp get_address(%{address: address_params}), do: Addresses.insert_or_update(address_params)
-  defp get_address(_), do: {:error, :bad_request}
 end

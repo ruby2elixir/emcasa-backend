@@ -7,8 +7,8 @@ defmodule Re.SellerLeads do
   alias Re.{
     PubSub,
     Repo,
-    User,
-    Accounts.Users,
+    OwnerContacts,
+    OwnerContact,
     SellerLead,
     SellerLeads.Facebook,
     SellerLeads.Site,
@@ -33,13 +33,12 @@ defmodule Re.SellerLeads do
     property_owner_param = %{
       name: Map.get(params, :owner_name),
       phone: Map.get(params, :owner_telephone),
-      email: Map.get(params, :owner_email),
-      role: "user"
+      email: Map.get(params, :owner_email)
     }
 
     property_owner =
-      %User{}
-      |> User.create_changeset(property_owner_param)
+      %OwnerContact{}
+      |> OwnerContact.changeset(property_owner_param)
       |> handle_property_owner()
 
     attrs =
@@ -54,7 +53,7 @@ defmodule Re.SellerLeads do
   defp handle_property_owner(property_owner_changeset) do
     phone = Changeset.get_field(property_owner_changeset, :phone)
 
-    case Users.get_by_phone(phone) do
+    case OwnerContacts.get_by_phone(phone) do
       {:error, _} -> Repo.insert!(property_owner_changeset)
       {_, user} -> user
     end
