@@ -6,6 +6,8 @@ defmodule Re.SellerLeads.Broker do
 
   import Ecto.Changeset
 
+  alias Re.SellerLeads.Utm
+
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "broker_seller_leads" do
@@ -41,7 +43,7 @@ defmodule Re.SellerLeads.Broker do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @params)
-    |> cast_embed(:utm, with: &Re.SellerLeads.Utm.changeset/2)
+    |> cast_embed(:utm, with: &Utm.changeset/2)
     |> validate_required(@required)
     |> validate_inclusion(:type, @types)
     |> generate_uuid()
