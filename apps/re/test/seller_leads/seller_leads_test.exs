@@ -4,7 +4,6 @@ defmodule Re.SellerLeadsTest do
   import Re.Factory
 
   alias Re.{
-    Accounts.Users,
     PubSub,
     SellerLeads,
     SellerLeads.Site
@@ -61,6 +60,50 @@ defmodule Re.SellerLeadsTest do
 
       {:ok, broker} = SellerLeads.create_broker(params)
       assert broker.owner_uuid == owner.uuid
+    end
+  end
+
+  describe "duplicated?" do
+    test "should be false when the address doesn't exists" do
+      address = insert(:address)
+      insert(:seller_lead, address: address, complement: "Apto. 201")
+
+      refute SellerLeads.duplicated?(address, "Apartamento 401")
+    end
+
+    test "should be true when the address and the complement is nil" do
+      address = insert(:address)
+      insert(:seller_lead, address: address, complement: nil)
+
+      assert SellerLeads.duplicated?(address, nil)
+    end
+
+    test "should be true when the address has the exactly same complement" do
+      address = insert(:address)
+      insert(:seller_lead, address: address, complement: "100")
+
+      assert SellerLeads.duplicated?(address, "100")
+    end
+
+    test "should be true when the seller lead address has a complement with letters" do
+      address = insert(:address)
+      insert(:seller_lead, address: address, complement: "apto 100")
+
+      assert SellerLeads.duplicated?(address, "100")
+    end
+
+    test "should be true when the passed address has a complement with letters" do
+      address = insert(:address)
+      insert(:seller_lead, address: address, complement: "100")
+
+      assert SellerLeads.duplicated?(address, "apto 100")
+    end
+
+    test "should be true when the address has a similar complement with letters and multiple groups" do
+      address = insert(:address)
+      insert(:seller_lead, address: address, complement: "Bloco 3 - Apto 200")
+
+      assert SellerLeads.duplicated?(address, "Apto. 200 - Bloco 3")
     end
   end
 end

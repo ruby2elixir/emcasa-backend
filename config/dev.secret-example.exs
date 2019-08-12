@@ -32,7 +32,10 @@ config :re_integrations,
   zapier_webhook_pass: "testpass",
   orulo_url: "orulo_url",
   orulo_api_token: "orulo_api_token",
-  orulo_client_token: "orulo_client_token"
+  orulo_client_token: "orulo_client_token",
+  salesforce_event_owner_id: "salesforce_user_id",
+  salesforce_api_key: "salesforce_api_key",
+  salesforce_url: "salesforce_api_url"
 
 config :re,
   vivareal_highlights_size_rio_de_janeiro: 10,

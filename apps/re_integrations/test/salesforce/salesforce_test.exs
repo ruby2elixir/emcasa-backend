@@ -7,7 +7,6 @@ defmodule ReIntegrations.SalesforceTest do
 
   alias ReIntegrations.{
     Repo,
-    Routific,
     Salesforce
   }
 
@@ -29,20 +28,19 @@ defmodule ReIntegrations.SalesforceTest do
   describe "schedule_tours/1" do
     test "creates a new job to monitor routific request" do
       assert {:ok, _} = Salesforce.schedule_visits(date: Timex.now())
-      assert_enqueued_job(Repo.all(Routific.JobQueue), "monitor_routific_job")
-    end
-  end
-
-  describe "enqueue_insert_event/1" do
-    test "creates a new job to insert a salesforce event" do
-      assert {:ok, _} = Salesforce.enqueue_insert_event(@event)
-      assert_enqueued_job(Repo.all(Salesforce.JobQueue), "insert_event")
+      assert_enqueued_job(Repo.all(Salesforce.JobQueue), "monitor_routific_job")
     end
   end
 
   describe "insert_event/1" do
     test "creates a salesforce event" do
       assert {:ok, %{}} = Salesforce.insert_event(@event)
+    end
+  end
+
+  describe "update_opportunity/2" do
+    test "updates a salesforce opportunity" do
+      assert {:ok, %{}} = Salesforce.update_opportunity("0x01", %{stage: :visit_scheduled})
     end
   end
 end

@@ -86,6 +86,12 @@ config :re, Re.AlikeTeller.Scheduler,
     {"@daily", {Re.AlikeTeller, :load, []}}
   ]
 
+config :re_integrations, ReIntegrations.Salesforce.Scheduler,
+  debug_logging: false,
+  jobs: [
+    {"@daily", fn -> Re.Salesforce.schedule_visits(date: Timex.now() |> Timex.add(days: 1)) end}
+  ]
+
 import_config "#{Mix.env()}.exs"
 
 import_config "timber.exs"

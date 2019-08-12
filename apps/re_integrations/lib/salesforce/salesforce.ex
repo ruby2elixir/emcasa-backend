@@ -8,17 +8,12 @@ defmodule ReIntegrations.Salesforce do
     Routific,
     Salesforce.Client,
     Salesforce.JobQueue,
+    Salesforce.Mapper,
     Salesforce.Payload.Event,
     Salesforce.Payload.Opportunity
   }
 
-  @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 60)
-
-  def enqueue_insert_event(payload) do
-    %{"type" => "insert_event", "event" => payload}
-    |> JobQueue.new()
-    |> Repo.insert()
-  end
+  @routific_max_attempts Application.get_env(:re_integrations, :routific_max_attempts, 6)
 
   def insert_event(payload) do
     with {:ok, event} <- Event.validate(payload),
@@ -31,12 +26,42 @@ defmodule ReIntegrations.Salesforce do
     end
   end
 
-  def schedule_visits(schedule_opts \\ []) do
+  def update_opportunity(id, payload) do
+    with {:ok, opportunity} <- Opportunity.validate(payload),
+         {:ok, %{status_code: 200, body: body}} <- Client.update_opportunity(id, opportunity),
+         {:ok, data} <- Jason.decode(body) do
+      {:ok, data}
+    else
+      {:ok, %{status_code: _status_code} = data} -> {:error, data}
+      error -> error
+    end
+  end
+
+  def get_account(id), do: get_entity(id, :Account)
+
+  def get_user(id), do: get_entity(id, :User)
+
+  defp get_entity(id, type) do
+    with {:ok, %{status_code: 200, body: body}} <- Client.get(id, type),
+         {:ok, data} <- Jason.decode(body) do
+      {:ok, data}
+    else
+      {:ok, %{status_code: _status_code} = data} -> {:error, data}
+      error -> error
+    end
+  end
+
+  def schedule_visits(schedule_opts) do
     with {:ok, %{status_code: 200, body: body}} <- fetch_visits(schedule_opts),
-         {:ok, %{"records" => records}} = Jason.decode(body) do
-      records
-      |> Enum.map(&build_visit/1)
-      |> Routific.start_job()
+         {:ok, %{"records" => records}} = Jason.decode(body),
+         {:ok, opportunities} <- Opportunity.build_all(records),
+         {:ok, job_id} <-
+           opportunities
+           |> Enum.map(&Mapper.Routific.build_visit/1)
+           |> Routific.start_job(schedule_opts) do
+      %{"type" => "monitor_routific_job", "job_id" => job_id}
+      |> JobQueue.new(max_attempts: @routific_max_attempts)
+      |> Repo.insert()
     end
   end
 
@@ -61,17 +86,4 @@ defmodule ReIntegrations.Salesforce do
     ORDER BY CreatedDate ASC
     """)
   end
-
-  defp build_visit(record) do
-    with {:ok, opportunity} <- Opportunity.build(record) do
-      opportunity
-      |> Map.take([:id, :address, :neighborhood])
-      |> Map.merge(Opportunity.visit_start_window(opportunity))
-      |> Map.put(:custom_notes, visit_notes(opportunity))
-      |> Map.put(:duration, @tour_visit_duration)
-    end
-  end
-
-  defp visit_notes(opportunity),
-    do: Map.take(opportunity, [:owner_id, :account_id, :neighborhood])
 end
