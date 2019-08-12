@@ -11,7 +11,8 @@ config :re_integrations,
   from: "admin@email.com",
   reply_to: "admin@email.com",
   env: "dev",
-  use_logger: true
+  use_logger: true,
+  timezone: System.get_env("TIMEZONE")
 
 config :re_web, ReWeb.Endpoint,
   url: [host: "localhost"],
