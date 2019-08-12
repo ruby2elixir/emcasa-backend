@@ -90,12 +90,12 @@ defmodule ReIntegrations.Salesforce.Payload.Lead do
     field :uuid, :string
   end
 
-  @optional ~w(last_name location street neighborhood city state email interest_realty_id
+  @optional ~w(location street neighborhood city state email interest_realty_id
                source phone full_name budget area evaluation realty_postal_code realty_city
                complemenet tour_data inserted_at realty_state realty_bathrooms realty_rooms
                realty_garage_spots realty_street_number realty_street realty_suites realty_type
                maintenance_fee price postal_code record_type_id type uuid)a
-  @required ~W(last_name location)
+  @required ~w(last_name)a
   @params @optional ++ @required
 
   def validate(params) do

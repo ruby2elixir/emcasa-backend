@@ -8,9 +8,9 @@ defmodule Re.SellerLeads.Salesforce.Client do
     User
   }
 
-  alias ReIntegrations.{
-    Payload.Lead,
-    Salesforce.Client
+  alias ReIntegrations.Salesforce.{
+    Client,
+    Payload.Lead
   }
 
   @record_type_id Application.get_env(:re_integrations, :salesforce_seller_lead_record_id, "")
