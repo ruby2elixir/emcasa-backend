@@ -16,8 +16,6 @@ defmodule ReIntegrations.Salesforce.Client do
 
   def insert_lead(payload), do: post(payload, "/api/v1/Lead")
 
-  def update_lead(id, payload), do: patch(payload, "/api/v1/Lead" <> id)
-
   def update_opportunity(id, payload), do: patch(payload, "/api/v1/Opportunity/" <> id)
 
   def query(soql),
