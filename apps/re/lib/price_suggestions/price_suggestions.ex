@@ -46,7 +46,12 @@ defmodule Re.PriceSuggestions do
     params
     |> map_params()
     |> PriceTeller.ask()
+    |> format_output()
   end
+
+  defp format_output({:error, :invalid_input, _params, changeset}), do: {:error, changeset}
+
+  defp format_output(error), do: error
 
   defp map_params(params) do
     %{
