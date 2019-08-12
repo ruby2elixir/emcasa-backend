@@ -6,9 +6,10 @@ defmodule ReWeb.Resolvers.Accounts do
 
   alias Re.Accounts
 
-  alias Re.Accounts.{
-    Auth,
-    Users
+  alias Re.{
+    Accounts.Auth,
+    Accounts.Users,
+    Repo
   }
 
   def account_kit_sign_in(%{access_token: access_token}, _) do
@@ -34,8 +35,11 @@ defmodule ReWeb.Resolvers.Accounts do
   def profile(params, %{context: %{current_user: current_user}}) do
     with {:ok, id} <- get_user_id(params, current_user),
          {:ok, user} <- Users.get(id),
-         :ok <- Bodyguard.permit(Users, :show_profile, current_user, user),
-         do: {:ok, user}
+         :ok <- Bodyguard.permit(Users, :show_profile, current_user, user)
+         do
+          Repo.preload(user, :districts)
+          {:ok, user}
+        end
   end
 
   def edit_profile(%{id: id} = params, %{context: %{current_user: current_user}}) do
