@@ -11,7 +11,8 @@ config :re_integrations,
   from: "admin@email.com",
   reply_to: "admin@email.com",
   env: "dev",
-  use_logger: true
+  use_logger: true,
+  timezone: System.get_env("TIMEZONE")
 
 config :re_web, ReWeb.Endpoint,
   url: [host: "localhost"],
@@ -89,7 +90,7 @@ config :re, Re.AlikeTeller.Scheduler,
 config :re_integrations, ReIntegrations.Salesforce.Scheduler,
   debug_logging: false,
   jobs: [
-    {"@daily", fn -> Re.Salesforce.schedule_visits(date: Timex.now() |> Timex.add(days: 1)) end}
+    {"@daily", fn -> Re.Salesforce.schedule_visits(date: Timex.now() |> Timex.shift(days: 1)) end}
   ]
 
 import_config "#{Mix.env()}.exs"

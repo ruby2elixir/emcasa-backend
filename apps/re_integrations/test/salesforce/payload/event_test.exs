@@ -32,7 +32,7 @@ defmodule ReIntegrations.Salesforce.Payload.EventTest do
 
   describe "Jason.Encoder" do
     test "maps schema keys to salesforce columns" do
-      assert @payload == Jason.encode!(@event) |> Jason.decode!()
+      assert @payload == @event |> Jason.encode!() |> Jason.decode!()
     end
   end
 end
