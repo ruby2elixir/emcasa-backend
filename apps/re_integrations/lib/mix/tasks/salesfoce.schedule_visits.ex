@@ -18,7 +18,9 @@ defmodule Mix.Tasks.ReIntegrations.Salesforce.ScheduleVisits do
 
   def run(_) do
     start()
-    Salesforce.schedule_visits(date: Timex.now(@timezone) |> Timex.shift(days: 1))
+    date = @timezone |> Timex.now() |> Timex.shift(days: 1)
+    Mix.shell().info("Scheduling visits for #{date}.")
+    Salesforce.schedule_visits(date: date)
     Mix.shell().info("Routific job enqueued for monitoring.")
   end
 
