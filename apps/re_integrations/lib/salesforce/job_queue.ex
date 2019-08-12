@@ -72,7 +72,8 @@ defmodule ReIntegrations.Salesforce.JobQueue do
       Enum.reduce(events, multi, fn event, multi ->
         __MODULE__.enqueue(multi, "schedule_#{event.id}", %{
           "type" => "insert_event",
-          "event" => Mapper.Routific.build_event(event, calendar_uuid, payload)
+          "event" => Mapper.Routific.build_event(event, calendar_uuid, payload),
+          "opportunity_id" => event.id
         })
       end)
 end
