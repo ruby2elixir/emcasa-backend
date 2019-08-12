@@ -10,7 +10,19 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
     "Dados_do_Imovel_para_Venda__c" => "address string",
     "Bairro__c" => "neighborhood",
     "Horario_Fixo_para_o_Tour__c" => "20:00:00",
-    "Periodo_Disponibilidade_Tour__c" => "Manhã"
+    "Periodo_Disponibilidade_Tour__c" => "Manhã",
+    "StageName" => "Confirmação Visita"
+  }
+
+  @opportunity %Payload.Opportunity{
+    id: "0x01",
+    account_id: "0x02",
+    owner_id: "0x02",
+    stage: :visit_pending,
+    address: "address string",
+    neighborhood: "neighborhood",
+    tour_strict_time: ~T[20:00:00],
+    tour_period: :morning
   }
 
   describe "build/1" do
@@ -49,6 +61,18 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
     test "returns default time range when not specified" do
       assert %{start: ~T[09:00:00Z], end: ~T[18:00:00Z]} =
                Payload.Opportunity.visit_start_window(%{})
+    end
+  end
+
+  describe "Jason.Encoder" do
+    test "maps schema keys to salesforce columns" do
+      assert Map.drop(@payload, ["Id"]) ==
+               @opportunity |> Jason.encode!() |> Jason.decode!()
+    end
+
+    test "filters nil values" do
+      assert Map.drop(@payload, ["Id", "AccountId"]) ==
+               @opportunity |> Map.drop([:account_id]) |> Jason.encode!() |> Jason.decode!()
     end
   end
 end

@@ -25,9 +25,30 @@ defmodule ReIntegrations.Salesforce.JobQueue do
     |> Repo.transaction()
   end
 
-  def perform(%Multi{} = multi, %{"type" => "insert_event", "event" => event}) do
+  def perform(%Multi{} = multi, %{
+        "type" => "insert_event",
+        "opportunity_id" => opportunity_id,
+        "event" => event
+      }) do
     multi
     |> Multi.run(:insert_event, fn _repo, _changes -> Salesforce.insert_event(event) end)
+    |> __MODULE__.enqueue(:update_opportunity, %{
+      "type" => "update_opportunity",
+      "id" => opportunity_id,
+      "opportunity" => %{stage: :visit_scheduled}
+    })
+    |> Repo.transaction()
+  end
+
+  def perform(%Multi{} = multi, %{
+        "type" => "update_opportunity",
+        "id" => id,
+        "opportunity" => payload
+      }) do
+    multi
+    |> Multi.run(:update_opportunity, fn _repo, _changes ->
+      Salesforce.update_opportunity(id, payload)
+    end)
     |> Repo.transaction()
   end
 
