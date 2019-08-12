@@ -14,10 +14,10 @@ defmodule Re.SellerLeads.Utm do
   end
 
   def changeset(struct, params \\ %{}),
-      do:
-        Ecto.Changeset.cast(
-          struct,
-          params,
-          ~w(campaign medium source initial_campaign initial_medium initial_source)a
-        )
+    do:
+      Ecto.Changeset.cast(
+        struct,
+        params,
+        ~w(campaign medium source initial_campaign initial_medium initial_source)a
+      )
 end
