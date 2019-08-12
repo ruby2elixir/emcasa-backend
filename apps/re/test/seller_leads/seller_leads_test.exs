@@ -6,7 +6,8 @@ defmodule Re.SellerLeadsTest do
   alias Re.{
     PubSub,
     SellerLeads,
-    SellerLeads.Site
+    SellerLeads.Site,
+    Accounts.Users
   }
 
   describe "create_site" do
