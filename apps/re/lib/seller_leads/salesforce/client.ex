@@ -22,14 +22,14 @@ defmodule Re.SellerLeads.Salesforce.Client do
     end
   end
 
+  def create_lead(_), do: {:error, :lead_type_not_handled}
+
   def update_lead(%Re.SellerLead{} = lead) do
     with {:ok, lead} <- map_params(lead),
-         {:ok, %{body: body}} <- Client.update_lead(salesforce_id, lead) do
+         {:ok, %{body: body}} <- Client.update_lead(lead.salesforce_id, lead) do
       Jason.decode(body)
     end
   end
-
-  def create_lead(_), do: {:error, :lead_type_not_handled}
 
   defp map_params(lead) do
     %{
