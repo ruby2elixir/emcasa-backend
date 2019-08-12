@@ -182,7 +182,7 @@ defmodule ReIntegrations.TestHTTP do
          """
        }}
 
-  def put(%URI{path: "/api/v1/Opportunity/0x01"}, _body, _opts),
+  def patch(%URI{path: "/api/v1/Opportunity/0x01"}, _body, _opts),
     do:
       {:ok,
        %{
