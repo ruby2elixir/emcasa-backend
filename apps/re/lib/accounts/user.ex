@@ -27,8 +27,6 @@ defmodule Re.User do
 
     has_many :listings, Re.Listing
 
-    has_many(:broker_leads, Re.SellerLeads.Broker, foreign_key: :broker_uuid, references: :uuid)
-
     has_many :listings_favorites, Re.Favorite
     has_many :favorited, through: [:listings_favorites, :listing]
 
@@ -43,7 +41,6 @@ defmodule Re.User do
   @roles ~w(admin user)
   @types ~w(property_owner partner_broker)
 
-  @phone_regex ~r/^\+55[0-9]{11}$/
   @update_required ~w()a
   @update_optional ~w(name email role phone device_token type salesforce_id)a
 
@@ -76,21 +73,9 @@ defmodule Re.User do
     |> Re.ChangesetHelper.generate_uuid()
   end
 
-  @create_required ~w(role phone)a
-  @create_optional ~w(name email device_token type salesforce_id)a
-
-  def create_changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, @create_required ++ @create_optional)
-    |> validate_required(@create_required)
-    |> base_changeset()
-    |> Re.ChangesetHelper.generate_uuid()
-  end
-
   defp base_changeset(changeset) do
     changeset
     |> validate_email()
-    |> validate_phone()
     |> validate_inclusion(:role, @roles)
     |> validate_inclusion(:type, @types)
   end
@@ -99,21 +84,6 @@ defmodule Re.User do
     changeset
     |> get_field(:email)
     |> check_email(changeset)
-  end
-
-  defp validate_phone(changeset) do
-    changeset
-    |> get_field(:phone)
-    |> check_phone(changeset)
-  end
-
-  defp check_phone(nil, changeset), do: changeset
-
-  defp check_phone(phone, changeset) do
-    case String.match?(phone, @phone_regex) do
-      true -> changeset
-      false -> add_error(changeset, :phone, "has invalid format: #{phone}", validation: :format)
-    end
   end
 
   defp check_email(nil, changeset), do: changeset
