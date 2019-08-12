@@ -28,7 +28,6 @@ defmodule Re.Listing do
     field :balconies, :integer
     field :has_elevator, :boolean
     field :matterport_code, :string
-    field :is_active, :boolean, default: false
     field :status, :string, default: "inactive"
     field :is_exclusive, :boolean, default: false
     field :is_release, :boolean, default: false
