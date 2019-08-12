@@ -5,7 +5,7 @@ defmodule Re.CustomAssertion do
 
   @doc """
   Function to check a list of things accoring to a mapper function
-  Ex: map_id = fn items -> Enum.map(items, & &1.id)
+  Ex: map_id = fn items -> Enum.map(items, & &1.id) end
   assert_mapper_match(expected, actual, map_id)
   """
   defmacro assert_mapper_match(left, right, key_func) do

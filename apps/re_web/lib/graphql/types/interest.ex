@@ -77,6 +77,28 @@ defmodule ReWeb.Types.Interest do
     field :user, :user, resolve: dataloader(Re.Accounts)
   end
 
+  object :price_suggestion do
+    field :listing_price, :float
+    field :listing_price_rounded, :float
+    field :sale_price, :float
+    field :sale_price_rounded, :float
+    field :listing_price_error_q90_min, :float
+    field :listing_price_error_q90_max, :float
+    field :listing_price_per_sqr_meter, :float
+    field :listing_average_price_per_sqr_meter, :float
+  end
+
+  input_object :price_suggestion_input do
+    field :area, non_null(:integer)
+    field :rooms, non_null(:integer)
+    field :bathrooms, non_null(:integer)
+    field :garage_spots, non_null(:integer)
+    field :suites, non_null(:integer)
+    field :type, non_null(:string)
+    field :maintenance_fee, non_null(:float)
+    field :address, non_null(:address_input)
+  end
+
   object :simulation do
     field :cem, :string
     field :cet, :string
@@ -110,6 +132,13 @@ defmodule ReWeb.Types.Interest do
       arg :input, non_null(:simulation_request)
 
       resolve &InterestsResolver.simulate/2
+    end
+
+    @desc "Query price suggestion"
+    field :price_suggestion, type: :price_suggestion do
+      arg :input, non_null(:price_suggestion_input)
+
+      resolve &InterestsResolver.price_suggestion/2
     end
   end
 
