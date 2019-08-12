@@ -35,7 +35,9 @@ config :re_integrations,
   orulo_client_token: "orulo_client_token",
   salesforce_event_owner_id: "salesforce_user_id",
   salesforce_api_key: "salesforce_api_key",
-  salesforce_url: "salesforce_api_url"
+  salesforce_url: "salesforce_api_url",
+  salesforce_buyer_lead_record_id: "buyer_record_id",
+  salesforce_seller_lead_record_id: "seller_record_id"
 
 config :re,
   vivareal_highlights_size_rio_de_janeiro: 10,
