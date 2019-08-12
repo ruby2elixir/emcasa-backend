@@ -22,6 +22,8 @@ defmodule Re.SellerLead do
     field :suggested_price, :float
     field :tour_option, :utc_datetime
 
+    field :salesforce_id, :string
+
     belongs_to :address, Re.Address,
       references: :uuid,
       foreign_key: :address_uuid,
@@ -37,7 +39,7 @@ defmodule Re.SellerLead do
 
   @required ~w(source)a
   @optional ~w(complement type area maintenance_fee rooms bathrooms suites garage_spots price
-               suggested_price tour_option address_uuid user_uuid)a
+               suggested_price tour_option address_uuid user_uuid salesforce_id)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do
