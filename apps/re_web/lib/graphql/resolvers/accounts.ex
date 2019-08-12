@@ -35,11 +35,10 @@ defmodule ReWeb.Resolvers.Accounts do
   def profile(params, %{context: %{current_user: current_user}}) do
     with {:ok, id} <- get_user_id(params, current_user),
          {:ok, user} <- Users.get(id),
-         :ok <- Bodyguard.permit(Users, :show_profile, current_user, user)
-         do
-          Repo.preload(user, :districts)
-          {:ok, user}
-        end
+         :ok <- Bodyguard.permit(Users, :show_profile, current_user, user) do
+      Repo.preload(user, :districts)
+      {:ok, user}
+    end
   end
 
   def edit_profile(%{id: id} = params, %{context: %{current_user: current_user}}) do
