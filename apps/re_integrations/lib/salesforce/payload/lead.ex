@@ -49,7 +49,7 @@ defmodule ReIntegrations.Salesforce.Payload.Lead do
     uuid: "uuid__c"
   )
 
-  defnum(Type,
+  defenum(Type,
     seller: "Venda",
     buyer: "Compra"
   )

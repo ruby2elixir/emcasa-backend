@@ -16,7 +16,9 @@ defmodule ReIntegrations.Salesforce.Client do
 
   def insert_lead(payload), do: post(payload, "/api/v1/Lead")
 
-  def update_opportunity(id, payload), do: put(payload, "/api/v1/Opportunity/" <> id)
+  def update_lead(id, payload), do: patch(payload, "/api/v1/Lead" <> id)
+
+  def update_opportunity(id, payload), do: patch(payload, "/api/v1/Opportunity/" <> id)
 
   def query(soql),
     do: post(%{soql: soql}, "/api/v1/query")
@@ -26,8 +28,8 @@ defmodule ReIntegrations.Salesforce.Client do
   defp post(body, path),
     do: path |> build_uri |> @http_client.post(Jason.encode!(body), @api_headers)
 
-  defp put(body, path),
-    do: path |> build_uri |> @http_client.put(Jason.encode!(body), @api_headers)
+  defp patch(body, path),
+    do: path |> build_uri |> @http_client.patch(Jason.encode!(body), @api_headers)
 
   defp get(path),
     do: path |> build_uri |> @http_client.get(@api_headers)
