@@ -90,7 +90,6 @@ config :re_integrations,
   salesforce_event_owner_id: System.get_env("SALESFORCE_EVENT_OWNER_ID"),
   salesforce_api_key: System.get_env("SALESFORCE_API_KEY"),
   salesforce_url: System.get_env("SALESFORCE_URL"),
-  google_calendar_timezone: System.get_env("GOOGLE_CALENDAR_TIMEZONE"),
   google_calendar_acl: %{
     role: "owner",
     scope: %{
