@@ -6,7 +6,10 @@ defmodule Re.SellerLeads.Broker do
 
   import Ecto.Changeset
 
-  alias Re.SellerLeads.Utm
+  alias Re.{
+    SellerLeads.Utm,
+    Listing
+  }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
@@ -35,7 +38,6 @@ defmodule Re.SellerLeads.Broker do
     timestamps()
   end
 
-  @types ~w(Apartamento Casa Cobertura)
   @required ~w(type address_uuid broker_uuid owner_uuid)a
   @optional ~w(complement additional_information)a
   @params @required ++ @optional
@@ -45,7 +47,7 @@ defmodule Re.SellerLeads.Broker do
     |> cast(params, @params)
     |> cast_embed(:utm, with: &Utm.changeset/2)
     |> validate_required(@required)
-    |> validate_inclusion(:type, @types)
+    |> validate_inclusion(:type, Listing.listing_types())
     |> generate_uuid()
   end
 
