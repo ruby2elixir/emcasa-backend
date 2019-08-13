@@ -54,6 +54,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
              tour_period stage notes)a
 
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 60)
+  @tour_visit_time_variance Application.get_env(:re_integrations, :tour_visit_time_variance, 15)
 
   def build_all(list) do
     results = Enum.map(list, &with({:ok, value} <- build(&1), do: value))
@@ -87,7 +88,10 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
   defp changeset(struct, params), do: cast(struct, params, @params)
 
   def visit_start_window(%{tour_period: :strict, tour_strict_time: %Time{} = time}),
-    do: %{start: time, end: Time.add(time, (@tour_visit_duration + 15) * 60, :second)}
+    do: %{
+      start: Time.add(time, -@tour_visit_time_variance * 60, :second),
+      end: Time.add(time, (@tour_visit_duration + @tour_visit_time_variance) * 60, :second)
+    }
 
   def visit_start_window(%{tour_period: :morning}),
     do: %{start: ~T[09:00:00Z], end: ~T[12:00:00Z]}
