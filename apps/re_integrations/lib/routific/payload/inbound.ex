@@ -50,6 +50,7 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
         address: address,
         start: arrival,
         end: finish,
+        break: Map.get(visit, "break", false),
         notes: get_in(input, [location_id, "notes"]),
         custom_notes: get_in(input, [location_id, "customNotes"])
       }
