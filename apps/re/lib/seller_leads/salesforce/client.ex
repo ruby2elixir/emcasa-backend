@@ -22,6 +22,9 @@ defmodule Re.SellerLeads.Salesforce do
   def create_lead(_), do: {:error, :lead_type_not_handled}
 
   defp map_params(lead) do
+    IO.puts("ayyyyyyyyyyyyyyyyyyyyyyyy")
+    IO.inspect(lead.suggested_price)
+
     %{
       uuid: lead.uuid,
       evaluation: false,
@@ -29,7 +32,7 @@ defmodule Re.SellerLeads.Salesforce do
       type: :seller,
       realty_type: lead.type,
       complement: lead.complement,
-      price: lead.suggested_price,
+      price: lead.price || lead.suggested_price,
       realty_rooms: lead.rooms,
       realty_bathrooms: lead.bathrooms,
       realty_suites: lead.suites,
