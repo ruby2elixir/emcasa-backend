@@ -28,7 +28,6 @@ defmodule Re.Listing do
     field :balconies, :integer
     field :has_elevator, :boolean
     field :matterport_code, :string
-    field :is_active, :boolean, default: false
     field :status, :string, default: "inactive"
     field :is_exclusive, :boolean, default: false
     field :is_release, :boolean, default: false
@@ -164,27 +163,9 @@ defmodule Re.Listing do
 
   defp generate_uuid(changeset), do: Re.ChangesetHelper.generate_uuid(changeset)
 
-  defp calculate_price_per_area(
-         %Ecto.Changeset{valid?: true, changes: %{price: price, area: area}} = changeset
-       ) do
-    set_price_per_area(price, area, changeset)
-  end
-
-  defp calculate_price_per_area(
-         %Ecto.Changeset{valid?: true, changes: %{price: price}, data: %{area: area}} = changeset
-       ) do
-    set_price_per_area(price, area, changeset)
-  end
-
-  defp calculate_price_per_area(
-         %Ecto.Changeset{valid?: true, changes: %{area: area}, data: %{price: price}} = changeset
-       ) do
-    set_price_per_area(price, area, changeset)
-  end
-
-  defp calculate_price_per_area(
-         %Ecto.Changeset{valid?: true, data: %{price: price, area: area}} = changeset
-       ) do
+  defp calculate_price_per_area(%Ecto.Changeset{valid?: true} = changeset) do
+    price = get_field(changeset, :price, nil)
+    area = get_field(changeset, :area, nil)
     set_price_per_area(price, area, changeset)
   end
 
