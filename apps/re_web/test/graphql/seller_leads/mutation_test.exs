@@ -181,7 +181,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
       assert %{"brokerSellerLeadCreate" =>  uuid} = json_response(conn, 200)["data"]
     end
 
-    test "property owner user should not add broker lead", %{
+    test "property owner user should add broker lead", %{
       user_conn: conn,
       address: address
     } do
@@ -206,7 +206,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
 
-      assert [%{"message" => "Forbidden", "code" => 403}] = json_response(conn, 200)["errors"]
+      assert %{"brokerSellerLeadCreate" =>  uuid} = json_response(conn, 200)["data"]
     end
 
     test "anonymous user should not add broker lead", %{
