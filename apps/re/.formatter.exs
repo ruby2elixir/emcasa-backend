@@ -3,7 +3,7 @@
   locals_without_parens: [
     field: 2,
     field: 3,
-    has_many: 2,
+    has_many: :*,
     belongs_to: 2,
     belongs_to: 3,
     embeds_one: 2,
