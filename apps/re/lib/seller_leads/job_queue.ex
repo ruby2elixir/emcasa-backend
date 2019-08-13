@@ -11,7 +11,7 @@ defmodule Re.SellerLeads.JobQueue do
     Repo,
     SellerLead,
     SellerLeads,
-    SellerLeads.Salesforce.Client,
+    SellerLeads.Salesforce,
     User
   }
 
@@ -40,7 +40,7 @@ defmodule Re.SellerLeads.JobQueue do
 
     multi
     |> Multi.run(:create_salesforce_lead, fn _repo, _changes ->
-      Client.create_lead(seller_lead)
+      Salesforce.create_lead(seller_lead)
     end)
     |> Multi.run(:update_seller_lead, fn _repo, %{create_salesforce_lead: %{"id" => id}} ->
       seller_lead

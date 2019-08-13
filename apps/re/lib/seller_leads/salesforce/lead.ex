@@ -1,4 +1,4 @@
-defmodule ReIntegrations.Salesforce.Payload.Lead do
+defmodule Re.Salesforce.Lead do
   @moduledoc """
   Module for validating salesforce lead entity
   """
@@ -114,8 +114,8 @@ defmodule ReIntegrations.Salesforce.Payload.Lead do
   end
 end
 
-defimpl Jason.Encoder, for: ReIntegrations.Salesforce.Payload.Lead do
-  alias ReIntegrations.Salesforce.Payload.Lead
+defimpl Jason.Encoder, for: Re.Salesforce.Lead do
+  alias Re.Salesforce.Lead
 
   def encode(value, opts) do
     keys = Keyword.keys(Lead.Schema.__enum_map__())

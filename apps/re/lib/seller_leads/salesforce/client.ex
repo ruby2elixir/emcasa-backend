@@ -1,16 +1,13 @@
-defmodule Re.SellerLeads.Salesforce.Client do
+defmodule Re.SellerLeads.Salesforce do
   @moduledoc """
   Module to interface with salesforce
   """
 
   alias Re.{
     Address,
+    Salesforce.Client,
+    Salesforce.Lead,
     User
-  }
-
-  alias ReIntegrations.Salesforce.{
-    Client,
-    Payload.Lead
   }
 
   @record_type_id Application.get_env(:re_integrations, :salesforce_seller_lead_record_id, "")
