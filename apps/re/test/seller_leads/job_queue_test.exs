@@ -98,53 +98,8 @@ defmodule Re.SellerLeads.JobQueueTest do
   end
 
   describe "create_lead_salesforce" do
-    @uri %URI{
-      authority: "www.emcasa.com",
-      fragment: nil,
-      host: "www.emcasa.com",
-      path: "/salesforce_zapier",
-      port: 80,
-      query: nil,
-      scheme: "http",
-      userinfo: nil
-    }
-
-    setup do
-      user = insert(:user)
-      address = insert(:address)
-      seller_lead = insert(:seller_lead, user: user, address: address)
-
-      {:ok, encoded_seller_lead} =
-        Jason.encode(%{
-          name: user.name,
-          email: user.email,
-          phone: String.replace(user.phone, "+", ""),
-          city: address.city,
-          state: address.state,
-          street: address.street,
-          street_number: address.street_number,
-          neighborhood: address.neighborhood,
-          postal_code: address.postal_code,
-          type: seller_lead.type,
-          complement: seller_lead.complement,
-          garage_spots: seller_lead.garage_spots,
-          area: seller_lead.area,
-          bathrooms: seller_lead.bathrooms,
-          rooms: seller_lead.rooms,
-          suites: seller_lead.suites,
-          maintenance_fee: seller_lead.maintenance_fee,
-          suggested_price: seller_lead.suggested_price,
-          source: seller_lead.source,
-          tour_option: seller_lead.tour_option,
-          inserted_at: seller_lead.inserted_at,
-          uuid: seller_lead.uuid
-        })
-
-      {:ok, seller_lead: seller_lead, encoded_seller_lead: encoded_seller_lead}
-    end
-
-    test "create lead", %{seller_lead: seller_lead, encoded_seller_lead: encoded_seller_lead} do
-      mock(HTTPoison, :post, {:ok, %{status_code: 200, body: ~s({"status":"success"})}})
+    test "create lead" do
+      seller_lead = insert(:seller_lead, user: build(:user), address: build(:address))
 
       assert {:ok, _} =
                JobQueue.perform(Multi.new(), %{
@@ -153,28 +108,9 @@ defmodule Re.SellerLeads.JobQueueTest do
                })
 
       refute Repo.one(JobQueue)
-      uri = @uri
 
-      assert_called(HTTPoison, :post, [^uri, ^encoded_seller_lead])
-    end
-
-    test "raise when there's a timeout", %{
-      seller_lead: seller_lead,
-      encoded_seller_lead: encoded_seller_lead
-    } do
-      mock(HTTPoison, :post, {:error, %{reason: :timeout}})
-
-      assert_raise RuntimeError, fn ->
-        assert {:error, _} =
-                 JobQueue.perform(Multi.new(), %{
-                   "type" => "create_lead_salesforce",
-                   "uuid" => seller_lead.uuid
-                 })
-      end
-
-      uri = @uri
-
-      assert_called(HTTPoison, :post, [^uri, ^encoded_seller_lead])
+      updated_seller_lead = Repo.get(SellerLead, seller_lead.uuid)
+      assert updated_seller_lead.salesforce_id == "0x01"
     end
   end
 
