@@ -85,7 +85,11 @@ defmodule Re.BuyerLeads.WalkInOffline do
     |> Map.put(:phone_number, phone_number)
   end
 
+  defp concat_phone_number(%{phone_number: "+55" <> phone_number}), do: "+55" <> phone_number
+
   defp concat_phone_number(%{phone_number: "+" <> phone_number}), do: "+55" <> phone_number
+
+  defp concat_phone_number(%{phone_number: "55" <> phone_number}), do: "+55" <> phone_number
 
   defp concat_phone_number(%{phone_number: phone_number}), do: "+" <> phone_number
 end

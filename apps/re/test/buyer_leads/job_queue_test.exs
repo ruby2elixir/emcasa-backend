@@ -661,5 +661,35 @@ defmodule Re.BuyerLeads.JobQueueTest do
       refute buyer.user_uuid
       refute buyer.user_url
     end
+
+    test "handle case where there's already a pre-pending country code" do
+      %{uuid: uuid} =
+        insert(:walk_in_offline_buyer_lead, phone_number: "+5511999999999", location: "SP")
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_walk_in_offline_buyer",
+                 "uuid" => uuid
+               })
+
+      assert buyer = Repo.one(BuyerLead)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
+      assert buyer.phone_number == "+5511999999999"
+    end
+
+    test "handle case where there's already a pre-pending country code without plus sign" do
+      %{uuid: uuid} =
+        insert(:walk_in_offline_buyer_lead, phone_number: "5511999999999", location: "SP")
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_walk_in_offline_buyer",
+                 "uuid" => uuid
+               })
+
+      assert buyer = Repo.one(BuyerLead)
+      assert_enqueued_job(Repo.all(JobQueue), "create_lead_salesforce")
+      assert buyer.phone_number == "+5511999999999"
+    end
   end
 end

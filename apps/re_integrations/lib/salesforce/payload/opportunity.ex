@@ -50,7 +50,8 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     field :stage, Stage
   end
 
-  @params ~w(id account_id owner_id address neighborhood tour_strict_date tour_strict_time tour_period)a
+  @params ~w(id account_id owner_id address neighborhood tour_strict_date tour_strict_time
+             tour_period stage notes)a
 
   def build_all(list) do
     results = Enum.map(list, &with({:ok, value} <- build(&1), do: value))
