@@ -22,9 +22,7 @@ defmodule Re.SellerLeads.BrokerTest do
       address = insert(:address)
 
       attr = @valid_attributes
-              |> Map.merge(%{broker_uuid: user.uuid})
-              |> Map.merge(%{address_uuid: address.uuid})
-              |> Map.merge(%{owner_uuid: owner.uuid})
+              |> Map.merge(%{broker_uuid: user.uuid, address_uuid: address.uuid, owner_uuid: owner.uuid})
 
       changeset = Broker.changeset(%Broker{}, attr)
 

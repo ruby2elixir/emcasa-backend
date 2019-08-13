@@ -19,8 +19,7 @@ defmodule ReWeb.Resolvers.SellerLeads do
          {:ok, address} <- Addresses.insert_or_update(params.address) do
       attr =
         params
-        |> Map.merge(%{broker_uuid: current_user.uuid})
-        |> Map.merge(%{address_uuid: address.uuid})
+        |> Map.merge(%{broker_uuid: current_user.uuid, address_uuid: address.uuid})
 
       SellerLeads.create_broker(attr)
     end
