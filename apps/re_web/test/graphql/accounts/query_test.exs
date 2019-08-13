@@ -22,9 +22,11 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
   end
 
   describe "userProfile" do
+    @tag dev: true
     test "admin should get any user profile", %{admin_conn: conn} do
+      district = insert(:district)
       user =
-        insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
+        insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789", districts: [district])
 
       listing1 = insert(:listing, user: user, type: "Casa", liquidity_ratio: 4.0)
       insert(:listing, user: user, type: "Casa", liquidity_ratio: 3.0)
@@ -92,7 +94,7 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
                "name" => user.name,
                "email" => user.email,
                "phone" => user.phone,
-               "districts" => [],
+               "districts" => [%{"name_slug" => district.name_slug}],
                "listings" => [
                  %{"id" => to_string(listing1.id)}
                ],
