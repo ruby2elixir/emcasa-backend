@@ -56,6 +56,7 @@ defmodule Re.SellerLeads.Salesforce do
 
   defp put_address_params(params, %Address{} = address) do
     Map.merge(params, %{
+      location: "#{address.city_slug}|#{address.state_slug}",
       street: address.street,
       realty_street: address.street,
       city: address.city,
