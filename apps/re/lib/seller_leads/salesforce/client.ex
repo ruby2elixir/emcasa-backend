@@ -1,42 +1,71 @@
-defmodule Re.SellerLeads.Salesforce.Client do
+defmodule Re.SellerLeads.Salesforce do
   @moduledoc """
   Module to interface with salesforce
   """
 
   alias Re.{
     Address,
-    SellerLeads.Salesforce.ZapierClient,
+    Salesforce.Client,
+    Salesforce.Lead,
     User
   }
 
-  @exported ~w(uuid source type complement suggested_price rooms bathrooms suites garage_spots
-               maintenance_fee area tour_option inserted_at)a
+  @record_type_id Application.get_env(:re_integrations, :salesforce_seller_lead_record_id, "")
 
   def create_lead(%Re.SellerLead{} = lead) do
-    lead
-    |> Map.take(@exported)
-    |> put_user_params(lead.user)
-    |> put_address_params(lead.address)
-    |> Map.update(:phone, "", fn phone -> String.replace(phone, "+", "") end)
-    |> Jason.encode!()
-    |> ZapierClient.post()
-    |> case do
-      {:ok, %{status_code: 200, body: body}} -> Jason.decode(body)
-      error -> error
+    with {:ok, lead} <- map_params(lead),
+         {:ok, %{body: body}} <- Client.insert_lead(lead) do
+      Jason.decode(body)
     end
   end
 
   def create_lead(_), do: {:error, :lead_type_not_handled}
 
+  defp map_params(lead) do
+    %{
+      uuid: lead.uuid,
+      evaluation: false,
+      record_type_id: @record_type_id,
+      type: :seller,
+      realty_type: lead.type,
+      complement: lead.complement,
+      price: lead.suggested_price,
+      realty_rooms: lead.rooms,
+      realty_bathrooms: lead.bathrooms,
+      realty_suites: lead.suites,
+      realty_garage_spots: lead.garage_spots,
+      maintenance_fee: lead.maintenance_fee,
+      area: lead.area,
+      tour_data: lead.tour_option,
+      inserted_at: lead.inserted_at,
+      source: lead.source
+    }
+    |> put_user_params(lead.user)
+    |> put_address_params(lead.address)
+    |> Lead.validate()
+  end
+
   defp put_user_params(params, %User{} = user) do
-    user
-    |> Map.take(~w(name phone email)a)
-    |> Map.merge(params)
+    Map.merge(params, %{
+      last_name: user.name,
+      full_name: user.name,
+      phone: String.replace(user.phone, "+", ""),
+      email: user.email
+    })
   end
 
   defp put_address_params(params, %Address{} = address) do
-    address
-    |> Map.take(~w(street street_number city state neighborhood postal_code)a)
-    |> Map.merge(params)
+    Map.merge(params, %{
+      street: address.street,
+      realty_street: address.street,
+      city: address.city,
+      realty_city: address.city,
+      state: address.state,
+      realty_state: address.state,
+      postal_code: address.postal_code,
+      realty_postal_code: address.postal_code,
+      neighborhood: address.neighborhood,
+      realty_street_number: address.street_number
+    })
   end
 end
