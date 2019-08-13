@@ -82,6 +82,7 @@ config :re_integrations,
   zapier_webhook_pass: "testpass",
   cloudinary_client: ReIntegrations.TestCloudex,
   orulo_url: "http://www.emcasa.com/orulo",
+  tour_visit_duration: 60,
   google_calendar_acl: %{
     role: "owner",
     scope: %{

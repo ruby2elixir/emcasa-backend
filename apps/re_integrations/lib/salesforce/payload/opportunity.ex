@@ -53,8 +53,8 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
   @params ~w(id account_id owner_id address neighborhood tour_strict_date tour_strict_time
              tour_period stage notes)a
 
-  @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 60)
-  @tour_visit_time_variance Application.get_env(:re_integrations, :tour_visit_time_variance, 15)
+  @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 40)
+  @tour_visit_max_lateness Application.get_env(:re_integrations, :tour_visit_max_lateness, 10)
 
   def build_all(list) do
     results = Enum.map(list, &with({:ok, value} <- build(&1), do: value))
@@ -89,8 +89,8 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
 
   def visit_start_window(%{tour_period: :strict, tour_strict_time: %Time{} = time}),
     do: %{
-      start: Time.add(time, -@tour_visit_time_variance * 60, :second),
-      end: Time.add(time, (@tour_visit_duration + @tour_visit_time_variance) * 60, :second)
+      start: Time.add(time, -@tour_visit_max_lateness * 60, :second),
+      end: Time.add(time, (@tour_visit_duration + @tour_visit_max_lateness) * 60, :second)
     }
 
   def visit_start_window(%{tour_period: :morning}),
