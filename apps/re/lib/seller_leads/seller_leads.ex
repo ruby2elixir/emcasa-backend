@@ -41,9 +41,16 @@ defmodule Re.SellerLeads do
       |> OwnerContact.changeset(property_owner_param)
       |> handle_property_owner()
 
+    case property_owner do
+      {:error, cause} -> {:error, cause}
+      {:ok, owner} -> handle_create_broker(owner, params)
+    end
+  end
+
+  defp handle_create_broker(owner, params) do
     attrs =
       params
-      |> Map.merge(%{owner_uuid: property_owner.uuid})
+      |> Map.merge(%{owner_uuid: owner.uuid})
 
     %Broker{}
     |> Broker.changeset(attrs)
@@ -54,8 +61,8 @@ defmodule Re.SellerLeads do
     phone = Changeset.get_field(property_owner_changeset, :phone)
 
     case OwnerContacts.get_by_phone(phone) do
-      {:error, _} -> Repo.insert!(property_owner_changeset)
-      {_, user} -> user
+      {:error, _} -> Repo.insert_or_update(property_owner_changeset)
+      {_, owner} -> {:ok, owner}
     end
   end
 

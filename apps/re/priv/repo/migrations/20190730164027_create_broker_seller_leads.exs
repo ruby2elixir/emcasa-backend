@@ -9,7 +9,7 @@ defmodule Re.Repo.Migrations.CreateBrokerSellerLeads do
       add :owner_uuid, references(:owner_contacts, column: :uuid, type: :uuid)
       add :complement, :string
       add :type, :string
-      add :additional_information, :string
+      add :additional_information, :text
       add :utm, :jsonb, default: nil
 
       timestamps()
