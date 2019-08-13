@@ -6,11 +6,11 @@ defmodule ReWeb.Resolvers.Addresses do
   alias Re.{
     Addresses,
     Addresses.Neighborhoods,
+    Districts,
     Development,
     Developments,
     Listing,
-    Listings,
-    Repo
+    Listings
   }
 
   def per_listing(listing, params, %{context: %{current_user: current_user}}) do
@@ -41,15 +41,9 @@ defmodule ReWeb.Resolvers.Addresses do
 
   def districts(_, _), do: {:ok, Neighborhoods.districts()}
 
-  def districts_by_user(_, %{context: %{current_user: current_user}}) do
-    districts =
-      current_user
-      |> Repo.preload(:districts)
-      |> Map.get(:districts)
-
-    IO.inspect(districts)
-
-    {:ok, districts}
+  def districts_by_broker_user(user, params, _) do
+    districts = Districts.districts_by_broker_user(user.uuid)
+    {:districts, Map.put(params, :districts, districts)}
   end
 
   def district(params, _), do: Neighborhoods.get_district(params)

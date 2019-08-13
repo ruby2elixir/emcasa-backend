@@ -4,6 +4,8 @@ defmodule ReWeb.Types.User do
   """
   use Absinthe.Schema.Notation
 
+  import Absinthe.Resolution.Helpers, only: [dataloader: 2]
+
   alias ReWeb.Resolvers.Accounts, as: AccountsResolver
   alias ReWeb.Resolvers.Listings, as: ListingsResolver
   alias ReWeb.Resolvers.Favorites, as: FavoritesResolver
@@ -18,9 +20,8 @@ defmodule ReWeb.Types.User do
     field :role, :string
     field :type, :string
 
-    field :districts, list_of(:district) do
-      resolve &AddressesResolver.districts_by_user/2
-    end
+    field :districts, list_of(:district),
+      resolve: dataloader(Re.Districts, &AddressesResolver.districts_by_broker_user/3)
 
     field :notification_preferences, :notification_preferences do
       deprecate("not used anymore")

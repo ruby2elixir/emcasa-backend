@@ -22,8 +22,6 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
   end
 
   describe "userProfile" do
-
-    @tag dev: true
     test "admin should get any user profile", %{admin_conn: conn} do
       user =
         insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
