@@ -32,6 +32,7 @@ defmodule ReIntegrations.TestHTTP do
          body: """
            {
              "status": "finished",
+             "id": "100",
              "input": {
                "visits": {
                  "1": {"notes": "", "customNotes": {"account_id":"0x01", "owner_id":"0x01"}},
@@ -75,10 +76,21 @@ defmodule ReIntegrations.TestHTTP do
        }}
 
   def get(%URI{path: "/jobs/PENDING_JOB_ID"}, _opts),
-    do: {:ok, %{status_code: 200, body: "{\"status\": \"pending\"}"}}
+    do: {:ok, %{status_code: 200, body: "{\"status\": \"pending\", \"id\": \"100\"}"}}
 
   def get(%URI{path: "/jobs/FAILED_JOB_ID"}, _opts),
-    do: {:ok, %{status_code: 412, body: "{\"status\": \"error\", \"output\": \"error message\"}"}}
+    do:
+      {:ok,
+       %{
+         status_code: 412,
+         body: """
+         {
+           "status": "error",
+           "id": "100",
+           "output": "error message"
+         }
+         """
+       }}
 
   def get(%URI{path: "/api/v1/User/0x01"}, _opts),
     do:
