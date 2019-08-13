@@ -83,7 +83,7 @@ defmodule Re.Salesforce.Lead do
     field :realty_suites, :integer
     field :realty_type, :string
     field :maintenance_fee, :float
-    field :price, :integer
+    field :price, :float
     field :postal_code, :string
     field :record_type_id, :string
     field :type, Type

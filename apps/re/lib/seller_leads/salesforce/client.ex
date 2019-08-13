@@ -29,7 +29,7 @@ defmodule Re.SellerLeads.Salesforce do
       type: :seller,
       realty_type: lead.type,
       complement: lead.complement,
-      price: lead.suggested_price,
+      price: lead.price || lead.suggested_price,
       realty_rooms: lead.rooms,
       realty_bathrooms: lead.bathrooms,
       realty_suites: lead.suites,
