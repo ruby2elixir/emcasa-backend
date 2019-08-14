@@ -28,7 +28,7 @@ defmodule Re.SellerLeads.JobQueue do
 
     request
     |> Request.seller_lead_changeset()
-    |> insert_seller_lead(multi)
+    |> insert_seller_lead(multi, request)
     |> update_name(request)
     |> update_email(request)
     |> Repo.transaction()
@@ -53,11 +53,13 @@ defmodule Re.SellerLeads.JobQueue do
 
   def perform(_multi, job), do: raise("Job type not handled. Job: #{Kernel.inspect(job)}")
 
-  defp insert_seller_lead(changeset, multi) do
+  defp insert_seller_lead(changeset, multi, request) do
     uuid = Changeset.get_field(changeset, :uuid)
+    request_changeset = Request.changeset(request, %{seller_lead_uuid: uuid})
 
     multi
     |> Multi.insert(:insert_seller_lead, changeset)
+    |> Multi.update(:update_request, request_changeset)
     |> __MODULE__.enqueue(:salesforce_job, %{"type" => "create_lead_salesforce", "uuid" => uuid})
   end
 

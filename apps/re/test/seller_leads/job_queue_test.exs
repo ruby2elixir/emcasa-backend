@@ -6,6 +6,7 @@ defmodule Re.SellerLeads.JobQueueTest do
   import Re.CustomAssertion
 
   alias Re.{
+    PriceSuggestions.Request,
     Repo,
     SellerLead,
     SellerLeads.JobQueue,
@@ -48,6 +49,9 @@ defmodule Re.SellerLeads.JobQueueTest do
       assert seller.garage_spots == price_suggestion_request.garage_spots
       assert seller.price == nil
       assert seller.suggested_price == price_suggestion_request.suggested_price
+
+      assert request = Repo.get_by(Request, uuid: uuid)
+      assert request.seller_lead_uuid == seller.uuid
     end
 
     test "save name in user when nil" do
