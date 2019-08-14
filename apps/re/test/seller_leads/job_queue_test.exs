@@ -6,6 +6,7 @@ defmodule Re.SellerLeads.JobQueueTest do
   import Re.CustomAssertion
 
   alias Re.{
+    PriceSuggestions.Request,
     Repo,
     SellerLead,
     SellerLeads.JobQueue,
@@ -48,6 +49,9 @@ defmodule Re.SellerLeads.JobQueueTest do
       assert seller.garage_spots == price_suggestion_request.garage_spots
       assert seller.price == nil
       assert seller.suggested_price == price_suggestion_request.suggested_price
+
+      assert request = Repo.get_by(Request, uuid: uuid)
+      assert request.seller_lead_uuid == seller.uuid
     end
 
     test "save name in user when nil" do
@@ -97,6 +101,36 @@ defmodule Re.SellerLeads.JobQueueTest do
     end
   end
 
+  describe "site_seller_lead" do
+    test "process lead" do
+      %{uuid: uuid} =
+        site_seller_lead =
+        insert(:site_seller_lead,
+          price_request:
+            build(:price_suggestion_request,
+              seller_lead: build(:seller_lead),
+              address: build(:address),
+              user: build(:user)
+            )
+        )
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_site_seller_lead",
+                 "uuid" => uuid
+               })
+
+      assert seller_lead = Repo.one(SellerLead)
+      assert_enqueued_job(Repo.all(JobQueue), "update_lead_salesforce")
+      assert seller_lead.uuid
+      assert seller_lead.complement == site_seller_lead.complement
+      assert seller_lead.type == site_seller_lead.type
+      assert seller_lead.maintenance_fee == site_seller_lead.maintenance_fee
+      assert seller_lead.suites == site_seller_lead.suites
+      assert seller_lead.price == site_seller_lead.price
+    end
+  end
+
   describe "create_lead_salesforce" do
     test "create lead" do
       seller_lead = insert(:seller_lead, user: build(:user), address: build(:address))
@@ -111,6 +145,20 @@ defmodule Re.SellerLeads.JobQueueTest do
 
       updated_seller_lead = Repo.get(SellerLead, seller_lead.uuid)
       assert updated_seller_lead.salesforce_id == "0x01"
+    end
+  end
+
+  describe "update_lead_salesforce" do
+    test "update lead" do
+      seller_lead = insert(:seller_lead, user: build(:user), address: build(:address))
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "update_lead_salesforce",
+                 "uuid" => seller_lead.uuid
+               })
+
+      refute Repo.one(JobQueue)
     end
   end
 

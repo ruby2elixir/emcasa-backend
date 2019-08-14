@@ -12,6 +12,7 @@ defmodule Re.SellerLeads.JobQueue do
     SellerLead,
     SellerLeads,
     SellerLeads.Salesforce,
+    SellerLeads.Site,
     User
   }
 
@@ -28,9 +29,22 @@ defmodule Re.SellerLeads.JobQueue do
 
     request
     |> Request.seller_lead_changeset()
-    |> insert_seller_lead(multi)
+    |> insert_seller_lead(multi, request)
     |> update_name(request)
     |> update_email(request)
+    |> Repo.transaction()
+    |> handle_error()
+  end
+
+  def perform(%Multi{} = multi, %{"type" => "process_site_seller_lead", "uuid" => uuid}) do
+    site_seller_lead =
+      Site
+      |> Ecto.Query.preload(price_request: [seller_lead: [:address, :user]])
+      |> Repo.get(uuid)
+
+    site_seller_lead
+    |> Site.seller_lead_changeset(site_seller_lead.price_request.seller_lead)
+    |> update_seller_lead(multi)
     |> Repo.transaction()
     |> handle_error()
   end
@@ -51,14 +65,35 @@ defmodule Re.SellerLeads.JobQueue do
     |> handle_error()
   end
 
+  def perform(%Multi{} = multi, %{"type" => "update_lead_salesforce", "uuid" => uuid}) do
+    {:ok, seller_lead} = SellerLeads.get_preloaded(uuid, [:address, :user])
+
+    multi
+    |> Multi.run(:update_salesforce_lead, fn _repo, _changes ->
+      Salesforce.update_lead(seller_lead)
+    end)
+    |> Repo.transaction()
+    |> handle_error()
+  end
+
   def perform(_multi, job), do: raise("Job type not handled. Job: #{Kernel.inspect(job)}")
 
-  defp insert_seller_lead(changeset, multi) do
+  defp insert_seller_lead(changeset, multi, request) do
     uuid = Changeset.get_field(changeset, :uuid)
+    request_changeset = Request.changeset(request, %{seller_lead_uuid: uuid})
 
     multi
     |> Multi.insert(:insert_seller_lead, changeset)
+    |> Multi.update(:update_request, request_changeset)
     |> __MODULE__.enqueue(:salesforce_job, %{"type" => "create_lead_salesforce", "uuid" => uuid})
+  end
+
+  defp update_seller_lead(changeset, multi) do
+    uuid = Changeset.get_field(changeset, :uuid)
+
+    multi
+    |> Multi.update(:update_seller_lead, changeset)
+    |> __MODULE__.enqueue(:salesforce_job, %{"type" => "update_lead_salesforce", "uuid" => uuid})
   end
 
   defp update_name(multi, %{name: name, user: %{name: nil} = user}),
