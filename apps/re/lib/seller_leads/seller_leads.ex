@@ -30,11 +30,7 @@ defmodule Re.SellerLeads do
   end
 
   def create_broker(params) do
-    property_owner_param = %{
-      name: Map.get(params, :owner_name),
-      phone: Map.get(params, :owner_telephone),
-      email: Map.get(params, :owner_email)
-    }
+    property_owner_param = Map.get(params, :owner)
 
     property_owner =
       %OwnerContact{}

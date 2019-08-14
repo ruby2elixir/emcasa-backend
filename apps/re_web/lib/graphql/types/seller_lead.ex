@@ -32,16 +32,9 @@ defmodule ReWeb.Types.SellerLead do
     field :complement, :string
     field :type, non_null(:string)
     field :additional_information, :string
-    field :owner_name, non_null(:string)
-    field :owner_telephone, non_null(:string)
-    field :owner_email, :string
+    field :owner, non_null(:owner_contact_input)
     field :address, non_null(:address_input)
-    field :campaign, :string
-    field :medium, :string
-    field :source, :string
-    field :initial_campaign, :string
-    field :initial_medium, :string
-    field :initial_source, :string
+    field :utm, :input_utm
   end
 
   object :seller_lead_mutations do
