@@ -8,16 +8,21 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
   setup %{conn: conn} do
     conn = put_req_header(conn, "accept", "application/json")
     admin_user = insert(:user, email: "admin@email.com", role: "admin")
-    user_user = insert(:user, email: "user@email.com", role: "user")
+    user_user = insert(:user, email: "user@email.com", role: "user", type: "property_owner")
+    broker_user = insert(:user, email: "user@email.com", role: "user", type: "partner_broker")
 
     price_request = insert(:price_suggestion_request)
+
+    address = build(:address)
 
     {
       :ok,
       unauthenticated_conn: conn,
       admin_conn: login_as(conn, admin_user),
       user_conn: login_as(conn, user_user),
-      price_request: price_request
+      broker_conn: login_as(conn, broker_user),
+      price_request: price_request,
+      address: address
     }
   end
 
@@ -137,6 +142,153 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
       assert %{"siteSellerLeadCreate" => nil} = json_response(conn, 200)["data"]
 
       assert_unauthorized_response(json_response(conn, 200))
+    end
+  end
+
+  describe "create_broker/2" do
+    @create_mutation """
+      mutation BrokerSellerLeadCreate($input: BrokerSellerLeadInput!) {
+        brokerSellerLeadCreate(input: $input) {
+          uuid
+        }
+      }
+    """
+    test "admin should add broker lead", %{
+      admin_conn: conn,
+      address: address
+    } do
+      variables = %{
+        "input" => %{
+          "address" => %{
+            "city" => address.city,
+            "state" => address.state,
+            "lat" => address.lat,
+            "lng" => address.lng,
+            "neighborhood" => address.neighborhood,
+            "street" => address.street,
+            "streetNumber" => address.street_number,
+            "postalCode" => address.postal_code
+          },
+          "ownerEmail" => "a@a.com",
+          "ownerTelephone" => "+5599999999999",
+          "ownerName" => "Suzana Vieira",
+          "type" => "Apartamento"
+        }
+      }
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
+
+      assert %{"brokerSellerLeadCreate" =>  uuid} = json_response(conn, 200)["data"]
+    end
+
+    test "property owner user should add broker lead", %{
+      user_conn: conn,
+      address: address
+    } do
+      variables = %{
+        "input" => %{
+          "address" => %{
+            "city" => address.city,
+            "state" => address.state,
+            "lat" => address.lat,
+            "lng" => address.lng,
+            "neighborhood" => address.neighborhood,
+            "street" => address.street,
+            "streetNumber" => address.street_number,
+            "postalCode" => address.postal_code
+          },
+          "ownerEmail" => "a@a.com",
+          "ownerTelephone" => "+5599999999999",
+          "ownerName" => "Suzana Vieira",
+          "type" => "Apartamento"
+        }
+      }
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
+
+      assert %{"brokerSellerLeadCreate" =>  uuid} = json_response(conn, 200)["data"]
+    end
+
+    test "anonymous user should not add broker lead", %{
+      unauthenticated_conn: conn,
+      address: address
+    } do
+      variables = %{
+        "input" => %{
+          "address" => %{
+            "city" => address.city,
+            "state" => address.state,
+            "lat" => address.lat,
+            "lng" => address.lng,
+            "neighborhood" => address.neighborhood,
+            "street" => address.street,
+            "streetNumber" => address.street_number,
+            "postalCode" => address.postal_code
+          },
+          "ownerEmail" => "a@a.com",
+          "ownerTelephone" => "+5599999999999",
+          "ownerName" => "Suzana Vieira",
+          "type" => "Apartamento"
+        }
+      }
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
+
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
+    end
+
+    test "broker user should add broker lead", %{
+      broker_conn: conn,
+      address: address
+    } do
+      variables = %{
+        "input" => %{
+          "address" => %{
+            "city" => address.city,
+            "state" => address.state,
+            "lat" => address.lat,
+            "lng" => address.lng,
+            "neighborhood" => address.neighborhood,
+            "street" => address.street,
+            "streetNumber" => address.street_number,
+            "postalCode" => address.postal_code
+          },
+          "ownerEmail" => "a@a.com",
+          "ownerTelephone" => "+5599999999999",
+          "ownerName" => "Suzana Vieira",
+          "type" => "Apartamento"
+        }
+      }
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
+
+      assert %{"brokerSellerLeadCreate" =>  uuid} = json_response(conn, 200)["data"]
+    end
+
+    test "broker user should not add broker lead with missing required fields", %{
+      broker_conn: conn,
+      address: address
+    } do
+      variables = %{
+        "input" => %{
+          "address" => %{
+            "city" => address.city,
+            "state" => address.state,
+            "lat" => address.lat,
+            "lng" => address.lng,
+            "neighborhood" => address.neighborhood,
+            "street" => address.street,
+            "streetNumber" => address.street_number,
+            "postalCode" => address.postal_code
+          },
+          "ownerTelephone" => "+5599999999999",
+          "type" => "Apartamento"
+        }
+      }
+      conn =
+        post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
+
+      assert json_response(conn, 200)["errors"]
     end
   end
 end

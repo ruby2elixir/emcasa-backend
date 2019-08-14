@@ -6,7 +6,8 @@ defmodule Re.SellerLeadsTest do
   alias Re.{
     PubSub,
     SellerLeads,
-    SellerLeads.Site
+    SellerLeads.Site,
+    OwnerContacts
   }
 
   describe "create_site" do
@@ -26,6 +27,43 @@ defmodule Re.SellerLeadsTest do
     end
   end
 
+  describe "create_broker" do
+    test "should create owner as owner contact when it doesn't exists" do
+      assert {:error, :not_found} == OwnerContacts.get_by_phone("+5599999999999")
+      user = insert(:user,  type: "partner_broker")
+      address = insert(:address)
+      params = %{
+        owner_email: "a@a.com",
+        owner_telephone: "+5599999999999",
+        owner_name: "Suzana Vieira",
+        type: "Apartamento",
+        broker_uuid: user.uuid,
+        address_uuid: address.uuid
+      }
+
+      SellerLeads.create_broker(params)
+      assert {:ok, owner} = OwnerContacts.get_by_phone("+5599999999999")
+      assert %{name: "Suzana Vieira", email: "a@a.com", phone: "+5599999999999"} == Map.take(owner, [:name, :email, :phone])
+    end
+
+    test "should not create owner as owner contact when it exists" do
+      user = insert(:user,  type: "partner_broker")
+      owner = insert(:owner_contact)
+      address = insert(:address)
+      params = %{
+        owner_email: "a@a.com",
+        owner_telephone: owner.phone,
+        owner_name: owner.name,
+        type: "Apartamento",
+        broker_uuid: user.uuid,
+        address_uuid: address.uuid
+      }
+
+      {:ok, broker} = SellerLeads.create_broker(params)
+      assert broker.owner_uuid == owner.uuid
+    end
+  end
+
   describe "duplicated?" do
     test "should be false when the address doesn't exists" do
       address = insert(:address)
@@ -33,35 +71,35 @@ defmodule Re.SellerLeadsTest do
 
       refute SellerLeads.duplicated?(address, "Apartamento 401")
     end
-    
+
     test "should be true when the address and the complement is nil" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: nil)
 
       assert SellerLeads.duplicated?(address, nil)
     end
-    
+
     test "should be true when the address has the exactly same complement" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "100")
 
       assert SellerLeads.duplicated?(address, "100")
     end
-    
+
     test "should be true when the seller lead address has a complement with letters" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "apto 100")
 
       assert SellerLeads.duplicated?(address, "100")
     end
-    
+
     test "should be true when the passed address has a complement with letters" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "100")
 
       assert SellerLeads.duplicated?(address, "apto 100")
     end
-    
+
     test "should be true when the address has a similar complement with letters and multiple groups" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "Bloco 3 - Apto 200")

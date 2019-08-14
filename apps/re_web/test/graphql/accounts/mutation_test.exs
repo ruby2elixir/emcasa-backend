@@ -83,7 +83,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       variables = %{
         "id" => user.id,
         "name" => "Fixed Name",
-        "phone" => "123321123",
+        "phone" => "+5544999999999",
         "notificationPreferences" => %{
           "email" => false,
           "app" => false
@@ -113,7 +113,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       assert user = Repo.get(User, user.id)
       assert user.name == "Fixed Name"
-      assert user.phone == "123321123"
+      assert user.phone == "+5544999999999"
       assert user.device_token == "asdasdasd"
       assert user.type == "partner_broker"
       refute user.notification_preferences.email
@@ -124,7 +124,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
       variables = %{
         "id" => user.id,
         "name" => "Fixed Name",
-        "phone" => "123321123",
+        "phone" => "+5544999999999",
         "notificationPreferences" => %{
           "email" => false,
           "app" => false
@@ -154,7 +154,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       assert user = Repo.get(User, user.id)
       assert user.name == "Fixed Name"
-      assert user.phone == "123321123"
+      assert user.phone == "+5544999999999"
       assert user.device_token == "asdasdasd"
       assert user.type == "partner_broker"
       refute user.notification_preferences.email
