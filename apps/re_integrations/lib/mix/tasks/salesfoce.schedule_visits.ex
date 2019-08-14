@@ -1,7 +1,15 @@
 defmodule Mix.Tasks.ReIntegrations.Salesforce.ScheduleVisits do
   @moduledoc """
-  Schedule visits.
+  Schedule salesforce visits
+  Usage:
+  ````
+    mix ReIntegrations.Salesforce.ScheduleVisits [date]
+  ```
+  Where the first argument is the date to schedule events for, in "YYYY-MM-DD" format.
+  The date is optional, running this command without arguments schedules events for tomorrow.
   """
+
+  @shortdoc "Schedule salesforce visits"
   use Mix.Task
 
   require Logger
@@ -10,10 +18,10 @@ defmodule Mix.Tasks.ReIntegrations.Salesforce.ScheduleVisits do
     Salesforce
   }
 
-  @shortdoc "Schedule visits"
-
   @start_apps [:timex, :postgrex, :ecto, :ecto_sql]
   @repos [Re.Repo, ReIntegrations.Repo]
+
+  @default_interval_to_schedule [days: 1]
   @timezone Application.get_env(:re_integrations, :timezone, "Etc/UTC")
 
   def run(args) do
@@ -39,5 +47,5 @@ defmodule Mix.Tasks.ReIntegrations.Salesforce.ScheduleVisits do
     end
   end
 
-  defp get_date(_), do: @timezone |> Timex.now() |> Timex.shift(days: 1)
+  defp get_date(_), do: @timezone |> Timex.now() |> Timex.shift(@default_interval_to_schedule)
 end
