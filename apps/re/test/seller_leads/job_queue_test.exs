@@ -148,6 +148,20 @@ defmodule Re.SellerLeads.JobQueueTest do
     end
   end
 
+  describe "update_lead_salesforce" do
+    test "update lead" do
+      seller_lead = insert(:seller_lead, user: build(:user), address: build(:address))
+
+      assert {:ok, _} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "update_lead_salesforce",
+                 "uuid" => seller_lead.uuid
+               })
+
+      refute Repo.one(JobQueue)
+    end
+  end
+
   describe "not handled jobs" do
     test "raise if not passing a multi" do
       assert_raise RuntimeError, fn ->

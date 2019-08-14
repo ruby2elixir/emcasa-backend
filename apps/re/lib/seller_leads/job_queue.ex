@@ -65,6 +65,17 @@ defmodule Re.SellerLeads.JobQueue do
     |> handle_error()
   end
 
+  def perform(%Multi{} = multi, %{"type" => "update_lead_salesforce", "uuid" => uuid}) do
+    {:ok, seller_lead} = SellerLeads.get_preloaded(uuid, [:address, :user])
+
+    multi
+    |> Multi.run(:update_salesforce_lead, fn _repo, _changes ->
+      Salesforce.update_lead(seller_lead)
+    end)
+    |> Repo.transaction()
+    |> handle_error()
+  end
+
   def perform(_multi, job), do: raise("Job type not handled. Job: #{Kernel.inspect(job)}")
 
   defp insert_seller_lead(changeset, multi, request) do
