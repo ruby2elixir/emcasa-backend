@@ -40,7 +40,7 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
 
   describe "visit_start_window/1" do
     test "returns exact time when tour period is strict" do
-      assert %{start: ~T[20:00:00Z], end: ~T[20:00:00Z]} =
+      assert %{start: ~T[19:50:00.000000], end: ~T[21:10:00.000000]} =
                Payload.Opportunity.visit_start_window(%{
                  tour_strict_time: ~T[20:00:00Z],
                  tour_period: :strict
