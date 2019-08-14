@@ -89,7 +89,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
       lng: address.lng
     }
 
-  defp get_breaks(), do: [%{id: "lunch", start: "12:00", end: "13:00"}]
+  defp get_breaks, do: [%{id: "lunch", start: "12:00", end: "13:00"}]
 
   defp build_options(options), do: Enum.into(options, %{})
 
