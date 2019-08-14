@@ -5,8 +5,7 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
 
   alias ReIntegrations.{
     Routific,
-    Salesforce.Mapper,
-    Salesforce.Payload
+    Salesforce.Mapper
   }
 
   @calendar_uuid Ecto.UUID.generate()
@@ -42,8 +41,8 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
       assert %{
                what_id: "0x02",
                type: :visit,
-               start: ~U[2019-08-01 12:30:00.000Z],
-               end: ~U[2019-08-01 13:00:00.000Z],
+               start: ~N[2019-08-01 12:30:00.000],
+               end: ~N[2019-08-01 13:00:00.000],
                address: "some address",
                duration: 30
              } = Mapper.Routific.build_event(@visit, @calendar_uuid, @payload)
@@ -51,8 +50,8 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
 
     test "shifts start time by idle_time" do
       assert %{
-               start: ~U[2019-08-01 12:30:00.000Z],
-               end: ~U[2019-08-01 13:00:00.000Z],
+               start: ~N[2019-08-01 12:30:00.000],
+               end: ~N[2019-08-01 13:00:00.000],
                duration: 30
              } =
                @visit
