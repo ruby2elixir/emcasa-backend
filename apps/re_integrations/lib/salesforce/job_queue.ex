@@ -69,7 +69,9 @@ defmodule ReIntegrations.Salesforce.JobQueue do
 
   defp enqueue_calendar_insert_events(multi, {calendar_uuid, [_depot | events]}, payload),
     do:
-      Enum.reduce(events, multi, fn event, multi ->
+      events
+      |> Enum.filter(&(not Map.get(&1, :break)))
+      |> Enum.reduce(multi, fn event, multi ->
         __MODULE__.enqueue(multi, "schedule_#{event.id}", %{
           "type" => "insert_event",
           "event" => Mapper.Routific.build_event(event, calendar_uuid, payload),

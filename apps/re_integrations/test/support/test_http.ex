@@ -60,6 +60,12 @@ defmodule ReIntegrations.TestHTTP do
                       "location_name": "R. Francisco Cruz, 345",
                       "arrival_time": "08:41",
                       "finish_time": "09:11"
+                    },
+                    {
+                      "break": true,
+                      "location_id": "nowhere",
+                      "arrival_time": "10:00",
+                      "finish_time": "11:00"
                     }
                   ]
                }

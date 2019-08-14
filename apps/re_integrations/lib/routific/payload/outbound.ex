@@ -58,7 +58,8 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
              speed: calendar.speed,
              start_location: build_depot(calendar),
              shift_start: to_time_string(calendar.shift_start),
-             shift_end: to_time_string(calendar.shift_end)
+             shift_end: to_time_string(calendar.shift_end),
+             breaks: get_breaks()
            })
          end)}
 
@@ -87,6 +88,8 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
       lat: address.lat,
       lng: address.lng
     }
+
+  defp get_breaks, do: [%{id: "lunch", start: "12:00", end: "13:00"}]
 
   defp build_options(options), do: Enum.into(options, %{})
 
