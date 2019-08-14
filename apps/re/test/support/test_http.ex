@@ -11,4 +11,32 @@ defmodule Re.TestHTTP do
 
   def get("https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename),
     do: {:ok, %{body: filename}}
+
+  def post(%URI{path: "/api/v1/Lead"}, _body, _opts),
+    do:
+      {:ok,
+       %{
+         status_code: 200,
+         body: """
+         {
+           "id": "0x01",
+           "success": true,
+           "errors": []
+         }
+         """
+       }}
+
+  def patch(%URI{path: "/api/v1/Lead/0x01"}, _body, _opts),
+    do:
+      {:ok,
+       %{
+         status_code: 200,
+         body: """
+         {
+           "id": "0x01",
+           "success": true,
+           "errors": []
+         }
+         """
+       }}
 end
