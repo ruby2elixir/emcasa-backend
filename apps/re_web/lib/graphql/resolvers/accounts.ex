@@ -6,9 +6,9 @@ defmodule ReWeb.Resolvers.Accounts do
 
   alias Re.Accounts
 
-  alias Re.Accounts.{
-    Auth,
-    Users
+  alias Re.{
+    Accounts.Auth,
+    Accounts.Users
   }
 
   def account_kit_sign_in(%{access_token: access_token}, _) do

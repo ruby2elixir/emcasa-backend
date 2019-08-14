@@ -23,8 +23,9 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
 
   describe "userProfile" do
     test "admin should get any user profile", %{admin_conn: conn} do
+      district = insert(:district)
       user =
-        insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789")
+        insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789", districts: [district])
 
       listing1 = insert(:listing, user: user, type: "Casa", liquidity_ratio: 4.0)
       insert(:listing, user: user, type: "Casa", liquidity_ratio: 3.0)
@@ -67,6 +68,9 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
             name
             email
             phone
+            districts {
+              name_slug
+            }
             listings (
               pagination: $listingPagination
               filters: $listingFilters
@@ -84,12 +88,12 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
-
       assert %{
                "id" => to_string(user.id),
                "name" => user.name,
                "email" => user.email,
                "phone" => user.phone,
+               "districts" => [%{"name_slug" => district.name_slug}],
                "listings" => [
                  %{"id" => to_string(listing1.id)}
                ],

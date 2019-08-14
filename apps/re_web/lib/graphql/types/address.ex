@@ -37,6 +37,7 @@ defmodule ReWeb.Types.Address do
     field :name_slug, :string
     field :description, :string
     field :status, :string
+    field :uuid, :uuid
   end
 
   input_object :address_input do
