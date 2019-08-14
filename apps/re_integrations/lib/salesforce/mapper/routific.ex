@@ -8,7 +8,7 @@ defmodule ReIntegrations.Salesforce.Mapper.Routific do
     Salesforce.Payload.Opportunity
   }
 
-  @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 60)
+  @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 40)
   @event_owner_id Application.get_env(:re_integrations, :salesforce_event_owner_id)
 
   def build_visit(%Opportunity{} = opportunity) do
