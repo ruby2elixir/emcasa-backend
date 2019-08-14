@@ -19,6 +19,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.BuyerLead
   import_types ReWeb.Types.Typology
   import_types ReWeb.Types.Custom.UUID
+  import_types ReWeb.Types.Utm
   import_types Absinthe.Type.Custom
 
   alias ReWeb.GraphQL.Middlewares
