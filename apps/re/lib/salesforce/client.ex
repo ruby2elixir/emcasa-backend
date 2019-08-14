@@ -5,7 +5,7 @@ defmodule Re.Salesforce.Client do
 
   @api_key Application.get_env(:re_integrations, :salesforce_api_key, "")
   @api_url Application.get_env(:re_integrations, :salesforce_url, "")
-  @http_client Application.get_env(:re_integrations, :http, HTTPoison)
+  @http_client Application.get_env(:re, :http, HTTPoison)
 
   @api_headers [{"Authorization", @api_key}, {"Content-Type", "application/json"}]
 
