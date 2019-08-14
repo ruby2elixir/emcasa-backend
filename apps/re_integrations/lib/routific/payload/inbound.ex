@@ -42,14 +42,15 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
         Map.put(acc, calendar_uuid, Enum.map(visits, &build_visit(&1, input)))
       end)
 
-  defp build_visit(%{"location_id" => location_id, "location_name" => address} = visit, input) do
+  defp build_visit(%{"location_id" => location_id} = visit, input) do
     with {:ok, arrival} <- visit |> Map.get("arrival_time") |> to_time_struct(),
          {:ok, finish} <- visit |> Map.get("finish_time") |> to_time_struct() do
       %{
         id: location_id,
-        address: address,
         start: arrival,
         end: finish,
+        address: Map.get(visit, "location_name"),
+        break: Map.get(visit, "break", false),
         notes: get_in(input, [location_id, "notes"]),
         custom_notes: get_in(input, [location_id, "customNotes"])
       }

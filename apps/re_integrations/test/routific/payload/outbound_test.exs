@@ -10,7 +10,7 @@ defmodule ReIntegrations.Routific.Payload.OutboundTest do
       address = insert(:address)
       district = insert(:district)
       calendar = insert(:calendar, address: address, districts: [district])
-      {:ok, district: district, calendar: calendar}
+      {:ok, district: district, calendar: calendar, address: address}
     end
 
     test "builds routific payload", %{district: district} do
@@ -30,7 +30,11 @@ defmodule ReIntegrations.Routific.Payload.OutboundTest do
                )
     end
 
-    test "builds fleet from calendars", %{district: district, calendar: calendar} do
+    test "builds fleet from calendars", %{
+      district: district,
+      calendar: calendar,
+      address: address
+    } do
       assert {:ok, %Payload.Outbound{fleet: fleet}} =
                Payload.Outbound.build(
                  [
@@ -46,7 +50,36 @@ defmodule ReIntegrations.Routific.Payload.OutboundTest do
                  []
                )
 
-      assert [calendar.uuid] == Map.keys(fleet)
+      assert %{
+               speed: speed,
+               start_location: start_location,
+               shift_start: _shift_start,
+               shift_end: _shift_end,
+               breaks: _breaks
+             } = fleet[calendar.uuid]
+
+      assert calendar.speed == speed
+      assert address.lat == start_location.lat
+      assert address.lng == start_location.lng
+    end
+
+    test "adds 1 break to fleets", %{district: district, calendar: calendar} do
+      {:ok, %Payload.Outbound{fleet: fleet}} =
+        Payload.Outbound.build(
+          [
+            %{
+              id: "1",
+              duration: 10,
+              address: "x",
+              neighborhood: district.name,
+              lat: 1.0,
+              lng: 1.0
+            }
+          ],
+          []
+        )
+
+      assert 1 == length(fleet[calendar.uuid].breaks)
     end
 
     test "fails when there are no calendars available" do
