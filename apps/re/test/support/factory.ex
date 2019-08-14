@@ -12,7 +12,7 @@ defmodule Re.Factory do
       uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email(),
-      phone: "+55#{Enum.random(10000000000..99999999999)}",
+      phone: "+55#{Enum.random(10_000_000_000..99_999_999_999)}",
       role: "user",
       notification_preferences: %{
         email: true,
@@ -376,7 +376,8 @@ defmodule Re.Factory do
       area: Enum.random(25..500),
       source: Enum.random(~w(Website Facebook)),
       tour_option: ~N[2019-07-18 10:00:00.000000],
-      inserted_at: ~N[2019-07-17 10:00:00.000000]
+      inserted_at: ~N[2019-07-17 10:00:00.000000],
+      salesforce_id: "0x01"
     }
   end
 

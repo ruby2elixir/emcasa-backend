@@ -6,6 +6,8 @@ defmodule Re.SellerLeads.Site do
 
   import Ecto.Changeset
 
+  alias Re.SellerLead
+
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "site_seller_leads" do
@@ -33,6 +35,18 @@ defmodule Re.SellerLeads.Site do
     |> validate_inclusion(:type, @types)
     |> generate_uuid()
     |> validate_attributes()
+  end
+
+  def seller_lead_changeset(site_seller_lead, seller_lead) do
+    params = %{
+      complement: site_seller_lead.complement,
+      type: site_seller_lead.type,
+      maintenance_fee: site_seller_lead.maintenance_fee,
+      suites: site_seller_lead.suites,
+      price: site_seller_lead.price
+    }
+
+    SellerLead.changeset(seller_lead, params)
   end
 
   @more_than_zero_attributes ~w(maintenance_fee suites price)a
