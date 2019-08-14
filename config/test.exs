@@ -89,7 +89,8 @@ config :re_integrations,
       type: "domain",
       value: "example.com"
     }
-  }
+  },
+  salesforce_seller_lead_record_id: "0x01"
 
 config :junit_formatter,
   report_file: "report_file_test.xml",

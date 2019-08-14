@@ -12,7 +12,7 @@ defmodule Re.Factory do
       uuid: UUID.uuid4(),
       name: Name.name(),
       email: Internet.email(),
-      phone: Phone.EnUs.phone(),
+      phone: "+55#{Enum.random(10000000000..99999999999)}",
       role: "user",
       notification_preferences: %{
         email: true,
@@ -371,7 +371,8 @@ defmodule Re.Factory do
       bathrooms: Enum.random(1..10),
       garage_spots: Enum.random(0..10),
       suites: Enum.random(0..10),
-      price: random(:price),
+      price: random(:price_float),
+      suggested_price: random(:price_float),
       area: Enum.random(25..500),
       source: Enum.random(~w(Website Facebook)),
       tour_option: ~N[2019-07-18 10:00:00.000000],

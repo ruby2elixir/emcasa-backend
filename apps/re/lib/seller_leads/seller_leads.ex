@@ -7,12 +7,18 @@ defmodule Re.SellerLeads do
   alias Re.{
     PubSub,
     Repo,
+    OwnerContacts,
+    OwnerContact,
     SellerLead,
     SellerLeads.Facebook,
-    SellerLeads.Site
+    SellerLeads.Site,
+    SellerLeads.Broker
   }
 
-  alias Ecto.Query
+  alias Ecto.{
+    Changeset,
+    Query
+  }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
@@ -21,6 +27,43 @@ defmodule Re.SellerLeads do
     |> Site.changeset(params)
     |> Repo.insert()
     |> PubSub.publish_new("new_site_seller_lead")
+  end
+
+  def create_broker(params) do
+    property_owner_param = %{
+      name: Map.get(params, :owner_name),
+      phone: Map.get(params, :owner_telephone),
+      email: Map.get(params, :owner_email)
+    }
+
+    property_owner =
+      %OwnerContact{}
+      |> OwnerContact.changeset(property_owner_param)
+      |> handle_property_owner()
+
+    case property_owner do
+      {:error, cause} -> {:error, cause}
+      {:ok, owner} -> handle_create_broker(owner, params)
+    end
+  end
+
+  defp handle_create_broker(owner, params) do
+    attrs =
+      params
+      |> Map.merge(%{owner_uuid: owner.uuid})
+
+    %Broker{}
+    |> Broker.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  defp handle_property_owner(property_owner_changeset) do
+    phone = Changeset.get_field(property_owner_changeset, :phone)
+
+    case OwnerContacts.get_by_phone(phone) do
+      {:error, _} -> Repo.insert_or_update(property_owner_changeset)
+      {_, owner} -> {:ok, owner}
+    end
   end
 
   def create(%{"source" => "facebook_seller"} = payload) do
