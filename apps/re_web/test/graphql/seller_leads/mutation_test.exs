@@ -169,9 +169,14 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "streetNumber" => address.street_number,
             "postalCode" => address.postal_code
           },
-          "ownerEmail" => "a@a.com",
-          "ownerTelephone" => "+5599999999999",
-          "ownerName" => "Suzana Vieira",
+          "owner" => %{
+            "email" => "a@a.com",
+            "phone" => "+5599999999999",
+            "name" => "Suzana Vieira"
+           },
+          "utm" => %{
+            "campaign" => "facebook"
+           },
           "type" => "Apartamento"
         }
       }
@@ -197,9 +202,11 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "streetNumber" => address.street_number,
             "postalCode" => address.postal_code
           },
-          "ownerEmail" => "a@a.com",
-          "ownerTelephone" => "+5599999999999",
-          "ownerName" => "Suzana Vieira",
+          "owner" => %{
+            "email" => "a@a.com",
+            "phone" => "+5599999999999",
+            "name" => "Suzana Vieira"
+          },
           "type" => "Apartamento"
         }
       }
@@ -225,9 +232,11 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "streetNumber" => address.street_number,
             "postalCode" => address.postal_code
           },
-          "ownerEmail" => "a@a.com",
-          "ownerTelephone" => "+5599999999999",
-          "ownerName" => "Suzana Vieira",
+          "owner" => %{
+            "email" => "a@a.com",
+            "phone" => "+5599999999999",
+            "name" => "Suzana Vieira"
+          },
           "type" => "Apartamento"
         }
       }
@@ -253,9 +262,11 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "streetNumber" => address.street_number,
             "postalCode" => address.postal_code
           },
-          "ownerEmail" => "a@a.com",
-          "ownerTelephone" => "+5599999999999",
-          "ownerName" => "Suzana Vieira",
+          "owner" => %{
+            "email" => "a@a.com",
+            "phone" => "+5599999999999",
+            "name" => "Suzana Vieira"
+          },
           "type" => "Apartamento"
         }
       }
@@ -281,7 +292,9 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "streetNumber" => address.street_number,
             "postalCode" => address.postal_code
           },
-          "ownerTelephone" => "+5599999999999",
+          "owner" => %{
+            "phone" => "+5599999999999",
+          },
           "type" => "Apartamento"
         }
       }

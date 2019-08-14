@@ -33,9 +33,11 @@ defmodule Re.SellerLeadsTest do
       user = insert(:user,  type: "partner_broker")
       address = insert(:address)
       params = %{
-        owner_email: "a@a.com",
-        owner_telephone: "+5599999999999",
-        owner_name: "Suzana Vieira",
+        owner: %{
+          email: "a@a.com",
+          phone: "+5599999999999",
+          name: "Suzana Vieira"
+        },
         type: "Apartamento",
         broker_uuid: user.uuid,
         address_uuid: address.uuid
@@ -51,9 +53,11 @@ defmodule Re.SellerLeadsTest do
       owner = insert(:owner_contact)
       address = insert(:address)
       params = %{
-        owner_email: "a@a.com",
-        owner_telephone: owner.phone,
-        owner_name: owner.name,
+        owner: %{
+          email: "a@a.com",
+          phone: owner.phone,
+          name: owner.name
+        },
         type: "Apartamento",
         broker_uuid: user.uuid,
         address_uuid: address.uuid
