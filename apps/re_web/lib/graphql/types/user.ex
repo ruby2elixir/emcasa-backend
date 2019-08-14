@@ -7,6 +7,7 @@ defmodule ReWeb.Types.User do
   alias ReWeb.Resolvers.Accounts, as: AccountsResolver
   alias ReWeb.Resolvers.Listings, as: ListingsResolver
   alias ReWeb.Resolvers.Favorites, as: FavoritesResolver
+  alias ReWeb.Resolvers.Addresses, as: AddressesResolver
 
   object :user do
     field :id, :id
@@ -15,6 +16,9 @@ defmodule ReWeb.Types.User do
     field :email, :string
     field :phone, :string
     field :role, :string
+    field :type, :string
+
+    field :districts, list_of(:district), resolve: &AddressesResolver.districts_by_broker_user/3
 
     field :notification_preferences, :notification_preferences do
       deprecate("not used anymore")

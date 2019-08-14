@@ -3,9 +3,12 @@ defmodule ReWeb.Resolvers.Addresses do
   Resolver module for addresses
   """
 
+  import Absinthe.Resolution.Helpers, only: [on_load: 2]
+
   alias Re.{
     Addresses,
     Addresses.Neighborhoods,
+    Districts,
     Development,
     Developments,
     Listing,
@@ -39,6 +42,14 @@ defmodule ReWeb.Resolvers.Addresses do
   end
 
   def districts(_, _), do: {:ok, Neighborhoods.districts()}
+
+  def districts_by_broker_user(user, _, %{context: %{loader: loader}}) do
+    loader
+    |> Dataloader.load(Districts, :districts, user)
+    |> on_load(fn loader ->
+      {:ok, Dataloader.get(loader, Districts, :districts, user)}
+    end)
+  end
 
   def district(params, _), do: Neighborhoods.get_district(params)
 

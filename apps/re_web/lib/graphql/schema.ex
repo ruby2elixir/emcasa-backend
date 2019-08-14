@@ -96,7 +96,8 @@ defmodule ReWeb.Schema do
       Re.OwnerContacts,
       Re.Statistics,
       Re.Tags,
-      Re.Units
+      Re.Units,
+      Re.Districts
     ]
   end
 end
