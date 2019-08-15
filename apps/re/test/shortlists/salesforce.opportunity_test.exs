@@ -40,13 +40,13 @@ defmodule Re.Shortlists.Salesforce.OpportunityTest do
                @payload["Numero_Minimo_de_Vagas__c"] |> String.to_integer()
 
       assert opportunity.min_area == 60
-      assert opportunity.floor == @payload["Andar_de_Preferencia__c"]
+      assert opportunity.preference_floor == :high
       assert opportunity.elevators == nil
       assert opportunity.nearby_subway == true
       assert opportunity.neighborhoods == ["Botafogo", "Urca"]
       assert opportunity.price_range == [750_000, 1_000_000]
       assert opportunity.maintenance_fee_range == [800, 1_000]
-      assert opportunity.lobby == @payload["Portaria_2__c"]
+      assert opportunity.lobby == nil
     end
   end
 end
