@@ -114,8 +114,10 @@ defmodule Re.PriceSuggestions do
 
   defp enqueue_if_covered(multi, _uuid, false), do: multi
 
-  defp enqueue_if_covered(multi, uuid, true), do: JobQueue.enqueue(multi, :seller_lead_job, %{
-      "type" => "process_price_suggestion_request",
-      "uuid" => uuid
-    })
+  defp enqueue_if_covered(multi, uuid, true),
+    do:
+      JobQueue.enqueue(multi, :seller_lead_job, %{
+        "type" => "process_price_suggestion_request",
+        "uuid" => uuid
+      })
 end
