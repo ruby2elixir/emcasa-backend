@@ -56,5 +56,12 @@ defmodule ReIntegrations.Salesforce.Mapper.Routific do
            if(is_nil(event.notes), do: "", else: event.notes)
 
   defp update_datetime(%Time{} = time, %DateTime{} = date),
-    do: date |> Timex.set(time: time) |> Timex.Timezone.convert(:utc) |> DateTime.to_naive()
+    do:
+      date
+      |> Timex.set(time: round_time(time))
+      |> Timex.Timezone.convert(:utc)
+      |> DateTime.to_naive()
+
+  defp round_time(%Time{minute: minute} = time),
+    do: Time.add(time, (round(minute / 5) * 5 - minute) * 60, :second)
 end
