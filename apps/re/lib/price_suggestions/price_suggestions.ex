@@ -99,13 +99,11 @@ defmodule Re.PriceSuggestions do
 
   defp save_price_suggestion(changeset) do
     uuid = Changeset.get_field(changeset, :uuid)
+    is_covered = Changeset.get_field(changeset, :is_covered)
 
     Ecto.Multi.new()
     |> Multi.insert(:insert_price_suggestion_request, changeset)
-    |> JobQueue.enqueue(:seller_lead_job, %{
-      "type" => "process_price_suggestion_request",
-      "uuid" => uuid
-    })
+    |> enqueue_if_covered(uuid, is_covered)
     |> Repo.transaction()
     |> return_insertion()
   end
@@ -113,4 +111,13 @@ defmodule Re.PriceSuggestions do
   defp return_insertion({:ok, %{insert_price_suggestion_request: request}}), do: {:ok, request}
 
   defp return_insertion(error), do: error
+
+  defp enqueue_if_covered(multi, _uuid, false), do: multi
+
+  defp enqueue_if_covered(multi, uuid, true),
+    do:
+      JobQueue.enqueue(multi, :seller_lead_job, %{
+        "type" => "process_price_suggestion_request",
+        "uuid" => uuid
+      })
 end
