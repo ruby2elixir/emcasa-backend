@@ -42,7 +42,9 @@ defmodule ReIntegrations.TestHTTP do
                "options": {"date": "2019-08-01T20:03:48.347904Z"}
              },
              "output": {
-               "unserved": null,
+               "unserved": {
+                 "3": "No vehicle available during the specified time windows."
+               },
                "solution": {
                   "affb1f63-399a-4d85-9f65-c127994104f6": [
                     {

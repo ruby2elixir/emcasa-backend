@@ -35,7 +35,9 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     notes: "Comentarios_do_Agendamento__c",
     tour_strict_date: "Data_Fixa_para_o_Tour__c",
     tour_strict_time: "Horario_Fixo_para_o_Tour__c",
-    tour_period: "Periodo_Disponibilidade_Tour__c"
+    tour_period: "Periodo_Disponibilidade_Tour__c",
+    route_unserved_reason: "Motivo_do_nao_agendamento__c",
+    route_url: "Link_da_rota__c"
   )
 
   schema "salesforce_opportunity" do
@@ -48,13 +50,17 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     field :tour_strict_time, :time
     field :tour_period, TourPeriod
     field :stage, Stage
+    field :route_unserved_reason, :string
+    field :route_url, :string
+    field :route_id, :string, virtual: true
   end
 
   @params ~w(id account_id owner_id address neighborhood tour_strict_date tour_strict_time
-             tour_period stage notes)a
+             tour_period stage notes route_unserved_reason route_url route_id)a
 
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 40)
   @tour_visit_max_lateness Application.get_env(:re_integrations, :tour_visit_max_lateness, 10)
+  @routific_job_url Application.get_env(:re_integrations, :routific_job_url, "")
 
   def build_all(list) do
     results = Enum.map(list, &with({:ok, value} <- build(&1), do: value))
@@ -85,7 +91,23 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     end
   end
 
-  defp changeset(struct, params), do: cast(struct, params, @params)
+  defp changeset(struct, params) do
+    struct
+    |> cast(params, @params)
+    |> put_route_url()
+  end
+
+  defp route_url(id), do: "#{@routific_job_url}/#{id}"
+
+  defp put_route_url(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{route_id: route_id}} when is_binary(route_id) ->
+        put_change(changeset, :route_url, route_url(route_id))
+
+      _ ->
+        changeset
+    end
+  end
 
   def visit_start_window(%{tour_period: :strict, tour_strict_time: %Time{} = time}),
     do: %{

@@ -22,12 +22,16 @@ defmodule ReIntegrations.Salesforce.JobQueue do
     |> Multi.merge(fn %{get_job_status: payload} ->
       enqueue_routific_insert_events(Ecto.Multi.new(), payload)
     end)
+    |> Multi.merge(fn %{get_job_status: payload} ->
+      enqueue_routific_update_unserved(Ecto.Multi.new(), payload)
+    end)
     |> Repo.transaction()
   end
 
   def perform(%Multi{} = multi, %{
         "type" => "insert_event",
         "opportunity_id" => opportunity_id,
+        "route_id" => route_id,
         "event" => event
       }) do
     multi
@@ -35,7 +39,7 @@ defmodule ReIntegrations.Salesforce.JobQueue do
     |> __MODULE__.enqueue(:update_opportunity, %{
       "type" => "update_opportunity",
       "id" => opportunity_id,
-      "opportunity" => %{stage: :visit_scheduled}
+      "opportunity" => %{stage: :visit_scheduled, route_unserved_reason: "", route_id: route_id}
     })
     |> Repo.transaction()
   end
@@ -75,7 +79,21 @@ defmodule ReIntegrations.Salesforce.JobQueue do
         __MODULE__.enqueue(multi, "schedule_#{event.id}", %{
           "type" => "insert_event",
           "event" => Mapper.Routific.build_event(event, calendar_uuid, payload),
+          "route_id" => payload.id,
           "opportunity_id" => event.id
+        })
+      end)
+
+  defp enqueue_routific_update_unserved(multi, payload),
+    do:
+      Enum.reduce(payload.unserved, multi, fn {opportunity_id, reason}, multi ->
+        __MODULE__.enqueue(multi, "update_#{opportunity_id}", %{
+          "type" => "update_opportunity",
+          "id" => opportunity_id,
+          "opportunity" => %{
+            route_unserved_reason: reason,
+            route_id: payload.id
+          }
         })
       end)
 end
