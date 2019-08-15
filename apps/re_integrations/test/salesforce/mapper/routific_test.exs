@@ -48,6 +48,21 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
              } = Mapper.Routific.build_event(@visit, @calendar_uuid, @payload)
     end
 
+    test "shifts start time by idle_time" do
+      assert %{
+               start: ~N[2019-08-01 12:30:00.000],
+               end: ~N[2019-08-01 13:00:00.000],
+               duration: 30
+             } =
+               @visit
+               |> Map.merge(%{
+                 start: ~T[12:00:00Z],
+                 end: ~T[13:00:00Z],
+                 idle_time: 30
+               })
+               |> Mapper.Routific.build_event(@calendar_uuid, @payload)
+    end
+
     test "rounds minutes to multiples of 5" do
       assert %{
                start: ~N[2019-08-01 12:30:00.000],
