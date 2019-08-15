@@ -21,7 +21,6 @@ defmodule Re.Shortlists.Salesforce.OpportunityTest do
   }
 
   describe "build/1" do
-    @tag dev: true
     test "builds payload struct from salesforce response" do
       assert {:ok, %Opportunity{} = opportunity} = Opportunity.build(@payload)
       assert opportunity.infrastructure == ["Sacada", "Churrasqueira"]
