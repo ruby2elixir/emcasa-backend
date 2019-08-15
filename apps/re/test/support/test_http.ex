@@ -12,6 +12,8 @@ defmodule Re.TestHTTP do
   def get("https://res.cloudinary.com/emcasa/image/upload/f_auto/v1513818385/" <> filename),
     do: {:ok, %{body: filename}}
 
+  def get(_, _), do: {:ok, nil}
+
   def post(%URI{path: "/api/v1/Lead"}, _body, _opts),
     do:
       {:ok,
