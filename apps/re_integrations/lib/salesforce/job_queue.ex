@@ -23,6 +23,7 @@ defmodule ReIntegrations.Salesforce.JobQueue do
       enqueue_routific_insert_events(Ecto.Multi.new(), payload)
     end)
     |> Repo.transaction()
+    |> handle_error()
   end
 
   def perform(%Multi{} = multi, %{
@@ -38,6 +39,7 @@ defmodule ReIntegrations.Salesforce.JobQueue do
       "opportunity" => %{stage: :visit_scheduled}
     })
     |> Repo.transaction()
+    |> handle_error()
   end
 
   def perform(%Multi{} = multi, %{
@@ -50,6 +52,7 @@ defmodule ReIntegrations.Salesforce.JobQueue do
       Salesforce.update_opportunity(id, payload)
     end)
     |> Repo.transaction()
+    |> handle_error()
   end
 
   defp get_routific_job(job_id) do
@@ -78,4 +81,17 @@ defmodule ReIntegrations.Salesforce.JobQueue do
           "opportunity_id" => event.id
         })
       end)
+
+  defp handle_error({:ok, result}), do: {:ok, result}
+
+  defp handle_error({:error, :get_job_status, :pending, _changes} = result),
+    do: result
+
+  defp handle_error(error) do
+    Sentry.capture_message("error when performing Salesforce.JobQueue",
+      extra: %{error: error}
+    )
+
+    raise "Error when performing Salesforce.JobQueue"
+  end
 end

@@ -38,12 +38,13 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
                })
     end
 
-    test "fails when routific job fails" do
-      assert {:error, _, _, _} =
-               JobQueue.perform(Multi.new(), %{
-                 "type" => "monitor_routific_job",
-                 "job_id" => "FAILED_JOB_ID"
-               })
+    test "raises when routific job fails" do
+      assert_raise RuntimeError, fn ->
+        JobQueue.perform(Multi.new(), %{
+          "type" => "monitor_routific_job",
+          "job_id" => "FAILED_JOB_ID"
+        })
+      end
     end
   end
 
