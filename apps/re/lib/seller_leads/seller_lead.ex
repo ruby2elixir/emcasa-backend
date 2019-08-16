@@ -6,6 +6,8 @@ defmodule Re.SellerLead do
 
   import Ecto.Changeset
 
+  alias Re.SellerLeads.Utm
+
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "seller_leads" do
@@ -21,8 +23,9 @@ defmodule Re.SellerLead do
     field :price, :float
     field :suggested_price, :float
     field :tour_option, :utc_datetime
-
     field :salesforce_id, :string
+
+    embeds_one :utm, Re.SellerLeads.Utm
 
     belongs_to :address, Re.Address,
       references: :uuid,
@@ -45,6 +48,7 @@ defmodule Re.SellerLead do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @params)
+    |> cast_embed(:utm, with: &Utm.changeset/2)
     |> validate_required(@required)
     |> generate_uuid()
   end

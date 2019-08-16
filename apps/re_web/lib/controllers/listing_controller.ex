@@ -7,7 +7,6 @@ defmodule ReWeb.ListingController do
     Listings
   }
 
-  @visualizations Application.get_env(:re, :visualizations, Re.Statistics.Visualizations)
   @emails Application.get_env(:re_integrations, :emails, ReIntegrations.Notifications.Emails)
 
   action_fallback(ReWeb.FallbackController)
@@ -39,8 +38,6 @@ defmodule ReWeb.ListingController do
   def show(conn, %{"id" => id}, user) do
     with {:ok, listing} <- Listings.get_preloaded(id),
          :ok <- Bodyguard.permit(Listings, :show_listing, user, listing) do
-      @visualizations.listing(listing, user, extract_details(conn))
-
       conn
       |> put_view(get_view(user, listing))
       |> render("show.json", listing: listing)
@@ -72,14 +69,6 @@ defmodule ReWeb.ListingController do
          :ok <- Bodyguard.permit(Listings, :delete_listing, user, listing),
          {:ok, _listing} <- Listings.deactivate(listing),
          do: send_resp(conn, :no_content, "")
-  end
-
-  @visualization_params ~w(remote_ip req_headers)a
-
-  defp extract_details(conn) do
-    conn
-    |> Map.take(@visualization_params)
-    |> Kernel.inspect()
   end
 
   defp send_email_if_not_admin(listing, %{role: "user"} = user) do

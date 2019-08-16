@@ -27,14 +27,18 @@ defmodule ReIntegrations.Salesforce.Mapper.Routific do
          {:ok, calendar} <- Re.Calendars.get(calendar_uuid),
          {:ok, sdr} <- Salesforce.get_user(event.custom_notes["owner_id"]),
          {:ok, account} <- Salesforce.get_account(event.custom_notes["account_id"]) do
+      start_time = event.start |> update_datetime(date) |> Timex.shift(minutes: event.idle_time)
+      end_time = update_datetime(event.end, date)
+      duration = Timex.diff(end_time, start_time, :minutes)
+
       %{
         owner_id: @event_owner_id,
         what_id: event.id,
         type: :visit,
         address: event.address,
-        start: update_datetime(event.start, date),
-        end: update_datetime(event.end, date),
-        duration: @tour_visit_duration,
+        start: start_time,
+        end: end_time,
+        duration: duration,
         subject: "[#{calendar.name}] Visita para tour",
         description: build_event_description(event, %{sdr: sdr, account: account})
       }
@@ -52,5 +56,12 @@ defmodule ReIntegrations.Salesforce.Mapper.Routific do
            if(is_nil(event.notes), do: "", else: event.notes)
 
   defp update_datetime(%Time{} = time, %DateTime{} = date),
-    do: date |> Timex.set(time: time) |> Timex.Timezone.convert(:utc)
+    do:
+      date
+      |> Timex.set(time: round_time(time))
+      |> Timex.Timezone.convert(:utc)
+      |> DateTime.to_naive()
+
+  defp round_time(%Time{minute: minute} = time),
+    do: Time.add(time, (round(minute / 5) * 5 - minute) * 60, :second)
 end

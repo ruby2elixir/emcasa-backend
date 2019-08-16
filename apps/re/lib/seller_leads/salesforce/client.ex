@@ -13,7 +13,7 @@ defmodule Re.SellerLeads.Salesforce do
   @record_type_id Application.get_env(:re_integrations, :salesforce_seller_lead_record_id, "")
 
   def create_lead(%Re.SellerLead{} = lead) do
-    with {:ok, lead} <- map_params(lead),
+    with {:ok, lead} <- map_params(lead, true),
          {:ok, %{body: body}} <- Client.insert_lead(lead) do
       Jason.decode(body)
     end
@@ -21,10 +21,19 @@ defmodule Re.SellerLeads.Salesforce do
 
   def create_lead(_), do: {:error, :lead_type_not_handled}
 
-  defp map_params(lead) do
+  def update_lead(%Re.SellerLead{} = lead) do
+    with {:ok, salesforce_lead} <- map_params(lead, false),
+         {:ok, %{body: body}} <- Client.update_lead(salesforce_lead, lead.salesforce_id) do
+      Jason.decode(body)
+    end
+  end
+
+  def update_lead(_), do: {:error, :lead_type_not_handled}
+
+  defp map_params(lead, evaluation) do
     %{
       uuid: lead.uuid,
-      evaluation: false,
+      evaluation: evaluation,
       record_type_id: @record_type_id,
       type: :seller,
       realty_type: lead.type,
@@ -47,7 +56,7 @@ defmodule Re.SellerLeads.Salesforce do
 
   defp put_user_params(params, %User{} = user) do
     Map.merge(params, %{
-      last_name: user.name,
+      last_name: user.name || "unknown",
       full_name: user.name,
       phone: String.replace(user.phone, "+", ""),
       email: user.email
