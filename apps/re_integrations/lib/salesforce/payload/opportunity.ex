@@ -41,18 +41,18 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
   )
 
   schema "salesforce_opportunity" do
-    field :account_id, :string
-    field :owner_id, :string
-    field :address, :string
-    field :neighborhood, :string
-    field :notes, :string
-    field :tour_strict_date, :date
-    field :tour_strict_time, :time
-    field :tour_period, TourPeriod
-    field :stage, Stage
-    field :route_unserved_reason, :string
-    field :route_url, :string
-    field :route_id, :string, virtual: true
+    field(:account_id, :string)
+    field(:owner_id, :string)
+    field(:address, :string)
+    field(:neighborhood, :string)
+    field(:notes, :string)
+    field(:tour_strict_date, :date)
+    field(:tour_strict_time, :time)
+    field(:tour_period, TourPeriod)
+    field(:stage, Stage)
+    field(:route_unserved_reason, :string)
+    field(:route_url, :string)
+    field(:route_id, :string, virtual: true)
   end
 
   @params ~w(id account_id owner_id address neighborhood tour_strict_date tour_strict_time
@@ -99,15 +99,11 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
 
   defp route_url(id), do: "#{@routific_job_url}/#{id}"
 
-  defp put_route_url(changeset) do
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{route_id: route_id}} when is_binary(route_id) ->
-        put_change(changeset, :route_url, route_url(route_id))
+  defp put_route_url(%{valid?: true, changes: %{route_id: route_id}} = changeset)
+       when is_binary(route_id),
+       do: put_change(changeset, :route_url, route_url(route_id))
 
-      _ ->
-        changeset
-    end
-  end
+  defp put_route_url(changeset), do: changeset
 
   def visit_start_window(%{tour_period: :strict, tour_strict_time: %Time{} = time}),
     do: %{
