@@ -87,7 +87,6 @@ defmodule Re.SellerLeads do
     address
     |> check_attribute_duplicated(normalized_complement, :seller_leads)
     |> Kernel.||(check_attribute_duplicated(address, normalized_complement, :listings))
-
   end
 
   defp check_attribute_duplicated(address, complement, attribute_to_fetch) do
