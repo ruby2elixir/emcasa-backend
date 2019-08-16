@@ -3,9 +3,11 @@ defmodule Re.SellerLeadsTest do
 
   import Re.Factory
 
+  import Re.CustomAssertion
+
   alias Re.{
-    PubSub,
     SellerLeads,
+    SellerLeads.JobQueue,
     SellerLeads.Site,
     OwnerContacts
   }
@@ -17,21 +19,19 @@ defmodule Re.SellerLeadsTest do
       price_suggestion_request = insert(:price_suggestion_request, user: user, address: address)
       params = params_for(:site_seller_lead, price_request: price_suggestion_request)
 
-      PubSub.subscribe("new_site_seller_lead")
-
       {:ok, _site_lead} = SellerLeads.create_site(params)
 
-      assert %{uuid: uuid} = Repo.one(Site)
-
-      assert_received %{topic: "new_site_seller_lead", new: %{uuid: ^uuid}}
+      assert Repo.one(Site)
+      assert_enqueued_job(Repo.all(JobQueue), "process_site_seller_lead")
     end
   end
 
   describe "create_broker" do
     test "should create owner as owner contact when it doesn't exists" do
       assert {:error, :not_found} == OwnerContacts.get_by_phone("+5599999999999")
-      user = insert(:user,  type: "partner_broker")
+      user = insert(:user, type: "partner_broker")
       address = insert(:address)
+
       params = %{
         owner: %{
           email: "a@a.com",
@@ -45,13 +45,16 @@ defmodule Re.SellerLeadsTest do
 
       SellerLeads.create_broker(params)
       assert {:ok, owner} = OwnerContacts.get_by_phone("+5599999999999")
-      assert %{name: "Suzana Vieira", email: "a@a.com", phone: "+5599999999999"} == Map.take(owner, [:name, :email, :phone])
+
+      assert %{name: "Suzana Vieira", email: "a@a.com", phone: "+5599999999999"} ==
+               Map.take(owner, [:name, :email, :phone])
     end
 
     test "should not create owner as owner contact when it exists" do
-      user = insert(:user,  type: "partner_broker")
+      user = insert(:user, type: "partner_broker")
       owner = insert(:owner_contact)
       address = insert(:address)
+
       params = %{
         owner: %{
           email: "a@a.com",

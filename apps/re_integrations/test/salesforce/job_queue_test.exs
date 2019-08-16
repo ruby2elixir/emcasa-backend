@@ -28,6 +28,7 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
                })
 
       assert_enqueued_job(Repo.all(JobQueue), "insert_event", 2)
+      assert_enqueued_job(Repo.all(JobQueue), "update_opportunity", 1)
     end
 
     test "fails when routific job is pending" do
@@ -38,12 +39,13 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
                })
     end
 
-    test "fails when routific job fails" do
-      assert {:error, _, _, _} =
-               JobQueue.perform(Multi.new(), %{
-                 "type" => "monitor_routific_job",
-                 "job_id" => "FAILED_JOB_ID"
-               })
+    test "raises when routific job fails" do
+      assert_raise RuntimeError, fn ->
+        JobQueue.perform(Multi.new(), %{
+          "type" => "monitor_routific_job",
+          "job_id" => "FAILED_JOB_ID"
+        })
+      end
     end
   end
 
@@ -60,6 +62,7 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
       JobQueue.perform(Multi.new(), %{
         "type" => "insert_event",
         "opportunity_id" => "0x01",
+        "route_id" => "test",
         "event" => @event
       })
 
@@ -71,6 +74,7 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
                JobQueue.perform(Multi.new(), %{
                  "type" => "insert_event",
                  "opportunity_id" => "0x01",
+                 "route_id" => "test",
                  "event" => @event
                })
     end

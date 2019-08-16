@@ -36,7 +36,10 @@ config :re_integrations,
   salesforce_event_owner_id: "salesforce_user_id",
   salesforce_api_key: "salesforce_api_key",
   salesforce_url: "salesforce_api_url",
-  salesforce_seller_lead_record_id: "seller_record_id"
+  salesforce_seller_lead_record_id: "seller_record_id",
+  routific_url: "routific_url",
+  routific_api_key: "routific_api_key",
+  routific_job_url: "dev.routific.com/app/job"
 
 config :re,
   vivareal_highlights_size_rio_de_janeiro: 10,

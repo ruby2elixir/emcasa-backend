@@ -14,7 +14,7 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
     "StageName" => "Confirmação Visita"
   }
 
-  @opportunity %Payload.Opportunity{
+  @changeset %{
     id: "0x01",
     account_id: "0x02",
     owner_id: "0x02",
@@ -24,6 +24,8 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
     tour_strict_time: ~T[20:00:00],
     tour_period: :morning
   }
+
+  @opportunity struct(%Payload.Opportunity{}, Enum.into(@changeset, []))
 
   describe "build/1" do
     test "builds payload struct from salesforce response" do
@@ -35,6 +37,15 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
       assert opportunity.neighborhood == @payload["Bairro__c"]
       assert opportunity.tour_strict_time == ~T[20:00:00Z]
       assert opportunity.tour_period == :morning
+    end
+  end
+
+  describe "validate/1" do
+    test "builds route_url from route_id" do
+      assert {:ok, opportunity} =
+               Payload.Opportunity.validate(Map.put(@changeset, :route_id, "test"))
+
+      assert "/test" == opportunity.route_url
     end
   end
 

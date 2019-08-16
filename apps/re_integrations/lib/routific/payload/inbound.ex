@@ -4,15 +4,16 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
   """
   @derive Jason.Encoder
 
-  defstruct [:status, :solution, :unserved, :options]
+  defstruct [:id, :status, :solution, :unserved, :options]
 
   @status_types ["finished", "pending", "error"]
 
-  def build(%{"status" => "finished", "output" => output, "input" => input}) do
+  def build(%{"status" => "finished", "id" => id, "output" => output, "input" => input}) do
     with {:ok, solution} <- build_solution(output["solution"], input),
          {:ok, unserved} <- build_unserved(output["unserved"]) do
       {:ok,
        %__MODULE__{
+         id: id,
          status: :finished,
          solution: solution,
          unserved: unserved,
@@ -21,8 +22,8 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
     end
   end
 
-  def build(%{"status" => status}) when status in @status_types,
-    do: {:ok, %__MODULE__{status: String.to_atom(status)}}
+  def build(%{"status" => status, "id" => id}) when status in @status_types,
+    do: {:ok, %__MODULE__{id: id, status: String.to_atom(status)}}
 
   def build(_data), do: {:error, :invalid_input}
 
@@ -51,6 +52,7 @@ defmodule ReIntegrations.Routific.Payload.Inbound do
         end: finish,
         address: Map.get(visit, "location_name"),
         break: Map.get(visit, "break", false),
+        idle_time: Map.get(visit, "idle_time", 0),
         notes: get_in(input, [location_id, "notes"]),
         custom_notes: get_in(input, [location_id, "customNotes"])
       }

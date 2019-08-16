@@ -5,28 +5,37 @@ defmodule Re.SellerLeads do
   require Ecto.Query
 
   alias Re.{
-    PubSub,
     Repo,
     OwnerContacts,
     OwnerContact,
     SellerLead,
     SellerLeads.Facebook,
+    SellerLeads.JobQueue,
     SellerLeads.Site,
     SellerLeads.Broker
   }
 
   alias Ecto.{
     Changeset,
+    Multi,
     Query
   }
 
   defdelegate authorize(action, user, params), to: __MODULE__.Policy
 
   def create_site(params) do
-    %Site{}
-    |> Site.changeset(params)
-    |> Repo.insert()
-    |> PubSub.publish_new("new_site_seller_lead")
+    changeset = Site.changeset(%Site{}, params)
+
+    uuid = Changeset.get_field(changeset, :uuid)
+
+    Ecto.Multi.new()
+    |> Multi.insert(:insert_site_seller_lead, changeset)
+    |> JobQueue.enqueue(:seller_lead_job, %{
+      "type" => "process_site_seller_lead",
+      "uuid" => uuid
+    })
+    |> Repo.transaction()
+    |> return_insertion()
   end
 
   def create_broker(params) do
@@ -109,4 +118,8 @@ defmodule Re.SellerLeads do
     |> Enum.sort()
     |> Enum.join("")
   end
+
+  defp return_insertion({:ok, %{insert_site_seller_lead: request}}), do: {:ok, request}
+
+  defp return_insertion(error), do: error
 end
