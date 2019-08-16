@@ -6,6 +6,7 @@ defmodule ReIntegrations.Routific.Payload.InboundTest do
   alias ReIntegrations.Routific.Payload
 
   @finished_response %{
+    "id" => "123",
     "status" => "finished",
     "input" => %{
       "visits" => %{},
@@ -43,12 +44,12 @@ defmodule ReIntegrations.Routific.Payload.InboundTest do
                Payload.Inbound.build(@finished_response)
 
       assert {:ok, %Payload.Inbound{status: :pending}} =
-               Payload.Inbound.build(%{"status" => "pending"})
+               Payload.Inbound.build(%{"status" => "pending", "id" => "123"})
 
       assert {:ok, %Payload.Inbound{status: :error}} =
-               Payload.Inbound.build(%{"status" => "error"})
+               Payload.Inbound.build(%{"status" => "error", "id" => "123"})
 
-      assert {:error, :invalid_input} = Payload.Inbound.build(%{"status" => "xxx"})
+      assert {:error, :invalid_input} = Payload.Inbound.build(%{"status" => "xxx", "id" => "123"})
     end
   end
 end
