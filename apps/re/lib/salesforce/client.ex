@@ -26,7 +26,7 @@ defmodule Re.Salesforce.Client do
     do: path |> build_uri |> @http_client.patch(Jason.encode!(body), @api_headers)
 
   defp get(path),
-    do: path |> build_uri |> @http_client.get(@api_headers)
+    do: path |> build_uri |> http_client().get(@api_headers)
 
   defp http_client, do: Mockery.Macro.mockable(@http_client)
 end
