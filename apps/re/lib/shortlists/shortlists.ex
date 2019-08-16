@@ -4,6 +4,7 @@ defmodule Re.Shortlists do
   """
 
   alias __MODULE__.{
+    Client,
     Salesforce.Opportunity
   }
 
@@ -16,6 +17,8 @@ defmodule Re.Shortlists do
   def generate_shortlist_from_salesforce_opportunity(opportunity_id) do
     with {:ok, opportunity} <- Salesforce.get_opportunity(opportunity_id),
          {:ok, service_params} <- Opportunity.build(opportunity) do
+      IO.inspect(opportunity)
+      IO.inspect(service_params)
       {:ok, service_params}
     else
       _error -> {:error, :invalid_opportunity}
