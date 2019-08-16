@@ -21,12 +21,17 @@ defmodule Re.Shortlists do
 
   def generate_shortlist_from_salesforce_opportunity(opportunity_id) do
     with {:ok, opportunity} <- Salesforce.get_opportunity(opportunity_id),
-         {:ok, service_params} <- Opportunity.build(opportunity),
-         {:ok, %{body: body}} <- Client.get_listings_uuids(service_params),
-         {:ok, listing_uuids} <- Jason.decode(body) do
+         {:ok, params} <- Opportunity.build(opportunity),
+         {:ok, listing_uuids} <- get_shortlist(params) do
       get_active_listings_by_uuid(listing_uuids)
     else
       _error -> {:error, :invalid_opportunity}
+    end
+  end
+
+  defp get_shortlist(params) do
+    with {:ok, %{body: body}} <- Client.get_listings_uuids(params) do
+      Jason.decode(body)
     end
   end
 
