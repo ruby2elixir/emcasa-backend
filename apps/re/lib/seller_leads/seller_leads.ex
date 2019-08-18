@@ -91,11 +91,18 @@ defmodule Re.SellerLeads do
   end
 
   def duplicated?(address, complement) do
+    check_attribute_duplicated(address, complement, :seller_leads) ||
+      check_attribute_duplicated(address, complement, :listings)
+  end
+
+  defp check_attribute_duplicated(address, complement, attribute_to_fetch) do
+    normalized_complement = normalize_complement(complement)
+
     address
-    |> Repo.preload(:seller_leads)
-    |> Map.get(:seller_leads)
-    |> Enum.any?(fn seller_lead ->
-      normalize_complement(seller_lead.complement) == normalize_complement(complement)
+    |> Repo.preload(attribute_to_fetch)
+    |> Map.get(attribute_to_fetch)
+    |> Enum.any?(fn attribute ->
+      normalize_complement(attribute.complement) == normalized_complement
     end)
   end
 

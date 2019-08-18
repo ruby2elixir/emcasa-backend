@@ -72,46 +72,60 @@ defmodule Re.SellerLeadsTest do
   end
 
   describe "duplicated?" do
-    test "should be false when the address doesn't exists" do
+    test "should be false when the address doesn't exists for seller lead" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "Apto. 201")
 
       refute SellerLeads.duplicated?(address, "Apartamento 401")
     end
 
-    test "should be true when the address and the complement is nil" do
+    test "should be true when the address and the complement is nil for seller lead" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: nil)
 
       assert SellerLeads.duplicated?(address, nil)
     end
 
-    test "should be true when the address has the exactly same complement" do
+    test "should be true when the address has the exactly same complement for seller lead" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "100")
 
       assert SellerLeads.duplicated?(address, "100")
     end
 
-    test "should be true when the seller lead address has a complement with letters" do
+    test "should be true when the seller lead address has a complement with letters for seller lead" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "apto 100")
 
       assert SellerLeads.duplicated?(address, "100")
     end
 
-    test "should be true when the passed address has a complement with letters" do
+    test "should be true when the passed address has a complement with letters for seller lead" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "100")
 
       assert SellerLeads.duplicated?(address, "apto 100")
     end
 
-    test "should be true when the address has a similar complement with letters and multiple groups" do
+    test "should be true when the address has a similar complement with letters and multiple groups for seller lead" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "Bloco 3 - Apto 200")
 
       assert SellerLeads.duplicated?(address, "Apto. 200 - Bloco 3")
+    end
+
+    test "should be true when the passed address has a similar complement for a publicated listing" do
+      address = insert(:address)
+      insert(:listing, address: address, complement: "Bloco 3 - Apto 200")
+
+      assert SellerLeads.duplicated?(address, "Apto. 200 - Bloco 3")
+    end
+
+    test "should be false when the passed address is the same address but a different complement as a publicated listing" do
+      address = insert(:address)
+      insert(:listing, address: address, complement: "Bloco 3 - Apto 320")
+
+      refute SellerLeads.duplicated?(address, "Apto. 200 - Bloco 3")
     end
   end
 end
