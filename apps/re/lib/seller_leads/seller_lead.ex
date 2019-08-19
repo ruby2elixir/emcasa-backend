@@ -29,14 +29,14 @@ defmodule Re.SellerLead do
     embeds_one :utm, Re.SellerLeads.Utm
 
     belongs_to :address, Re.Address,
-               references: :uuid,
-               foreign_key: :address_uuid,
-               type: Ecto.UUID
+      references: :uuid,
+      foreign_key: :address_uuid,
+      type: Ecto.UUID
 
     belongs_to :user, Re.User,
-               references: :uuid,
-               foreign_key: :user_uuid,
-               type: Ecto.UUID
+      references: :uuid,
+      foreign_key: :user_uuid,
+      type: Ecto.UUID
 
     timestamps(type: :utc_datetime)
   end

@@ -107,10 +107,10 @@ defmodule Re.SellerLeads.JobQueueTest do
       insert(:seller_lead, address: address, complement: nil)
 
       %{uuid: uuid} =
-          insert(:price_suggestion_request,
-            address: address,
-            user: user
-          )
+        insert(:price_suggestion_request,
+          address: address,
+          user: user
+        )
 
       assert {:ok, %{insert_seller_lead: seller}} =
                JobQueue.perform(Multi.new(), %{
@@ -127,10 +127,10 @@ defmodule Re.SellerLeads.JobQueueTest do
       user = insert(:user)
 
       %{uuid: uuid} =
-          insert(:price_suggestion_request,
-            address: address,
-            user: user
-          )
+        insert(:price_suggestion_request,
+          address: address,
+          user: user
+        )
 
       assert {:ok, %{insert_seller_lead: seller}} =
                JobQueue.perform(Multi.new(), %{
