@@ -24,8 +24,14 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
   describe "userProfile" do
     test "admin should get any user profile", %{admin_conn: conn} do
       district = insert(:district)
+
       user =
-        insert(:user, name: "Tester John", email: "tester.john@emcasa.com", phone: "123456789", districts: [district])
+        insert(:user,
+          name: "Tester John",
+          email: "tester.john@emcasa.com",
+          phone: "123456789",
+          districts: [district]
+        )
 
       listing1 = insert(:listing, user: user, type: "Casa", liquidity_ratio: 4.0)
       insert(:listing, user: user, type: "Casa", liquidity_ratio: 3.0)
@@ -88,6 +94,7 @@ defmodule ReWeb.GraphQL.Accounts.QueryTest do
       """
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.query_wrapper(query, variables))
+
       assert %{
                "id" => to_string(user.id),
                "name" => user.name,
