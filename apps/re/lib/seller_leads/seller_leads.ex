@@ -95,9 +95,8 @@ defmodule Re.SellerLeads do
     |> duplicated?()
   end
 
-  def duplicated?(duplicated_entities \\ %{}) do
-    Kernel.length(duplicated_entities) > 0
-  end
+  def duplicated?([]), do: false
+  def duplicated?(_), do: true
 
   def duplicated_entities(address, complement) do
     check_duplicated_entity(address, complement, :seller_leads) ++
