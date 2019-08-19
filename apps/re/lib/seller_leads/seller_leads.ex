@@ -100,8 +100,8 @@ defmodule Re.SellerLeads do
   end
 
   def duplicated_entities(address, complement) do
-    check_duplicated_entity(address, complement, :seller_leads)
-    ++ check_duplicated_entity(address, complement, :listings)
+    check_duplicated_entity(address, complement, :seller_leads) ++
+      check_duplicated_entity(address, complement, :listings)
   end
 
   defp check_duplicated_entity(address, complement, entity_name) do
