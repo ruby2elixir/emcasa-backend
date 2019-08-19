@@ -296,8 +296,8 @@ defmodule Re.Listings.FiltersTest do
     end
 
     test "filter by has_elevator when is true" do
-      %{id: id} = insert(:listing, has_elevator: true)
-      insert(:listing, has_elevator: false)
+      %{id: id} = insert(:listing, elevators: 2)
+      insert(:listing, elevators: 0)
 
       result =
         Listing
@@ -308,8 +308,8 @@ defmodule Re.Listings.FiltersTest do
     end
 
     test "filter by has_elevator when is false" do
-      %{id: id} = insert(:listing, has_elevator: false)
-      insert(:listing, has_elevator: true)
+      %{id: id} = insert(:listing, elevators: 0)
+      insert(:listing, elevators: 2)
 
       result =
         Listing
