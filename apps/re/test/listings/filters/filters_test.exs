@@ -295,6 +295,30 @@ defmodule Re.Listings.FiltersTest do
       assert_mapper_match([%{id: id1}, %{id: id2}], result, &map_id/1)
     end
 
+    test "filter by has_elevator when is true" do
+      %{id: id} = insert(:listing, has_elevator: true)
+      insert(:listing, has_elevator: false)
+
+      result =
+        Listing
+        |> Filters.apply(%{has_elevator: true})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
+    test "filter by has_elevator when is false" do
+      %{id: id} = insert(:listing, has_elevator: false)
+      insert(:listing, has_elevator: true)
+
+      result =
+        Listing
+        |> Filters.apply(%{has_elevator: false})
+        |> Repo.all()
+
+      assert_mapper_match([%{id: id}], result, &map_id/1)
+    end
+
     test "filter listing by age" do
       base_year = Date.utc_today().year
       %{id: id1} = insert(:listing, construction_year: base_year - 5)

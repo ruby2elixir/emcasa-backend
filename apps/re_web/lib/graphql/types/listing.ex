@@ -212,6 +212,7 @@ defmodule ReWeb.Types.Listing do
     field :max_floor_count, :integer
     field :min_unit_per_floor, :integer
     field :max_unit_per_floor, :integer
+    field :has_elevator, :boolean
     field :orientations, list_of(non_null(:orientation_type))
     field :sun_periods, list_of(non_null(:sun_period_type))
     field :min_age, :integer
@@ -255,6 +256,7 @@ defmodule ReWeb.Types.Listing do
     field :max_floor_count, :integer
     field :min_unit_per_floor, :integer
     field :max_unit_per_floor, :integer
+    field :has_elevator, :boolean
     field :orientations, list_of(non_null(:orientation_type))
     field :sun_periods, list_of(non_null(:sun_period_type))
     field :min_age, :integer
