@@ -98,7 +98,7 @@ defmodule Re.SellerLeads do
   def duplicated?(duplicated_entities \\ %{}) do
     duplicated_entities
     |> Map.values()
-    |> Enum.any?(fn value ->  Kernel.length(value) > 0 end)
+    |> Enum.any?(fn value -> Kernel.length(value) > 0 end)
   end
 
   def duplicated_entities(address, complement) do
@@ -117,6 +117,7 @@ defmodule Re.SellerLeads do
     |> Enum.filter(fn entity ->
       normalize_complement(entity.complement) == normalized_complement
     end)
+    |> Enum.map(fn entity -> entity.uuid end)
   end
 
   @number_group_regex ~r/(\d)*/
