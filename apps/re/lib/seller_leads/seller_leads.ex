@@ -91,11 +91,14 @@ defmodule Re.SellerLeads do
   end
 
   def duplicated?(address, complement) do
-    duplicated_entities = duplicated_entities(address, complement)
+    duplicated_entities(address, complement)
+    |> duplicated?()
+  end
 
+  def duplicated?(duplicated_entities \\ %{}) do
     duplicated_entities
-    |> Map.keys()
-    |> Enum.any?(fn key ->  Kernel.length(Map.get(duplicated_entities, key)) > 0 end)
+    |> Map.values()
+    |> Enum.any?(fn value ->  Kernel.length(value) > 0 end)
   end
 
   def duplicated_entities(address, complement) do
