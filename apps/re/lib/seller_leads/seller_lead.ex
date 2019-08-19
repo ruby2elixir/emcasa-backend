@@ -24,25 +24,26 @@ defmodule Re.SellerLead do
     field :suggested_price, :float
     field :tour_option, :utc_datetime
     field :salesforce_id, :string
+    field :duplicated, :string
 
     embeds_one :utm, Re.SellerLeads.Utm
 
     belongs_to :address, Re.Address,
-      references: :uuid,
-      foreign_key: :address_uuid,
-      type: Ecto.UUID
+               references: :uuid,
+               foreign_key: :address_uuid,
+               type: Ecto.UUID
 
     belongs_to :user, Re.User,
-      references: :uuid,
-      foreign_key: :user_uuid,
-      type: Ecto.UUID
+               references: :uuid,
+               foreign_key: :user_uuid,
+               type: Ecto.UUID
 
     timestamps(type: :utc_datetime)
   end
 
   @required ~w(source)a
   @optional ~w(complement type area maintenance_fee rooms bathrooms suites garage_spots price
-               suggested_price tour_option address_uuid user_uuid salesforce_id)a
+               suggested_price tour_option address_uuid user_uuid salesforce_id duplicated)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do

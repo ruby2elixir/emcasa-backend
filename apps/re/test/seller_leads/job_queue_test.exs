@@ -99,6 +99,47 @@ defmodule Re.SellerLeads.JobQueueTest do
       assert user = Repo.get_by(User, uuid: user_uuid)
       assert user.email == "mahemail@emcasa.com"
     end
+
+    test "should mark as duplicated when another lead with same address and complement exists" do
+      address = insert(:address)
+      user = insert(:user)
+
+      insert(:seller_lead, address: address, complement: nil)
+
+      %{uuid: uuid} =
+          insert(:price_suggestion_request,
+            address: address,
+            user: user
+          )
+
+      assert {:ok, %{insert_seller_lead: seller}} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_price_suggestion_request",
+                 "uuid" => uuid
+               })
+
+      assert seller.duplicated == "almost_sure"
+    end
+
+    @tag dev: true
+    test "should not mark as duplicated when another lead with other address and complement exists" do
+      address = insert(:address)
+      user = insert(:user)
+
+      %{uuid: uuid} =
+          insert(:price_suggestion_request,
+            address: address,
+            user: user
+          )
+
+      assert {:ok, %{insert_seller_lead: seller}} =
+               JobQueue.perform(Multi.new(), %{
+                 "type" => "process_price_suggestion_request",
+                 "uuid" => uuid
+               })
+
+      assert seller.duplicated == "maybe"
+    end
   end
 
   describe "site_seller_lead" do

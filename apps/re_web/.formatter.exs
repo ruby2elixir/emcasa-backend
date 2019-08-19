@@ -1,5 +1,5 @@
 [
-  inputs: ["mix.exs", "lib/**/*.{ex,exs}"],
+  inputs: ["mix.exs", "lib/**/*.{ex,exs}", "test/**/*.{ex,exs}"],
   locals_without_parens: [
     field: 2,
     field: 3,

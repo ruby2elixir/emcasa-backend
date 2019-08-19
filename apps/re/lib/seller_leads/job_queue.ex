@@ -7,6 +7,7 @@ defmodule Re.SellerLeads.JobQueue do
   require Ecto.Query
 
   alias Re.{
+    Addresses,
     PriceSuggestions.Request,
     Repo,
     SellerLead,
@@ -14,12 +15,12 @@ defmodule Re.SellerLeads.JobQueue do
     SellerLeads.Salesforce,
     SellerLeads.Site,
     User
-  }
+    }
 
   alias Ecto.{
     Changeset,
     Multi
-  }
+    }
 
   def perform(%Multi{} = multi, %{"type" => "process_price_suggestion_request", "uuid" => uuid}) do
     request =
@@ -29,6 +30,7 @@ defmodule Re.SellerLeads.JobQueue do
 
     request
     |> Request.seller_lead_changeset()
+    |> check_duplicity()
     |> insert_seller_lead(multi, request)
     |> update_name(request)
     |> update_email(request)
@@ -97,14 +99,26 @@ defmodule Re.SellerLeads.JobQueue do
   end
 
   defp update_name(multi, %{name: name, user: %{name: nil} = user}),
-    do: Multi.update(multi, :update_user_name, User.update_changeset(user, %{name: name}))
+       do: Multi.update(multi, :update_user_name, User.update_changeset(user, %{name: name}))
 
   defp update_name(multi, _), do: multi
 
   defp update_email(multi, %{email: email, user: %{email: nil} = user}),
-    do: Multi.update(multi, :update_user_email, User.update_changeset(user, %{email: email}))
+       do: Multi.update(multi, :update_user_email, User.update_changeset(user, %{email: email}))
 
   defp update_email(multi, _), do: multi
+
+  defp check_duplicity(changeset) do
+    uuid = Changeset.get_field(changeset, :address_uuid)
+    case Addresses.get_by_uuid(uuid) do
+      {:ok, address} ->
+        case SellerLeads.duplicated?(address, nil) do
+          true -> Changeset.put_change(changeset, :duplicated, "almost_sure")
+          false -> Changeset.put_change(changeset, :duplicated, "maybe")
+        end
+      {:error, _} -> Changeset.put_change(changeset, :duplicated, "unlikely")
+    end
+  end
 
   defp handle_error({:ok, result}), do: {:ok, result}
 
