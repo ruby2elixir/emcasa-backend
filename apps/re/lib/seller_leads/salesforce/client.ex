@@ -56,7 +56,7 @@ defmodule Re.SellerLeads.Salesforce do
 
   defp put_user_params(params, %User{} = user) do
     Map.merge(params, %{
-      last_name: user.name,
+      last_name: user.name || "unknown",
       full_name: user.name,
       phone: String.replace(user.phone, "+", ""),
       email: user.email

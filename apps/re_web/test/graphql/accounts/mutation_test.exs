@@ -416,6 +416,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
           "/graphql_api",
           AbsintheHelpers.mutation_wrapper(@update_role_mutation, variables)
         )
+
       assert %{"uuid" => user.uuid, "role" => "admin"} ==
                json_response(conn, 200)["data"]["userUpdateRole"]
     end
@@ -460,10 +461,10 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
   end
 
   describe "editBrokerDistricts" do
-
     test "admin should edit any partner broker districts", %{admin_conn: conn, partner_user: user} do
       districts = insert_list(2, :district)
       districts_uuid = Enum.map(districts, fn district -> district.uuid end)
+
       variables = %{
         "id" => user.id,
         "districts" => districts_uuid
@@ -482,7 +483,8 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editBrokerDistricts"]
+      assert %{"id" => to_string(user.id)} ==
+               json_response(conn, 200)["data"]["editBrokerDistricts"]
 
       assert user = Repo.get(User, user.id) |> Repo.preload(:districts)
       assert user.districts == districts
@@ -491,6 +493,7 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
     test "broker should edit own districts", %{partner_conn: conn, partner_user: user} do
       districts = insert_list(2, :district)
       districts_uuid = Enum.map(districts, fn district -> district.uuid end)
+
       variables = %{
         "id" => user.id,
         "districts" => districts_uuid
@@ -509,7 +512,8 @@ defmodule ReWeb.GraphQL.Accounts.MutationTest do
 
       conn = post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(mutation, variables))
 
-      assert %{"id" => to_string(user.id)} == json_response(conn, 200)["data"]["editBrokerDistricts"]
+      assert %{"id" => to_string(user.id)} ==
+               json_response(conn, 200)["data"]["editBrokerDistricts"]
 
       assert user = Repo.get(User, user.id) |> Repo.preload(:districts)
       assert user.districts == districts

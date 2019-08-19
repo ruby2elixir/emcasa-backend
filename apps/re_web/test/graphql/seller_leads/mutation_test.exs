@@ -173,17 +173,18 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "email" => "a@a.com",
             "phone" => "+5599999999999",
             "name" => "Suzana Vieira"
-           },
+          },
           "utm" => %{
             "campaign" => "facebook"
-           },
+          },
           "type" => "Apartamento"
         }
       }
+
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
 
-      assert %{"brokerSellerLeadCreate" =>  uuid} = json_response(conn, 200)["data"]
+      assert %{"brokerSellerLeadCreate" => uuid} = json_response(conn, 200)["data"]
     end
 
     test "property owner user should add broker lead", %{
@@ -210,10 +211,11 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
           "type" => "Apartamento"
         }
       }
+
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
 
-      assert %{"brokerSellerLeadCreate" =>  uuid} = json_response(conn, 200)["data"]
+      assert %{"brokerSellerLeadCreate" => uuid} = json_response(conn, 200)["data"]
     end
 
     test "anonymous user should not add broker lead", %{
@@ -240,6 +242,7 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
           "type" => "Apartamento"
         }
       }
+
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
 
@@ -270,10 +273,11 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
           "type" => "Apartamento"
         }
       }
+
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
 
-      assert %{"brokerSellerLeadCreate" =>  uuid} = json_response(conn, 200)["data"]
+      assert %{"brokerSellerLeadCreate" => uuid} = json_response(conn, 200)["data"]
     end
 
     test "broker user should not add broker lead with missing required fields", %{
@@ -293,11 +297,12 @@ defmodule ReWeb.GraphQL.SellerLeads.MutationTest do
             "postalCode" => address.postal_code
           },
           "owner" => %{
-            "phone" => "+5599999999999",
+            "phone" => "+5599999999999"
           },
           "type" => "Apartamento"
         }
       }
+
       conn =
         post(conn, "/graphql_api", AbsintheHelpers.mutation_wrapper(@create_mutation, variables))
 
