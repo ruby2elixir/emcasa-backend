@@ -6,10 +6,7 @@ defmodule Re.SellerLeads.DuplicatedEntity do
 
   import EctoEnum
 
-  defenum(Type,
-    listing: "listing",
-    seller_lead: "seller_lead"
-  )
+  defenum(Type, [{Re.Listing, "listing"}, {Re.SellerLead, "seller_lead"}])
 
   embedded_schema do
     field :type, Type
@@ -23,7 +20,4 @@ defmodule Re.SellerLeads.DuplicatedEntity do
         params,
         ~w(type uuid)a
       )
-
-  def struct_to_atom(Re.Listing), do: :listing
-  def struct_to_atom(Re.SellerLead), do: :seller_lead
 end

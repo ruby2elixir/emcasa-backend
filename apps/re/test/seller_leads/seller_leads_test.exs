@@ -6,7 +6,9 @@ defmodule Re.SellerLeadsTest do
   import Re.CustomAssertion
 
   alias Re.{
+    Listing,
     PriceSuggestions.Request,
+    SellerLead,
     SellerLeads,
     SellerLeads.JobQueue,
     SellerLeads.Site,
@@ -147,7 +149,7 @@ defmodule Re.SellerLeadsTest do
          %{address: address} do
       seller_lead = insert(:seller_lead, address: address, complement: nil)
 
-      assert [%{type: :seller_lead, uuid: seller_lead.uuid}] ==
+      assert [%{type: SellerLead, uuid: seller_lead.uuid}] ==
                SellerLeads.duplicated_entities(address, nil)
     end
 
@@ -155,7 +157,7 @@ defmodule Re.SellerLeadsTest do
          %{address: address} do
       listing = insert(:listing, address: address, complement: nil)
 
-      assert [%{type: :listing, uuid: listing.uuid}] ==
+      assert [%{type: Listing, uuid: listing.uuid}] ==
                SellerLeads.duplicated_entities(address, nil)
     end
 
@@ -165,8 +167,8 @@ defmodule Re.SellerLeadsTest do
       seller_lead = insert(:seller_lead, address: address, complement: nil)
 
       assert [
-               %{type: :seller_lead, uuid: seller_lead.uuid},
-               %{type: :listing, uuid: listing.uuid}
+               %{type: SellerLead, uuid: seller_lead.uuid},
+               %{type: Listing, uuid: listing.uuid}
              ] == SellerLeads.duplicated_entities(address, nil)
     end
 
@@ -174,7 +176,7 @@ defmodule Re.SellerLeadsTest do
          %{address: address} do
       seller_lead = insert(:seller_lead, address: address, complement: "100")
 
-      assert [%{type: :seller_lead, uuid: seller_lead.uuid}] ==
+      assert [%{type: SellerLead, uuid: seller_lead.uuid}] ==
                SellerLeads.duplicated_entities(address, "100")
     end
 
@@ -182,7 +184,7 @@ defmodule Re.SellerLeadsTest do
          %{address: address} do
       seller_lead = insert(:seller_lead, address: address, complement: "apto 100")
 
-      assert [%{type: :seller_lead, uuid: seller_lead.uuid}] ==
+      assert [%{type: SellerLead, uuid: seller_lead.uuid}] ==
                SellerLeads.duplicated_entities(address, "100")
     end
 
@@ -190,7 +192,7 @@ defmodule Re.SellerLeadsTest do
          %{address: address} do
       seller_lead = insert(:seller_lead, address: address, complement: "100")
 
-      assert [%{type: :seller_lead, uuid: seller_lead.uuid}] ==
+      assert [%{type: SellerLead, uuid: seller_lead.uuid}] ==
                SellerLeads.duplicated_entities(address, "apto 100")
     end
 
@@ -199,7 +201,7 @@ defmodule Re.SellerLeadsTest do
       seller_lead = insert(:seller_lead, address: address, complement: "Bloco 3 - Apto 200")
 
       assert [
-               %{type: :seller_lead, uuid: seller_lead.uuid}
+               %{type: SellerLead, uuid: seller_lead.uuid}
              ] == SellerLeads.duplicated_entities(address, "Apto. 200 - Bloco 3")
     end
 
@@ -207,7 +209,7 @@ defmodule Re.SellerLeadsTest do
          %{address: address} do
       listing = insert(:listing, address: address, complement: "Bloco 3 - Apto 200")
 
-      assert [%{type: :listing, uuid: listing.uuid}] ==
+      assert [%{type: Listing, uuid: listing.uuid}] ==
                SellerLeads.duplicated_entities(address, "Apto. 200 - Bloco 3")
     end
 

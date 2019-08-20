@@ -16,8 +16,7 @@ defmodule Re.SellerLeads do
     SellerLeads.JobQueue,
     SellerLeads.NotifyWhenCovered,
     SellerLeads.Site,
-    SellerLeads.Broker,
-    SellerLeads.DuplicatedEntity
+    SellerLeads.Broker
   }
 
   alias Ecto.{
@@ -137,7 +136,7 @@ defmodule Re.SellerLeads do
       normalize_complement(entity.complement) == normalized_complement
     end)
     |> Enum.map(fn entity ->
-      %{type: DuplicatedEntity.struct_to_atom(entity.__struct__), uuid: entity.uuid}
+      %{type: entity.__struct__, uuid: entity.uuid}
     end)
   end
 
