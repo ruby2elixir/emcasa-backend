@@ -2,6 +2,8 @@ defmodule Re.Shortlists.Salesforce.Opportunity do
   @moduledoc """
   Module for validating and parse salesforce opportunity entity on shortlist context
   """
+  alias Re.Slugs
+
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -97,6 +99,12 @@ defmodule Re.Shortlists.Salesforce.Opportunity do
   defp build_field({"Area_Desejada__c" = field, value}) do
     min_area = build_min_area(value)
     with({:ok, key} <- Schema.cast(field), do: {key, min_area})
+  end
+
+  @sluggify_fields ~w(Portaria_2__c Tipo_do_Imovel__c)
+  defp build_field({field, value}) when field in @sluggify_fields do
+    new_value = Slugs.sluggify(value)
+    with({:ok, key} <- Schema.cast(field), do: {key, new_value})
   end
 
   @boolean_field ~w(Necessita_Elevador__c Proximidade_de_Metr__c)

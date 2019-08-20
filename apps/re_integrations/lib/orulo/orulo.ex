@@ -65,6 +65,9 @@ defmodule ReIntegrations.Orulo do
     |> Repo.transaction()
   end
 
+  def import_typologies(multi, id) when is_integer(id),
+    do: import_typologies(multi, Integer.to_string(id))
+
   def import_typologies(multi, id) do
     multi
     |> Multi.run(:fetch_typologies, fn _repo, _changes ->

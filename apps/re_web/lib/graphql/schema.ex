@@ -68,6 +68,7 @@ defmodule ReWeb.Schema do
     import_fields(:listing_subscriptions)
     import_fields(:image_subscriptions)
     import_fields(:calendar_subscriptions)
+    import_fields(:seller_lead_subscriptions)
   end
 
   defp loader(ctx) do

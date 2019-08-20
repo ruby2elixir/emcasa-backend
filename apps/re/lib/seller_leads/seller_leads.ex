@@ -5,12 +5,16 @@ defmodule Re.SellerLeads do
   require Ecto.Query
 
   alias Re.{
-    Repo,
+    Addresses,
     OwnerContacts,
     OwnerContact,
+    PriceSuggestions,
+    PubSub,
+    Repo,
     SellerLead,
     SellerLeads.Facebook,
     SellerLeads.JobQueue,
+    SellerLeads.NotifyWhenCovered,
     SellerLeads.Site,
     SellerLeads.Broker,
     SellerLeads.DuplicatedEntity
@@ -51,6 +55,25 @@ defmodule Re.SellerLeads do
       {:error, cause} -> {:error, cause}
       {:ok, owner} -> handle_create_broker(owner, params)
     end
+  end
+
+  def create_price_suggestion(_params, nil), do: {:error, :bad_request}
+
+  def create_price_suggestion(params, user) do
+    with {:ok, address} <- Addresses.insert_or_update(params.address) do
+      params
+      |> Map.put(:address_id, address.id)
+      |> Map.put(:user_id, user.id)
+      |> PriceSuggestions.create_request()
+      |> PubSub.publish_new("new_price_suggestion_request")
+    end
+  end
+
+  def create_out_of_coverage(params) do
+    %NotifyWhenCovered{}
+    |> NotifyWhenCovered.changeset(params)
+    |> Repo.insert()
+    |> PubSub.publish_new("notify_when_covered")
   end
 
   defp handle_create_broker(owner, params) do
