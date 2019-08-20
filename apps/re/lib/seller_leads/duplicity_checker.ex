@@ -51,7 +51,7 @@ defmodule Re.SellerLeads.DuplicityChecker do
   end
 
   def check_duplicity_seller_lead(changeset, nil),
-       do: Changeset.put_change(changeset, :duplicated, "unlikely")
+    do: Changeset.put_change(changeset, :duplicated, "unlikely")
 
   def check_duplicity_seller_lead(changeset, address) do
     complement = Changeset.get_field(changeset, :complement)
