@@ -32,13 +32,6 @@ defmodule Re.Addresses do
     end
   end
 
-  def get_by_uuid(uuid) do
-    case Repo.get_by!(Address, uuid: uuid) do
-      nil -> {:error, :not_found}
-      address -> {:ok, address}
-    end
-  end
-
   def get_by_id(id) do
     case Repo.get(Address, id) do
       nil -> {:error, :not_found}
