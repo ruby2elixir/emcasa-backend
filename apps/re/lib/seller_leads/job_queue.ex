@@ -7,14 +7,13 @@ defmodule Re.SellerLeads.JobQueue do
   require Ecto.Query
 
   alias Re.{
-    Addresses,
     PriceSuggestions.Request,
     Repo,
     SellerLead,
     SellerLeads,
+    SellerLeads.DuplicatedEntity,
     SellerLeads.Salesforce,
     SellerLeads.Site,
-    SellerLeads.DuplicatedEntity,
     User
   }
 
@@ -31,7 +30,7 @@ defmodule Re.SellerLeads.JobQueue do
 
     request
     |> Request.seller_lead_changeset()
-    |> check_duplicity()
+    |> check_duplicity(request.address)
     |> insert_seller_lead(multi, request)
     |> update_name(request)
     |> update_email(request)
@@ -109,27 +108,20 @@ defmodule Re.SellerLeads.JobQueue do
 
   defp update_email(multi, _), do: multi
 
-  defp check_duplicity(changeset) do
-    uuid = Changeset.get_field(changeset, :address_uuid)
+  defp check_duplicity(changeset, nil), do: Changeset.put_change(changeset, :duplicated, "unlikely")
+
+  defp check_duplicity(changeset, address) do
     complement = Changeset.get_field(changeset, :complement)
+    duplicated_entities = SellerLeads.duplicated_entities(address, complement)
+    changeset_duplicated =
+      duplicated_entities
+      |> Enum.map(fn entity -> DuplicatedEntity.changeset(%DuplicatedEntity{}, entity) end)
 
-    case Addresses.get_by_uuid(uuid) do
-      {:ok, address} ->
-        duplicated_entities = SellerLeads.duplicated_entities(address, complement)
+    changeset = Changeset.put_embed(changeset, :duplicated_entities, changeset_duplicated)
 
-        changeset_duplicated =
-          duplicated_entities
-          |> Enum.map(fn entity -> DuplicatedEntity.changeset(%DuplicatedEntity{}, entity) end)
-
-        changeset = Changeset.put_embed(changeset, :duplicated_entities, changeset_duplicated)
-
-        case SellerLeads.duplicated?(duplicated_entities) do
-          true -> Changeset.put_change(changeset, :duplicated, "almost_sure")
-          false -> Changeset.put_change(changeset, :duplicated, "maybe")
-        end
-
-      {:error, _} ->
-        Changeset.put_change(changeset, :duplicated, "unlikely")
+    case SellerLeads.duplicated?(duplicated_entities) do
+      true -> Changeset.put_change(changeset, :duplicated, "almost_sure")
+      false -> Changeset.put_change(changeset, :duplicated, "maybe")
     end
   end
 
