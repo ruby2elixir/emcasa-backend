@@ -56,7 +56,7 @@ defmodule ReIntegrations.Orulo.PayloadProcessor.Buildings do
   defp enqueue_typology_job(multi, building) do
     JobQueue.enqueue(multi, :fetch_typologies, %{
       "type" => "fetch_typologies",
-      "building_id" => building.external_id
+      "building_id" => building.external_id |> Integer.to_string()
     })
   end
 end
