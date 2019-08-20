@@ -1,4 +1,4 @@
-defmodule Re.Interests.NotifyWhenCovered do
+defmodule Re.SellerLeads.NotifyWhenCovered do
   @moduledoc """
   Schema for storing interest in non-covered regions
   """

@@ -10,12 +10,9 @@ defmodule Re.Interests do
   }
 
   alias Re.{
-    Addresses,
     BuyerLeads.JobQueue,
     Interest,
     Interests.ContactRequest,
-    Interests.NotifyWhenCovered,
-    PriceSuggestions,
     PubSub,
     Repo,
     User
@@ -40,25 +37,6 @@ defmodule Re.Interests do
     |> attach_user(user)
     |> Repo.insert()
     |> PubSub.publish_new("contact_request")
-  end
-
-  def request_price_suggestion(_params, nil), do: {:error, :bad_request}
-
-  def request_price_suggestion(params, user) do
-    with {:ok, address} <- Addresses.insert_or_update(params.address) do
-      params
-      |> Map.put(:address_id, address.id)
-      |> Map.put(:user_id, user.id)
-      |> PriceSuggestions.create_request()
-      |> PubSub.publish_new("new_price_suggestion_request")
-    end
-  end
-
-  def notify_when_covered(params) do
-    %NotifyWhenCovered{}
-    |> NotifyWhenCovered.changeset(params)
-    |> Repo.insert()
-    |> PubSub.publish_new("notify_when_covered")
   end
 
   defp insert(%{valid?: true} = changeset) do
