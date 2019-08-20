@@ -12,6 +12,7 @@ defmodule Re.SellerLeads.JobQueue do
     SellerLead,
     SellerLeads,
     SellerLeads.DuplicatedEntity,
+    SellerLeads.DuplicityChecker,
     SellerLeads.Salesforce,
     SellerLeads.Site,
     User
@@ -30,7 +31,7 @@ defmodule Re.SellerLeads.JobQueue do
 
     request
     |> Request.seller_lead_changeset()
-    |> check_duplicity(request.address)
+    |> DuplicityChecker.check_duplicity_seller_lead(request.address)
     |> insert_seller_lead(multi, request)
     |> update_name(request)
     |> update_email(request)
@@ -107,25 +108,6 @@ defmodule Re.SellerLeads.JobQueue do
     do: Multi.update(multi, :update_user_email, User.update_changeset(user, %{email: email}))
 
   defp update_email(multi, _), do: multi
-
-  defp check_duplicity(changeset, nil),
-    do: Changeset.put_change(changeset, :duplicated, "unlikely")
-
-  defp check_duplicity(changeset, address) do
-    complement = Changeset.get_field(changeset, :complement)
-    duplicated_entities = SellerLeads.duplicated_entities(address, complement)
-
-    changeset_duplicated =
-      duplicated_entities
-      |> Enum.map(fn entity -> DuplicatedEntity.changeset(%DuplicatedEntity{}, entity) end)
-
-    changeset = Changeset.put_embed(changeset, :duplicated_entities, changeset_duplicated)
-
-    case SellerLeads.duplicated?(duplicated_entities) do
-      true -> Changeset.put_change(changeset, :duplicated, "almost_sure")
-      false -> Changeset.put_change(changeset, :duplicated, "maybe")
-    end
-  end
 
   defp handle_error({:ok, result}), do: {:ok, result}
 

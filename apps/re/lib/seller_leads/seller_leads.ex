@@ -113,46 +113,6 @@ defmodule Re.SellerLeads do
     end
   end
 
-  def duplicated?(address, complement) do
-    duplicated_entities(address, complement)
-    |> duplicated?()
-  end
-
-  def duplicated?([]), do: false
-  def duplicated?(_), do: true
-
-  def duplicated_entities(address, complement) do
-    check_duplicated_entity(address, complement, :seller_leads) ++
-      check_duplicated_entity(address, complement, :listings)
-  end
-
-  defp check_duplicated_entity(address, complement, entity_name) do
-    normalized_complement = normalize_complement(complement)
-
-    address
-    |> Repo.preload(entity_name)
-    |> Map.get(entity_name)
-    |> Enum.filter(fn entity ->
-      normalize_complement(entity.complement) == normalized_complement
-    end)
-    |> Enum.map(fn entity ->
-      %{type: entity.__struct__, uuid: entity.uuid}
-    end)
-  end
-
-  @number_group_regex ~r/(\d)*/
-
-  defp normalize_complement(nil), do: nil
-
-  defp normalize_complement(complement) do
-    @number_group_regex
-    |> Regex.scan(complement)
-    |> Enum.map(fn list -> List.first(list) end)
-    |> Enum.filter(fn result -> String.length(result) >= 1 end)
-    |> Enum.sort()
-    |> Enum.join("")
-  end
-
   defp return_insertion({:ok, %{insert_site_seller_lead: request}}), do: {:ok, request}
 
   defp return_insertion(error), do: error
