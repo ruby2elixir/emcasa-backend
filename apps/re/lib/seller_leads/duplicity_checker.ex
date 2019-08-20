@@ -2,6 +2,7 @@ defmodule Re.SellerLeads.DuplicityChecker do
   require Ecto.Query
 
   alias Re.{
+    Addresses,
     Repo,
     SellerLeads.DuplicatedEntity
   }
@@ -24,30 +25,17 @@ defmodule Re.SellerLeads.DuplicityChecker do
   end
 
   defp check_duplicated_entity(address, complement, entity_name) do
-    normalized_complement = normalize_complement(complement)
+    normalized_complement = Addresses.normalize_complement(complement)
 
     address
     |> Repo.preload(entity_name)
     |> Map.get(entity_name)
     |> Enum.filter(fn entity ->
-      normalize_complement(entity.complement) == normalized_complement
+      Addresses.normalize_complement(entity.complement) == normalized_complement
     end)
     |> Enum.map(fn entity ->
       %{type: entity.__struct__, uuid: entity.uuid}
     end)
-  end
-
-  @number_group_regex ~r/(\d)*/
-
-  defp normalize_complement(nil), do: nil
-
-  defp normalize_complement(complement) do
-    @number_group_regex
-    |> Regex.scan(complement)
-    |> Enum.map(fn list -> List.first(list) end)
-    |> Enum.filter(fn result -> String.length(result) >= 1 end)
-    |> Enum.sort()
-    |> Enum.join("")
   end
 
   def check_duplicity_seller_lead(changeset, nil),
