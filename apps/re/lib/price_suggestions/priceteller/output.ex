@@ -11,6 +11,9 @@ defmodule Re.PriceTeller.Output do
     field :listing_price_rounded, :float
     field :sale_price, :float
     field :sale_price_rounded, :float
+    field :sale_price_error_q90_min, :float
+    field :sale_price_error_q90_max, :float
+    field :sale_price_per_sqr_meter, :float
     field :listing_price_error_q90_min, :float
     field :listing_price_error_q90_max, :float
     field :listing_price_per_sqr_meter, :float
@@ -18,6 +21,7 @@ defmodule Re.PriceTeller.Output do
   end
 
   @params ~w(listing_price listing_price_rounded sale_price sale_price_rounded
+             sale_price_error_q90_min sale_price_error_q90_max sale_price_per_sqr_meter
              listing_price_error_q90_min listing_price_error_q90_max listing_price_per_sqr_meter
              listing_average_price_per_sqr_meter)a
 
