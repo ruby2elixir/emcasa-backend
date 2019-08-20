@@ -54,51 +54,6 @@ defmodule ReWeb.Types.Interest do
     field :neighborhood, :string
   end
 
-  object :price_request do
-    field :id, :id
-    field :name, :string
-    field :email, :string
-    field :area, :integer
-    field :rooms, :integer
-    field :suites, :integer
-    field :type, :string
-    field :maintenance_fee, :float
-    field :bathrooms, :integer
-    field :garage_spots, :integer
-    field :is_covered, :boolean
-    field :suggested_price, :float
-    field :listing_price_rounded, :float
-    field :listing_price_error_q90_min, :float
-    field :listing_price_error_q90_max, :float
-    field :listing_price_per_sqr_meter, :float
-    field :listing_average_price_per_sqr_meter, :float
-
-    field :address, :address, resolve: dataloader(Re.Addresses)
-    field :user, :user, resolve: dataloader(Re.Accounts)
-  end
-
-  object :price_suggestion do
-    field :listing_price, :float
-    field :listing_price_rounded, :float
-    field :sale_price, :float
-    field :sale_price_rounded, :float
-    field :listing_price_error_q90_min, :float
-    field :listing_price_error_q90_max, :float
-    field :listing_price_per_sqr_meter, :float
-    field :listing_average_price_per_sqr_meter, :float
-  end
-
-  input_object :price_suggestion_input do
-    field :area, non_null(:integer)
-    field :rooms, non_null(:integer)
-    field :bathrooms, non_null(:integer)
-    field :garage_spots, non_null(:integer)
-    field :suites, non_null(:integer)
-    field :type, non_null(:string)
-    field :maintenance_fee, non_null(:float)
-    field :address, non_null(:address_input)
-  end
-
   object :simulation do
     field :cem, :string
     field :cet, :string
@@ -133,13 +88,6 @@ defmodule ReWeb.Types.Interest do
 
       resolve &InterestsResolver.simulate/2
     end
-
-    @desc "Query price suggestion"
-    field :price_suggestion, type: :price_suggestion do
-      arg :input, non_null(:price_suggestion_input)
-
-      resolve &InterestsResolver.price_suggestion/2
-    end
   end
 
   object :interest_mutations do
@@ -158,38 +106,6 @@ defmodule ReWeb.Types.Interest do
       arg :message, :string
 
       resolve &InterestsResolver.request_contact/2
-    end
-
-    @desc "Request price suggestion"
-    field :request_price_suggestion, type: :price_request do
-      arg :name, :string
-      arg :email, :string
-      arg :area, non_null(:integer)
-      arg :rooms, non_null(:integer)
-      arg :bathrooms, non_null(:integer)
-      arg :garage_spots, non_null(:integer)
-      arg :suites, :integer
-      arg :type, :string
-      arg :maintenance_fee, :float
-      arg :is_covered, non_null(:boolean)
-
-      arg :address, non_null(:address_input)
-
-      resolve &InterestsResolver.request_price_suggestion/2
-    end
-
-    @desc "Request notification when covered"
-    field :notify_when_covered, type: :contact do
-      arg :name, :string
-      arg :phone, :string
-      arg :email, :string
-      arg :message, :string
-
-      arg :state, non_null(:string)
-      arg :city, non_null(:string)
-      arg :neighborhood, non_null(:string)
-
-      resolve &InterestsResolver.notify_when_covered/2
     end
   end
 
@@ -221,36 +137,6 @@ defmodule ReWeb.Types.Interest do
       trigger :request_contact,
         topic: fn _ ->
           "contact_requested"
-        end
-    end
-
-    @desc "Subscribe to price suggestion requests"
-    field :price_suggestion_requested, :price_request do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          :system -> {:ok, topic: "price_suggestion_requested"}
-          _ -> {:error, :unauthorized}
-        end
-      end)
-
-      trigger :request_price_suggestion,
-        topic: fn _ ->
-          "price_suggestion_requested"
-        end
-    end
-
-    @desc "Subscribe to price suggestion requests"
-    field :notification_coverage_asked, :contact do
-      config(fn _args, %{context: %{current_user: current_user}} ->
-        case current_user do
-          :system -> {:ok, topic: "notification_coverage_asked"}
-          _ -> {:error, :unauthorized}
-        end
-      end)
-
-      trigger :notify_when_covered,
-        topic: fn _ ->
-          "notification_coverage_asked"
         end
     end
   end

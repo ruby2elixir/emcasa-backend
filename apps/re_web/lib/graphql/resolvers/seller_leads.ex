@@ -24,4 +24,12 @@ defmodule ReWeb.Resolvers.SellerLeads do
       SellerLeads.create_broker(attr)
     end
   end
+
+  def create_price_suggestion(params, %{context: %{current_user: current_user}}) do
+    with :ok <- Bodyguard.permit(SellerLeads, :create_price_suggestion, current_user) do
+      SellerLeads.create_price_suggestion(params, current_user)
+    end
+  end
+
+  def create_out_of_coverage(params, _), do: SellerLeads.create_out_of_coverage(params)
 end
