@@ -91,19 +91,28 @@ defmodule Re.SellerLeads do
   end
 
   def duplicated?(address, complement) do
-    check_attribute_duplicated(address, complement, :seller_leads) ||
-      check_attribute_duplicated(address, complement, :listings)
+    duplicated_entities(address, complement)
+    |> duplicated?()
   end
 
-  defp check_attribute_duplicated(address, complement, attribute_to_fetch) do
+  def duplicated?([]), do: false
+  def duplicated?(_), do: true
+
+  def duplicated_entities(address, complement) do
+    check_duplicated_entity(address, complement, :seller_leads) ++
+      check_duplicated_entity(address, complement, :listings)
+  end
+
+  defp check_duplicated_entity(address, complement, entity_name) do
     normalized_complement = normalize_complement(complement)
 
     address
-    |> Repo.preload(attribute_to_fetch)
-    |> Map.get(attribute_to_fetch)
-    |> Enum.any?(fn attribute ->
-      normalize_complement(attribute.complement) == normalized_complement
+    |> Repo.preload(entity_name)
+    |> Map.get(entity_name)
+    |> Enum.filter(fn entity ->
+      normalize_complement(entity.complement) == normalized_complement
     end)
+    |> Enum.map(fn entity -> %{type: entity.__struct__, uuid: entity.uuid} end)
   end
 
   @number_group_regex ~r/(\d)*/
