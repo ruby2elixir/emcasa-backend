@@ -108,11 +108,13 @@ defmodule Re.SellerLeads.JobQueue do
 
   defp update_email(multi, _), do: multi
 
-  defp check_duplicity(changeset, nil), do: Changeset.put_change(changeset, :duplicated, "unlikely")
+  defp check_duplicity(changeset, nil),
+    do: Changeset.put_change(changeset, :duplicated, "unlikely")
 
   defp check_duplicity(changeset, address) do
     complement = Changeset.get_field(changeset, :complement)
     duplicated_entities = SellerLeads.duplicated_entities(address, complement)
+
     changeset_duplicated =
       duplicated_entities
       |> Enum.map(fn entity -> DuplicatedEntity.changeset(%DuplicatedEntity{}, entity) end)
