@@ -80,7 +80,8 @@ defmodule ReIntegrations.Salesforce do
     SELECT #{fields}
     FROM Opportunity
     WHERE
-      StageName = 'Confirmação Visita' AND (
+      StageName = 'Confirmação Visita' AND
+      Periodo_Disponibilidade_Tour__c != 'Proprietário com fotos' AND (
         Data_Fixa_para_o_Tour__c = NULL OR
         Data_Fixa_para_o_Tour__c = #{date_constraint})
     ORDER BY CreatedDate ASC
