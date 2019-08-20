@@ -11,7 +11,6 @@ defmodule Re.SellerLeads.JobQueue do
     Repo,
     SellerLead,
     SellerLeads,
-    SellerLeads.DuplicatedEntity,
     SellerLeads.DuplicityChecker,
     SellerLeads.Salesforce,
     SellerLeads.Site,
