@@ -17,6 +17,8 @@ defmodule Re.SellerLeadsTest do
     {:ok, address: insert(:address), user: insert(:user)}
   end
 
+  @mock_priceteller_response "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"sale_price_error_q90_min\":25200.0,\"sale_price_error_q90_max\":28544.0,\"sale_price_per_sqr_meter\":560.0,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
+
   describe "create_site" do
     test "should create a seller lead and notify by email" do
       user = insert(:user)
@@ -78,15 +80,7 @@ defmodule Re.SellerLeadsTest do
 
   describe "create_price_suggestion/2" do
     test "should store price suggestion request", %{user: user} do
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_priceteller_response}})
 
       address_params = %{
         street: "street",
@@ -121,15 +115,7 @@ defmodule Re.SellerLeadsTest do
     end
 
     test "should store price suggestion request with user attached", %{user: user} do
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_priceteller_response}})
 
       address_params = %{
         street: "street",
@@ -165,15 +151,7 @@ defmodule Re.SellerLeadsTest do
     end
 
     test "should not store price suggestion request without user" do
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_priceteller_response}})
 
       address_params = %{
         street: "street",
@@ -206,15 +184,7 @@ defmodule Re.SellerLeadsTest do
     end
 
     test "should not create process request when neighborhood is not covered", %{user: user} do
-      mock(
-        HTTPoison,
-        :post,
-        {:ok,
-         %{
-           body:
-             "{\"sale_price_rounded\":24195.0,\"sale_price\":24195.791,\"listing_price_rounded\":26279.0,\"listing_price\":26279.915,\"listing_price_error_q90_min\":25200.0,\"listing_price_error_q90_max\":28544.0,\"listing_price_per_sqr_meter\":560.0,\"listing_average_price_per_sqr_meter\":610.0}"
-         }}
-      )
+      mock(HTTPoison, :post, {:ok, %{body: @mock_priceteller_response}})
 
       address_params = %{
         street: "street",

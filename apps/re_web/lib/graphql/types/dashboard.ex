@@ -52,6 +52,9 @@ defmodule ReWeb.Types.Dashboard do
     field :listing_price_rounded, :float
     field :sale_price, :float
     field :sale_price_rounded, :float
+    field :sale_price_error_q90_min, :float
+    field :sale_price_error_q90_max, :float
+    field :sale_price_per_sqr_meter, :float
     field :listing_price_error_q90_min, :float
     field :listing_price_error_q90_max, :float
     field :listing_price_per_sqr_meter, :float
