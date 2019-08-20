@@ -119,9 +119,9 @@ defmodule Re.SellerLeads.JobQueueTest do
                })
 
       assert seller.duplicated == "almost_sure"
+      assert Kernel.length(seller.duplicated_entities) == 1
     end
 
-    @tag dev: true
     test "should not mark as duplicated when another lead with other address and complement exists" do
       address = insert(:address)
       user = insert(:user)
@@ -139,6 +139,7 @@ defmodule Re.SellerLeads.JobQueueTest do
                })
 
       assert seller.duplicated == "maybe"
+      assert Kernel.length(seller.duplicated_entities) == 0
     end
   end
 

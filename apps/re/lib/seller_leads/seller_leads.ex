@@ -12,7 +12,8 @@ defmodule Re.SellerLeads do
     SellerLeads.Facebook,
     SellerLeads.JobQueue,
     SellerLeads.Site,
-    SellerLeads.Broker
+    SellerLeads.Broker,
+    SellerLeads.DuplicatedEntity
   }
 
   alias Ecto.{
@@ -112,7 +113,9 @@ defmodule Re.SellerLeads do
     |> Enum.filter(fn entity ->
       normalize_complement(entity.complement) == normalized_complement
     end)
-    |> Enum.map(fn entity -> %{type: entity.__struct__, uuid: entity.uuid} end)
+    |> Enum.map(fn entity ->
+      %{type: DuplicatedEntity.struct_to_atom(entity.__struct__), uuid: entity.uuid}
+    end)
   end
 
   @number_group_regex ~r/(\d)*/

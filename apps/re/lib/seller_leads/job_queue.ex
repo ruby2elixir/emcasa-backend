@@ -14,6 +14,7 @@ defmodule Re.SellerLeads.JobQueue do
     SellerLeads,
     SellerLeads.Salesforce,
     SellerLeads.Site,
+    SellerLeads.DuplicatedEntity,
     User
   }
 
@@ -110,10 +111,19 @@ defmodule Re.SellerLeads.JobQueue do
 
   defp check_duplicity(changeset) do
     uuid = Changeset.get_field(changeset, :address_uuid)
+    complement = Changeset.get_field(changeset, :complement)
 
     case Addresses.get_by_uuid(uuid) do
       {:ok, address} ->
-        case SellerLeads.duplicated?(address, nil) do
+        duplicated_entities = SellerLeads.duplicated_entities(address, complement)
+
+        changeset_duplicated =
+          duplicated_entities
+          |> Enum.map(fn entity -> DuplicatedEntity.changeset(%DuplicatedEntity{}, entity) end)
+
+        changeset = Changeset.put_embed(changeset, :duplicated_entities, changeset_duplicated)
+
+        case SellerLeads.duplicated?(duplicated_entities) do
           true -> Changeset.put_change(changeset, :duplicated, "almost_sure")
           false -> Changeset.put_change(changeset, :duplicated, "maybe")
         end
