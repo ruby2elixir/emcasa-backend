@@ -17,14 +17,14 @@ defmodule Re.Shortlists.Salesforce.OpportunityTest do
     "Bairros_de_Interesse__c" => "Botafogo;Urca",
     "Valor_M_ximo_para_Compra_2__c" => "De R$750.000 a R$1.000.000",
     "Valor_M_ximo_de_Condom_nio__c" => "R$800 a R$1.000",
-    "Portaria_2__c" => "Indiferente"
+    "Portaria_2__c" => "Portaria Eletrônica"
   }
 
   describe "build/1" do
     test "builds payload struct from salesforce response" do
       assert {:ok, %Opportunity{} = opportunity} = Opportunity.build(@payload)
       assert opportunity.infrastructure == ["Sacada", "Churrasqueira"]
-      assert opportunity.type == @payload["Tipo_do_Imovel__c"]
+      assert opportunity.type == "apartamento"
 
       assert opportunity.min_rooms ==
                @payload["Quantidade_Minima_de_Quartos__c"] |> String.to_integer()
@@ -45,7 +45,7 @@ defmodule Re.Shortlists.Salesforce.OpportunityTest do
       assert opportunity.neighborhoods == ["Botafogo", "Urca"]
       assert opportunity.price_range == [750_000, 1_000_000]
       assert opportunity.maintenance_fee_range == [800, 1_000]
-      assert opportunity.lobby == nil
+      assert opportunity.lobby == "portaria-eletronica"
     end
   end
 end
