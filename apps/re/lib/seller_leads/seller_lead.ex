@@ -7,8 +7,8 @@ defmodule Re.SellerLead do
   import Ecto.Changeset
 
   alias Re.SellerLeads.{
-    Utm,
-    DuplicatedEntity
+    DuplicatedEntity,
+    Utm
   }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
