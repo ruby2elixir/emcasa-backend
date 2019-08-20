@@ -21,11 +21,20 @@ defmodule Re.Shortlists do
 
   def generate_shortlist_from_salesforce_opportunity(opportunity_id) do
     with {:ok, opportunity} <- Salesforce.get_opportunity(opportunity_id),
-         {:ok, params} <- Opportunity.build(opportunity),
+         {:ok, params} <- create_params(opportunity),
          {:ok, listing_uuids} <- get_shortlist(params) do
       get_active_listings_by_uuid(listing_uuids)
     else
       _error -> {:error, :invalid_opportunity}
+    end
+  end
+
+  defp create_params(opportunity) do
+    opportunity
+    |> Opportunity.build()
+    |> case do
+      {:ok, params} -> {:ok, Map.put(%{}, :characteristcs, params)}
+      error -> error
     end
   end
 
