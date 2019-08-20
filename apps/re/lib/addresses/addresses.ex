@@ -96,4 +96,17 @@ defmodule Re.Addresses do
   end
 
   defp fill_postal_code(postal_code), do: postal_code
+
+  @number_group_regex ~r/(\d)*/
+
+  def normalize_complement(nil), do: nil
+
+  def normalize_complement(complement) do
+    @number_group_regex
+    |> Regex.scan(complement)
+    |> Enum.map(fn list -> List.first(list) end)
+    |> Enum.filter(fn result -> String.length(result) >= 1 end)
+    |> Enum.sort()
+    |> Enum.join("")
+  end
 end

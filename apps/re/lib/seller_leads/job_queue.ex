@@ -11,6 +11,7 @@ defmodule Re.SellerLeads.JobQueue do
     Repo,
     SellerLead,
     SellerLeads,
+    SellerLeads.DuplicityChecker,
     SellerLeads.Salesforce,
     SellerLeads.Site,
     User
@@ -29,6 +30,7 @@ defmodule Re.SellerLeads.JobQueue do
 
     request
     |> Request.seller_lead_changeset()
+    |> DuplicityChecker.check_duplicity_seller_lead(request.address)
     |> insert_seller_lead(multi, request)
     |> update_name(request)
     |> update_email(request)
