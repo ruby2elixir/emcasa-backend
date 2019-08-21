@@ -53,7 +53,7 @@ defmodule ReWeb.GraphQL.DuplicityChecker.QueryTest do
           AbsintheHelpers.query_wrapper(@check_duplicity_query, variables)
         )
 
-      refute json_response(conn, 200)["data"]["checkDuplicity"]
+      assert false == json_response(conn, 200)["data"]["checkDuplicity"]
     end
 
     test "user should query check_duplicity", %{user_conn: conn, address: address} do
@@ -77,7 +77,7 @@ defmodule ReWeb.GraphQL.DuplicityChecker.QueryTest do
           AbsintheHelpers.query_wrapper(@check_duplicity_query, variables)
         )
 
-      refute json_response(conn, 200)["data"]["checkDuplicity"]
+      assert false == json_response(conn, 200)["data"]["checkDuplicity"]
     end
 
     test "anonymous user should not query check_duplicity", %{
@@ -104,7 +104,7 @@ defmodule ReWeb.GraphQL.DuplicityChecker.QueryTest do
           AbsintheHelpers.query_wrapper(@check_duplicity_query, variables)
         )
 
-      refute json_response(conn, 200)["data"]["checkDuplicity"]
+      assert [%{"message" => "Unauthorized", "code" => 401}] = json_response(conn, 200)["errors"]
     end
 
     test "should be true when for the input there is an address and a complement for a listing",
@@ -133,7 +133,7 @@ defmodule ReWeb.GraphQL.DuplicityChecker.QueryTest do
           AbsintheHelpers.query_wrapper(@check_duplicity_query, variables)
         )
 
-      assert json_response(conn, 200)["data"]["checkDuplicity"]
+      assert true == json_response(conn, 200)["data"]["checkDuplicity"]
     end
 
     test "should be false when for the input there is an address and but not for the same complement for a listing",
@@ -162,7 +162,7 @@ defmodule ReWeb.GraphQL.DuplicityChecker.QueryTest do
           AbsintheHelpers.query_wrapper(@check_duplicity_query, variables)
         )
 
-      refute json_response(conn, 200)["data"]["checkDuplicity"]
+      assert false == json_response(conn, 200)["data"]["checkDuplicity"]
     end
 
     test "should be true when for the input there is an address and complement is nil for a listing",
@@ -190,7 +190,7 @@ defmodule ReWeb.GraphQL.DuplicityChecker.QueryTest do
           AbsintheHelpers.query_wrapper(@check_duplicity_query, variables)
         )
 
-      assert json_response(conn, 200)["data"]["checkDuplicity"]
+      assert true == json_response(conn, 200)["data"]["checkDuplicity"]
     end
   end
 end
