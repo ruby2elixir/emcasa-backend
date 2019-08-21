@@ -53,14 +53,15 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run: mix do compile --warnings-as-errors, coveralls.json
-
-      - run: MIX_ENV=test mix absinthe.schema.json --schema ReWeb.Schema --json-codec AbsintheSortingCodec --pretty
-      - run: sudo npm install --global apollo
-      - run: |
-          if [ "${CIRCLE_BRANCH}" == "master" ]; then
-            apollo service:push -c=priv/apollo/apollo.staging.config.js --key=$APOLLO_STAGING_TOKEN
-            apollo service:push -c=priv/apollo/apollo.prod.config.js --key=$APOLLO_PRODUCTION_TOKEN
-          fi
+      - run:
+          name: "Upload GraphQL schema to Apollo"
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              MIX_ENV=test mix absinthe.schema.json --schema ReWeb.Schema --json-codec AbsintheSortingCodec --pretty
+              sudo npm install --global apollo
+              apollo service:push -c=priv/apollo/apollo.staging.config.js --key=$APOLLO_STAGING_TOKEN
+              apollo service:push -c=priv/apollo/apollo.prod.config.js --key=$APOLLO_PRODUCTION_TOKEN
+            fi
 
       - run: curl -s https://codecov.io/bash | bash
 
