@@ -4,7 +4,6 @@ defmodule ReWeb.Resolvers.DuplicityChecker do
   """
 
   alias Re.{
-    Addresses,
     SellerLeads.DuplicityChecker
   }
 
