@@ -48,7 +48,7 @@ defmodule Re.SellerLeads.Salesforce do
       tour_data: lead.tour_option,
       inserted_at: lead.inserted_at,
       source: lead.source,
-      duplicated: lead.duplicated,
+      duplicated: lead.duplicated
     }
     |> put_user_params(lead.user)
     |> put_address_params(lead.address)
@@ -82,6 +82,7 @@ defmodule Re.SellerLeads.Salesforce do
   end
 
   defp put_duplicated_entities(params, nil), do: params
+
   defp put_duplicated_entities(params, duplicated_entities) do
     Map.merge(params, %{
       duplicated_entities: Jason.encode!(duplicated_entities)
