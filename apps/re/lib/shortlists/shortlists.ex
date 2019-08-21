@@ -23,28 +23,28 @@ defmodule Re.Shortlists do
   def get_or_create(opportunity_id) do
     case Repo.get_by(Shortlist, opportunity_id: opportunity_id) do
       nil ->
-        with {:ok, opportunity} <- Salesforce.get_opportunity(opportunity_id),
-             {:ok, params} <- create_params(opportunity),
-             {:ok, listing_uuids} <- get_shortlist(params) do
-          listings = get_active_listings_by_uuid(listing_uuids)
-
-          %Shortlist{}
-          |> Shortlist.changeset(%{opportunity_id: opportunity_id})
-          |> Ecto.Changeset.put_assoc(:listings, listings)
-          |> Repo.insert()
-        else
-          _error -> {:error, :invalid_opportunity}
-        end
+        create_shortlist(opportunity_id)
 
       shortlist ->
         {:ok, shortlist}
     end
   end
 
+  defp create_shortlist(opportunity_id) do
+    with {:ok, listing_uuids} <- get_listing_uuids_from_opportunity_preferences(opportunity_id) do
+      listings = get_active_listings_by_uuid(listing_uuids)
+
+      %Shortlist{}
+      |> Shortlist.changeset(%{opportunity_id: opportunity_id})
+      |> Ecto.Changeset.put_assoc(:listings, listings)
+      |> Repo.insert()
+    else
+      _error -> {:error, :invalid_opportunity}
+    end
+  end
+
   def generate_shortlist_from_salesforce_opportunity(opportunity_id) do
-    with {:ok, opportunity} <- Salesforce.get_opportunity(opportunity_id),
-         {:ok, params} <- create_params(opportunity),
-         {:ok, listing_uuids} <- get_shortlist(params) do
+    with {:ok, listing_uuids} <- get_listing_uuids_from_opportunity_preferences(opportunity_id) do
       get_active_listings_by_uuid(listing_uuids)
     else
       _error -> {:error, :invalid_opportunity}
@@ -57,6 +57,13 @@ defmodule Re.Shortlists do
     |> case do
       {:ok, params} -> {:ok, Map.put(%{}, :characteristcs, params)}
       error -> error
+    end
+  end
+
+  defp get_listing_uuids_from_opportunity_preferences(opportunity_id) do
+    with {:ok, opportunity} <- Salesforce.get_opportunity(opportunity_id),
+         {:ok, params} <- create_params(opportunity) do
+      get_shortlist(params)
     end
   end
 
