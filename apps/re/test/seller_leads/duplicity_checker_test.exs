@@ -28,6 +28,13 @@ defmodule Re.SellerLead.DuplicityChecker do
       assert DuplicityChecker.duplicated?(address, nil)
     end
 
+    test "should be true when the address and the complement is empty string for seller lead" do
+      address = insert(:address)
+      insert(:seller_lead, address: address, complement: nil)
+
+      assert DuplicityChecker.duplicated?(address, "")
+    end
+
     test "should be true when the address has the exactly same complement for seller lead" do
       address = insert(:address)
       insert(:seller_lead, address: address, complement: "100")

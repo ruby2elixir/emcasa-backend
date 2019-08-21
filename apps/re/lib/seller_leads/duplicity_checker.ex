@@ -2,6 +2,7 @@ defmodule Re.SellerLeads.DuplicityChecker do
   require Ecto.Query
 
   alias Re.{
+    Address,
     Addresses,
     Repo,
     SellerLeads.DuplicatedEntity
@@ -11,9 +12,21 @@ defmodule Re.SellerLeads.DuplicityChecker do
     Changeset
   }
 
-  def duplicated?(address, complement) do
+  defdelegate authorize(action, user, params), to: Re.SellerLeads.Policy
+
+  def duplicated?(%Address{} = address, complement) do
     duplicated_entities(address, complement)
     |> duplicated?()
+  end
+
+  def duplicated(address, complement) do
+    case Addresses.get(address) do
+      {:ok, address} ->
+        {:ok, duplicated?(address, complement)}
+
+      {:error, _} ->
+        {:ok, false}
+    end
   end
 
   def duplicated?([]), do: false

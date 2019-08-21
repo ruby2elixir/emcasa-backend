@@ -100,6 +100,7 @@ defmodule Re.Addresses do
   @number_group_regex ~r/(\d)*/
 
   def normalize_complement(nil), do: nil
+  def normalize_complement(""), do: nil
 
   def normalize_complement(complement) do
     @number_group_regex
