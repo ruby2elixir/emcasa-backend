@@ -47,9 +47,30 @@ defmodule ReWeb.Types.Dashboard do
     field :total_entries, :integer
   end
 
+  object :price_suggestion do
+    field :listing_price, :float
+    field :listing_price_rounded, :float
+    field :sale_price, :float
+    field :sale_price_rounded, :float
+    field :sale_price_error_q90_min, :float
+    field :sale_price_error_q90_max, :float
+    field :sale_price_per_sqr_meter, :float
+    field :listing_price_error_q90_min, :float
+    field :listing_price_error_q90_max, :float
+    field :listing_price_per_sqr_meter, :float
+    field :listing_average_price_per_sqr_meter, :float
+  end
+
   object :dashboard_queries do
     @desc "Get dashboard stats"
     field :dashboard, :dashboard, resolve: &DashboardResolvers.index/2
+
+    @desc "Query price suggestion"
+    field :price_suggestion, type: :price_suggestion do
+      arg :input, non_null(:price_suggestion_input)
+
+      resolve &DashboardResolvers.price_suggestion/2
+    end
   end
 
   object :dashboard_mutations do

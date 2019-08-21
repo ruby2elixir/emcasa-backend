@@ -21,6 +21,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.Custom.UUID
   import_types ReWeb.Types.Utm
   import_types ReWeb.Types.Shortlist
+  import_types ReWeb.Types.DuplicityChecker
   import_types Absinthe.Type.Custom
 
   alias ReWeb.GraphQL.Middlewares
@@ -48,6 +49,7 @@ defmodule ReWeb.Schema do
     import_fields(:development_queries)
     import_fields(:tag_queries)
     import_fields(:shortlist_queries)
+    import_fields(:duplicity_checking_queries)
   end
 
   mutation do
@@ -70,6 +72,7 @@ defmodule ReWeb.Schema do
     import_fields(:listing_subscriptions)
     import_fields(:image_subscriptions)
     import_fields(:calendar_subscriptions)
+    import_fields(:seller_lead_subscriptions)
   end
 
   defp loader(ctx) do

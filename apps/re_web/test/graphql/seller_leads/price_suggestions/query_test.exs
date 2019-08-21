@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
+defmodule ReWeb.GraphQL.SellerLeads.PriceSuggestions.QueryTest do
   use ReWeb.ConnCase
 
   alias ReWeb.AbsintheHelpers
@@ -26,7 +26,7 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
      admin_user: admin_user}
   end
 
-  @mock_response ~s|{"sale_price_rounded":24195.0,"sale_price":24195.791,"listing_price_rounded":26279.0,"listing_price":26279.915,"listing_price_error_q90_min":25200.0,"listing_price_error_q90_max":28544.0,"listing_price_per_sqr_meter":560.0,"listing_average_price_per_sqr_meter":610.0}|
+  @mock_response ~s|{"sale_price_rounded":24195.0,"sale_price":24195.791,"sale_price_error_q90_min":25200.0,"sale_price_error_q90_max":28544.0,"sale_price_per_sqr_meter":560.0,"listing_price_rounded":26279.0,"listing_price":26279.915,"listing_price_error_q90_min":25200.0,"listing_price_error_q90_max":28544.0,"listing_price_per_sqr_meter":560.0,"listing_average_price_per_sqr_meter":610.0}|
 
   describe "priceSuggestionRequest" do
     @variables %{
@@ -260,6 +260,9 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
           listingPriceRounded
           salePrice
           salePriceRounded
+          salePriceErrorQ90Max
+          salePriceErrorQ90Min
+          salePricePerSqrMeter
           listingAveragePricePerSqrMeter
           listingPriceErrorQ90Max
           listingPriceErrorQ90Min
@@ -294,6 +297,9 @@ defmodule ReWeb.GraphQL.Interests.PriceSuggestions.QueryTest do
                "listingPriceRounded" => 26_279.0,
                "salePrice" => 24_195.791,
                "salePriceRounded" => 24_195.0,
+               "salePriceErrorQ90Max" => 28_544.0,
+               "salePriceErrorQ90Min" => 25_200.0,
+               "salePricePerSqrMeter" => 560.0,
                "listingPriceErrorQ90Max" => 28_544.0,
                "listingPriceErrorQ90Min" => 25_200.0,
                "listingPricePerSqrMeter" => 560.0,

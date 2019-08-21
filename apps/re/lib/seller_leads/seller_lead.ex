@@ -6,7 +6,10 @@ defmodule Re.SellerLead do
 
   import Ecto.Changeset
 
-  alias Re.SellerLeads.Utm
+  alias Re.SellerLeads.{
+    DuplicatedEntity,
+    Utm
+  }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
@@ -24,8 +27,11 @@ defmodule Re.SellerLead do
     field :suggested_price, :float
     field :tour_option, :utc_datetime
     field :salesforce_id, :string
+    field :duplicated, :string
 
     embeds_one :utm, Re.SellerLeads.Utm
+
+    embeds_many :duplicated_entities, Re.SellerLeads.DuplicatedEntity
 
     belongs_to :address, Re.Address,
       references: :uuid,
@@ -42,13 +48,14 @@ defmodule Re.SellerLead do
 
   @required ~w(source)a
   @optional ~w(complement type area maintenance_fee rooms bathrooms suites garage_spots price
-               suggested_price tour_option address_uuid user_uuid salesforce_id)a
+               suggested_price tour_option address_uuid user_uuid salesforce_id duplicated)a
   @params @required ++ @optional
 
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @params)
     |> cast_embed(:utm, with: &Utm.changeset/2)
+    |> cast_embed(:duplicated_entities, with: &DuplicatedEntity.changeset/2)
     |> validate_required(@required)
     |> generate_uuid()
   end

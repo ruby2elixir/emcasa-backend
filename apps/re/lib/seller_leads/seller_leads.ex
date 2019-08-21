@@ -5,12 +5,16 @@ defmodule Re.SellerLeads do
   require Ecto.Query
 
   alias Re.{
-    Repo,
+    Addresses,
     OwnerContacts,
     OwnerContact,
+    PriceSuggestions,
+    PubSub,
+    Repo,
     SellerLead,
     SellerLeads.Facebook,
     SellerLeads.JobQueue,
+    SellerLeads.NotifyWhenCovered,
     SellerLeads.Site,
     SellerLeads.Broker
   }
@@ -52,6 +56,25 @@ defmodule Re.SellerLeads do
     end
   end
 
+  def create_price_suggestion(_params, nil), do: {:error, :bad_request}
+
+  def create_price_suggestion(params, user) do
+    with {:ok, address} <- Addresses.insert_or_update(params.address) do
+      params
+      |> Map.put(:address_id, address.id)
+      |> Map.put(:user_id, user.id)
+      |> PriceSuggestions.create_request()
+      |> PubSub.publish_new("new_price_suggestion_request")
+    end
+  end
+
+  def create_out_of_coverage(params) do
+    %NotifyWhenCovered{}
+    |> NotifyWhenCovered.changeset(params)
+    |> Repo.insert()
+    |> PubSub.publish_new("notify_when_covered")
+  end
+
   defp handle_create_broker(owner, params) do
     attrs =
       params
@@ -88,44 +111,6 @@ defmodule Re.SellerLeads do
       nil -> {:error, :not_found}
       seller_lead -> {:ok, seller_lead}
     end
-  end
-
-  def duplicated?(address, complement) do
-    duplicated_entities(address, complement)
-    |> duplicated?()
-  end
-
-  def duplicated?([]), do: false
-  def duplicated?(_), do: true
-
-  def duplicated_entities(address, complement) do
-    check_duplicated_entity(address, complement, :seller_leads) ++
-      check_duplicated_entity(address, complement, :listings)
-  end
-
-  defp check_duplicated_entity(address, complement, entity_name) do
-    normalized_complement = normalize_complement(complement)
-
-    address
-    |> Repo.preload(entity_name)
-    |> Map.get(entity_name)
-    |> Enum.filter(fn entity ->
-      normalize_complement(entity.complement) == normalized_complement
-    end)
-    |> Enum.map(fn entity -> %{type: entity.__struct__, uuid: entity.uuid} end)
-  end
-
-  @number_group_regex ~r/(\d)*/
-
-  defp normalize_complement(nil), do: nil
-
-  defp normalize_complement(complement) do
-    @number_group_regex
-    |> Regex.scan(complement)
-    |> Enum.map(fn list -> List.first(list) end)
-    |> Enum.filter(fn result -> String.length(result) >= 1 end)
-    |> Enum.sort()
-    |> Enum.join("")
   end
 
   defp return_insertion({:ok, %{insert_site_seller_lead: request}}), do: {:ok, request}

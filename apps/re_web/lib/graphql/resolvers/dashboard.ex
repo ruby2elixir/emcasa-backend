@@ -8,6 +8,7 @@ defmodule ReWeb.Resolvers.Dashboard do
     Listing,
     Listings.Admin,
     Listings.Filters,
+    PriceSuggestions,
     Repo
   }
 
@@ -89,6 +90,12 @@ defmodule ReWeb.Resolvers.Dashboard do
   end
 
   def upload_factors_csv(_, _), do: {:ok, "ok"}
+
+  def price_suggestion(%{input: params}, %{context: %{current_user: current_user}}) do
+    with :ok <- is_admin(current_user) do
+      PriceSuggestions.suggest_price(params)
+    end
+  end
 
   defp is_admin(nil), do: {:error, :unauthorized}
   defp is_admin(%{role: "admin"}), do: :ok

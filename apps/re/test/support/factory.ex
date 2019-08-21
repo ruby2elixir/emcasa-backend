@@ -186,7 +186,7 @@ defmodule Re.Factory do
     }
   end
 
-  def notify_when_covered_factory, do: %Re.Interests.NotifyWhenCovered{}
+  def notify_when_covered_factory, do: %Re.SellerLeads.NotifyWhenCovered{}
 
   def tour_appointment_factory, do: %Re.Calendars.TourAppointment{}
 

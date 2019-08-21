@@ -1,4 +1,4 @@
-defmodule ReWeb.GraphQL.Interests.NotifyWhenCovered.MutationTest do
+defmodule ReWeb.GraphQL.SellerLeads.NotifyWhenCovered.MutationTest do
   use ReWeb.ConnCase
 
   alias ReWeb.AbsintheHelpers
@@ -6,7 +6,7 @@ defmodule ReWeb.GraphQL.Interests.NotifyWhenCovered.MutationTest do
   import Re.Factory
 
   alias Re.{
-    Interests.NotifyWhenCovered,
+    SellerLeads.NotifyWhenCovered,
     Repo
   }
 
