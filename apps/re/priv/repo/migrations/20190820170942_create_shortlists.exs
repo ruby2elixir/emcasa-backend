@@ -16,5 +16,7 @@ defmodule Re.Repo.Migrations.CreateShortlists do
           references(:shortlists, column: :uuid, type: :uuid, on_delete: :delete_all),
           primary_key: true
     end
+
+    create index(:listings_shortlists, [:listing_uuid, :shortlist_uuid])
   end
 end
