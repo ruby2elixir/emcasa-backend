@@ -11,6 +11,8 @@ defmodule Re.SellerLeads.DuplicityChecker do
     Changeset
   }
 
+  defdelegate authorize(action, user, params), to: Re.SellerLeads.Policy
+
   def duplicated?(address, complement) do
     duplicated_entities(address, complement)
     |> duplicated?()
