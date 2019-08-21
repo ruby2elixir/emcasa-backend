@@ -16,13 +16,7 @@ defmodule ReWeb.Resolvers.DuplicityChecker do
              current_user,
              params
            ) do
-      case Addresses.get(params.address) do
-        {:ok, address} ->
-          {:ok, DuplicityChecker.duplicated?(address, Map.get(params, :complement))}
-
-        {:error, _} ->
-          {:ok, false}
-      end
+      DuplicityChecker.duplicated(params.address, Map.get(params, :complement))
     end
   end
 end
