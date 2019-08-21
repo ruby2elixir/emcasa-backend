@@ -60,7 +60,8 @@ defmodule ReWeb.Mixfile do
       {:plug_checkup, "~> 0.5"},
       {:prometheus_phoenix, "~> 1.2"},
       {:prometheus_plugs, "~> 1.1"},
-      {:telemetry, "~> 0.4"}
+      {:telemetry, "~> 0.4"},
+      {:absinthe_sorting_codec, "~> 1.0.1"}
     ]
   end
 
