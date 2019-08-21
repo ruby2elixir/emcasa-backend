@@ -61,3 +61,5 @@ jobs:
           path: _build/test/lib/re_web/
       - store_test_results:
           path: _build/test/lib/re_integrations/
+
+      - run: MIX_ENV=test mix absinthe.schema.json --schema ReWeb.Schema --json-codec AbsintheSortingCodec --pretty
