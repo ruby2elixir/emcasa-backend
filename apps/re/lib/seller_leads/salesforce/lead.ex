@@ -46,7 +46,9 @@ defmodule Re.Salesforce.Lead do
     postal_code: "PostalCode",
     record_type_id: "RecordTypeId",
     type: "Tipo_de_Lead__c",
-    uuid: "uuid__c"
+    uuid: "uuid__c",
+    duplicated: "Probabilidade_de_Duplicidade__c",
+    duplicated_entities: "IDs_de_Duplicados__c"
   )
 
   defenum(Type,
@@ -88,13 +90,15 @@ defmodule Re.Salesforce.Lead do
     field :record_type_id, :string
     field :type, Type
     field :uuid, :string
+    field :duplicated, :string
+    field :duplicated_entities, :string
   end
 
   @optional ~w(street neighborhood city state email interest_realty_id
                source phone full_name budget area evaluation realty_postal_code realty_city
                complemenet tour_data inserted_at realty_state realty_bathrooms realty_rooms
                realty_garage_spots realty_street_number realty_street realty_suites realty_type
-               maintenance_fee price postal_code record_type_id type uuid)a
+               maintenance_fee price postal_code record_type_id type uuid duplicated duplicated_entities)a
   @required ~w(last_name location)a
   @params @optional ++ @required
 

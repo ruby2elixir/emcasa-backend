@@ -47,10 +47,12 @@ defmodule Re.SellerLeads.Salesforce do
       area: lead.area,
       tour_data: lead.tour_option,
       inserted_at: lead.inserted_at,
-      source: lead.source
+      source: lead.source,
+      duplicated: lead.duplicated,
     }
     |> put_user_params(lead.user)
     |> put_address_params(lead.address)
+    |> put_duplicated_entities(lead.duplicated_entities)
     |> Lead.validate()
   end
 
@@ -76,6 +78,13 @@ defmodule Re.SellerLeads.Salesforce do
       realty_postal_code: address.postal_code,
       neighborhood: address.neighborhood,
       realty_street_number: address.street_number
+    })
+  end
+
+  defp put_duplicated_entities(params, nil), do: params
+  defp put_duplicated_entities(params, duplicated_entities) do
+    Map.merge(params, %{
+      duplicated_entities: Jason.encode!(duplicated_entities)
     })
   end
 end
