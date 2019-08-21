@@ -58,7 +58,8 @@ jobs:
       - run: sudo npm install --global apollo
       - run: |
           if [ "${CIRCLE_BRANCH}" == "chore/upload-schema-to-apollo" ]; then
-            apollo service:push -c=priv/apollo/apollo.config.js --key=$APOLLO_STAGING_TOKEN
+            apollo service:push -c=priv/apollo/apollo.staging.config.js --key=$APOLLO_STAGING_TOKEN
+            apollo service:push -c=priv/apollo/apollo.prod.config.js --key=$APOLLO_PRODUCTION_TOKEN
           fi
 
       - run: curl -s https://codecov.io/bash | bash
