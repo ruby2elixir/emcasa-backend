@@ -13,8 +13,7 @@ defmodule ReIntegrations.Salesforce.JobQueue do
     Repo,
     Routific,
     Salesforce,
-    Salesforce.Mapper,
-    Salesforce.ZapierClient
+    Salesforce.Mapper
   }
 
   def perform(%Multi{} = multi, %{"type" => "monitor_routific_job", "job_id" => id}) do
@@ -27,7 +26,7 @@ defmodule ReIntegrations.Salesforce.JobQueue do
       enqueue_routific_update_unserved(Ecto.Multi.new(), payload)
     end)
     |> Multi.run(:send_notification, fn _repo, %{get_job_status: payload} ->
-      ZapierClient.report(payload)
+      Salesforce.report_scheduled_tours(payload)
     end)
     |> Repo.transaction()
     |> handle_error()

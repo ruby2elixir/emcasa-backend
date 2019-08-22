@@ -10,7 +10,8 @@ defmodule ReIntegrations.Salesforce do
     Salesforce.JobQueue,
     Salesforce.Mapper,
     Salesforce.Payload.Event,
-    Salesforce.Payload.Opportunity
+    Salesforce.Payload.Opportunity,
+    Salesforce.ZapierClient
   }
 
   @routific_max_attempts Application.get_env(:re_integrations, :routific_max_attempts, 6)
@@ -87,4 +88,11 @@ defmodule ReIntegrations.Salesforce do
     ORDER BY CreatedDate ASC
     """)
   end
+
+  def report_scheduled_tours(%Routific.Payload.Inbound{} = routific_response),
+    do:
+      with(
+        {:ok, payload} <- Mapper.Zapier.build_report(routific_response),
+        do: ZapierClient.post(payload)
+      )
 end
