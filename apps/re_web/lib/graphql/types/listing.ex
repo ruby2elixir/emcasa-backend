@@ -12,6 +12,8 @@ defmodule ReWeb.Types.Listing do
                                         rejected sold sold_by_emcasa temporarily_suspended to_be_published
                                         went_exclusive)
 
+  enum :status, values: ~w(active inactive)
+
   enum :garage_type, values: ~w(contract condominium)
 
   enum :orientation_type, values: ~w(frontside backside lateral inside)
@@ -147,6 +149,7 @@ defmodule ReWeb.Types.Listing do
 
     field :owner_contact, :owner_contact_input
     field :deactivation_reason, :deactivation_reason
+    field :status, :status
   end
 
   input_object :deactivation_options_input do
