@@ -33,13 +33,14 @@ defmodule ReIntegrations.Salesforce.Mapper.Zapier do
 
   defp build_unserved(%{unserved: unserved}),
     do:
-      Enum.map(unserved, fn {id, reason} ->
+      unserved
+      |> Enum.map(fn {id, reason} ->
         "[<#{opportunity_url(id)}\">|#{id}>] #{reason}"
       end)
       |> Enum.join("\n")
 
   defp build_solution(%{solution: solution}),
-    do: Enum.map(solution, &build_route/1) |> Enum.join("\n")
+    do: solution |> Enum.map(&build_route/1) |> Enum.join("\n")
 
   defp build_route({calendar_uuid, [_depot | visits]}),
     do:

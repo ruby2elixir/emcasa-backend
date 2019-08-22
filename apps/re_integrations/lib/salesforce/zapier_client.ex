@@ -3,12 +3,6 @@ defmodule ReIntegrations.Salesforce.ZapierClient do
   Client to send reports to Slack through Zapier.
   """
 
-  alias Re.{
-    Calendars
-  }
-
-  alias ReIntegrations.Routific
-
   @url Application.get_env(:re_integrations, :zapier_schedule_visits_url, "")
   @http_client Application.get_env(:re_integrations, :http, HTTPoison)
 
