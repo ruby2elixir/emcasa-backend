@@ -6,6 +6,8 @@ defmodule Re.SellerLeads.DuplicatedEntity do
 
   import EctoEnum
 
+  @derive Jason.Encoder
+
   defenum(Type, [{Re.Listing, "listing"}, {Re.SellerLead, "seller_lead"}])
 
   embedded_schema do
@@ -18,6 +20,6 @@ defmodule Re.SellerLeads.DuplicatedEntity do
       Ecto.Changeset.cast(
         struct,
         params,
-        ~w(type uuid)a
+        ~w(type uuid)a@derive Jason.Encoder
       )
 end
