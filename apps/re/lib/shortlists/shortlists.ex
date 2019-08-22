@@ -39,7 +39,7 @@ defmodule Re.Shortlists do
       |> Ecto.Changeset.put_assoc(:listings, listings)
       |> Repo.insert()
     else
-      _error -> {:error, :invalid_opportunity}
+      _error -> {:error, :failed_to_create_new_shortlist}
     end
   end
 
@@ -47,7 +47,7 @@ defmodule Re.Shortlists do
     with {:ok, listing_uuids} <- get_listing_uuids_from_opportunity_preferences(opportunity_id) do
       get_active_listings_by_uuid(listing_uuids)
     else
-      _error -> {:error, :invalid_opportunity}
+      _error -> {:error, :failed_to_create_new_shortlist}
     end
   end
 
