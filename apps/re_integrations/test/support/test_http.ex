@@ -202,6 +202,8 @@ defmodule ReIntegrations.TestHTTP do
          """
        }}
 
+  def post(%URI{path: "/zapier/webhook"}, _body, _opts), do: {:ok, %{status_code: 200}}
+
   def patch(%URI{path: "/api/v1/Opportunity/0x01"}, _body, _opts),
     do:
       {:ok,

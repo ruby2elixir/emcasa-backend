@@ -90,7 +90,8 @@ config :re_integrations,
       value: "example.com"
     }
   },
-  salesforce_seller_lead_record_id: "0x01"
+  salesforce_seller_lead_record_id: "0x01",
+  zapier_schedule_visits_url: "https://example.com/zapier/webhook"
 
 config :junit_formatter,
   report_file: "report_file_test.xml",

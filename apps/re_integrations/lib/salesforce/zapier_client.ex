@@ -19,8 +19,10 @@ defmodule ReIntegrations.Salesforce.ZapierClient do
         body:
           "Visitas agendadas para #{format_date(date)}:\n" <>
             build_solution(payload) <>
-            if(Enum.empty?(payload.unserved), do: "",
-            else: "\n\nOpotunidades não agendadas:\n" <> build_unserved(payload))
+            if(Enum.empty?(payload.unserved),
+              do: "",
+              else: "\n\nOpotunidades não agendadas:\n" <> build_unserved(payload)
+            )
       })
     end
   end
