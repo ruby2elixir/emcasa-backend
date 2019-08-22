@@ -61,6 +61,7 @@ defmodule Re.Exporters.ZapTest do
           "<Bairro>Copacabana</Bairro>" <>
           "<Numero>55</Numero>" <>
           "<Complemento>basement</Complemento>" <>
+          "<CEP>11111111</CEP>" <>
           "<PrecoVenda>1000000</PrecoVenda>" <>
           "<PrecoCondominio>1000</PrecoCondominio>" <>
           "<AreaUtil>50</AreaUtil>" <>
@@ -130,6 +131,7 @@ defmodule Re.Exporters.ZapTest do
           "<Bairro>Copacabana</Bairro>" <>
           "<Numero>55</Numero>" <>
           "<Complemento>basement</Complemento>" <>
+          "<CEP>11111111</CEP>" <>
           "<PrecoVenda>1000000</PrecoVenda>" <>
           "<PrecoCondominio>1000</PrecoCondominio>" <>
           "<AreaUtil>50</AreaUtil>" <>
@@ -189,6 +191,7 @@ defmodule Re.Exporters.ZapTest do
           "<Bairro>Copacabana</Bairro>" <>
           "<Numero>55</Numero>" <>
           "<Complemento>basement</Complemento>" <>
+          "<CEP>11111111</CEP>" <>
           "<PrecoVenda>1000000</PrecoVenda>" <>
           "<PrecoCondominio>1000</PrecoCondominio>" <>
           "<AreaUtil>50</AreaUtil>" <>
@@ -257,6 +260,7 @@ defmodule Re.Exporters.ZapTest do
           "<Bairro>Copacabana</Bairro>" <>
           "<Numero>55</Numero>" <>
           "<Complemento>basement</Complemento>" <>
+          "<CEP>11111111</CEP>" <>
           "<PrecoVenda>1000000</PrecoVenda>" <>
           "<PrecoCondominio>1000</PrecoCondominio>" <>
           "<AreaUtil>50</AreaUtil>" <>
@@ -330,6 +334,7 @@ defmodule Re.Exporters.ZapTest do
           "<Bairro>Copacabana</Bairro>" <>
           "<Numero>55</Numero>" <>
           "<Complemento>basement</Complemento>" <>
+          "<CEP>11111111</CEP>" <>
           "<PrecoVenda>1000000</PrecoVenda>" <>
           "<PrecoCondominio>1000</PrecoCondominio>" <>
           "<AreaUtil>50</AreaUtil>" <>
