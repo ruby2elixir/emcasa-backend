@@ -92,6 +92,7 @@ defmodule Re.Shortlists.Salesforce.Opportunity do
       value
       |> String.split(";")
       |> Enum.reject(&(&1 == @ignorable))
+      |> Enum.map(&Slugs.sluggify(&1))
 
     with({:ok, key} <- Schema.cast(field), do: {key, features})
   end
