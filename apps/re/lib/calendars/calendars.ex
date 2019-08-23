@@ -76,6 +76,8 @@ defmodule Re.Calendars do
     "#{day_name}, #{formatted_day}"
   end
 
+  def format_time(%Time{} = time), do: time |> Time.to_string() |> String.slice(0..4)
+
   defp day_name(1), do: "Segunda-feira"
   defp day_name(2), do: "Terça-feira"
   defp day_name(3), do: "Quarta-feira"
