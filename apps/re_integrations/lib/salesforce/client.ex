@@ -3,6 +3,8 @@ defmodule ReIntegrations.Salesforce.Client do
   Client to handle requests to an emcasa/salesforce api
   """
 
+  require Mockery.Macro
+
   @api_key Application.get_env(:re_integrations, :salesforce_api_key, "")
   @api_url Application.get_env(:re_integrations, :salesforce_url, "")
   @http_client Application.get_env(:re_integrations, :http, HTTPoison)
