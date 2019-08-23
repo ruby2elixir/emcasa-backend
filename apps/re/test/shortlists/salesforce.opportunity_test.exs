@@ -23,7 +23,7 @@ defmodule Re.Shortlists.Salesforce.OpportunityTest do
   describe "build/1" do
     test "builds payload struct from salesforce response" do
       assert {:ok, %Opportunity{} = opportunity} = Opportunity.build(@payload)
-      assert opportunity.infrastructure == ["Sacada", "Churrasqueira"]
+      assert opportunity.infrastructure == ["sacada", "churrasqueira"]
       assert opportunity.type == "apartamento"
 
       assert opportunity.min_rooms ==
@@ -42,7 +42,7 @@ defmodule Re.Shortlists.Salesforce.OpportunityTest do
       assert opportunity.preference_floor == :high
       assert opportunity.elevators == nil
       assert opportunity.nearby_subway == true
-      assert opportunity.neighborhoods == ["Botafogo", "Urca"]
+      assert opportunity.neighborhoods == ["botafogo", "urca"]
       assert opportunity.price_range == [750_000, 1_000_000]
       assert opportunity.maintenance_fee_range == [800, 1_000]
       assert opportunity.lobby == "portaria-eletronica"
