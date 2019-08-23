@@ -11,16 +11,26 @@ defmodule ReIntegrations.Salesforce.Mapper.Zapier do
 
   def build_report(%Routific.Payload.Inbound{} = payload) do
     with {:ok, date} <- payload.options |> Map.fetch!("date") |> Timex.parse("{ISO:Extended}") do
-      {:ok,
-       %{
-         body:
-           "Visitas agendadas para #{format_date(date)}:\n" <>
-             build_solution(payload) <>
-             if(Enum.empty?(payload.unserved),
-               do: "",
-               else: "\n\nOpotunidades não agendadas:\n" <> build_unserved(payload)
-             )
-       }}
+      {:ok, %{body: build_body(payload, date)}}
+    end
+  end
+
+  defp build_body(payload, date) do
+    [
+      if(not Enum.empty?(payload.solution),
+        do:
+          "Sessões de tour agendadas para #{format_date(date)}:\n" <>
+            build_solution(payload)
+      ),
+      if(not Enum.empty?(payload.unserved),
+        do: "Opotunidades não agendadas:\n" <> build_unserved(payload)
+      )
+    ]
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join("\n\n")
+    |> case do
+      "" -> "Nenhuma sessão agendada para #{format_date(date)}."
+      body -> body
     end
   end
 
