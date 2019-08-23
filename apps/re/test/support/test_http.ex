@@ -14,20 +14,6 @@ defmodule Re.TestHTTP do
 
   def get(_, _), do: {:ok, nil}
 
-  def post(%URI{path: "/api/v1/Lead"}, _body, _opts),
-    do:
-      {:ok,
-       %{
-         status_code: 200,
-         body: """
-         {
-           "id": "0x01",
-           "success": true,
-           "errors": []
-         }
-         """
-       }}
-
   def patch(%URI{path: "/api/v1/Lead/0x01"}, _body, _opts),
     do:
       {:ok,
