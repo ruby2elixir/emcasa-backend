@@ -76,7 +76,7 @@ defmodule Re.UnitTest do
 
       assert Keyword.get(changeset.errors, :price) ==
                {"must be greater than or equal to %{number}",
-                [validation: :number, kind: :greater_than_or_equal_to, number: 250_000]}
+                [validation: :number, kind: :greater_than_or_equal_to, number: 200_000]}
 
       assert Keyword.get(changeset.errors, :property_tax) ==
                {"must be greater than or equal to %{number}",

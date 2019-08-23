@@ -158,6 +158,29 @@ defmodule Re.ListingTest do
 
       refute changeset.valid?
     end
+
+    test "insert changeset with inactive status should set default deactivation reason" do
+      address = insert(:address)
+      user = insert(:user)
+
+      attrs =
+        @valid_attrs
+        |> Map.put(:address_id, address.id)
+        |> Map.put(:user_id, user.id)
+        |> Map.put(:status, "inactive")
+
+      assert %{valid?: true, changes: %{deactivation_reason: "to_be_published"}} =
+               Listing.changeset(%Listing{}, attrs)
+    end
+
+    test "update changeset with inactive status should require deactivation reason" do
+      listing = insert(:listing, status: "active")
+
+      assert %{valid?: false, errors: errors} = Listing.changeset(listing, %{status: "inactive"})
+
+      assert Keyword.get(errors, :deactivation_reason) ==
+               {"can't be blank", [validation: :required]}
+    end
   end
 
   describe "development_changeset/2" do
