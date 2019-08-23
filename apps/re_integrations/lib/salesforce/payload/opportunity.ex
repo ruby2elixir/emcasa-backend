@@ -67,25 +67,30 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     payload
     |> Map.take(Schema.__valid_values__())
     |> Enum.into(%{}, &build_field/1)
-    |> validate()
+    |> validate(:get)
   end
 
   defp build_field({field, value}),
     do: with({:ok, key} <- Schema.cast(field), do: {key, value})
 
-  def validate(params) do
+  def validate(params, method) do
     %__MODULE__{}
-    |> changeset(params)
+    |> changeset(params, method)
     |> case do
       %{valid?: true} = changeset -> {:ok, apply_changes(changeset)}
       changeset -> {:error, :invalid_input, params, changeset}
     end
   end
 
-  defp changeset(struct, params) do
+  defp changeset(struct, params, :get) do
     struct
     |> cast(params, @params ++ @required)
     |> validate_required(@required)
+  end
+
+  defp changeset(struct, params, :put) do
+    struct
+    |> cast(params, @params ++ @required)
     |> put_route_url()
   end
 

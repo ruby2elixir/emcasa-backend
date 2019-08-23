@@ -41,9 +41,16 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
   end
 
   describe "validate/1" do
-    test "builds route_url from route_id" do
+    test "validates required params for :get method" do
+      assert {:ok, _opportunity} =
+               Payload.Opportunity.validate(@changeset, :get)
+      assert {:error, :invalid_input, _, _} =
+               Payload.Opportunity.validate(Map.drop(@changeset, [:account_id]), :get)
+    end
+
+    test "builds route_url from route_id for :put method" do
       assert {:ok, opportunity} =
-               Payload.Opportunity.validate(Map.put(@changeset, :route_id, "test"))
+               Payload.Opportunity.validate(%{route_id: "test"}, :put)
 
       assert "/test" == opportunity.route_url
     end

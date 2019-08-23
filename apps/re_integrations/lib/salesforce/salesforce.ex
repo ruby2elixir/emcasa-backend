@@ -28,14 +28,13 @@ defmodule ReIntegrations.Salesforce do
   end
 
   def update_opportunity(id, payload) do
-    with opportunity <- struct(%Opportunity{}, payload),
+    with {:ok, opportunity} <- Opportunity.validate(payload, :put),
          {:ok, %{status_code: 200, body: body}} <- Client.update_opportunity(id, opportunity),
          {:ok, data} <- Jason.decode(body) do
       {:ok, data}
     else
       {:ok, %{status_code: _status_code} = data} -> {:error, data}
-      {:error, error} -> {:error, error}
-      error -> {:error, error}
+      error -> error
     end
   end
 
