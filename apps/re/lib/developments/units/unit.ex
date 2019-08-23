@@ -6,6 +6,7 @@ defmodule Re.Unit do
   use Ecto.Schema
 
   import Ecto.Changeset
+  alias Re.Listing
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
@@ -54,8 +55,8 @@ defmodule Re.Unit do
     |> validate_attributes()
     |> validate_number(
       :price,
-      greater_than_or_equal_to: 250_000,
-      less_than_or_equal_to: 100_000_000
+      greater_than_or_equal_to: Listing.price_lower_limit(),
+      less_than_or_equal_to: Listing.price_upper_limit()
     )
     |> validate_inclusion(:garage_type, @garage_types)
     |> validate_inclusion(:status, @statuses)

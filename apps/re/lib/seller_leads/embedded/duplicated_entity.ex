@@ -8,6 +8,7 @@ defmodule Re.SellerLeads.DuplicatedEntity do
 
   defenum(Type, [{Re.Listing, "listing"}, {Re.SellerLead, "seller_lead"}])
 
+  @derive {Jason.Encoder, only: [:type, :uuid]}
   embedded_schema do
     field :type, Type
     field :uuid, :string

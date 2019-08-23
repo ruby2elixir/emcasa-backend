@@ -7,9 +7,10 @@ defmodule Re.Exporters.Zap do
   @highlight 2
   @super_highlight 3
 
-  @exported_attributes ~w(id type subtype category address state city neighborhood street_number complement
-                          price maintenance_fee util_area area_unit rooms bathrooms suites garage_spots
-                          property_tax description images highlight tags)a
+  @exported_attributes ~w(id type subtype category address state city neighborhood street_number
+                          complement postal_code price maintenance_fee util_area area_unit rooms
+                          bathrooms suites garage_spots property_tax description images highlight
+                          tags)a
 
   @default_options %{attributes: @exported_attributes, highlight_ids: [], super_highlight_ids: []}
 
@@ -82,6 +83,10 @@ defmodule Re.Exporters.Zap do
 
   defp convert_attribute(:complement, listing, _, acc) do
     [{"Complemento", %{}, listing.complement} | acc]
+  end
+
+  defp convert_attribute(:postal_code, listing, _, acc) do
+    [{"CEP", %{}, String.replace(listing.address.postal_code, "-", "")} | acc]
   end
 
   defp convert_attribute(:price, listing, _, acc) do
