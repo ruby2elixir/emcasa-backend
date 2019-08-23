@@ -21,7 +21,11 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
 
   describe "monitor_routific_job" do
     test "enqueues salesforce events for insertion when routific job succeeds" do
-      assert {:ok, %{get_job_status: %Routific.Payload.Inbound{}}} =
+      assert {:ok,
+              %{
+                get_job_status: %Routific.Payload.Inbound{},
+                send_notification: %{status_code: 200}
+              }} =
                JobQueue.perform(Multi.new(), %{
                  "type" => "monitor_routific_job",
                  "job_id" => "FINISHED_JOB_ID"
