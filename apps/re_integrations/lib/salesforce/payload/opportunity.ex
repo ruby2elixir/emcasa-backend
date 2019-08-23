@@ -55,23 +55,13 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     field :route_id, :string, virtual: true
   end
 
-  @params ~w(id tour_strict_date tour_strict_time notes route_unserved_reason route_url route_id)a
+  @params ~w(id tour_strict_date tour_strict_time notes route_unserved_reason route_url route_id stage)a
 
-  @required ~w(account_id owner_id address neighborhood tour_period stage)a
+  @required ~w(account_id owner_id address neighborhood tour_period)a
 
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 40)
   @tour_visit_max_lateness Application.get_env(:re_integrations, :tour_visit_max_lateness, 10)
   @routific_job_url Application.get_env(:re_integrations, :routific_job_url, "")
-
-  def build_all(list) do
-    results = Enum.map(list, &with({:ok, value} <- build(&1), do: value))
-
-    with nil <- Enum.find(results, nil, &(not is_ok(&1))), do: {:ok, results}
-  end
-
-  defp is_ok({:error, _}), do: false
-  defp is_ok({:error, _, _, _, _}), do: false
-  defp is_ok(_), do: true
 
   def build(payload) do
     payload

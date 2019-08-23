@@ -27,13 +27,14 @@ defmodule ReIntegrations.Salesforce do
   end
 
   def update_opportunity(id, payload) do
-    with {:ok, opportunity} <- Opportunity.validate(payload),
+    with opportunity <- struct(%Opportunity{}, payload),
          {:ok, %{status_code: 200, body: body}} <- Client.update_opportunity(id, opportunity),
          {:ok, data} <- Jason.decode(body) do
       {:ok, data}
     else
       {:ok, %{status_code: _status_code} = data} -> {:error, data}
-      error -> error
+      {:error, error} -> {:error, error}
+      error -> {:error, error}
     end
   end
 
@@ -54,14 +55,11 @@ defmodule ReIntegrations.Salesforce do
   def schedule_visits(schedule_opts) do
     with {:ok, %{status_code: 200, body: body}} <- fetch_visits(schedule_opts),
          {:ok, %{"records" => records}} = Jason.decode(body),
-         {:ok, opportunities} <- Opportunity.build_all(records),
-         {:ok, job_id} <-
-           opportunities
-           |> Enum.map(&Mapper.Routific.build_visit/1)
-           |> Routific.start_job(schedule_opts) do
-      %{"type" => "monitor_routific_job", "job_id" => job_id}
-      |> JobQueue.new(max_attempts: @routific_max_attempts)
-      |> Repo.insert()
+         {opportunities, invalid} <- build_opportunities(records) do
+      Ecto.Multi.new()
+      |> enqueue_failed_validations_report(invalid)
+      |> enqueue_routific_job(opportunities, schedule_opts)
+      |> Repo.transaction()
     end
   end
 
@@ -87,4 +85,50 @@ defmodule ReIntegrations.Salesforce do
     ORDER BY CreatedDate ASC
     """)
   end
+
+  defp enqueue_failed_validations_report(multi, errors),
+    do: Enum.reduce(errors, multi, &update_failed_opportunity/2)
+
+  defp update_failed_opportunity({:error, error, %{id: id}, %{errors: errors}}, multi) do
+    IO.inspect(errors)
+
+    JobQueue.enqueue(multi, "update_#{id}", %{
+      "type" => "update_opportunity",
+      "id" => id,
+      "opportunity" => %{
+        route_unserved_reason:
+          errors
+          |> Enum.map(fn {field, {msg, _}} -> "#{field}: #{msg}" end)
+          |> List.insert_at(0, "#{error}")
+          |> Enum.join("\n")
+      }
+    })
+  end
+
+  defp enqueue_routific_job(multi, [], _schedule_opts), do: multi
+
+  defp enqueue_routific_job(multi, entries, schedule_opts),
+    do:
+      with(
+        {:ok, job_id} <-
+          entries
+          |> Enum.map(&Mapper.Routific.build_visit/1)
+          |> Routific.start_job(schedule_opts),
+        do:
+          JobQueue.enqueue(
+            multi,
+            "monitor_routific_job",
+            %{"type" => "monitor_routific_job", "job_id" => job_id},
+            max_attempts: @routific_max_attempts
+          )
+      )
+
+  defp build_opportunities(entries) do
+    entries
+    |> Enum.map(&with({:ok, value} <- Opportunity.build(&1), do: value))
+    |> Enum.split_with(&is_ok/1)
+  end
+
+  defp is_ok({:error, _, _, _}), do: false
+  defp is_ok(_), do: true
 end
