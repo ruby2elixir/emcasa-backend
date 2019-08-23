@@ -102,6 +102,9 @@ defmodule Re.Listing do
   @price_lower_limit 200_000
   @price_upper_limit 100_000_000
 
+  def price_lower_limit, do: @price_lower_limit
+  def price_upper_limit, do: @price_upper_limit
+
   def changeset(struct, params) do
     struct
     |> cast(params, @attributes)
@@ -116,6 +119,8 @@ defmodule Re.Listing do
     |> validate_inclusion(:orientation, @orientation_types)
     |> validate_inclusion(:sun_period, @sun_period_types)
     |> validate_inclusion(:deactivation_reason, @deactivation_reasons)
+    |> put_default_deactivation_reason()
+    |> validate_status()
     |> generate_uuid()
     |> calculate_price_per_area()
     |> calculate_liquidity()
@@ -184,5 +189,24 @@ defmodule Re.Listing do
     price = get_field(changeset, :price, 0)
     suggested_price = get_field(changeset, :suggested_price, 0)
     put_change(changeset, :liquidity_ratio, Liquidity.calculate(price, suggested_price))
+  end
+
+  defp validate_status(changeset) do
+    if get_field(changeset, :status) == "inactive" do
+      validate_required(changeset, :deactivation_reason)
+    else
+      changeset
+    end
+  end
+
+  defp put_default_deactivation_reason(changeset) do
+    case {
+      get_field(changeset, :status),
+      get_field(changeset, :deactivation_reason),
+      get_field(changeset, :id)
+    } do
+      {"inactive", nil, nil} -> put_change(changeset, :deactivation_reason, "to_be_published")
+      {_, _, _} -> changeset
+    end
   end
 end
