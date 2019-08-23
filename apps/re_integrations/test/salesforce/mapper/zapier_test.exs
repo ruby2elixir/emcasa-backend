@@ -40,7 +40,7 @@ defmodule ReIntegrations.Salesforce.Mapper.ZapierTest do
                })
 
       assert String.contains?(body, "Sessões de tour agendadas")
-      assert not String.contains?(body, "Opotunidades não agendadas")
+      refute String.contains?(body, "Opotunidades não agendadas")
     end
 
     test "payload with unserved opportunities" do
@@ -54,7 +54,7 @@ defmodule ReIntegrations.Salesforce.Mapper.ZapierTest do
                  solution: %{}
                })
 
-      assert not String.contains?(body, "Sessões de tour agendadas")
+      refute String.contains?(body, "Sessões de tour agendadas")
       assert String.contains?(body, "Opotunidades não agendadas")
     end
 
