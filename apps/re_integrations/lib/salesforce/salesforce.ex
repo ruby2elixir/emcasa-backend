@@ -90,8 +90,6 @@ defmodule ReIntegrations.Salesforce do
     do: Enum.reduce(errors, multi, &update_failed_opportunity/2)
 
   defp update_failed_opportunity({:error, error, %{id: id}, %{errors: errors}}, multi) do
-    IO.inspect(errors)
-
     JobQueue.enqueue(multi, "update_#{id}", %{
       "type" => "update_opportunity",
       "id" => id,
