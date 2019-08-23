@@ -105,7 +105,7 @@ defmodule ReIntegrations.Salesforce do
         route_unserved_reason:
           errors
           |> Enum.map(fn {field, {msg, _}} ->
-            "#{Oppotinity.Schema.dump(field)}: #{msg}"
+            "#{Opportunity.Schema.dump(field)}: #{msg}"
           end)
           |> List.insert_at(0, "#{error}")
           |> Enum.join("\n")
