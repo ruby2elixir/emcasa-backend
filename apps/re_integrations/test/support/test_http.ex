@@ -101,9 +101,6 @@ defmodule ReIntegrations.TestHTTP do
          """
        }}
 
-  def get(%URI{path: "/simulator"}, [], _opts),
-    do: {:ok, %{body: "{\"cem\":\"10,8%\",\"cet\":\"11,3%\"}"}}
-
   def post(%URI{path: "/priceteller"}, _, [
         {"Content-Type", "application/json"},
         {"X-Api-Key", "mahtoken"}

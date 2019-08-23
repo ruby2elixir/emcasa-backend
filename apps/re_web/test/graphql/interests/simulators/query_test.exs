@@ -32,14 +32,12 @@ defmodule ReWeb.GraphQL.Interests.Simulators.QueryTest do
 
   @uri %URI{
     authority: "www.emcasa.com",
-    fragment: nil,
     host: "www.emcasa.com",
     path: "/simulator",
     port: 80,
     query:
       "account_id=test_account_id&amortizacao=S&calcular_tr=N&data_nascimento=22%2F05%2F1987&data_nascimento_co=&incluir_co=N&juros_anual=10.5000000000&juros_anual_home_equity=21.5000000000&mutuario=PF&prazo=360&renda_liquida=19.000%2C00&renda_liquida_co=&seguradora=itau&somar=S&tarifa_avaliacao=3.300%2C00&tipo_imovel=R&tipo_produto=F&valor_financiavel=278.800%2C00&valor_imovel=340.000%2C00&valor_itbi=2.130%2C00",
-    scheme: "http",
-    userinfo: nil
+    scheme: "http"
   }
 
   setup %{conn: conn} do
