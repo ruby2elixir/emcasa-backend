@@ -1,79 +1,6 @@
 defmodule ReIntegrations.TestHTTP do
   @moduledoc false
 
-  def get(%URI{path: "/jobs/INVALID_JOB_ID"}, _opts),
-    do: {:ok, %{status_code: 404}}
-
-  def get(%URI{path: "/jobs/FINISHED_JOB_ID"}, _opts),
-    do:
-      {:ok,
-       %{
-         status_code: 200,
-         body: """
-           {
-             "status": "finished",
-             "id": "100",
-             "input": {
-               "visits": {
-                 "1": {"notes": "", "customNotes": {"account_id":"0x01", "owner_id":"0x01"}},
-                 "2": {"notes": "", "customNotes": {"account_id":"0x01", "owner_id":"0x01"}}
-               },
-               "fleet": {},
-               "options": {"date": "2019-08-01T20:03:48.347904Z"}
-             },
-             "output": {
-               "unserved": {
-                 "3": "No vehicle available during the specified time windows."
-               },
-               "solution": {
-                  "affb1f63-399a-4d85-9f65-c127994104f6": [
-                    {
-                      "location_id": "depot",
-                      "location_name": "depot",
-                      "arrival_time": "08:00"
-                    },
-                    {
-                      "location_id": "2",
-                      "location_name": "Rua Vergueiro, 3475",
-                      "arrival_time": "08:10",
-                      "finish_time": "08:40"
-                    },
-                    {
-                      "location_id": "1",
-                      "location_name": "R. Francisco Cruz, 345",
-                      "arrival_time": "08:41",
-                      "finish_time": "09:11"
-                    },
-                    {
-                      "break": true,
-                      "location_id": "nowhere",
-                      "arrival_time": "10:00",
-                      "finish_time": "11:00"
-                    }
-                  ]
-               }
-             }
-           }
-         """
-       }}
-
-  def get(%URI{path: "/jobs/PENDING_JOB_ID"}, _opts),
-    do: {:ok, %{status_code: 200, body: "{\"status\": \"pending\", \"id\": \"100\"}"}}
-
-  def get(%URI{path: "/jobs/FAILED_JOB_ID"}, _opts),
-    do:
-      {:ok,
-       %{
-         status_code: 412,
-         body: """
-         {
-           "status": "error",
-           "id": "100",
-           "output": "error message"
-         }
-         """
-       }}
-
   def get(%URI{path: "/api/v1/User/0x01"}, _opts),
     do:
       {:ok,
@@ -115,9 +42,6 @@ defmodule ReIntegrations.TestHTTP do
                "\"sale_price\":575910.45," <>
                "\"sale_price_rounded\":575000.0}"
          }}
-
-  def post(%URI{path: "/v1/vrp-long"}, _body, _opts),
-    do: {:ok, %{body: "{\"job_id\": \"100\"}"}}
 
   def post(%URI{path: "/api/v1/query"}, body, _opts) do
     if String.contains?(body, "FROM Opportunity") do
