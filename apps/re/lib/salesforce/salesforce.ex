@@ -11,7 +11,7 @@ defmodule Re.Salesforce do
   Bairros_de_Interesse__c Valor_M_ximo_para_Compra_2__c Valor_M_ximo_de_Condom_nio__c Portaria_2__c
   Account.Name Owner.Name)
 
-  def get_opportunity_with_with_associations(id) do
+  def get_opportunity_with_associations(id) do
     query = """
     SELECT #{Enum.join(@opportunity_params, ", ")}
     FROM Opportunity
@@ -34,25 +34,18 @@ defmodule Re.Salesforce do
     end
   end
 
-  def flatten_map(object) do
-    object
-    |> Enum.reduce(%{}, fn {key, value}, acc ->
-      case key do
-        "attributes" -> acc
-        _ -> resolve_flatten(acc, key, value)
-      end
-    end)
-  end
+  def flatten_map(object), do: Enum.reduce(object, %{}, &resolve_flatten/2)
 
-  defp resolve_flatten(map, key, value) when is_bitstring(value), do: Map.put(map, key, value)
+  defp resolve_flatten({"attributes", _value}, map), do: map
 
-  defp resolve_flatten(map, key, value) when is_map(value) do
-    value
-    |> Enum.reduce(map, fn {nested_key, nested_value}, acc ->
-      case nested_key do
-        "attributes" -> acc
-        _ -> Map.put(acc, key <> nested_key, nested_value)
-      end
-    end)
+  defp resolve_flatten({key, value}, map) when is_bitstring(value), do: Map.put(map, key, value)
+
+  defp resolve_flatten({key, value}, map) when is_map(value),
+    do: Enum.reduce(value, map, &create_new_key(&1, &2, key))
+
+  defp create_new_key({"attributes", _nested_value}, map, _root_key), do: map
+
+  defp create_new_key({nested_key, nested_value}, map, root_key) do
+    Map.put(map, root_key <> nested_key, nested_value)
   end
 end
