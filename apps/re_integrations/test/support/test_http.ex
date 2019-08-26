@@ -14,20 +14,6 @@ defmodule ReIntegrations.TestHTTP do
          """
        }}
 
-  def get(%URI{path: "/api/v1/Account/0x01"}, _opts),
-    do:
-      {:ok,
-       %{
-         status_code: 200,
-         body: """
-         {
-           "Id": "0x01",
-           "Name": "name",
-           "PersonMobilePhone": ""
-         }
-         """
-       }}
-
   def post(%URI{path: "/priceteller"}, _, [
         {"Content-Type", "application/json"},
         {"X-Api-Key", "mahtoken"}
