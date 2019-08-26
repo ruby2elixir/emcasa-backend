@@ -59,7 +59,7 @@ config :re,
   priceteller_url: "priceteller_url",
   priceteller_token: "mahtoken",
   aliketeller_url: "aliketeller_url",
-  shortlist_service_url: "shortlist_url"
+  selekta_url: "selekta_url"
 
 config :account_kit,
   app_id: "your_dev_app_id",

@@ -70,7 +70,7 @@ config :re,
   priceteller_url: System.get_env("PRICETELLER_URL"),
   priceteller_token: System.get_env("PRICETELLER_TOKEN"),
   aliketeller_url: System.get_env("ALIKETELLER_URL"),
-  shortlist_service_url: System.get_env("SHORTLIST_SERVICE_URL")
+  selekta_url: System.get_env("SELEKTA_URL")
 
 config :re_integrations,
   to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),
