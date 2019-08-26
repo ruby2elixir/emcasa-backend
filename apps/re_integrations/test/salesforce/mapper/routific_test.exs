@@ -5,7 +5,8 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
 
   alias ReIntegrations.{
     Routific,
-    Salesforce.Mapper
+    Salesforce.Mapper,
+    Salesforce.Payload
   }
 
   @calendar_uuid Ecto.UUID.generate()
@@ -30,10 +31,25 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
     }
   }
 
+  @opportunity %Payload.Opportunity{
+    stage: :visit_pending,
+    tour_period: :morning,
+    address: "x",
+    city: "São Paulo"
+  }
+
   setup do
     address = insert(:address)
     insert(:calendar, uuid: @calendar_uuid, address: address)
     :ok
+  end
+
+  describe "build_visit/1" do
+    test "builds visit types from salesforce opportunity" do
+      assert %{
+               type: ["sao-paulo"]
+             } = Mapper.Routific.build_visit(@opportunity)
+    end
   end
 
   describe "build_event/1" do

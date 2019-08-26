@@ -11,7 +11,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
 
   def build(input, opts) do
     with {:ok, visits} <- build_visits(input),
-         {:ok, fleet} <- build_fleet(input) do
+         {:ok, fleet} <- build_fleet() do
       {:ok, %__MODULE__{visits: visits, fleet: fleet, options: build_options(opts)}}
     end
   end
@@ -34,7 +34,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
 
   defp build_visit(%{duration: _duration, address: address} = visit) do
     visit
-    |> Map.take([:duration, :start, :end, :notes])
+    |> Map.take([:duration, :start, :end, :notes, :type])
     |> Map.update(:start, Routific.shift_start(), &to_time_string/1)
     |> Map.update(:end, Routific.shift_end(), &to_time_string/1)
     |> Map.put(:customNotes, Map.get(visit, :custom_notes, %{}))
@@ -46,11 +46,8 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
 
   defp build_visit(_visit), do: :error
 
-  defp build_fleet(visits) do
-    visits
-    |> get_neighborhoods()
-    |> get_calendars()
-    |> case do
+  defp build_fleet do
+    case get_calendars() do
       calendars when length(calendars) !== 0 ->
         {:ok,
          Enum.reduce(calendars, %{}, fn calendar, acc ->
@@ -59,6 +56,7 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
              start_location: build_depot(calendar),
              shift_start: to_time_string(calendar.shift_start),
              shift_end: to_time_string(calendar.shift_end),
+             type: calendar.types,
              breaks: get_breaks()
            })
          end)}
@@ -68,15 +66,8 @@ defmodule ReIntegrations.Routific.Payload.Outbound do
     end
   end
 
-  defp get_neighborhoods(visits) do
-    visits
-    |> Enum.map(&Map.get(&1, :neighborhood))
-    |> Enum.uniq()
-  end
-
-  defp get_calendars(neighborhoods) do
+  defp get_calendars do
     Calendar
-    |> Calendar.Queries.by_district_names(neighborhoods)
     |> Calendar.Queries.preload_relations([:address])
     |> Re.Repo.all()
   end

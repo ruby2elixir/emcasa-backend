@@ -8,7 +8,7 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
     "AccountId" => "0x02",
     "OwnerId" => "0x02",
     "Dados_do_Imovel_para_Venda__c" => "address string",
-    "Bairro__c" => "neighborhood",
+    "Cidade__c" => "São Paulo",
     "Horario_Fixo_para_o_Tour__c" => "20:00:00",
     "Periodo_Disponibilidade_Tour__c" => "Manhã",
     "StageName" => "Confirmação Visita"
@@ -20,7 +20,7 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
     owner_id: "0x02",
     stage: :visit_pending,
     address: "address string",
-    neighborhood: "neighborhood",
+    city: "São Paulo",
     tour_strict_time: ~T[20:00:00],
     tour_period: :morning
   }
@@ -34,7 +34,6 @@ defmodule ReIntegrations.Salesforce.Payload.OpportunityTest do
       assert opportunity.account_id == @payload["AccountId"]
       assert opportunity.owner_id == @payload["OwnerId"]
       assert opportunity.address == @payload["Dados_do_Imovel_para_Venda__c"]
-      assert opportunity.neighborhood == @payload["Bairro__c"]
       assert opportunity.tour_strict_time == ~T[20:00:00Z]
       assert opportunity.tour_period == :morning
     end

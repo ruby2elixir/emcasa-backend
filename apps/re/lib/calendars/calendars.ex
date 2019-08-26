@@ -36,13 +36,6 @@ defmodule Re.Calendars do
     |> Repo.insert()
   end
 
-  def upsert_districts(calendar, districts) do
-    calendar
-    |> Repo.preload([:districts])
-    |> Calendar.changeset_update_districts(districts)
-    |> Repo.update()
-  end
-
   def schedule_tour(params) do
     option = get_one_datetime(params)
 
