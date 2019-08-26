@@ -3,10 +3,7 @@ defmodule Re.Calendars.Calendar.Queries do
   Module for grouping developments queries
   """
 
-  alias Re.{
-    Calendars.Calendar,
-    Slugs
-  }
+  alias Re.Calendars.Calendar
 
   import Ecto.Query
 
