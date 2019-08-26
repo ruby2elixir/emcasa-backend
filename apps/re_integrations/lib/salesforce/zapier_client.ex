@@ -7,7 +7,10 @@ defmodule ReIntegrations.Salesforce.ZapierClient do
   @url Application.get_env(:re_integrations, :zapier_schedule_visits_url, "")
 
   def post(%{body: _} = payload),
-    do: @url |> URI.parse() |> http_client().post(Jason.encode!(payload), [])
+    do:
+      @url
+      |> URI.parse()
+      |> http_client().post(Jason.encode!(payload), [])
 
   defp http_client, do: Mockery.Macro.mockable(HTTPoison)
 end

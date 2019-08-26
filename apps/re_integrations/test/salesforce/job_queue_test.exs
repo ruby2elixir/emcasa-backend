@@ -112,7 +112,7 @@ defmodule ReIntegrations.Salesforce.JobQueueTest do
       }
 
       zapier_body =
-        ~s({"body":"Sessões de tour agendadas para 01/08:\\n**:\\n• [</2/view|2>] 08:10 - 08:40 | Rua Vergueiro, 3475\\n• [</1/view|1>] 08:41 - 09:11 | R. Francisco Cruz, 345\\n\\nOpotunidades não agendadas:\\n[</3/view\\">|3>] No vehicle available during the specified time windows."})
+        ~s({"body":"Sessões de tour agendadas para 01/08:\\n**:\\n• [</2/view|2>] 08:10 - 08:40 | Rua Vergueiro, 3475\\n• [</1/view|1>] 08:41 - 09:11 | R. Francisco Cruz, 345\\n\\nOpotunidades não agendadas:\\n• [</3/view|3>] No vehicle available during the specified time windows."})
 
       assert_called(HTTPoison, :get, [
         %URI{path: "/jobs/FINISHED_JOB_ID"},

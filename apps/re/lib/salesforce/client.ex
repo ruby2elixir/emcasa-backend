@@ -15,6 +15,8 @@ defmodule Re.Salesforce.Client do
 
   def get(id, :Opportunity), do: get("/api/v1/Opportunity/" <> id)
 
+  def query(soql), do: post(%{soql: soql}, "/api/v1/query")
+
   defp build_uri(path), do: URI.parse(@api_url <> path)
 
   defp post(body, path),

@@ -19,8 +19,7 @@ defmodule ReIntegrations.RoutificTest do
 
   setup do
     address = insert(:address)
-    district = insert(:district, name: "Vila Mariana", name_slug: "vila-mariana")
-    calendar = insert(:calendar, address: address, districts: [district])
+    calendar = insert(:calendar, address: address)
 
     payload =
       ~s({) <>
@@ -41,7 +40,8 @@ defmodule ReIntegrations.RoutificTest do
         ~s("lat":#{address.lat},) <>
         ~s("lng":#{address.lng},) <>
         ~s("name":"#{address.street}, #{address.street_number}") <>
-        ~s(}) <>
+        ~s(},) <>
+        ~s("type":[]) <>
         ~s(}) <>
         ~s(},) <>
         ~s("options":{},) <>

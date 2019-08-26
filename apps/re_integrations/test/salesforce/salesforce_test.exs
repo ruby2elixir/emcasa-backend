@@ -3,7 +3,6 @@ defmodule ReIntegrations.SalesforceTest do
   use Mockery
 
   import Re.CustomAssertion
-
   import Re.Factory
 
   alias ReIntegrations.{
@@ -21,42 +20,70 @@ defmodule ReIntegrations.SalesforceTest do
 
   setup do
     address = insert(:address)
-    district = insert(:district, name: "Vila Mariana", name_slug: "vila-mariana")
-    insert(:calendar, address: address, districts: [district])
+    insert(:calendar, address: address)
     :ok
   end
 
-  @response {:ok,
-             %{
-               status_code: 200,
-               body: """
-               {
-                 "records": [
-                   {
-                     "Id": "0x01",
-                     "AccountId": "0x01",
-                     "OwnerId": "0x01",
-                     "Bairro__c": "Vila Mariana",
-                     "Dados_do_Imovel_para_Venda__c": "address 123",
-                     "Periodo_Disponibilidade_Tour__c": "Manhã"
-                   },
-                   {
-                     "Id": "0x02",
-                     "AccountId": "0x01",
-                     "OwnerId": "0x01",
-                     "Bairro__c": "Vila Mariana",
-                     "Dados_do_Imovel_para_Venda__c": "address 123",
-                     "Data_Fixa_para_o_Tour__c": "2019-08-26",
-                     "Horario_Fixo_para_o_Tour__c": "20:25:00",
-                     "Periodo_Disponibilidade_Tour__c": "Fixo"
-                   }
-                 ]
-               }
-               """
-             }}
+  @valid_response {:ok,
+                   %{
+                     status_code: 200,
+                     body: """
+                     {
+                       "records": [
+                         {
+                           "Id": "0x01",
+                           "AccountId": "0x01",
+                           "OwnerId": "0x01",
+                           "Cidade__c": "São Paulo",
+                           "Dados_do_Imovel_para_Venda__c": "address 123",
+                           "Periodo_Disponibilidade_Tour__c": "Manhã"
+                         },
+                         {
+                           "Id": "0x02",
+                           "AccountId": "0x01",
+                           "OwnerId": "0x01",
+                           "Cidade__c": "São Paulo",
+                           "Dados_do_Imovel_para_Venda__c": "address 123",
+                           "Data_Fixa_para_o_Tour__c": "2019-08-26",
+                           "Horario_Fixo_para_o_Tour__c": "20:25:00",
+                           "Periodo_Disponibilidade_Tour__c": "Fixo"
+                         }
+                       ]
+                     }
+                     """
+                   }}
+
+  @invalid_response {:ok,
+                     %{
+                       status_code: 200,
+                       body: """
+                           {
+                             "records": [
+                               {
+                                 "Id": "0x01",
+                                 "AccountId": "0x01",
+                                 "OwnerId": "0x01",
+                                 "Cidade__c": "São Paulo",
+                                 "Dados_do_Imovel_para_Venda__c": "address 123",
+                                 "Periodo_Disponibilidade_Tour__c": "y"
+                               },
+                               {
+                                 "Id": "0x02",
+                                 "AccountId": null,
+                                 "OwnerId": "0x01",
+                                 "Cidade__c": "São Paulo",
+                                 "Dados_do_Imovel_para_Venda__c": "address 123",
+                                 "Data_Fixa_para_o_Tour__c": "2019-07-29",
+                                 "Horario_Fixo_para_o_Tour__c": "20:25:00",
+                                 "Periodo_Disponibilidade_Tour__c": "Manhã"
+                               }
+                             ]
+                           }
+                       """
+                     }}
 
   @soql """
-  SELECT Id, AccountId, OwnerId, StageName, Dados_do_Imovel_para_Venda__c, Bairro__c, Comentarios_do_Agendamento__c, Data_Fixa_para_o_Tour__c, Horario_Fixo_para_o_Tour__c, Periodo_Disponibilidade_Tour__c, Motivo_do_nao_agendamento__c, Link_da_rota__c
+  SELECT Id, AccountId, OwnerId, StageName, Dados_do_Imovel_para_Venda__c, Cidade__c, Comentarios_do_Agendamento__c, Data_Fixa_para_o_Tour__c, Horario_Fixo_para_o_Tour__c, Periodo_Disponibilidade_Tour__c, Motivo_do_nao_agendamento__c, Link_da_rota__c
   FROM Opportunity
   WHERE
     StageName = 'Confirmação Visita' AND
@@ -69,11 +96,11 @@ defmodule ReIntegrations.SalesforceTest do
   describe "schedule_tours/1" do
     test "creates a new job to monitor routific request" do
       mock(HTTPoison, [post: 3], fn
-        %URI{path: "/api/v1/query"}, _, _ -> @response
+        %URI{path: "/api/v1/query"}, _, _ -> @valid_response
         %URI{path: "/v1/vrp-long"}, _, _ -> {:ok, %{body: ~s({"job_id": "100"})}}
       end)
 
-      assert {:ok, _} = Salesforce.schedule_visits(date: ~N[2019-08-26 00:00:00])
+      assert {:ok, response} = Salesforce.schedule_visits(date: ~N[2019-08-26 00:00:00])
 
       body = Jason.encode!(%{soql: @soql})
 
@@ -84,6 +111,13 @@ defmodule ReIntegrations.SalesforceTest do
         ^body,
         [{"Authorization", ""}, {"Content-Type", "application/json"}]
       ])
+    end
+
+    test "updates opportunities with invalid input" do
+      mock(HTTPoison, :post, @invalid_response)
+
+      assert {:ok, _} = Salesforce.schedule_visits(date: ~N[2019-07-29 20:25:00])
+      assert_enqueued_job(Repo.all(Salesforce.JobQueue), "update_opportunity", 2)
     end
   end
 
