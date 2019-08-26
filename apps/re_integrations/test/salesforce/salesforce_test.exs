@@ -46,7 +46,7 @@ defmodule ReIntegrations.SalesforceTest do
                      "Id": "0x01",
                      "AccountId": "0x01",
                      "OwnerId": "0x01",
-                     "Bairro__c": "Vila Mariana",
+                     "Cidade__c": "São Paulo",
                      "Dados_do_Imovel_para_Venda__c": "address 123",
                      "Periodo_Disponibilidade_Tour__c": "y"
                    },
@@ -54,7 +54,7 @@ defmodule ReIntegrations.SalesforceTest do
                      "Id": "0x02",
                      "AccountId": null,
                      "OwnerId": "0x01",
-                     "Bairro__c": "Vila Mariana",
+                     "Cidade__c": "São Paulo",
                      "Dados_do_Imovel_para_Venda__c": "address 123",
                      "Data_Fixa_para_o_Tour__c": "2019-07-29",
                      "Horario_Fixo_para_o_Tour__c": "20:25:00",

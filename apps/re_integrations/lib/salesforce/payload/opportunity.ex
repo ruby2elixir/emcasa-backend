@@ -31,7 +31,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     owner_id: "OwnerId",
     stage: "StageName",
     address: "Dados_do_Imovel_para_Venda__c",
-    neighborhood: "Bairro__c",
+    city: "Cidade__c",
     notes: "Comentarios_do_Agendamento__c",
     tour_strict_date: "Data_Fixa_para_o_Tour__c",
     tour_strict_time: "Horario_Fixo_para_o_Tour__c",
@@ -44,7 +44,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     field :account_id, :string
     field :owner_id, :string
     field :address, :string
-    field :neighborhood, :string
+    field :city, :string
     field :notes, :string
     field :tour_strict_date, :date
     field :tour_strict_time, :time
@@ -57,7 +57,7 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
 
   @params ~w(id tour_strict_date tour_strict_time notes route_unserved_reason route_url route_id stage)a
 
-  @required ~w(account_id owner_id address neighborhood tour_period)a
+  @required ~w(account_id owner_id address city tour_period)a
 
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 40)
   @tour_visit_max_lateness Application.get_env(:re_integrations, :tour_visit_max_lateness, 10)
