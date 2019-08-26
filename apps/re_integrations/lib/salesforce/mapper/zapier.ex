@@ -45,7 +45,7 @@ defmodule ReIntegrations.Salesforce.Mapper.Zapier do
     do:
       unserved
       |> Enum.map(fn {id, reason} ->
-        "[<#{opportunity_url(id)}\">|#{id}>] #{reason}"
+        "• [<#{opportunity_url(id)}|#{id}>] #{reason}"
       end)
       |> Enum.join("\n")
 
