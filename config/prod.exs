@@ -98,7 +98,9 @@ config :re_integrations,
       value: System.get_env("GOOGLE_CALENDAR_ACL_OWNER")
     }
   },
-  salesforce_seller_lead_record_id: System.get_env("SALESFORCE_SELLER_LEAD_RECORD_ID")
+  salesforce_seller_lead_record_id: System.get_env("SALESFORCE_SELLER_LEAD_RECORD_ID"),
+  zapier_schedule_visits_url: System.get_env("ZAPIER_SCHEDULE_VISITS_URL"),
+  salesforce_opportunity_url: System.get_env("SALESFORCE_OPPORTUNITY_URL")
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),

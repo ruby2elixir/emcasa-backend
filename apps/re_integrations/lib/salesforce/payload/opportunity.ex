@@ -55,45 +55,42 @@ defmodule ReIntegrations.Salesforce.Payload.Opportunity do
     field :route_id, :string, virtual: true
   end
 
-  @params ~w(id account_id owner_id address neighborhood tour_strict_date tour_strict_time
-             tour_period stage notes route_unserved_reason route_url route_id)a
+  @params ~w(id tour_strict_date tour_strict_time notes route_unserved_reason route_url route_id stage)a
+
+  @required ~w(account_id owner_id address neighborhood tour_period)a
 
   @tour_visit_duration Application.get_env(:re_integrations, :tour_visit_duration, 40)
   @tour_visit_max_lateness Application.get_env(:re_integrations, :tour_visit_max_lateness, 10)
   @routific_job_url Application.get_env(:re_integrations, :routific_job_url, "")
 
-  def build_all(list) do
-    results = Enum.map(list, &with({:ok, value} <- build(&1), do: value))
-
-    with nil <- Enum.find(results, nil, &(not is_ok(&1))), do: {:ok, results}
-  end
-
-  defp is_ok({:error, _}), do: false
-  defp is_ok({:error, _, _, _, _}), do: false
-  defp is_ok(_), do: true
-
   def build(payload) do
     payload
     |> Map.take(Schema.__valid_values__())
     |> Enum.into(%{}, &build_field/1)
-    |> validate()
+    |> validate(:get)
   end
 
   defp build_field({field, value}),
     do: with({:ok, key} <- Schema.cast(field), do: {key, value})
 
-  def validate(params) do
+  def validate(params, method) do
     %__MODULE__{}
-    |> changeset(params)
+    |> changeset(params, method)
     |> case do
       %{valid?: true} = changeset -> {:ok, apply_changes(changeset)}
       changeset -> {:error, :invalid_input, params, changeset}
     end
   end
 
-  defp changeset(struct, params) do
+  defp changeset(struct, params, :get) do
     struct
-    |> cast(params, @params)
+    |> cast(params, @params ++ @required)
+    |> validate_required(@required)
+  end
+
+  defp changeset(struct, params, :put) do
+    struct
+    |> cast(params, @params ++ @required)
     |> put_route_url()
   end
 
