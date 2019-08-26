@@ -5,6 +5,8 @@ defmodule Re.Repo.Migrations.CreateShortlists do
     create table(:shortlists, primary_key: false) do
       add :uuid, :uuid, primary_key: true
       add :opportunity_id, :string, null: false
+      add :account_name, :string, null: false
+      add :owner_name, :string, null: false
 
       timestamps()
     end

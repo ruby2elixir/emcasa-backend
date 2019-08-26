@@ -5,7 +5,11 @@ defmodule Re.ShortlistTest do
 
   describe "changeset/2" do
     test "changeset with valid attributes" do
-      attrs = %{opportunity_id: "0x01"}
+      attrs = %{
+        opportunity_id: "0x01",
+        account_name: "Antônio",
+        owner_name: "Nunes"
+      }
 
       changeset = Shortlist.changeset(%Shortlist{}, attrs)
 
@@ -18,6 +22,12 @@ defmodule Re.ShortlistTest do
       refute changeset.valid?
 
       assert Keyword.get(changeset.errors, :opportunity_id) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :account_name) ==
+               {"can't be blank", [validation: :required]}
+
+      assert Keyword.get(changeset.errors, :owner_name) ==
                {"can't be blank", [validation: :required]}
     end
   end

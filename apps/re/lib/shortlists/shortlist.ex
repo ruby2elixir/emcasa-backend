@@ -10,6 +10,8 @@ defmodule Re.Shortlist do
 
   schema "shortlists" do
     field :opportunity_id, :string
+    field :account_name, :string
+    field :owner_name, :string
 
     many_to_many :listings, Re.Listing,
       join_through: "listings_shortlists",
@@ -19,7 +21,7 @@ defmodule Re.Shortlist do
     timestamps()
   end
 
-  @required ~w(opportunity_id)a
+  @required ~w(opportunity_id account_name owner_name)a
 
   def changeset(struct, params \\ %{}) do
     struct
