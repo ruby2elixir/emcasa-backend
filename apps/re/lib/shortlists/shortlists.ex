@@ -23,7 +23,7 @@ defmodule Re.Shortlists do
     with {:ok, opportunity} <- Salesforce.get_opportunity(opportunity_id),
          {:ok, params} <- create_params(opportunity),
          {:ok, listing_uuids} <- get_shortlist(params) do
-      get_active_listings_by_uuid(listing_uuids)
+      {:ok, get_active_listings_by_uuid(listing_uuids)}
     else
       _error -> {:error, :invalid_opportunity}
     end
