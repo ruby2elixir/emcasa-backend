@@ -58,7 +58,8 @@ config :re,
   zapier_create_salesforce_lead_url: "SALESFORCE_ZAPIER_URL",
   priceteller_url: "priceteller_url",
   priceteller_token: "mahtoken",
-  aliketeller_url: "aliketeller_url"
+  aliketeller_url: "aliketeller_url",
+  shortlist_service_url: "shortlist_url"
 
 config :account_kit,
   app_id: "your_dev_app_id",
