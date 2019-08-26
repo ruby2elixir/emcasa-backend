@@ -25,4 +25,6 @@ defmodule Re.Salesforce.Client do
 
   defp get(path),
     do: path |> build_uri |> @http_client.get(@api_headers)
+
+  def query(soql), do: post(%{soql: soql}, "/api/v1/query")
 end
