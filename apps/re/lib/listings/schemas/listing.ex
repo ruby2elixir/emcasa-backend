@@ -102,6 +102,9 @@ defmodule Re.Listing do
   @price_lower_limit 200_000
   @price_upper_limit 100_000_000
 
+  def price_lower_limit, do: @price_lower_limit
+  def price_upper_limit, do: @price_upper_limit
+
   def changeset(struct, params) do
     struct
     |> cast(params, @attributes)
