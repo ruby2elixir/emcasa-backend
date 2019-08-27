@@ -25,8 +25,8 @@ defmodule Re.ShortlistsTest do
     test "create shortlist if doesn't exists" do
       %{uuid: listing_uuid} = listing = insert(:listing)
 
-      mock_post(@http_client, "{}")
-      mock_get(HTTPoison, "[\"#{listing_uuid}\"]")
+      mock_request(HTTPoison, :post, "{}")
+      mock_request(HTTPoison, :get, "[\"#{listing_uuid}\"]")
 
       assert {:ok, fetched_shortlist} = Shortlists.get_or_create("0x01")
       assert fetched_shortlist.uuid
@@ -35,22 +35,10 @@ defmodule Re.ShortlistsTest do
     end
   end
 
-  def mock_get(client, body) do
+  def mock_request(client, type, body) do
     mock(
       client,
-      :get,
-      {:ok,
-       %{
-         status_code: 200,
-         body: body
-       }}
-    )
-  end
-
-  def mock_post(client, body) do
-    mock(
-      client,
-      :post,
+      type,
       {:ok,
        %{
          status_code: 200,
