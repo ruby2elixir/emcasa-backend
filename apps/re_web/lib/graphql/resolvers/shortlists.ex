@@ -6,7 +6,7 @@ defmodule ReWeb.Resolvers.Shortlists do
 
   def index(%{opportunity_id: opportunity_id}, %{context: %{current_user: current_user}}) do
     case Bodyguard.permit(Shortlists, :shortlist_listings, current_user, %{}) do
-      :ok -> {:ok, Shortlists.generate_shortlist_from_salesforce_opportunity(opportunity_id)}
+      :ok -> Shortlists.generate_shortlist_from_salesforce_opportunity(opportunity_id)
       error -> error
     end
   end

@@ -25,7 +25,7 @@ defmodule ReWeb.GraphQL.Shortlists.QueryTest do
   test "should return listings from shortlist for admin", %{admin_conn: conn} do
     mock(
       @http_client,
-      :get,
+      :post,
       {:ok,
        %{
          status_code: 200,

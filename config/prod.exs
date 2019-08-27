@@ -69,7 +69,8 @@ config :re,
   zapier_create_salesforce_seller_lead_url: System.get_env("SALESFORCE_ZAPIER_SELLER_URL"),
   priceteller_url: System.get_env("PRICETELLER_URL"),
   priceteller_token: System.get_env("PRICETELLER_TOKEN"),
-  aliketeller_url: System.get_env("ALIKETELLER_URL")
+  aliketeller_url: System.get_env("ALIKETELLER_URL"),
+  selekta_url: System.get_env("SELEKTA_URL")
 
 config :re_integrations,
   to: System.get_env("INTEREST_NOTIFICATION_EMAILS"),
@@ -98,7 +99,9 @@ config :re_integrations,
       value: System.get_env("GOOGLE_CALENDAR_ACL_OWNER")
     }
   },
-  salesforce_seller_lead_record_id: System.get_env("SALESFORCE_SELLER_LEAD_RECORD_ID")
+  salesforce_seller_lead_record_id: System.get_env("SALESFORCE_SELLER_LEAD_RECORD_ID"),
+  zapier_schedule_visits_url: System.get_env("ZAPIER_SCHEDULE_VISITS_URL"),
+  salesforce_opportunity_url: System.get_env("SALESFORCE_OPPORTUNITY_URL")
 
 config :re_integrations, ReIntegrations.Search.Cluster,
   url: System.get_env("ELASTICSEARCH_URL"),

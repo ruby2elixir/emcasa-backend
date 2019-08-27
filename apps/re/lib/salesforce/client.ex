@@ -20,10 +20,12 @@ defmodule Re.Salesforce.Client do
   defp build_uri(path), do: URI.parse(@api_url <> path)
 
   defp post(body, path),
-    do: path |> build_uri |> @http_client.post(Jason.encode!(body), @api_headers)
+    do: path |> build_uri |> http_client().post(Jason.encode!(body), @api_headers)
 
   defp patch(body, path),
-    do: path |> build_uri |> @http_client.patch(Jason.encode!(body), @api_headers)
+    do: path |> build_uri |> http_client().patch(Jason.encode!(body), @api_headers)
+
+  def query(soql), do: post(%{soql: soql}, "/api/v1/query")
 
   defp get(path),
     do: path |> build_uri |> http_client().get(@api_headers)

@@ -1,6 +1,8 @@
 defmodule ReIntegrations.SalesforceTest do
   use ReIntegrations.ModelCase
 
+  import Mockery
+
   import Re.CustomAssertion
 
   import Re.Factory
@@ -20,8 +22,7 @@ defmodule ReIntegrations.SalesforceTest do
 
   setup do
     address = insert(:address)
-    district = insert(:district, name: "Vila Mariana", name_slug: "vila-mariana")
-    insert(:calendar, address: address, districts: [district])
+    insert(:calendar, address: address)
     :ok
   end
 
@@ -29,6 +30,44 @@ defmodule ReIntegrations.SalesforceTest do
     test "creates a new job to monitor routific request" do
       assert {:ok, _} = Salesforce.schedule_visits(date: Timex.now())
       assert_enqueued_job(Repo.all(Salesforce.JobQueue), "monitor_routific_job")
+    end
+
+    test "updates opportunities with invalid input" do
+      mock(
+        ReIntegrations.TestHTTP,
+        :post,
+        {:ok,
+         %{
+           status_code: 200,
+           body: """
+               {
+                 "records": [
+                   {
+                     "Id": "0x01",
+                     "AccountId": "0x01",
+                     "OwnerId": "0x01",
+                     "Cidade__c": "São Paulo",
+                     "Dados_do_Imovel_para_Venda__c": "address 123",
+                     "Periodo_Disponibilidade_Tour__c": "y"
+                   },
+                   {
+                     "Id": "0x02",
+                     "AccountId": null,
+                     "OwnerId": "0x01",
+                     "Cidade__c": "São Paulo",
+                     "Dados_do_Imovel_para_Venda__c": "address 123",
+                     "Data_Fixa_para_o_Tour__c": "2019-07-29",
+                     "Horario_Fixo_para_o_Tour__c": "20:25:00",
+                     "Periodo_Disponibilidade_Tour__c": "Manhã"
+                   }
+                 ]
+               }
+           """
+         }}
+      )
+
+      assert {:ok, _} = Salesforce.schedule_visits(date: Timex.now())
+      assert_enqueued_job(Repo.all(Salesforce.JobQueue), "update_opportunity", 2)
     end
   end
 
