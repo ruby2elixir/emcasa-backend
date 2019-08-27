@@ -90,7 +90,7 @@ config :re, Re.AlikeTeller.Scheduler,
 config :re_integrations, ReIntegrations.Salesforce.Scheduler,
   debug_logging: false,
   jobs: [
-    {"@daily", fn -> Re.Salesforce.schedule_visits(date: Timex.now() |> Timex.shift(days: 1)) end}
+    {"1 0 * * *", {ReIntegrations.Salesforce.Scheduler, :schedule_daily_visits, []}}
   ]
 
 import_config "#{Mix.env()}.exs"
