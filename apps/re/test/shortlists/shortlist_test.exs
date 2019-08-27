@@ -23,12 +23,6 @@ defmodule Re.ShortlistTest do
 
       assert Keyword.get(changeset.errors, :opportunity_id) ==
                {"can't be blank", [validation: :required]}
-
-      assert Keyword.get(changeset.errors, :account_name) ==
-               {"can't be blank", [validation: :required]}
-
-      assert Keyword.get(changeset.errors, :owner_name) ==
-               {"can't be blank", [validation: :required]}
     end
   end
 end

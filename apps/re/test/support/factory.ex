@@ -384,7 +384,9 @@ defmodule Re.Factory do
   def shortlist_factory do
     %Re.Shortlist{
       uuid: UUID.uuid4(),
-      opportunity_id: "0x01"
+      opportunity_id: "0x01",
+      account_name: Name.name(),
+      owner_name: Name.name()
     }
   end
 
