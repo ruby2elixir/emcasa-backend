@@ -74,11 +74,6 @@ defmodule Re.Listing do
       join_keys: [listing_uuid: :uuid, tag_uuid: :uuid],
       on_replace: :delete
 
-    many_to_many :listings, Re.Shortlist,
-      join_through: "listings_shortlists",
-      join_keys: [shortlist_uuid: :uuid, listing_uuid: :uuid],
-      on_replace: :delete
-
     timestamps()
   end
 
