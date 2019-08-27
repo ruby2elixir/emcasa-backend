@@ -3,6 +3,8 @@ defmodule Re.Salesforce.Client do
   Client to handle requests to an emcasa/salesforce api
   """
 
+  require Mockery.Macro
+
   @api_key Application.get_env(:re_integrations, :salesforce_api_key, "")
   @api_url Application.get_env(:re_integrations, :salesforce_url, "")
   @http_client Application.get_env(:re, :http, HTTPoison)
@@ -18,13 +20,15 @@ defmodule Re.Salesforce.Client do
   defp build_uri(path), do: URI.parse(@api_url <> path)
 
   defp post(body, path),
-    do: path |> build_uri |> @http_client.post(Jason.encode!(body), @api_headers)
+    do: path |> build_uri |> http_client().post(Jason.encode!(body), @api_headers)
 
   defp patch(body, path),
-    do: path |> build_uri |> @http_client.patch(Jason.encode!(body), @api_headers)
-
-  defp get(path),
-    do: path |> build_uri |> @http_client.get(@api_headers)
+    do: path |> build_uri |> http_client().patch(Jason.encode!(body), @api_headers)
 
   def query(soql), do: post(%{soql: soql}, "/api/v1/query")
+
+  defp get(path),
+    do: path |> build_uri |> http_client().get(@api_headers)
+
+  defp http_client, do: Mockery.Macro.mockable(@http_client)
 end

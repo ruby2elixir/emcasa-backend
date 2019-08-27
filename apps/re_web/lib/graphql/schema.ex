@@ -20,6 +20,7 @@ defmodule ReWeb.Schema do
   import_types ReWeb.Types.Typology
   import_types ReWeb.Types.Custom.UUID
   import_types ReWeb.Types.Utm
+  import_types ReWeb.Types.Shortlist
   import_types ReWeb.Types.DuplicityChecker
   import_types Absinthe.Type.Custom
 
@@ -47,6 +48,7 @@ defmodule ReWeb.Schema do
     import_fields(:calendar_queries)
     import_fields(:development_queries)
     import_fields(:tag_queries)
+    import_fields(:shortlist_queries)
     import_fields(:duplicity_checking_queries)
   end
 
