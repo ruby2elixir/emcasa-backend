@@ -1,5 +1,6 @@
 defmodule ReIntegrations.OruloTest do
   @moduledoc false
+  use Mockery
 
   import Re.CustomAssertion
   import ReIntegrations.Factory
@@ -28,7 +29,17 @@ defmodule ReIntegrations.OruloTest do
   end
 
   describe "insert_building_payload/2" do
+    @buildings_uri %URI{
+      authority: "www.emcasa.com",
+      host: "www.emcasa.com",
+      path: "/buildings/666",
+      port: 80,
+      scheme: "http"
+    }
+
     test "create new building" do
+      mock(HTTPoison, :get, {:ok, %{body: "{\"test\": \"building_payload\"}"}})
+
       assert {:ok, %{insert_building_payload: inserted_building}} =
                Orulo.import_development(Multi.new(), 666)
 
@@ -36,11 +47,26 @@ defmodule ReIntegrations.OruloTest do
       assert inserted_building.external_id == 666
       assert inserted_building.payload == %{"test" => "building_payload"}
       assert_enqueued_job(Repo.all(JobQueue), "parse_building_into_development")
+
+      uri = @buildings_uri
+
+      assert_called(HTTPoison, :get, [^uri, [{"Authorization", "Bearer "}]])
     end
   end
 
   describe "import_images/2" do
+    @images_uri %URI{
+      authority: "www.emcasa.com",
+      host: "www.emcasa.com",
+      path: "/buildings/666/images",
+      port: 80,
+      scheme: "http",
+      query: "dimensions[]=1024x1024"
+    }
+
     test "create new image payload" do
+      mock(HTTPoison, :get, {:ok, %{body: "{\"test\": \"images_payload\"}"}})
+
       assert {:ok, %{insert_images_payload: images_payload}} =
                Orulo.import_images(Multi.new(), 666)
 
@@ -48,11 +74,25 @@ defmodule ReIntegrations.OruloTest do
       assert images_payload.external_id == 666
       assert images_payload.payload == %{"test" => "images_payload"}
       assert_enqueued_job(Repo.all(JobQueue), "parse_images_payloads_into_images")
+
+      uri = @images_uri
+
+      assert_called(HTTPoison, :get, [^uri, [{"Authorization", "Bearer "}]])
     end
   end
 
   describe "import_typologies/2" do
+    @typologies_uri %URI{
+      authority: "www.emcasa.com",
+      host: "www.emcasa.com",
+      path: "/buildings/666/typologies",
+      port: 80,
+      scheme: "http"
+    }
+
     test "create new typology payload" do
+      mock(HTTPoison, :get, {:ok, %{body: "{\"test\": \"typologies_payload\"}"}})
+
       assert {:ok, %{insert_typologies_payload: payload}} =
                Orulo.import_typologies(Multi.new(), "666")
 
@@ -60,11 +100,32 @@ defmodule ReIntegrations.OruloTest do
       assert payload.building_id == "666"
       assert payload.payload == %{"test" => "typologies_payload"}
       assert_enqueued_job(Repo.all(JobQueue), "fetch_units")
+
+      uri = @typologies_uri
+
+      assert_called(HTTPoison, :get, [^uri, [{"Authorization", "Bearer "}]])
     end
   end
 
   describe "get_units/2" do
+    @unit_1_uri %URI{
+      authority: "www.emcasa.com",
+      host: "www.emcasa.com",
+      path: "/buildings/1/typologies/1/units",
+      port: 80,
+      scheme: "http"
+    }
+
+    @unit_2_uri %URI{
+      authority: "www.emcasa.com",
+      host: "www.emcasa.com",
+      path: "/buildings/1/typologies/2/units",
+      port: 80,
+      scheme: "http"
+    }
+
     test "get units for all typologies" do
+      mock(HTTPoison, :get, {:ok, %{body: "{\"units\": []}"}})
       building_id = "1"
       typology_ids = ["1", "2"]
 
@@ -73,6 +134,12 @@ defmodule ReIntegrations.OruloTest do
                "2" => {:ok, %{body: "{\"units\": []}"}}
              } ==
                Orulo.get_units(building_id, typology_ids)
+
+      uri1 = @unit_1_uri
+      uri2 = @unit_2_uri
+
+      assert_called(HTTPoison, :get, [^uri1, [{"Authorization", "Bearer "}]])
+      assert_called(HTTPoison, :get, [^uri2, [{"Authorization", "Bearer "}]])
     end
   end
 

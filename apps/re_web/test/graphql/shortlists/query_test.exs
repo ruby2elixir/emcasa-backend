@@ -20,11 +20,9 @@ defmodule ReWeb.GraphQL.Shortlists.QueryTest do
      user_conn: login_as(conn, user_user)}
   end
 
-  @http_client Application.get_env(:re, :http)
-
   test "should return listings from shortlist for admin", %{admin_conn: conn} do
     mock(
-      @http_client,
+      HTTPoison,
       :post,
       {:ok,
        %{

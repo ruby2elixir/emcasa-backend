@@ -2,6 +2,7 @@ defmodule ReIntegrations.Routific.Client do
   @moduledoc """
   Client to handle vehicle routing through routific.
   """
+  require Mockery.Macro
 
   alias ReIntegrations.{
     Routific.Payload
@@ -9,7 +10,6 @@ defmodule ReIntegrations.Routific.Client do
 
   @api_key Application.get_env(:re_integrations, :routific_api_key, "")
   @api_url Application.get_env(:re_integrations, :routific_url, "")
-  @http_client Application.get_env(:re_integrations, :http, HTTPoison)
 
   @api_headers [{"Authorization", "Bearer #{@api_key}"}, {"Content-Type", "application/json"}]
 
@@ -21,8 +21,10 @@ defmodule ReIntegrations.Routific.Client do
   defp build_uri(path), do: URI.parse(@api_url <> path)
 
   defp post(body, path),
-    do: path |> build_uri |> @http_client.post(Jason.encode!(body), @api_headers)
+    do: path |> build_uri |> http_client().post(Jason.encode!(body), @api_headers)
 
   defp get(path),
-    do: path |> build_uri |> @http_client.get(@api_headers)
+    do: path |> build_uri |> http_client().get(@api_headers)
+
+  defp http_client, do: Mockery.Macro.mockable(HTTPoison)
 end

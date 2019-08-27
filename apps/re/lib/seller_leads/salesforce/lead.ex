@@ -30,7 +30,7 @@ defmodule Re.Salesforce.Lead do
     evaluation: "Avaliacao_do_Imovel__c",
     realty_postal_code: "CEP__c",
     realty_city: "Cidade_do_Imovel__c",
-    complemenet: "Complemento__c",
+    complement: "Complemento__c",
     tour_data: "Data_Tour__c",
     inserted_at: "Data_de_Criacao_do_Lead__c",
     realty_state: "Estado_do_Imovel__c",
@@ -73,7 +73,7 @@ defmodule Re.Salesforce.Lead do
     field :evaluation, :boolean
     field :realty_postal_code, :string
     field :realty_city, :string
-    field :complemenet, :string
+    field :complement, :string
     field :tour_data, :naive_datetime
     field :inserted_at, :utc_datetime
     field :realty_state, :string
@@ -96,7 +96,7 @@ defmodule Re.Salesforce.Lead do
 
   @optional ~w(street neighborhood city state email interest_realty_id
                source phone full_name budget area evaluation realty_postal_code realty_city
-               complemenet tour_data inserted_at realty_state realty_bathrooms realty_rooms
+               complement tour_data inserted_at realty_state realty_bathrooms realty_rooms
                realty_garage_spots realty_street_number realty_street realty_suites realty_type
                maintenance_fee price postal_code record_type_id type uuid duplicated duplicated_entities)a
   @required ~w(last_name location)a

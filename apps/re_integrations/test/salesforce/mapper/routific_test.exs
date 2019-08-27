@@ -1,5 +1,6 @@
 defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
   use ReIntegrations.ModelCase
+  use Mockery
 
   import Re.Factory
 
@@ -54,6 +55,16 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
 
   describe "build_event/1" do
     test "builds salesforce event from a routific solution" do
+      mock(
+        HTTPoison,
+        :get,
+        {:ok,
+         %{
+           status_code: 200,
+           body: ~s({"Id":"0x01","Name":"name","PersonMobilePhone":""})
+         }}
+      )
+
       assert %{
                what_id: "0x02",
                type: :visit,
@@ -62,9 +73,26 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
                address: "some address",
                duration: 30
              } = Mapper.Routific.build_event(@visit, @calendar_uuid, @payload)
+
+      uri = %URI{path: "/api/v1/Account/0x01"}
+
+      assert_called(HTTPoison, :get, [
+        ^uri,
+        [{"Authorization", ""}, {"Content-Type", "application/json"}]
+      ])
     end
 
     test "shifts start time by idle_time" do
+      mock(
+        HTTPoison,
+        :get,
+        {:ok,
+         %{
+           status_code: 200,
+           body: ~s({"Id":"0x01","Name":"name","PersonMobilePhone":""})
+         }}
+      )
+
       assert %{
                start: ~N[2019-08-01 12:30:00.000],
                end: ~N[2019-08-01 13:00:00.000],
@@ -77,9 +105,26 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
                  idle_time: 30
                })
                |> Mapper.Routific.build_event(@calendar_uuid, @payload)
+
+      uri = %URI{path: "/api/v1/Account/0x01"}
+
+      assert_called(HTTPoison, :get, [
+        ^uri,
+        [{"Authorization", ""}, {"Content-Type", "application/json"}]
+      ])
     end
 
     test "rounds minutes to multiples of 5" do
+      mock(
+        HTTPoison,
+        :get,
+        {:ok,
+         %{
+           status_code: 200,
+           body: ~s({"Id":"0x01","Name":"name","PersonMobilePhone":""})
+         }}
+      )
+
       assert %{
                start: ~N[2019-08-01 12:30:00.000],
                end: ~N[2019-08-01 13:00:00.000]
@@ -90,6 +135,13 @@ defmodule ReIntegrations.Salesforce.Mapper.RoutificTest do
                  end: ~T[12:58:00Z]
                })
                |> Mapper.Routific.build_event(@calendar_uuid, @payload)
+
+      uri = %URI{path: "/api/v1/Account/0x01"}
+
+      assert_called(HTTPoison, :get, [
+        ^uri,
+        [{"Authorization", ""}, {"Content-Type", "application/json"}]
+      ])
     end
   end
 end
