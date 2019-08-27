@@ -381,6 +381,15 @@ defmodule Re.Factory do
     }
   end
 
+  def shortlist_factory do
+    %Re.Shortlist{
+      uuid: UUID.uuid4(),
+      opportunity_id: "0x01",
+      account_name: Name.name(),
+      owner_name: Name.name()
+    }
+  end
+
   defp random_postcode do
     first =
       10_000..99_999
