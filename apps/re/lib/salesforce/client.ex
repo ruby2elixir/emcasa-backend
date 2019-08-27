@@ -4,6 +4,8 @@ defmodule Re.Salesforce.Client do
   """
   require Mockery.Macro
 
+  require Mockery.Macro
+
   @api_key Application.get_env(:re_integrations, :salesforce_api_key, "")
   @api_url Application.get_env(:re_integrations, :salesforce_url, "")
 
