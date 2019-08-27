@@ -17,7 +17,7 @@ defmodule Re.Shortlists do
   defdelegate authorize(action, user, params), to: Re.Shortlists.Policy
 
   def generate_shortlist_from_salesforce_opportunity(opportunity_id) do
-    with {:ok, opportunity} <- Salesforce.get_opportunity(opportunity_id),
+    with {:ok, opportunity} <- Salesforce.get_opportunity_with_associations(opportunity_id),
          {:ok, listing_uuids} <- Selekta.suggest_shortlist(opportunity) do
       {:ok, get_active_listings_by_uuid(listing_uuids)}
     else

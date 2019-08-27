@@ -20,11 +20,6 @@ defmodule Re.Addresses.District do
     field :status, :string, default: "uncovered"
     field :sort_order, :integer
 
-    many_to_many :calendars, Re.Calendars.Calendar,
-      join_through: Re.Calendars.CalendarDistrict,
-      join_keys: [district_uuid: :uuid, calendar_uuid: :uuid],
-      on_replace: :delete
-
     many_to_many :users, Re.User,
       join_through: Re.BrokerDistrict,
       join_keys: [district_uuid: :uuid, user_uuid: :uuid],

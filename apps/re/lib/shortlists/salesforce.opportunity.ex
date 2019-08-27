@@ -26,7 +26,9 @@ defmodule Re.Shortlists.Salesforce.Opportunity do
     neighborhoods: "Bairros_de_Interesse__c",
     price_range: "Valor_M_ximo_para_Compra_2__c",
     maintenance_fee_range: "Valor_M_ximo_de_Condom_nio__c",
-    lobby: "Portaria_2__c"
+    lobby: "Portaria_2__c",
+    user_name: "AccountName",
+    owner_name: "OwnerName"
   )
 
   defenum(PreferenceFloor,
@@ -49,10 +51,13 @@ defmodule Re.Shortlists.Salesforce.Opportunity do
     field :price_range, {:array, :integer}
     field :maintenance_fee_range, {:array, :integer}
     field :lobby, :string
+    field :user_name, :string
+    field :owner_name, :string
   end
 
   @params ~w(infrastructure type min_rooms min_suites min_bathrooms min_garage_spots min_area
-  preference_floor elevators nearby_subway neighborhoods price_range maintenance_fee_range lobby)a
+  preference_floor elevators nearby_subway neighborhoods price_range maintenance_fee_range lobby
+  user_name owner_name)a
 
   @ignorable "Indiferente"
 

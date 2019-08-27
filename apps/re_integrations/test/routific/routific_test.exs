@@ -18,8 +18,7 @@ defmodule ReIntegrations.RoutificTest do
 
   setup do
     address = insert(:address)
-    district = insert(:district, name: "Vila Mariana", name_slug: "vila-mariana")
-    insert(:calendar, address: address, districts: [district])
+    insert(:calendar, address: address)
     :ok
   end
 
