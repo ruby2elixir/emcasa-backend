@@ -7,8 +7,6 @@ defmodule Re.ShortlistsTest do
 
   alias Re.Shortlists
 
-  @http_client Application.get_env(:re, :http)
-
   describe "get_or_create/2" do
     test "get shortlist if already exists" do
       listing = insert(:listing)
