@@ -89,6 +89,7 @@ config :re, Re.AlikeTeller.Scheduler,
 
 config :re_integrations, ReIntegrations.Salesforce.Scheduler,
   debug_logging: false,
+  timezone: System.get_env("TIMEZONE") || "Etc/UTC",
   jobs: [
     {"1 0 * * *", {ReIntegrations.Salesforce.Scheduler, :schedule_daily_visits, []}}
   ]
