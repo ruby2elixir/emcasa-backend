@@ -7,7 +7,7 @@ defmodule ReIntegrations.Salesforce.Scheduler do
 
   @timezone Application.get_env(:re_integrations, :timezone, "Etc/UTC")
 
-  def schedule_daily_visits(), do: @timezone |> Timex.now() |> schedule_daily_visits()
+  def schedule_daily_visits, do: @timezone |> Timex.now() |> schedule_daily_visits()
 
   def schedule_daily_visits(%DateTime{} = today) do
     today
