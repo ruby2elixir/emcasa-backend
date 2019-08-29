@@ -33,6 +33,7 @@ defmodule ReIntegrations.Application do
       worker(Search.Server, []),
       {Orulo.JobQueue, repo: Repo},
       {Salesforce.JobQueue, repo: Repo, reservation_timeout: 60_000, execution_timeout: 30_000},
-      Search.Cluster
+      Search.Cluster,
+      Salesforce.Scheduler
     ]
 end
